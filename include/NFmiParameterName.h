@@ -1462,6 +1462,14 @@ enum FmiParameterName
   kFmiIcingRate = 4820,
   kFmiIceMass = 4821,
 
+  kFmiCOConcentration = 4900,
+  kFmiNOConcentration,
+  kFmiNO2Concentration,
+  kFmiO3Concentration,
+  kFmiPM10Concentration,
+  kFmiPM25Concentration,
+  kFmiSO2Concentration,
+
   // Some value larger than any other enum value
   kFmiLastParameter = 6000
 

@@ -1450,6 +1450,13 @@ static void InitParamNames(NFmiEnumConverter::storage_type &theData)
   PARAMINSERT("VolumetricSoilWaterLayer4", kFmiVolumetricSoilWaterLayer4);
   PARAMINSERT("HighVegetationType", kFmiHighVegetationType);
   PARAMINSERT("LowVegetationType", kFmiLowVegetationType);
+  PARAMINSERT("COConcentration", kFmiCOConcentration);
+  PARAMINSERT("NOConcentration", kFmiNOConcentration);
+  PARAMINSERT("NO2Concentration", kFmiNO2Concentration);
+  PARAMINSERT("O3Concentration", kFmiO3Concentration);
+  PARAMINSERT("PM10Concentration", kFmiPM10Concentration);
+  PARAMINSERT("PM25Concentration", kFmiPM25Concentration);
+  PARAMINSERT("SO2Concentration", kFmiSO2Concentration);
 }
 
 // ----------------------------------------------------------------------
