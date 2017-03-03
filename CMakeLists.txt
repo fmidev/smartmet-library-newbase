@@ -19,6 +19,7 @@ target_include_directories(
 set(
     ${PROJECT_NAME}_INCLUDE_DIRS
     ${PROJECT_SOURCE_DIR}/newbase
+    ${PROJECT_SOURCE_DIR}
     ${BOOST_INCLUDE_DIR} 
     CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE
     )
