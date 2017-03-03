@@ -83,8 +83,8 @@ class _FMI_DLL NFmiStaticTime : public NFmiSortable
 
   virtual std::ostream& Write(std::ostream& file) const;
 
-  ::time_t EpochTime() const;
-  static ::time_t my_timegm(struct ::tm* t);
+  std::time_t EpochTime() const;
+  static std::time_t my_timegm(struct ::tm* t);
 
  protected:
   void _setCurrent(void);

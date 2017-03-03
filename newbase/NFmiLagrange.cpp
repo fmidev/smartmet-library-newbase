@@ -274,7 +274,7 @@ double NFmiLagrange::L(
   // x  :			point where interpolation should occur at
   // denominator: pre-computed constant denominator of the product of term L.
   //				It is constant in a sense that it stays unchanged for a given array
-  //of
+  // of
   // xi,
   //				no matter what x is, thus permitting pre-computation
   // i  :			index of Lagrange term, i = 0..n-1

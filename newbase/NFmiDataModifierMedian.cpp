@@ -51,7 +51,6 @@ float NFmiDataModifierMedian::Median(void)
   if (itsMedianArray.empty())
     return kFloatMissing;  // mielestäni tämän pitää palauttaa missing value eikä heittää poikkeusta
                            // (Marko)
-                           //	throw std::runtime_error("Cannot calculate median of an empty array");
   std::sort(itsMedianArray.begin(), itsMedianArray.end());
   //  return itsMedianArray[itsMedianArray.size()/2];
   return itsMedianArray[static_cast<int>(itsMedianArray.size() * itsLimitProsent / 100.f)];

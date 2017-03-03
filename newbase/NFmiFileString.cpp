@@ -37,14 +37,20 @@ NFmiFileString::NFmiFileString(void) {}
  */
 // ----------------------------------------------------------------------
 
-NFmiFileString::NFmiFileString(const NFmiString &theStr) : NFmiString(theStr) {}
+NFmiFileString::NFmiFileString(const NFmiString &theStr) : NFmiString(theStr) 
+{
+    NormalizeDelimiter();
+}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
  */
 // ----------------------------------------------------------------------
 
-NFmiFileString::NFmiFileString(const NFmiFileString &theFileStr) : NFmiString(theFileStr) {}
+NFmiFileString::NFmiFileString(const NFmiFileString &theFileStr) : NFmiString(theFileStr) 
+{
+    NormalizeDelimiter();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

@@ -6,7 +6,7 @@
 // ======================================================================
 
 #include "NFmiSnapShotInterface.h"
-#include <time.h>
+#include <ctime>
 #include <fstream>
 
 using namespace std;

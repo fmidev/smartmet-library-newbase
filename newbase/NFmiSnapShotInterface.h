@@ -10,7 +10,7 @@
 
 #include "NFmiString.h"  // Added by ClassView
 #include "NFmiQueryData.h"
-#include <time.h>
+#include <ctime>
 
 #ifdef UNIX
 const NFmiString kFmiWorkingDirectory("/tmp/snapshot");
