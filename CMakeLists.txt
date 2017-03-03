@@ -12,13 +12,13 @@ add_library(
 
 target_include_directories( 
     ${PROJECT_NAME}
-    PUBLIC ${PROJECT_SOURCE_DIR}/include
+    PUBLIC ${PROJECT_SOURCE_DIR}/newbase
     PUBLIC ${BOOST_INCLUDE_DIR} 
     )
 
 set(
     ${PROJECT_NAME}_INCLUDE_DIRS
-    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/newbase
     ${BOOST_INCLUDE_DIR} 
     CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE
     )
