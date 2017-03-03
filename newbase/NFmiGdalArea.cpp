@@ -137,10 +137,12 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
 {
   // Guess a good value for itsDescription
 
-  std::string auth = theCRS.GetAuthorityName(NULL);
-  if (!auth.empty())
+  const char *auth = theCRS.GetAuthorityName(NULL);
+  if (auth != NULL)
   {
-    itsDescription = auth + ":" + theCRS.GetAuthorityCode(NULL);
+    itsDescription = std::string(auth);
+    const char *code = theCRS.GetAuthorityCode(NULL);
+    if (code != NULL) itsDescription += ":" + std::string(code);
   }
   else
   {
