@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 17.3.1
+Version: 17.3.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -73,6 +73,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Mar  6 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.6-1.fmi
+- Added CMakeList.txt created for the Windows build
+- Minor fixes needed for by the Windows build
+
 * Wed Mar  1 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.1-1.fmi
 - ProbabilityOfColdLimit5 is the probability of temperature being below -35C
 
