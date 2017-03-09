@@ -1943,6 +1943,7 @@ double NFmiInfoAreaMaskVertConditionalFunc::Value(const NFmiCalculationParams &t
   float value = kFloatMissing;
   if (InitializeFromArguments())
   {
+    SetLevelValues();
     // 1. Laske latlon-pistettä vastaava 'reaali'-hilapiste.
     NFmiLocationCache locationCache = CalcLocationCache(theCalculationParams.itsLatlon);
 
