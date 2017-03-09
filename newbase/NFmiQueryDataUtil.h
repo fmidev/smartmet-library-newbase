@@ -282,10 +282,10 @@ class NFmiLocationIndexRangeCalculator
   MutexType itsMutex;
   bool fNoMoreWork;
 
-  NFmiLocationIndexRangeCalculator(
-      const NFmiLocationIndexRangeCalculator &);  // ei toteuteta kopio konstruktoria
-  NFmiLocationIndexRangeCalculator &operator=(
-      NFmiLocationIndexRangeCalculator const &);  // ei toteuteta sijoitus operaattoria
+  // ei toteuteta kopio konstruktoria
+  NFmiLocationIndexRangeCalculator(const NFmiLocationIndexRangeCalculator &);
+  // ei toteuteta sijoitus operaattoria
+  NFmiLocationIndexRangeCalculator &operator=(NFmiLocationIndexRangeCalculator const &);
 };
 
 //! Undocumented
@@ -293,6 +293,10 @@ class _FMI_DLL NFmiQueryDataUtil
 {
  public:
   typedef checkedVector<GridRecordData *> GridDataVector;
+  using SoundingLevelContainer = std::vector<unsigned long>;
+  using SignificantSoundingLevels = std::unique_ptr<SoundingLevelContainer>;
+  static SignificantSoundingLevels GetSignificantSoundingLevelIndices(NFmiFastQueryInfo &theInfo);
+
   static void DestroyGridRecordData(GridDataVector &theGridRecordDatas);  // apufunktio, joka tuhoaa
                                                                           // dynaamisen datan ja
                                                                           // tyhjentää vektorin
