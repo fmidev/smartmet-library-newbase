@@ -3166,7 +3166,7 @@ float NFmiQueryInfo::FindNearestNonMissingValueFromTimeList(const NFmiMetTime &t
             "time not found.");
       theFoundTime = *timeList->Time(theTimeIndexInOut);
       if (theMaxMinuteRange != 0 &&
-          ::abs(theTime.DifferenceInMinutes(theFoundTime)) > theMaxMinuteRange)
+          std::abs(theTime.DifferenceInMinutes(theFoundTime)) > theMaxMinuteRange)
         value = kFloatMissing;  // aika josta löytyi ei puuttuva arvo, löytyi liian kaukaa
       break;
     }

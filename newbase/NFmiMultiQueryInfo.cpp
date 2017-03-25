@@ -502,7 +502,7 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
 
   const NFmiMetTime &time1 = itsMultiIndexes[idx1].valid_time;
 
-  if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time1)) > theMaxMinuteRange)
+  if (theMaxMinuteRange != 0 && std::abs(theTime.DifferenceInMinutes(time1)) > theMaxMinuteRange)
     return kFloatMissing;
 
   // Find next value to use in interpolation
@@ -520,7 +520,7 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
 
   const NFmiMetTime &time2 = itsMultiIndexes[idx2].valid_time;
 
-  if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time2)) > theMaxMinuteRange)
+  if (theMaxMinuteRange != 0 && std::abs(theTime.DifferenceInMinutes(time2)) > theMaxMinuteRange)
     return kFloatMissing;
 
   // Interpolate.
