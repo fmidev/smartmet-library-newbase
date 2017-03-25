@@ -117,7 +117,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
 
   if (!itsData->Init(Size())) return false;
 
-  if ((theData->itsInterpolationMethod == kLinearlyFast))
+  if (theData->itsInterpolationMethod == kLinearlyFast)
   {
     // HUOM! - ei ota huomioon "croppausta", ts. toimii aina KOKO gridille, ei pelkästään sen
     // osagridille.
