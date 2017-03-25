@@ -50,7 +50,6 @@ else
 	-Wcast-align \
 	-Winline \
 	-Wno-multichar \
-	-Wno-pmf-conversions \
 	-Woverloaded-virtual  \
 	-Wpointer-arith \
 	-Wcast-qual \
