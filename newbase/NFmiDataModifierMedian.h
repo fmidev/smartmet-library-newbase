@@ -20,19 +20,19 @@
 class _FMI_DLL NFmiDataModifierMedian : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierMedian(void) override;
+  ~NFmiDataModifierMedian() override;
   NFmiDataModifierMedian(float theLimitProsent = 50.f);
   NFmiDataModifierMedian(const NFmiDataModifierMedian& theOther);
-  NFmiDataModifier* Clone(void) const override;
+  NFmiDataModifier* Clone() const override;
 
-  float Median(void);
+  float Median();
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
-  float LimitProsent(void) const { return itsLimitProsent; }
+  float CalculationResult() override;
+  float LimitProsent() const { return itsLimitProsent; }
   void LimitProsent(float newValue);
 
  protected:

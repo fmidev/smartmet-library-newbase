@@ -29,7 +29,7 @@ class NFmiIntegrationSelector;
 class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
 {
  public:
-  ~NFmiTotalWind(void) override;
+  ~NFmiTotalWind() override;
   NFmiTotalWind(const NFmiTotalWind& theWind);
   NFmiTotalWind(double theInfoVersion = 7.);
   NFmiTotalWind(unsigned long theValue,
@@ -46,16 +46,16 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
                 double theInfoVersion = 7.,
                 float theWindGustValue = kFloatMissing);
 
-  NFmiCombinedParam* Clone(void) const override;
+  NFmiCombinedParam* Clone() const override;
 
   bool CheckWindVector(unsigned long theValue);
   bool IsMemberParam(FmiParameterName type) const override;
 
-  unsigned long LongValue(void) const override;
+  unsigned long LongValue() const override;
   bool LongValue(unsigned long theValue) override;
 
-  double CalcU(void);  // lasketaan myös tuuli komponentit u ja v
-  double CalcV(void);  // lasketaan myös tuuli komponentit u ja v
+  double CalcU();  // lasketaan myös tuuli komponentit u ja v
+  double CalcV();  // lasketaan myös tuuli komponentit u ja v
   bool SubValue(double theValue, FmiParameterName theParam) override;
   double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0) override;
   double RawSubValue(FmiParameterName theParam) override;
@@ -99,14 +99,14 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
   bool FromWindVector(unsigned long theValue);
   unsigned long WindSpeedFromWindVector(unsigned long theValue);
   unsigned long WindDirectionFromWindVector(unsigned long theValue);
-  unsigned long ToWindVector(void);
+  unsigned long ToWindVector();
 
   // puuttuvan arvon testit on syytä tehdä tämän funktion kautta muuttuneen version myötä
   // tuulennopeudelle
-  unsigned long WindSpeedMissingValue(void) const;
-  unsigned long WindGustMissingValue(void) const;
+  unsigned long WindSpeedMissingValue() const;
+  unsigned long WindGustMissingValue() const;
 
-  double WindDirectionValue(void);
+  double WindDirectionValue();
   double WindSpeedVx(unsigned long theValue);
   double WindGustVx(unsigned long theValue);
   unsigned long WindSpeedVx(double theValue);
@@ -134,13 +134,13 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
     unsigned long WindGustMS : 12;    // GustSpeed 0..409.3 m/s kymmenyksen tarkkuudella
   };
 
-  unsigned long WindDirection(void) const;
-  unsigned long WindSpeed(void) const;
-  unsigned long WindSpeedV6(void) const;
-  unsigned long WindSpeedV7(void) const;
-  unsigned long WindGust(void) const;
-  unsigned long WindGustV6(void) const;
-  unsigned long WindGustV7(void) const;
+  unsigned long WindDirection() const;
+  unsigned long WindSpeed() const;
+  unsigned long WindSpeedV6() const;
+  unsigned long WindSpeedV7() const;
+  unsigned long WindGust() const;
+  unsigned long WindGustV6() const;
+  unsigned long WindGustV7() const;
   void SetWindDirection(unsigned long theValue);
 
   // todellisesta tuulennopeudesta muunnetaan uint:ksi ja talletetaan oikean version bittimuotoon
@@ -175,26 +175,26 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
  */
 // ----------------------------------------------------------------------
 
-inline NFmiCombinedParam* NFmiTotalWind::Clone(void) const { return new NFmiTotalWind(*this); }
+inline NFmiCombinedParam* NFmiTotalWind::Clone() const { return new NFmiTotalWind(*this); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::LongValue(void) const { return itsData.longType; }
+inline unsigned long NFmiTotalWind::LongValue() const { return itsData.longType; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindSpeedMissingValue(void) const
+inline unsigned long NFmiTotalWind::WindSpeedMissingValue() const
 {
   return (itsInfoVersion >= 7.) ? kT12BitMissing : kT9BitMissing;
 }
 
-inline unsigned long NFmiTotalWind::WindGustMissingValue(void) const
+inline unsigned long NFmiTotalWind::WindGustMissingValue() const
 {
   return (itsInfoVersion >= 7.) ? kT12BitMissing : kT4BitMissing;
 }
@@ -247,28 +247,14 @@ inline unsigned long NFmiTotalWind::WindGustVx(double theValue)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindDirection(void) const { return itsData.longType & 0x3F; }
+inline unsigned long NFmiTotalWind::WindDirection() const { return itsData.longType & 0x3F; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindSpeedV6(void) const
-{
-  return (itsData.longType >> 6) & 0x01FF;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiTotalWind::WindSpeedV7(void) const
-{
-  return (itsData.longType >> 6) & 0x0FFF;
-}
+inline unsigned long NFmiTotalWind::WindSpeedV6() const { return (itsData.longType >> 6) & 0x01FF; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -276,7 +262,15 @@ inline unsigned long NFmiTotalWind::WindSpeedV7(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindSpeed(void) const
+inline unsigned long NFmiTotalWind::WindSpeedV7() const { return (itsData.longType >> 6) & 0x0FFF; }
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline unsigned long NFmiTotalWind::WindSpeed() const
 {
   if (itsInfoVersion >= 7.) return WindSpeedV7();
 
@@ -289,10 +283,7 @@ inline unsigned long NFmiTotalWind::WindSpeed(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindGustV6(void) const
-{
-  return (itsData.longType >> 15) & 0xF;
-}
+inline unsigned long NFmiTotalWind::WindGustV6() const { return (itsData.longType >> 15) & 0xF; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -300,10 +291,7 @@ inline unsigned long NFmiTotalWind::WindGustV6(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindGustV7(void) const
-{
-  return (itsData.longType >> 18) & 0xFFF;
-}
+inline unsigned long NFmiTotalWind::WindGustV7() const { return (itsData.longType >> 18) & 0xFFF; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -311,7 +299,7 @@ inline unsigned long NFmiTotalWind::WindGustV7(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindGust(void) const
+inline unsigned long NFmiTotalWind::WindGust() const
 {
   if (itsInfoVersion >= 7.) return WindGustV7();
 

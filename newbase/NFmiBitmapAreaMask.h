@@ -18,9 +18,9 @@ class NFmiGrid;
 class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
 {
  public:
-  ~NFmiBitmapAreaMask(void) override;
+  ~NFmiBitmapAreaMask() override;
 
-  NFmiBitmapAreaMask(void);
+  NFmiBitmapAreaMask();
 
   NFmiBitmapAreaMask(const NFmiBitmapAreaMask& theMask);
 
@@ -37,7 +37,7 @@ class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
                      const NFmiLevel* theLevel,
                      BinaryOperator thePostBinaryOperator = kNoValue);
 
-  NFmiAreaMask* Clone(void) const override;
+  NFmiAreaMask* Clone() const override;
 #ifdef UNIX
   // RHEL6 compiler bug fails the reference
   void Init(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
@@ -57,23 +57,20 @@ class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
       override;  // HUOM! toimii vain NFmiBinaryMask:in kanssa. Asettaa koko maskin
                  // kaikki arvot halutuksi.
 
-  const NFmiDataIdent* DataIdent(void) const override { return itsDataIdent; }
-  const NFmiParam* Param(void) const override
-  {
-    return itsDataIdent ? itsDataIdent->GetParam() : 0;
-  }
+  const NFmiDataIdent* DataIdent() const override { return itsDataIdent; }
+  const NFmiParam* Param() const override { return itsDataIdent ? itsDataIdent->GetParam() : 0; }
   using NFmiAreaMaskImpl::Level;
-  const NFmiLevel* Level(void) const override { return itsLevel; }
+  const NFmiLevel* Level() const override { return itsLevel; }
 
  protected:
   double CalcValueFromLocation(const NFmiPoint& theLatLon) const override;  // tee tämä lapsiin!!!
-  const NFmiString MakeSubMaskString(
-      void) const override;  // tekee  param nimi tai vastaavan stringin pätkän
+  const NFmiString MakeSubMaskString()
+      const override;  // tekee  param nimi tai vastaavan stringin pätkän
 
  private:
   NFmiBitmapAreaMask& operator=(const NFmiBitmapAreaMask& theMask);
 
-  void Destroy(void);
+  void Destroy();
   int LatLon2Index(const NFmiPoint& theLatLon) const;
 
   bool CheckIndex(int theIndex) const

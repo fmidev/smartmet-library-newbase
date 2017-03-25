@@ -15,9 +15,9 @@
 class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
 {
  public:
-  ~NFmiOrthographicArea(void) override;
+  ~NFmiOrthographicArea() override;
 
-  NFmiOrthographicArea(void);
+  NFmiOrthographicArea();
 
   NFmiOrthographicArea(const NFmiOrthographicArea &thePerspectiveArea);
 
@@ -48,15 +48,15 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
   const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXY) const override;
 
   void ZoomFactor(double theZoomFactor);
-  double ZoomFactor(void) const;
+  double ZoomFactor() const;
 
-  virtual double GlobeRadius(void) const;
+  virtual double GlobeRadius() const;
   virtual void GlobeRadius(double &theGlobeRadius);
 
-  virtual double AzimuthAngle(void) const;
+  virtual double AzimuthAngle() const;
   virtual void AzimuthAngle(double &theAzimuthAngle);
 
-  NFmiArea *Clone(void) const override;
+  NFmiArea *Clone() const override;
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                     const NFmiPoint &theTopRightLatLon,
                     bool allowPacificFix = true) const override;
@@ -70,8 +70,8 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
   bool operator==(const NFmiArea &theArea) const override;
   bool operator!=(const NFmiArea &theArea) const override;
 
-  const char *ClassName(void) const override;
-  const std::string AreaStr(void) const override;
+  const char *ClassName() const override;
+  const std::string AreaStr() const override;
   const std::string WKT() const override;
 
   std::ostream &Write(std::ostream &file) const override;
@@ -80,7 +80,7 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
  protected:
   double K(const double /* delta */) const override { return 1.; };
   double CalcDelta(const double /* xyDistance */) const override { return 0.; };
-  double DistanceFromPerspectivePointToCenterOfEarth(void) const override { return 0.; };
+  double DistanceFromPerspectivePointToCenterOfEarth() const override { return 0.; };
   double itsAzimuthAngle;
   double itsLat0;
   double itsLon0;
@@ -103,12 +103,12 @@ typedef NFmiOrthographicArea *PNFmiOrthographicArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiOrthographicArea::~NFmiOrthographicArea(void) {}
+inline NFmiOrthographicArea::~NFmiOrthographicArea() {}
 // ----------------------------------------------------------------------
 
-inline double NFmiOrthographicArea::GlobeRadius(void) const { return itsGlobeRadius; }
+inline double NFmiOrthographicArea::GlobeRadius() const { return itsGlobeRadius; }
 // ----------------------------------------------------------------------
 
-inline const char *NFmiOrthographicArea::ClassName(void) const { return "kNFmiOrthographicArea"; }
+inline const char *NFmiOrthographicArea::ClassName() const { return "kNFmiOrthographicArea"; }
 
 // ======================================================================

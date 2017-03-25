@@ -12,16 +12,16 @@
 class _FMI_DLL NFmiDataModifierMin : public NFmiDataModifierExtreme
 {
  public:
-  ~NFmiDataModifierMin(void) override;
-  NFmiDataModifierMin(void);
+  ~NFmiDataModifierMin() override;
+  NFmiDataModifierMin();
   NFmiDataModifierMin(const NFmiDataModifierMin& theOther);
-  NFmiDataModifier* Clone(void) const override;
+  NFmiDataModifier* Clone() const override;
 
   //  virtual void Calculate(float theValue);
 
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   bool IsNewExtreme(float value) override;

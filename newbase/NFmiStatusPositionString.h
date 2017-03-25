@@ -13,8 +13,8 @@
 class _FMI_DLL NFmiStatusPositionString : public NFmiStatusString
 {
  public:
-  ~NFmiStatusPositionString(void) override;
-  NFmiStatusPositionString(void);
+  ~NFmiStatusPositionString() override;
+  NFmiStatusPositionString();
   NFmiStatusPositionString(const NFmiStatusPositionString& theStatusPositionString);
   NFmiStatusPositionString(const NFmiString& theString,
                            long theStatus,
@@ -24,9 +24,9 @@ class _FMI_DLL NFmiStatusPositionString : public NFmiStatusString
 
   NFmiStatusPositionString& operator=(const NFmiStatusPositionString& theStatusPositionString);
 
-  long StartPosition(void);
-  long EndPosition(void);
-  unsigned long ClassId(void) const override;
+  long StartPosition();
+  long EndPosition();
+  unsigned long ClassId() const override;
   NFmiString* Clone() const override;
 
   std::ostream& Write(std::ostream& file) const override;
@@ -44,9 +44,6 @@ class _FMI_DLL NFmiStatusPositionString : public NFmiStatusString
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiStatusPositionString::ClassId(void) const
-{
-  return kNFmiStatusPositionString;
-}
+inline unsigned long NFmiStatusPositionString::ClassId() const { return kNFmiStatusPositionString; }
 
 // ======================================================================

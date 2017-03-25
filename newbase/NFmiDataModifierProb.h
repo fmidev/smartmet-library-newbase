@@ -15,7 +15,7 @@
 class _FMI_DLL NFmiDataModifierProb : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierProb(void) override;
+  ~NFmiDataModifierProb() override;
   NFmiDataModifierProb(FmiProbabilityCondition theCondition,
                        double theFirstLimit,
                        FmiJoinOperator theJoinOperator = kFmiAdd,
@@ -26,11 +26,11 @@ class _FMI_DLL NFmiDataModifierProb : public NFmiDataModifier
                        FmiJoinOperator theJoinOperator,
                        NFmiCombinedParam* theCombinedParam = 0);
 
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   void Calculate(float theValue) override;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   virtual bool CheckParams(double theValue);

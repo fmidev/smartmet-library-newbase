@@ -20,8 +20,8 @@ class _FMI_DLL NFmiInfoModifier : public NFmiParamDataModifier
                    NFmiLevel* theLevel,
                    NFmiQueryInfo* theData = 0,
                    FmiJoinOperator theJoinOperator = kFmiAdd);
-  NFmiQueryInfo* Info(void);
-  double FloatValue(void) override;
+  NFmiQueryInfo* Info();
+  double FloatValue() override;
   virtual double PeekValue(long dx, long dy, long dt);
 
  protected:

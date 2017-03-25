@@ -18,8 +18,8 @@
 class _FMI_DLL NFmiLagrange
 {
  public:
-  ~NFmiLagrange(void);
-  NFmiLagrange(void);
+  ~NFmiLagrange();
+  NFmiLagrange();
   NFmiLagrange(const NFmiLagrange& theLagrange);
   NFmiLagrange(const double* si, const double* ti, double* yij, int sn, int tn);
   NFmiLagrange(const double* si, const double* yij, int sn);
@@ -39,13 +39,13 @@ class _FMI_DLL NFmiLagrange
   double Interpolate(double s);
 
  private:
-  double* Si(void);
-  double* Ti(void);
-  double* Yij(void);
+  double* Si();
+  double* Ti();
+  double* Yij();
 
   void Denominator(const checkedVector<double>& xi, checkedVector<double>& denominator, int n);
-  void SiDenominator(void);
-  void TiDenominator(void);
+  void SiDenominator();
+  void TiDenominator();
 
   double L(
       const checkedVector<double>& xi, double x, checkedVector<double>& denominator, int i, int n);

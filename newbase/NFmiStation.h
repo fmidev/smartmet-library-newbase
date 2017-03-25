@@ -13,9 +13,9 @@
 class _FMI_DLL NFmiStation : public NFmiLocation
 {
  public:
-  ~NFmiStation(void) override;
+  ~NFmiStation() override;
 
-  NFmiStation(void);
+  NFmiStation();
 
   NFmiStation(const NFmiStation& theStation);
 
@@ -37,11 +37,11 @@ class _FMI_DLL NFmiStation : public NFmiLocation
   bool IsLessThan(const NFmiSortable& theLocation) const override;
   virtual bool IsEqualName(const NFmiStation& theStation) const;
 
-  NFmiLocation* Clone(void) const override;
-  unsigned long ClassId(void) const override { return kNFmiStation; }
-  virtual double MaxDistance(void) const { return itsMaxDistance; }
+  NFmiLocation* Clone() const override;
+  unsigned long ClassId() const override { return kNFmiStation; }
+  virtual double MaxDistance() const { return itsMaxDistance; }
   virtual void MaxDistance(double theMaxDistance) { itsMaxDistance = theMaxDistance; }
-  virtual FmiStationType IdentType(void) const { return itsIdentType; }
+  virtual FmiStationType IdentType() const { return itsIdentType; }
   virtual void IdentType(FmiStationType theIdentType) { itsIdentType = theIdentType; }
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;

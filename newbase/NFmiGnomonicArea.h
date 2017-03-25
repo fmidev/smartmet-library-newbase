@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiGnomonicArea : public NFmiAzimuthalArea
 {
  public:
-  ~NFmiGnomonicArea(void) override;
+  ~NFmiGnomonicArea() override;
 
   NFmiGnomonicArea();
 
@@ -49,7 +49,7 @@ class _FMI_DLL NFmiGnomonicArea : public NFmiAzimuthalArea
   NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
                     const NFmiPoint& theTopRightLatLon,
                     bool allowPacificFix = true) const override;
-  NFmiArea* Clone(void) const override;
+  NFmiArea* Clone() const override;
 
   NFmiGnomonicArea& operator=(const NFmiGnomonicArea& theArea);
 
@@ -62,9 +62,9 @@ class _FMI_DLL NFmiGnomonicArea : public NFmiAzimuthalArea
   bool operator==(const NFmiArea& theArea) const override;
   bool operator!=(const NFmiArea& theArea) const override;
 
-  unsigned long ClassId(void) const override;
-  const char* ClassName(void) const override;
-  const std::string AreaStr(void) const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
   const std::string WKT() const override;
 
   std::ostream& Write(std::ostream& file) const override;
@@ -73,7 +73,7 @@ class _FMI_DLL NFmiGnomonicArea : public NFmiAzimuthalArea
  protected:
   double K(const double delta) const override;
   double CalcDelta(const double xyDistance) const override;
-  double DistanceFromPerspectivePointToCenterOfEarth(void) const override;
+  double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:
 };  // class NFmiGnomonicArea
@@ -87,20 +87,20 @@ typedef NFmiGnomonicArea* PNFmiGnomonicArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGnomonicArea::~NFmiGnomonicArea(void) {}
+inline NFmiGnomonicArea::~NFmiGnomonicArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGnomonicArea::ClassId(void) const { return kNFmiGnomonicArea; }
+inline unsigned long NFmiGnomonicArea::ClassId() const { return kNFmiGnomonicArea; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiGnomonicArea::ClassName(void) const { return "kNFmiGnomonicArea"; }
+inline const char* NFmiGnomonicArea::ClassName() const { return "kNFmiGnomonicArea"; }
 
 // ======================================================================

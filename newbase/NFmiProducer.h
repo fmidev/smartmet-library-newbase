@@ -20,14 +20,14 @@
 class _FMI_DLL NFmiProducer : public NFmiIndividual
 {
  public:
-  NFmiProducer(void);
+  NFmiProducer();
   NFmiProducer(const NFmiProducer& theProducer);
   explicit NFmiProducer(unsigned long theIdent, const NFmiString& theName = "Kennel");
 
   NFmiProducer& operator=(const NFmiProducer& theProducer);
   bool operator==(const NFmiProducer& theProducer) const;
 
-  const char* ClassName(void) const override;
+  const char* ClassName() const override;
 
  private:
 };  // class NFmiProducer
@@ -38,7 +38,7 @@ class _FMI_DLL NFmiProducer : public NFmiIndividual
  */
 // ----------------------------------------------------------------------
 
-inline NFmiProducer::NFmiProducer(void) {}
+inline NFmiProducer::NFmiProducer() {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -97,6 +97,6 @@ inline NFmiProducer& NFmiProducer::operator=(const NFmiProducer& theProducer)
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiProducer::ClassName(void) const { return "NFmiProducer"; }
+inline const char* NFmiProducer::ClassName() const { return "NFmiProducer"; }
 
 // ======================================================================

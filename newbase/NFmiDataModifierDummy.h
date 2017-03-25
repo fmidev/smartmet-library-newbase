@@ -16,8 +16,8 @@
 class _FMI_DLL NFmiDataModifierDummy : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierDummy(void) override;
-  NFmiDataModifierDummy(void);
+  ~NFmiDataModifierDummy() override;
+  NFmiDataModifierDummy();
   using NFmiDataModifier::Calculate;
   void Calculate(float theValue) override;
 
@@ -26,8 +26,8 @@ class _FMI_DLL NFmiDataModifierDummy : public NFmiDataModifier
 
   void Calculate(NFmiQueryInfo* theQI) override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
-  void Clear(void) override;
+  float CalculationResult() override;
+  void Clear() override;
 
  protected:
   float itsValue;

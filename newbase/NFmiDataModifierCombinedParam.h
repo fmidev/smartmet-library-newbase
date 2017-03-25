@@ -19,14 +19,14 @@ class _FMI_DLL NFmiDataModifierCombinedParam : public NFmiDataModifier
   ~NFmiDataModifierCombinedParam() override;
   NFmiDataModifierCombinedParam(const NFmiCombinedParam &theParam);
 
-  void Clear(void) override;
+  void Clear() override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   void Calculate(float theValue) override;
   float CalculationResult() override;
 
-  NFmiCombinedParam *CombinedCalculationResult(void) override;
+  NFmiCombinedParam *CombinedCalculationResult() override;
 
  protected:
   NFmiCombinedParam *itsCombinedParam;

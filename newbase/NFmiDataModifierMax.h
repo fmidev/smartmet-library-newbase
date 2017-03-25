@@ -20,14 +20,14 @@
 class _FMI_DLL NFmiDataModifierMax : public NFmiDataModifierExtreme
 {
  public:
-  ~NFmiDataModifierMax(void) override;
-  NFmiDataModifierMax(void);
+  ~NFmiDataModifierMax() override;
+  NFmiDataModifierMax();
   NFmiDataModifierMax(const NFmiDataModifierMax& theOther);
-  NFmiDataModifier* Clone(void) const override;
+  NFmiDataModifier* Clone() const override;
 
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   bool IsNewExtreme(float value) override;

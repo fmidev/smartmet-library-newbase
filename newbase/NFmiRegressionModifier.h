@@ -17,7 +17,7 @@ class _FMI_DLL NFmiRegressionModifier : public NFmiInfoModifier
   NFmiRegressionModifier(NFmiDataIdent* theParam, NFmiLevel* theLevel, NFmiQueryInfo* theData = 0);
 
   std::ostream& WriteOperand(std::ostream& file) const override;
-  double FloatValue(void) override;
+  double FloatValue() override;
 
  protected:
   NFmiDataModifierList* itsRegressionItems;

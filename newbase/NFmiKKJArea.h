@@ -14,8 +14,8 @@
 class _FMI_DLL NFmiKKJArea : public NFmiArea
 {
  public:
-  ~NFmiKKJArea(void) override;
-  NFmiKKJArea(void);
+  ~NFmiKKJArea() override;
+  NFmiKKJArea();
   NFmiKKJArea(const NFmiKKJArea& theKKJArea);
 
   NFmiKKJArea(const NFmiPoint& theBottomLeftLatLon,
@@ -36,7 +36,7 @@ class _FMI_DLL NFmiKKJArea : public NFmiArea
   NFmiKKJArea(const NFmiPoint& theTopLeftXY, const NFmiPoint& theBottomRightXY);
 
   void Init(bool fKeepWorldRect = false) override;
-  const NFmiRect WorldRect(void) const override;
+  const NFmiRect WorldRect() const override;
 
   const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
   const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
@@ -53,15 +53,15 @@ class _FMI_DLL NFmiKKJArea : public NFmiArea
   bool operator==(const NFmiArea& theArea) const override;
   bool operator!=(const NFmiArea& theArea) const override;
 
-  unsigned long ClassId(void) const override;
-  const char* ClassName(void) const override;
-  const std::string AreaStr(void) const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
   const std::string WKT() const override;
 
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
 
-  void SetupGaussKruger(void);
+  void SetupGaussKruger();
   void SetupAnyEllipsoid(double theA, double theP);
 
  protected:
@@ -94,28 +94,28 @@ typedef NFmiKKJArea* PNFmiKKJArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiKKJArea::~NFmiKKJArea(void) {}
+inline NFmiKKJArea::~NFmiKKJArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiKKJArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiKKJArea::WorldRect() const { return itsWorldRect; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiKKJArea::ClassId(void) const { return kNFmiKKJArea; }
+inline unsigned long NFmiKKJArea::ClassId() const { return kNFmiKKJArea; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiKKJArea::ClassName(void) const { return "NFmiKKJArea"; }
+inline const char* NFmiKKJArea::ClassName() const { return "NFmiKKJArea"; }
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented

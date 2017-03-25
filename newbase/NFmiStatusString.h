@@ -13,16 +13,16 @@
 class _FMI_DLL NFmiStatusString : public NFmiString
 {
  public:
-  ~NFmiStatusString(void) override;
-  NFmiStatusString(void);
+  ~NFmiStatusString() override;
+  NFmiStatusString();
   NFmiStatusString(const NFmiStatusString& theStatusString);
   NFmiStatusString(const NFmiString& theString, long theStatus);
 
   NFmiStatusString& operator=(const NFmiStatusString& theStausString);
 
-  long Status(void);
-  const NFmiString& String(void);
-  unsigned long ClassId(void) const override { return kNFmiStatusString; };
+  long Status();
+  const NFmiString& String();
+  unsigned long ClassId() const override { return kNFmiStatusString; };
   NFmiString* Clone() const override;
 
   std::ostream& Write(std::ostream& file) const override;

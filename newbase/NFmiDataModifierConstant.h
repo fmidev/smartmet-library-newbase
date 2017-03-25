@@ -15,7 +15,7 @@ class _FMI_DLL NFmiDataModifierConstant : public NFmiDataModifier
  public:
   ~NFmiDataModifierConstant() override;
   NFmiDataModifierConstant(double theConstant, FmiJoinOperator theJoinOperator = kFmiAdd);
-  double FloatValue(void) override;
+  double FloatValue() override;
   std::ostream& WriteOperand(std::ostream& file) const override;
 
  protected:

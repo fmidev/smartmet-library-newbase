@@ -14,12 +14,12 @@
 class _FMI_DLL NFmiMetBoxQueryData : public NFmiQueryData
 {
  public:
-  ~NFmiMetBoxQueryData(void) override;
-  NFmiMetBoxQueryData(void);
+  ~NFmiMetBoxQueryData() override;
+  NFmiMetBoxQueryData();
   NFmiMetBoxQueryData(const NFmiMetBoxQueryData& theData);
   NFmiMetBoxQueryData(NFmiQueryInfo& theInfo);
 
-  virtual NFmiMetBox* Value(void);
+  virtual NFmiMetBox* Value();
 
  private:
   NFmiMetBoxQueryData& operator=(const NFmiMetBoxQueryData& theData);

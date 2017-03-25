@@ -204,9 +204,9 @@ class _FMI_DLL NFmiDataMatrix
   //! Return matrix height.
 
   size_type NY() const { return itsNY; }
-  bool PrintYInverted(void) const { return fPrintYInverted; }
+  bool PrintYInverted() const { return fPrintYInverted; }
   void PrintYInverted(bool newValue) { fPrintYInverted = newValue; }
-  bool PrintIndexAxies(void) const { return fPrintIndexAxies; }
+  bool PrintIndexAxies() const { return fPrintIndexAxies; }
   void PrintIndexAxies(bool newValue) { fPrintIndexAxies = newValue; }
   //! Matrix value at given location, or given value outside matrix
 

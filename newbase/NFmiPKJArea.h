@@ -13,8 +13,8 @@
 class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
 {
  public:
-  ~NFmiPKJArea(void) override;
-  NFmiPKJArea(void);
+  ~NFmiPKJArea() override;
+  NFmiPKJArea();
   NFmiPKJArea(const NFmiPKJArea& thePKJArea);
 
   NFmiPKJArea(const NFmiPoint& theBottomLeftLatLon,
@@ -40,10 +40,10 @@ class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
                     const NFmiPoint& theTopRightLatLon,
                     bool allowPacificFix = true) const override;
 
-  NFmiArea* Clone(void) const override;
+  NFmiArea* Clone() const override;
 
-  unsigned long ClassId(void) const override;
-  const char* ClassName(void) const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
 
   NFmiPKJArea& operator=(const NFmiPKJArea& theArea);
 
@@ -78,20 +78,20 @@ typedef NFmiPKJArea* PNFmiPKJArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPKJArea::~NFmiPKJArea(void) {}
+inline NFmiPKJArea::~NFmiPKJArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiPKJArea::ClassId(void) const { return kNFmiPKJArea; }
+inline unsigned long NFmiPKJArea::ClassId() const { return kNFmiPKJArea; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiPKJArea::ClassName(void) const { return "NFmiPKJArea"; }
+inline const char* NFmiPKJArea::ClassName() const { return "NFmiPKJArea"; }
 
 // ======================================================================

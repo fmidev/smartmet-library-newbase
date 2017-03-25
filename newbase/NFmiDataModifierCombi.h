@@ -16,7 +16,7 @@ class NFmiIntegrationSelector;
 class _FMI_DLL NFmiDataModifierCombi : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierCombi(void) override;
+  ~NFmiDataModifierCombi() override;
   NFmiDataModifierCombi(const NFmiDataModifierCombi& other);
 
   NFmiDataModifierCombi(unsigned int theNumberOfValues = 0,
@@ -25,7 +25,7 @@ class _FMI_DLL NFmiDataModifierCombi : public NFmiDataModifier
                         bool missingValuesAllowed = true,
                         NFmiCombinedParam* theCombinedParam = 0);
 
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::Calculate;
   void Calculate(float theValue) override;
   float CalcResult(const NFmiIntegrationSelector& theSelector);

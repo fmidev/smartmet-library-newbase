@@ -15,7 +15,7 @@ class NFmiQueryInfo;
 class _FMI_DLL NFmiDataModifierWindChill : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierWindChill(void) override;
+  ~NFmiDataModifierWindChill() override;
 
   // anna se queryinfo mistä halutaan laskea windchilliä konstruktorissa!
   NFmiDataModifierWindChill(NFmiQueryInfo* theQueryInfo,
@@ -24,14 +24,14 @@ class _FMI_DLL NFmiDataModifierWindChill : public NFmiDataModifier
                             int theTeperatureParamId = 4,
                             int theWindSpeedParamId = 21);
 
-  void Clear(void) override;
+  void Clear() override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   void Calculate(float theValue) override;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
-  const NFmiPoint& LatLon(void) const;
+  const NFmiPoint& LatLon() const;
   void LatLon(const NFmiPoint& newLatLon);
 
  private:
@@ -52,7 +52,7 @@ class _FMI_DLL NFmiDataModifierWindChill : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint& NFmiDataModifierWindChill::LatLon(void) const { return itsLatLonPoint; }
+inline const NFmiPoint& NFmiDataModifierWindChill::LatLon() const { return itsLatLonPoint; }
 // ----------------------------------------------------------------------
 /*!
  * \param newLatLon Undocumented

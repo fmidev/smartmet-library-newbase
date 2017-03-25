@@ -18,19 +18,19 @@ class NFmiLevel;
 class _FMI_DLL NFmiDataModifierDescriptor : public NFmiDataDescriptor
 {
  public:
-  ~NFmiDataModifierDescriptor(void) override;
-  NFmiDataModifierDescriptor(void);
+  ~NFmiDataModifierDescriptor() override;
+  NFmiDataModifierDescriptor();
 
   NFmiParamDataModifier* VarianceModifier(const NFmiDataIdent& theParam, const NFmiLevel* theLevel);
-  NFmiParamDataModifierList* GetVarianceModifiers(void);
+  NFmiParamDataModifierList* GetVarianceModifiers();
   void SetVarianceModifiers(NFmiParamDataModifierList* theList);
 
   // seuraavat on pakko kirjoittaa, koska ne on määritelty pure virtualiksi emossa
-  unsigned long Index(void) const override;
-  unsigned long Size(void) const override;
-  bool IsActive(void) const override;
+  unsigned long Index() const override;
+  unsigned long Size() const override;
+  bool IsActive() const override;
   bool SetActivity(bool theActivityState) override;
-  bool NextActive(void) override;
+  bool NextActive() override;
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
 

@@ -16,11 +16,11 @@
 class _FMI_DLL NFmiDataModifierExtremePlace : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierExtremePlace(void) override;
-  NFmiDataModifierExtremePlace(void);
+  ~NFmiDataModifierExtremePlace() override;
+  NFmiDataModifierExtremePlace();
 
   void SetLocation(NFmiQueryInfo *theQI);
-  const NFmiLocation GetLocation(void);
+  const NFmiLocation GetLocation();
   // virtual void Calculate(NFmiQueryInfo * theQI);
   // virtual void Calculate(float theValue);
   using NFmiDataModifier::Calculate;

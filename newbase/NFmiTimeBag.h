@@ -14,17 +14,17 @@
 class _FMI_DLL NFmiTimeBag : public NFmiSize
 {
  public:
-  NFmiTimeBag(void);
+  NFmiTimeBag();
   NFmiTimeBag(const NFmiTimeBag &theBag);
   NFmiTimeBag(const NFmiMetTime &theFirstTime,
               const NFmiMetTime &theLastTime,
               NFmiTimePerioid theTimeResolution);
 
-  const NFmiMetTime &FirstTime(void) const;
-  const NFmiMetTime &LastTime(void) const;
-  const NFmiMetTime &CurrentTime(void) const;
-  unsigned long TimeFromStart(void) const;
-  const NFmiTimePerioid &Resolution(void) const;
+  const NFmiMetTime &FirstTime() const;
+  const NFmiMetTime &LastTime() const;
+  const NFmiMetTime &CurrentTime() const;
+  unsigned long TimeFromStart() const;
+  const NFmiTimePerioid &Resolution() const;
   virtual const NFmiTimeBag Combine(const NFmiTimeBag &theBag,
                                     int theStartTimeFunction = 0,
                                     int theEndTimeFunction = 0);  // should be const. Look at .cpp
@@ -33,12 +33,11 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
                                     const NFmiMetTime &theEndLimit);
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
-  unsigned long GetSize(
-      void) const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp
-  bool IsEmpty(void) const;  // Jouduin tekemään IsEmpty -metodin, NFmiTimeBag palauttaa tyhjänä 1:n
-                             // kun resolution on 0 jostain historiallisista v. 1998 syistä
-  bool Next(void) override;
-  bool Previous(void) override;
+  unsigned long GetSize() const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp
+  bool IsEmpty() const;  // Jouduin tekemään IsEmpty -metodin, NFmiTimeBag palauttaa tyhjänä 1:n
+                         // kun resolution on 0 jostain historiallisista v. 1998 syistä
+  bool Next() override;
+  bool Previous() override;
   void Reset(FmiDirection directionToIter = kForward) override;
   bool SetCurrent(const NFmiMetTime &theTime);
   void SetNewStartTime(const NFmiMetTime &theTime);
@@ -52,7 +51,7 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
   std::ostream &Write(std::ostream &file) const override;
   std::istream &Read(std::istream &file) override;
 
-  const char *ClassName(void) const override;
+  const char *ClassName() const override;
 
   NFmiTimeBag &operator=(const NFmiTimeBag &theTimeBag);
   bool operator==(const NFmiTimeBag &theTimeBag) const;
@@ -71,7 +70,7 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimeBag::NFmiTimeBag(void)
+inline NFmiTimeBag::NFmiTimeBag()
     : NFmiSize(),
       itsFirstTime(NFmiMetTime()),
       itsCurrentTime(itsFirstTime),
@@ -122,31 +121,28 @@ inline NFmiTimeBag::NFmiTimeBag(const NFmiTimeBag &theBag)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime &NFmiTimeBag::FirstTime(void) const { return itsFirstTime; }
+inline const NFmiMetTime &NFmiTimeBag::FirstTime() const { return itsFirstTime; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime &NFmiTimeBag::LastTime(void) const { return itsLastTime; }
+inline const NFmiMetTime &NFmiTimeBag::LastTime() const { return itsLastTime; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime &NFmiTimeBag::CurrentTime(void) const { return itsCurrentTime; }
+inline const NFmiMetTime &NFmiTimeBag::CurrentTime() const { return itsCurrentTime; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeBag::TimeFromStart(void) const
-{
-  return CurrentIndex() * itsResolution;
-}
+inline unsigned long NFmiTimeBag::TimeFromStart() const { return CurrentIndex() * itsResolution; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -154,14 +150,14 @@ inline unsigned long NFmiTimeBag::TimeFromStart(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiTimePerioid &NFmiTimeBag::Resolution(void) const { return itsResolution; }
+inline const NFmiTimePerioid &NFmiTimeBag::Resolution() const { return itsResolution; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimeBag::ClassName(void) const { return "NFmiTimeBag"; }
+inline const char *NFmiTimeBag::ClassName() const { return "NFmiTimeBag"; }
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiTimeBag

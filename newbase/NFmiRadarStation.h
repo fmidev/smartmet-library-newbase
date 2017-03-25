@@ -13,9 +13,9 @@
 class _FMI_DLL NFmiRadarStation : public NFmiStation
 {
  public:
-  ~NFmiRadarStation(void) override;
+  ~NFmiRadarStation() override;
 
-  NFmiRadarStation(void);
+  NFmiRadarStation();
 
   NFmiRadarStation(const NFmiRadarStation& theStation);
 
@@ -27,16 +27,16 @@ class _FMI_DLL NFmiRadarStation : public NFmiStation
   NFmiRadarStation& operator=(const NFmiRadarStation& NFmiRadarStation);
   bool IsEqual(const NFmiSortable& theLocation) const override;
 
-  unsigned long Resolution(void) const;
-  unsigned long XNumber(void) const;
-  unsigned long YNumber(void) const;
+  unsigned long Resolution() const;
+  unsigned long XNumber() const;
+  unsigned long YNumber() const;
 
   void Resolution(unsigned long theResolution);
   void XNumber(unsigned long theXNumber);
   void YNumber(unsigned long theYNumber);
 
-  NFmiLocation* Clone(void) const override;
-  unsigned long ClassId(void) const override;
+  NFmiLocation* Clone() const override;
+  unsigned long ClassId() const override;
 
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
@@ -54,21 +54,21 @@ class _FMI_DLL NFmiRadarStation : public NFmiStation
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::Resolution(void) const { return itsResolution; }
+inline unsigned long NFmiRadarStation::Resolution() const { return itsResolution; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::XNumber(void) const { return itsXNumber; }
+inline unsigned long NFmiRadarStation::XNumber() const { return itsXNumber; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::YNumber(void) const { return itsYNumber; }
+inline unsigned long NFmiRadarStation::YNumber() const { return itsYNumber; }
 // ----------------------------------------------------------------------
 /*!
  * \param theResolution Undocumented
@@ -101,13 +101,13 @@ inline void NFmiRadarStation::YNumber(unsigned long theYNumber) { itsYNumber = t
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocation* NFmiRadarStation::Clone(void) const { return new NFmiRadarStation(*this); }
+inline NFmiLocation* NFmiRadarStation::Clone() const { return new NFmiRadarStation(*this); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::ClassId(void) const { return kNFmiRadarStation; }
+inline unsigned long NFmiRadarStation::ClassId() const { return kNFmiRadarStation; }
 
 // ======================================================================

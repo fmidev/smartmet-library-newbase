@@ -14,14 +14,14 @@
 class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierList(void) override;
+  ~NFmiDataModifierList() override;
   // NFmiDataModifier(const NFmiDataModifier & theModier); // compiler generates
   NFmiDataModifierList(NFmiCombinedParam* thePotentialCombinedParam = 0);
 
   bool Add(NFmiDataModifier* theModifier);
-  void Clear(void) override;
+  void Clear() override;
 
-  bool IsCombinedParam(void);
+  bool IsCombinedParam();
 
   bool BoolOperation(float) override;
   float FloatOperation(float theValue) override;
@@ -29,18 +29,18 @@ class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
   using NFmiDataModifier::CalculationResult;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::WriteExpressionBody;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
   void Calculate(float NotInUse) override;
   std::ostream& WriteExpressionBody(std::ostream& file) override;
 
  public:
-  double FloatValue(void) override;
-  bool Reset(void);
-  bool Next(void);
-  NFmiDataModifier* Current(void);
+  double FloatValue() override;
+  bool Reset();
+  bool Next();
+  NFmiDataModifier* Current();
   bool Remove(bool fDeleteData = false);
   void Clear(bool fDeleteData = false);
-  unsigned long NumberOfItems(void);
+  unsigned long NumberOfItems();
 
  protected:
   double itsReturnValue;
@@ -70,7 +70,7 @@ inline float NFmiDataModifierList::FloatOperation(float theValue) { return theVa
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifierList::CalculationResult(void)
+inline float NFmiDataModifierList::CalculationResult()
 {
   return static_cast<float>(itsReturnValue);
 }
@@ -81,13 +81,13 @@ inline float NFmiDataModifierList::CalculationResult(void)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifierList::Clear(void) {}
+inline void NFmiDataModifierList::Clear() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiDataModifierList::NumberOfItems(void) { return itsList.NumberOfItems(); }
+inline unsigned long NFmiDataModifierList::NumberOfItems() { return itsList.NumberOfItems(); }
 
 // ======================================================================

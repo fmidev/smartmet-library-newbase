@@ -20,13 +20,13 @@
 class _FMI_DLL NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
 {
  public:
-  ~NFmiDataModifierMinPlace(void) override;
-  NFmiDataModifierMinPlace(void);
+  ~NFmiDataModifierMinPlace() override;
+  NFmiDataModifierMinPlace();
 
-  void Clear(void) override;
+  void Clear() override;
 
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   bool IsNewExtreme(float value) override;

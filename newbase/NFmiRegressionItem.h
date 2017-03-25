@@ -25,8 +25,8 @@ class _FMI_DLL NFmiRegressionItem : public NFmiInfoModifier
   using NFmiDataModifier::CalculationResult;
   void Calculate(NFmiQueryInfo* theData) override;
   void Calculate(float theValue) override { NFmiInfoModifier::Calculate(theValue); }
-  float CalculationResult(void) override;
-  double FloatValue(void) override;
+  float CalculationResult() override;
+  double FloatValue() override;
 
  protected:
   double itsReturnValue;

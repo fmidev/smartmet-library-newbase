@@ -14,45 +14,45 @@
 class _FMI_DLL NFmiVPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
-  ~NFmiVPlaceDescriptor(void) override;
-  NFmiVPlaceDescriptor(void);
+  ~NFmiVPlaceDescriptor() override;
+  NFmiVPlaceDescriptor();
   NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor &theVPlaceDescriptor);
   NFmiVPlaceDescriptor(NFmiLevelBag &theLevelBag);
 
   NFmiVPlaceDescriptor &operator=(const NFmiVPlaceDescriptor &theVPlaceDescriptor);
   bool operator==(const NFmiVPlaceDescriptor &theVPlaceDescriptor) const;
 
-  void Reset(void);
-  bool Next(void);
-  bool Previous(void);
+  void Reset();
+  bool Next();
+  bool Previous();
 
-  NFmiLevel *Level(void) const;
+  NFmiLevel *Level() const;
   NFmiLevel *Level(unsigned long theIndex) const;
-  NFmiLevel *LevelMinValue(void) const;
-  NFmiLevel *LevelMaxValue(void) const;
+  NFmiLevel *LevelMinValue() const;
+  NFmiLevel *LevelMaxValue() const;
   bool Level(const NFmiLevel &theLevel);
 
-  const NFmiLevelBag *Levels(void) const;
+  const NFmiLevelBag *Levels() const;
 
-  bool IsStep(void) const;   // 'askel' määritelty? false jos ei.
-  bool IsLevel(void) const;  // LevelBag määritelty?
+  bool IsStep() const;   // 'askel' määritelty? false jos ei.
+  bool IsLevel() const;  // LevelBag määritelty?
 
   void LevelBag(NFmiLevelBag &theLevelBag);
   const NFmiLevelBag &LevelBag() const { return *itsLevelBag; }
-  void Destroy(void);
+  void Destroy();
 
-  unsigned long Index(void) const override;
+  unsigned long Index() const override;
   bool Index(unsigned long theIndex);
-  unsigned long Size(void) const override;
+  unsigned long Size() const override;
 
-  bool NextActive(void) override;
-  bool IsActive(void) const override;
+  bool NextActive() override;
+  bool IsActive() const override;
   bool SetActivity(bool theActivityState) override;
 
   std::ostream &Write(std::ostream &file) const override;
   std::istream &Read(std::istream &file) override;
 
-  virtual const char *ClassName(void) const;
+  virtual const char *ClassName() const;
 
  private:
   NFmiLevelBag *itsLevelBag;
@@ -66,14 +66,14 @@ class _FMI_DLL NFmiVPlaceDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels(void) const { return itsLevelBag; }
+inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels() const { return itsLevelBag; }
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiVPlaceDescriptor::Reset(void)
+inline void NFmiVPlaceDescriptor::Reset()
 {
   if (itsLevelBag) itsLevelBag->Reset();
 }
@@ -84,21 +84,21 @@ inline void NFmiVPlaceDescriptor::Reset(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiVPlaceDescriptor::IsStep(void) const { return itsLevelBag->IsStep(); }
+inline bool NFmiVPlaceDescriptor::IsStep() const { return itsLevelBag->IsStep(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiVPlaceDescriptor::IsActive(void) const { return (itsActivity[Index()]); }
+inline bool NFmiVPlaceDescriptor::IsActive() const { return (itsActivity[Index()]); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiVPlaceDescriptor::ClassName(void) const { return "NFmiVPlaceDescriptor"; }
+inline const char *NFmiVPlaceDescriptor::ClassName() const { return "NFmiVPlaceDescriptor"; }
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiVPlaceDescriptor

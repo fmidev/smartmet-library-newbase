@@ -16,8 +16,8 @@ class NFmiQueryData;
 class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
 {
  public:
-  ~NFmiQueryInfoSatel(void) override;
-  NFmiQueryInfoSatel(void);
+  ~NFmiQueryInfoSatel() override;
+  NFmiQueryInfoSatel();
   NFmiQueryInfoSatel(const NFmiQueryInfoSatel& theInfo);
 
   NFmiQueryInfoSatel(const NFmiParamDescriptor& theParamDescriptor,
@@ -33,18 +33,18 @@ class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
 
   virtual NFmiQueryInfo& operator=(const NFmiQueryInfo& theInfo);
 
-  NFmiQueryInfo* Clone(void) const override;
+  NFmiQueryInfo* Clone() const override;
 
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
 
-  unsigned long ClassId(void) const override;
-  const char* ClassName(void) const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
 
  private:
   NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo);
 
-  void Destroy(void);
+  void Destroy();
   NFmiString* itsSatelName;
 
 };  // class NFMiQueryInfoSatel
@@ -55,13 +55,13 @@ class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfoSatel::ClassId(void) const { return kNFmiSatelQueryInfo; }
+inline unsigned long NFmiQueryInfoSatel::ClassId() const { return kNFmiSatelQueryInfo; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiQueryInfoSatel::ClassName(void) const { return "NFmiQueryInfoSatel"; }
+inline const char* NFmiQueryInfoSatel::ClassName() const { return "NFmiQueryInfoSatel"; }
 
 // ======================================================================

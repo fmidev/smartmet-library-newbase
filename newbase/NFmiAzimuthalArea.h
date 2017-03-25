@@ -14,9 +14,9 @@
 class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
 {
  public:
-  ~NFmiAzimuthalArea(void) override;
+  ~NFmiAzimuthalArea() override;
 
-  NFmiAzimuthalArea(void);
+  NFmiAzimuthalArea();
 
   NFmiAzimuthalArea(const NFmiAzimuthalArea& theAzimuthalArea);
 
@@ -53,7 +53,7 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
 
   void Init(bool fKeepWorldRect = false) override;
 
-  const NFmiRect WorldRect(void) const override;
+  const NFmiRect WorldRect() const override;
 
   const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
   const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
@@ -65,16 +65,16 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
   virtual const NFmiPoint LatLonToWorldXY(double theAzimuth, double theRadius) const;
   virtual const NFmiPoint ToXY(double theAzimuth, double theRadius) const;
 
-  double CentralLongitude(void) const;
-  double Orientation(void) const;
+  double CentralLongitude() const;
+  double Orientation() const;
 
-  double CentralLatitude(void) const;
-  double TrueLatitude(void) const;
-  double XScaleFactor(void) const;
-  double YScaleFactor(void) const;
+  double CentralLatitude() const;
+  double TrueLatitude() const;
+  double XScaleFactor() const;
+  double YScaleFactor() const;
 
   virtual const NFmiPoint RadialXYPoint(double theAzimuth, double theRadius) const;
-  virtual const NFmiPoint CurrentCenter(void) const;
+  virtual const NFmiPoint CurrentCenter() const;
 
   NFmiAzimuthalArea& operator=(const NFmiAzimuthalArea& theArea);
 
@@ -87,8 +87,8 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
 
-  const char* ClassName(void) const override;
-  const std::string AreaStr(void) const override = 0;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override = 0;
 
  protected:
   NFmiPoint itsTopRightLatLon;
@@ -98,7 +98,7 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
 
   virtual double K(const double delta) const = 0;
   virtual double CalcDelta(const double xyDistance) const = 0;
-  virtual double DistanceFromPerspectivePointToCenterOfEarth(void) const = 0;
+  virtual double DistanceFromPerspectivePointToCenterOfEarth() const = 0;
 
   double itsXScaleFactor;
   double itsYScaleFactor;
@@ -121,42 +121,42 @@ typedef NFmiAzimuthalArea* PNFmiAzimuthalArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAzimuthalArea::~NFmiAzimuthalArea(void) {}
+inline NFmiAzimuthalArea::~NFmiAzimuthalArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiAzimuthalArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiAzimuthalArea::WorldRect() const { return itsWorldRect; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::CentralLongitude(void) const { return itsCentralLongitude; }
+inline double NFmiAzimuthalArea::CentralLongitude() const { return itsCentralLongitude; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::Orientation(void) const { return itsCentralLongitude; }
+inline double NFmiAzimuthalArea::Orientation() const { return itsCentralLongitude; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::CentralLatitude(void) const { return itsCentralLatitude.Value(); }
+inline double NFmiAzimuthalArea::CentralLatitude() const { return itsCentralLatitude.Value(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Projection true latitude
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::TrueLatitude(void) const { return itsTrueLatitude.Value(); }
+inline double NFmiAzimuthalArea::TrueLatitude() const { return itsTrueLatitude.Value(); }
 // ----------------------------------------------------------------------
 /*!
  * Tarvitaan kun määritellään hilaväliä metreissä
@@ -165,7 +165,7 @@ inline double NFmiAzimuthalArea::TrueLatitude(void) const { return itsTrueLatitu
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::XScaleFactor(void) const { return itsXScaleFactor; }
+inline double NFmiAzimuthalArea::XScaleFactor() const { return itsXScaleFactor; }
 // ----------------------------------------------------------------------
 /*!
  * Tarvitaan kun määritellään hilaväliä metreissä
@@ -174,13 +174,13 @@ inline double NFmiAzimuthalArea::XScaleFactor(void) const { return itsXScaleFact
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAzimuthalArea::YScaleFactor(void) const { return itsYScaleFactor; }
+inline double NFmiAzimuthalArea::YScaleFactor() const { return itsYScaleFactor; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiAzimuthalArea::ClassName(void) const { return "NFmiAzimuthalArea"; }
+inline const char* NFmiAzimuthalArea::ClassName() const { return "NFmiAzimuthalArea"; }
 
 // ======================================================================

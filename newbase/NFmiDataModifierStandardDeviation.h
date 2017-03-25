@@ -12,15 +12,15 @@
 class _FMI_DLL NFmiDataModifierStandardDeviation : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierStandardDeviation(void) override;
-  NFmiDataModifierStandardDeviation(void);
+  ~NFmiDataModifierStandardDeviation() override;
+  NFmiDataModifierStandardDeviation();
 
-  void Clear(void) override;
+  void Clear() override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   void Calculate(float theValue) override;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   long itsCounter;

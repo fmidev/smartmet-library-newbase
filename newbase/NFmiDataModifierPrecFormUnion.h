@@ -15,16 +15,16 @@ class _FMI_DLL NFmiDataModifierPrecFormUnion : public NFmiDataModifier
   // HUOM missingValuesAlloved = true koska pouta tuo puuttuvan !!!
 
  public:
-  ~NFmiDataModifierPrecFormUnion(void) override;
+  ~NFmiDataModifierPrecFormUnion() override;
   NFmiDataModifierPrecFormUnion(FmiJoinOperator theJoinOperator = kFmiAdd,
                                 bool missingValuesAlloved = true);
 
-  void Clear(void) override;
+  void Clear() override;
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void) override;
-  float Result(void);
+  float CalculationResult() override;
+  float Result();
 
  private:
   bool fIsRain;

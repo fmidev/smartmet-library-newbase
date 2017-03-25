@@ -14,9 +14,9 @@
 class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
 {
  public:
-  ~NFmiLambertEqualArea(void) override;
+  ~NFmiLambertEqualArea() override;
 
-  NFmiLambertEqualArea(void);
+  NFmiLambertEqualArea();
 
   NFmiLambertEqualArea(const NFmiLambertEqualArea& theLambertEqualArea);
 
@@ -51,11 +51,11 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
                        const double theTrueLatitude = 90.);
 
   void Init(bool fKeepWorldRect = false) override;
-  NFmiArea* Clone(void) const override;
+  NFmiArea* Clone() const override;
   NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
                     const NFmiPoint& theTopRightLatLon,
                     bool allowPacificFix = true) const override;
-  const NFmiRect WorldRect(void) const override;
+  const NFmiRect WorldRect() const override;
 
   using NFmiArea::CreateNewArea;
   NFmiArea* CreateNewArea(const NFmiRect& theRect) const override;
@@ -70,9 +70,9 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
   bool operator==(const NFmiArea& theArea) const override;
   bool operator!=(const NFmiArea& theArea) const override;
 
-  unsigned long ClassId(void) const override;
-  const char* ClassName(void) const override;
-  const std::string AreaStr(void) const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
   const std::string WKT() const override;
 
   std::ostream& Write(std::ostream& file) const override;
@@ -81,7 +81,7 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
  protected:
   double K(const double delta) const override;
   double CalcDelta(const double xyDistance) const override;
-  double DistanceFromPerspectivePointToCenterOfEarth(void) const override;
+  double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:
 };  // class NFmiLambertEqualArea
@@ -95,27 +95,27 @@ typedef NFmiLambertEqualArea* PNFmiLambertEqualArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLambertEqualArea::~NFmiLambertEqualArea(void) {}
+inline NFmiLambertEqualArea::~NFmiLambertEqualArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiLambertEqualArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiLambertEqualArea::WorldRect() const { return itsWorldRect; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiLambertEqualArea::ClassId(void) const { return kNFmiLambertEqualArea; }
+inline unsigned long NFmiLambertEqualArea::ClassId() const { return kNFmiLambertEqualArea; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiLambertEqualArea::ClassName(void) const { return "kNFmiLambertEqualArea"; }
+inline const char* NFmiLambertEqualArea::ClassName() const { return "kNFmiLambertEqualArea"; }
 
 // ======================================================================

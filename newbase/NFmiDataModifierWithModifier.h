@@ -12,18 +12,18 @@
 class _FMI_DLL NFmiDataModifierWithModifier : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierWithModifier(void) override;
+  ~NFmiDataModifierWithModifier() override;
   NFmiDataModifierWithModifier(NFmiQueryInfo* theQueryInfoCopy,
                                NFmiDataModifier* theDataModifier,
                                int theXRange,
                                int theYRange);
 
   float FloatOperation(float theValue) override;
-  void Clear(void) override;
+  void Clear() override;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   void Calculate(float theValue) override;
-  float CalculationResult(void) override;
+  float CalculationResult() override;
 
  protected:
   NFmiQueryInfo* itsQueryInfoCopy;
@@ -43,7 +43,7 @@ class _FMI_DLL NFmiDataModifierWithModifier : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier(void) { delete itsModifier; }
+inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier() { delete itsModifier; }
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -72,14 +72,14 @@ inline NFmiDataModifierWithModifier::NFmiDataModifierWithModifier(NFmiQueryInfo*
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifierWithModifier::Clear(void) { itsModifier->Clear(); }
+inline void NFmiDataModifierWithModifier::Clear() { itsModifier->Clear(); }
 // ----------------------------------------------------------------------
 /*
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifierWithModifier::CalculationResult(void)
+inline float NFmiDataModifierWithModifier::CalculationResult()
 {
   return itsModifier->CalculationResult();
 }

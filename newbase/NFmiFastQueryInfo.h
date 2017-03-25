@@ -19,7 +19,7 @@ class NFmiRect;
 class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 {
  public:
-  ~NFmiFastQueryInfo(void) override;
+  ~NFmiFastQueryInfo() override;
 
   NFmiFastQueryInfo(const NFmiFastQueryInfo &theInfo);
 
@@ -39,44 +39,44 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                     NFmiHPlaceDescriptor *theHPlaceDescriptor = 0,
                     NFmiVPlaceDescriptor *theVPlaceDescriptor = 0);
 
-  bool NextActiveParam(void) override;
+  bool NextActiveParam() override;
   bool NextActiveParam(bool fIgnoreSubParam);  // = true);
-  bool IsActiveParam(void) override;
+  bool IsActiveParam() override;
   bool ActivateParam(bool newState, bool fIgnoreSubParam);  // = true);
   bool ActivateParam(bool newState) override;
 
-  void Reset(void) override;
-  void ResetParam(void) override;
-  void ResetLocation(void) override;
-  void ResetLevel(void) override;
-  void ResetTime(void) override;
+  void Reset() override;
+  void ResetParam() override;
+  void ResetLocation() override;
+  void ResetLevel() override;
+  void ResetTime() override;
 
-  bool First(void) override;
+  bool First() override;
 
   // miksi first-metodit palauttavat booleanin?? (nfmiqueryinfon peruja), voidaanko muuttaa???
 
   bool FirstParam(bool fIgnoreSubParam = true) override;
-  bool FirstLocation(void) override;
-  bool FirstLevel(void) override;
-  bool FirstTime(void) override;
+  bool FirstLocation() override;
+  bool FirstLevel() override;
+  bool FirstTime() override;
 
   bool NextParam(bool fIgnoreSubParam = true) override;
-  bool NextLocation(void) override;
+  bool NextLocation() override;
 
-  bool NextLevel(void) override;
-  bool NextTime(void) override;
+  bool NextLevel() override;
+  bool NextTime() override;
 
   // miksi last-metodit palauttavat booleanin?? (nfmiqueryinfon peruja), voidaanko muuttaa???
 
   bool LastParam(bool fIgnoreSubParam = true);
-  bool LastLocation(void);
-  bool LastLevel(void);
-  virtual bool LastTime(void);
+  bool LastLocation();
+  bool LastLevel();
+  virtual bool LastTime();
 
   bool PreviousParam(bool fIgnoreSubParam = true) override;
-  bool PreviousLocation(void) override;
-  bool PreviousLevel(void) override;
-  bool PreviousTime(void) override;
+  bool PreviousLocation() override;
+  bool PreviousLevel() override;
+  bool PreviousTime() override;
 
   // HUOM!!! Nämä seuraavat metodit ovat todellisuudessa samaa luokkaa nopeudessa
   // kuin NFmiQueryInfo:nkin vastaavat metodit.
@@ -99,58 +99,58 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   bool Level(const NFmiLevel &theLevelValue) override;
   bool Time(const NFmiMetTime &theTime) override;
 
-  const NFmiLocation *Location(void) const override;
-  NFmiPoint LatLon(void) const override;
-  const NFmiPoint &LatLonFast(void) const;  // Lisäsin nopean Latlon-metodin, joka ei ole
-                                            // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
+  const NFmiLocation *Location() const override;
+  NFmiPoint LatLon() const override;
+  const NFmiPoint &LatLonFast() const;  // Lisäsin nopean Latlon-metodin, joka ei ole
+                                        // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
   // const referenssiä, koska se pyytää NFmiGrid-luokalta
   // latlon-pistettä ja se rakennetaan lennossa.
   const NFmiPoint &LatLon(unsigned long index) const;
-  const NFmiPoint RelativePoint(void) const override;
-  const NFmiLevel *Level(void) const override;
-  FmiLevelType LevelType(void) const;
-  NFmiProducer *Producer(void) override;
-  const NFmiProducer &FirstParamProducer(void);
+  const NFmiPoint RelativePoint() const override;
+  const NFmiLevel *Level() const override;
+  FmiLevelType LevelType() const;
+  NFmiProducer *Producer() override;
+  const NFmiProducer &FirstParamProducer();
 
-  NFmiDataIdent &Param(void) const override;
+  NFmiDataIdent &Param() const override;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
 
   // HUOM!!! Nämä seuraavat metodit ovat todellisuudessa hitaita ja
   // niiden käyttöä pitäisi välttää!
   // Näistä voisi varmaan tehdä nopeampia!!!!
 
-  const NFmiMetTime &Time(void) const override;
+  const NFmiMetTime &Time() const override;
   bool TimeToNearestStep(const NFmiMetTime &theTime,
                          FmiDirection theDirection,
                          long theTimeRangeInMinutes = kLongMissing) override;
-  const NFmiMetTime &ValidTime(void) const override;
+  const NFmiMetTime &ValidTime() const override;
   using NFmiQueryInfo::OriginTime;
-  const NFmiMetTime &OriginTime(void) const override;
+  const NFmiMetTime &OriginTime() const override;
   // ****** hitaat loppuvat tähän ********************************
 
-  unsigned long TimeResolution(void) override;
+  unsigned long TimeResolution() override;
 
   // ******* Halutaanko manipuloida infoa suoraan indeksien avulla ????? ******************
 
-  unsigned long ParamIndex(void) const override;
-  unsigned long LocationIndex(void) const override;
-  unsigned long LevelIndex(void) const override;
-  unsigned long TimeIndex(void) const override;
+  unsigned long ParamIndex() const override;
+  unsigned long LocationIndex() const override;
+  unsigned long LevelIndex() const override;
+  unsigned long TimeIndex() const override;
   bool ParamIndex(unsigned long theIndex) override;
   bool LocationIndex(unsigned long theIndex) override;
   bool LevelIndex(unsigned long theIndex) override;
   bool TimeIndex(unsigned long theIndex) override;
   // ******* Halutaanko manipuloida infoa suoraan indeksien avulla ????? ******************
 
-  unsigned long SizeParams(void) const override;
-  unsigned long SizeLocations(void) const override;
-  unsigned long SizeLevels(void) const override;
-  unsigned long SizeTimes(void) const override;
+  unsigned long SizeParams() const override;
+  unsigned long SizeLocations() const override;
+  unsigned long SizeLevels() const override;
+  unsigned long SizeTimes() const override;
 
-  bool IsParamUsable(void) const override;
-  bool IsLocationUsable(void) const override;
-  bool IsLevelUsable(void) const override;
-  bool IsTimeUsable(void) const override;
+  bool IsParamUsable() const override;
+  bool IsLocationUsable() const override;
+  bool IsLevelUsable() const override;
+  bool IsTimeUsable() const override;
 
   unsigned long PeekLocationIndex(int theXOffset, int theYOffset) const;
   float PeekLocationValue(int theXOffset,
@@ -345,40 +345,40 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                     const NFmiMetTime &theInterpolatedTime,
                     float wantedHeightLevel);
 
-  bool HeightDataAvailable(void) const
+  bool HeightDataAvailable() const
   {
     return fHeightValueAvailable || fHeightLevelDataAvailable;
   }  // tämä on uusi yleisfunktio, jota pitäisi käyttää kun halutaan tietää onko heightlevel-dataa
      // käytössä
-  bool HeightValueAvailable(void) const { return fHeightValueAvailable; }
-  bool HeightLevelDataAvailable(void) const { return fHeightLevelDataAvailable; }
-  bool HeightParamIsRising(void) const { return fHeightParamIsRising; }
-  unsigned long HeightParamIndex(void) const { return itsHeightParamIndex; }
-  unsigned long PressureParamIndex(void) const { return itsPressureParamIndex; }
-  bool PressureDataAvailable(void) const
+  bool HeightValueAvailable() const { return fHeightValueAvailable; }
+  bool HeightLevelDataAvailable() const { return fHeightLevelDataAvailable; }
+  bool HeightParamIsRising() const { return fHeightParamIsRising; }
+  unsigned long HeightParamIndex() const { return itsHeightParamIndex; }
+  unsigned long PressureParamIndex() const { return itsPressureParamIndex; }
+  bool PressureDataAvailable() const
   {
     return fPressureValueAvailable || fPressureLevelDataAvailable;
   }  // tämä on uusi yleisfunktio, jota pitäisi käyttää kun halutaan tietää onko painelevel-dataa
   // käytössä
-  bool PressureValueAvailable(void) const
+  bool PressureValueAvailable() const
   {
     return fPressureValueAvailable;
   }  // Katso voiko PressureDataAvailable -funktiota käyttää mieluummin
-  bool PressureLevelDataAvailable(void) const
+  bool PressureLevelDataAvailable() const
   {
     return fPressureLevelDataAvailable;
   }  // Katso voiko PressureDataAvailable -funktiota käyttää mieluummin
-  bool PressureParamIsRising(void) const { return fPressureParamIsRising; }
+  bool PressureParamIsRising() const { return fPressureParamIsRising; }
   bool FindNearestTime(const NFmiMetTime &theTime,
                        FmiDirection theDirection = kCenter,
                        unsigned long theTimeRangeInMinutes = kUnsignedLongMissing) override;
 
   NFmiGrid *GridData(bool fUseExisting = false);
-  NFmiQueryInfo *Clone(void) const override;
+  NFmiQueryInfo *Clone() const override;
   NFmiFastQueryInfo &operator=(const NFmiFastQueryInfo &theInfo);
   bool SetDescriptors(NFmiQueryInfo *theQueryInfo, bool fIgnoreLevel = true) override;
   NFmiQueryInfo *CreateCombinedInfo(NFmiQueryInfo *theOtherInfo) override;
-  bool IsSubParamUsed(void) const override;
+  bool IsSubParamUsed() const override;
 
   // ***** 14.5.2001/MArko Uusia metodeja hilassa liikkumiseen ***************
   // HUOM!! liikkumista ei voi sallia laatikon ulkopuolelle kuten esim. PeekValue-metodissa voi!!!
@@ -391,10 +391,10 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 
   // näillä asetetaan paikka suoraan johonkin laitaan (ei 'laatikon' ulkopuolelle!)
 
-  bool Top(void) override;     // toimii vain gridi datalle oikein!!!
-  bool Bottom(void) override;  // toimii vain gridi datalle oikein!!!
-  bool Left(void) override;    // toimii vain gridi datalle oikein!!!
-  bool Right(void) override;   // toimii vain gridi datalle oikein!!!
+  bool Top() override;     // toimii vain gridi datalle oikein!!!
+  bool Bottom() override;  // toimii vain gridi datalle oikein!!!
+  bool Left() override;    // toimii vain gridi datalle oikein!!!
+  bool Right() override;   // toimii vain gridi datalle oikein!!!
   // ***** 14.5.2001/MArko Uusia metodeja hilassa liikkumiseen ***************
 
   size_t Index(unsigned long theParamIndex,
@@ -409,42 +409,42 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   // Käytetty InterpolatedValue-metodien virittämiseen W&C parametrin ali parametrien kanssa.
   void SetIsSubParamUsed(bool newState) override { fUseSubParam = newState; }
   bool HasLatlonInfoInData() const;
-  NFmiPoint GetLatlonFromData(void);  // jos datassa on kFmiLongitude ja kFmiLatitude parametrit,
-                                      // lasketaan sijanti asetetun ajan ja paikan suhteen niiden
-                                      // avulla
+  NFmiPoint GetLatlonFromData();  // jos datassa on kFmiLongitude ja kFmiLatitude parametrit,
+                                  // lasketaan sijanti asetetun ajan ja paikan suhteen niiden
+                                  // avulla
   float PeekParamValue(unsigned long theParamIndex);  // jos tiedetään jonkin parametrin indeksi,
                                                       // tämän avulla voidaan kurkata
   // sen parametrin arvoa (aika,paikka ja leveli jo asetettuja)
   // HUOM! Ei toimi aliparametrien (TotalWind ja WeatherAndCloudiness) kanssa!!!!
 
   // Nämä metodit määrätään fastInfossa koska lapsiluokissa käytetään näitä sitten.
-  virtual const std::string &DataFileName(void) const
+  virtual const std::string &DataFileName() const
   {
     static std::string dummy;
     return dummy;
   }
   virtual void DataFileName(const std::string & /* theDataFileName */) {}
-  virtual const std::string &DataFilePattern(void) const
+  virtual const std::string &DataFilePattern() const
   {
     static std::string dummy;
     return dummy;
   }
   virtual void DataFilePattern(const std::string & /* theDataFilePattern */) {}
-  virtual boost::shared_ptr<NFmiQueryData> DataReference(void)
+  virtual boost::shared_ptr<NFmiQueryData> DataReference()
   {
     return boost::shared_ptr<NFmiQueryData>();
   }  // HUOM! ei saa palauttaa itsRefQueryData -data osaa shared-pointterissa, koska se deletoisi
      // lopuksi datan (TÄMÄ siis overridataan lapsessa!)
-  NFmiInfoData::Type DataType(void) const override { return itsDataType; };
+  NFmiInfoData::Type DataType() const override { return itsDataType; };
   void DataType(NFmiInfoData::Type newType) override { itsDataType = newType; };
   // Näillä Start/Restore -funktioilla otetaan nykyinen parametri tila talteen ja otetaan käyttöön
   // 'erikois' korkeus-parametri. Ja käytön jälkeen palautus.
   // HUOM! Jos Start-funktio palauttaa true:n, on kyseisen korkeus parametrin käyttö mahdollista ja
   // tällöin pitää kutsua jossain vaiheessa vastaavaa Restore-funktiota!
-  bool StartUsingPressureParam(void);
-  void RestoreAfterUsingPressureParam(void);
-  bool StartUsingHeightParam(void);
-  void RestoreAfterUsingHeightParam(void);
+  bool StartUsingPressureParam();
+  void RestoreAfterUsingPressureParam();
+  bool StartUsingHeightParam();
+  void RestoreAfterUsingHeightParam();
   // Universaali funktio, jolla saa halutunlaisen korkeus parametrin kyseiseltä leveliltä haluttuun
   // kohtaan ja aikaa interpoloituna
   float GetLevelHeightValue(FmiParameterName theParId,
@@ -495,7 +495,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const NFmiDataMatrix<float> &maskMatrix);
 
  protected:
-  size_t Index(void) const override;
+  size_t Index() const override;
 
   float IndexFloatValue(size_t theIndex) const override;
   bool IndexFloatValue(size_t theIndex, float theValue) override;
@@ -504,12 +504,12 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const unsigned long &theLocationIndex,
                                    const unsigned long &theLevelIndex,
                                    const unsigned long &theTimeIndex) const;
-  void InitFastInfo(void);
-  std::vector<float> CalcPressureLevelDataPressures(void);
-  std::vector<float> CalcHeightLevelDataHeights(void);
-  float GetCurrentLevelPressure(void);
-  float FindFirstPressureValue(void);
-  float FindFirstHeightValue(void);
+  void InitFastInfo();
+  std::vector<float> CalcPressureLevelDataPressures();
+  std::vector<float> CalcHeightLevelDataHeights();
+  float GetCurrentLevelPressure();
+  float FindFirstPressureValue();
+  float FindFirstHeightValue();
   void DoWindComponentFix(const NFmiGrid &usedGrid,
                           float u,
                           float v,
@@ -617,7 +617,7 @@ inline bool NFmiFastQueryInfo::AreIndividualIndexiesInside(const unsigned long &
  */
 // ----------------------------------------------------------------------
 
-inline size_t NFmiFastQueryInfo::Index(void) const
+inline size_t NFmiFastQueryInfo::Index() const
 {
   if (AreIndividualIndexiesInside(itsParamIndex, itsLocationIndex, itsLevelIndex, itsTimeIndex))
     return (itsParamIndex * itsLocLevTimSize + itsLocationIndex * itsLevTimSize +
@@ -657,14 +657,14 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsSubParamUsed(void) const { return fUseSubParam; }
+inline bool NFmiFastQueryInfo::IsSubParamUsed() const { return fUseSubParam; }
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetParam(void)
+inline void NFmiFastQueryInfo::ResetParam()
 {
   itsParamIndex = static_cast<unsigned long>(-1);
   fUseSubParam = false;
@@ -676,7 +676,7 @@ inline void NFmiFastQueryInfo::ResetParam(void)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetLocation(void)
+inline void NFmiFastQueryInfo::ResetLocation()
 {
   itsLocationIndex = static_cast<unsigned long>(-1);
 }
@@ -687,14 +687,14 @@ inline void NFmiFastQueryInfo::ResetLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetLevel(void) { itsLevelIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetLevel() { itsLevelIndex = static_cast<unsigned long>(-1); }
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetTime(void) { itsTimeIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetTime() { itsTimeIndex = static_cast<unsigned long>(-1); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -713,7 +713,7 @@ inline bool NFmiFastQueryInfo::FirstParam(bool fIgnoreSubParam)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::NextLocation(void)
+inline bool NFmiFastQueryInfo::NextLocation()
 {
   itsLocationIndex++;
   if (itsLocationIndex < itsLocationSize) return true;
@@ -728,7 +728,7 @@ inline bool NFmiFastQueryInfo::NextLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::FirstLocation(void)
+inline bool NFmiFastQueryInfo::FirstLocation()
 {
   ResetLocation();
   return NextLocation();
@@ -740,7 +740,7 @@ inline bool NFmiFastQueryInfo::FirstLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::FirstLevel(void)
+inline bool NFmiFastQueryInfo::FirstLevel()
 {
   ResetLevel();
   return NextLevel();
@@ -752,7 +752,7 @@ inline bool NFmiFastQueryInfo::FirstLevel(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::NextTime(void)
+inline bool NFmiFastQueryInfo::NextTime()
 {
   itsTimeIndex++;
   if (itsTimeIndex < itsTimeSize) return true;
@@ -767,7 +767,7 @@ inline bool NFmiFastQueryInfo::NextTime(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::FirstTime(void)
+inline bool NFmiFastQueryInfo::FirstTime()
 {
   ResetTime();
   return NextTime();
@@ -791,7 +791,7 @@ inline float NFmiFastQueryInfo::IndexFloatValue(size_t theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::LastLocation(void)
+inline bool NFmiFastQueryInfo::LastLocation()
 {
   itsLocationIndex = itsLocationSize - 1;
   return true;
@@ -803,7 +803,7 @@ inline bool NFmiFastQueryInfo::LastLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::LastLevel(void)
+inline bool NFmiFastQueryInfo::LastLevel()
 {
   itsLevelIndex = itsLevelSize - 1;
   return true;
@@ -815,7 +815,7 @@ inline bool NFmiFastQueryInfo::LastLevel(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::LastTime(void)
+inline bool NFmiFastQueryInfo::LastTime()
 {
   itsTimeIndex = itsTimeSize - 1;
   return true;
@@ -849,70 +849,70 @@ inline bool NFmiFastQueryInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::ParamIndex(void) const { return itsParamIndex; }
+inline unsigned long NFmiFastQueryInfo::ParamIndex() const { return itsParamIndex; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LocationIndex(void) const { return itsLocationIndex; }
+inline unsigned long NFmiFastQueryInfo::LocationIndex() const { return itsLocationIndex; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LevelIndex(void) const { return itsLevelIndex; }
+inline unsigned long NFmiFastQueryInfo::LevelIndex() const { return itsLevelIndex; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::TimeIndex(void) const { return itsTimeIndex; }
+inline unsigned long NFmiFastQueryInfo::TimeIndex() const { return itsTimeIndex; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeParams(void) const { return itsParamSize; }
+inline unsigned long NFmiFastQueryInfo::SizeParams() const { return itsParamSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLocations(void) const { return itsLocationSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLocations() const { return itsLocationSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLevels(void) const { return itsLevelSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLevels() const { return itsLevelSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeTimes(void) const { return itsTimeSize; }
+inline unsigned long NFmiFastQueryInfo::SizeTimes() const { return itsTimeSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsParamUsable(void) const { return itsParamIndex < itsParamSize; }
+inline bool NFmiFastQueryInfo::IsParamUsable() const { return itsParamIndex < itsParamSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsLocationUsable(void) const
+inline bool NFmiFastQueryInfo::IsLocationUsable() const
 {
   return itsLocationIndex < itsLocationSize;
 }
@@ -923,21 +923,21 @@ inline bool NFmiFastQueryInfo::IsLocationUsable(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsLevelUsable(void) const { return itsLevelIndex < itsLevelSize; }
+inline bool NFmiFastQueryInfo::IsLevelUsable() const { return itsLevelIndex < itsLevelSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsTimeUsable(void) const { return itsTimeIndex < itsTimeSize; }
+inline bool NFmiFastQueryInfo::IsTimeUsable() const { return itsTimeIndex < itsTimeSize; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
+inline unsigned long NFmiFastQueryInfo::TimeResolution()
 {
   // piti overidata täällä, koska timeindex pitää asettaa
   // ennen Resolution kyselyä
@@ -953,11 +953,8 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiFastQueryInfo::LatLon(void) const { return LatLon(itsLocationIndex); }
-inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast(void) const
-{
-  return LatLon(itsLocationIndex);
-}
+inline NFmiPoint NFmiFastQueryInfo::LatLon() const { return LatLon(itsLocationIndex); }
+inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast() const { return LatLon(itsLocationIndex); }
 
 // ----------------------------------------------------------------------
 /*!
