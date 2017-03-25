@@ -1286,10 +1286,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
       itsNewClassIdent = classIdent;
       return file;
     }
-    else
-    {
-      itsNewClassIdent = kNFmiRadarQueryInfo;
-    }
+
+    itsNewClassIdent = kNFmiRadarQueryInfo;
   }
 
   unsigned long theReserve;
@@ -1360,11 +1358,9 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint)
     NFmiLocationCache locCache = CalcLocationCache(theLatLonPoint);
     return CachedInterpolation(locCache);
   }
-  else
-  {
-    Location(theLatLonPoint);  // asemadatalle haetaan lähimmän pisteen arvo
-    return FloatValue();
-  }
+
+  Location(theLatLonPoint);  // asemadatalle haetaan lähimmän pisteen arvo
+  return FloatValue();
 }
 
 float NFmiQueryInfo::InterpolatedValueForCombinedParam(const NFmiPoint &theGridPoint)
@@ -1862,10 +1858,9 @@ bool NFmiQueryInfo::PreviousParam(bool fIgnoreSubParam)
 
 bool NFmiQueryInfo::Param(const NFmiDataIdent &theDataIdent)
 {
-  if (itsParamDescriptor->Param(theDataIdent))
-    return true;
-  else if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                        // aliparametrina
+  if (itsParamDescriptor->Param(theDataIdent)) return true;
+  if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
+                                   // aliparametrina
   {
     return true;
   }
@@ -1881,10 +1876,9 @@ bool NFmiQueryInfo::Param(const NFmiDataIdent &theDataIdent)
 
 bool NFmiQueryInfo::Param(const NFmiParam &theParam)
 {
-  if (itsParamDescriptor->Param(theParam))
-    return true;
-  else if (FindSubParam(theParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                    // aliparametrina
+  if (itsParamDescriptor->Param(theParam)) return true;
+  if (FindSubParam(theParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
+                               // aliparametrina
   {
     return true;
   }
@@ -1917,11 +1911,10 @@ bool NFmiQueryInfo::Param(const NFmiParam &theParam, const NFmiParam &theSubPara
   // asettuu itsParamDescriptor osoittamaan esimmäisenä (aliparametrina )löydettyä itemiä,
   // jonka nimi on kFmiFogIntensity.
 
-  if (!itsParamDescriptor->Param(theParam))
-    return false;
+  if (!itsParamDescriptor->Param(theParam)) return false;
 
-  else if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                       // aliparametrina
+  if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
+                                  // aliparametrina
   {
     return true;
   }
@@ -2103,8 +2096,8 @@ float NFmiQueryInfo::TimePeriodFloatValue(unsigned long period,
     return static_cast<float>(
         itsCombinedParamParser->SubValue(FmiParameterName(Param().GetParam()->GetIdent())));
   }
-  else
-    return TimePeriodValue(NFmiPoint(), period, startWeight, centreWeight, endWeight);
+
+  return TimePeriodValue(NFmiPoint(), period, startWeight, centreWeight, endWeight);
 }
 
 // ----------------------------------------------------------------------
@@ -2134,9 +2127,9 @@ float NFmiQueryInfo::TimePeriodFloatValue(const NFmiMetTime &theStartTime,
     return static_cast<float>(
         itsCombinedParamParser->SubValue(FmiParameterName(Param().GetParam()->GetIdent())));
   }
-  else
-    return TimePeriodValue(
-        NFmiPoint(), theStartTime, theEndTime, startWeight, centreWeight, endWeight);
+
+  return TimePeriodValue(
+      NFmiPoint(), theStartTime, theEndTime, startWeight, centreWeight, endWeight);
 }
 
 // ----------------------------------------------------------------------
@@ -2173,8 +2166,8 @@ float NFmiQueryInfo::InterpolatedTimePeriodFloatValue(const NFmiPoint &latlon,
     return static_cast<float>(
         itsCombinedParamParser->SubValue(FmiParameterName(Param().GetParam()->GetIdent())));
   }
-  else
-    return TimePeriodValue(latlon, theStartTime, theEndTime, startWeight, centreWeight, endWeight);
+
+  return TimePeriodValue(latlon, theStartTime, theEndTime, startWeight, centreWeight, endWeight);
 }
 
 // ----------------------------------------------------------------------
@@ -2241,10 +2234,9 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
   }
 
   delete newInfo;
-  if (factorSum > 0.)
-    return static_cast<float>(sum / factorSum);
-  else
-    return kFloatMissing;
+  if (factorSum > 0.) return static_cast<float>(sum / factorSum);
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------
@@ -2311,10 +2303,9 @@ float NFmiQueryInfo::TimePeriodValue(
     newInfo.NextTime();
   }
 
-  if (factorSum > 0.)
-    return static_cast<float>(sum / factorSum);
-  else
-    return kFloatMissing;
+  if (factorSum > 0.) return static_cast<float>(sum / factorSum);
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------
@@ -3026,8 +3017,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
             value1 = kFloatMissing;
           break;
         }
-        else
-          value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+
+        value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
       }
       for (i = forwardOffset; i + timeIndex < int(sizeTimes); i++)
       {
@@ -3039,8 +3030,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
             value2 = kFloatMissing;
           break;
         }
-        else
-          value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+
+        value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
       }
       if (value1 == kFloatMissing || value2 == kFloatMissing)
         returnValue = kFloatMissing;
@@ -3194,8 +3185,8 @@ float NFmiQueryInfo::CalcTimeOffsetToLastTime(const NFmiMetTime &theTime,
     float offset1 = 1 - (diff1 / totalDiff);
     return offset1;
   }
-  else
-    return 1;  // eli palautetaan offset, jolla ollaan kiinni time1:ssä
+
+  return 1;  // eli palautetaan offset, jolla ollaan kiinni time1:ssä
 }
 
 // Jos X/Y on negatiivinen, mutta sen itseisarvo on pienempi kuin eps, annetaan arvoksi 0.
@@ -3451,10 +3442,9 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
   else if (theValue1 == kFloatMissing || theValue2 == kFloatMissing)
   {  // Jos toinen arvoista puuttuva, palautetaan suoraan se arvo, jota lähempänä offset1 on, oli se
     // puuttuva tai ei
-    if (offset1 <= 0.5)
-      return theValue2;
-    else
-      return theValue1;
+    if (offset1 <= 0.5) return theValue2;
+
+    return theValue1;
   }
   else
   {
@@ -3632,81 +3622,75 @@ const NFmiPoint NFmiQueryInfo::PeekLocationLatLon(int /* theXOffset */, int /* t
 
 float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCache)
 {
-  if (theLocationCache.NoValue())
-    return kFloatMissing;
+  if (theLocationCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua paikka indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
+  unsigned long oldLocationIndex = LocationIndex();
+  LocationIndex(theLocationCache.itsLocationIndex);
+  float value = kFloatMissing;
+  if (theLocationCache.NoInterpolation())
+    value = FloatValue();
   else
   {
-    // metodin loputtua paikka indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
-    unsigned long oldLocationIndex = LocationIndex();
-    LocationIndex(theLocationCache.itsLocationIndex);
-    float value = kFloatMissing;
-    if (theLocationCache.NoInterpolation())
-      value = FloatValue();
-    else
-    {
-      // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
-      if (fabs(theLocationCache.itsGridPoint.X() - round(theLocationCache.itsGridPoint.X())) <
-              gInterpolatedValueEps &&
-          fabs(theLocationCache.itsGridPoint.Y() - round(theLocationCache.itsGridPoint.Y())) <
-              gInterpolatedValueEps)
-        return FloatValue();
+    // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
+    if (fabs(theLocationCache.itsGridPoint.X() - round(theLocationCache.itsGridPoint.X())) <
+            gInterpolatedValueEps &&
+        fabs(theLocationCache.itsGridPoint.Y() - round(theLocationCache.itsGridPoint.Y())) <
+            gInterpolatedValueEps)
+      return FloatValue();
 
-      NFmiDataIdent &param = Param();
-      FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-      bool wcParam = IsSubParamUsed() && ::IsWeatherSubParam(*this);
-      if (wcParam)  // HESSAA, hsade, sateenolomuoto ja sateen tyypit pitää hoitaa erikoistapauksina
-        return InterpolatedValueForCombinedParam(theLocationCache.itsGridPoint);
-      else if (interp == kNearestPoint || interp == kNoneInterpolation)
+    NFmiDataIdent &param = Param();
+    FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+    bool wcParam = IsSubParamUsed() && ::IsWeatherSubParam(*this);
+    if (wcParam)  // HESSAA, hsade, sateenolomuoto ja sateen tyypit pitää hoitaa erikoistapauksina
+      return InterpolatedValueForCombinedParam(theLocationCache.itsGridPoint);
+    if (interp == kNearestPoint || interp == kNoneInterpolation)
+    {
+      if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
       {
-        if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
-        {
-          unsigned long gridSizeX = Grid()->XNumber();
-          double xFraction = theLocationCache.itsGridPoint.X() -
-                             static_cast<int>(theLocationCache.itsGridPoint.X());
-          // xFraction:ista riippuen otetaan lähin hilapiste joko maailman oikeasta tai vasemmasta
-          // reunasta
-          int xInd = (xFraction > 0.5) ? 0 : gridSizeX - 1;
-          auto yInd = static_cast<int>(
-              round(theLocationCache.itsGridPoint
-                        .Y()));  // y-indeksi vain pyöristetään lähimpään pisteeseen
-          LocationIndex(yInd * gridSizeX + xInd);
-          value = FloatValue();
-        }
-        else
-          value = FloatValue();
+        unsigned long gridSizeX = Grid()->XNumber();
+        double xFraction =
+            theLocationCache.itsGridPoint.X() - static_cast<int>(theLocationCache.itsGridPoint.X());
+        // xFraction:ista riippuen otetaan lähin hilapiste joko maailman oikeasta tai vasemmasta
+        // reunasta
+        int xInd = (xFraction > 0.5) ? 0 : gridSizeX - 1;
+        auto yInd =
+            static_cast<int>(round(theLocationCache.itsGridPoint
+                                       .Y()));  // y-indeksi vain pyöristetään lähimpään pisteeseen
+        LocationIndex(yInd * gridSizeX + xInd);
+        value = FloatValue();
       }
       else
-      {
-        std::vector<float> values(4, kFloatMissing);  // indexies 0..3 => bl,br,tr,tl
-        GetCachedValues(theLocationCache, values);
-        auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-      }
+        value = FloatValue();
     }
-    // palautetaan indeksi lopuksi
-    LocationIndex(oldLocationIndex);
-    return value;
+    else
+    {
+      std::vector<float> values(4, kFloatMissing);  // indexies 0..3 => bl,br,tr,tl
+      GetCachedValues(theLocationCache, values);
+      auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+      value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+    }
   }
+  // palautetaan indeksi lopuksi
+  LocationIndex(oldLocationIndex);
+  return value;
 }
 
 float NFmiQueryInfo::CachedInterpolation(const NFmiTimeCache &theTimeCache)
 {
-  if (theTimeCache.NoValue())
-    return kFloatMissing;
-  else
-  {
-    // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
-    unsigned long oldTimeIndex = TimeIndex();
-    std::vector<float> values(2, kFloatMissing);
-    GetCachedValues(theTimeCache, values);
-    NFmiDataIdent &param = Param();
-    FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-    auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-    float value = CachedTimeInterpolatedValue(values[0], values[1], theTimeCache, interp, parId);
-    // palautetaan indeksi lopuksi
-    TimeIndex(oldTimeIndex);
-    return value;
-  }
+  if (theTimeCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
+  unsigned long oldTimeIndex = TimeIndex();
+  std::vector<float> values(2, kFloatMissing);
+  GetCachedValues(theTimeCache, values);
+  NFmiDataIdent &param = Param();
+  FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+  auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+  float value = CachedTimeInterpolatedValue(values[0], values[1], theTimeCache, interp, parId);
+  // palautetaan indeksi lopuksi
+  TimeIndex(oldTimeIndex);
+  return value;
 }
 
 static float InterpolateWandC(std::vector<float> &theValues,
@@ -3949,47 +3933,44 @@ float NFmiQueryInfo::CachedTimeInterpolatedValue(float theValue1,
 float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCache,
                                          const NFmiTimeCache &theTimeCache)
 {
-  if (theLocationCache.NoValue() || theTimeCache.NoValue())
-    return kFloatMissing;
-  else
+  if (theLocationCache.NoValue() || theTimeCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua paikka/aika indeksit eivät saa olla muuttuneita, indeksit talteen tässä!!!
+  unsigned long oldTimeIndex = TimeIndex();
+  unsigned long oldLocationIndex = LocationIndex();
+  LocationIndex(theLocationCache.itsLocationIndex);
+  TimeIndex(theTimeCache.itsTimeIndex1);
+  float value = kFloatMissing;
+  if (theTimeCache.NoInterpolation())
   {
-    // metodin loputtua paikka/aika indeksit eivät saa olla muuttuneita, indeksit talteen tässä!!!
-    unsigned long oldTimeIndex = TimeIndex();
-    unsigned long oldLocationIndex = LocationIndex();
-    LocationIndex(theLocationCache.itsLocationIndex);
-    TimeIndex(theTimeCache.itsTimeIndex1);
-    float value = kFloatMissing;
-    if (theTimeCache.NoInterpolation())
-    {
-      if (theLocationCache.NoInterpolation())
-        value = FloatValue();
-      else
-      {
-        TimeIndex(theTimeCache.itsTimeIndex1);
-        value = CachedInterpolation(theLocationCache);
-      }
-    }
+    if (theLocationCache.NoInterpolation())
+      value = FloatValue();
     else
     {
-      if (theLocationCache.NoInterpolation())
-        value = CachedInterpolation(theTimeCache);
-      else
-      {  // tehdään sitten sekä aika että paikka cached interpolaatio
-        std::vector<float> values(8, kFloatMissing);
-        GetCachedValues(theLocationCache, theTimeCache, values);
-        NFmiDataIdent &param = Param();
-        FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-        auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-        float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
-        value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
-      }
+      TimeIndex(theTimeCache.itsTimeIndex1);
+      value = CachedInterpolation(theLocationCache);
     }
-    // palautetaan indeksit lopuksi
-    TimeIndex(oldTimeIndex);
-    LocationIndex(oldLocationIndex);
-    return value;
   }
+  else
+  {
+    if (theLocationCache.NoInterpolation())
+      value = CachedInterpolation(theTimeCache);
+    else
+    {  // tehdään sitten sekä aika että paikka cached interpolaatio
+      std::vector<float> values(8, kFloatMissing);
+      GetCachedValues(theLocationCache, theTimeCache, values);
+      NFmiDataIdent &param = Param();
+      FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+      auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+      float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+      float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
+      value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
+    }
+  }
+  // palautetaan indeksit lopuksi
+  TimeIndex(oldTimeIndex);
+  LocationIndex(oldLocationIndex);
+  return value;
 }
 
 // oletus, vektori on jo alustettu sopivan kokoiseksi ja puuttuvilla arvoilla
@@ -4102,61 +4083,55 @@ void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
 
 float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiLocationCache &theLocationCache)
 {
-  if (theLocationCache.NoValue())
-    return kFloatMissing;
+  if (theLocationCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua paikka indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
+  unsigned long oldLocationIndex = LocationIndex();
+  LocationIndex(theLocationCache.itsLocationIndex);
+  float value = kFloatMissing;
+  if (theLocationCache.NoInterpolation())
+    value = PressureLevelValue(P);
   else
   {
-    // metodin loputtua paikka indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
-    unsigned long oldLocationIndex = LocationIndex();
-    LocationIndex(theLocationCache.itsLocationIndex);
-    float value = kFloatMissing;
-    if (theLocationCache.NoInterpolation())
+    // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
+    if (fabs(theLocationCache.itsGridPoint.X() - round(theLocationCache.itsGridPoint.X())) <
+            gInterpolatedValueEps &&
+        fabs(theLocationCache.itsGridPoint.Y() - round(theLocationCache.itsGridPoint.Y())) <
+            gInterpolatedValueEps)
+      return PressureLevelValue(P);
+
+    NFmiDataIdent &param = Param();
+    FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+    if (interp == kNearestPoint)
       value = PressureLevelValue(P);
     else
     {
-      // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
-      if (fabs(theLocationCache.itsGridPoint.X() - round(theLocationCache.itsGridPoint.X())) <
-              gInterpolatedValueEps &&
-          fabs(theLocationCache.itsGridPoint.Y() - round(theLocationCache.itsGridPoint.Y())) <
-              gInterpolatedValueEps)
-        return PressureLevelValue(P);
-
-      NFmiDataIdent &param = Param();
-      FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-      if (interp == kNearestPoint)
-        value = PressureLevelValue(P);
-      else
-      {
-        std::vector<float> values(4, kFloatMissing);
-        GetCachedPressureLevelValues(P, theLocationCache, values);
-        auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-      }
+      std::vector<float> values(4, kFloatMissing);
+      GetCachedPressureLevelValues(P, theLocationCache, values);
+      auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+      value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
     }
-    // palautetaan indeksi lopuksi
-    LocationIndex(oldLocationIndex);
-    return value;
   }
+  // palautetaan indeksi lopuksi
+  LocationIndex(oldLocationIndex);
+  return value;
 }
 
 float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiTimeCache &theTimeCache)
 {
-  if (theTimeCache.NoValue())
-    return kFloatMissing;
-  else
-  {
-    // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
-    unsigned long oldTimeIndex = TimeIndex();
-    std::vector<float> values(2, kFloatMissing);
-    GetCachedPressureLevelValues(P, theTimeCache, values);
-    NFmiDataIdent &param = Param();
-    FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-    auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-    float value = CachedTimeInterpolatedValue(values[0], values[1], theTimeCache, interp, parId);
-    // palautetaan indeksi lopuksi
-    TimeIndex(oldTimeIndex);
-    return value;
-  }
+  if (theTimeCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
+  unsigned long oldTimeIndex = TimeIndex();
+  std::vector<float> values(2, kFloatMissing);
+  GetCachedPressureLevelValues(P, theTimeCache, values);
+  NFmiDataIdent &param = Param();
+  FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+  auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+  float value = CachedTimeInterpolatedValue(values[0], values[1], theTimeCache, interp, parId);
+  // palautetaan indeksi lopuksi
+  TimeIndex(oldTimeIndex);
+  return value;
 }
 
 void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
@@ -4173,47 +4148,44 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P,
                                               const NFmiLocationCache &theLocationCache,
                                               const NFmiTimeCache &theTimeCache)
 {
-  if (theLocationCache.NoValue() || theTimeCache.NoValue())
-    return kFloatMissing;
-  else
+  if (theLocationCache.NoValue() || theTimeCache.NoValue()) return kFloatMissing;
+
+  // metodin loputtua paikka/aika indeksit eivät saa olla muuttuneita, indeksit talteen tässä!!!
+  unsigned long oldTimeIndex = TimeIndex();
+  unsigned long oldLocationIndex = LocationIndex();
+  LocationIndex(theLocationCache.itsLocationIndex);
+  TimeIndex(theTimeCache.itsTimeIndex1);
+  float value = kFloatMissing;
+  if (theTimeCache.NoInterpolation())
   {
-    // metodin loputtua paikka/aika indeksit eivät saa olla muuttuneita, indeksit talteen tässä!!!
-    unsigned long oldTimeIndex = TimeIndex();
-    unsigned long oldLocationIndex = LocationIndex();
-    LocationIndex(theLocationCache.itsLocationIndex);
-    TimeIndex(theTimeCache.itsTimeIndex1);
-    float value = kFloatMissing;
-    if (theTimeCache.NoInterpolation())
-    {
-      if (theLocationCache.NoInterpolation())
-        value = PressureLevelValue(P);
-      else
-      {
-        TimeIndex(theTimeCache.itsTimeIndex1);
-        value = CachedPressureLevelValue(P, theLocationCache);
-      }
-    }
+    if (theLocationCache.NoInterpolation())
+      value = PressureLevelValue(P);
     else
     {
-      if (theLocationCache.NoInterpolation())
-        value = CachedPressureLevelValue(P, theTimeCache);
-      else
-      {  // tehdään sitten sekä aika että paikka cached interpolaatio
-        std::vector<float> values(8, kFloatMissing);
-        GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values);
-        NFmiDataIdent &param = Param();
-        FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-        auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-        float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
-        value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
-      }
+      TimeIndex(theTimeCache.itsTimeIndex1);
+      value = CachedPressureLevelValue(P, theLocationCache);
     }
-    // palautetaan indeksit lopuksi
-    TimeIndex(oldTimeIndex);
-    LocationIndex(oldLocationIndex);
-    return value;
   }
+  else
+  {
+    if (theLocationCache.NoInterpolation())
+      value = CachedPressureLevelValue(P, theTimeCache);
+    else
+    {  // tehdään sitten sekä aika että paikka cached interpolaatio
+      std::vector<float> values(8, kFloatMissing);
+      GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values);
+      NFmiDataIdent &param = Param();
+      FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+      auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+      float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+      float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
+      value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
+    }
+  }
+  // palautetaan indeksit lopuksi
+  TimeIndex(oldTimeIndex);
+  LocationIndex(oldLocationIndex);
+  return value;
 }
 
 // ----------------------------------------------------------------------
@@ -4282,12 +4254,12 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
         //				return InterpolatedValueForCombinedParam(gpoint, xShift,
         // yShift);
       }
-      else if (interp == kByCombinedParam)
+      if (interp == kByCombinedParam)
       {
         if (param == kFmiWeatherAndCloudiness)
           return InterpolatedValueForWeatherAndCloudiness(
               theTime, theMaxMinuteRange, gpoint, xShift, yShift);
-        else if (param == kFmiTotalWindMS)
+        if (param == kFmiTotalWindMS)
           return InterpolatedValueForTotalWind(theTime, theMaxMinuteRange, gpoint, xShift, yShift);
 
         return theValue;

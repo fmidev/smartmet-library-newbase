@@ -109,13 +109,10 @@ NFmiAreaMaskImpl::~NFmiAreaMaskImpl() = default;
 
 bool NFmiAreaMaskImpl::IsMasked(const NFmiPoint &theLatLon) const
 {
-  if (!fEnabled)
-    return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
-  else
-  {
-    double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
-    return itsMaskCondition.IsMasked(testValue);
-  }
+  if (!fEnabled) return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
+
+  double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
+  return itsMaskCondition.IsMasked(testValue);
 }
 
 // ----------------------------------------------------------------------
@@ -130,13 +127,10 @@ bool NFmiAreaMaskImpl::IsMasked(const NFmiPoint &theLatLon) const
 
 double NFmiAreaMaskImpl::MaskValue(const NFmiPoint &theLatLon) const
 {
-  if (!fEnabled)
-    return 1.;
-  else
-  {
-    double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
-    return itsMaskCondition.MaskValue(testValue);
-  }
+  if (!fEnabled) return 1.;
+
+  double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
+  return itsMaskCondition.MaskValue(testValue);
 }
 
 // ----------------------------------------------------------------------

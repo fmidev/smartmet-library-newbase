@@ -125,9 +125,8 @@ float FmiSnowWaterRatio(float t, float ff)
 
   if (ff < 10 * knot)
   {
-    if (t > 0)
-      return 10;
-    else if (t > -5)
+    if (t > 0) return 10;
+    if (t > -5)
       return 11;
     else if (t > -10)
       return 14;
@@ -138,9 +137,8 @@ float FmiSnowWaterRatio(float t, float ff)
   }
   else if (ff < 20 * knot)
   {
-    if (t > -5)
-      return 10;
-    else if (t > -10)
+    if (t > -5) return 10;
+    if (t > -10)
       return 12;
     else if (t > -20)
       return 15;
@@ -149,9 +147,8 @@ float FmiSnowWaterRatio(float t, float ff)
   }
   else
   {
-    if (t > -10)
-      return 10;
-    else if (t > -15)
+    if (t > -10) return 10;
+    if (t > -15)
       return 11;
     else if (t > -20)
       return 14;
@@ -216,10 +213,9 @@ float FmiSnowUpperLimit(float prec)
 
 double CalcFlightLevelPressure(double PALT)
 {
-  if (PALT <= 36089)
-    return 1013.25 * ::pow((1 - (0.000001 * 6.8756 * PALT)), 5.2559);
-  else
-    return 226.32 * ::exp(-((PALT - 36089) / 20805));
+  if (PALT <= 36089) return 1013.25 * ::pow((1 - (0.000001 * 6.8756 * PALT)), 5.2559);
+
+  return 226.32 * ::exp(-((PALT - 36089) / 20805));
 }
 
 // ----------------------------------------------------------------------
@@ -317,9 +313,8 @@ double CalcHeightAtPressure(double p2)
 float FmiDegreeDays(float value, int month)
 {
   // huom eri kynnysarvo alku/loppuvuodelle (sÃ¤teilyn vaikutus)
-  if (value == kFloatMissing)
-    return kFloatMissing;
-  else if ((value > 12.) || (value > 10. && month < 7))
+  if (value == kFloatMissing) return kFloatMissing;
+  if ((value > 12.) || (value > 10. && month < 7))
     return 0;
   else
     return 17.f - value;

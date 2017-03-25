@@ -454,10 +454,9 @@ inline float NFmiWeatherAndCloudiness::Temperature(void) const { return itsTempe
 
 inline unsigned long NFmiWeatherAndCloudiness::PrecipitationScale(double theValue) const
 {
-  if (itsInfoVersion >= 7.)
-    return PrecipitationScaleV7(theValue);
-  else
-    return PrecipitationScaleV6(theValue);
+  if (itsInfoVersion >= 7.) return PrecipitationScaleV7(theValue);
+
+  return PrecipitationScaleV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -469,10 +468,9 @@ inline unsigned long NFmiWeatherAndCloudiness::PrecipitationScale(double theValu
 
 inline double NFmiWeatherAndCloudiness::PrecipitationScale(unsigned long theValue) const
 {
-  if (itsInfoVersion >= 7.)
-    return PrecipitationScaleV7(theValue);
-  else
-    return PrecipitationScaleV6(theValue);
+  if (itsInfoVersion >= 7.) return PrecipitationScaleV7(theValue);
+
+  return PrecipitationScaleV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -538,10 +536,9 @@ inline unsigned long NFmiWeatherAndCloudiness::HighCloudsV7(void) const
 
 inline unsigned long NFmiWeatherAndCloudiness::HighClouds(void) const
 {
-  if (itsInfoVersion >= 7.)
-    return HighCloudsV7();
-  else
-    return HighCloudsV6();
+  if (itsInfoVersion >= 7.) return HighCloudsV7();
+
+  return HighCloudsV6();
 }
 
 // ----------------------------------------------------------------------
@@ -574,10 +571,9 @@ inline unsigned long NFmiWeatherAndCloudiness::TotalPrecipitationV7(void) const
 
 inline unsigned long NFmiWeatherAndCloudiness::TotalPrecipitation(void) const
 {
-  if (itsInfoVersion >= 7.)
-    return TotalPrecipitationV7();
-  else
-    return TotalPrecipitationV6();
+  if (itsInfoVersion >= 7.) return TotalPrecipitationV7();
+
+  return TotalPrecipitationV6();
 }
 
 // ----------------------------------------------------------------------

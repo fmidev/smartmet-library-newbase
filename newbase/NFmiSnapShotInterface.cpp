@@ -104,10 +104,9 @@ NFmiSnapShotInterface::NFmiSnapShotInterface(NFmiString theDataFileName,
 bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
 {
   bool retBool = false;
-  if (IsValid())
-    return retBool;
+  if (IsValid()) return retBool;
 
-  else if (itsInfo)
+  if (itsInfo)
   {
     retBool = true;
     if (theInfo) delete theInfo;
@@ -132,8 +131,8 @@ bool NFmiSnapShotInterface::IsValid()
   {
     return false;
   }
-  else
-    return true;
+
+  return true;
 }
 
 // ----------------------------------------------------------------------

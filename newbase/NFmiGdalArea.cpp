@@ -460,14 +460,14 @@ NFmiArea *NFmiGdalArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                             BottomRight(),
                             fix.fIsPacific);
   }
-  else
-    return new NFmiGdalArea(itsDatum,
-                            itsDescription,
-                            theBottomLeftLatLon,
-                            theTopRightLatLon,
-                            TopLeft(),
-                            BottomRight(),
-                            PacificView());
+
+  return new NFmiGdalArea(itsDatum,
+                          itsDescription,
+                          theBottomLeftLatLon,
+                          theTopRightLatLon,
+                          TopLeft(),
+                          BottomRight(),
+                          PacificView());
 }
 
 // ----------------------------------------------------------------------
@@ -531,17 +531,14 @@ void NFmiGdalArea::init()
 
 double NFmiGdalArea::WorldXYWidth() const
 {
-  if (!itsSpatialReference->IsGeographic())
-    return WorldRect().Width();
-  else
-  {
-    double pi = boost::math::constants::pi<double>();
-    double circumference = 2 * pi * 6371220;
-    double dlon = itsTopRightLatLon.X() - itsBottomLeftLatLon.X();
-    if (dlon < 0) dlon += 360;
-    double clat = 0.5 * (itsBottomLeftLatLon.Y() + itsTopRightLatLon.Y());
-    return dlon / 360 * circumference * cos(clat * pi / 180);
-  }
+  if (!itsSpatialReference->IsGeographic()) return WorldRect().Width();
+
+  double pi = boost::math::constants::pi<double>();
+  double circumference = 2 * pi * 6371220;
+  double dlon = itsTopRightLatLon.X() - itsBottomLeftLatLon.X();
+  if (dlon < 0) dlon += 360;
+  double clat = 0.5 * (itsBottomLeftLatLon.Y() + itsTopRightLatLon.Y());
+  return dlon / 360 * circumference * cos(clat * pi / 180);
 }
 
 // ----------------------------------------------------------------------
@@ -552,15 +549,12 @@ double NFmiGdalArea::WorldXYWidth() const
 
 double NFmiGdalArea::WorldXYHeight() const
 {
-  if (!itsSpatialReference->IsGeographic())
-    return WorldRect().Height();
-  else
-  {
-    double pi = boost::math::constants::pi<double>();
-    double circumference = 2 * pi * 6371220;
-    double dlat = itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y();
-    return dlat / 360.0 * circumference;  // angle -> meters
-  }
+  if (!itsSpatialReference->IsGeographic()) return WorldRect().Height();
+
+  double pi = boost::math::constants::pi<double>();
+  double circumference = 2 * pi * 6371220;
+  double dlat = itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y();
+  return dlat / 360.0 * circumference;  // angle -> meters
 }
 
 #endif  // UNIX

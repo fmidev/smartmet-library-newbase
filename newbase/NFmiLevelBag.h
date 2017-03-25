@@ -110,10 +110,9 @@ inline NFmiLevel *NFmiLevelBag::LevelMaxValue(void) { return &itsLevels[itsSize 
 inline NFmiLevel *NFmiLevelBag::Level(void) const
 {
   //  return &(itsLevels[itsIndex]);
-  if (itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
-    return &(itsLevels[itsIndex]);
-  else
-    return 0;
+  if (itsIndex >= 0 && itsIndex < static_cast<long>(GetSize())) return &(itsLevels[itsIndex]);
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------
@@ -125,10 +124,9 @@ inline NFmiLevel *NFmiLevelBag::Level(void) const
 
 inline NFmiLevel *NFmiLevelBag::Level(unsigned long theIndex) const
 {
-  if (theIndex < GetSize())
-    return &(itsLevels[theIndex]);
-  else
-    return 0;
+  if (theIndex < GetSize()) return &(itsLevels[theIndex]);
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------

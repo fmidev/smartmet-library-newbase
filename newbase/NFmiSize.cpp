@@ -116,8 +116,8 @@ bool NFmiSize::Next()
     itsIndex++;
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -148,8 +148,8 @@ bool NFmiSize::SetCurrentIndex(unsigned long theIndex)
     itsIndex = theIndex;
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------

@@ -93,8 +93,8 @@ float NFmiDataModifierSum::CalculationResult()
 {
   if (!fCalculationResultOk || (!fMissingValuesAllowed && itsNumberOfMissingValues > 0))
     return kFloatMissing;
-  else
-    return Sum();
+
+  return Sum();
 }
 
 // ======================================================================

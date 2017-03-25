@@ -110,10 +110,9 @@ bool MyGrid::operator<(const MyGrid &theGrid) const
 // NFmiThreadCallBacks inplemantations
 bool NFmiThreadCallBacks::Stop() const
 {
-  if (itsStopper)
-    return itsStopper->Stop();
-  else
-    return false;
+  if (itsStopper) return itsStopper->Stop();
+
+  return false;
 }
 
 void NFmiThreadCallBacks::Stop(bool newValue)
@@ -138,10 +137,9 @@ void NFmiThreadCallBacks::AddRange(int value)
 
 bool NFmiThreadCallBacks::DoPostMessage(unsigned int message, unsigned int wParam, long lParam)
 {
-  if (itsProgress)
-    return itsProgress->DoPostMessage(message, wParam, lParam);
-  else
-    return false;
+  if (itsProgress) return itsProgress->DoPostMessage(message, wParam, lParam);
+
+  return false;
 }
 
 void NFmiThreadCallBacks::CheckIfStopped()
@@ -151,10 +149,9 @@ void NFmiThreadCallBacks::CheckIfStopped()
 
 bool NFmiThreadCallBacks::WaitUntilInitialized()
 {
-  if (itsProgress)
-    return itsProgress->WaitUntilInitialized();
-  else
-    return true;
+  if (itsProgress) return itsProgress->WaitUntilInitialized();
+
+  return true;
 }
 
 NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theTimeSize)
@@ -289,10 +286,8 @@ float NFmiQueryDataUtil::LimitChecker::GetInsideLimitsValue(float theValue) cons
   if (theValue == kFloatMissing) return theValue;
   if (!fCircularValue)
   {
-    if (itsLowerLimit != kFloatMissing && theValue < itsLowerLimit)
-      return itsLowerLimit;
-    else if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit)
-      return itsUpperLimit;
+    if (itsLowerLimit != kFloatMissing && theValue < itsLowerLimit) return itsLowerLimit;
+    if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit) return itsUpperLimit;
   }
   else
   {
@@ -304,7 +299,7 @@ float NFmiQueryDataUtil::LimitChecker::GetInsideLimitsValue(float theValue) cons
       float tmp = itsUpperLimit - (itsLowerLimit - theValue);
       return tmp;
     }
-    else if (theValue > itsUpperLimit)
+    if (theValue > itsUpperLimit)
     {
       float tmp = itsLowerLimit + (theValue - itsUpperLimit);
       return tmp;
@@ -677,51 +672,47 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
   if (theInterpolationMethod != kLagrange ||
       !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
     return theInfo.InterpolatedValue(theLatlon);
-  else
+
+  NFmiLagrange lagrange;
+  static const int maxSize = 4;
+  checkedVector<double> valueVec(maxSize * maxSize);
+  static const double tVec[maxSize] = {-1, 0, 1, 2};  // arvojen t sijainnit
+  static const double sVec[maxSize] = {-1, 0, 1, 2};  // arvojen s sijainnit
+  float value = kFloatMissing;
+  const NFmiGrid &grid = *theInfo.Grid();
+  unsigned long gridXNumber = grid.XNumber();
+  unsigned long gridYNumber = grid.YNumber();
+  NFmiPoint gridPoint(theInfo.Grid()->LatLonToGrid(theLatlon));
+  unsigned long zeroPointIndex =
+      static_cast<int>(gridPoint.Y()) * gridXNumber +
+      static_cast<int>(gridPoint.X());  // nollapisteindeksi tarkoittaa sen hilapisteen indeksiä,
+                                        // joka saadaan kun griPoint leikataan alas lähimpään
+                                        // kokonais hilapisteeseen
+  if (!theInfo.LocationIndex(zeroPointIndex)) return value;
+  if ((gridPoint.X() > 1) && (gridPoint.Y() > 1) && (gridPoint.X() < gridXNumber - 2) &&
+      (gridPoint.Y() < gridYNumber - 2))
   {
-    NFmiLagrange lagrange;
-    static const int maxSize = 4;
-    checkedVector<double> valueVec(maxSize * maxSize);
-    static const double tVec[maxSize] = {-1, 0, 1, 2};  // arvojen t sijainnit
-    static const double sVec[maxSize] = {-1, 0, 1, 2};  // arvojen s sijainnit
-    float value = kFloatMissing;
-    const NFmiGrid &grid = *theInfo.Grid();
-    unsigned long gridXNumber = grid.XNumber();
-    unsigned long gridYNumber = grid.YNumber();
-    NFmiPoint gridPoint(theInfo.Grid()->LatLonToGrid(theLatlon));
-    unsigned long zeroPointIndex =
-        static_cast<int>(gridPoint.Y()) * gridXNumber +
-        static_cast<int>(gridPoint.X());  // nollapisteindeksi tarkoittaa sen hilapisteen indeksiä,
-                                          // joka saadaan kun griPoint leikataan alas lähimpään
-                                          // kokonais hilapisteeseen
-    if (!theInfo.LocationIndex(zeroPointIndex)) return value;
-    if ((gridPoint.X() > 1) && (gridPoint.Y() > 1) && (gridPoint.X() < gridXNumber - 2) &&
-        (gridPoint.Y() < gridYNumber - 2))
+    for (int j = -1; j < 3; j++)
     {
-      for (int j = -1; j < 3; j++)
+      for (int i = -1; i < 3; i++)
       {
-        for (int i = -1; i < 3; i++)
-        {
-          int ind = (j + 1) * maxSize + (i + 1);
-          valueVec[ind] = theInfo.PeekLocationValue(i, j);
-        }
-      }
-      if (std::find_if(valueVec.begin(), valueVec.end(), ::IsMissingValue<double>(kFloatMissing)) !=
-          valueVec.end())
-        return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
-      else
-      {
-        lagrange.Init(sVec, tVec, &valueVec[0], maxSize, maxSize);
-        value = static_cast<float>(
-            lagrange.Interpolate(fmod(gridPoint.X(), 1), fmod(gridPoint.Y(), 1)));
-        return theLimitChecker.GetInsideLimitsValue(value);
+        int ind = (j + 1) * maxSize + (i + 1);
+        valueVec[ind] = theInfo.PeekLocationValue(i, j);
       }
     }
-    else  // hilan reunoilla tehdään lineaarinen interpolointi, en jaksa tehdä erikoistapauksia
-          // reunoille ja kulmiin.
-      return theInfo.InterpolatedValue(theLatlon);
-    //	  return value;
+    if (std::find_if(valueVec.begin(), valueVec.end(), ::IsMissingValue<double>(kFloatMissing)) !=
+        valueVec.end())
+      return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
+
+    lagrange.Init(sVec, tVec, &valueVec[0], maxSize, maxSize);
+    value =
+        static_cast<float>(lagrange.Interpolate(fmod(gridPoint.X(), 1), fmod(gridPoint.Y(), 1)));
+    return theLimitChecker.GetInsideLimitsValue(value);
   }
+  else  // hilan reunoilla tehdään lineaarinen interpolointi, en jaksa tehdä erikoistapauksia
+        // reunoille ja kulmiin.
+    return theInfo.InterpolatedValue(theLatlon);
+  //	  return value;
 }
 
 // ----------------------------------------------------------------------
@@ -1174,11 +1165,9 @@ float GetLagrangeValue(checkedVector<double> &theValueVec,
                    theValueVec.end(),
                    ::IsMissingValue<double>(kFloatMissing)) != theValueVec.end())
     return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
-  else
-  {
-    lagrange.Init(&theTimeVec[0], &theValueVec[0], static_cast<int>(theValueVec.size()));
-    return static_cast<float>(lagrange.Interpolate(theInterpolatedTimePlace));
-  }
+
+  lagrange.Init(&theTimeVec[0], &theValueVec[0], static_cast<int>(theValueVec.size()));
+  return static_cast<float>(lagrange.Interpolate(theInterpolatedTimePlace));
 }
 
 // ----------------------------------------------------------------------
@@ -1211,62 +1200,60 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
   if (theInterpolationMethod != kLagrange ||
       !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
     return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
-  else
+
+  float value = kFloatMissing;
+  unsigned long oldTimeIndex = theInfo.TimeIndex();
+  theInfo.TimeIndex(theOneStepBeforeTimeIndex);
+  if (theOneStepBeforeTimeIndex ==
+      0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
   {
-    float value = kFloatMissing;
-    unsigned long oldTimeIndex = theInfo.TimeIndex();
-    theInfo.TimeIndex(theOneStepBeforeTimeIndex);
-    if (theOneStepBeforeTimeIndex ==
-        0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
-    {
-      checkedVector<double> valueVec(3);
-      checkedVector<double> timeVec(
-          3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
-      timeVec[0] = 0;
-      timeVec[1] = 1;
-      timeVec[2] = 2;
-      valueVec[0] = theInfo.PeekTimeValue(0);
-      valueVec[1] = theInfo.PeekTimeValue(1);
-      valueVec[2] = theInfo.PeekTimeValue(2);
-      value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
-    }
-    else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)  // case: annettu index timebagin
-                                                                    // loppu rajalla, eli tehdään
-                                                                    // interpolointi 3:lla arvolla
-    {
-      checkedVector<double> valueVec(3);
-      checkedVector<double> timeVec(
-          3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
-      timeVec[0] = -1;
-      timeVec[1] = 0;
-      timeVec[2] = 1;
-      valueVec[0] = theInfo.PeekTimeValue(-1);
-      valueVec[1] = theInfo.PeekTimeValue(0);
-      valueVec[2] = theInfo.PeekTimeValue(1);
-      value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
-    }
-    else if (theOneStepBeforeTimeIndex >
-             theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
-      value = kFloatMissing;
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
-    {
-      checkedVector<double> valueVec(4);
-      checkedVector<double> timeVec(
-          4);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
-      timeVec[0] = -1;
-      timeVec[1] = 0;
-      timeVec[2] = 1;
-      timeVec[3] = 2;
-      valueVec[0] = theInfo.PeekTimeValue(-1);
-      valueVec[1] = theInfo.PeekTimeValue(0);
-      valueVec[2] = theInfo.PeekTimeValue(1);
-      valueVec[3] = theInfo.PeekTimeValue(2);
-      value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
-    }
-    theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
-                                      // minusta se on turhaa)
-    return theLimitChecker.GetInsideLimitsValue(value);
+    checkedVector<double> valueVec(3);
+    checkedVector<double> timeVec(
+        3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+    timeVec[0] = 0;
+    timeVec[1] = 1;
+    timeVec[2] = 2;
+    valueVec[0] = theInfo.PeekTimeValue(0);
+    valueVec[1] = theInfo.PeekTimeValue(1);
+    valueVec[2] = theInfo.PeekTimeValue(2);
+    value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
   }
+  else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)  // case: annettu index timebagin
+                                                                  // loppu rajalla, eli tehdään
+                                                                  // interpolointi 3:lla arvolla
+  {
+    checkedVector<double> valueVec(3);
+    checkedVector<double> timeVec(
+        3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+    timeVec[0] = -1;
+    timeVec[1] = 0;
+    timeVec[2] = 1;
+    valueVec[0] = theInfo.PeekTimeValue(-1);
+    valueVec[1] = theInfo.PeekTimeValue(0);
+    valueVec[2] = theInfo.PeekTimeValue(1);
+    value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
+  }
+  else if (theOneStepBeforeTimeIndex >
+           theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
+    value = kFloatMissing;
+  else  // muuten tehdään normaali 4:n pisteen interpolointi
+  {
+    checkedVector<double> valueVec(4);
+    checkedVector<double> timeVec(
+        4);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+    timeVec[0] = -1;
+    timeVec[1] = 0;
+    timeVec[2] = 1;
+    timeVec[3] = 2;
+    valueVec[0] = theInfo.PeekTimeValue(-1);
+    valueVec[1] = theInfo.PeekTimeValue(0);
+    valueVec[2] = theInfo.PeekTimeValue(1);
+    valueVec[3] = theInfo.PeekTimeValue(2);
+    value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
+  }
+  theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
+                                    // minusta se on turhaa)
+  return theLimitChecker.GetInsideLimitsValue(value);
 }
 
 // ----------------------------------------------------------------------
@@ -1301,48 +1288,46 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
   if (theInterpolationMethod != kLagrange ||
       !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
     return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
-  else
+
+  //	  checkedVector<double> timeVec(4); // yllä olevien arvojen suhteelliset paikat
+  // aika-avaruudessa (0 - 1)
+  float value = kFloatMissing;
+  unsigned long oldTimeIndex = theInfo.TimeIndex();
+  theInfo.TimeIndex(theOneStepBeforeTimeIndex);
+  if (theOneStepBeforeTimeIndex ==
+      0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
   {
-    //	  checkedVector<double> timeVec(4); // yllä olevien arvojen suhteelliset paikat
-    // aika-avaruudessa (0 - 1)
-    float value = kFloatMissing;
-    unsigned long oldTimeIndex = theInfo.TimeIndex();
-    theInfo.TimeIndex(theOneStepBeforeTimeIndex);
-    if (theOneStepBeforeTimeIndex ==
-        0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
-    {
-      checkedVector<double> valueVec(3);
-      valueVec[0] = theInfo.PeekTimeValue(0);
-      valueVec[1] = theInfo.PeekTimeValue(1);
-      valueVec[2] = theInfo.PeekTimeValue(2);
-      value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
-    }
-    else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)  // case: annettu index timebagin
-                                                                    // loppu rajalla, eli tehdään
-                                                                    // interpolointi 3:lla arvolla
-    {
-      checkedVector<double> valueVec(3);
-      valueVec[0] = theInfo.PeekTimeValue(-1);
-      valueVec[1] = theInfo.PeekTimeValue(0);
-      valueVec[2] = theInfo.PeekTimeValue(1);
-      value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
-    }
-    else if (theOneStepBeforeTimeIndex >
-             theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
-      value = kFloatMissing;
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
-    {
-      checkedVector<double> valueVec(4);
-      valueVec[0] = theInfo.PeekTimeValue(-1);
-      valueVec[1] = theInfo.PeekTimeValue(0);
-      valueVec[2] = theInfo.PeekTimeValue(1);
-      valueVec[3] = theInfo.PeekTimeValue(2);
-      value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
-    }
-    theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
-                                      // minusta se on turhaa)
-    return theLimitChecker.GetInsideLimitsValue(value);
+    checkedVector<double> valueVec(3);
+    valueVec[0] = theInfo.PeekTimeValue(0);
+    valueVec[1] = theInfo.PeekTimeValue(1);
+    valueVec[2] = theInfo.PeekTimeValue(2);
+    value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
   }
+  else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)  // case: annettu index timebagin
+                                                                  // loppu rajalla, eli tehdään
+                                                                  // interpolointi 3:lla arvolla
+  {
+    checkedVector<double> valueVec(3);
+    valueVec[0] = theInfo.PeekTimeValue(-1);
+    valueVec[1] = theInfo.PeekTimeValue(0);
+    valueVec[2] = theInfo.PeekTimeValue(1);
+    value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
+  }
+  else if (theOneStepBeforeTimeIndex >
+           theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
+    value = kFloatMissing;
+  else  // muuten tehdään normaali 4:n pisteen interpolointi
+  {
+    checkedVector<double> valueVec(4);
+    valueVec[0] = theInfo.PeekTimeValue(-1);
+    valueVec[1] = theInfo.PeekTimeValue(0);
+    valueVec[2] = theInfo.PeekTimeValue(1);
+    valueVec[3] = theInfo.PeekTimeValue(2);
+    value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
+  }
+  theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
+                                    // minusta se on turhaa)
+  return theLimitChecker.GetInsideLimitsValue(value);
 }
 
 // ----------------------------------------------------------------------
@@ -1604,17 +1589,14 @@ NFmiTimeBag MakeReferenceTimeBagCheck(const NFmiTimeBag &theTimeBag,
   NFmiMetTime startRefTime(thePossibleReferenceTimeBag->FirstTime());
   int resolutionInMinutes = theTimeBag.Resolution();
   int shiftInMinutes = abs(startTime.DifferenceInMinutes(startRefTime) % resolutionInMinutes);
-  if (shiftInMinutes == 0)
-    return theTimeBag;
-  else
-  {
-    startTime.ChangeByMinutes(shiftInMinutes);
-    NFmiMetTime endTime(theTimeBag.LastTime());
-    endTime.ChangeByMinutes(-(resolutionInMinutes - shiftInMinutes));
-    if (startTime > endTime) endTime = startTime;
-    NFmiTimeBag tmp(startTime, endTime, resolutionInMinutes);
-    return tmp;
-  }
+  if (shiftInMinutes == 0) return theTimeBag;
+
+  startTime.ChangeByMinutes(shiftInMinutes);
+  NFmiMetTime endTime(theTimeBag.LastTime());
+  endTime.ChangeByMinutes(-(resolutionInMinutes - shiftInMinutes));
+  if (startTime > endTime) endTime = startTime;
+  NFmiTimeBag tmp(startTime, endTime, resolutionInMinutes);
+  return tmp;
 }
 
 // ----------------------------------------------------------------------
@@ -2066,13 +2048,11 @@ static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &the
     NFmiTimeList timesTotal = times1.Combine(times2, theStartTimeFunction, theEndTimeFunction);
     return NFmiTimeDescriptor(origTime, timesTotal);
   }
-  else
-  {
-    NFmiTimeDescriptor timeDesc(
-        theTimeDescriptor1.Combine(theTimeDescriptor2, theStartTimeFunction, theEndTimeFunction));
-    timeDesc.OriginTime(origTime);
-    return timeDesc;
-  }
+
+  NFmiTimeDescriptor timeDesc(
+      theTimeDescriptor1.Combine(theTimeDescriptor2, theStartTimeFunction, theEndTimeFunction));
+  timeDesc.OriginTime(origTime);
+  return timeDesc;
 }
 
 // ----------------------------------------------------------------------
@@ -2330,10 +2310,9 @@ static NFmiTimeDescriptor GetTimeDesc(NFmiQueryDataUtil::GridDataVector &theGrid
   bool fUseTimeBag = ConvertTimeList2TimeBag(timeList, timeBag);  // jos mahd.
 
   // Oletus kaikki origintimet ovat samoja, en tutki niita nyt yhtaan.
-  if (fUseTimeBag)
-    return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeBag);
-  else
-    return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeList);
+  if (fUseTimeBag) return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeBag);
+
+  return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeList);
 }
 
 static void FillQDataWithGribRecords(NFmiQueryData &theQData,
@@ -4713,7 +4692,7 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
         gMissingIndex;
     return;
   }
-  else if (totalSize == 1)
+  if (totalSize == 1)
   {
     theStartInd1 = theEndInd1 = theStartInd;
     theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 = gMissingIndex;
@@ -5097,8 +5076,8 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
           if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
               static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
             return true;
-          else
-            return false;
+
+          return false;
         }
         else
           return true;
@@ -5118,8 +5097,8 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
       if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
           static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
         return true;
-      else
-        return false;
+
+      return false;
     }
     else if (theArea1->ClassId() == theArea2->ClassId())
       return true;

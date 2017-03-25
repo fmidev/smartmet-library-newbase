@@ -77,11 +77,9 @@ inline bool NFmiStringList::Index(int theIndex)
     itsIndex = theIndex;
     return true;
   }
-  else
-  {
-    itsIndex = 0;
-    return false;
-  }
+
+  itsIndex = 0;
+  return false;
 }
 
 // ----------------------------------------------------------------------

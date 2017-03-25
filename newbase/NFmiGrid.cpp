@@ -505,7 +505,7 @@ static bool SeekStartingPoint(ifstream &in,
     in.ignore(theStartOffsetInBytes);
     return !in.fail();
   }
-  else if (!theDataStartsAfterString.empty())
+  if (!theDataStartsAfterString.empty())
   {
     // int maxIgnoredCount = std::numeric_limits<double>::max(); // ei piru käänny!!!???!!!!
     int maxIgnoredCount = 2000000000;  // tähän iso luku
@@ -515,9 +515,8 @@ static bool SeekStartingPoint(ifstream &in,
       in.ignore(maxIgnoredCount, firstChar);
       if (!in.fail())
       {
-        if (theDataStartsAfterString.size() == 1)
-          return true;
-        else if (theDataStartsAfterString.size() == 2)
+        if (theDataStartsAfterString.size() == 1) return true;
+        if (theDataStartsAfterString.size() == 2)
         {
           int secondChar = theDataStartsAfterString[1];
           if (in.peek() == secondChar)
@@ -545,12 +544,10 @@ static bool SeekStartingPoint(ifstream &in,
 
 bool NFmiGrid::SwapData(FmiDirection theStartingCorner, bool walkXDimFirst)
 {
-  if (walkXDimFirst)
-    return NFmiGridBase::Swap(theStartingCorner);
-  else
-  {
-    // ei ole vielä toteutettu!!!!!!!
-  }
+  if (walkXDimFirst) return NFmiGridBase::Swap(theStartingCorner);
+
+  // ei ole vielä toteutettu!!!!!!!
+
   return false;
 }
 
@@ -756,19 +753,16 @@ checkedVector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation 
 
 bool NFmiGrid::operator==(const NFmiGrid &theGrid) const
 {
-  if (this == &theGrid)
-    return true;
-  else
+  if (this == &theGrid) return true;
+
+  if (NFmiGridBase::operator==(theGrid))
   {
-    if (NFmiGridBase::operator==(theGrid))
+    if (itsArea && theGrid.itsArea)
     {
-      if (itsArea && theGrid.itsArea)
-      {
-        if (*itsArea == *(theGrid.itsArea)) return true;
-      }
+      if (*itsArea == *(theGrid.itsArea)) return true;
     }
-    return false;
   }
+  return false;
 }
 
 // Halutaan laskea this-gridin avulla interpoloituja arvoja theTargetGrid:lle. Sitä varten lasketaan

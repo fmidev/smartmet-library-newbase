@@ -62,7 +62,7 @@ double NFmiCalculator::FloatValue()
     itsDataIterator->DoForEach(itsDataModifier);
     return itsDataModifier->CalculationResult();
   }
-  else if (itsData && itsDataModifier)
+  if (itsData && itsDataModifier)
   {
     return itsDataModifier->FloatValue();
   }

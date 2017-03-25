@@ -295,13 +295,11 @@ void NFmiMetTime::NextMetTime(const NFmiTimePerioid &thePerioid)
       SetMonth(short(GetMonth() + thePerioid.Month() - 12));
       return;
     }
-    else
-    {
-      SetYear(short(GetYear() + thePerioid.Year()));
-      SetMonth(short(GetMonth() + thePerioid.Month()));
-      if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
-      return;
-    }
+
+    SetYear(short(GetYear() + thePerioid.Year()));
+    SetMonth(short(GetMonth() + thePerioid.Month()));
+    if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
+    return;
   }
 
   DecodeCompareValue(GetCompareValue() + (thePerioid.Hour() * 60L + thePerioid.Minute()));
@@ -345,13 +343,11 @@ void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
       SetMonth(short(12 - GetMonth() + thePerioid.Month()));
       return;
     }
-    else
-    {
-      SetYear(short(GetYear() - thePerioid.Year()));
-      SetMonth(short(GetMonth() - thePerioid.Month()));
-      if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
-      return;
-    }
+
+    SetYear(short(GetYear() - thePerioid.Year()));
+    SetMonth(short(GetMonth() - thePerioid.Month()));
+    if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
+    return;
   }
 
   DecodeCompareValue(GetCompareValue() - thePerioid);

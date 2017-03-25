@@ -75,7 +75,7 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
     NFmiRect rect(topLeft, bottomRight);
     return rect;
   }
-  else if (PacificView() == false && theArea->PacificView())
+  if (PacificView() == false && theArea->PacificView())
   {
     std::unique_ptr<NFmiArea> pacificAreaFromThis(DoForcePacificFix());
 
@@ -349,10 +349,9 @@ const NFmiPoint NFmiArea::CenterLatLon() const
 
 bool NFmiArea::IsPacificLongitude(double theLongitude)
 {
-  if (theLongitude > 180 && theLongitude <= 360)
-    return true;
-  else
-    return false;
+  if (theLongitude > 180 && theLongitude <= 360) return true;
+
+  return false;
 }
 
 void NFmiArea::CheckForPacificView()
@@ -374,8 +373,8 @@ PacificPointFixerData NFmiArea::PacificPointFixer(const NFmiPoint &theBottomLeft
     NFmiAreaFactory::DoPossiblePacificFix(bottomLeftLatLon, topRightLatLon, usePacificView);
     return PacificPointFixerData(bottomLeftLatLon, topRightLatLon, usePacificView);
   }
-  else
-    return PacificPointFixerData(theBottomLeftLatlon, theTopRightLatlon, usePacificView);
+
+  return PacificPointFixerData(theBottomLeftLatlon, theTopRightLatlon, usePacificView);
 }
 
 bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
@@ -398,8 +397,8 @@ double NFmiArea::FixLongitude(double theLon) const
       // reunoilla, koska siellä on käytetty vähän yli 180-pituuspiirin
       // meneviä arvoja Tyynenmeren 180 asteen pituuspiirin reunoilla
       return theLon - 360;
-    else
-      return theLon;
+
+    return theLon;
   }
   else if (theLon < 0)
     return theLon + 360;

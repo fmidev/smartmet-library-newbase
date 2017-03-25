@@ -54,9 +54,8 @@ NFmiCalculationCondition::NFmiCalculationCondition()
 
 bool NFmiCalculationCondition::IsMasked(double theValue) const
 {
-  if (itsCondition == kFmiNoMaskOperation)
-    return true;
-  else if (theValue == kFloatMissing)
+  if (itsCondition == kFmiNoMaskOperation) return true;
+  if (theValue == kFloatMissing)
     return false;
   else
   {
@@ -122,9 +121,8 @@ bool NFmiCalculationCondition::IsMasked(double theValue) const
 
 double NFmiCalculationCondition::MaskValue(double theValue) const
 {
-  if (itsCondition == kFmiNoMaskOperation)
-    return 1.;
-  else if (theValue == kFloatMissing)
+  if (itsCondition == kFmiNoMaskOperation) return 1.;
+  if (theValue == kFloatMissing)
   {
     return 0.;
   }

@@ -313,9 +313,9 @@ NFmiArea* NFmiMercatorArea::NewArea(const NFmiPoint& theBottomLeftLatLon,
                                 BottomRight(),
                                 fixedPointData.fIsPacific);
   }
-  else
-    return new NFmiMercatorArea(
-        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+
+  return new NFmiMercatorArea(
+      theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
 }
 
 // ----------------------------------------------------------------------

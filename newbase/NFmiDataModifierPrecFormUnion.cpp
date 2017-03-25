@@ -87,10 +87,9 @@ void NFmiDataModifierPrecFormUnion::Clear()
 
 float NFmiDataModifierPrecFormUnion::CalculationResult()
 {
-  if (fCalculationResultOk)
-    return Result();
-  else
-    return kFloatMissing;
+  if (fCalculationResultOk) return Result();
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

@@ -47,8 +47,8 @@ boost::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
     copyMaskList->CheckIfMaskUsed();
     return copyMaskList;
   }
-  else
-    return boost::shared_ptr<NFmiAreaMaskList>();
+
+  return boost::shared_ptr<NFmiAreaMaskList>();
 }
 
 unsigned long NFmiAreaMaskList::NumberOfItems()
@@ -93,19 +93,17 @@ bool NFmiAreaMaskList::Reset()
 bool NFmiAreaMaskList::Next()
 {
   itsCurrentIndex++;
-  if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size())
-    return true;
-  else
-    return false;
+  if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size()) return true;
+
+  return false;
 }
 
 // Tämä tarkistaa vektori-taulukkoon osoittavia indeksejä, jotka alkavat 0:sta.
 bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 {
-  if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size())
-    return true;
-  else
-    return false;
+  if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size()) return true;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -117,14 +115,11 @@ bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 
 boost::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
 {
-  if (IsValidIndex(itsCurrentIndex))
-    return itsMaskVector[itsCurrentIndex];
-  else
-  {
-    // jos indeksi on vektorin ulkopuolella, palautetaan 0-pointteri (shared_ptr tyhjänä)
-    static boost::shared_ptr<NFmiAreaMask> dummy;
-    return dummy;
-  }
+  if (IsValidIndex(itsCurrentIndex)) return itsMaskVector[itsCurrentIndex];
+
+  // jos indeksi on vektorin ulkopuolella, palautetaan 0-pointteri (shared_ptr tyhjänä)
+  static boost::shared_ptr<NFmiAreaMask> dummy;
+  return dummy;
 }
 
 // ----------------------------------------------------------------------
@@ -142,8 +137,8 @@ bool NFmiAreaMaskList::Remove()
     itsMaskVector.erase(itsMaskVector.begin() + itsCurrentIndex);
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -173,8 +168,8 @@ bool NFmiAreaMaskList::IsMasked(const NFmiPoint &theLatLon)
     }
     return true;
   }
-  else
-    return true;
+
+  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -205,13 +200,11 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
         {
           return 0.;
         }
-        else
+
+        if (index->IsRampMask())
         {
-          if (index->IsRampMask())
-          {
-            sum += tempValue;
-            count++;
-          }
+          sum += tempValue;
+          count++;
         }
       }
     }
@@ -239,11 +232,9 @@ bool NFmiAreaMaskList::Find(unsigned long theIndex)
     itsCurrentIndex = vectorIndex;
     return true;
   }
-  else
-  {
-    itsCurrentIndex = -1;
-    return false;
-  }
+
+  itsCurrentIndex = -1;
+  return false;
 }
 
 // ----------------------------------------------------------------------

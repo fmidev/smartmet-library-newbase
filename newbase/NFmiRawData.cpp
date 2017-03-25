@@ -450,7 +450,7 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
     itsData[index] = value;
     return true;
   }
-  else if (itsOffset > 0)
+  if (itsOffset > 0)
   {
     // We have mmapped output data
     auto *ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);

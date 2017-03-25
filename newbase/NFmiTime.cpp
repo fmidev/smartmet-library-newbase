@@ -627,9 +627,8 @@ void NFmiTime::DecodeCompareValue(long aCompareValue)
 
 short NFmiTime::DaysInYear(const short aYear)
 {
-  if (aYear % 4 != 0)
-    return 365;
-  else if (aYear % 400 == 0)
+  if (aYear % 4 != 0) return 365;
+  if (aYear % 400 == 0)
     return 366;
   else if (aYear % 100 == 0)
     return 365;
@@ -647,10 +646,9 @@ short NFmiTime::DaysInYear(const short aYear)
 
 short NFmiTime::DaysInMonth(const short aMonth, const short aYear)
 {
-  if (aMonth == 2)
-    return static_cast<short>(monthLength[1] + DaysInYear(aYear) - 365);
-  else
-    return static_cast<short>(monthLength[aMonth - 1]);
+  if (aMonth == 2) return static_cast<short>(monthLength[1] + DaysInYear(aYear) - 365);
+
+  return static_cast<short>(monthLength[aMonth - 1]);
 }
 
 // ----------------------------------------------------------------------
@@ -826,8 +824,8 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
 
   if (theLongitude < 0)
     return static_cast<short>((((-1 * theLongitude) + 7.5) / 15) + theWinterTimeDiff);
-  else
-    return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
+
+  return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
 }
 
 // ----------------------------------------------------------------------
@@ -940,12 +938,10 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
         ind++;
         continue;
       }
-      else
-      {
-        noConversion = !noConversion;
-        ind++;
-        continue;
-      }
+
+      noConversion = !noConversion;
+      ind++;
+      continue;
     }
     else if (noConversion)
     {

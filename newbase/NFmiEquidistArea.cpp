@@ -250,10 +250,9 @@ double NFmiEquidistArea::K(const double delta) const
   // ... with these ones
 
   double acosDelta = acos(d);
-  if (acosDelta == 0)
-    return kRearth;
-  else
-    return kRearth * acosDelta / sin(acosDelta);
+  if (acosDelta == 0) return kRearth;
+
+  return kRearth * acosDelta / sin(acosDelta);
 }
 
 // ----------------------------------------------------------------------
@@ -306,14 +305,14 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                 itsCentralLatitude.Value(),
                                 fixedPointData.fIsPacific);
   }
-  else
-    return new NFmiEquidistArea(theBottomLeftLatLon,
-                                theTopRightLatLon,
-                                itsCentralLongitude,
-                                TopLeft(),
-                                BottomRight(),
-                                itsCentralLatitude.Value(),
-                                PacificView());
+
+  return new NFmiEquidistArea(theBottomLeftLatLon,
+                              theTopRightLatLon,
+                              itsCentralLongitude,
+                              TopLeft(),
+                              BottomRight(),
+                              itsCentralLatitude.Value(),
+                              PacificView());
 }
 
 // ----------------------------------------------------------------------

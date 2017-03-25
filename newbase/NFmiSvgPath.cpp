@@ -49,10 +49,9 @@ bool EatWhiteSpaces(istream& theInput)
   {
     ch = static_cast<char>(theInput.get());
   } while (isspace(ch));
-  if (theInput.fail())
-    return false;  // jos stremin lopussa, epäonnistuu
-  else
-    theInput.unget();
+  if (theInput.fail()) return false;  // jos stremin lopussa, epäonnistuu
+
+  theInput.unget();
   return true;
 }
 

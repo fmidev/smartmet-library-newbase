@@ -58,10 +58,9 @@ NFmiSortedList::NFmiSortedList(NFmiSortedList &theList)
 
 bool NFmiSortedList::Add(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (itsSortOrder == kAscending)
-    return AddAscending(theItem, fAddDuplicates);
-  else
-    return AddDescending(theItem, fAddDuplicates);
+  if (itsSortOrder == kAscending) return AddAscending(theItem, fAddDuplicates);
+
+  return AddDescending(theItem, fAddDuplicates);
 }
 
 // ----------------------------------------------------------------------

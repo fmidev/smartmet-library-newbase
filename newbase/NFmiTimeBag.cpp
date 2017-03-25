@@ -259,11 +259,9 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
       if (itsResolution.Day()) itsCurrentTime.ChangeByDays(theIndex * itsResolution.Day());
       return true;
     }
-    else
-    {
-      itsCurrentTime.ChangeByMinutes(theIndex * itsResolution);
-      return true;
-    }
+
+    itsCurrentTime.ChangeByMinutes(theIndex * itsResolution);
+    return true;
   }
   return false;
 }
@@ -277,10 +275,9 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
 
 bool NFmiTimeBag::IsInside(const NFmiMetTime &theTime) const
 {
-  if (theTime >= itsFirstTime && theTime <= itsLastTime)
-    return true;
-  else
-    return false;
+  if (theTime >= itsFirstTime && theTime <= itsLastTime) return true;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -419,8 +416,8 @@ bool NFmiTimeBag::operator==(const NFmiTimeBag &theTimeBag) const
   if (itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
       itsResolution == theTimeBag.itsResolution)
     return true;
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------

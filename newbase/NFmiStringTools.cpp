@@ -576,9 +576,8 @@ char tolowerfi(char theChar) { return iso_8859_1_lower[static_cast<unsigned char
 
 int todec(unsigned char theHex)
 {
-  if (theHex >= '0' && theHex <= '9')
-    return (theHex - '0');
-  else if (theHex >= 'a' && theHex <= 'f')
+  if (theHex >= '0' && theHex <= '9') return (theHex - '0');
+  if (theHex >= 'a' && theHex <= 'f')
     return (theHex - 'a' + 10);
   else
     return (theHex - 'A' + 10);
@@ -1001,10 +1000,9 @@ const std::string Basename(const std::string &theFile)
 const std::string Suffix(const std::string &theFile)
 {
   string::size_type pos = theFile.rfind('.');
-  if (pos == string::npos)
-    return "";
-  else
-    return theFile.substr(pos + 1);
+  if (pos == string::npos) return "";
+
+  return theFile.substr(pos + 1);
 }
 
 }  // namespace NFmiStringTools

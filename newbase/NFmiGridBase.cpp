@@ -1114,10 +1114,9 @@ bool NFmiGridBase::WriteBinaryData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (itsData)
-    return itsData->WriteBinaryData(numberOfItems, theFileName);
-  else
-    return false;
+  if (itsData) return itsData->WriteBinaryData(numberOfItems, theFileName);
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -1136,10 +1135,9 @@ bool NFmiGridBase::WriteTextData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (itsData)
-    return itsData->WriteBinaryData(numberOfItems, theFileName);
-  else
-    return false;
+  if (itsData) return itsData->WriteBinaryData(numberOfItems, theFileName);
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -1322,12 +1320,9 @@ NFmiGridBase &NFmiGridBase::operator=(const NFmiGridBase &theBase)
 // gridbasen yhtäläisyydestä ei oikeastaan muuta dataosiot kiinnosta kuin hilan x- ja y-koot.
 bool NFmiGridBase::operator==(const NFmiGridBase &theGrid) const
 {
-  if (this == &theGrid)
-    return true;
-  else
-  {
-    return (itsXNumber == theGrid.itsXNumber && itsYNumber == theGrid.itsYNumber);
-  }
+  if (this == &theGrid) return true;
+
+  return (itsXNumber == theGrid.itsXNumber && itsYNumber == theGrid.itsYNumber);
 }
 
 // ----------------------------------------------------------------------

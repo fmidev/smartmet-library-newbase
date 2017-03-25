@@ -204,10 +204,9 @@ NFmiAreaMask* NFmiLatLonAreaMask::Clone() const { return new NFmiLatLonAreaMask(
 
 double NFmiLatLonAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLon) const
 {
-  if (itsDataIdent->GetParamIdent() == kFmiLatitude)
-    return theLatLon.Y();
-  else
-    return theLatLon.X();
+  if (itsDataIdent->GetParamIdent() == kFmiLatitude) return theLatLon.Y();
+
+  return theLatLon.X();
 }
 
 // ----------------------------------------------------------------------
@@ -723,10 +722,9 @@ double NFmiGridSizeAreaMask::CalcValueFromLocation(const NFmiPoint& /* theLatLon
 {
   if (itsInfo->IsGrid())
   {
-    if (fCalcXValue)
-      return itsInfo->Area()->WorldXYWidth() / (itsInfo->Grid()->XNumber() - 1);
-    else
-      return itsInfo->Area()->WorldXYHeight() / (itsInfo->Grid()->YNumber() - 1);
+    if (fCalcXValue) return itsInfo->Area()->WorldXYWidth() / (itsInfo->Grid()->XNumber() - 1);
+
+    return itsInfo->Area()->WorldXYHeight() / (itsInfo->Grid()->YNumber() - 1);
   }
   return kFloatMissing;
 

@@ -637,7 +637,7 @@ bool NFmiSuperSmartInfo::LocationIndex2XYPosition(unsigned long theIndex,
     *theYOffset = -1;
     return false;
   }
-  else if (IsGrid())
+  if (IsGrid())
   {
     *theXOffset = (theIndex % itsGridXNumber);
     *theYOffset = (theIndex / itsGridXNumber);
@@ -766,8 +766,8 @@ bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
   {
     if (fUseHelperBinaryMasks && itsCurrentHelperBinaryMask)
       return itsCurrentHelperBinaryMask->IsMasked(theLocationIndex);
-    else
-      return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
+
+    return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
   }
 
   return true;  // jos ei maskia käytössä, on maski aina päällä!!!
@@ -1211,8 +1211,8 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::HelperBinaryMask(int theUsedVariationFac
   size_t size = itsHelperBinaryMaskList.size();
   if (theUsedVariationFactor < 0 || static_cast<std::size_t>(theUsedVariationFactor) >= size)
     return nullptr;
-  else
-    return itsHelperBinaryMaskList[theUsedVariationFactor];
+
+  return itsHelperBinaryMaskList[theUsedVariationFactor];
 }
 
 // ----------------------------------------------------------------------

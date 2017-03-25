@@ -103,10 +103,9 @@ int NFmiEnumConverter::ToEnum(const char *s)
 
   auto iter = itsData.find(s);
 
-  if (iter == itsData.end())
-    return itsBadEnum;
-  else
-    return iter->second;
+  if (iter == itsData.end()) return itsBadEnum;
+
+  return iter->second;
 }
 
 // ----------------------------------------------------------------------
@@ -118,10 +117,9 @@ int NFmiEnumConverter::ToEnum(const char *s)
 const std::string NFmiEnumConverter::ToString(int theValue)
 {
   const char *ptr = ToCharPtr(theValue);
-  if (ptr == nullptr)
-    return "";
-  else
-    return ptr;
+  if (ptr == nullptr) return "";
+
+  return ptr;
 }
 
 // ----------------------------------------------------------------------

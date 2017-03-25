@@ -376,19 +376,17 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
 
     return false;  // Lisämuistin varausta ei ole toteutettu
   }
-  else
-  {
-    if (itsFirstPair) delete[] itsFirstPair;
-    itsFirstPair = new NFmiPoint[itsMaxPairNumber];
 
-    if (itsLastPair) delete[] itsLastPair;
-    itsLastPair = new NFmiPoint[itsMaxPairNumber];
+  if (itsFirstPair) delete[] itsFirstPair;
+  itsFirstPair = new NFmiPoint[itsMaxPairNumber];
 
-    if (itsOutputInputRatio) delete[] itsOutputInputRatio;
-    itsOutputInputRatio = new double[itsMaxPairNumber];
+  if (itsLastPair) delete[] itsLastPair;
+  itsLastPair = new NFmiPoint[itsMaxPairNumber];
 
-    return true;
-  }
+  if (itsOutputInputRatio) delete[] itsOutputInputRatio;
+  itsOutputInputRatio = new double[itsMaxPairNumber];
+
+  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -491,10 +489,9 @@ bool NFmiTransformList::Interpolate(const NFmiPoint& firstPair, const NFmiPoint&
     // Clamp value
     itsOutputValue = firstOutputValue;
 
-    if (inputValue == firstInputValue)
-      return true;  // This is the starting point for input range
-    else
-      return false;  // Outside of input range
+    if (inputValue == firstInputValue) return true;  // This is the starting point for input range
+
+    return false;  // Outside of input range
   }
 
   if (inputValue >= lastInputValue)
@@ -502,10 +499,9 @@ bool NFmiTransformList::Interpolate(const NFmiPoint& firstPair, const NFmiPoint&
     // Clamp value
     itsOutputValue = lastOutputValue;
 
-    if (inputValue == lastInputValue)
-      return true;  // This is the ending point for input range
-    else
-      return false;  // Outside of input range
+    if (inputValue == lastInputValue) return true;  // This is the ending point for input range
+
+    return false;  // Outside of input range
   }
 
   if ((firstInputValue < inputValue) && (inputValue < lastInputValue))

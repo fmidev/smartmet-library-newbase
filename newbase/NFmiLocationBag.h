@@ -126,10 +126,9 @@ inline std::istream &operator>>(std::istream &file, NFmiLocationBag &ob) { retur
 
 inline const NFmiLocation *NFmiLocationBag::Location(unsigned long theIndex) const
 {
-  if (theIndex < itsLocations.size())
-    return itsLocations[theIndex];
-  else
-    return 0;
+  if (theIndex < itsLocations.size()) return itsLocations[theIndex];
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------

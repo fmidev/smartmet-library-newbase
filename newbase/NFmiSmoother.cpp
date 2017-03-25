@@ -271,9 +271,8 @@ const checkedVector<float> NFmiSmoother::SmoothenKernel(const checkedVector<floa
 
 NFmiSmoother::NFmiSmootherMethod NFmiSmoother::SmootherValue(const string& theName)
 {
-  if (theName == "None")
-    return kFmiSmootherNone;
-  else if (theName == "Neighbourhood")
+  if (theName == "None") return kFmiSmootherNone;
+  if (theName == "Neighbourhood")
     return kFmiSmootherNeighbourhood;
   else if (theName == "PseudoGaussian")
     return kFmiSmootherPseudoGaussian;

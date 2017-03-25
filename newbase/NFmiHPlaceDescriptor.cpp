@@ -289,7 +289,7 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
     const NFmiLocation *location = LocationWithIndex(theIndex);
     return NFmiPoint(location->GetLongitude(), location->GetLatitude());
   }
-  else if (itsGrid)
+  if (itsGrid)
   {
     return itsGrid->LatLon(theIndex);
   }
@@ -340,10 +340,8 @@ NFmiPoint NFmiHPlaceDescriptor::RelativePoint(unsigned long theIndex) const
 
 bool NFmiHPlaceDescriptor::Next()
 {
-  if (IsLocation())
-    return (itsLocationBag->Next());
-  else if (IsGrid())
-    return (itsGrid->Next());
+  if (IsLocation()) return (itsLocationBag->Next());
+  if (IsGrid()) return (itsGrid->Next());
   return false;
 }
 
@@ -355,10 +353,8 @@ bool NFmiHPlaceDescriptor::Next()
 
 bool NFmiHPlaceDescriptor::Previous()
 {
-  if (IsLocation())
-    return (itsLocationBag->Previous());
-  else if (IsGrid())
-    return (itsGrid->Previous());
+  if (IsLocation()) return (itsLocationBag->Previous());
+  if (IsGrid()) return (itsGrid->Previous());
   return false;
 }
 
@@ -428,10 +424,9 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
       tempBoolean = itsLocationBag->Next();
       if (!tempBoolean) break;
     } while (!(itsLocationBag->Location()->GetIdent() == theIdent));
-    if (tempBoolean)
-      return true;
-    else
-      return false;
+    if (tempBoolean) return true;
+
+    return false;
   }
   else
     return false;
@@ -468,10 +463,9 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
       theLocationUpperCase.UpperCase();
     } while (!(theLocationUpperCase == theUpperName));
 
-    if (tempBoolean)
-      return true;
-    else
-      return false;
+    if (tempBoolean) return true;
+
+    return false;
   }
   else
     return false;
@@ -489,7 +483,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiPoint &theLonLatPoint, NFmiPoint *
   if (IsLocation())  // Muutin käyttämään locationbagin omaa koodia ("saman niminen asema" -bugin
                      // takia) /Marko
     return itsLocationBag->NearestLocation(theLonLatPoint);
-  else if (IsGrid())
+  if (IsGrid())
   {
     if (itsGrid->NearestLatLon(
             theLonLatPoint.X(), theLonLatPoint.Y(), kFloatMissing * 1000., theGridPoint))
@@ -522,10 +516,9 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
                                                               // voidaan etsiä myös locationilla
                                                               // stationeita
 
-    if (tempBoolean)
-      return true;
-    else
-      return false;
+    if (tempBoolean) return true;
+
+    return false;
   }
   else if (IsGrid())
     return itsGrid->NearestLatLon(theLocation.GetLongitude(), theLocation.GetLatitude());
@@ -541,10 +534,9 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
 
 bool NFmiHPlaceDescriptor::IsActive() const
 {
-  if (itsActivity)
-    return (itsActivity[Index()]);
-  else
-    return false;
+  if (itsActivity) return (itsActivity[Index()]);
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -562,8 +554,8 @@ bool NFmiHPlaceDescriptor::SetActivity(bool theActivityState)
     itsActivity[Index()] = theActivityState;
     return temp;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -691,10 +683,9 @@ bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation,
 {
   if (itsLocationBag)
   {
-    if (theArea)
-      return itsLocationBag->NearestLocation(theLocation, theArea, theMaxDistance);
-    else
-      return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
+    if (theArea) return itsLocationBag->NearestLocation(theLocation, theArea, theMaxDistance);
+
+    return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
   }
   if (itsGrid)
     return itsGrid->NearestLatLon(
@@ -752,8 +743,8 @@ bool NFmiHPlaceDescriptor::MoveInGrid(long xSteps, long ySteps)
     }
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -944,10 +935,8 @@ const checkedVector<std::pair<int, double> > NFmiHPlaceDescriptor::NearestLocati
   {
     return itsLocationBag->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
   }
-  else
-  {
-    return itsGrid->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
-  }
+
+  return itsGrid->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
 }
 
 // ----------------------------------------------------------------------
@@ -989,10 +978,9 @@ void NFmiHPlaceDescriptor::CreateLatLonCache(std::vector<NFmiPoint> &v)
 
 bool NFmiHPlaceDescriptor::IsInside(const NFmiPoint &theLatLon, double theRadius) const
 {
-  if (IsLocation())
-    return itsLocationBag->IsInside(theLatLon, theRadius);
-  else
-    return itsGrid->IsInside(theLatLon);
+  if (IsLocation()) return itsLocationBag->IsInside(theLatLon, theRadius);
+
+  return itsGrid->IsInside(theLatLon);
 }
 
 // ----------------------------------------------------------------------

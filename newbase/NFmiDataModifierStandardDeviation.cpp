@@ -75,8 +75,8 @@ float NFmiDataModifierStandardDeviation::CalculationResult()
 {
   if (fCalculationResultOk)
     return (itsSquaredSum - itsSum * itsSum / itsCounter) / (itsCounter - 1);
-  else
-    return kFloatMissing;
+
+  return kFloatMissing;
 }
 
 // ======================================================================

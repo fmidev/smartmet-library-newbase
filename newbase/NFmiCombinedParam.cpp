@@ -315,8 +315,8 @@ NFmiDataModifierCombi *NFmiCombinedParam::FindSubParamIntegrator(FmiParameterNam
   {
     return itsIntegrators[idx];
   }
-  else
-    return nullptr;
+
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -387,10 +387,9 @@ void NFmiCombinedParam::CreateSubParams() { itsSubParams = nullptr; }
 
 NFmiDataModifierCombi *NFmiCombinedParam::GetSubIntegrator(unsigned long theIndex)
 {
-  if (theIndex < itsSubParams->GetSize())
-    return itsIntegrators[theIndex];
-  else
-    return nullptr;
+  if (theIndex < itsSubParams->GetSize()) return itsIntegrators[theIndex];
+
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -403,10 +402,9 @@ NFmiDataModifierCombi *NFmiCombinedParam::GetSubIntegrator(unsigned long theInde
 NFmiDataModifierCombi *NFmiCombinedParam::SubIntegrator(FmiParameterName theSubParamName)
 {
   int idx = FindSubParamIntegratorIndex(theSubParamName);
-  if (idx >= 0)
-    return GetSubIntegrator(idx);
-  else
-    return nullptr;
+  if (idx >= 0) return GetSubIntegrator(idx);
+
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------

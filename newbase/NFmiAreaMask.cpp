@@ -27,8 +27,8 @@ boost::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
   {
     return boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
   }
-  else
-    return theInfo;
+
+  return theInfo;
 }
 
 boost::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
@@ -38,8 +38,8 @@ boost::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
   {
     return boost::shared_ptr<NFmiAreaMask>(theMask->Clone());
   }
-  else
-    return theMask;
+
+  return theMask;
 }
 
 checkedVector<boost::shared_ptr<NFmiAreaMask> > NFmiAreaMask::DoShallowCopy(

@@ -246,13 +246,13 @@ NFmiArea *NFmiRotatedLatLonArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                      BottomRight(),
                                      fixedPointData.fIsPacific);
   }
-  else
-    return new NFmiRotatedLatLonArea(theBottomLeftLatLon,
-                                     theTopRightLatLon,
-                                     itsSouthernPole,
-                                     TopLeft(),
-                                     BottomRight(),
-                                     PacificView());
+
+  return new NFmiRotatedLatLonArea(theBottomLeftLatLon,
+                                   theTopRightLatLon,
+                                   itsSouthernPole,
+                                   TopLeft(),
+                                   BottomRight(),
+                                   PacificView());
 }
 
 // ----------------------------------------------------------------------

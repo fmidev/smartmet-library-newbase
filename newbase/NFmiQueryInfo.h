@@ -1371,9 +1371,9 @@ inline bool NFmiQueryInfo::FloatValue(float theFloatData)
     fHasNonFiniteValueSet = true;
     return false;
   }
-  else
-    return IsSubParamUsed() ? SubParamFloatValue(theFloatData)
-                            : IndexFloatValue(Index(), theFloatData);
+
+  return IsSubParamUsed() ? SubParamFloatValue(theFloatData)
+                          : IndexFloatValue(Index(), theFloatData);
 }
 
 // ----------------------------------------------------------------------

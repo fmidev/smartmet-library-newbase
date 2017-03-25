@@ -186,11 +186,10 @@ inline NFmiString &NFmiString::operator+=(const NFmiString &aFmiString)
     Add(tmpStr.GetCharPtr());
     return *this;
   }
-  else
-  {
-    Add(aFmiString.GetCharPtr());
-    return *this;
-  }
+
+  Add(aFmiString.GetCharPtr());
+  return *this;
+
   //  Add (aFmiString.GetCharPtr());
   //  return *this;
 }

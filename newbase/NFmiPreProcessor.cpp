@@ -450,7 +450,7 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
         itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
         return false;
       }
-      else if (posbigalku == string::npos && posbigloppu != string::npos)
+      if (posbigalku == string::npos && posbigloppu != string::npos)
       {
         itsMessage = "ERROR in " + itsFileName + ": " + theBeginDirective + " missing";
         return false;

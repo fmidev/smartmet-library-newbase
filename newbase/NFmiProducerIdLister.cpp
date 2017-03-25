@@ -213,9 +213,8 @@ bool NFmiProducerIdLister::ChangeTimeResolution(int theNewResolutionInMinutes)
   int currentRes = itsTimes.Resolution();
   double ratio = static_cast<double>(currentRes) / theNewResolutionInMinutes;
   NFmiTimeBag newTimeBag(itsTimes.FirstTime(), itsTimes.LastTime(), theNewResolutionInMinutes);
-  if (ratio == 0)
-    return false;
-  else if (ratio == 1)
+  if (ratio == 0) return false;
+  if (ratio == 1)
     return true;  // ei tarvitse tehdä mitään!
   else if (ratio > 1 && currentRes % theNewResolutionInMinutes != 0)
     return false;

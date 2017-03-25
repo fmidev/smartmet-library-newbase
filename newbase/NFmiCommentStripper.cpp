@@ -499,7 +499,7 @@ bool NFmiCommentStripper::StripNested(checkedVector<unsigned long> theBeginPosit
                      ": Missing pair to */ after: " + itsString.substr(max(posEnd - 22, 0), 21);
         return false;
       }
-      else if (level == 0)
+      if (level == 0)
       {
         int len = posEnd + 2 - startOfErase;
         itsString.erase(startOfErase - eraseSum, len);

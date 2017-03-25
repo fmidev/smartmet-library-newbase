@@ -224,11 +224,9 @@ bool NFmiLocationBag::Location(const NFmiLocation &theLocation)
     itsIndex = result.GetIndex();
     return true;
   }
-  else
-  {
-    Reset();
-    return false;
-  }
+
+  Reset();
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -259,10 +257,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation, double th
     itsIndex = result.GetIndex();
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -565,22 +561,19 @@ const checkedVector<pair<int, double> > NFmiLocationBag::NearestLocations(
 
   if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
   {
-    if (tempValues.size() == 0)
-      return checkedVector<pair<int, double> >();
-    else
-    {
-      // halutaan n kpl lahimpiä paikkoja
-      int usedCount = theMaxWantedLocations;
-      if (usedCount > static_cast<int>(tempValues.size()))
-        usedCount =
-            static_cast<int>(tempValues.size());  // maksimissaan voidaan sortata size:iin asti
-      std::partial_sort(tempValues.begin(),
-                        tempValues.begin() + usedCount,
-                        tempValues.end(),
-                        LocationIndexDistanceLess<IndDistPari>());
-      // palautetaan haluttu määrä locatioita
-      return checkedVector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
-    }
+    if (tempValues.size() == 0) return checkedVector<pair<int, double> >();
+
+    // halutaan n kpl lahimpiä paikkoja
+    int usedCount = theMaxWantedLocations;
+    if (usedCount > static_cast<int>(tempValues.size()))
+      usedCount =
+          static_cast<int>(tempValues.size());  // maksimissaan voidaan sortata size:iin asti
+    std::partial_sort(tempValues.begin(),
+                      tempValues.begin() + usedCount,
+                      tempValues.end(),
+                      LocationIndexDistanceLess<IndDistPari>());
+    // palautetaan haluttu määrä locatioita
+    return checkedVector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
   }
 
   // theMaxDistance != kFloatMissing)
@@ -597,10 +590,9 @@ const checkedVector<pair<int, double> > NFmiLocationBag::NearestLocations(
     if (pos > maxWantedPos) pos = maxWantedPos;
   }
 
-  if (pos == tempValues.end())
-    return tempValues;
-  else
-    return checkedVector<IndDistPari>(tempValues.begin(), pos);
+  if (pos == tempValues.end()) return tempValues;
+
+  return checkedVector<IndDistPari>(tempValues.begin(), pos);
 }
 
 //----------------------------------------------------------------------

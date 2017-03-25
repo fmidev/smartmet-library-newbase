@@ -151,10 +151,9 @@ bool NFmiParamBag::operator==(const NFmiParamBag& theOtherParams) const
 
   for (unsigned long i = 0; i < GetSize(); i++)
   {
-    if (!(this->itsParamsVector[i] == theOtherParams.itsParamsVector[i]))
-      return false;
-    else
-      retVal = true;
+    if (!(this->itsParamsVector[i] == theOtherParams.itsParamsVector[i])) return false;
+
+    retVal = true;
   }
   return retVal;
 }
@@ -348,11 +347,10 @@ NFmiDataIdent* NFmiParamBag::Current(bool fIgnoreSubParam) const
     if (fIsSubParamUsed) return itsUsedSubParam;
   if (GetSize() > 0 && itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
     return const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]);
-  else
-  {
-    static NFmiDataIdent dummy;
-    return &dummy;
-  }
+
+  static NFmiDataIdent dummy;
+  return &dummy;
+
   //  return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : 0;
 }
 
@@ -681,41 +679,39 @@ bool NFmiParamBag::Next() { return Next(true); }
 
 bool NFmiParamBag::Next(bool fIgnoreSubParam)
 {
-  if (fIgnoreSubParam)
-    return NFmiSize::Next();
-  else
-  {
-    if (itsIndex != -1)
-    {
-      if (Current()->HasDataParams())
-        if (Current()->NextDataParam())
-        {
-          itsUsedSubParam = &Current()->CurrentDataParam();
-          fIsSubParamUsed = true;
-          return true;
-        }
-    }
+  if (fIgnoreSubParam) return NFmiSize::Next();
 
-    if (NFmiSize::Next())
-    {
-      if (Current()->HasDataParams())
+  if (itsIndex != -1)
+  {
+    if (Current()->HasDataParams())
+      if (Current()->NextDataParam())
       {
-        Current()->ResetDataParams();
-        if (Current()->NextDataParam())
-        {
-          itsUsedSubParam = &Current()->CurrentDataParam();
-          fIsSubParamUsed = true;
-          return true;
-        }
+        itsUsedSubParam = &Current()->CurrentDataParam();
+        fIsSubParamUsed = true;
+        return true;
       }
-      else
+  }
+
+  if (NFmiSize::Next())
+  {
+    if (Current()->HasDataParams())
+    {
+      Current()->ResetDataParams();
+      if (Current()->NextDataParam())
       {
-        fIsSubParamUsed = false;
-        itsUsedSubParam = nullptr;
+        itsUsedSubParam = &Current()->CurrentDataParam();
+        fIsSubParamUsed = true;
         return true;
       }
     }
+    else
+    {
+      fIsSubParamUsed = false;
+      itsUsedSubParam = nullptr;
+      return true;
+    }
   }
+
   return false;
 }
 
@@ -737,34 +733,30 @@ bool NFmiParamBag::Previous() { return Previous(true); }
 
 bool NFmiParamBag::Previous(bool fIgnoreSubParam)
 {
-  if (fIgnoreSubParam)
-    return NFmiSize::Previous();
-  else
+  if (fIgnoreSubParam) return NFmiSize::Previous();
+
+  if (Current()->HasDataParams())
+    if (Current()->PreviousDataParam())
+    {
+      itsUsedSubParam = &Current()->CurrentDataParam();
+      fIsSubParamUsed = true;
+      return true;
+    }
+
+  if (NFmiSize::Previous())
   {
     if (Current()->HasDataParams())
-      if (Current()->PreviousDataParam())
-      {
-        itsUsedSubParam = &Current()->CurrentDataParam();
-        fIsSubParamUsed = true;
-        return true;
-      }
-
-    if (NFmiSize::Previous())
     {
-      if (Current()->HasDataParams())
-      {
-        itsUsedSubParam = &Current()->CurrentDataParam();
-        fIsSubParamUsed = true;
-        return Current()->ResetLastDataParams();
-      }
-      else
-      {
-        fIsSubParamUsed = false;
-        itsUsedSubParam = nullptr;
-        return true;
-      }
+      itsUsedSubParam = &Current()->CurrentDataParam();
+      fIsSubParamUsed = true;
+      return Current()->ResetLastDataParams();
     }
+
+    fIsSubParamUsed = false;
+    itsUsedSubParam = nullptr;
+    return true;
   }
+
   return false;
 }
 
@@ -895,15 +887,13 @@ bool NFmiParamBag::Add(const NFmiDataIdent& theParam, bool fCheckNoDuplicatePara
 
 bool NFmiParamBag::Remove()
 {
-  if (itsIndex < 0 || static_cast<unsigned long>(itsIndex) >= itsSize)
-    return false;
-  else
-  {
-    auto it = itsParamsVector.begin();
-    it += itsIndex;
-    itsParamsVector.erase(it);
-    SetSize(itsParamsVector.size());
-  }
+  if (itsIndex < 0 || static_cast<unsigned long>(itsIndex) >= itsSize) return false;
+
+  auto it = itsParamsVector.begin();
+  it += itsIndex;
+  itsParamsVector.erase(it);
+  SetSize(itsParamsVector.size());
+
   return true;
 }
 

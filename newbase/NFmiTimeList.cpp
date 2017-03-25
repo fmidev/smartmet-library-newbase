@@ -112,13 +112,10 @@ bool NFmiTimeList::Next(NFmiMetTime **theItem) const
 
 bool NFmiTimeList::Next() const
 {
-  if (itsIsReset)
-    return First();
-  else
-  {
-    itsIndex++;
-    return IndexOk(itsIndex);
-  }
+  if (itsIsReset) return First();
+
+  itsIndex++;
+  return IndexOk(itsIndex);
 }
 
 bool NFmiTimeList::IndexOk(int theIndex) const
@@ -135,13 +132,10 @@ bool NFmiTimeList::IndexOk(int theIndex) const
 
 bool NFmiTimeList::Previous() const
 {
-  if (itsIsReset)
-    return false;
-  else
-  {
-    itsIndex--;
-    return IndexOk(itsIndex);
-  }
+  if (itsIsReset) return false;
+
+  itsIndex--;
+  return IndexOk(itsIndex);
 }
 
 // ----------------------------------------------------------------------
@@ -182,12 +176,10 @@ bool NFmiTimeList::First() const
     Reset();
     return false;
   }
-  else
-  {
-    itsIsReset = false;
-    itsIndex = 0;
-    return true;
-  }
+
+  itsIsReset = false;
+  itsIndex = 0;
+  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -496,7 +488,7 @@ bool NFmiTimeList::FindNearestTime(const NFmiMetTime &theTime,
 
   if (theDirection == kBackward)
     return FindNearestBackwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
-  else if (theDirection == kForward)
+  if (theDirection == kForward)
     return FindNearestForwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
   else
     return FindNearestTime(firstNotLess, theTime, theTimeRangeInMinutes);
@@ -509,12 +501,10 @@ bool NFmiTimeList::FindNearestBackwardTime(checkedVector<NFmiMetTime *>::iterato
 {
   if (firstNotLess == itsVectorList.begin())
     return false;  // All times in itsVectorList were bigger than theTime
-  else
-  {
-    firstNotLess--;  // Lets move to previous time which is what we are searching here (parameter's
-                     // descriptive name false after this)
-    return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
-  }
+
+  firstNotLess--;  // Lets move to previous time which is what we are searching here (parameter's
+                   // descriptive name false after this)
+  return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
@@ -524,10 +514,8 @@ bool NFmiTimeList::FindNearestForwardTime(checkedVector<NFmiMetTime *>::iterator
 {
   if (firstNotLess == itsVectorList.end())
     return false;  // All times in itsVectorList were less than theTime
-  else
-  {
-    return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
-  }
+
+  return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
@@ -540,7 +528,7 @@ bool NFmiTimeList::FindNearestTime(checkedVector<NFmiMetTime *>::iterator &first
     // Only list's first time is possible
     return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
   }
-  else if (firstNotLess == itsVectorList.end())
+  if (firstNotLess == itsVectorList.end())
   {
     // Only list's last time is possible
     firstNotLess--;
@@ -555,10 +543,9 @@ bool NFmiTimeList::FindNearestTime(checkedVector<NFmiMetTime *>::iterator &first
     auto timeIter1 = firstNotLess;
     double diff1 = std::fabs(theTime.DifferenceInMinutes(*(*timeIter1)));
     // first time in the list has precedence if difference is equal
-    if (diff1 <= diff2)
-      return CheckFoundTimeIter(timeIter1, theTime, theTimeRangeInMinutes);
-    else
-      return CheckFoundTimeIter(timeIter2, theTime, theTimeRangeInMinutes);
+    if (diff1 <= diff2) return CheckFoundTimeIter(timeIter1, theTime, theTimeRangeInMinutes);
+
+    return CheckFoundTimeIter(timeIter2, theTime, theTimeRangeInMinutes);
   }
 }
 
@@ -572,9 +559,8 @@ bool NFmiTimeList::IsSearchedTimeInRange(checkedVector<NFmiMetTime *>::iterator 
                                          const NFmiMetTime &theTime,
                                          unsigned long theTimeRangeInMinutes)
 {
-  if (theTimeRangeInMinutes == kUnsignedLongMissing)
-    return true;
-  else if (theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter))))
+  if (theTimeRangeInMinutes == kUnsignedLongMissing) return true;
+  if (theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter))))
     return true;
   else
     return false;
@@ -589,8 +575,8 @@ bool NFmiTimeList::CheckFoundTimeIter(checkedVector<NFmiMetTime *>::iterator &fo
     itsIndex = CalcTimeListIndex(foundTimeIter);
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -679,7 +665,7 @@ int NFmiTimeList::CurrentResolution() const
 {
   if (itsIndex > 0 && itsIndex < static_cast<int>(itsVectorList.size()))
     return itsVectorList[itsIndex]->DifferenceInMinutes(*itsVectorList[itsIndex - 1]);
-  else if (itsIndex == 0 && itsVectorList.size() > 1)
+  if (itsIndex == 0 && itsVectorList.size() > 1)
     return itsVectorList[itsIndex + 1]->DifferenceInMinutes(*itsVectorList[itsIndex]);
   // HUOM! loppu osa koodia on poikeus tapausten tarkastelua ja pitäisi heittää esim. poikkeus.
   // Mutta laitoin koodin toimimaan kuten timebag:in Resolution-metodi toimisi
@@ -762,9 +748,8 @@ const NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime &theStartLimi
 bool NFmiTimeList::IsInside(const NFmiMetTime &theTime) const
 {
   int timeCount = NumberOfItems();
-  if (timeCount < 1)
-    return false;
-  else if (timeCount == 1)
+  if (timeCount < 1) return false;
+  if (timeCount == 1)
     return *itsVectorList[0] == theTime;
   else
     return *itsVectorList[0] <= theTime && theTime <= *itsVectorList[timeCount - 1];

@@ -165,12 +165,10 @@ bool NFmiFindFile::Next()
     itsFileName = itsGlobBuffer->gl_pathv[itsGlobIndex];
     return true;
   }
-  else
-  {
-    globfree(itsGlobBuffer);
-    itsGlobBuffer = nullptr;
-    return false;
-  }
+
+  globfree(itsGlobBuffer);
+  itsGlobBuffer = nullptr;
+  return false;
 
 #else
   struct _finddata_t c_file;

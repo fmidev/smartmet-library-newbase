@@ -622,8 +622,8 @@ inline size_t NFmiFastQueryInfo::Index(void) const
   if (AreIndividualIndexiesInside(itsParamIndex, itsLocationIndex, itsLevelIndex, itsTimeIndex))
     return (itsParamIndex * itsLocLevTimSize + itsLocationIndex * itsLevTimSize +
             itsLevelIndex * itsTimeSize + itsTimeIndex);
-  else
-    return static_cast<size_t>(-1);
+
+  return static_cast<size_t>(-1);
 }
 
 // ----------------------------------------------------------------------
@@ -647,8 +647,8 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
                   theLevelIndex * itsTimeSize + theTimeIndex);
     return idx;
   }
-  else
-    return static_cast<size_t>(-1);
+
+  return static_cast<size_t>(-1);
 }
 
 // ----------------------------------------------------------------------
@@ -716,13 +716,10 @@ inline bool NFmiFastQueryInfo::FirstParam(bool fIgnoreSubParam)
 inline bool NFmiFastQueryInfo::NextLocation(void)
 {
   itsLocationIndex++;
-  if (itsLocationIndex < itsLocationSize)
-    return true;
-  else
-  {
-    itsLocationIndex = itsLocationSize;
-    return false;
-  }
+  if (itsLocationIndex < itsLocationSize) return true;
+
+  itsLocationIndex = itsLocationSize;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -758,13 +755,10 @@ inline bool NFmiFastQueryInfo::FirstLevel(void)
 inline bool NFmiFastQueryInfo::NextTime(void)
 {
   itsTimeIndex++;
-  if (itsTimeIndex < itsTimeSize)
-    return true;
-  else
-  {
-    itsTimeIndex = itsTimeSize;
-    return false;
-  }
+  if (itsTimeIndex < itsTimeSize) return true;
+
+  itsTimeIndex = itsTimeSize;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -842,13 +836,11 @@ inline bool NFmiFastQueryInfo::Param(FmiParameterName theParam)
     fUseSubParam = itsParamDescriptor->IsSubParamUsed();
     return true;
   }
-  else
-  {
-    // reset index if the param was not found
-    itsParamIndex = static_cast<unsigned long>(-1);
-    fUseSubParam = false;
-    return false;
-  }
+
+  // reset index if the param was not found
+  itsParamIndex = static_cast<unsigned long>(-1);
+  fUseSubParam = false;
+  return false;
 }
 
 // ----------------------------------------------------------------------

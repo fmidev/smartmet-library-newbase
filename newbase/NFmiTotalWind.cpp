@@ -99,15 +99,11 @@ static double WeightedMean(double missingValue,
     facSum += factor4;
   }
 
-  if (!any)
-    return missingValue;
-  else
-  {
-    if (facSum > 0.)
-      return sum / facSum;
-    else
-      return 0;
-  }
+  if (!any) return missingValue;
+
+  if (facSum > 0.) return sum / facSum;
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------
@@ -708,24 +704,21 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
 
   if (dir1 == kTVariableWind)  // vaihtelevaa tuulta
   {
-    if (factor == 0)
-      return kTVariableWind;
-    else
-      return dir2;  // ei tarvitse laskea mitään
+    if (factor == 0) return kTVariableWind;
+
+    return dir2;  // ei tarvitse laskea mitään
   }
   else if (dir2 == kTVariableWind)
   {
-    if (factor == 1)
-      return kTVariableWind;
-    else
-      return dir1;  // ei tarvitse laskea mitään
+    if (factor == 1) return kTVariableWind;
+
+    return dir1;  // ei tarvitse laskea mitään
   }
   if (dir1 == kT6BitMissing)
   {
-    if (factor == 0)
-      return kT6BitMissing;  // palautetaan puuttuva tieto
-    else
-      return dir2;  // ei tarvitse laskea mitään
+    if (factor == 0) return kT6BitMissing;  // palautetaan puuttuva tieto
+
+    return dir2;  // ei tarvitse laskea mitään
   }
 
   for (unsigned long i : dirTable)  // katsotaan kummalla puolella 180:aa astetta arvot ovat
@@ -936,14 +929,13 @@ bool NFmiTotalWind::WindDirection(unsigned long theValue)
       fDataOk = true;
     return true;
   }
+
+  SetWindDirection(kT6BitMissing);
+  if (WindSpeed() == WindSpeedMissingValue())
+    fDataOk = false;
   else
-  {
-    SetWindDirection(kT6BitMissing);
-    if (WindSpeed() == WindSpeedMissingValue())
-      fDataOk = false;
-    else
-      fDataOk = true;
-  }
+    fDataOk = true;
+
   return false;
 }
 
@@ -971,14 +963,13 @@ bool NFmiTotalWind::WindSpeed(unsigned long theValue)
 
     return true;
   }
+
+  SetWindSpeed(WindSpeedMissingValue());
+  if (WindDirection() == kT6BitMissing)
+    fDataOk = false;
   else
-  {
-    SetWindSpeed(WindSpeedMissingValue());
-    if (WindDirection() == kT6BitMissing)
-      fDataOk = false;
-    else
-      fDataOk = true;
-  }
+    fDataOk = true;
+
   return false;
 }
 
@@ -1011,12 +1002,10 @@ bool NFmiTotalWind::LongValue(unsigned long theValue)
     fDataOk = true;
     return true;
   }
-  else
-  {
-    itsData.longType = kTCombinedWeatherMissing;
-    fDataOk = true;
-    return false;
-  }
+
+  itsData.longType = kTCombinedWeatherMissing;
+  fDataOk = true;
+  return false;
 }
 
 // ----------------------------------------------------------------------

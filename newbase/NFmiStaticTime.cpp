@@ -238,30 +238,20 @@ bool NFmiStaticTime::IsEqual(const NFmiSortable &aFmiTest) const
 
 bool NFmiStaticTime::IsLessThan(const NFmiSortable &aFmiTest) const
 {
-  if (GetYear() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear())
-    return false;
-  else if (GetYear() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear())
-    return true;
+  if (GetYear() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return false;
+  if (GetYear() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return true;
 
-  if (GetMonth() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth())
-    return false;
-  else if (GetMonth() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth())
-    return true;
+  if (GetMonth() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return false;
+  if (GetMonth() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return true;
 
-  if (GetDay() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay())
-    return false;
-  else if (GetDay() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay())
-    return true;
+  if (GetDay() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return false;
+  if (GetDay() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return true;
 
-  if (GetHour() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour())
-    return false;
-  else if (GetHour() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour())
-    return true;
+  if (GetHour() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return false;
+  if (GetHour() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return true;
 
-  if (GetMin() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin())
-    return false;
-  else if (GetMin() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin())
-    return true;
+  if (GetMin() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return false;
+  if (GetMin() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return true;
 
   if (GetSec() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetSec()) return true;
 

@@ -30,18 +30,17 @@
 
 static bool IsFindFunction(NFmiAreaMask::FunctionType theFunction)
 {
-  if (theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC)
-    return true;
-  else
-    return false;
+  if (theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC) return true;
+
+  return false;
 }
 
 static bool IsFindConditionalFunction(NFmiAreaMask::FunctionType theFunction)
 {
   if (theFunction >= NFmiAreaMask::ProbOver && theFunction <= NFmiAreaMask::ProbBetweenEq)
     return true;
-  else
-    return false;
+
+  return false;
 }
 
 static bool CheckProbabilityCondition(NFmiAreaMask::FunctionType condition,
@@ -247,15 +246,12 @@ bool NFmiInfoAreaMask::UseLevelInfo() const { return false; }
 
 double NFmiInfoAreaMask::CalcValueFromLocation(const NFmiPoint &theLatLon) const
 {
-  if (fIsTimeIntepolationNeededInValue)
-    return itsInfo->InterpolatedValue(theLatLon, itsTime, 360);
-  else
-  {
-    double value = itsInfo->InterpolatedValue(theLatLon);
-    if (value == kFloatMissing && itsInfo->DataType() == NFmiInfoData::kScriptVariableData)
-      value = itsInfo->FloatValue();
-    return value;
-  }
+  if (fIsTimeIntepolationNeededInValue) return itsInfo->InterpolatedValue(theLatLon, itsTime, 360);
+
+  double value = itsInfo->InterpolatedValue(theLatLon);
+  if (value == kFloatMissing && itsInfo->DataType() == NFmiInfoData::kScriptVariableData)
+    value = itsInfo->FloatValue();
+  return value;
 }
 
 // ----------------------------------------------------------------------
@@ -347,14 +343,11 @@ double NFmiInfoAreaMask::PressureValueStatic(double thePressure,
 
 bool NFmiInfoAreaMask::IsMasked(int theIndex) const
 {
-  if (!fEnabled)
-    return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
-  else
-  {
-    double testValue = itsInfo->GetFloatValue(itsInfo->Index(
-        itsInfo->ParamIndex(), theIndex, itsInfo->LevelIndex(), itsInfo->TimeIndex()));
-    return itsMaskCondition.IsMasked(testValue);
-  }
+  if (!fEnabled) return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
+
+  double testValue = itsInfo->GetFloatValue(
+      itsInfo->Index(itsInfo->ParamIndex(), theIndex, itsInfo->LevelIndex(), itsInfo->TimeIndex()));
+  return itsMaskCondition.IsMasked(testValue);
 }
 
 // ----------------------------------------------------------------------
@@ -745,9 +738,9 @@ NFmiLocationCache NFmiInfoAreaMaskMetFuncBase::CalcPeekedLocation(
     NFmiLocationCache locationCache = CalcLocationCache(loc.GetLocation());
     return locationCache;
   }
-  else  // lasketaan peek-piste datan oman hilan suuntaisesti
-    return NFmiLocationCache::MakePeekedLocation(
-        theLocationCachePoint, theOffsetX, theOffsetY, itsGridSizeX, itsGridSizeY);
+  // lasketaan peek-piste datan oman hilan suuntaisesti
+  return NFmiLocationCache::MakePeekedLocation(
+      theLocationCachePoint, theOffsetX, theOffsetY, itsGridSizeX, itsGridSizeY);
 }
 
 // Oletus, kaikki offset-pyynnöt on valideja, joten rajoja ei tarkastella
@@ -963,15 +956,13 @@ double NFmiInfoAreaMaskGrad::Value(const NFmiCalculationParams &theCalculationPa
       float divergence = gradX + gradY;  // lasketaan vain komponentit yhteen
       return divergence;
     }
-    else
-    {
-      float gradScalar = ::sqrt((gradX * gradX) + (gradY * gradY));  // lasketaan komponenttien
-      // avulla pituus ja käytetään
-      // sitä paluuarvona (skalaari
-      // arvo, vaikka gradientti on
-      // oikeasti vektori suure)
-      return gradScalar;
-    }
+
+    float gradScalar = ::sqrt((gradX * gradX) + (gradY * gradY));  // lasketaan komponenttien
+    // avulla pituus ja käytetään
+    // sitä paluuarvona (skalaari
+    // arvo, vaikka gradientti on
+    // oikeasti vektori suure)
+    return gradScalar;
   }
   else if (itsMetFunctionDirection == DirectionX)
     return gradX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella
@@ -1180,7 +1171,7 @@ double NFmiInfoAreaMaskLaplace::Value(const NFmiCalculationParams &theCalculatio
     float laplaceScalar = laplaceX + laplaceY;
     return laplaceScalar;
   }
-  else if (itsMetFunctionDirection == DirectionX)
+  if (itsMetFunctionDirection == DirectionX)
     return laplaceX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella
                       // puuttuvia arvoja, koska arvot palautetaan vain sellaisenaan
   else if (itsMetFunctionDirection == DirectionY)
@@ -1244,7 +1235,7 @@ double NFmiInfoAreaMaskRotor::Value(const NFmiCalculationParams &theCalculationP
                                                               // rotor on oikeasti vektori suure)
     return rotScalar;
   }
-  else if (itsMetFunctionDirection == DirectionX)
+  if (itsMetFunctionDirection == DirectionX)
     return rotX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella puuttuvia
                   // arvoja, koska arvot palautetaan vain sellaisenaan
   else if (itsMetFunctionDirection == DirectionY)
@@ -1502,10 +1493,9 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
 
 static float ConvertFL2P(float FL)
 {
-  if (FL != kFloatMissing)
-    return static_cast<float>(::CalcFlightLevelPressure(FL));
-  else
-    return kFloatMissing;
+  if (FL != kFloatMissing) return static_cast<float>(::CalcFlightLevelPressure(FL));
+
+  return kFloatMissing;
 }
 
 void NFmiInfoAreaMaskVertFunc::SetLevelValues()
@@ -1570,7 +1560,7 @@ float NFmiInfoAreaMaskVertFunc::DoGetFunction(const NFmiLocationCache &theLocati
   if (itsSecondaryFunc == NFmiAreaMask::VertZ)
     return itsInfo->HeightValue(
         theLevelValue, theCalculationParams.itsLatlon, theCalculationParams.itsTime);
-  else if (itsSecondaryFunc == NFmiAreaMask::VertP || itsSecondaryFunc == NFmiAreaMask::VertFL)
+  if (itsSecondaryFunc == NFmiAreaMask::VertP || itsSecondaryFunc == NFmiAreaMask::VertFL)
     return itsInfo->PressureLevelValue(
         theLevelValue, theCalculationParams.itsLatlon, theCalculationParams.itsTime);
   else
@@ -1639,10 +1629,9 @@ static double CalcLogInterpolatedValue(double x1, double x2, double x, double y1
 
 float NFmiInfoAreaMaskVertFunc::GetLevelHeightValue(const NFmiLocationCache &theLocationCache)
 {
-  if (itsUsedHeightParId == kFmiModelLevel)
-    return itsInfo->Level()->LevelValue();
-  else
-    return itsInfo->GetLevelHeightValue(itsUsedHeightParId, theLocationCache, itsTimeCache);
+  if (itsUsedHeightParId == kFmiModelLevel) return itsInfo->Level()->LevelValue();
+
+  return itsInfo->GetLevelHeightValue(itsUsedHeightParId, theLocationCache, itsTimeCache);
 }
 
 float NFmiInfoAreaMaskVertFunc::DoFindFunction(const NFmiLocationCache &theLocationCache)
@@ -1707,8 +1696,8 @@ float NFmiInfoAreaMaskVertFunc::DoFindFunction(const NFmiLocationCache &theLocat
   if (findHeight)
     return foundHeight;  // palautetaan viimeisin löytynyt arvo (tai missing, jos ei löytynyt
                          // yhtään)
-  else
-    return static_cast<float>(foundCount);
+
+  return static_cast<float>(foundCount);
 }
 
 float NFmiInfoAreaMaskVertFunc::DoVerticalGrad(const NFmiLocationCache &theLocationCache,
@@ -1721,8 +1710,8 @@ float NFmiInfoAreaMaskVertFunc::DoVerticalGrad(const NFmiLocationCache &theLocat
     float result = ::fabs(value2 - value1) / ::fabs(itsEndLevelValue - itsStartLevelValue);
     return result;
   }
-  else
-    return kFloatMissing;
+
+  return kFloatMissing;
 }
 
 // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -1741,7 +1730,7 @@ double NFmiInfoAreaMaskVertFunc::Value(const NFmiCalculationParams &theCalculati
 
   if (itsPrimaryFunc == NFmiAreaMask::Get)
     return DoGetFunction(locationCache, theCalculationParams, itsStartLevelValue);
-  else if (itsPrimaryFunc == NFmiAreaMask::Grad)
+  if (itsPrimaryFunc == NFmiAreaMask::Grad)
     return DoVerticalGrad(locationCache, theCalculationParams);
 
   // 2. Käy läpi haluttu level korkeus/level väli ja laske haluttu operaatio niille
@@ -1791,10 +1780,9 @@ class DoubleValueSearcher
   {
     if (primaryValue != kFloatMissing && itsExtremeValue != kFloatMissing)
     {
-      if (fSearchMax)
-        return primaryValue > itsExtremeValue;
-      else
-        return primaryValue < itsExtremeValue;
+      if (fSearchMax) return primaryValue > itsExtremeValue;
+
+      return primaryValue < itsExtremeValue;
     }
     else if (primaryValue != kFloatMissing)
       return true;
@@ -1824,22 +1812,20 @@ float NFmiInfoAreaMaskVertFunc::DoNormalFunction(const NFmiLocationCache &theLoc
     }
     return valueSearcher.ExtremeSecondaryValue();
   }
-  else
+
+  // 3. Nollaa integraattori-laskuri
+  itsFunctionModifier->Clear();
+  // 7. käy levelit läpi ja sijoita arvot itsFunctionModifier:iin
+  for (auto levelIndex = static_cast<int>(itsStartLevelIndex);
+       fReverseLevels ? levelIndex >= static_cast<int>(itsEndLevelIndex)
+                      : levelIndex <= static_cast<int>(itsEndLevelIndex);
+       levelIndex += itsLevelIncrement)
   {
-    // 3. Nollaa integraattori-laskuri
-    itsFunctionModifier->Clear();
-    // 7. käy levelit läpi ja sijoita arvot itsFunctionModifier:iin
-    for (auto levelIndex = static_cast<int>(itsStartLevelIndex);
-         fReverseLevels ? levelIndex >= static_cast<int>(itsEndLevelIndex)
-                        : levelIndex <= static_cast<int>(itsEndLevelIndex);
-         levelIndex += itsLevelIncrement)
-    {
-      itsInfo->LevelIndex(levelIndex);
-      itsFunctionModifier->Calculate(itsInfo->CachedInterpolation(theLocationCache, itsTimeCache));
-    }
-    // 8. palauta laskennan tulos
-    return itsFunctionModifier->CalculationResult();
+    itsInfo->LevelIndex(levelIndex);
+    itsFunctionModifier->Calculate(itsInfo->CachedInterpolation(theLocationCache, itsTimeCache));
   }
+  // 8. palauta laskennan tulos
+  return itsFunctionModifier->CalculationResult();
 }
 
 // **********************************************************

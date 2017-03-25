@@ -107,17 +107,15 @@ const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
 
   if (dLeftTop <= dRightTop)
   {
-    if (dLeftTop <= dLeftBottom)
-      return TopLeft();
-    else
-      return BottomLeft();
+    if (dLeftTop <= dLeftBottom) return TopLeft();
+
+    return BottomLeft();
   }
   else
   {
-    if (dRightTop <= dRightBottom)
-      return TopRight();
-    else
-      return BottomRight();
+    if (dRightTop <= dRightBottom) return TopRight();
+
+    return BottomRight();
   }
 }
 
@@ -414,8 +412,8 @@ bool NFmiRect::Intersect(const NFmiRect &theRect) const
   if (this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
       this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top())
     return true;
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------

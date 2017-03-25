@@ -131,10 +131,8 @@ bool NFmiDataPool::Init(unsigned long theNumber)
       itsData[i] = kFloatMissing;
     return true;
   }
-  else
-  {
-    return false;
-  }
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -195,8 +193,8 @@ bool NFmiDataPool::Index(unsigned long newIndex)
       fLast = true;
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -208,10 +206,9 @@ bool NFmiDataPool::Index(unsigned long newIndex)
 
 bool NFmiDataPool::Next(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex += numberOfSteps))
-    return true;
-  else
-    return false;
+  if (numberOfSteps && IsInside(itsIndex += numberOfSteps)) return true;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -223,10 +220,9 @@ bool NFmiDataPool::Next(unsigned long numberOfSteps)
 
 bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex -= numberOfSteps))
-    return true;
-  else
-    return false;
+  if (numberOfSteps && IsInside(itsIndex -= numberOfSteps)) return true;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------

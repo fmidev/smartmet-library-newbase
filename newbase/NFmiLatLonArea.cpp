@@ -182,9 +182,9 @@ NFmiArea *NFmiLatLonArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                               BottomRight(),
                               fixedPointData.fIsPacific);
   }
-  else
-    return new NFmiLatLonArea(
-        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+
+  return new NFmiLatLonArea(
+      theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
 }
 
 // ----------------------------------------------------------------------

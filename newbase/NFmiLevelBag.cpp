@@ -202,10 +202,9 @@ bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
          i < static_cast<int>(this->GetSize()) && static_cast<int>(theLevelBag.GetSize());
          i++)
     {
-      if (!(this->itsLevels[i] == theLevelBag.itsLevels[i]))
-        return false;
-      else
-        retVal = true;
+      if (!(this->itsLevels[i] == theLevelBag.itsLevels[i])) return false;
+
+      retVal = true;
     }
   }
   return retVal;

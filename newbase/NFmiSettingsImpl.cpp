@@ -467,10 +467,9 @@ const std::string NFmiSettingsImpl::Value(const std::string& theName,
 {
   if (!itIsInitialized) Init();
   DataType::const_iterator pos = itsData.find(theName);
-  if (pos == itsData.end())
-    return theAlternate;
-  else
-    return expand(pos->second, itsData, "${", "}", itsNamespaces);
+  if (pos == itsData.end()) return theAlternate;
+
+  return expand(pos->second, itsData, "${", "}", itsNamespaces);
 }
 
 // ----------------------------------------------------------------------
@@ -639,10 +638,9 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 
     if (!input.good())
     {
-      if (words == 0)
-        break;
-      else
-        throw runtime_error("Error parsing the end of the configuration file");
+      if (words == 0) break;
+
+      throw runtime_error("Error parsing the end of the configuration file");
     }
 
     // Extract name containing multiple words

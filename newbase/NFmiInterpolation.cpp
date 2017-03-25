@@ -46,11 +46,9 @@ double Linear(double theX, double theX1, double theX2, double theY1, double theY
     if (theY1 != theY2) return kFloatMissing;
     return theY1;
   }
-  else
-  {
-    double factor = (theX - theX1) / (theX2 - theX1);
-    return Linear(factor, theY1, theY2);
-  }
+
+  double factor = (theX - theX1) / (theX2 - theX1);
+  return Linear(factor, theY1, theY2);
 }
 
 // ----------------------------------------------------------------------
@@ -75,24 +73,22 @@ double WindVector(double theFactor, double theLeftWV, double theRightWV)
   {
     return (theFactor == 0 ? theLeftWV : kFloatMissing);
   }
-  else
-  {
-    double leftWD = (static_cast<int>(theLeftWV) % 100) * 10.;
-    auto leftWS = static_cast<double>(static_cast<int>(theLeftWV) / 100);
-    double rightWD = (static_cast<int>(theRightWV) % 100) * 10.;
-    auto rightWS = static_cast<double>(static_cast<int>(theRightWV) / 100);
 
-    NFmiInterpolation::WindInterpolator windInterpolator;
-    windInterpolator.operator()(leftWS, leftWD, 1 - theFactor);
-    windInterpolator.operator()(rightWS, rightWD, theFactor);
-    double wdInterp = windInterpolator.Direction();
-    double wsInterp = windInterpolator.Speed();
+  double leftWD = (static_cast<int>(theLeftWV) % 100) * 10.;
+  auto leftWS = static_cast<double>(static_cast<int>(theLeftWV) / 100);
+  double rightWD = (static_cast<int>(theRightWV) % 100) * 10.;
+  auto rightWS = static_cast<double>(static_cast<int>(theRightWV) / 100);
 
-    if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
-      return round(wsInterp) * 100 + round(wdInterp / 10.);
-    else
-      return kFloatMissing;
-  }
+  NFmiInterpolation::WindInterpolator windInterpolator;
+  windInterpolator.operator()(leftWS, leftWD, 1 - theFactor);
+  windInterpolator.operator()(rightWS, rightWD, theFactor);
+  double wdInterp = windInterpolator.Direction();
+  double wsInterp = windInterpolator.Speed();
+
+  if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
+    return round(wsInterp) * 100 + round(wdInterp / 10.);
+
+  return kFloatMissing;
 }
 
 double WindVector(double theX,
@@ -128,8 +124,8 @@ double WindVector(double theX,
 
     if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
       return round(wsInterp) * 100 + round(wdInterp / 10.);
-    else
-      return kFloatMissing;
+
+    return kFloatMissing;
   }
 
   // Grid cell edges
@@ -191,11 +187,9 @@ double ModLinear(
     if (theY1 != theY2) return kFloatMissing;
     return theY1;
   }
-  else
-  {
-    double factor = (theX - theX1) / (theX2 - theX1);
-    return ModLinear(factor, theY1, theY2, theModulo);
-  }
+
+  double factor = (theX - theX1) / (theX2 - theX1);
+  return ModLinear(factor, theY1, theY2, theModulo);
 }
 
 // ----------------------------------------------------------------------
@@ -282,8 +276,8 @@ double BiLinear(double theX,
             dx * dy * theTopRight) /
            wsum;
   }
-  else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+  if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
   {
     double wsum = ((1 - dx) * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
     return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
@@ -474,8 +468,8 @@ double ModBiLinear(double theX,
     calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
     return calculator();
   }
-  else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+  if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
   {
     if (1 - dx < dy) return kFloatMissing;
     calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));

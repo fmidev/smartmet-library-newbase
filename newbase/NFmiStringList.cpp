@@ -118,10 +118,9 @@ bool NFmiStringList::Previous()
 
 NFmiString *NFmiStringList::Current() const
 {
-  if (itsIndex < itsList.size())
-    return itsList[itsIndex];
-  else
-    return nullptr;
+  if (itsIndex < itsList.size()) return itsList[itsIndex];
+
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------

@@ -369,10 +369,9 @@ int NFmiCmdLine::NumberofParameters() const { return itsParameterCount; }
 
 const char *NFmiCmdLine::Parameter(int i) const
 {
-  if (i > itsParameterCount || i < 1)
-    return "";
-  else
-    return itsParameters[i - 1];
+  if (i > itsParameterCount || i < 1) return "";
+
+  return itsParameters[i - 1];
 }
 
 // ----------------------------------------------------------------------
@@ -396,10 +395,9 @@ char *NFmiCmdLine::Command() const { return itsCommand; }
 
 char NFmiCmdLine::OptionLetter(int i) const
 {
-  if (i > itsOptionCount || i < 1)
-    return ' ';
-  else
-    return itsOptionLetters[i - 1];
+  if (i > itsOptionCount || i < 1) return ' ';
+
+  return itsOptionLetters[i - 1];
 }
 
 // ----------------------------------------------------------------------
@@ -415,10 +413,9 @@ char NFmiCmdLine::OptionLetter(int i) const
 
 const char *NFmiCmdLine::OptionValue(int i) const
 {
-  if (i > itsOptionCount || i < 1)
-    return "";
-  else
-    return itsOptionValues[i - 1];
+  if (i > itsOptionCount || i < 1) return "";
+
+  return itsOptionValues[i - 1];
 }
 
 // ----------------------------------------------------------------------
@@ -456,10 +453,9 @@ const char *NFmiCmdLine::OptionValue(char c) const
   int i;
   for (i = 0; i < itsOptionCount; i++)
     if (itsOptionLetters[i] == c) break;
-  if (i <= itsOptionCount)
-    return itsOptionValues[i];
-  else
-    return nullptr;
+  if (i <= itsOptionCount) return itsOptionValues[i];
+
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------

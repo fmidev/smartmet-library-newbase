@@ -32,10 +32,9 @@ NFmiDataModifierAdd::NFmiDataModifierAdd(float theAddValue) : itsAddValue(theAdd
 
 float NFmiDataModifierAdd::FloatOperation(float theValue)
 {
-  if (CheckMissingValues(theValue))
-    return (theValue + itsAddValue);
-  else
-    return theValue;
+  if (CheckMissingValues(theValue)) return (theValue + itsAddValue);
+
+  return theValue;
 }
 
 // ======================================================================

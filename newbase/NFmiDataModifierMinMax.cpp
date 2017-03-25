@@ -46,10 +46,9 @@ NFmiDataModifier* NFmiDataModifierMinMax::Clone() const
 
 float NFmiDataModifierMinMax::MinValue()
 {
-  if (itsMinValue != FLT_MAX)
-    return itsMinValue;
-  else
-    return kFloatMissing;
+  if (itsMinValue != FLT_MAX) return itsMinValue;
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------
@@ -60,10 +59,9 @@ float NFmiDataModifierMinMax::MinValue()
 
 float NFmiDataModifierMinMax::MaxValue()
 {
-  if (itsMaxValue != -FLT_MAX)
-    return itsMaxValue;
-  else
-    return kFloatMissing;
+  if (itsMaxValue != -FLT_MAX) return itsMaxValue;
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

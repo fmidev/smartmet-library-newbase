@@ -391,17 +391,15 @@ bool NFmiTimeDescriptor::Next()
 {
   if (itsTimeBagIdent)
   {
-    if (IsValidTime())
-      return itsTimeList ? itsTimeList->Next() : itsValidTimeBag->Next();
-    else
-      return false;
+    if (IsValidTime()) return itsTimeList ? itsTimeList->Next() : itsValidTimeBag->Next();
+
+    return false;
   }
   else
   {
-    if (IsOriginTime())
-      return (itsOriginTimeBag->Next());
-    else
-      return false;
+    if (IsOriginTime()) return (itsOriginTimeBag->Next());
+
+    return false;
   }
 }
 
@@ -418,15 +416,14 @@ bool NFmiTimeDescriptor::Previous()
     if (IsValidTime())
       return itsTimeList ? itsTimeList->Previous()
                          : itsValidTimeBag->Previous();  // Huom TimeList->false
-    else
-      return false;
+
+    return false;
   }
   else
   {
-    if (IsOriginTime())
-      return (itsOriginTimeBag->Previous());
-    else
-      return false;
+    if (IsOriginTime()) return (itsOriginTimeBag->Previous());
+
+    return false;
   }
 }
 
@@ -468,8 +465,8 @@ bool NFmiTimeDescriptor::TimeToNearestStep(const NFmiMetTime &theTime,
     return (itsTimeList
                 ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
                 : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
-  else
-    return (itsOriginTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
+
+  return (itsOriginTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
 }
 
 // ----------------------------------------------------------------------
@@ -482,24 +479,23 @@ const NFmiMetTime &NFmiTimeDescriptor::Time() const
 {
   if (itsTimeBagIdent)
     return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
-  else
-    return (itsOriginTimeBag->CurrentTime());
+
+  return (itsOriginTimeBag->CurrentTime());
 }
 
 const NFmiMetTime &NFmiTimeDescriptor::FirstTime() const
 {
   if (itsTimeBagIdent)
     return (itsTimeList ? itsTimeList->FirstTime() : itsValidTimeBag->FirstTime());
-  else
-    return (itsOriginTimeBag->FirstTime());
+
+  return (itsOriginTimeBag->FirstTime());
 }
 
 const NFmiMetTime &NFmiTimeDescriptor::LastTime() const
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList ? itsTimeList->LastTime() : itsValidTimeBag->LastTime());
-  else
-    return (itsOriginTimeBag->LastTime());
+  if (itsTimeBagIdent) return (itsTimeList ? itsTimeList->LastTime() : itsValidTimeBag->LastTime());
+
+  return (itsOriginTimeBag->LastTime());
 }
 
 // ----------------------------------------------------------------------
@@ -510,10 +506,9 @@ const NFmiMetTime &NFmiTimeDescriptor::LastTime() const
 
 const NFmiMetTime &NFmiTimeDescriptor::OriginTime() const
 {
-  if (!itsTimeBagIdent)
-    return (itsOriginTimeBag->CurrentTime());
-  else
-    return (itsOriginTimeBag->FirstTime());
+  if (!itsTimeBagIdent) return (itsOriginTimeBag->CurrentTime());
+
+  return (itsOriginTimeBag->FirstTime());
 }
 
 void NFmiTimeDescriptor::OriginTime(const NFmiMetTime &newTime)
@@ -551,25 +546,21 @@ const NFmiMetTime &NFmiTimeDescriptor::ValidTime() const
 {
   if (itsTimeBagIdent)
     return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
-  else
+
+  if (itsTimeList)
   {
-    if (itsTimeList)
-    {
-      itsTimeList->Reset();
-      itsTimeList->Next();
-      return *itsTimeList->Current();
-    }
-    else
-    {
-      // Origintimebag systeemejä ei tietääkseni käytetä missään, joten tätä ei ole testattu.
-      // TÄMÄ ei ole thread safetya koodia!!!!
-      static NFmiMetTime dummyTime;
-      dummyTime = itsOriginTimeBag->CurrentTime();
-      dummyTime.NextMetTime(static_cast<short int>(
-          itsValidTimeBag->FirstTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime())));
-      return dummyTime;
-    }
+    itsTimeList->Reset();
+    itsTimeList->Next();
+    return *itsTimeList->Current();
   }
+
+  // Origintimebag systeemejä ei tietääkseni käytetä missään, joten tätä ei ole testattu.
+  // TÄMÄ ei ole thread safetya koodia!!!!
+  static NFmiMetTime dummyTime;
+  dummyTime = itsOriginTimeBag->CurrentTime();
+  dummyTime.NextMetTime(static_cast<short int>(
+      itsValidTimeBag->FirstTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime())));
+  return dummyTime;
 }
 
 // ----------------------------------------------------------------------
@@ -584,15 +575,14 @@ unsigned long NFmiTimeDescriptor::Index() const
   {
     if (IsValidTime())
       return (itsTimeList ? itsTimeList->Index() : itsValidTimeBag->CurrentIndex());
-    else
-      return static_cast<unsigned long>(-1);
+
+    return static_cast<unsigned long>(-1);
   }
   else
   {
-    if (IsOriginTime())
-      return (itsOriginTimeBag->CurrentIndex());
-    else
-      return static_cast<unsigned long>(-1);
+    if (IsOriginTime()) return (itsOriginTimeBag->CurrentIndex());
+
+    return static_cast<unsigned long>(-1);
   }
 }
 
@@ -608,15 +598,14 @@ unsigned long NFmiTimeDescriptor::Size() const
   {
     if (IsValidTime())
       return (itsTimeList ? itsTimeList->NumberOfItems() : itsValidTimeBag->GetSize());
-    else
-      return static_cast<unsigned long>(0);
+
+    return static_cast<unsigned long>(0);
   }
   else
   {
-    if (itsOriginTimeBag && IsOriginTime())
-      return (itsOriginTimeBag->GetSize());
-    else
-      return static_cast<unsigned long>(0);
+    if (itsOriginTimeBag && IsOriginTime()) return (itsOriginTimeBag->GetSize());
+
+    return static_cast<unsigned long>(0);
   }
 }
 
@@ -626,10 +615,9 @@ bool NFmiTimeDescriptor::IsEmpty() const
   {
     if (IsValidTime())
     {
-      if (itsTimeList)
-        return itsTimeList->NumberOfItems() == 0;
-      else
-        return itsValidTimeBag->IsEmpty();
+      if (itsTimeList) return itsTimeList->NumberOfItems() == 0;
+
+      return itsValidTimeBag->IsEmpty();
     }
   }
   else
@@ -656,8 +644,8 @@ unsigned long NFmiTimeDescriptor::SizeActive() const
     }
     return num;
   }
-  else
-    return static_cast<unsigned long>(0);
+
+  return static_cast<unsigned long>(0);
 }
 
 // ----------------------------------------------------------------------
@@ -823,8 +811,8 @@ const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
     NFmiTimePerioid period(endTime.DifferenceInMinutes(startTime));
     return period;
   }
-  else
-    return 0;
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------
@@ -840,15 +828,14 @@ const NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
     if (IsValidTime())
       return itsTimeList ? NFmiTimePerioid(itsTimeList->CurrentResolution())
                          : itsValidTimeBag->Resolution();
-    else
-      return 0;
+
+    return 0;
   }
   else
   {
-    if (IsOriginTime())
-      return (itsOriginTimeBag->Resolution());
-    else
-      return 0;
+    if (IsOriginTime()) return (itsOriginTimeBag->Resolution());
+
+    return 0;
   }
 }
 
@@ -953,7 +940,7 @@ NFmiTimeDescriptor NFmiTimeDescriptor::Combine(const NFmiTimeDescriptor &theComb
           itsIsLocalTime,
           itsIsInterpolation);
     }
-    else if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
+    if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
     {
       NFmiTimeList timeList =
           itsTimeList->Combine(*(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);
@@ -1121,10 +1108,8 @@ bool NFmiTimeDescriptor::Time(const unsigned long &theIndex)
       {
         return itsTimeList->Index(theIndex);
       }
-      else
-      {
-        return itsValidTimeBag->SetTime(theIndex);
-      }
+
+      return itsValidTimeBag->SetTime(theIndex);
     }
   }
   else
@@ -1208,15 +1193,14 @@ bool NFmiTimeDescriptor::IsInside(const NFmiMetTime &theTime) const
   {
     if (IsValidTime())
       return itsTimeList ? itsTimeList->IsInside(theTime) : itsValidTimeBag->IsInside(theTime);
-    else
-      return false;
+
+    return false;
   }
   else
   {
-    if (IsOriginTime())
-      return itsOriginTimeBag->IsInside(theTime);
-    else
-      return false;
+    if (IsOriginTime()) return itsOriginTimeBag->IsInside(theTime);
+
+    return false;
   }
 }
 
@@ -1230,15 +1214,15 @@ bool NFmiTimeDescriptor::FindNearestTime(const NFmiMetTime &theTime,
       return itsTimeList
                  ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
                  : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes);
-    else
-      return false;
+
+    return false;
   }
   else
   {
     if (IsOriginTime())
       return itsOriginTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes);
-    else
-      return false;
+
+    return false;
   }
 }
 

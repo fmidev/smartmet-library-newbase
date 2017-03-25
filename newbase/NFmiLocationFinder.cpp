@@ -332,10 +332,9 @@ const NFmiPoint NFmiLocationFinder::Find(const NFmiString& theName)
   iter = itsSecondaryPoints.find(name);
 
   itsLastSearchFailed = (iter == itsSecondaryPoints.end());
-  if (itsLastSearchFailed)
-    return NFmiPoint(kFloatMissing, kFloatMissing);
-  else
-    return iter->second;
+  if (itsLastSearchFailed) return NFmiPoint(kFloatMissing, kFloatMissing);
+
+  return iter->second;
 }
 
 // ======================================================================

@@ -214,8 +214,8 @@ class _FMI_DLL NFmiDataMatrix
   {
     if (i < 0 || j < 0 || static_cast<size_type>(i) >= itsNX || static_cast<size_type>(j) >= itsNY)
       return missingvalue;
-    else
-      return this->operator[](i)[j];
+
+    return this->operator[](i)[j];
   }
 
   const T& GetValue(int theLongIndex, const T& missingvalue) const
@@ -327,20 +327,17 @@ class _FMI_DLL NFmiDataMatrix
        // arvoja jos haluaa
       double xFraction = xInd - x1;
       double yFraction = yInd - y1;
-      if (interp == kNearestPoint)
-        return At(FmiRound(xInd), FmiRound(yInd));
+      if (interp == kNearestPoint) return At(FmiRound(xInd), FmiRound(yInd));
+
+      if (theParamId == kFmiWindDirection || theParamId == kFmiWaveDirection)
+        value = static_cast<float>(NFmiInterpolation::ModBiLinear(
+            xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1), 360));
+      else if (theParamId == kFmiWindVectorMS)
+        value = static_cast<float>(NFmiInterpolation::WindVector(
+            xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1)));
       else
-      {
-        if (theParamId == kFmiWindDirection || theParamId == kFmiWaveDirection)
-          value = static_cast<float>(NFmiInterpolation::ModBiLinear(
-              xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1), 360));
-        else if (theParamId == kFmiWindVectorMS)
-          value = static_cast<float>(NFmiInterpolation::WindVector(
-              xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1)));
-        else
-          value = static_cast<float>(NFmiInterpolation::BiLinear(
-              xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1)));
-      }
+        value = static_cast<float>(NFmiInterpolation::BiLinear(
+            xFraction, yFraction, At(x1, y2), At(x2, y2), At(x1, y1), At(x2, y1)));
     }
     return value;
   }
@@ -568,51 +565,45 @@ class _FMI_DLL NFmiDataMatrix
         b == -kFloatMissing)  // HUOM! pitää ottaa huomioon myös negatiivinen puuttuva, koska esim.
                               // NFmiDataMatrix operator-= antaa b-arvot tänne negatiivisina
       return kFloatMissing;
-    else
-      return a + b;
+
+    return a + b;
   }
 
   float FloatMul(float a, float b) const
   {
-    if (a == kFloatMissing || b == kFloatMissing)
-      return kFloatMissing;
-    else
-      return a * b;
+    if (a == kFloatMissing || b == kFloatMissing) return kFloatMissing;
+
+    return a * b;
   }
 
   float FloatDiv(float a, float b) const
   {
-    if (a == kFloatMissing || b == kFloatMissing || b == 0.0)
-      return kFloatMissing;
-    else
-      return a / b;
+    if (a == kFloatMissing || b == kFloatMissing || b == 0.0) return kFloatMissing;
+
+    return a / b;
   }
 
   float FloatMin(float a, float b) const
   {
-    if (a == kFloatMissing || b == kFloatMissing)
-      return kFloatMissing;
-    else
-      return (a < b ? a : b);
+    if (a == kFloatMissing || b == kFloatMissing) return kFloatMissing;
+
+    return (a < b ? a : b);
   }
 
   float FloatMax(float a, float b) const
   {
-    if (a == kFloatMissing || b == kFloatMissing)
-      return kFloatMissing;
-    else
-      return (a > b ? a : b);
+    if (a == kFloatMissing || b == kFloatMissing) return kFloatMissing;
+
+    return (a > b ? a : b);
   }
 
   float FloatMinMax(float a, float minLimit, float maxLimit) const
   {
     if (a == kFloatMissing || minLimit == kFloatMissing || maxLimit == kFloatMissing)
       return kFloatMissing;
-    else
-    {
-      a = (a > maxLimit ? maxLimit : a);
-      return (a < minLimit ? minLimit : a);
-    }
+
+    a = (a > maxLimit ? maxLimit : a);
+    return (a < minLimit ? minLimit : a);
   }
 };
 

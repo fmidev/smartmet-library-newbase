@@ -185,10 +185,9 @@ void NFmiBitmapAreaMask::Init(boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
 
 bool NFmiBitmapAreaMask::IsMasked(const NFmiPoint& theLatLon) const
 {
-  if (!fEnabled)
-    return true;
-  else
-    return IsMasked(LatLon2Index(theLatLon));
+  if (!fEnabled) return true;
+
+  return IsMasked(LatLon2Index(theLatLon));
 }
 
 // ----------------------------------------------------------------------
@@ -206,10 +205,8 @@ bool NFmiBitmapAreaMask::IsMasked(const NFmiPoint& theLatLon) const
 
 bool NFmiBitmapAreaMask::IsMasked(int theIndex) const
 {
-  if (!fEnabled)
-    return true;
-  else if (CheckIndex(theIndex))
-    return itsBitmask[theIndex];
+  if (!fEnabled) return true;
+  if (CheckIndex(theIndex)) return itsBitmask[theIndex];
 
   return false;
 }
@@ -228,10 +225,9 @@ bool NFmiBitmapAreaMask::IsMasked(int theIndex) const
 
 double NFmiBitmapAreaMask::MaskValue(const NFmiPoint& theLatLon) const
 {
-  if (!fEnabled)
-    return 1;
-  else
-    return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+  if (!fEnabled) return 1;
+
+  return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
 }
 
 // ----------------------------------------------------------------------

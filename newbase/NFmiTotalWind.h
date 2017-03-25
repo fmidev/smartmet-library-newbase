@@ -208,18 +208,16 @@ inline unsigned long NFmiTotalWind::WindGustMissingValue(void) const
 
 inline double NFmiTotalWind::WindSpeedVx(unsigned long theValue)
 {
-  if (itsInfoVersion >= 7.)
-    return WindSpeedV7(theValue);
-  else
-    return WindSpeedV6(theValue);
+  if (itsInfoVersion >= 7.) return WindSpeedV7(theValue);
+
+  return WindSpeedV6(theValue);
 }
 
 inline double NFmiTotalWind::WindGustVx(unsigned long theValue)
 {
-  if (itsInfoVersion >= 7.)
-    return WindGustV7(theValue);
-  else
-    return WindGustV6(theValue);
+  if (itsInfoVersion >= 7.) return WindGustV7(theValue);
+
+  return WindGustV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -231,18 +229,16 @@ inline double NFmiTotalWind::WindGustVx(unsigned long theValue)
 
 inline unsigned long NFmiTotalWind::WindSpeedVx(double theValue)
 {
-  if (itsInfoVersion >= 7.)
-    return WindSpeedV7(theValue);
-  else
-    return WindSpeedV6(theValue);
+  if (itsInfoVersion >= 7.) return WindSpeedV7(theValue);
+
+  return WindSpeedV6(theValue);
 }
 
 inline unsigned long NFmiTotalWind::WindGustVx(double theValue)
 {
-  if (itsInfoVersion >= 7.)
-    return WindGustV7(theValue);
-  else
-    return WindGustV6(theValue);
+  if (itsInfoVersion >= 7.) return WindGustV7(theValue);
+
+  return WindGustV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -282,10 +278,9 @@ inline unsigned long NFmiTotalWind::WindSpeedV7(void) const
 
 inline unsigned long NFmiTotalWind::WindSpeed(void) const
 {
-  if (itsInfoVersion >= 7.)
-    return WindSpeedV7();
-  else
-    return WindSpeedV6();
+  if (itsInfoVersion >= 7.) return WindSpeedV7();
+
+  return WindSpeedV6();
 }
 
 // ----------------------------------------------------------------------
@@ -318,10 +313,9 @@ inline unsigned long NFmiTotalWind::WindGustV7(void) const
 
 inline unsigned long NFmiTotalWind::WindGust(void) const
 {
-  if (itsInfoVersion >= 7.)
-    return WindGustV7();
-  else
-    return WindGustV6();
+  if (itsInfoVersion >= 7.) return WindGustV7();
+
+  return WindGustV6();
 }
 
 // ----------------------------------------------------------------------

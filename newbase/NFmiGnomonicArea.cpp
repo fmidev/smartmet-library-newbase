@@ -277,15 +277,15 @@ NFmiArea *NFmiGnomonicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                 itsTrueLatitude.Value(),
                                 fixedPointData.fIsPacific);
   }
-  else
-    return new NFmiGnomonicArea(theBottomLeftLatLon,
-                                theTopRightLatLon,
-                                itsCentralLongitude,
-                                TopLeft(),
-                                BottomRight(),
-                                itsCentralLatitude.Value(),
-                                itsTrueLatitude.Value(),
-                                PacificView());
+
+  return new NFmiGnomonicArea(theBottomLeftLatLon,
+                              theTopRightLatLon,
+                              itsCentralLongitude,
+                              TopLeft(),
+                              BottomRight(),
+                              itsCentralLatitude.Value(),
+                              itsTrueLatitude.Value(),
+                              PacificView());
 }
 
 // ----------------------------------------------------------------------

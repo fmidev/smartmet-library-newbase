@@ -378,13 +378,10 @@ bool NFmiFastQueryInfo::NextParam(bool fIgnoreSubParam)
   {
     fUseSubParam = false;
     itsParamIndex++;
-    if (itsParamIndex < itsParamSize)
-      return true;
-    else
-    {
-      itsParamIndex = itsParamSize;
-      return false;
-    }
+    if (itsParamIndex < itsParamSize) return true;
+
+    itsParamIndex = itsParamSize;
+    return false;
   }
   else
   {
@@ -413,13 +410,10 @@ bool NFmiFastQueryInfo::NextParam(bool fIgnoreSubParam)
 bool NFmiFastQueryInfo::NextLevel()
 {
   itsLevelIndex++;
-  if (itsLevelIndex < itsLevelSize)
-    return true;
-  else
-  {
-    itsLevelIndex = itsLevelSize;
-    return false;
-  }
+  if (itsLevelIndex < itsLevelSize) return true;
+
+  itsLevelIndex = itsLevelSize;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -443,11 +437,9 @@ bool NFmiFastQueryInfo::PreviousParam(bool fIgnoreSubParam)
       itsParamIndex--;
       return true;
     }
-    else
-    {
-      itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-      return false;
-    }
+
+    itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+    return false;
   }
   else
   {
@@ -476,12 +468,9 @@ bool NFmiFastQueryInfo::PreviousLocation()
     itsLocationIndex--;
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -500,11 +489,9 @@ bool NFmiFastQueryInfo::PreviousLevel()
     itsLevelIndex--;
     return true;
   }
-  else
-  {
-    itsLevelIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLevelIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -523,11 +510,9 @@ bool NFmiFastQueryInfo::PreviousTime()
     itsTimeIndex--;
     return true;
   }
-  else
-  {
-    itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -546,12 +531,10 @@ bool NFmiFastQueryInfo::Param(const NFmiParam &theParam)
     fUseSubParam = itsParamDescriptor->IsSubParamUsed();
     return true;
   }
-  else
-  {
-    itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    fUseSubParam = false;
-    return false;
-  }
+
+  itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  fUseSubParam = false;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -572,12 +555,10 @@ bool NFmiFastQueryInfo::Param(const NFmiParam &theParam, const NFmiParam &theSub
     fUseSubParam = itsParamDescriptor->IsSubParamUsed();
     return true;
   }
-  else
-  {
-    itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    fUseSubParam = false;
-    return false;
-  }
+
+  itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  fUseSubParam = false;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -596,12 +577,10 @@ bool NFmiFastQueryInfo::Param(const NFmiDataIdent &theDataIdent)
     fUseSubParam = itsParamDescriptor->IsSubParamUsed();
     return true;
   }
-  else
-  {
-    itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    fUseSubParam = false;
-    return false;
-  }
+
+  itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  fUseSubParam = false;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -619,12 +598,9 @@ bool NFmiFastQueryInfo::Location(const NFmiLocation &theLocation)
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -671,12 +647,9 @@ bool NFmiFastQueryInfo::Location(const NFmiString &theLocationName)
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -694,12 +667,9 @@ bool NFmiFastQueryInfo::Location(const NFmiPoint &theLonLatPoint, NFmiPoint *the
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -717,12 +687,9 @@ bool NFmiFastQueryInfo::NearestLocation(const NFmiLocation &theLocation, double 
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 bool NFmiFastQueryInfo::NearestLocation(const NFmiLocation &theLocation,
@@ -734,12 +701,9 @@ bool NFmiFastQueryInfo::NearestLocation(const NFmiLocation &theLocation,
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -756,12 +720,9 @@ bool NFmiFastQueryInfo::NearestPoint(const NFmiPoint &theLatLonPoint)
     itsLocationIndex = NFmiQueryInfo::LocationIndex();
     return true;
   }
-  else
-  {
-    itsLocationIndex =
-        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLocationIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -779,11 +740,9 @@ bool NFmiFastQueryInfo::Level(const NFmiLevel &theLevelValue)
     itsLevelIndex = NFmiQueryInfo::LevelIndex();
     return true;
   }
-  else
-  {
-    itsLevelIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsLevelIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -801,11 +760,9 @@ bool NFmiFastQueryInfo::Time(const NFmiMetTime &theTime)
     itsTimeIndex = NFmiQueryInfo::TimeIndex();
     return true;
   }
-  else
-  {
-    itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -827,11 +784,9 @@ bool NFmiFastQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
     itsTimeIndex = NFmiQueryInfo::TimeIndex();
     return true;
   }
-  else
-  {
-    itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -874,10 +829,9 @@ NFmiProducer *NFmiFastQueryInfo::Producer()
 const NFmiProducer &NFmiFastQueryInfo::FirstParamProducer()
 {
   static NFmiProducer dummy;
-  if (SizeParams() <= 0)
-    return dummy;
-  else
-    return *(itsParamDescriptor->Param(0, true).GetProducer());
+  if (SizeParams() <= 0) return dummy;
+
+  return *(itsParamDescriptor->Param(0, true).GetProducer());
 }
 
 // ----------------------------------------------------------------------
@@ -892,13 +846,10 @@ const NFmiLocation *NFmiFastQueryInfo::Location() const
 {
   static NFmiLocation dummy(kFloatMissing, kFloatMissing);
   const NFmiLocation *loc = itsHPlaceDescriptor->LocationWithIndex(itsLocationIndex);
-  if (loc)
-    return loc;
-  else
-  {
-    dummy = NFmiLocation(LatLon());
-    return &dummy;
-  }
+  if (loc) return loc;
+
+  dummy = NFmiLocation(LatLon());
+  return &dummy;
 }
 
 // ----------------------------------------------------------------------
@@ -932,11 +883,10 @@ const NFmiLevel *NFmiFastQueryInfo::Level() const
 
 FmiLevelType NFmiFastQueryInfo::LevelType() const
 {
-  if (itsLevelIndex < SizeLevels())
-    return itsVPlaceDescriptor->Level(itsLevelIndex)->LevelType();
-  else
-    return itsVPlaceDescriptor->Level(0)
-        ->LevelType();  // Jos levelIndex ei ollut minkään levelin kohdalla,
+  if (itsLevelIndex < SizeLevels()) return itsVPlaceDescriptor->Level(itsLevelIndex)->LevelType();
+
+  return itsVPlaceDescriptor->Level(0)
+      ->LevelType();  // Jos levelIndex ei ollut minkään levelin kohdalla,
   // 1. level type pitäisi aina löytyä ja sen pitäisi olla sama kuin kaikki muutkin
 }
 
@@ -1209,39 +1159,38 @@ static checkedVector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theI
     }
     return locationIndexies;
   }
-  else
-  {  // asema datalle palautetaan seuraavat paikka indeksit
-    int ssize = theInfo->SizeLocations();
-    checkedVector<unsigned long> locationIndexies;
-    if (ssize > 0)
+
+  // asema datalle palautetaan seuraavat paikka indeksit
+  int ssize = theInfo->SizeLocations();
+  checkedVector<unsigned long> locationIndexies;
+  if (ssize > 0)
+  {
+    locationIndexies.push_back(
+        ssize /
+        2);  // laitetaan ensimmäiseksi puoliväli, koska alusta ja lopusta puuttuu helposti dataa
+    if (ssize > 4)
     {
-      locationIndexies.push_back(
-          ssize /
-          2);  // laitetaan ensimmäiseksi puoliväli, koska alusta ja lopusta puuttuu helposti dataa
-      if (ssize > 4)
-      {
-        locationIndexies.push_back(ssize / 4);  // laitetaan sitten neljäsosan kohta, koska alusta
-                                                // ja lopusta puuttuu helposti dataa
-        locationIndexies.push_back(3 * ssize / 4);  // laitetaan sitten kolmannen neljäsosan kohta,
-                                                    // koska alusta ja lopusta puuttuu helposti
-                                                    // dataa
-      }
-      if (ssize > 16)
-      {
-        locationIndexies.push_back(0);  // laitetaan vain alusta jotain lukuja listaan
-        locationIndexies.push_back(1);
-        locationIndexies.push_back(2);
-        locationIndexies.push_back(3);
-        locationIndexies.push_back(4);
-        locationIndexies.push_back(ssize - 1);  // laietaan vain lopusta jotain indeksejä mukaan
-        locationIndexies.push_back(ssize - 2);
-        locationIndexies.push_back(ssize - 3);
-        locationIndexies.push_back(ssize - 4);
-        locationIndexies.push_back(ssize - 5);
-      }
+      locationIndexies.push_back(ssize / 4);  // laitetaan sitten neljäsosan kohta, koska alusta
+                                              // ja lopusta puuttuu helposti dataa
+      locationIndexies.push_back(3 * ssize / 4);  // laitetaan sitten kolmannen neljäsosan kohta,
+                                                  // koska alusta ja lopusta puuttuu helposti
+                                                  // dataa
     }
-    return locationIndexies;
+    if (ssize > 16)
+    {
+      locationIndexies.push_back(0);  // laitetaan vain alusta jotain lukuja listaan
+      locationIndexies.push_back(1);
+      locationIndexies.push_back(2);
+      locationIndexies.push_back(3);
+      locationIndexies.push_back(4);
+      locationIndexies.push_back(ssize - 1);  // laietaan vain lopusta jotain indeksejä mukaan
+      locationIndexies.push_back(ssize - 2);
+      locationIndexies.push_back(ssize - 3);
+      locationIndexies.push_back(ssize - 4);
+      locationIndexies.push_back(ssize - 5);
+    }
   }
+  return locationIndexies;
 }
 
 // tutkii onko annetun parametrin arvot korkeus leveleiden mukaan
@@ -1969,9 +1918,8 @@ void NFmiFastQueryInfo::CroppedValues(
 
 static float InterpolationHelper(float theValue1, float theValue2, float theFactor1)
 {
-  if (theValue1 == kFloatMissing && theValue2 == kFloatMissing)
-    return kFloatMissing;
-  else if (theValue1 == kFloatMissing)
+  if (theValue1 == kFloatMissing && theValue2 == kFloatMissing) return kFloatMissing;
+  if (theValue1 == kFloatMissing)
     return theValue2;
   else if (theValue2 == kFloatMissing)
     return theValue1;
@@ -2231,8 +2179,8 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
     // Mika: Tästä tulee jostain syystä overflow varoitus
     if (!validTimes.FindNearestTime(tmpTime))
       return;  // laskettavan aikajakson alkuaikaa ei löytynyt, turha jatkaa
-    else if (validTimes.CurrentTime() <
-             tmpTime)  // löytynyt aika oli pienempi kuin raja, kasvatetaan esaatua aikaa yhdellä
+    if (validTimes.CurrentTime() <
+        tmpTime)  // löytynyt aika oli pienempi kuin raja, kasvatetaan esaatua aikaa yhdellä
       if (!validTimes.Next())
         return;  // jos Next epäonnistui, mentiin timebagin ulkopuolelle ja voidaan lopettaa
     NFmiMetTime startTime(validTimes.CurrentTime());
@@ -2243,9 +2191,9 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
     if (!validTimes.IsInside(tmpTime)) return;  // offsetaika meni timebagin ohi, voidaan lopettaa
     if (!validTimes.FindNearestTime(tmpTime))
       return;  // laskettavan aikajakson loppuaikaa ei löytynyt, turha jatkaa
-    else if (validTimes.CurrentTime() > tmpTime)  // löytynyt aika oli suurempi kuin raja,
-                                                  // vähennetään saatua aikaa yhdellä
-                                                  // aika-askeleella
+    if (validTimes.CurrentTime() > tmpTime)  // löytynyt aika oli suurempi kuin raja,
+                                             // vähennetään saatua aikaa yhdellä
+                                             // aika-askeleella
       if (!validTimes.Previous())
         return;  // jos Previous epäonnistui, mentiin timebagin ulkopuolelle ja voidaan lopettaa
     NFmiMetTime endTime(validTimes.CurrentTime());
@@ -2493,7 +2441,7 @@ bool NFmiFastQueryInfo::GetTimeIndex(const NFmiMetTime &theTime, double &tInd)
     tInd = TimeIndex();
     return true;
   }
-  else if (IsInside(theTime))
+  if (IsInside(theTime))
   {
     if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
                                               // kokeiltu, löytyykö theTime jo suoraan
@@ -2564,7 +2512,7 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
     }
     return false;
   }
-  else if (fPressureValueAvailable)
+  if (fPressureValueAvailable)
   {
     // aluksi pitää järjestellä parametrin indeksi paine datan kohdalle ja
     // ottaa currentti paramindex talteen ja oliko
@@ -2650,33 +2598,31 @@ float NFmiFastQueryInfo::FastPressureLevelValue(double xInd, double yInd, double
     TimeIndex(static_cast<unsigned long>(round(tInd)));
     return FastPressureLevelValue(xInd, yInd, pInd);
   }
-  else
-  {
-    TimeIndex(static_cast<unsigned long>(tInd));
-    float value1 = FastPressureLevelValue(xInd, yInd, pInd);
-    NextTime();  // tämänkin pitää löytyä
-    float value2 = FastPressureLevelValue(xInd, yInd, pInd);
 
-    double factor = tInd - static_cast<int>(tInd);
-    float value = kFloatMissing;
-    FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
-    if (IsGrid() && interp == kLinearly)
-    {  // lineaarinen interpolointi
-      auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
-      if (param == kFmiWindDirection || param == kFmiWaveDirection)
-        value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
-      else
-        value = static_cast<float>(NFmiInterpolation::Linear(factor, value1, value2));
-    }
+  TimeIndex(static_cast<unsigned long>(tInd));
+  float value1 = FastPressureLevelValue(xInd, yInd, pInd);
+  NextTime();  // tämänkin pitää löytyä
+  float value2 = FastPressureLevelValue(xInd, yInd, pInd);
+
+  double factor = tInd - static_cast<int>(tInd);
+  float value = kFloatMissing;
+  FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
+  if (IsGrid() && interp == kLinearly)
+  {  // lineaarinen interpolointi
+    auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
+    if (param == kFmiWindDirection || param == kFmiWaveDirection)
+      value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
     else
-    {  // muut tapaukset eli nearest interpolointi
-      if (factor < 0.5)
-        value = value1;
-      else
-        value = value2;
-    }
-    return value;
+      value = static_cast<float>(NFmiInterpolation::Linear(factor, value1, value2));
   }
+  else
+  {  // muut tapaukset eli nearest interpolointi
+    if (factor < 0.5)
+      value = value1;
+    else
+      value = value2;
+  }
+  return value;
 }
 
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
@@ -2697,35 +2643,33 @@ float NFmiFastQueryInfo::FastPressureLevelValue(double xInd, double yInd, double
     LevelIndex(static_cast<unsigned long>(round(pInd)));
     return FastPressureLevelValue(xInd, yInd);
   }
-  else
-  {
-    LevelIndex(static_cast<unsigned long>(pInd));
-    float value1 = FastPressureLevelValue(xInd, yInd);
-    NextLevel();
-    float value2 = FastPressureLevelValue(xInd, yInd);
-    double factor =
-        pInd - static_cast<int>(
-                   pInd);  // huom! tässä factorissa on jo otettu huomioon logaritminen kerroin
 
-    float value = kFloatMissing;
-    FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
-    if (IsGrid() && interp == kLinearly)
-    {  // lineaarinen interpolointi
-      auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
-      if (param == kFmiWindDirection || param == kFmiWaveDirection)
-        value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
-      else
-        value = static_cast<float>(NFmiInterpolation::Linear(factor, value1, value2));
-    }
+  LevelIndex(static_cast<unsigned long>(pInd));
+  float value1 = FastPressureLevelValue(xInd, yInd);
+  NextLevel();
+  float value2 = FastPressureLevelValue(xInd, yInd);
+  double factor =
+      pInd -
+      static_cast<int>(pInd);  // huom! tässä factorissa on jo otettu huomioon logaritminen kerroin
+
+  float value = kFloatMissing;
+  FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
+  if (IsGrid() && interp == kLinearly)
+  {  // lineaarinen interpolointi
+    auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
+    if (param == kFmiWindDirection || param == kFmiWaveDirection)
+      value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
     else
-    {  // muut tapaukset eli nearest interpolointi
-      if (factor < 0.5)
-        value = value1;
-      else
-        value = value2;
-    }
-    return value;
+      value = static_cast<float>(NFmiInterpolation::Linear(factor, value1, value2));
   }
+  else
+  {  // muut tapaukset eli nearest interpolointi
+    if (factor < 0.5)
+      value = value1;
+    else
+      value = value2;
+  }
+  return value;
 }
 
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
@@ -2816,8 +2760,8 @@ float NFmiFastQueryInfo::GetCurrentLevelPressure()
 
     return value;
   }
-  else
-    return itsPressureLevelDataPressures[LevelIndex()];
+
+  return itsPressureLevelDataPressures[LevelIndex()];
 }
 
 // Etsii PressureLevelValue-metodia varten 1. paine arvon, mikä ei ole puuttuvaa, tai
@@ -2992,9 +2936,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
                                             const NFmiPoint &theLatlon,
                                             const NFmiMetTime &theTime)
 {
-  if (Time(theTime))
-    return PressureLevelValue(P, theLatlon);
-  else if (IsInside(theTime))
+  if (Time(theTime)) return PressureLevelValue(P, theLatlon);
+  if (IsInside(theTime))
   {
     if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
                                               // kokeiltu, löytyykö theTime jo suoraan
@@ -3014,9 +2957,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
 float NFmiFastQueryInfo::PressureLevelValue(float P, const NFmiMetTime &theTime)
 {
-  if (Time(theTime))
-    return PressureLevelValue(P);
-  else if (IsInside(theTime))
+  if (Time(theTime)) return PressureLevelValue(P);
+  if (IsInside(theTime))
   {
     if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
                                               // kokeiltu, löytyykö theTime jo suoraan
@@ -3156,9 +3098,8 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
                                      const NFmiPoint &theLatlon,
                                      const NFmiMetTime &theTime)
 {
-  if (Time(theTime))
-    return HeightValue(theHeight, theLatlon);
-  else if (IsInside(theTime))
+  if (Time(theTime)) return HeightValue(theHeight, theLatlon);
+  if (IsInside(theTime))
   {
     if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
                                               // kokeiltu, löytyykö theTime jo suoraan
@@ -3178,9 +3119,8 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
 float NFmiFastQueryInfo::HeightValue(float theHeight, const NFmiMetTime &theTime)
 {
-  if (Time(theTime))
-    return HeightValue(theHeight);
-  else if (IsInside(theTime))
+  if (Time(theTime)) return HeightValue(theHeight);
+  if (IsInside(theTime))
   {
     if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
                                               // kokeiltu, löytyykö theTime jo suoraan
@@ -3206,11 +3146,9 @@ bool NFmiFastQueryInfo::FindNearestTime(const NFmiMetTime &theTime,
     itsTimeIndex = NFmiQueryInfo::TimeIndex();
     return true;
   }
-  else
-  {
-    itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-    return false;
-  }
+
+  itsTimeIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+  return false;
 }
 
 static bool IsInsideRange(std::vector<float> &theLevelValues, float theValue)
@@ -3251,7 +3189,7 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
   auto pos = std::lower_bound(tmpVec.begin(), tmpVec.end(), theHeight);
   if (pos == tmpVec.end())  // ei voida interpoloida korkeuden mukaan niss tapauksissa
     return kFloatMissing;
-  else if (pos == tmpVec.begin())  // voidaan palauttaa suoraan 1. kohdan arvo
+  if (pos == tmpVec.begin())  // voidaan palauttaa suoraan 1. kohdan arvo
     return theParValues[theColumn][0];
   else
   {
@@ -3268,10 +3206,9 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
       value = ratio * p1 + (1 - ratio) * p2;
     else if (theInterpolationMethod == kNearestPoint)
     {
-      if (::fabs(theHeight - h1) < ::fabs(theHeight - h2))
-        return static_cast<float>(p1);
-      else
-        return static_cast<float>(p2);
+      if (::fabs(theHeight - h1) < ::fabs(theHeight - h2)) return static_cast<float>(p1);
+
+      return static_cast<float>(p2);
     }
     return static_cast<float>(value);
   }
@@ -3301,7 +3238,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
   auto pos = std::lower_bound(tmpVec.rbegin(), tmpVec.rend(), theP);
   if (pos == tmpVec.rend())  // ei voida interpoloida korkeuden mukaan niss tapauksissa
     return kFloatMissing;
-  else if (pos == tmpVec.rbegin())  // voidaan palauttaa suoraan viimeisen kohdan arvo
+  if (pos == tmpVec.rbegin())  // voidaan palauttaa suoraan viimeisen kohdan arvo
     return theParValues[theColumn][theParValues.NY() - 1];
   else
   {
@@ -3317,16 +3254,15 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
       return kFloatMissing;
     if (theParamId == kFmiWindDirection)
       return CalcLogModLinearInterpolatedValue(p1, p2, theP, value1, value2, 360);
-    else if (theParamId == kFmiWindVectorMS)
+    if (theParamId == kFmiWindVectorMS)
       return CalcLogInterpolatedWindWectorValue(p1, p2, theP, value1, value2);
     else if (theInterpolationMethod == kLinearly)
       return static_cast<float>(CalcLogInterpolatedValue(p1, p2, theP, value1, value2));
     else if (theInterpolationMethod == kNearestPoint)
     {
-      if (::fabs(theP - p1) < ::fabs(theP - p2))
-        return value1;
-      else
-        return value2;
+      if (::fabs(theP - p1) < ::fabs(theP - p2)) return value1;
+
+      return value2;
     }
     return value;
   }
@@ -4560,11 +4496,9 @@ float NFmiFastQueryInfo::PeekParamValue(unsigned long theParamIndex)
       Param(oldParam);
       return value;
     }
-    else
-    {
-      size_t idx = Index(theParamIndex, itsLocationIndex, itsLevelIndex, itsTimeIndex);
-      return NFmiQueryInfo::PeekValue(idx);
-    }
+
+    size_t idx = Index(theParamIndex, itsLocationIndex, itsLevelIndex, itsTimeIndex);
+    return NFmiQueryInfo::PeekValue(idx);
   }
   return kFloatMissing;
 }

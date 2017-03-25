@@ -108,9 +108,8 @@ float NFmiDataModifierMaxMean::CalculationResult()
   if (itsWeightFactor == kFloatMissing && avg != kFloatMissing && max != kFloatMissing)
   {
     float weightFactor = avg / max;
-    if (weightFactor < 0.4)
-      return avg;
-    else if (weightFactor >= 0.4 && weightFactor <= 0.6)
+    if (weightFactor < 0.4) return avg;
+    if (weightFactor >= 0.4 && weightFactor <= 0.6)
       return (avg + max) / 2;
     else if (weightFactor > 0.6 && weightFactor != kFloatMissing)
       return max;

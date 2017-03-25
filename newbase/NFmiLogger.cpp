@@ -522,10 +522,8 @@ bool NFmiLogger::Log2StdErr(const std::string &theFinalMessage)
 bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, ofstream &theFile)
 {
   theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-  if (theFile)
-    return true;
-  else if (DirectoryExist(
-               thePath))  // hakemisto on, mutta tiedostoa ei voi luoda/avata, palauta false
+  if (theFile) return true;
+  if (DirectoryExist(thePath))  // hakemisto on, mutta tiedostoa ei voi luoda/avata, palauta false
     return false;
   else  // muuten yritä luoda hakemisto ja sitten tiedosto
   {
@@ -534,10 +532,9 @@ bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, 
       theFile.clear();  // asettaa bad-bitin pois päältä, että voidaan yrittää tiedoston luomista
                         // uudestaan (ja kysyä onnistuiko)
       theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-      if (theFile)
-        return true;
-      else
-        return false;  // edelleenkään tiedostoa ei saatu luotua
+      if (theFile) return true;
+
+      return false;  // edelleenkään tiedostoa ei saatu luotua
     }
     else
       return false;  // hakemistoa ei saatu luotua

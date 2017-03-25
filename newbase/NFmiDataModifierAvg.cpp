@@ -88,10 +88,9 @@ void NFmiDataModifierAvg::Clear()
 
 float NFmiDataModifierAvg::CalculationResult()
 {
-  if (fCalculationResultOk)
-    return itsAverage;
-  else
-    return kFloatMissing;
+  if (fCalculationResultOk) return itsAverage;
+
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

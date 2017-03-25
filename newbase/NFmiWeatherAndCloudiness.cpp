@@ -521,15 +521,11 @@ int NFmiWeatherAndCloudiness::WeightedMean(int missingValue,
     facSum += factor4;
   }
 
-  if (!any)
-    return missingValue;
-  else
-  {
-    if (facSum > 0.)
-      return static_cast<int>(sum / facSum + .5);
-    else
-      return 0;
-  }
+  if (!any) return missingValue;
+
+  if (facSum > 0.) return static_cast<int>(sum / facSum + .5);
+
+  return 0;
 }
 
 // ----------------------------------------------------------------------
@@ -603,15 +599,13 @@ float NFmiWeatherAndCloudiness::PrecipitationWeightedMean(unsigned long missingV
     sum += prec;
     facSum += factor4;
   }
-  if (!any)
-    return kFloatMissing;
+  if (!any) return kFloatMissing;
 
-  else if (facSum > 0.)
+  if (facSum > 0.)
   {
-    if (considerMax)
-      return static_cast<float>((maxvalue + (sum / facSum)) / 2.);
-    else
-      return static_cast<float>(sum / facSum);
+    if (considerMax) return static_cast<float>((maxvalue + (sum / facSum)) / 2.);
+
+    return static_cast<float>(sum / facSum);
   }
   else
     return 0;
@@ -1049,14 +1043,12 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(double 
     sum += formTable[i];
 
   // toimiiko vaikka näin
-  if (sum <= 0.)
-    return kT3BitMissing;
-  else if ((formTable[5] + formTable[4]) / sum > .3)
+  if (sum <= 0.) return kT3BitMissing;
+  if ((formTable[5] + formTable[4]) / sum > .3)
   {
-    if (formTable[5] >= formTable[4])
-      return kTFreezingRain;
-    else
-      return kTFreezingDrizzle;
+    if (formTable[5] >= formTable[4]) return kTFreezingRain;
+
+    return kTFreezingDrizzle;
   }
   else if (formTable[6] / sum > .3)
     return kTHail;
@@ -1074,7 +1066,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(double 
 
     if (rainSnowRelation > 9.)  // rajat oli 20/80, nyt 10/90%
       return kTRain;
-    else if (rainSnowRelation < 1. / 9.)
+    if (rainSnowRelation < 1. / 9.)
       return kTSnow;
     else
       return kTSleet;
@@ -1639,35 +1631,25 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
       return kTFreezingDrizzle;
     case 20:
     {
-      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-        return kT3BitMissing;
+      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing)) return kT3BitMissing;
 
-      else
-      {
-        long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
-                        0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
+      long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
+                      0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
 
-        if (theTemperature >= y)
-          return kTDrizzle;
-        else
-          return kTSnow;
-      }
+      if (theTemperature >= y) return kTDrizzle;
+
+      return kTSnow;
     }
     case 26:
     {
-      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-        return kT3BitMissing;
+      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing)) return kT3BitMissing;
 
-      else
-      {
-        long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
-                        0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
+      long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
+                      0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
 
-        if (theTemperature >= y)
-          return kTSleet;
-        else
-          return kTSnow;
-      }
+      if (theTemperature >= y) return kTSleet;
+
+      return kTSnow;
     }
     case 22:
     case 70:
@@ -1706,23 +1688,22 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
     case 95:
     case 97:
     {
-      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-        return kT3BitMissing;
+      if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing)) return kT3BitMissing;
 
-      else if ((theTemperature >= 3.6 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
-               (theTemperature >= 3.5 && theHumidity >= 41 && theHumidity <= 42) ||
-               (theTemperature >= 3.4 && theHumidity >= 43 && theHumidity <= 44) ||
-               (theTemperature >= 3.3 && theHumidity == 45) ||
-               (theTemperature >= 3.2 && theHumidity == 46) ||
-               (theTemperature >= 3.1 && theHumidity == 47) ||
-               (theTemperature >= 3.0 && theHumidity == 48) ||
-               (theTemperature >= 2.8 && theHumidity == 49) ||
-               (theTemperature >= 2.6 && theHumidity == 50) ||
-               (theTemperature >= 0.6 && theHumidity >= 51 && theHumidity <= 60) ||
-               (theTemperature >= 0.7 && theHumidity >= 61 && theHumidity <= 74) ||
-               (theTemperature >= 0.8 && theHumidity >= 75 && theHumidity <= 78) ||
-               (theTemperature >= 0.9 && theHumidity >= 79 && theHumidity <= 82) ||
-               (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
+      if ((theTemperature >= 3.6 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
+          (theTemperature >= 3.5 && theHumidity >= 41 && theHumidity <= 42) ||
+          (theTemperature >= 3.4 && theHumidity >= 43 && theHumidity <= 44) ||
+          (theTemperature >= 3.3 && theHumidity == 45) ||
+          (theTemperature >= 3.2 && theHumidity == 46) ||
+          (theTemperature >= 3.1 && theHumidity == 47) ||
+          (theTemperature >= 3.0 && theHumidity == 48) ||
+          (theTemperature >= 2.8 && theHumidity == 49) ||
+          (theTemperature >= 2.6 && theHumidity == 50) ||
+          (theTemperature >= 0.6 && theHumidity >= 51 && theHumidity <= 60) ||
+          (theTemperature >= 0.7 && theHumidity >= 61 && theHumidity <= 74) ||
+          (theTemperature >= 0.8 && theHumidity >= 75 && theHumidity <= 78) ||
+          (theTemperature >= 0.9 && theHumidity >= 79 && theHumidity <= 82) ||
+          (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
         return kTRain;
 
       else if ((theTemperature <= 3.5 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
@@ -2707,17 +2688,15 @@ unsigned long NFmiWeatherAndCloudiness::ThunderToHessaa() const
   {
     if (thunderProb >= 60)
     {  // kovaa ukkosta 62 ja 64
-      if (N >= 85)
-        return 64;
-      else
-        return 62;
+      if (N >= 85) return 64;
+
+      return 62;
     }
     else
     {  // heikompaa ukkosta 61 ja 63
-      if (N >= 85)
-        return 63;
-      else
-        return 61;
+      if (N >= 85) return 63;
+
+      return 61;
     }
   }
   // oletus oli että tähän metodiin tullaan vain jos ukkosen tn >= 30, joten tarkastetaan tämä vielä
@@ -2745,20 +2724,20 @@ unsigned long NFmiWeatherAndCloudiness::ToHessaa()
   if (IsFair())  // ei sada
     return TotalCloudinessToHessaa();
 
-  else  // sataa, ei ukkosta
+  // sataa, ei ukkosta
+
+  if (TotalCloudiness() > kTSkyClear && TotalCloudiness() < kTPartlyCloudy)
+    hessaa = PartlyCloudyHessaa();
+  else if (TotalCloudiness() >= kTPartlyCloudy && TotalCloudiness() <= kTNearlyCloudy)
+    hessaa = HalfCloudyHessaa();
+  else if (TotalCloudiness() > kTNearlyCloudy && TotalCloudiness() <= kTOverCast)
+    hessaa = OverCastHessaa();
+  else  // pilvet puuttuu
   {
-    if (TotalCloudiness() > kTSkyClear && TotalCloudiness() < kTPartlyCloudy)
-      hessaa = PartlyCloudyHessaa();
-    else if (TotalCloudiness() >= kTPartlyCloudy && TotalCloudiness() <= kTNearlyCloudy)
-      hessaa = HalfCloudyHessaa();
-    else if (TotalCloudiness() > kTNearlyCloudy && TotalCloudiness() <= kTOverCast)
-      hessaa = OverCastHessaa();
-    else  // pilvet puuttuu
-    {
-      fDataOk = false;                     // pilvet puuttuu, vaikka sataa
-      hessaa = TotalCloudinessToHessaa();  // koemielessä täällä (laura 051099)
-    }
+    fDataOk = false;                     // pilvet puuttuu, vaikka sataa
+    hessaa = TotalCloudinessToHessaa();  // koemielessä täällä (laura 051099)
   }
+
   return hessaa;
 }
 
@@ -2936,11 +2915,9 @@ bool NFmiWeatherAndCloudiness::FromHessaa(unsigned long theValue)
     SetThunderProbability(ThunderProbabilityFromHessaa(theValue));
     return true;
   }
-  else
-  {
-    itsData.longType = kTCombinedWeatherMissing;
-    return false;
-  }
+
+  itsData.longType = kTCombinedWeatherMissing;
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -3368,9 +3345,8 @@ bool NFmiWeatherAndCloudiness::SubValue(double theValue, FmiParameterName thePar
 
 unsigned long NFmiWeatherAndCloudiness::HighCloudsV7(double theValue) const
 {
-  if (theValue == kFloatMissing)
-    return kT3BitMissing;
-  else if (theValue < 5.)
+  if (theValue == kFloatMissing) return kT3BitMissing;
+  if (theValue < 5.)
     return 0;
   else if (theValue < 20.)
     return 1;
@@ -3465,10 +3441,9 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedSubValue(
       }
 
       float returnValue = integrator->CalcResult(tmpSelector);
-      if (returnValue == kFloatMissing)
-        return kUnsignedLongMissing;
-      else
-        return static_cast<unsigned long>(returnValue);
+      if (returnValue == kFloatMissing) return kUnsignedLongMissing;
+
+      return static_cast<unsigned long>(returnValue);
     }
   }
   return kUnsignedLongMissing;
@@ -3651,17 +3626,16 @@ double NFmiWeatherAndCloudiness::ThunderProbabilityValue() const
   unsigned long tempValue = ThunderProbability();
   if (tempValue != kTThunderProbabilityMissing && tempValue != kUnsignedLongMissing)
     return 10 * tempValue;
-  else
-    return kFloatMissing;
+
+  return kFloatMissing;
 }
 
 double NFmiWeatherAndCloudiness::TotalCloudinessValue() const
 {
   unsigned long tempValue = TotalCloudiness();
-  if (tempValue != kT4BitMissing && tempValue != kUnsignedLongMissing)
-    return 10 * tempValue;
-  else
-    return kFloatMissing;
+  if (tempValue != kT4BitMissing && tempValue != kUnsignedLongMissing) return 10 * tempValue;
+
+  return kFloatMissing;
 }
 
 double NFmiWeatherAndCloudiness::Precipitation1hValue() const
@@ -3746,10 +3720,9 @@ double NFmiWeatherAndCloudiness::RawSubValue(FmiParameterName theParam)
 bool NFmiWeatherAndCloudiness::IsPrecipitationOk() const
 {
   if (!DataOk()) return false;
-  if (TotalPrecipitation() != TotalPrecipitationMissingValue())
-    return true;
-  else
-    return false;
+  if (TotalPrecipitation() != TotalPrecipitationMissingValue()) return true;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4055,8 +4028,8 @@ bool NFmiWeatherAndCloudiness::ThunderProbability(unsigned long theValue)
     SetThunderProbability(theValue);
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4088,8 +4061,8 @@ bool NFmiWeatherAndCloudiness::TotalCloudiness(unsigned long theValue)
     }
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4110,8 +4083,8 @@ bool NFmiWeatherAndCloudiness::LowClouds(unsigned long theValue)
     SetTotalCloudiness(CalcTotalCloudiness());
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4132,8 +4105,8 @@ bool NFmiWeatherAndCloudiness::MiddleClouds(unsigned long theValue)
     SetTotalCloudiness(CalcTotalCloudiness());
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4155,8 +4128,8 @@ bool NFmiWeatherAndCloudiness::HighClouds(unsigned long theValue)
     SetTotalCloudiness(CalcTotalCloudiness());
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4366,8 +4339,8 @@ bool NFmiWeatherAndCloudiness::FogIntensity(unsigned long theValue)
     fDataOk = true;
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -4385,12 +4358,10 @@ bool NFmiWeatherAndCloudiness::LongValue(unsigned long theValue)
     fDataOk = true;
     return true;
   }
-  else
-  {
-    itsData.longType = kTCombinedWeatherMissing;
-    fDataOk = true;
-    return false;
-  }
+
+  itsData.longType = kTCombinedWeatherMissing;
+  fDataOk = true;
+  return false;
 }
 
 // ----------------------------------------------------------------------

@@ -148,10 +148,9 @@ string extend_plain_regex(const string &thePattern)
 string path_of_msdos_pattern(const string &theMsPattern)
 {
   string::size_type pos = theMsPattern.rfind('/');
-  if (pos == string::npos)
-    return ".";
-  else
-    return theMsPattern.substr(0, pos);
+  if (pos == string::npos) return ".";
+
+  return theMsPattern.substr(0, pos);
 }
 
 // ----------------------------------------------------------------------
@@ -165,13 +164,10 @@ string path_of_msdos_pattern(const string &theMsPattern)
 string regex_of_msdos_pattern(const string &theMsPattern)
 {
   string::size_type pos = theMsPattern.rfind('/');
-  if (pos == string::npos)
-    return extend_plain_regex(theMsPattern);
-  else
-  {
-    string mspattern = theMsPattern.substr(pos + 1);
-    return extend_plain_regex(mspattern);
-  }
+  if (pos == string::npos) return extend_plain_regex(theMsPattern);
+
+  string mspattern = theMsPattern.substr(pos + 1);
+  return extend_plain_regex(mspattern);
 }
 
 }  // namespace Unix
@@ -1051,14 +1047,12 @@ time_t FindFile(const string &theFileFilter,
 
   // Return the desired age file (newest/oldest)
 
-  if (matches.size() == 0)
-    return 0;
-  else
-  {
-    Matches::const_iterator it = (fSearchNewest ? --matches.end() : matches.begin());
-    if (theFoundFileName != nullptr) *theFoundFileName = it->second;
-    return it->first;
-  }
+  if (matches.size() == 0) return 0;
+
+  Matches::const_iterator it = (fSearchNewest ? --matches.end() : matches.begin());
+  if (theFoundFileName != nullptr) *theFoundFileName = it->second;
+  return it->first;
+
 #else
   struct _finddata_t fileinfo;
   intptr_t handle;
@@ -1181,7 +1175,7 @@ bool ReadFile2String(const std::string &theFileName,
       in.close();
       return in.good();
     }
-    else if (FileExists(theFileName) && fileSize == 0)
+    if (FileExists(theFileName) && fileSize == 0)
     {
       theFileContent = "";  // pitää tyhjentää stringi, koska tiedosto oli tyhjä
       return true;          // tiedoston luku onnistui, vaikka se olikin tyhjä
@@ -1213,7 +1207,7 @@ bool ReadFileStart2String(const std::string &theFileName,
       in.close();
       return in.good();
     }
-    else if (FileExists(theFileName) && fileSize == 0)
+    if (FileExists(theFileName) && fileSize == 0)
     {
       theFileContent = "";  // pitää tyhjentää stringi, koska tiedosto oli tyhjä
       return true;          // tiedoston luku onnistui, vaikka se olikin tyhjä
@@ -1459,14 +1453,11 @@ void CleanFilePattern(const std::string &theFilePattern,
   auto mapIt = fileMap.begin();
   for (int i = 0; mapIt != fileMap.end(); ++mapIt, i++)
   {
-    if (static_cast<int>(fileMap.size()) - i <= theKeepFileCount)
-      break;
-    else
-    {
-      std::string &filename = (*mapIt).second;
-      bool status = RemoveFile(filename);
-      if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
-    }
+    if (static_cast<int>(fileMap.size()) - i <= theKeepFileCount) break;
+
+    std::string &filename = (*mapIt).second;
+    bool status = RemoveFile(filename);
+    if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
   }
 }
 
@@ -1557,21 +1548,18 @@ bool IsCompressed(const string &theName)
 std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &theWorkingDirectory)
 {
   NFmiFileString fileString(theOrigPath);
-  if (fileString.IsAbsolutePath())
-    return theOrigPath;
-  else
-  {
-    std::string finalPath;
-    finalPath = theWorkingDirectory;
-    if (theWorkingDirectory.size() &&
-        theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
+  if (fileString.IsAbsolutePath()) return theOrigPath;
+
+  std::string finalPath;
+  finalPath = theWorkingDirectory;
+  if (theWorkingDirectory.size() &&
+      theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
 #ifdef WIN32
-      if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
+    if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
 #endif  // WIN32
-        finalPath += kFmiDirectorySeparator;
-    finalPath += theOrigPath;
-    return finalPath;
-  }
+      finalPath += kFmiDirectorySeparator;
+  finalPath += theOrigPath;
+  return finalPath;
 }
 
 // Polku on absoluuttinen jos:

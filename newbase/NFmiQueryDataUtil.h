@@ -108,9 +108,8 @@ class MyGrid
     if (itsNX == theGrid.itsNX)
       if (itsNY == theGrid.itsNY)
       {
-        if (itsArea == 0 && theGrid.itsArea == 0)
-          return true;
-        else if (itsArea && theGrid.itsArea)
+        if (itsArea == 0 && theGrid.itsArea == 0) return true;
+        if (itsArea && theGrid.itsArea)
         {
           if (itsArea->ClassId() == theGrid.itsArea->ClassId())
             if (*itsArea == *(theGrid.itsArea)) return true;
