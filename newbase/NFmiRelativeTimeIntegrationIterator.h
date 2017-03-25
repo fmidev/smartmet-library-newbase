@@ -14,13 +14,13 @@
 class _FMI_DLL NFmiRelativeTimeIntegrationIterator : public NFmiDataIterator
 {
  public:
-  virtual ~NFmiRelativeTimeIntegrationIterator();
+  ~NFmiRelativeTimeIntegrationIterator() override;
   NFmiRelativeTimeIntegrationIterator(
       NFmiQueryInfo* theData,
       int theStepnumber,       // integroitavien aika-askelten lukumäärä
       int theStartShift = 0);  // Integroinnin loppuaika aikaskeleina
 
-  virtual void DoForEach(NFmiDataModifier* theDataModifier);
+  void DoForEach(NFmiDataModifier* theDataModifier) override;
 
  protected:
   int itsStartShift;
@@ -37,12 +37,12 @@ class _FMI_DLL NFmiRelativeTimeIntegrationIterator : public NFmiDataIterator
 class _FMI_DLL NFmiRelativeTimeIntegrationIterator2 : public NFmiDataIterator
 {
  public:
-  virtual ~NFmiRelativeTimeIntegrationIterator2();
+  ~NFmiRelativeTimeIntegrationIterator2() override;
   NFmiRelativeTimeIntegrationIterator2(NFmiQueryInfo* theData,
                                        int theStepnumber,
                                        int theStartShift = 0);
 
-  virtual void DoForEach(NFmiDataModifier* theDataModifier);
+  void DoForEach(NFmiDataModifier* theDataModifier) override;
 
  protected:
   int itsStartShift;  //! Integroinnin alkuaika aikaskeleina

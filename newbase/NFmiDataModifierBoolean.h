@@ -23,15 +23,15 @@ enum FmiModifierBoolOperations
 class _FMI_DLL NFmiDataModifierBoolean : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierBoolean(void);
+  ~NFmiDataModifierBoolean(void) override;
   NFmiDataModifierBoolean(FmiModifierBoolOperations theCondition,
                           NFmiDataModifier* theFirstValue,
                           NFmiDataModifier* theSecondValue);
 
   virtual bool BooleanValue(void);
 
-  virtual std::ostream& WriteOperator(std::ostream& file) const;
-  virtual std::ostream& WriteExpressionBody(std::ostream& file);
+  std::ostream& WriteOperator(std::ostream& file) const override;
+  std::ostream& WriteExpressionBody(std::ostream& file) override;
 
   operator bool();
 

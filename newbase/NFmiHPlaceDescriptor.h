@@ -24,7 +24,7 @@ class NFmiLocation;
 class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiHPlaceDescriptor(void);
+  ~NFmiHPlaceDescriptor(void) override;
   NFmiHPlaceDescriptor(void);
   NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor &theHPlaceDescriptor);
 
@@ -97,9 +97,9 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
 
   void CreateLatLonCache(std::vector<NFmiPoint> &v);
 
-  virtual unsigned long Index(void) const;
+  unsigned long Index(void) const override;
   bool Index(unsigned long theIndex);
-  virtual unsigned long Size(void) const;
+  unsigned long Size(void) const override;
 
   virtual FmiStationType SelectedType(void) const;
   virtual void SelectedType(FmiStationType thelocationType);
@@ -108,14 +108,14 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
   virtual void MaxNumberOfSources(unsigned long theMaxNumberOfSources);
   virtual bool IsMaxNumberOfSources(void) const;
 
-  virtual bool IsActive(void) const;
-  virtual bool SetActivity(bool);
-  virtual bool NextActive(void);
+  bool IsActive(void) const override;
+  bool SetActivity(bool) override;
+  bool NextActive(void) override;
 
   virtual const NFmiHPlaceDescriptor Combine(const NFmiHPlaceDescriptor &theCombine);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
   virtual unsigned long ClassId(void) const;
   virtual const char *ClassName(void) const;

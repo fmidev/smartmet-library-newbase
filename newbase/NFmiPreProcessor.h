@@ -33,7 +33,7 @@ class _FMI_DLL NFmiPreProcessor : public NFmiCommentStripper
   bool CompleteFileName(std::string& theFileName);
 
   using NFmiCommentStripper::Strip;
-  bool Strip(void);
+  bool Strip(void) override;
 
   bool StripDoubleEnds(const std::string& theBeginDirective,
                        const std::string& theEndDirective,

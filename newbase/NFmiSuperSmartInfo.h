@@ -35,7 +35,7 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
                                  // olemassa ja käytössä)
   };
 
-  ~NFmiSuperSmartInfo(void);
+  ~NFmiSuperSmartInfo(void) override;
 
   NFmiSuperSmartInfo(void);
   NFmiSuperSmartInfo(const NFmiQueryInfo& theInfo);
@@ -55,20 +55,20 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
   // paikan-asetus-funktiot pitää kirjoittaa uudestaan areamaskien takia, koska
   // nyt liikutaan maskeja käytettäessä vain maskattuihin kohtiin ja muut hypätään yli!!!!
 
-  bool FirstLocation(void);
-  bool NextLocation(void);
-  bool PreviousLocation(void);
+  bool FirstLocation(void) override;
+  bool NextLocation(void) override;
+  bool PreviousLocation(void) override;
   using NFmiFastQueryInfo::NearestLocation;
   bool NearestLocation(const NFmiLocation& theLocation,
-                       double theMaxDistance = kFloatMissing * 1000.);
+                       double theMaxDistance = kFloatMissing * 1000.) override;
 
-  bool NearestPoint(const NFmiPoint& theLatLonPoint);
+  bool NearestPoint(const NFmiPoint& theLatLonPoint) override;
 
   // Parametrin-asetus-funktiot pitää kirjoittaa uudestaan varianssi-calculaattorien takia!!!!!
 
-  bool FirstParam(bool fIgnoreSubParam = true);
-  bool NextParam(bool fIgnoreSubParam = true);
-  bool PreviousParam(bool fIgnoreSubParam = true);
+  bool FirstParam(bool fIgnoreSubParam = true) override;
+  bool NextParam(bool fIgnoreSubParam = true) override;
+  bool PreviousParam(bool fIgnoreSubParam = true) override;
   bool LastParam(bool fIgnoreSubParam = true);
 
 #ifndef UNIX
@@ -76,38 +76,38 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
 #else
   // oli pakko kirjoittaa, koska muuten en voi kutsua SSInfo:lta tätä,
   // koska muitakin Param-metodeja on peittämässä tätä
-  NFmiDataIdent& Param(void) const { return NFmiFastQueryInfo::Param(); };
+  NFmiDataIdent& Param(void) const override { return NFmiFastQueryInfo::Param(); };
 #endif
 
-  bool Param(const NFmiParam& theParam);
-  bool Param(const NFmiParam& theParam, const NFmiParam& theSubParam);
-  bool Param(const NFmiDataIdent& theDataIdent);
-  bool Param(FmiParameterName theParam);
+  bool Param(const NFmiParam& theParam) override;
+  bool Param(const NFmiParam& theParam, const NFmiParam& theSubParam) override;
+  bool Param(const NFmiDataIdent& theDataIdent) override;
+  bool Param(FmiParameterName theParam) override;
 
   // ajan-asetus-funktiot pitää kirjoittaa uudestaan areamaskin takia,
   // jos sattuu olemaan dynaamisia ajassa muuttuvia!!!!
 
-  bool FirstTime(void);
-  bool NextTime(void);
-  bool LastTime(void);
-  bool PreviousTime(void);
+  bool FirstTime(void) override;
+  bool NextTime(void) override;
+  bool LastTime(void) override;
+  bool PreviousTime(void) override;
 
 #ifndef UNIX
   using NFmiFastQueryInfo::Time;  // nyt voi käyttää suoraan SSInfosta muitakin Time-funktioita
   using NFmiFastQueryInfo::TimeIndex;  // nyt voi käyttää suoraan SSInfosta muitakin
                                        // TimeIndex-funktioita
 #else
-  const NFmiMetTime& Time(void) const { return NFmiFastQueryInfo::Time(); }
-  unsigned long TimeIndex(void) const { return NFmiFastQueryInfo::TimeIndex(); }
+  const NFmiMetTime& Time(void) const override { return NFmiFastQueryInfo::Time(); }
+  unsigned long TimeIndex(void) const override { return NFmiFastQueryInfo::TimeIndex(); }
 #endif
-  bool Time(const NFmiMetTime& theTime);
-  bool TimeIndex(unsigned long theIndex);
+  bool Time(const NFmiMetTime& theTime) override;
+  bool TimeIndex(unsigned long theIndex) override;
 
-  unsigned long SizeLocations(void) const;
-  unsigned long SizeActiveLocations(void) const;
+  unsigned long SizeLocations(void) const override;
+  unsigned long SizeActiveLocations(void) const override;
 
   // QueryData Read
-  float FloatValue(void) const;
+  float FloatValue(void) const override;
 
   using NFmiQueryInfo::FloatValue;
 
@@ -123,18 +123,18 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
                                    bool doVarianceCalculation);
 
   using NFmiFastQueryInfo::PeekLocationValue;
-  float PeekLocationValue(int theXOffset, int theYOffset) const;
-  float PeekTimeValue(int theTimeOffset);
+  float PeekLocationValue(int theXOffset, int theYOffset) const override;
+  float PeekTimeValue(int theTimeOffset) override;
   using NFmiQueryInfo::PeekValue;
-  float PeekValue(int theTimeOffset, int theXOffset, int theYOffset);
+  float PeekValue(int theTimeOffset, int theXOffset, int theYOffset) override;
 
   // ClassIdent
-  unsigned long ClassId(void) const;
-  const char* ClassName(void) const;
+  unsigned long ClassId(void) const override;
+  const char* ClassName(void) const override;
 
-  NFmiQueryInfo* Clone(void) const;
-  std::ostream& Write(std::ostream& file) const;
-  std::istream& Read(std::istream& file);
+  NFmiQueryInfo* Clone(void) const override;
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   // operator
   NFmiSuperSmartInfo& operator=(const NFmiSuperSmartInfo& theInfo);
@@ -177,11 +177,11 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
  protected:
   void Destroy(void);
 
-  virtual size_t Index(void) const;
+  size_t Index(void) const override;
   size_t Index(unsigned long theParamIndex,
                unsigned long theLocationIndex,
                unsigned long theLevelIndex,
-               unsigned long theTimeIndex) const
+               unsigned long theTimeIndex) const override
   {
     return NFmiFastQueryInfo::Index(theParamIndex, theLocationIndex, theLevelIndex, theTimeIndex);
   }

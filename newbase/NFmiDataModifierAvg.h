@@ -12,18 +12,18 @@
 class _FMI_DLL NFmiDataModifierAvg : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierAvg(void);
+  ~NFmiDataModifierAvg(void) override;
   NFmiDataModifierAvg(void);
   NFmiDataModifierAvg(const NFmiDataModifierAvg& theOther);
-  NFmiDataModifier* Clone(void) const;
+  NFmiDataModifier* Clone(void) const override;
 
   float Avg(void);
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear(void);
+  void Clear(void) override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult(void);
+  float CalculationResult(void) override;
   long Counter(void);
 
  protected:

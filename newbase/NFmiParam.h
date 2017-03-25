@@ -48,9 +48,9 @@ class _FMI_DLL NFmiParam : public NFmiIndividual
   FmiInterpolationMethod InterpolationMethod(void) const;
   void InterpolationMethod(FmiInterpolationMethod theInterpolationMethod);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
-  virtual const char *ClassName(void) const;
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
+  const char *ClassName(void) const override;
 
  protected:
  private:

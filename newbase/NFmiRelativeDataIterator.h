@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiRelativeDataIterator : public NFmiDataIterator
 {
  public:
-  virtual ~NFmiRelativeDataIterator();
+  ~NFmiRelativeDataIterator() override;
   NFmiRelativeDataIterator(NFmiQueryInfo* theData, long dx = 0, long dy = 0, long dt = 0);
 
   NFmiRelativeDataIterator(NFmiQueryInfo* theData,
@@ -25,8 +25,8 @@ class _FMI_DLL NFmiRelativeDataIterator : public NFmiDataIterator
                            long dyEnd,
                            long dtEnd);
 
-  void SetDimensions(long dx, long dy, long dt);
-  virtual void DoForEach(NFmiDataModifier* theDataModifier = 0);
+  void SetDimensions(long dx, long dy, long dt) override;
+  void DoForEach(NFmiDataModifier* theDataModifier = 0) override;
 
  protected:
   long itsDtStart;

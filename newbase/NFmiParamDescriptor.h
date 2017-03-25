@@ -15,7 +15,7 @@
 class _FMI_DLL NFmiParamDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiParamDescriptor(void);
+  ~NFmiParamDescriptor(void) override;
   NFmiParamDescriptor(void);
   NFmiParamDescriptor(const NFmiParamDescriptor &theParamDescriptor);
   NFmiParamDescriptor(const NFmiParamBag &theParamBag, bool interpolate = false);
@@ -33,19 +33,19 @@ class _FMI_DLL NFmiParamDescriptor : public NFmiDataDescriptor
   bool Param(const NFmiParam &theParam);
   bool Param(FmiParameterName theParam);
 
-  virtual unsigned long Index(void) const;
+  unsigned long Index(void) const override;
   bool Index(unsigned long theIndex);
-  virtual unsigned long Size(void) const;
+  unsigned long Size(void) const override;
 
-  virtual bool IsActive(void) const;
+  bool IsActive(void) const override;
   virtual bool IsActive(bool fIgnoreSubParam) const;
   virtual bool IsActive(unsigned long index, bool fIgnoreSubParam = true) const;
-  virtual bool SetActivity(bool theActivityState);
+  bool SetActivity(bool theActivityState) override;
   virtual bool SetActivity(bool theActivityState, bool fIgnoreSubParam);
   virtual bool SetActivity(bool theActivityState,
                            unsigned long theIndex,
                            bool fIgnoreSubParam = true);
-  virtual bool NextActive(void);
+  bool NextActive(void) override;
   virtual bool NextActive(bool fIgnoreSubParam);
   virtual unsigned long SizeActive(void) const;
   bool FindSubParam(const NFmiParam &theParam);
@@ -57,8 +57,8 @@ class _FMI_DLL NFmiParamDescriptor : public NFmiDataDescriptor
   void SetProducer(const NFmiProducer &newProducer);
 
   virtual const NFmiParamDescriptor Combine(const NFmiParamDescriptor &theCombine);
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
   virtual unsigned long ClassId(void) const;
   virtual const char *ClassName(void) const;

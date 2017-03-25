@@ -14,27 +14,27 @@
 class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierList(void);
+  ~NFmiDataModifierList(void) override;
   // NFmiDataModifier(const NFmiDataModifier & theModier); // compiler generates
   NFmiDataModifierList(NFmiCombinedParam* thePotentialCombinedParam = 0);
 
   bool Add(NFmiDataModifier* theModifier);
-  virtual void Clear(void);
+  void Clear(void) override;
 
   bool IsCombinedParam(void);
 
-  bool BoolOperation(float);
-  virtual float FloatOperation(float theValue);
+  bool BoolOperation(float) override;
+  float FloatOperation(float theValue) override;
 
   using NFmiDataModifier::CalculationResult;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::WriteExpressionBody;
-  virtual float CalculationResult(void);
-  virtual void Calculate(float NotInUse);
-  virtual std::ostream& WriteExpressionBody(std::ostream& file);
+  float CalculationResult(void) override;
+  void Calculate(float NotInUse) override;
+  std::ostream& WriteExpressionBody(std::ostream& file) override;
 
  public:
-  virtual double FloatValue(void);
+  double FloatValue(void) override;
   bool Reset(void);
   bool Next(void);
   NFmiDataModifier* Current(void);

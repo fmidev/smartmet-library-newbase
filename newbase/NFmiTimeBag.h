@@ -33,13 +33,13 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
                                     const NFmiMetTime &theEndLimit);
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
-  virtual unsigned long GetSize(
-      void) const;           //??? Tarvitaanko täällä? //should be const. Look at .cpp
+  unsigned long GetSize(
+      void) const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp
   bool IsEmpty(void) const;  // Jouduin tekemään IsEmpty -metodin, NFmiTimeBag palauttaa tyhjänä 1:n
                              // kun resolution on 0 jostain historiallisista v. 1998 syistä
-  virtual bool Next(void);
-  virtual bool Previous(void);
-  virtual void Reset(FmiDirection directionToIter = kForward);
+  bool Next(void) override;
+  bool Previous(void) override;
+  void Reset(FmiDirection directionToIter = kForward) override;
   bool SetCurrent(const NFmiMetTime &theTime);
   void SetNewStartTime(const NFmiMetTime &theTime);
   bool SetTime(unsigned long theIndex);
@@ -49,10 +49,10 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
                        FmiDirection theDirection = kCenter,
                        unsigned long theTimeRangeInMinutes = kUnsignedLongMissing);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
-  virtual const char *ClassName(void) const;
+  const char *ClassName(void) const override;
 
   NFmiTimeBag &operator=(const NFmiTimeBag &theTimeBag);
   bool operator==(const NFmiTimeBag &theTimeBag) const;

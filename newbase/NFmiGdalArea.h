@@ -18,7 +18,7 @@ class OGRCoordinateTransformation;
 class _FMI_DLL NFmiGdalArea : public NFmiArea
 {
  public:
-  virtual ~NFmiGdalArea();
+  ~NFmiGdalArea() override;
 
   NFmiGdalArea();
 
@@ -50,37 +50,37 @@ class _FMI_DLL NFmiGdalArea : public NFmiArea
                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
                bool usePacificView = false);
 
-  virtual NFmiArea* Clone() const;
+  NFmiArea* Clone() const override;
 
   NFmiGdalArea& operator=(const NFmiGdalArea& theArea);
 
   bool operator==(const NFmiGdalArea& theArea) const;
   bool operator!=(const NFmiGdalArea& theArea) const;
 
-  bool operator==(const NFmiArea& theArea) const;
-  bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual unsigned long ClassId() const;
-  virtual const char* ClassName() const;
-  const std::string AreaStr() const;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
   const std::string& Datum() const;
-  virtual const std::string WKT() const;
+  const std::string WKT() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiRect WorldRect() const;
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiRect WorldRect() const override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
-  virtual double WorldXYHeight() const;
-  virtual double WorldXYWidth() const;
+  double WorldXYHeight() const override;
+  double WorldXYWidth() const override;
 
  private:
   void init();

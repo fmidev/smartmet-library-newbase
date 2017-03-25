@@ -13,7 +13,7 @@
 class _FMI_DLL NFmiRadarStation : public NFmiStation
 {
  public:
-  virtual ~NFmiRadarStation(void);
+  ~NFmiRadarStation(void) override;
 
   NFmiRadarStation(void);
 
@@ -25,7 +25,7 @@ class _FMI_DLL NFmiRadarStation : public NFmiStation
                    unsigned long theYNumber);
 
   NFmiRadarStation& operator=(const NFmiRadarStation& NFmiRadarStation);
-  virtual bool IsEqual(const NFmiSortable& theLocation) const;
+  bool IsEqual(const NFmiSortable& theLocation) const override;
 
   unsigned long Resolution(void) const;
   unsigned long XNumber(void) const;
@@ -35,11 +35,11 @@ class _FMI_DLL NFmiRadarStation : public NFmiStation
   void XNumber(unsigned long theXNumber);
   void YNumber(unsigned long theYNumber);
 
-  virtual NFmiLocation* Clone(void) const;
-  virtual unsigned long ClassId(void) const;
+  NFmiLocation* Clone(void) const override;
+  unsigned long ClassId(void) const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  private:
   unsigned long itsResolution;  //!< res. of radar grid

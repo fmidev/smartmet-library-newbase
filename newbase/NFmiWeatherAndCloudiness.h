@@ -31,7 +31,7 @@ class NFmiIntegrationSelector;
 class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
 {
  public:
-  virtual ~NFmiWeatherAndCloudiness(void);
+  ~NFmiWeatherAndCloudiness(void) override;
   NFmiWeatherAndCloudiness(void);
   NFmiWeatherAndCloudiness(double theInfoVersion);
   NFmiWeatherAndCloudiness(const NFmiWeatherAndCloudiness& theWeather);
@@ -65,7 +65,7 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
                            float thePrecipitation = kFloatMissing,
                            double theInfoVersion = 7.);
 
-  virtual NFmiCombinedParam* Clone(void) const;
+  NFmiCombinedParam* Clone(void) const override;
 
   static bool IsFair(float precForm);
   static bool IsLiquid(float precForm);
@@ -86,14 +86,14 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
   bool IsFair(void) const;
   bool IsThunder(void) const;
   bool IsPrecipitationOk(void) const;
-  virtual bool IsMemberParam(FmiParameterName type) const;
+  bool IsMemberParam(FmiParameterName type) const override;
 
-  bool SubValue(double theValue, FmiParameterName theParam);
-  double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0);
-  virtual double RawSubValue(FmiParameterName theParam);
+  bool SubValue(double theValue, FmiParameterName theParam) override;
+  double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0) override;
+  double RawSubValue(FmiParameterName theParam) override;
 
-  virtual bool LongValue(unsigned long theValue);
-  virtual unsigned long LongValue(void) const;
+  bool LongValue(unsigned long theValue) override;
+  unsigned long LongValue(void) const override;
 
   NFmiDataIdent* CreateParam(const NFmiProducer& theProducer = NFmiProducer(),
                              NFmiVoidPtrList* theSecondaryProducerList = 0) const;
@@ -110,14 +110,14 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness4 = NFmiWeatherAndCloudiness(),
       float factor4 = kFloatMissing) const;
 
-  virtual bool SetToWeightedMean(NFmiCombinedParam* theWeatherAndCloudiness1,
-                                 float fac1,
-                                 NFmiCombinedParam* theWeatherAndCloudiness2,
-                                 float fac2,
-                                 NFmiCombinedParam* theWeatherAndCloudiness3 = 0,
-                                 float fac3 = kFloatMissing,
-                                 NFmiCombinedParam* theWeatherAndCloudiness4 = 0,
-                                 float fac4 = kFloatMissing);
+  bool SetToWeightedMean(NFmiCombinedParam* theWeatherAndCloudiness1,
+                         float fac1,
+                         NFmiCombinedParam* theWeatherAndCloudiness2,
+                         float fac2,
+                         NFmiCombinedParam* theWeatherAndCloudiness3 = 0,
+                         float fac3 = kFloatMissing,
+                         NFmiCombinedParam* theWeatherAndCloudiness4 = 0,
+                         float fac4 = kFloatMissing) override;
 
   const NFmiWeatherAndCloudiness MeanWeather(
       bool isTimePeriod,
@@ -130,22 +130,22 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness4 = NFmiWeatherAndCloudiness(),
       float fac4 = kFloatMissing) const;
 
-  virtual bool SetToWeightedPeriod(NFmiQueryInfo* info,
-                                   const NFmiPoint& theLonLat,
-                                   unsigned long period,
-                                   bool considerPrecipitationMax,
-                                   float factor1 = 1.,
-                                   float factor2 = 1.,
-                                   float factor3 = 1.);
+  bool SetToWeightedPeriod(NFmiQueryInfo* info,
+                           const NFmiPoint& theLonLat,
+                           unsigned long period,
+                           bool considerPrecipitationMax,
+                           float factor1 = 1.,
+                           float factor2 = 1.,
+                           float factor3 = 1.) override;
 
-  virtual bool SetToWeightedPeriod(NFmiQueryInfo* info,
-                                   const NFmiPoint& theLonLat,
-                                   const NFmiMetTime& startTime,
-                                   const NFmiMetTime& endTime,
-                                   bool considerPrecipitationMax,
-                                   float factor1 = 1.,
-                                   float factor2 = 1.,
-                                   float factor3 = 1.);
+  bool SetToWeightedPeriod(NFmiQueryInfo* info,
+                           const NFmiPoint& theLonLat,
+                           const NFmiMetTime& startTime,
+                           const NFmiMetTime& endTime,
+                           bool considerPrecipitationMax,
+                           float factor1 = 1.,
+                           float factor2 = 1.,
+                           float factor3 = 1.) override;
 
   int CrossCheckIndex(void) const;
 
@@ -156,7 +156,7 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
   void DefaultPrecipitationTypeIsLargeScale(bool newState);
 
  protected:
-  virtual void CreateSubParams(void);
+  void CreateSubParams(void) override;
 
   unsigned long PrecipitationFormFromWeightTable(double* formTable) const;
   unsigned long PrecipitationFormWeightedMean(unsigned long form1,
@@ -193,11 +193,11 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
                    int value4 = kShortMissing,
                    float factor4 = kFloatMissing) const;
 
-  virtual void CreateIntegrators(void);
+  void CreateIntegrators(void) override;
 
  public:
   void SetPrecipitationProbabilityLimits(float firstLimit = -1, float secondLimit = -1);
-  virtual NFmiCombinedParam* CreateNew(float theInitValue);
+  NFmiCombinedParam* CreateNew(float theInitValue) override;
 
   unsigned long TimeIntegratedHessaa(
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness1,
@@ -232,7 +232,7 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
   double TotalCloudinessValue(void) const;
   double Precipitation1hValue(void) const;
   void CheckIfPrecipZeroAndCleanTypeAndForm(void);
-  void CrossCheck(FmiParameterName theParam);
+  void CrossCheck(FmiParameterName theParam) override;
   unsigned long CalcTotalCloudiness(void);
 
   bool TotalCloudiness(unsigned long theValue);

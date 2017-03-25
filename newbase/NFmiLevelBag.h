@@ -18,7 +18,7 @@ class NFmiLevel;
 class _FMI_DLL NFmiLevelBag : public NFmiSize
 {
  public:
-  virtual ~NFmiLevelBag(void);
+  ~NFmiLevelBag(void) override;
   NFmiLevelBag(void);
   NFmiLevelBag(const NFmiLevelBag &theLevelBag);
   NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels);
@@ -38,10 +38,10 @@ class _FMI_DLL NFmiLevelBag : public NFmiSize
   bool AddLevel(const NFmiLevel &theLevel);
 
   virtual const NFmiLevelBag Combine(const NFmiLevelBag &theBag) const;
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
-  virtual const char *ClassName(void) const;
+  const char *ClassName(void) const override;
 
  private:
   NFmiLevel *itsLevels;

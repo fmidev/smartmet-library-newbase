@@ -16,12 +16,12 @@ class NFmiIntegrationSelector;
 class _FMI_DLL NFmiMaskedDataIterator : public NFmiDataIterator
 {
  public:
-  virtual ~NFmiMaskedDataIterator();
+  ~NFmiMaskedDataIterator() override;
   NFmiMaskedDataIterator(NFmiSuperSmartInfo* theData,
                          bool isCombinedParam = false,
                          NFmiIntegrationSelector* theIntegrationSelector = 0);
 
-  virtual void DoForEach(NFmiDataModifier* theModifier);
+  void DoForEach(NFmiDataModifier* theModifier) override;
 
   bool fIsCombinedParam;
   NFmiIntegrationSelector* itsIntegrationSelector;

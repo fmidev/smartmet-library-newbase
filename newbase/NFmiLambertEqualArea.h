@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiLambertEqualArea(void);
+  ~NFmiLambertEqualArea(void) override;
 
   NFmiLambertEqualArea(void);
 
@@ -50,15 +50,15 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
                        const double theCentralLatitude = 52.,
                        const double theTrueLatitude = 90.);
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* Clone(void) const;
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
-  virtual const NFmiRect WorldRect(void) const;
+  void Init(bool fKeepWorldRect = false) override;
+  NFmiArea* Clone(void) const override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
+  const NFmiRect WorldRect(void) const override;
 
   using NFmiArea::CreateNewArea;
-  NFmiArea* CreateNewArea(const NFmiRect& theRect) const;
+  NFmiArea* CreateNewArea(const NFmiRect& theRect) const override;
 
   NFmiLambertEqualArea& operator=(const NFmiLambertEqualArea& theArea);
 
@@ -67,21 +67,21 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
 
   using NFmiAzimuthalArea::operator==;
   using NFmiAzimuthalArea::operator!=;
-  bool operator==(const NFmiArea& theArea) const;
-  bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
-  const std::string AreaStr(void) const;
-  virtual const std::string WKT() const;
+  unsigned long ClassId(void) const override;
+  const char* ClassName(void) const override;
+  const std::string AreaStr(void) const override;
+  const std::string WKT() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  protected:
-  virtual double K(const double delta) const;
-  virtual double CalcDelta(const double xyDistance) const;
-  virtual double DistanceFromPerspectivePointToCenterOfEarth(void) const;
+  double K(const double delta) const override;
+  double CalcDelta(const double xyDistance) const override;
+  double DistanceFromPerspectivePointToCenterOfEarth(void) const override;
 
  private:
 };  // class NFmiLambertEqualArea

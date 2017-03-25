@@ -17,7 +17,7 @@ class NFmiQueryInfo;
 class _FMI_DLL NFmiDataModifier : public NFmiDataModifierBase
 {
  public:
-  virtual ~NFmiDataModifier(void);
+  ~NFmiDataModifier(void) override;
   NFmiDataModifier(const NFmiDataModifier& theModier);
   virtual NFmiDataModifier* Clone(void) const;
   NFmiDataModifier(FmiJoinOperator theJoinOperator = kFmiAdd,

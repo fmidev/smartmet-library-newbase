@@ -25,7 +25,7 @@ enum FmiValues
 class _FMI_DLL NFmiValueString : public NFmiString
 {
  public:
-  ~NFmiValueString(void);
+  ~NFmiValueString(void) override;
   NFmiValueString(void);
 
   NFmiValueString(const short theValue, const char *theFormat = "%hd");

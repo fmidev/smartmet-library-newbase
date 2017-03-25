@@ -13,17 +13,17 @@
 class _FMI_DLL NFmiDataModifierMode : public NFmiDataModifier
 {
  public:
-  void Clear(void);
+  void Clear(void) override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult();
+  void Calculate(float theValue) override;
+  float CalculationResult() override;
 
   NFmiDataModifierMode(void);
-  virtual ~NFmiDataModifierMode(void);
+  ~NFmiDataModifierMode(void) override;
   NFmiDataModifierMode(const NFmiDataModifierMode &theOther);
-  NFmiDataModifier *Clone(void) const;
+  NFmiDataModifier *Clone(void) const override;
 
  private:
   class Data

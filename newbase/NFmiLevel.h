@@ -15,7 +15,7 @@
 class _FMI_DLL NFmiLevel : public NFmiIndividual
 {
  public:
-  ~NFmiLevel(void);
+  ~NFmiLevel(void) override;
   NFmiLevel(void);
   NFmiLevel(const NFmiLevel& theLevel);
   NFmiLevel(unsigned long theIdent, const NFmiString& theName, float theLevelValue);
@@ -30,10 +30,10 @@ class _FMI_DLL NFmiLevel : public NFmiIndividual
   void LevelValue(float theLevelValue) { itsLevelValue = theLevelValue; }
   FmiLevelType LevelType(void) const;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const char* ClassName(void) const;
+  const char* ClassName(void) const override;
 
   bool IsMissing() const;
 

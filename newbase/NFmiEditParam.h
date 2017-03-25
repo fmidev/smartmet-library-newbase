@@ -20,7 +20,7 @@ enum FmiMaskMethod
 class _FMI_DLL NFmiEditParam : public NFmiParam
 {
  public:
-  virtual ~NFmiEditParam();
+  ~NFmiEditParam() override;
   NFmiEditParam();
 
  private:

@@ -17,7 +17,7 @@
 class _FMI_DLL NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
 {
  public:
-  virtual ~NFmiMultiValuedGrid(void);
+  ~NFmiMultiValuedGrid(void) override;
 
   NFmiMultiValuedGrid(void);
   NFmiMultiValuedGrid(const NFmiGrid& theGrid,
@@ -29,13 +29,13 @@ class _FMI_DLL NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
 
   // Ambiquos methods inhereted primarily from NFmiGrid
 
-  bool First(void);                // resets Grid
-  unsigned long Size(void) const;  // Grid Size
-  NFmiArea* Area(void) const;      // GridArea
+  bool First(void) override;                // resets Grid
+  unsigned long Size(void) const override;  // Grid Size
+  NFmiArea* Area(void) const;               // GridArea
 
   float FloatValue(long dx = 0, long dy = 0);
   using NFmiQueryInfo::FloatValue;
-  bool FloatValue(float data);
+  bool FloatValue(float data) override;
   bool InterpolateToLatLonPoint(double newLon, double newLat, double& theValue);
 
  private:
@@ -48,8 +48,8 @@ class _FMI_DLL NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
 
   using NFmiGrid::Init;
   void Init(void);
-  virtual bool Init(NFmiDataPool* theData) { return NFmiGrid::Init(theData); }
-  virtual bool Init(NFmiGridBase* theData) { return NFmiGridBase::Init(theData); }
+  bool Init(NFmiDataPool* theData) override { return NFmiGrid::Init(theData); }
+  bool Init(NFmiGridBase* theData) override { return NFmiGridBase::Init(theData); }
   NFmiDataPool* itsMultiData;
   unsigned long itsCurrentDataStatus;
 

@@ -16,7 +16,7 @@
 class _FMI_DLL NFmiParamBag : public NFmiSize
 {
  public:
-  virtual ~NFmiParamBag(void);
+  ~NFmiParamBag(void) override;
   void Destroy(void);
 
   NFmiParamBag(void);
@@ -27,11 +27,11 @@ class _FMI_DLL NFmiParamBag : public NFmiSize
   NFmiParamBag &operator=(const NFmiParamBag &theParam);
   bool operator==(const NFmiParamBag &theParam) const;
 
-  virtual void Reset(FmiDirection directionToIter = kForward);
-  virtual bool First(void);
-  bool Next(void);
+  void Reset(FmiDirection directionToIter = kForward) override;
+  bool First(void) override;
+  bool Next(void) override;
   bool Next(bool fIgnoreSubParam);  // = true);
-  bool Previous(void);
+  bool Previous(void) override;
   bool Previous(bool fIgnoreSubParam);  // =true);
 
   FmiParameterName CurrentParam(void) const;
@@ -75,10 +75,10 @@ class _FMI_DLL NFmiParamBag : public NFmiSize
   virtual bool IsActive(bool fIgnoreSubParam = true) const;
   virtual bool IsActive(unsigned long index, bool fIgnoreSubParam = true) const;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
-  virtual const char *ClassName(void) const { return "NFmiParamBag"; }
+  const char *ClassName(void) const override { return "NFmiParamBag"; }
 
  private:
   checkedVector<NFmiDataIdent> itsParamsVector;

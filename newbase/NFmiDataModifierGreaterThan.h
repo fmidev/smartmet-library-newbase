@@ -13,7 +13,7 @@ class _FMI_DLL NFmiDataModifierGreaterThan : public NFmiDataModifier
 {
  public:
   NFmiDataModifierGreaterThan(float theValue = kFloatMissing);
-  virtual bool BoolOperation(float theValue);
+  bool BoolOperation(float theValue) override;
 
  private:
   double itsLimit;

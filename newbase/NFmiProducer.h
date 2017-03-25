@@ -27,7 +27,7 @@ class _FMI_DLL NFmiProducer : public NFmiIndividual
   NFmiProducer& operator=(const NFmiProducer& theProducer);
   bool operator==(const NFmiProducer& theProducer) const;
 
-  virtual const char* ClassName(void) const;
+  const char* ClassName(void) const override;
 
  private:
 };  // class NFmiProducer

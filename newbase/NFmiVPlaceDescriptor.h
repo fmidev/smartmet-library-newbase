@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiVPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiVPlaceDescriptor(void);
+  ~NFmiVPlaceDescriptor(void) override;
   NFmiVPlaceDescriptor(void);
   NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor &theVPlaceDescriptor);
   NFmiVPlaceDescriptor(NFmiLevelBag &theLevelBag);
@@ -41,16 +41,16 @@ class _FMI_DLL NFmiVPlaceDescriptor : public NFmiDataDescriptor
   const NFmiLevelBag &LevelBag() const { return *itsLevelBag; }
   void Destroy(void);
 
-  virtual unsigned long Index(void) const;
+  unsigned long Index(void) const override;
   bool Index(unsigned long theIndex);
-  virtual unsigned long Size(void) const;
+  unsigned long Size(void) const override;
 
-  virtual bool NextActive(void);
-  virtual bool IsActive(void) const;
-  virtual bool SetActivity(bool theActivityState);
+  bool NextActive(void) override;
+  bool IsActive(void) const override;
+  bool SetActivity(bool theActivityState) override;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
   virtual const char *ClassName(void) const;
 

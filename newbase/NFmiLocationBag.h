@@ -26,7 +26,7 @@ class NFmiArea;
 class _FMI_DLL NFmiLocationBag : public NFmiSize
 {
  public:
-  virtual ~NFmiLocationBag(void);
+  ~NFmiLocationBag(void) override;
   NFmiLocationBag(void);
   NFmiLocationBag(const NFmiLocationBag &theBag);
   NFmiLocationBag(const NFmiLocation &theLocation);
@@ -60,8 +60,8 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
   virtual NFmiLocationBag *Clone(void) const;
 
   virtual unsigned long ClassId(void) const { return kNFmiLocationBag; }
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
   bool IsInside(const NFmiPoint &theLatLon, double theRadius) const;
 

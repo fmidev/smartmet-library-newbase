@@ -13,7 +13,7 @@
 class _FMI_DLL NFmiFileString : public NFmiString
 {
  public:
-  ~NFmiFileString(void);
+  ~NFmiFileString(void) override;
   NFmiFileString(void);
   NFmiFileString(const NFmiFileString& theFileStr);
   NFmiFileString(const NFmiString& theStr);

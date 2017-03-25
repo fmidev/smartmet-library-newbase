@@ -12,18 +12,18 @@
 class _FMI_DLL NFmiDataModifierSum : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierSum(void);
+  ~NFmiDataModifierSum(void) override;
   NFmiDataModifierSum(FmiJoinOperator theJoinOperator = kFmiAdd, bool missingValuesAlloved = true);
   NFmiDataModifierSum(const NFmiDataModifierSum& theOther);
-  NFmiDataModifier* Clone(void) const;
+  NFmiDataModifier* Clone(void) const override;
 
   float Sum(void);
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear(void);
+  void Clear(void) override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult(void);
+  float CalculationResult(void) override;
 
  protected:
   float itsSum;

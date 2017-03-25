@@ -15,14 +15,14 @@
 class _FMI_DLL NFmiDataModifierExtreme : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierExtreme(void);
+  ~NFmiDataModifierExtreme(void) override;
   NFmiDataModifierExtreme(void);
   NFmiDataModifierExtreme(const NFmiDataModifierExtreme &theOther);
 
   void SetTime(NFmiQueryInfo *theQI);
   const NFmiTime GetTime(void);
-  virtual void Calculate(NFmiQueryInfo *theQI);
-  virtual void Calculate(float theValue);
+  void Calculate(NFmiQueryInfo *theQI) override;
+  void Calculate(float theValue) override;
   virtual void Calculate(float theValue, NFmiQueryInfo *theQI);
 
  protected:

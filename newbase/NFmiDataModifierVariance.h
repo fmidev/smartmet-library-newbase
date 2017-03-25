@@ -16,14 +16,14 @@ typedef boost::shared_mutex MutexType;
 class _FMI_DLL NFmiDataModifierVariance : public NFmiRegressionModifier
 {
  public:
-  virtual ~NFmiDataModifierVariance(void);
+  ~NFmiDataModifierVariance(void) override;
   NFmiDataModifierVariance(NFmiDataIdent* theDataIdent,
                            NFmiLevel* theLevel,
                            NFmiQueryInfo* theData = 0,
                            float theVarianceLevel = 1.0,
                            bool onlyVariance = false);
 
-  virtual double FloatValue(void);
+  double FloatValue(void) override;
 
  protected:
   double GaussianRandom(void);

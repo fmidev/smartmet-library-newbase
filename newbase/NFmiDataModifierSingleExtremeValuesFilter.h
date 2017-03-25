@@ -12,14 +12,14 @@
 class _FMI_DLL NFmiDataModifierSingleExtremeValuesFilter : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierSingleExtremeValuesFilter(void);
+  ~NFmiDataModifierSingleExtremeValuesFilter(void) override;
   NFmiDataModifierSingleExtremeValuesFilter(void);
   NFmiDataModifierSingleExtremeValuesFilter(float thePointValue, float theLimit);
-  void Clear(void);
+  void Clear(void) override;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult(void);
+  void Calculate(float theValue) override;
+  float CalculationResult(void) override;
 
  private:
   NFmiDataModifierAvg itsAvgModifier;

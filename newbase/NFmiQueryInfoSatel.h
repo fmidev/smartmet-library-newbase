@@ -16,7 +16,7 @@ class NFmiQueryData;
 class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
 {
  public:
-  ~NFmiQueryInfoSatel(void);
+  ~NFmiQueryInfoSatel(void) override;
   NFmiQueryInfoSatel(void);
   NFmiQueryInfoSatel(const NFmiQueryInfoSatel& theInfo);
 
@@ -33,13 +33,13 @@ class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
 
   virtual NFmiQueryInfo& operator=(const NFmiQueryInfo& theInfo);
 
-  NFmiQueryInfo* Clone(void) const;
+  NFmiQueryInfo* Clone(void) const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
+  unsigned long ClassId(void) const override;
+  const char* ClassName(void) const override;
 
  private:
   NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo);

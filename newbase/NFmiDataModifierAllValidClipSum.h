@@ -12,11 +12,11 @@
 class _FMI_DLL NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
 {
  public:
-  virtual ~NFmiDataModifierAllValidClipSum(void);
+  ~NFmiDataModifierAllValidClipSum(void) override;
   NFmiDataModifierAllValidClipSum(void);
 
-  virtual void Calculate(float theValue) { NFmiDataModifierAllValidSum::Calculate(theValue); }
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override { NFmiDataModifierAllValidSum::Calculate(theValue); }
+  void Calculate(NFmiQueryInfo* theQI) override;
 
  private:
   float itsHalfValue;

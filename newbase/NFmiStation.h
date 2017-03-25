@@ -13,7 +13,7 @@
 class _FMI_DLL NFmiStation : public NFmiLocation
 {
  public:
-  virtual ~NFmiStation(void);
+  ~NFmiStation(void) override;
 
   NFmiStation(void);
 
@@ -33,21 +33,21 @@ class _FMI_DLL NFmiStation : public NFmiLocation
 
   NFmiStation& operator=(const NFmiStation& theStation);
 
-  virtual bool IsEqual(const NFmiSortable& theLocation) const;
-  virtual bool IsLessThan(const NFmiSortable& theLocation) const;
+  bool IsEqual(const NFmiSortable& theLocation) const override;
+  bool IsLessThan(const NFmiSortable& theLocation) const override;
   virtual bool IsEqualName(const NFmiStation& theStation) const;
 
-  virtual NFmiLocation* Clone(void) const;
-  virtual unsigned long ClassId(void) const { return kNFmiStation; }
+  NFmiLocation* Clone(void) const override;
+  unsigned long ClassId(void) const override { return kNFmiStation; }
   virtual double MaxDistance(void) const { return itsMaxDistance; }
   virtual void MaxDistance(double theMaxDistance) { itsMaxDistance = theMaxDistance; }
   virtual FmiStationType IdentType(void) const { return itsIdentType; }
   virtual void IdentType(FmiStationType theIdentType) { itsIdentType = theIdentType; }
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  protected:
-  virtual void SetLocation(const NFmiLocation& theLocations);
+  void SetLocation(const NFmiLocation& theLocations) override;
 
   double itsMaxDistance;
   FmiStationType itsIdentType;

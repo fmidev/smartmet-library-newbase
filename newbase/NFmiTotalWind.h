@@ -29,7 +29,7 @@ class NFmiIntegrationSelector;
 class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
 {
  public:
-  virtual ~NFmiTotalWind(void);
+  ~NFmiTotalWind(void) override;
   NFmiTotalWind(const NFmiTotalWind& theWind);
   NFmiTotalWind(double theInfoVersion = 7.);
   NFmiTotalWind(unsigned long theValue,
@@ -46,19 +46,19 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
                 double theInfoVersion = 7.,
                 float theWindGustValue = kFloatMissing);
 
-  virtual NFmiCombinedParam* Clone(void) const;
+  NFmiCombinedParam* Clone(void) const override;
 
   bool CheckWindVector(unsigned long theValue);
-  virtual bool IsMemberParam(FmiParameterName type) const;
+  bool IsMemberParam(FmiParameterName type) const override;
 
-  virtual unsigned long LongValue(void) const;
-  virtual bool LongValue(unsigned long theValue);
+  unsigned long LongValue(void) const override;
+  bool LongValue(unsigned long theValue) override;
 
   double CalcU(void);  // lasketaan myös tuuli komponentit u ja v
   double CalcV(void);  // lasketaan myös tuuli komponentit u ja v
-  bool SubValue(double theValue, FmiParameterName theParam);
-  double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0);
-  double RawSubValue(FmiParameterName theParam);
+  bool SubValue(double theValue, FmiParameterName theParam) override;
+  double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0) override;
+  double RawSubValue(FmiParameterName theParam) override;
 
   NFmiDataIdent* CreateParam(const NFmiProducer& theProducer = NFmiProducer(),
                              NFmiVoidPtrList* theSecondaryProducerList = 0);
@@ -71,24 +71,24 @@ class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
                          NFmiCombinedParam* theCombinedParam3 = 0,
                          float fac3 = kFloatMissing,
                          NFmiCombinedParam* theCombinedParam4 = 0,
-                         float fac4 = kFloatMissing);
+                         float fac4 = kFloatMissing) override;
 
-  virtual bool SetToWeightedPeriod(NFmiQueryInfo* info,
-                                   const NFmiPoint& theLonLat,
-                                   unsigned long period,
-                                   bool considerPrecipitationMax,
-                                   float factor1 = 1.,
-                                   float factor2 = 1.,
-                                   float factor3 = 1.);
+  bool SetToWeightedPeriod(NFmiQueryInfo* info,
+                           const NFmiPoint& theLonLat,
+                           unsigned long period,
+                           bool considerPrecipitationMax,
+                           float factor1 = 1.,
+                           float factor2 = 1.,
+                           float factor3 = 1.) override;
 
-  virtual bool SetToWeightedPeriod(NFmiQueryInfo* info,
-                                   const NFmiPoint& theLonLat,
-                                   const NFmiMetTime& startTime,
-                                   const NFmiMetTime& endTime,
-                                   bool considerPrecipitationMax,
-                                   float factor1 = 1.,
-                                   float factor2 = 1.,
-                                   float factor3 = 1.);
+  bool SetToWeightedPeriod(NFmiQueryInfo* info,
+                           const NFmiPoint& theLonLat,
+                           const NFmiMetTime& startTime,
+                           const NFmiMetTime& endTime,
+                           bool considerPrecipitationMax,
+                           float factor1 = 1.,
+                           float factor2 = 1.,
+                           float factor3 = 1.) override;
 
  private:
   void SetFromDirectionAndSpeed(float theDirection, float theSpeed);

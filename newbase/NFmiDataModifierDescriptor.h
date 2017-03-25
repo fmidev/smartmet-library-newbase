@@ -18,7 +18,7 @@ class NFmiLevel;
 class _FMI_DLL NFmiDataModifierDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiDataModifierDescriptor(void);
+  ~NFmiDataModifierDescriptor(void) override;
   NFmiDataModifierDescriptor(void);
 
   NFmiParamDataModifier* VarianceModifier(const NFmiDataIdent& theParam, const NFmiLevel* theLevel);
@@ -26,13 +26,13 @@ class _FMI_DLL NFmiDataModifierDescriptor : public NFmiDataDescriptor
   void SetVarianceModifiers(NFmiParamDataModifierList* theList);
 
   // seuraavat on pakko kirjoittaa, koska ne on määritelty pure virtualiksi emossa
-  virtual unsigned long Index(void) const;
-  virtual unsigned long Size(void) const;
-  virtual bool IsActive(void) const;
-  virtual bool SetActivity(bool theActivityState);
-  virtual bool NextActive(void);
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  unsigned long Index(void) const override;
+  unsigned long Size(void) const override;
+  bool IsActive(void) const override;
+  bool SetActivity(bool theActivityState) override;
+  bool NextActive(void) override;
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  protected:
   NFmiParamDataModifierList* itsSystematicModifiers;  // Omistaa listan

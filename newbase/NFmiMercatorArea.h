@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiMercatorArea : public NFmiArea
 {
  public:
-  virtual ~NFmiMercatorArea(void);
+  ~NFmiMercatorArea(void) override;
   NFmiMercatorArea(void);
   NFmiMercatorArea(const NFmiMercatorArea &theLatLonArea);
   NFmiMercatorArea(const NFmiPoint &theBottomLeftLatLon,
@@ -23,29 +23,29 @@ class _FMI_DLL NFmiMercatorArea : public NFmiArea
                    const NFmiPoint &theBottomRightXY = NFmiPoint(1., 1.),
                    bool usePacificView = false);
 
-  virtual NFmiArea *Clone(void) const;
-  virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
-  virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
+  NFmiArea *Clone(void) const override;
+  const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const override;
+  const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const override;
   virtual double XScale(void) const;
   virtual double YScale(void) const;
-  virtual void Init(bool fKeepWorldRect = false);
+  void Init(bool fKeepWorldRect = false) override;
 
-  virtual const NFmiRect WorldRect(void) const;
+  const NFmiRect WorldRect(void) const override;
 
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
-  virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                            const NFmiPoint &theTopRightLatLon,
-                            bool allowPacificFix = true) const;
-  virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
-  const std::string AreaStr(void) const;
-  virtual const std::string WKT() const;
+  const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const override;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const override;
+  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
+                    const NFmiPoint &theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
+  unsigned long ClassId(void) const override;
+  const char *ClassName(void) const override;
+  const std::string AreaStr(void) const override;
+  const std::string WKT() const override;
   virtual bool operator==(const NFmiMercatorArea &theArea) const;
-  virtual bool operator==(const NFmiArea &theArea) const;
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  bool operator==(const NFmiArea &theArea) const override;
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
  protected:
   NFmiPoint itsBottomLeftLatLon;

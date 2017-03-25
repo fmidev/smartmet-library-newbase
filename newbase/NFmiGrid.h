@@ -60,7 +60,7 @@ class NFmiTimeCache
 class _FMI_DLL NFmiGrid : public NFmiGridBase
 {
  public:
-  virtual ~NFmiGrid(void);
+  ~NFmiGrid(void) override;
 
   NFmiGrid(const NFmiArea *theArea = 0,
            unsigned long theXNumber = 0,
@@ -72,7 +72,7 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
   NFmiGrid(const NFmiGrid &theGrid, FmiDirection theDirection = kBase);
 
   using NFmiGridBase::Init;
-  virtual bool Init(NFmiDataPool *theData);
+  bool Init(NFmiDataPool *theData) override;
   virtual bool Init(NFmiGrid *theGrid);
   bool Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate);
   bool Init(NFmiGrid &theGrid, NFmiGrid &theSubGrid, FmiInterpolationMethod howToInterpolate);
@@ -157,12 +157,12 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
                              NFmiDataMatrix<NFmiLocationCache> &theLocationCache);
 
   virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
+  const char *ClassName(void) const override;
   bool operator==(const NFmiGrid &theGrid) const;
   NFmiGrid &operator=(const NFmiGrid &theGrid);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
   bool IsInside(const NFmiPoint &theLatLon) const;
 

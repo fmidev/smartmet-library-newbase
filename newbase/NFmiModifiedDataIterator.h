@@ -15,9 +15,9 @@ class NFmiInfoModifier;
 class _FMI_DLL NFmiModifiedDataIterator : public NFmiRelativeDataIterator
 {
  public:
-  virtual ~NFmiModifiedDataIterator();
+  ~NFmiModifiedDataIterator() override;
   NFmiModifiedDataIterator(NFmiInfoModifier* theData, long dx = 0, long dy = 0, long dt = 0);
-  virtual void DoForEach(NFmiDataModifier* theDataModifier);
+  void DoForEach(NFmiDataModifier* theDataModifier) override;
 
  protected:
   NFmiModifiedDataIterator(const NFmiModifiedDataIterator& theIter);

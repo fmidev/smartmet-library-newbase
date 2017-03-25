@@ -14,16 +14,16 @@
 class _FMI_DLL NFmiDataModifierChange : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierChange();
+  ~NFmiDataModifierChange() override;
   NFmiDataModifierChange();
-  NFmiDataModifier* Clone() const;
+  NFmiDataModifier* Clone() const override;
 
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
 
  protected:
   bool itsFirstValueOK;

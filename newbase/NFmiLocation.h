@@ -20,7 +20,7 @@ class NFmiMetTime;
 class _FMI_DLL NFmiLocation : public NFmiIndividual
 {
  public:
-  virtual ~NFmiLocation(void) {}
+  ~NFmiLocation(void) override {}
   NFmiLocation(void) : NFmiIndividual(0, "undefined"), itsLatlon(NFmiPoint::gMissingLatlon) {}
   NFmiLocation(double theLongitude, double theLatitude)
       : NFmiIndividual(0, "undefined"), itsLatlon(theLongitude, theLatitude)
@@ -80,13 +80,13 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
                                 bool& isPolarNight);
 
   NFmiLocation& operator=(const NFmiLocation& theLocation);
-  virtual bool IsEqual(const NFmiSortable& aFmiTest) const;
-  virtual bool IsLessThan(const NFmiSortable& aFmiTest) const;
+  bool IsEqual(const NFmiSortable& aFmiTest) const override;
+  bool IsLessThan(const NFmiSortable& aFmiTest) const override;
 
   virtual NFmiLocation* Clone(void) const;
   virtual unsigned long ClassId(void) const { return kNFmiLocation; }
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   std::size_t HashValue() const;
 

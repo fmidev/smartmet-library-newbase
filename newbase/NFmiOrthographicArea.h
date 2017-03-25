@@ -15,7 +15,7 @@
 class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiOrthographicArea(void);
+  ~NFmiOrthographicArea(void) override;
 
   NFmiOrthographicArea(void);
 
@@ -41,11 +41,11 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
                        const NFmiPoint &theBottomRightXY = NFmiPoint(1.f, 1.f),
                        bool usePacificView = false);
 
-  virtual void Init(bool fKeepWorldRect = false);
+  void Init(bool fKeepWorldRect = false) override;
 
   using NFmiAzimuthalArea::LatLonToWorldXY;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXY) const;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXY) const override;
 
   void ZoomFactor(double theZoomFactor);
   double ZoomFactor(void) const;
@@ -56,10 +56,10 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
   virtual double AzimuthAngle(void) const;
   virtual void AzimuthAngle(double &theAzimuthAngle);
 
-  virtual NFmiArea *Clone(void) const;
-  virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                            const NFmiPoint &theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  NFmiArea *Clone(void) const override;
+  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
+                    const NFmiPoint &theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
   NFmiOrthographicArea &operator=(const NFmiOrthographicArea &theArea);
   bool operator==(const NFmiOrthographicArea &theArea) const;
@@ -67,20 +67,20 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
 
   using NFmiAzimuthalArea::operator==;
   using NFmiAzimuthalArea::operator!=;
-  bool operator==(const NFmiArea &theArea) const;
-  bool operator!=(const NFmiArea &theArea) const;
+  bool operator==(const NFmiArea &theArea) const override;
+  bool operator!=(const NFmiArea &theArea) const override;
 
-  virtual const char *ClassName(void) const;
-  const std::string AreaStr(void) const;
-  virtual const std::string WKT() const;
+  const char *ClassName(void) const override;
+  const std::string AreaStr(void) const override;
+  const std::string WKT() const override;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream &Write(std::ostream &file) const override;
+  std::istream &Read(std::istream &file) override;
 
  protected:
-  virtual double K(const double /* delta */) const { return 1.; };
-  virtual double CalcDelta(const double /* xyDistance */) const { return 0.; };
-  virtual double DistanceFromPerspectivePointToCenterOfEarth(void) const { return 0.; };
+  double K(const double /* delta */) const override { return 1.; };
+  double CalcDelta(const double /* xyDistance */) const override { return 0.; };
+  double DistanceFromPerspectivePointToCenterOfEarth(void) const override { return 0.; };
   double itsAzimuthAngle;
   double itsLat0;
   double itsLon0;

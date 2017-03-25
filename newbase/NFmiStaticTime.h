@@ -36,15 +36,15 @@ const unsigned long kDDHHMM = kDay + kHour + kMinute;
 class _FMI_DLL NFmiStaticTime : public NFmiSortable
 {
  public:
-  virtual ~NFmiStaticTime() {}
+  ~NFmiStaticTime() override {}
   NFmiStaticTime(void);
   NFmiStaticTime(const NFmiStaticTime& theTime);
   NFmiStaticTime(short year, short month, short day);
   NFmiStaticTime(short year, short month, short day, short hour, short minute = 0, short sec = 0);
   NFmiStaticTime(std::time_t theTime, bool fMakeLocal);
 
-  virtual bool IsEqual(const NFmiSortable& aFmiTest) const;
-  virtual bool IsLessThan(const NFmiSortable& aFmiTest) const;
+  bool IsEqual(const NFmiSortable& aFmiTest) const override;
+  bool IsLessThan(const NFmiSortable& aFmiTest) const override;
 
   NFmiStaticTime& operator=(const NFmiStaticTime& theTime);
 

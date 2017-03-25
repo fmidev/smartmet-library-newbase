@@ -14,7 +14,7 @@
 class _FMI_DLL NFmiKKJArea : public NFmiArea
 {
  public:
-  virtual ~NFmiKKJArea(void);
+  ~NFmiKKJArea(void) override;
   NFmiKKJArea(void);
   NFmiKKJArea(const NFmiKKJArea& theKKJArea);
 
@@ -35,31 +35,31 @@ class _FMI_DLL NFmiKKJArea : public NFmiArea
 
   NFmiKKJArea(const NFmiPoint& theTopLeftXY, const NFmiPoint& theBottomRightXY);
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual const NFmiRect WorldRect(void) const;
+  void Init(bool fKeepWorldRect = false) override;
+  const NFmiRect WorldRect(void) const override;
 
-  virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
+  const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
   virtual const NFmiPoint ToWorldXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const override;
 
   NFmiKKJArea& operator=(const NFmiKKJArea& theArea);
 
   virtual bool operator==(const NFmiKKJArea& theArea) const;
   virtual bool operator!=(const NFmiKKJArea& theArea) const;
 
-  virtual bool operator==(const NFmiArea& theArea) const;
-  virtual bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
-  const std::string AreaStr(void) const;
-  virtual const std::string WKT() const;
+  unsigned long ClassId(void) const override;
+  const char* ClassName(void) const override;
+  const std::string AreaStr(void) const override;
+  const std::string WKT() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   void SetupGaussKruger(void);
   void SetupAnyEllipsoid(double theA, double theP);

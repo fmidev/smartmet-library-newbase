@@ -13,7 +13,7 @@
 class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
 {
  public:
-  virtual ~NFmiPKJArea(void);
+  ~NFmiPKJArea(void) override;
   NFmiPKJArea(void);
   NFmiPKJArea(const NFmiPKJArea& thePKJArea);
 
@@ -35,15 +35,15 @@ class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
               const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
               const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
 
-  void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  void Init(bool fKeepWorldRect = false) override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
-  virtual NFmiArea* Clone(void) const;
+  NFmiArea* Clone(void) const override;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
+  unsigned long ClassId(void) const override;
+  const char* ClassName(void) const override;
 
   NFmiPKJArea& operator=(const NFmiPKJArea& theArea);
 
@@ -52,17 +52,17 @@ class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
 
   using NFmiKKJArea::operator==;
   using NFmiKKJArea::operator!=;
-  virtual bool operator==(const NFmiArea& theArea) const;
-  virtual bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const std::string WKT() const;
+  const std::string WKT() const override;
 
  protected:
-  virtual int ZoneNumberByLongitude(const double lon) const;
-  virtual int ZoneNumberByEasting(const double easting) const;
+  int ZoneNumberByLongitude(const double lon) const override;
+  int ZoneNumberByEasting(const double easting) const override;
 
  private:
   NFmiPoint CornerWorldXY(const NFmiPoint& latlonPoint) const;

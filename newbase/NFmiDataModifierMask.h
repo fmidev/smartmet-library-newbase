@@ -21,11 +21,11 @@
 class _FMI_DLL NFmiDataModifierMask : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierMask();
+  ~NFmiDataModifierMask() override;
   NFmiDataModifierMask(FmiMaskOperation theCondition = kFmiNoMaskOperation,
                        double theFirstLimit = kFloatMissing,
                        double theSecondLimit = kFloatMissing);
-  virtual bool BoolOperation(float theValue);
+  bool BoolOperation(float theValue) override;
 
  protected:
   FmiMaskOperation itsMaskOperation;

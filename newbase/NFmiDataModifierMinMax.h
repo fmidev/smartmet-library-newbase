@@ -23,20 +23,20 @@
 class _FMI_DLL NFmiDataModifierMinMax : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierMinMax(void);
+  ~NFmiDataModifierMinMax(void) override;
   NFmiDataModifierMinMax(void);
   NFmiDataModifierMinMax(const NFmiDataModifierMinMax& theOther);
-  NFmiDataModifier* Clone(void) const;
+  NFmiDataModifier* Clone(void) const override;
 
   float MinValue(void);
   float MaxValue(void);
 
-  void Clear(void);
+  void Clear(void) override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult(void);  // kysy erikseen min ja max!
+  void Calculate(float theValue) override;
+  float CalculationResult(void) override;  // kysy erikseen min ja max!
 
  private:
   float itsMinValue;

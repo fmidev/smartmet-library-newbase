@@ -94,32 +94,32 @@ class _FMI_DLL NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::non
   NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQueryInfo> >& theInfos);
 
   using NFmiFastQueryInfo::OriginTime;
-  const NFmiMetTime& OriginTime() const;  // we may have multiple origin times
+  const NFmiMetTime& OriginTime() const override;  // we may have multiple origin times
 
-  const NFmiMetTime& ValidTime() const;
-  bool Time(const NFmiMetTime& theTime);
+  const NFmiMetTime& ValidTime() const override;
+  bool Time(const NFmiMetTime& theTime) override;
 
-  void ResetTime();
-  bool NextTime();
-  bool FirstTime();
-  bool LastTime();
-  bool PreviousTime();
-  unsigned long TimeIndex() const;
-  bool TimeIndex(unsigned long theIndex);
-  bool IsInside(const NFmiMetTime& theTime) const;
+  void ResetTime() override;
+  bool NextTime() override;
+  bool FirstTime() override;
+  bool LastTime() override;
+  bool PreviousTime() override;
+  unsigned long TimeIndex() const override;
+  bool TimeIndex(unsigned long theIndex) override;
+  bool IsInside(const NFmiMetTime& theTime) const override;
 
-  float InterpolatedValue(const NFmiMetTime& theTime, int theMaxMinuteRange);
+  float InterpolatedValue(const NFmiMetTime& theTime, int theMaxMinuteRange) override;
 
   bool FindNearestTime(const NFmiMetTime& theTime,
                        FmiDirection theDirection = kCenter,
-                       unsigned long theTimeRangeInMinutes = kUnsignedLongMissing)
+                       unsigned long theTimeRangeInMinutes = kUnsignedLongMissing) override
   {
     return TimeToNearestStep(theTime, theDirection, theTimeRangeInMinutes);
   }
 
   bool TimeToNearestStep(const NFmiMetTime& theTime,
                          FmiDirection theDirection,
-                         long theTimeRangeInMinutes = kLongMissing);
+                         long theTimeRangeInMinutes = kLongMissing) override;
 
   // This is used to store querydata objects if a filename or directory
   // is used to construct the object. If NFmiFastQueryInfos are used,
