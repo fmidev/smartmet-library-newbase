@@ -33,7 +33,7 @@ bool NFmiBox::Initialize(unsigned long newSize)
   itsSize = newSize;
   if (itsValues)
   {
-    delete itsValues;
+    delete[] itsValues;
     itsValues = nullptr;
   }
   if (itsSize > 0) itsValues = new float[itsSize];
