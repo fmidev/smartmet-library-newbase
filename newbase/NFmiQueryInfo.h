@@ -228,7 +228,7 @@ class _FMI_DLL NFmiQueryInfo
                                     std::vector<float> &theValues);
   // ****** Cached interpolation methods ***********************
 
-  void SetLocalTimes(const float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi
+  void SetLocalTimes(float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi
   bool IsLocalTime() const;
   unsigned long ForecastPeriod();
 

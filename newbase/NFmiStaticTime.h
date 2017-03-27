@@ -65,8 +65,8 @@ class _FMI_DLL NFmiStaticTime : public NFmiSortable
   void XPrint(const char* str) const;
   virtual void Print() const;
 
-  const NFmiString ToStr(const unsigned long theTimeMask) const;
-  void FromStr(const NFmiString theTimeString, const unsigned long theTimeMask = kYYYYMMDDHHMMSS);
+  const NFmiString ToStr(unsigned long theTimeMask) const;
+  void FromStr(NFmiString theTimeString, unsigned long theTimeMask = kYYYYMMDDHHMMSS);
   double CalcHourOfDay() const;
 
   void SetYear(short year);

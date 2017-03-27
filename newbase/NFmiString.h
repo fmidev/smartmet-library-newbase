@@ -63,13 +63,13 @@ class _FMI_DLL NFmiString : public NFmiSortable
   NFmiString &operator=(const NFmiString & /*aFmiString*/);
   NFmiString &operator+=(const unsigned char *aChar);
   NFmiString &operator+=(const char *aChar);
-  NFmiString &operator+=(const char aChar);
+  NFmiString &operator+=(char aChar);
   NFmiString &operator+=(const NFmiString & /*aFmiString*/);
 
   bool operator==(const NFmiString &other) const;
   bool operator==(const char *other) const;
 
-  unsigned char operator[](const unsigned long counter) const;
+  unsigned char operator[](unsigned long counter) const;
 
   operator char *() const;
   operator unsigned char *() const;

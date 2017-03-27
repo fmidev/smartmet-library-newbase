@@ -19,21 +19,21 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
   static const NFmiMetTime gMissingTime;  // Tätä missing aikaa voi käyttää, jos haluaa ilmaista
                                           // että jokin aika ei mahdollisesti ole initialisoitu
 
-  explicit NFmiMetTime(const long timeStepInMinutes = 60);
+  explicit NFmiMetTime(long timeStepInMinutes = 60);
   NFmiMetTime(const NFmiMetTime& aMetTime);
-  NFmiMetTime(const long datePart, const long timePart);
+  NFmiMetTime(long datePart, long timePart);
   NFmiMetTime(const NFmiMetTime& aMetTime, short negRange, short posRange);
   NFmiMetTime(const NFmiTime& aTime,
               long theConstructMetTime = 60,
               short negRange = 0,
               short posRange = 0);
-  NFmiMetTime(const short year, const short month, const short day);
-  NFmiMetTime(const short year,
-              const short month,
-              const short day,
-              const short hour,
-              const short minute = 0,
-              const short sec = 0,
+  NFmiMetTime(short year, short month, short day);
+  NFmiMetTime(short year,
+              short month,
+              short day,
+              short hour,
+              short minute = 0,
+              short sec = 0,
               long timeStep = 60,
               short negRange = 0,
               short posRange = 0);
@@ -59,13 +59,13 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
   const NFmiMetTime operator--(int);  // postfix
 
   void NextMetTime();
-  void NextMetTime(const long deltaInMinutes);
+  void NextMetTime(long deltaInMinutes);
   void NextMetTime(const NFmiTimePerioid& perioid);
   void PreviousMetTime();
-  void PreviousMetTime(const long deltaInMinutes);
+  void PreviousMetTime(long deltaInMinutes);
   void PreviousMetTime(const NFmiTimePerioid& perioid);
   void NearestMetTime(FmiDirection theDirect = kNoDirection);
-  void NearestMetTime(const long deltaInMinutes, FmiDirection theDirect = kNoDirection);
+  void NearestMetTime(long deltaInMinutes, FmiDirection theDirect = kNoDirection);
   void NearestMetTime(const NFmiTimePerioid& perioid, FmiDirection theDirect = kNoDirection);
 
   // Näiden pitäisi mielestäni muuttaa olion sisäistä arvoa, vaan nämäpä
@@ -75,7 +75,7 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
   //    NFmiMetTime PreviousObservation( const short deltaInMinutes ) const;
   //    NFmiMetTime NearestObservation( const short deltaInMinutes ) const;
 
-  void SetTimeStep(const long timeStepInMinutes,
+  void SetTimeStep(long timeStepInMinutes,
                    bool fSetTime = true,
                    FmiDirection theDirect = kNoDirection);
 
@@ -99,7 +99,7 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
   struct std::tm GetSystemTime() override;
 
  private:
-  void ConstructMetTime(const long timeStepInMinutes, FmiDirection theDirect = kNoDirection);
+  void ConstructMetTime(long timeStepInMinutes, FmiDirection theDirect = kNoDirection);
 
  private:
   NFmiTimePerioid fTimeStepInMinutes;

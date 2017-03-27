@@ -18,7 +18,7 @@ class _FMI_DLL NFmiTransformList
   NFmiTransformList(int theMaxPairNumber = 50);
 
   bool AddDataMapping(const NFmiPoint& firstPair, const NFmiPoint& lastPair);
-  double Transform(const double value, int theRangeIndex = -1);
+  double Transform(double value, int theRangeIndex = -1);
 
   const NFmiPoint FirstPair();
   const NFmiPoint LastPair();
@@ -50,7 +50,7 @@ class _FMI_DLL NFmiTransformList
   virtual void Init(int theMaxPairNumber);
   virtual bool Allocate(int theMaxPairNumber);
   virtual bool Interpolate(const NFmiPoint& firstPair, const NFmiPoint& lastPair);
-  virtual bool Interpolate(const int theRangeIndex, double theValue);
+  virtual bool Interpolate(int theRangeIndex, double theValue);
   bool Equal(NFmiPoint& p1, NFmiPoint& p2);
 
  private:

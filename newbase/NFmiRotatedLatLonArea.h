@@ -23,7 +23,7 @@ class _FMI_DLL NFmiRotatedLatLonArea : public NFmiLatLonArea
                             NFmiPoint(0., -30.),  // 25.4.02/EL: lon = 0, lat = 30 South
                         const NFmiPoint &theTopLeftXY = NFmiPoint(0., 0.),
                         const NFmiPoint &theBottomRightXY = NFmiPoint(1., 1.),
-                        const bool initiallyRotated = false,
+                        bool initiallyRotated = false,
                         bool usePacificView = false);
 
   NFmiArea *Clone() const override;

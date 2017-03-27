@@ -22,8 +22,8 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
   NFmiOrthographicArea(const NFmiOrthographicArea &thePerspectiveArea);
 
   NFmiOrthographicArea(const NFmiPoint &theCentralLatLonPoint,
-                       const double theRadialRange = kRearth,
-                       const double theAzimuthAngle = 0.,
+                       double theRadialRange = kRearth,
+                       double theAzimuthAngle = 0.,
                        const NFmiPoint &theTopLeftXY = NFmiPoint(0.f, 0.f),
                        const NFmiPoint &theBottomRightXY = NFmiPoint(1.f, 1.f),
                        bool usePacificView = false);
@@ -36,7 +36,7 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
   */
   NFmiOrthographicArea(const NFmiPoint &theBottomLeftLatLon,
                        const NFmiPoint &theTopRightLatLon,
-                       const double theAzimuthAngle = 0.0,
+                       double theAzimuthAngle = 0.0,
                        const NFmiPoint &theTopLeftXY = NFmiPoint(0.f, 0.f),
                        const NFmiPoint &theBottomRightXY = NFmiPoint(1.f, 1.f),
                        bool usePacificView = false);

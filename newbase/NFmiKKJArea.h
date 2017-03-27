@@ -68,8 +68,8 @@ class _FMI_DLL NFmiKKJArea : public NFmiArea
   NFmiPoint itsTopRightLatLon;
   NFmiPoint itsBottomLeftLatLon;
 
-  virtual int ZoneNumberByLongitude(const double lon) const = 0;
-  virtual int ZoneNumberByEasting(const double easting) const = 0;
+  virtual int ZoneNumberByLongitude(double lon) const = 0;
+  virtual int ZoneNumberByEasting(double easting) const = 0;
 
   double Rad(double x) const;
   double Deg(double x) const;

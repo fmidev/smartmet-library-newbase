@@ -113,7 +113,7 @@ class _FMI_DLL NFmiTimeDescriptor : public NFmiDataDescriptor
   virtual bool SetActivePeriod(bool theActivityState, const NFmiTimeBag &thePeriod);
   virtual NFmiTimeBag GetActivePeriod();
 
-  void SetLocalTimes(const float theLongitude);  // Muuttaa ajan paikalliseksi
+  void SetLocalTimes(float theLongitude);  // Muuttaa ajan paikalliseksi
   FmiTimeLocalzation TimeLocalzation() const;
   bool IsInterpolation() const;
   bool IsOriginLastest() const;

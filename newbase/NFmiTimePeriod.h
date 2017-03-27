@@ -69,7 +69,7 @@ class _FMI_DLL NFmiTimePerioid
   // used only NFmiMetTime ..
 
   bool IsDate() const;
-  NFmiTimePerioid &operator=(const long theMinutes);
+  NFmiTimePerioid &operator=(long theMinutes);
   void CalculatePerioid();
 
  private:

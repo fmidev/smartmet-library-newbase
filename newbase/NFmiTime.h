@@ -51,7 +51,7 @@ class _FMI_DLL NFmiTime : public NFmiStaticTime
 
   NFmiTime &operator=(const NFmiTime &theTime);
 
-  static void Init(const FmiLanguage theLanguage);
+  static void Init(FmiLanguage theLanguage);
 
   // HUOM! tämä voi olla hämäävä, koska time_t on integer,
   // (pitäisikö thehdä SetTime-metodi konstruktorin sijaan?)
@@ -79,13 +79,13 @@ class _FMI_DLL NFmiTime : public NFmiStaticTime
   short GetZoneDifferenceHour() const;
   short GetWeekday() const;  // mon=1, tue=2,..., sat=6,  sun=7
 
-  const NFmiString Weekday(const FmiLanguage theLanguage = kFinnish) const;
-  const NFmiString MonthName(const FmiLanguage theLanguage = kFinnish) const;
+  const NFmiString Weekday(FmiLanguage theLanguage = kFinnish) const;
+  const NFmiString MonthName(FmiLanguage theLanguage = kFinnish) const;
 
   using NFmiStaticTime::ToStr;
 
-  virtual const NFmiString ToStr(const NFmiString theTimeFormat,
-                                 const FmiLanguage theLanguage = kFinnish) const;
+  virtual const NFmiString ToStr(NFmiString theTimeFormat,
+                                 FmiLanguage theLanguage = kFinnish) const;
 
   void PrintWeekday() const;
   short GetJulianDay() const;

@@ -28,27 +28,27 @@ class _FMI_DLL NFmiValueString : public NFmiString
   ~NFmiValueString() override;
   NFmiValueString();
 
-  NFmiValueString(const short theValue, const char *theFormat = "%hd");
-  NFmiValueString(const int theValue, const char *format = "%d");
-  NFmiValueString(const float theValue, const char *format = "%f");
-  NFmiValueString(const long theValue, const char *format = "%ld");
-  NFmiValueString(const double theValue, const char *format = "%lf");
+  NFmiValueString(short theValue, const char *theFormat = "%hd");
+  NFmiValueString(int theValue, const char *format = "%d");
+  NFmiValueString(float theValue, const char *format = "%f");
+  NFmiValueString(long theValue, const char *format = "%ld");
+  NFmiValueString(double theValue, const char *format = "%lf");
 
   NFmiValueString(const char * /*theValue*/);
   NFmiValueString(const unsigned char * /*theValue*/);
   NFmiValueString(const NFmiString & /*theValue*/);
   NFmiValueString(const NFmiValueString & /*theValue*/);
 
-  void SetValue(const short value, const char *format = "%hd");
-  void SetValue(const int value, const char *format = "%d");
-  void SetValue(const float value, const char *format = "%f");
-  void SetValue(const long value, const char *format = "%ld");
-  void SetValue(const double value, const char *format = "%lf");
+  void SetValue(short value, const char *format = "%hd");
+  void SetValue(int value, const char *format = "%d");
+  void SetValue(float value, const char *format = "%f");
+  void SetValue(long value, const char *format = "%ld");
+  void SetValue(double value, const char *format = "%lf");
 
-  bool ConvertToInt(int &convertValue, const int start = 0, const int size = 0) const;
-  bool ConvertToFloat(float &convertValue, const int start = 0, const int size = 0) const;
-  bool ConvertToLong(long &convertValue, const int start = 0, const int size = 0) const;
-  bool ConvertToDouble(double &convertValue, const int start = 0, const int size = 0) const;
+  bool ConvertToInt(int &convertValue, int start = 0, int size = 0) const;
+  bool ConvertToFloat(float &convertValue, int start = 0, int size = 0) const;
+  bool ConvertToLong(long &convertValue, int start = 0, int size = 0) const;
+  bool ConvertToDouble(double &convertValue, int start = 0, int size = 0) const;
 
   unsigned int SignificantDecimals() const;
 

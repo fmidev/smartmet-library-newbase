@@ -62,7 +62,7 @@ class _FMI_DLL NFmiPreProcessor : public NFmiCommentStripper
                                const std::string& theConditionalElseDirective = "#else");
 
   bool SetReplaceMap(const std::map<std::string, std::string>& theMap);
-  bool AddReplaceString(const std::string fromString, const std::string toString);
+  bool AddReplaceString(std::string fromString, std::string toString);
 
   int NumOfReplacesDone() const;
   bool NoFilesIncluded();

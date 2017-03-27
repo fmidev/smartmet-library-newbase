@@ -26,25 +26,25 @@ class _FMI_DLL NFmiEquidistArea : public NFmiAzimuthalArea
 
   NFmiEquidistArea(const NFmiPoint& theBottomLeftLatLon,
                    const NFmiPoint& theTopRightLatLon,
-                   const double theOrientation = 0.,
+                   double theOrientation = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                   const double theCentralLatitude = 90.,  // 90 deg. = North Pole
+                   double theCentralLatitude = 90.,  // 90 deg. = North Pole
                    bool usePacificView = false);
 
   NFmiEquidistArea(const NFmiPoint& theBottomLeftLatLon,
-                   const double theWidthInMeters,
-                   const double theHeightInMeters,
-                   const double theOrientation = 0.,
+                   double theWidthInMeters,
+                   double theHeightInMeters,
+                   double theOrientation = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                   const double theCentralLatitude = 90.);  // 90 deg. = North Pole
+                   double theCentralLatitude = 90.);  // 90 deg. = North Pole
 
-  NFmiEquidistArea(const double theRadialRange,
-                   const double theOrientation = 0.,
+  NFmiEquidistArea(double theRadialRange,
+                   double theOrientation = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                   const double theCentralLatitude = 90.);  // 90 deg. = North Pole
+                   double theCentralLatitude = 90.);  // 90 deg. = North Pole
 
   void Init(bool fKeepWorldRect = false) override;
   NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
@@ -68,8 +68,8 @@ class _FMI_DLL NFmiEquidistArea : public NFmiAzimuthalArea
   const std::string WKT() const override;
 
  protected:
-  double K(const double delta) const override;
-  double CalcDelta(const double xyDistance) const override;
+  double K(double delta) const override;
+  double CalcDelta(double xyDistance) const override;
   double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:

@@ -28,27 +28,27 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
 
   NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
                     const NFmiPoint& theTopRightLatLon,
-                    const double theCentralLongitude = 0.,
+                    double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    const double theCenterLatitude = 90.,
-                    const double theTrueLatitude = 60.,
+                    double theCenterLatitude = 90.,
+                    double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
   NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
-                    const double theCentralLongitude = 0.,
+                    double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    const double theCenterLatitude = 90.,
-                    const double theTrueLatitude = 60.,
+                    double theCenterLatitude = 90.,
+                    double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
-  NFmiAzimuthalArea(const double theRadialRange,
-                    const double theCentralLongitude = 0.,
+  NFmiAzimuthalArea(double theRadialRange,
+                    double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    const double theCenterLatitude = 90.,
-                    const double theTrueLatitude = 60.,
+                    double theCenterLatitude = 90.,
+                    double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
   void Init(bool fKeepWorldRect = false) override;
@@ -96,8 +96,8 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
 
   NFmiPoint itsBottomLeftWorldXY;
 
-  virtual double K(const double delta) const = 0;
-  virtual double CalcDelta(const double xyDistance) const = 0;
+  virtual double K(double delta) const = 0;
+  virtual double CalcDelta(double xyDistance) const = 0;
   virtual double DistanceFromPerspectivePointToCenterOfEarth() const = 0;
 
   double itsXScaleFactor;
