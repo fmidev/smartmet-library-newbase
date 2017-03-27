@@ -604,7 +604,6 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
     }
     angle2 = angle1;
   }
-  return;
 }
 
 // ----------------------------------------------------------------------

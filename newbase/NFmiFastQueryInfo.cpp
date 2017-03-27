@@ -4198,10 +4198,7 @@ void NFmiFastQueryInfo::DoWindComponentFix(const NFmiGrid &usedGrid,
   theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
 }
 
-static void valBufDeleter(float *ptr)
-{
-  delete[] ptr;
-}
+static void valBufDeleter(float *ptr) { delete[] ptr; }
 
 // Tämä hakee haluttuun hilaan ja alueeseen dataa.
 void NFmiFastQueryInfo::PressureValues(NFmiDataMatrix<float> &theValues,
