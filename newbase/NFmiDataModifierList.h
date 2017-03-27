@@ -23,7 +23,7 @@ class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
 
   bool IsCombinedParam();
 
-  bool BoolOperation(float) override;
+  bool BoolOperation(float /*theValue*/) override;
   float FloatOperation(float theValue) override;
 
   using NFmiDataModifier::CalculationResult;
@@ -55,7 +55,7 @@ class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataModifierList::BoolOperation(float) { return false; }
+inline bool NFmiDataModifierList::BoolOperation(float /*theValue*/) { return false; }
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented

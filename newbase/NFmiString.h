@@ -22,7 +22,7 @@ class _FMI_DLL NFmiString : public NFmiSortable
   NFmiString(const unsigned char *aText);
   NFmiString(const unsigned char *aText, unsigned long len);
   NFmiString(const char *aText);
-  NFmiString(const char *, unsigned long len);
+  NFmiString(const char * /*aText*/, unsigned long len);
   NFmiString(const std::string &str);
 
   bool IsValue() const;
@@ -38,7 +38,7 @@ class _FMI_DLL NFmiString : public NFmiSortable
   const unsigned char *GetCharPtr() const;
   const char *CharPtr() const;
 
-  void SetCharPtr(unsigned char *);
+  void SetCharPtr(unsigned char * /*aChar*/);
   void TrimR(unsigned char theChar = ' ');
   void TrimL(unsigned char theChar = ' ');
   void FillR(long theSize, unsigned char theChar = ' ');
@@ -60,11 +60,11 @@ class _FMI_DLL NFmiString : public NFmiSortable
 
   NFmiString &operator=(const unsigned char *aChar);
   NFmiString &operator=(const char *aChar);
-  NFmiString &operator=(const NFmiString &);
+  NFmiString &operator=(const NFmiString & /*aFmiString*/);
   NFmiString &operator+=(const unsigned char *aChar);
   NFmiString &operator+=(const char *aChar);
   NFmiString &operator+=(const char aChar);
-  NFmiString &operator+=(const NFmiString &);
+  NFmiString &operator+=(const NFmiString & /*aFmiString*/);
 
   bool operator==(const NFmiString &other) const;
   bool operator==(const char *other) const;

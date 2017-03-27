@@ -69,7 +69,7 @@ class _FMI_DLL NFmiGridBase
   bool IsInsideX(signed long numOfSteps) const;
   bool IsInsideY(signed long numOfSteps) const;
   bool IsInsideGrid(unsigned long XPointNum, unsigned long YPointNum) const;
-  bool IsInsideGrid(const NFmiPoint&) const;
+  bool IsInsideGrid(const NFmiPoint& /*point*/) const;
   bool IsInsideOriginalGrid(double xGrid, double yGrid) const;
 
   //  bool Base() const;

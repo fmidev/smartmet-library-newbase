@@ -52,7 +52,7 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
 
   bool IsEqual(const NFmiSortable& aFmiTest) const override;
 
-  NFmiMetTime& operator=(const NFmiMetTime&);
+  NFmiMetTime& operator=(const NFmiMetTime& /*aTime*/);
   NFmiMetTime& operator++();          // prefix
   NFmiMetTime& operator--();          // prefix
   const NFmiMetTime operator++(int);  // postfix

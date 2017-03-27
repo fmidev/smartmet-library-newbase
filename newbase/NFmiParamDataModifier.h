@@ -26,14 +26,14 @@ class _FMI_DLL NFmiParamDataModifier : public NFmiDataModifier
                         FmiJoinOperator theJoinOperator = kFmiAdd);
 
   std::ostream& WriteOperand(std::ostream& file) const override;
-  bool BoolOperation(float) override;
+  bool BoolOperation(float /*theValue*/) override;
   float FloatOperation(float theValue) override;
 
   using NFmiDataModifier::CalculationResult;
   using NFmiDataModifier::Calculate;
 
   float CalculationResult() override;
-  void Calculate(float) override;
+  void Calculate(float /*theValue*/) override;
 
   void Clear() override;
 

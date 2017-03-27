@@ -134,7 +134,7 @@ class _FMI_DLL NFmiQueryInfo
   virtual bool Level(const NFmiLevel &theLevelValue);
   virtual bool Time(const NFmiMetTime &theTime);
   virtual bool TimeToNearestStep(const NFmiMetTime &theTime,
-                                 FmiDirection = kForward,
+                                 FmiDirection /*theDirection*/ = kForward,
                                  long theTimeRangeInMinutes = kLongMissing);
 
   const NFmiArea *Area() const;

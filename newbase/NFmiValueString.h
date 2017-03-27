@@ -34,10 +34,10 @@ class _FMI_DLL NFmiValueString : public NFmiString
   NFmiValueString(const long theValue, const char *format = "%ld");
   NFmiValueString(const double theValue, const char *format = "%lf");
 
-  NFmiValueString(const char *);
-  NFmiValueString(const unsigned char *);
-  NFmiValueString(const NFmiString &);
-  NFmiValueString(const NFmiValueString &);
+  NFmiValueString(const char * /*theValue*/);
+  NFmiValueString(const unsigned char * /*theValue*/);
+  NFmiValueString(const NFmiString & /*theValue*/);
+  NFmiValueString(const NFmiValueString & /*theValue*/);
 
   void SetValue(const short value, const char *format = "%hd");
   void SetValue(const int value, const char *format = "%d");
