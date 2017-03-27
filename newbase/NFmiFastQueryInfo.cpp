@@ -4200,7 +4200,7 @@ void NFmiFastQueryInfo::DoWindComponentFix(const NFmiGrid &usedGrid,
 
 static void valBufDeleter(float *ptr)
 {
-  if (ptr) delete[] ptr;
+  delete[] ptr;
 }
 
 // Tämä hakee haluttuun hilaan ja alueeseen dataa.
