@@ -120,7 +120,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQue
       itsMultiIndexes(),
       itsMultiTimeIndex(kUnsignedLongMissing)
 {
-  if (theInfos.size() == 0)
+  if (theInfos.empty())
     throw std::runtime_error("Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
 
   Init();

@@ -3155,7 +3155,7 @@ static bool IsInsideRange(std::vector<float> &theLevelValues, float theValue)
 {
   if (theValue != kFloatMissing)
   {
-    if (theLevelValues.size())
+    if (!theLevelValues.empty())
     {
       float value1 = theLevelValues[0];
       float value2 = theLevelValues[theLevelValues.size() - 1];

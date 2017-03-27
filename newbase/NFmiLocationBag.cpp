@@ -561,7 +561,7 @@ const checkedVector<pair<int, double> > NFmiLocationBag::NearestLocations(
 
   if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
   {
-    if (tempValues.size() == 0) return checkedVector<pair<int, double> >();
+    if (tempValues.empty()) return checkedVector<pair<int, double> >();
 
     // halutaan n kpl lahimpiä paikkoja
     int usedCount = theMaxWantedLocations;

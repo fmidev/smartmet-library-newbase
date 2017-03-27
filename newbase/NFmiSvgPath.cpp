@@ -353,7 +353,7 @@ void NFmiSvgPath::push_back(const Element& theElement)
 
 std::ostream& NFmiSvgPath::Write(std::ostream& file) const
 {
-  if (itsData.size() > 0)
+  if (!itsData.empty())
   {
     file << '"';
     for (auto it = begin(); it != end(); ++it)

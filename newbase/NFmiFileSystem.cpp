@@ -1047,7 +1047,7 @@ time_t FindFile(const string &theFileFilter,
 
   // Return the desired age file (newest/oldest)
 
-  if (matches.size() == 0) return 0;
+  if (matches.empty()) return 0;
 
   Matches::const_iterator it = (fSearchNewest ? --matches.end() : matches.begin());
   if (theFoundFileName != nullptr) *theFoundFileName = it->second;
@@ -1552,7 +1552,7 @@ std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &
 
   std::string finalPath;
   finalPath = theWorkingDirectory;
-  if (theWorkingDirectory.size() &&
+  if (!theWorkingDirectory.empty() &&
       theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
 #ifdef WIN32
     if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
@@ -1568,7 +1568,7 @@ std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &
 // 3. Siinä on kirjain, ':' ja joko '\\' tai '/' eli windows device esim. C:/tmp
 bool IsAbsolutePath(const std::string &thePath)
 {
-  if (thePath.size())
+  if (!thePath.empty())
   {
     if (thePath[0] == '/' || thePath[0] == '\\') return true;
 

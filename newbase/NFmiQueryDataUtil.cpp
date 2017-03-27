@@ -2174,7 +2174,7 @@ NFmiQueryDataUtil::SignificantSoundingLevels NFmiQueryDataUtil::GetSignificantSo
       auto value = theInfo.FloatValue();
       if (value != kFloatMissing && value > 0) indexVector->push_back(theInfo.LevelIndex());
     }
-    if (indexVector->size()) return indexVector;
+    if (!indexVector->empty()) return indexVector;
   }
   return SignificantSoundingLevels();
 }
@@ -2659,8 +2659,8 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
           theSourceInfo.ParamIndex(chParIndex);
           weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
         }
-        if (precipFormParamIndexVector
-                .size())  // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
+        if (!precipFormParamIndexVector
+                 .empty())  // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
           ::SetPrecipitationFormValue(theSourceInfo, weather, precipFormParamIndexVector);
 
         theDestInfo.FloatValue(weather.TransformedFloatValue());
@@ -3056,7 +3056,7 @@ NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInfo,
     // katsotaan vielä precipitation form parametrin tilanne, onko niitä vektorissa ja
     // poistetaanko
     // niitä (positiiviset arvot) vai ei (negatiiviset arvot)
-    if (thePrecipFormParIds.size() && (*theWeather1 || *theWeather2))
+    if (!thePrecipFormParIds.empty() && (*theWeather1 || *theWeather2))
     {
       for (int thePrecipFormParId : thePrecipFormParIds)
       {
@@ -4301,7 +4301,7 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
     std::vector<NFmiMetTime> &theValidTimesIn,
     bool fFirstInfoDefines)
 {
-  if (theFInfoVectorIn.size() == 0)
+  if (theFInfoVectorIn.empty())
     throw std::runtime_error(
         "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
   NFmiFastQueryInfo *firstInfo = theFInfoVectorIn[0].get();
@@ -4465,7 +4465,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
 
   std::vector<NFmiMetTime> foundValidTimes =
       ::MakeValidTimesList(fInfoVector, theMaxTimeStepsInData);
-  if (foundValidTimes.size() > 0)
+  if (!foundValidTimes.empty())
   {
     NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
     NFmiQueryInfo combinedDataMetaInfo =

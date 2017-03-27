@@ -81,7 +81,7 @@ bool NFmiStringList::Next(NFmiString **theItem)
 
 bool NFmiStringList::Next()
 {
-  if (itsList.size())
+  if (!itsList.empty())
   {
     itsIndex = (itsIndex < itsList.size() - 1) ? itsIndex + 1 : 0;
     return (itsIndex != 0);
@@ -138,7 +138,7 @@ bool NFmiStringList::Reset(FmiDirection theDirect)
 {
   if (theDirect == kBackward)
   {
-    if (itsList.size() > 0)
+    if (!itsList.empty())
       itsIndex = itsList.size() - 1;
     else
       itsIndex = 0;
@@ -146,7 +146,7 @@ bool NFmiStringList::Reset(FmiDirection theDirect)
   else
     itsIndex = 0;
 
-  return (itsList.size() > 0);
+  return (!itsList.empty());
 }
 
 // ----------------------------------------------------------------------
