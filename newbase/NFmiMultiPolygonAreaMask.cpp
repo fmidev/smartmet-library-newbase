@@ -67,7 +67,7 @@ NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask(const NFmiCalculationConditio
                                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
       itsAreaPolygons(),
-      itsAreaPolygonValues(),
+      itsAreaPolygonValues()
 {
 }
 

@@ -2786,7 +2786,7 @@ unsigned long NFmiWeatherAndCloudiness::ToHsade() const
     {
       if (IsRain())  // vettä
       {
-        hsade = hsade;
+        // the value is good as it is
       }
       else if (IsSleet())  // räntää
       {
