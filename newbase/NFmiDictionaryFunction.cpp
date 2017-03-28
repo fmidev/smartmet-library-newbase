@@ -20,7 +20,7 @@ std::string GetDictionaryString(const char *theMagicWord)
   std::string finalMagicWord(baseWords);
   finalMagicWord += usedMagicWord;
   std::string dictionarySentense =
-      NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string(theMagicWord));
+      NFmiSettings::Optional<std::string>(finalMagicWord, std::string(theMagicWord));
   NFmiStringTools::ReplaceAll(
       dictionarySentense,
       R"(\t)",

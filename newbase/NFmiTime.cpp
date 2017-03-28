@@ -1121,5 +1121,5 @@ std::string NFmiTime::GetDictionaryString(const char *theMagicWord)
 
   std::string finalMagicWord(baseWords);
   finalMagicWord += theMagicWord;
-  return NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string("XXXXX"));
+  return NFmiSettings::Optional<std::string>(finalMagicWord, std::string("XXXXX"));
 }
