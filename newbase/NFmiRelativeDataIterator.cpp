@@ -87,7 +87,7 @@ NFmiRelativeDataIterator::NFmiRelativeDataIterator(NFmiQueryInfo* theData,
 
 void NFmiRelativeDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  if (theDataModifier == nullptr) return;
 
   CheckIfMaskIsUsed();  // käy asettamassa fMaskInUse-flagin päälle (optimointia, jos ei ole maskia
                         // käytössä)

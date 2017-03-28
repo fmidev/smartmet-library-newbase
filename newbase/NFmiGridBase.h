@@ -212,7 +212,7 @@ using PNFmiGridBase = NFmiGridBase*;
 inline NFmiGridBase::~NFmiGridBase()
 {
   delete itsData;
-  if (itsFloatData) delete[] itsFloatData;
+  if (itsFloatData != nullptr) delete[] itsFloatData;
 }
 
 // ----------------------------------------------------------------------
@@ -453,7 +453,10 @@ inline bool NFmiGridBase::IsInsideGrid(const NFmiPoint& point) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiGridBase::MinValue() { return (itsData ? itsData->MinValue() : kFloatMissing); }
+inline double NFmiGridBase::MinValue()
+{
+  return (itsData != nullptr ? itsData->MinValue() : kFloatMissing);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -461,7 +464,10 @@ inline double NFmiGridBase::MinValue() { return (itsData ? itsData->MinValue() :
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiGridBase::MaxValue() { return (itsData ? itsData->MaxValue() : kFloatMissing); }
+inline double NFmiGridBase::MaxValue()
+{
+  return (itsData != nullptr ? itsData->MaxValue() : kFloatMissing);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theClampMinValue Undocumented

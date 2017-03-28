@@ -167,18 +167,20 @@ NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiArea &theArea,
 
 NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor &theHPlaceDescriptor)
     : NFmiDataDescriptor(),
-      itsLocationBag(theHPlaceDescriptor.itsLocationBag
+      itsLocationBag(theHPlaceDescriptor.itsLocationBag != nullptr
                          ? theHPlaceDescriptor.itsLocationBag->Clone()
                          : nullptr),
-      itsArea(theHPlaceDescriptor.itsArea ? theHPlaceDescriptor.itsArea->Clone() : nullptr),
+      itsArea(theHPlaceDescriptor.itsArea != nullptr ? theHPlaceDescriptor.itsArea->Clone()
+                                                     : nullptr),
       itsSelectedType(theHPlaceDescriptor.SelectedType()),
       itsMaxNumberOfSources(theHPlaceDescriptor.itsMaxNumberOfSources),
-      itsGrid(theHPlaceDescriptor.itsGrid ? new NFmiGrid(*(theHPlaceDescriptor.itsGrid)) : nullptr),
-      itsActivity(theHPlaceDescriptor.itsLocationBag
+      itsGrid(theHPlaceDescriptor.itsGrid != nullptr ? new NFmiGrid(*(theHPlaceDescriptor.itsGrid))
+                                                     : nullptr),
+      itsActivity(theHPlaceDescriptor.itsLocationBag != nullptr
                       ? new bool[theHPlaceDescriptor.itsLocationBag->GetSize()]
                       : nullptr)
 {
-  if (itsActivity)
+  if (itsActivity != nullptr)
     for (int i = 0; i < static_cast<int>(itsLocationBag->GetSize()); i++)
       itsActivity[i] = true;
 }
@@ -191,22 +193,22 @@ NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor &theHPlace
 
 void NFmiHPlaceDescriptor::Destroy()
 {
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
   {
     delete itsLocationBag;
     itsLocationBag = nullptr;
   }
-  if (itsArea)
+  if (itsArea != nullptr)
   {
     delete itsArea;
     itsArea = nullptr;
   }
-  if (itsGrid)
+  if (itsGrid != nullptr)
   {
     delete itsGrid;
     itsGrid = nullptr;
   }
-  if (itsActivity)
+  if (itsActivity != nullptr)
   {
     delete[] itsActivity;
     itsActivity = nullptr;
@@ -237,7 +239,7 @@ void NFmiHPlaceDescriptor::LocationList(const NFmiLocationBag &theLocationBag)
 
 const NFmiLocation *NFmiHPlaceDescriptor::Location() const
 {
-  if (itsLocationBag) return itsLocationBag->Location();
+  if (itsLocationBag != nullptr) return itsLocationBag->Location();
   return nullptr;
 }
 
@@ -250,7 +252,7 @@ const NFmiLocation *NFmiHPlaceDescriptor::Location() const
 
 const NFmiLocation *NFmiHPlaceDescriptor::LocationWithIndex(unsigned long theIndex) const
 {
-  if (itsLocationBag) return itsLocationBag->Location(theIndex);
+  if (itsLocationBag != nullptr) return itsLocationBag->Location(theIndex);
   return nullptr;
 }
 
@@ -262,12 +264,12 @@ const NFmiLocation *NFmiHPlaceDescriptor::LocationWithIndex(unsigned long theInd
 
 NFmiPoint NFmiHPlaceDescriptor::LatLon() const
 {
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
   {
     const NFmiLocation *loc = Location();
-    if (loc) return loc->GetLocation();
+    if (loc != nullptr) return loc->GetLocation();
   }
-  else if (itsGrid)
+  else if (itsGrid != nullptr)
   {
     return itsGrid->LatLon();
   }
@@ -284,12 +286,12 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon() const
 
 NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
 {
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
   {
     const NFmiLocation *location = LocationWithIndex(theIndex);
     return NFmiPoint(location->GetLongitude(), location->GetLatitude());
   }
-  if (itsGrid)
+  if (itsGrid != nullptr)
   {
     return itsGrid->LatLon(theIndex);
   }
@@ -309,7 +311,7 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
 
 NFmiPoint NFmiHPlaceDescriptor::RelativePoint() const
 {
-  if (itsLocationBag || !itsGrid)
+  if ((itsLocationBag != nullptr) || (itsGrid == nullptr))
     return NFmiPoint(kFloatMissing,
                      kFloatMissing);  // Marko En tiedä voidaanko tätä saada laskettua mitenkään?
   return itsGrid->RelativePoint();
@@ -326,7 +328,7 @@ NFmiPoint NFmiHPlaceDescriptor::RelativePoint() const
 
 NFmiPoint NFmiHPlaceDescriptor::RelativePoint(unsigned long theIndex) const
 {
-  if (itsLocationBag || !itsGrid)
+  if ((itsLocationBag != nullptr) || (itsGrid == nullptr))
     return NFmiPoint(kFloatMissing,
                      kFloatMissing);  // Marko En tiedä voidaanko tätä saada laskettua mitenkään?
   return itsGrid->RelativePoint(theIndex);
@@ -368,7 +370,8 @@ unsigned long NFmiHPlaceDescriptor::Size() const
 {
   if (IsLocation()) return (itsLocationBag->GetSize());
   if (IsArea()) return 1ul;
-  if (itsGrid) return itsGrid->OriginalSize();  // Marko/23.11.1998, myös time, param, level jutut
+  if (itsGrid != nullptr)
+    return itsGrid->OriginalSize();  // Marko/23.11.1998, myös time, param, level jutut
   return 0;
 }
 
@@ -398,7 +401,7 @@ unsigned long NFmiHPlaceDescriptor::Index() const
 bool NFmiHPlaceDescriptor::Index(unsigned long theIndex)
 {
   if (IsLocation()) return itsLocationBag->SetCurrentIndex(theIndex);
-  if (IsArea()) return static_cast<unsigned long>(0);
+  if (IsArea()) return static_cast<unsigned long>(0) != 0u;
   if (IsGrid()) return itsGrid->Index(theIndex);
   return false;
 }
@@ -534,7 +537,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
 
 bool NFmiHPlaceDescriptor::IsActive() const
 {
-  if (itsActivity) return (itsActivity[Index()]);
+  if (itsActivity != nullptr) return (itsActivity[Index()]);
 
   return false;
 }
@@ -548,7 +551,7 @@ bool NFmiHPlaceDescriptor::IsActive() const
 
 bool NFmiHPlaceDescriptor::SetActivity(bool theActivityState)
 {
-  if (itsActivity)
+  if (itsActivity != nullptr)
   {
     bool temp = itsActivity[Index()];
     itsActivity[Index()] = theActivityState;
@@ -589,14 +592,17 @@ NFmiHPlaceDescriptor &NFmiHPlaceDescriptor::operator=(
   {
     Destroy();
 
-    itsLocationBag =
-        theHPlaceDescriptor.itsLocationBag ? theHPlaceDescriptor.itsLocationBag->Clone() : nullptr;
-    itsArea = theHPlaceDescriptor.itsArea ? theHPlaceDescriptor.itsArea->Clone() : nullptr;
-    itsGrid = theHPlaceDescriptor.itsGrid ? new NFmiGrid(*theHPlaceDescriptor.itsGrid) : nullptr;
+    itsLocationBag = theHPlaceDescriptor.itsLocationBag != nullptr
+                         ? theHPlaceDescriptor.itsLocationBag->Clone()
+                         : nullptr;
+    itsArea =
+        theHPlaceDescriptor.itsArea != nullptr ? theHPlaceDescriptor.itsArea->Clone() : nullptr;
+    itsGrid = theHPlaceDescriptor.itsGrid != nullptr ? new NFmiGrid(*theHPlaceDescriptor.itsGrid)
+                                                     : nullptr;
 
     itsSelectedType = theHPlaceDescriptor.itsSelectedType;
 
-    if (itsLocationBag)
+    if (itsLocationBag != nullptr)
     {
       itsActivity = new bool[itsLocationBag->GetSize()];
       for (int i = 0; i < static_cast<int>(itsLocationBag->GetSize()); i++)
@@ -641,7 +647,7 @@ bool NFmiHPlaceDescriptor::operator==(const NFmiHPlaceDescriptor &theHPlaceDescr
 
 const NFmiHPlaceDescriptor NFmiHPlaceDescriptor::Combine(const NFmiHPlaceDescriptor &theCombine)
 {
-  if (itsLocationBag && theCombine.itsLocationBag)
+  if ((itsLocationBag != nullptr) && (theCombine.itsLocationBag != nullptr))
     return NFmiHPlaceDescriptor(itsLocationBag->Combine(*(theCombine).itsLocationBag));
   // jos ei voi yhdistää locationbagejä, palauttaa this-descriptorin (voitaisiin ehkä laittaa jotain
   // gridi yhdistelyjä?)
@@ -670,8 +676,9 @@ void NFmiHPlaceDescriptor::Reset()
 
 bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation, double theMaxDistance)
 {
-  if (itsLocationBag) return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
-  if (itsGrid)
+  if (itsLocationBag != nullptr)
+    return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
+  if (itsGrid != nullptr)
     return itsGrid->NearestLatLon(
         theLocation.GetLongitude(), theLocation.GetLatitude(), theMaxDistance);
   return false;
@@ -681,13 +688,14 @@ bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation,
                                            const NFmiArea *theArea,
                                            double theMaxDistance)
 {
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
   {
-    if (theArea) return itsLocationBag->NearestLocation(theLocation, theArea, theMaxDistance);
+    if (theArea != nullptr)
+      return itsLocationBag->NearestLocation(theLocation, theArea, theMaxDistance);
 
     return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
   }
-  if (itsGrid)
+  if (itsGrid != nullptr)
     return itsGrid->NearestLatLon(
         theLocation.GetLongitude(), theLocation.GetLatitude(), theMaxDistance);
   return false;
@@ -702,9 +710,9 @@ bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation,
 
 bool NFmiHPlaceDescriptor::NearestPoint(const NFmiPoint &theLatLonPoint)
 {
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
     return itsLocationBag->NearestLocation(NFmiLocation(theLatLonPoint.X(), theLatLonPoint.Y()));
-  if (itsGrid) return itsGrid->NearestLatLon(theLatLonPoint.X(), theLatLonPoint.Y());
+  if (itsGrid != nullptr) return itsGrid->NearestLatLon(theLatLonPoint.X(), theLatLonPoint.Y());
   return false;
 }
 
@@ -762,7 +770,7 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
   file << static_cast<long>(itsSelectedType) << " " << itsMaxNumberOfSources << " " << theDummy
        << " " << theDummy << std::endl;
 
-  if (itsLocationBag)
+  if (itsLocationBag != nullptr)
   {
     file << itsLocationBag->ClassId() << " NFmiLocationBag" << std::endl;
     file << *itsLocationBag;
@@ -776,7 +784,7 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
     file << 0 << " NFmiLocationBag" << std::endl;
   }
 
-  if (itsArea)
+  if (itsArea != nullptr)
   {
     file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
     file << *itsArea;
@@ -786,7 +794,7 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
     file << 0 << " NFmiArea" << std::endl;
   }
 
-  if (itsGrid)
+  if (itsGrid != nullptr)
   {
     file << itsGrid->ClassId() << " " << itsGrid->ClassName() << std::endl;
     file << *itsGrid;
@@ -827,7 +835,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
     if (classId >= KNFmiMaxClass)
       throw runtime_error("NFmiHPlaceDescriptor::Read().classID(NFmiLocation) Error");
 
-    if (classId)
+    if (classId != 0u)
     {
       itsLocationBag = static_cast<NFmiLocationBag *>(CreateSaveBase(classId));
       file >> *itsLocationBag;
@@ -841,7 +849,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
     if (classId > KNFmiMaxClass)
       throw runtime_error("NFmiHPlaceDescriptor::Read().classID(NFmiArea) Error");
     file >> className;  // NFmiArea
-    if (classId)
+    if (classId != 0u)
     {
       itsArea = static_cast<NFmiArea *>(CreateSaveBase(classId));
       file >> *itsArea;
@@ -851,7 +859,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
     if (classId > KNFmiMaxClass)
       throw runtime_error("NFmiHPlaceDescriptor::Read().classID(NFmiGrid) Error");
     file >> className;  // NFmiGrid
-    if (classId)
+    if (classId != 0u)
     {
       itsGrid = static_cast<NFmiGrid *>(CreateSaveBase(classId));
       file >> *itsGrid;
@@ -876,7 +884,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 
 const NFmiArea *NFmiHPlaceDescriptor::Area() const
 {
-  return itsArea ? itsArea : itsGrid ? itsGrid->Area() : nullptr;
+  return itsArea != nullptr ? itsArea : itsGrid != nullptr ? itsGrid->Area() : nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -887,7 +895,7 @@ const NFmiArea *NFmiHPlaceDescriptor::Area() const
 
 FmiInterpolationMethod NFmiHPlaceDescriptor::InterpolationMethod() const
 {
-  return itsGrid ? itsGrid->InterpolationMethod() : kNoneInterpolation;
+  return itsGrid != nullptr ? itsGrid->InterpolationMethod() : kNoneInterpolation;
 }
 
 // ----------------------------------------------------------------------
@@ -898,7 +906,7 @@ FmiInterpolationMethod NFmiHPlaceDescriptor::InterpolationMethod() const
 
 NFmiPoint NFmiHPlaceDescriptor::GridPoint() const
 {
-  return itsGrid ? itsGrid->GridPoint() : NFmiPoint(kFloatMissing, kFloatMissing);
+  return itsGrid != nullptr ? itsGrid->GridPoint() : NFmiPoint(kFloatMissing, kFloatMissing);
 }
 
 // ----------------------------------------------------------------------

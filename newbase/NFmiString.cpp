@@ -271,7 +271,7 @@ void NFmiString::TrimL(unsigned char theChar)
   while (fChar[len] == theChar)
     len++;
 
-  if (len)
+  if (len != 0)
   {
     Set(&fChar[len], (fLength - len));
   }
@@ -497,7 +497,7 @@ unsigned long NFmiString::SearchLast(const unsigned char *searChar) const
   findChar = reinterpret_cast<unsigned char *>(
       strstr(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(searChar)));
 
-  while (findChar)
+  while (findChar != nullptr)
   {
     lastChar = findChar;
     findChar = reinterpret_cast<unsigned char *>(
@@ -541,7 +541,7 @@ unsigned long NFmiString::SearchLast(const unsigned char *searchChar, unsigned l
 
 NFmiString &NFmiString::operator=(const char *FmiChar)
 {
-  if (FmiChar)
+  if (FmiChar != nullptr)
     Set(reinterpret_cast<const unsigned char *>(FmiChar),
         static_cast<unsigned long>(strlen(static_cast<const char *>(FmiChar))));
   return *this;
@@ -558,7 +558,7 @@ NFmiString &NFmiString::operator=(const char *FmiChar)
 
 NFmiString &NFmiString::operator=(const unsigned char *FmiChar)
 {
-  if (FmiChar)
+  if (FmiChar != nullptr)
     Set(static_cast<const unsigned char *>(FmiChar),
         static_cast<unsigned long>(strlen(reinterpret_cast<const char *>(FmiChar))));
   return *this;

@@ -48,7 +48,7 @@ NFmiRelativeTimeIntegrationIterator::NFmiRelativeTimeIntegrationIterator(NFmiQue
 
 void NFmiRelativeTimeIntegrationIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  if (theDataModifier == nullptr) return;
 
   theDataModifier->Clear();
 
@@ -92,7 +92,7 @@ NFmiRelativeTimeIntegrationIterator2::NFmiRelativeTimeIntegrationIterator2(NFmiQ
 
 void NFmiRelativeTimeIntegrationIterator2::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  if (theDataModifier == nullptr) return;
 
   theDataModifier->Clear();
 

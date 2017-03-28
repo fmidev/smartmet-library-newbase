@@ -23,7 +23,7 @@
 
 NFmiDataModifierCombi::~NFmiDataModifierCombi()
 {
-  if (itsFrequencies) delete[] itsFrequencies;
+  if (itsFrequencies != nullptr) delete[] itsFrequencies;
 }
 
 // ----------------------------------------------------------------------
@@ -94,7 +94,7 @@ void NFmiDataModifierCombi::Clear()
   itsMax = -kFloatMissing;
   itsMin = kFloatMissing;
   itsTotalCounter = 0;
-  if (!itsNumberOfValues) return;
+  if (itsNumberOfValues == 0) return;
   for (int i = 0; i < itsNumberOfValues; i++)
     itsFrequencies[i] = 0;
 }
@@ -130,7 +130,7 @@ void NFmiDataModifierCombi::Calculate(float theValue)
 
   if (theValue < itsMin) itsMin = theValue;
 
-  if (itsNumberOfValues)
+  if (itsNumberOfValues != 0)
   {
     // Ensimmäisellä kierroksella muutetaan puuttuva nollaksi
     if (itsFrequencies[static_cast<int>(theValue)] == kFloatMissing)
@@ -157,7 +157,7 @@ float NFmiDataModifierCombi::CalcResult(const NFmiIntegrationSelector& theSelect
     case kFmiMax:
       return itsMax == -kFloatMissing ? kFloatMissing : itsMax;
     case kFmiMean:
-      if (itsTotalCounter)
+      if (itsTotalCounter != 0u)
         return itsSum / static_cast<float>(itsTotalCounter);
       else
         return kFloatMissing;

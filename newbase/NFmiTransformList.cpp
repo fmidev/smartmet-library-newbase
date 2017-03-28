@@ -148,19 +148,19 @@ using namespace std;
 
 NFmiTransformList::~NFmiTransformList()
 {
-  if (itsFirstPair)
+  if (itsFirstPair != nullptr)
   {
     delete[] itsFirstPair;
     itsFirstPair = nullptr;
   }
 
-  if (itsLastPair)
+  if (itsLastPair != nullptr)
   {
     delete[] itsLastPair;
     itsLastPair = nullptr;
   }
 
-  if (itsOutputInputRatio)
+  if (itsOutputInputRatio != nullptr)
   {
     delete[] itsOutputInputRatio;
     itsOutputInputRatio = nullptr;
@@ -208,7 +208,7 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
 NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList)
 {
   // Copy FirstPair array
-  if (itsFirstPair)
+  if (itsFirstPair != nullptr)
   {
     if (itsMaxPairNumber != theList.itsMaxPairNumber)
     {
@@ -222,7 +222,7 @@ NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList
   memcpy(itsFirstPair, theList.itsFirstPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
 
   // Copy LastPair array
-  if (itsLastPair)
+  if (itsLastPair != nullptr)
   {
     if (itsMaxPairNumber != theList.itsMaxPairNumber)
     {
@@ -236,7 +236,7 @@ NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList
   memcpy(itsLastPair, theList.itsLastPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
 
   // Copy OutputInputRatio array
-  if (itsOutputInputRatio)
+  if (itsOutputInputRatio != nullptr)
   {
     if (itsMaxPairNumber != theList.itsMaxPairNumber)
     {
@@ -287,13 +287,15 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
 
   // No pairs inserted in lists ?
   // If so, lists can be taken as identical lists
-  if ((!itsFirstPair) && (!theList.itsFirstPair) && (!itsLastPair) && (!theList.itsLastPair))
+  if ((itsFirstPair == nullptr) && (theList.itsFirstPair == nullptr) && (itsLastPair == nullptr) &&
+      (theList.itsLastPair == nullptr))
     return true;
 
   // Pairwise list item comparison
   int ind = 0;
 
-  if (itsFirstPair && theList.itsFirstPair && itsLastPair && theList.itsLastPair)
+  if ((itsFirstPair != nullptr) && (theList.itsFirstPair != nullptr) && (itsLastPair != nullptr) &&
+      (theList.itsLastPair != nullptr))
   {
     do
     {
@@ -377,13 +379,13 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
     return false;  // Lisämuistin varausta ei ole toteutettu
   }
 
-  if (itsFirstPair) delete[] itsFirstPair;
+  if (itsFirstPair != nullptr) delete[] itsFirstPair;
   itsFirstPair = new NFmiPoint[itsMaxPairNumber];
 
-  if (itsLastPair) delete[] itsLastPair;
+  if (itsLastPair != nullptr) delete[] itsLastPair;
   itsLastPair = new NFmiPoint[itsMaxPairNumber];
 
-  if (itsOutputInputRatio) delete[] itsOutputInputRatio;
+  if (itsOutputInputRatio != nullptr) delete[] itsOutputInputRatio;
   itsOutputInputRatio = new double[itsMaxPairNumber];
 
   return true;
@@ -651,13 +653,13 @@ std::istream& NFmiTransformList::Read(std::istream& file)
   file >> itsInputValue;
   file >> itsOutputValue;
 
-  if (itsFirstPair)
+  if (itsFirstPair != nullptr)
   {
     delete[] itsFirstPair;
     itsFirstPair = nullptr;
   }
 
-  if (itsLastPair)
+  if (itsLastPair != nullptr)
   {
     delete[] itsLastPair;
     itsLastPair = nullptr;

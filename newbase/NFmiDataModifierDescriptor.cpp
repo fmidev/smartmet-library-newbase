@@ -50,7 +50,7 @@ NFmiParamDataModifier* NFmiDataModifierDescriptor::VarianceModifier(const NFmiDa
                                                                     const NFmiLevel* theLevel)
 {
   NFmiParamDataModifier* modifier = nullptr;
-  if (itsVarianceModifiers)
+  if (itsVarianceModifiers != nullptr)
     if (itsVarianceModifiers->Find(theParam, theLevel)) modifier = itsVarianceModifiers->Current();
   return modifier;
 }
@@ -64,7 +64,7 @@ NFmiParamDataModifier* NFmiDataModifierDescriptor::VarianceModifier(const NFmiDa
 void NFmiDataModifierDescriptor::SetVarianceModifiers(NFmiParamDataModifierList* theList)
 {
   // HUOM!!! Ottaa annetun listan omistukseensa!
-  if (itsVarianceModifiers) delete itsVarianceModifiers;
+  if (itsVarianceModifiers != nullptr) delete itsVarianceModifiers;
   itsVarianceModifiers = theList;
 }
 

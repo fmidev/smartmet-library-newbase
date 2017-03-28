@@ -64,19 +64,19 @@ class MyGrid
  public:
   MyGrid() : itsArea(0), itsNX(0), itsNY(0) {}
   MyGrid(const NFmiArea *theArea, int theNX, int theNY)
-      : itsArea(theArea ? theArea->Clone() : 0), itsNX(theNX), itsNY(theNY)
+      : itsArea(theArea != nullptr ? theArea->Clone() : 0), itsNX(theNX), itsNY(theNY)
   {
   }
 
   MyGrid(const MyGrid &theGrid)
-      : itsArea(theGrid.itsArea ? theGrid.itsArea->Clone() : 0),
+      : itsArea(theGrid.itsArea != nullptr ? theGrid.itsArea->Clone() : 0),
         itsNX(theGrid.itsNX),
         itsNY(theGrid.itsNY)
   {
   }
 
   MyGrid(const NFmiGrid &theGrid)
-      : itsArea(theGrid.Area() ? theGrid.Area()->Clone() : 0),
+      : itsArea(theGrid.Area() != nullptr ? theGrid.Area()->Clone() : 0),
         itsNX(theGrid.XNumber()),
         itsNY(theGrid.YNumber())
   {
@@ -88,7 +88,7 @@ class MyGrid
     if (this != &theGrid)
     {
       delete itsArea;
-      itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : 0;
+      itsArea = theGrid.itsArea != nullptr ? theGrid.itsArea->Clone() : 0;
       itsNX = theGrid.itsNX;
       itsNY = theGrid.itsNY;
     }
@@ -98,7 +98,7 @@ class MyGrid
   MyGrid &operator=(const NFmiGrid &theGrid)
   {
     delete itsArea;
-    itsArea = theGrid.Area() ? theGrid.Area()->Clone() : 0;
+    itsArea = theGrid.Area() != nullptr ? theGrid.Area()->Clone() : 0;
     itsNX = theGrid.XNumber();
     itsNY = theGrid.YNumber();
     return *this;
@@ -109,7 +109,7 @@ class MyGrid
       if (itsNY == theGrid.itsNY)
       {
         if (itsArea == 0 && theGrid.itsArea == 0) return true;
-        if (itsArea && theGrid.itsArea)
+        if ((itsArea != nullptr) && (theGrid.itsArea != nullptr))
         {
           if (itsArea->ClassId() == theGrid.itsArea->ClassId())
             if (*itsArea == *(theGrid.itsArea)) return true;

@@ -187,7 +187,7 @@ inline NFmiTime::NFmiTime(short year, short month, short day, short hour, short 
 
 inline void NFmiTime::ChangeByMinutes(long minutes)
 {
-  if (minutes) DecodeCompareValue(GetCompareValue() + minutes);
+  if (minutes != 0) DecodeCompareValue(GetCompareValue() + minutes);
 }
 
 // ----------------------------------------------------------------------
@@ -198,7 +198,7 @@ inline void NFmiTime::ChangeByMinutes(long minutes)
 
 inline void NFmiTime::ChangeByHours(long hours)
 {
-  if (hours) DecodeCompareValue(GetCompareValue() + 60L * hours);
+  if (hours != 0) DecodeCompareValue(GetCompareValue() + 60L * hours);
 }
 
 // ----------------------------------------------------------------------
@@ -209,7 +209,7 @@ inline void NFmiTime::ChangeByHours(long hours)
 
 inline void NFmiTime::ChangeByDays(long days)
 {
-  if (days) DecodeCompareValue(GetCompareValue() + 60L * 24L * days);
+  if (days != 0) DecodeCompareValue(GetCompareValue() + 60L * 24L * days);
 }
 
 // ----------------------------------------------------------------------

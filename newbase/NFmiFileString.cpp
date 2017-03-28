@@ -88,7 +88,7 @@ const NFmiString NFmiFileString::Extension() const
   unsigned char find[2] = ".";
 
   last = SearchLast(find);
-  if (last) return GetChars(last + 1, GetLen() - last);
+  if (last != 0u) return GetChars(last + 1, GetLen() - last);
 
   return "";  // jos last oli 0, ei löytynyt .-merkkiä  ja ei ole extensiota
 }
@@ -154,7 +154,7 @@ const NFmiString NFmiFileString::Path() const
     last = SearchLast(find2);
   }
 
-  if (first)
+  if (first != 0u)
   {
     if (fChar[0] == '.')  // Lasse 23.9.98 suht polku
       return GetChars(1, last);
@@ -211,7 +211,7 @@ const NFmiString NFmiFileString::PathWithoutLastDirectory()
     pos = Search(find, ++pos);
   }
 
-  if (first)
+  if (first != 0u)
   {
     if (fChar[0] == '.') return GetChars(1, nextLast);
 

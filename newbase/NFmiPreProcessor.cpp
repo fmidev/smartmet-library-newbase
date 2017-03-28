@@ -686,7 +686,7 @@ bool NFmiPreProcessor::Define()
   istringstream input(itsString);
 
   string line;
-  while (getline(input, line))
+  while (getline(input, line) != nullptr)
   {
     istringstream lineinput(line);
     string token;

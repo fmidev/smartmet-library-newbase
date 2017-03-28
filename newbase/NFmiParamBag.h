@@ -118,7 +118,7 @@ inline const NFmiString NFmiParamBag::CurrentParamName() const
 
 inline const NFmiDataIdent *NFmiParamBag::GetFirst() const
 {
-  return GetSize() ? &itsParamsVector[0] : 0;
+  return GetSize() != 0u ? &itsParamsVector[0] : 0;
 }
 
 // ----------------------------------------------------------------------
@@ -129,7 +129,7 @@ inline const NFmiDataIdent *NFmiParamBag::GetFirst() const
 
 inline const NFmiDataIdent *NFmiParamBag::GetLast() const
 {
-  return GetSize() ? &itsParamsVector[GetSize() - 1] : 0;
+  return GetSize() != 0u ? &itsParamsVector[GetSize() - 1] : 0;
 }
 
 // ----------------------------------------------------------------------

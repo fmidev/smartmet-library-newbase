@@ -77,7 +77,7 @@ NFmiRegressionModifier::NFmiRegressionModifier(NFmiDataIdent *theParam,
 
 double NFmiRegressionModifier::FloatValue()
 {
-  if (!itsData) return kFloatMissing;
+  if (itsData == nullptr) return kFloatMissing;
 
   return std::max(static_cast<double>(*itsRegressionItems), 0.0);
 }

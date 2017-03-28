@@ -411,7 +411,7 @@ const NFmiPoint NFmiGdalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
     throw std::runtime_error("Trying to use an uninitialized GDAL area");
   double x = theXYPoint.X();
   double y = theXYPoint.Y();
-  if (!itsWorldXYToLatLonTransformation->Transform(1, &x, &y))
+  if (itsWorldXYToLatLonTransformation->Transform(1, &x, &y) == 0)
     return NFmiPoint(kFloatMissing, kFloatMissing);
   return NFmiPoint(x, y);
 }
@@ -428,7 +428,7 @@ const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) c
     throw std::runtime_error("Trying to use an uninitialized GDAL area");
   double x = theLatLonPoint.X();
   double y = theLatLonPoint.Y();
-  if (!itsLatLonToWorldXYTransformation->Transform(1, &x, &y))
+  if (itsLatLonToWorldXYTransformation->Transform(1, &x, &y) == 0)
     return NFmiPoint(kFloatMissing, kFloatMissing);
   return NFmiPoint(x, y);
 }
@@ -532,7 +532,7 @@ void NFmiGdalArea::init()
 
 double NFmiGdalArea::WorldXYWidth() const
 {
-  if (!itsSpatialReference->IsGeographic()) return WorldRect().Width();
+  if (itsSpatialReference->IsGeographic() == 0) return WorldRect().Width();
 
   double pi = boost::math::constants::pi<double>();
   double circumference = 2 * pi * 6371220;
@@ -550,7 +550,7 @@ double NFmiGdalArea::WorldXYWidth() const
 
 double NFmiGdalArea::WorldXYHeight() const
 {
-  if (!itsSpatialReference->IsGeographic()) return WorldRect().Height();
+  if (itsSpatialReference->IsGeographic() == 0) return WorldRect().Height();
 
   double pi = boost::math::constants::pi<double>();
   double circumference = 2 * pi * 6371220;

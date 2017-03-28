@@ -63,7 +63,7 @@ NFmiBitMask::NFmiBitMask(const NFmiBitMask& theBitMask)
       itsNumberOfLongsInMask(theBitMask.itsNumberOfLongsInMask),
       itsMaskData(nullptr)
 {
-  if (theBitMask.itsMaskData)
+  if (theBitMask.itsMaskData != nullptr)
   {
     itsMaskData = new long[itsNumberOfLongsInMask];
     memcpy(itsMaskData, theBitMask.itsMaskData, itsNumberOfBytesInMask);
@@ -107,7 +107,7 @@ void NFmiBitMask::Init(long theSize)
 
   CalculateMaskProperties(theSize);  // theSize: the number of BITS to be stored in mask array
 
-  if (itsMaskData) delete[] itsMaskData;
+  if (itsMaskData != nullptr) delete[] itsMaskData;
 
   itsMaskData = new long[itsNumberOfLongsInMask];
 
@@ -126,7 +126,7 @@ void NFmiBitMask::Init(NFmiBitMask* theBitMask)
 
   CalculateMaskProperties(theBitMask->Size());
 
-  if (itsMaskData) delete[] itsMaskData;
+  if (itsMaskData != nullptr) delete[] itsMaskData;
 
   itsMaskData = new long[itsNumberOfLongsInMask];
 
@@ -280,7 +280,7 @@ NFmiBitMask& NFmiBitMask::operator=(const NFmiBitMask& theBitMask)
   itsNumberOfBytesInMask = theBitMask.itsNumberOfBytesInMask;
   itsNumberOfLongsInMask = theBitMask.itsNumberOfLongsInMask;
 
-  if (itsMaskData) delete[] itsMaskData;
+  if (itsMaskData != nullptr) delete[] itsMaskData;
 
   itsMaskData = new long[itsNumberOfLongsInMask];
 

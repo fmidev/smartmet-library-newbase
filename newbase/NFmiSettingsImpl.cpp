@@ -385,7 +385,7 @@ NFmiSettingsImpl::~NFmiSettingsImpl()
 
 NFmiSettingsImpl& NFmiSettingsImpl::Instance()
 {
-  if (!itsInstance)
+  if (itsInstance == nullptr)
   {
     if (itIsDestroyed)
       Die();
@@ -703,7 +703,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 
       istringstream lineinput(line);
       string val, word;
-      while (lineinput >> word)
+      while (lineinput >> word != nullptr)
       {
         if (!val.empty()) val += ' ';
         val += word;

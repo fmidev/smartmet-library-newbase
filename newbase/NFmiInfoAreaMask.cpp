@@ -125,7 +125,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing)
 {
-  if (theInfo && theInfo->Level()) itsLevel = *theInfo->Level();
+  if (theInfo && (theInfo->Level() != nullptr)) itsLevel = *theInfo->Level();
 }
 
 // ----------------------------------------------------------------------
@@ -150,7 +150,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const boost::shared_ptr<NFmiFastQueryInfo> &t
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing)
 {
-  if (theInfo && theInfo->Level()) itsLevel = *theInfo->Level();
+  if (theInfo && (theInfo->Level() != nullptr)) itsLevel = *theInfo->Level();
 }
 
 NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther)
@@ -604,7 +604,7 @@ static bool IsPacificViewData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   if (theInfo)
   {
-    if (theInfo->Grid())  // trajektori datojen pitäisi olla hiladatoja
+    if (theInfo->Grid() != nullptr)  // trajektori datojen pitäisi olla hiladatoja
       return theInfo->Grid()->Area()->PacificView();
   }
 
@@ -718,7 +718,7 @@ void NFmiInfoAreaMaskMetFuncBase::SetGridSizeVariables()
 bool NFmiInfoAreaMaskMetFuncBase::IsDataOperatable(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo) const
 {
-  if (theInfo && theInfo->Grid()) return true;
+  if (theInfo && (theInfo->Grid() != nullptr)) return true;
   return false;
 }
 
@@ -2183,7 +2183,7 @@ void NFmiInfoAreaMaskProbFunc::InitializeFromArguments()
   if (itsSearchRangeInKM > 0 && itsSearchRangeInKM != kFloatMissing && itsInfo)
   {
     const NFmiGrid *grid = itsInfo->Grid();
-    if (grid)
+    if (grid != nullptr)
     {
       double gridSizeXInKM = grid->Area()->WorldXYWidth() / (grid->XNumber() - 1) * 0.001;
       itsGridPointRectSizeX = FmiRound(2. * itsSearchRangeInKM / gridSizeXInKM);
@@ -2307,7 +2307,7 @@ double NFmiInfoAreaMaskProbFunc::Value(const NFmiCalculationParams &theCalculati
                                        bool /* fUseTimeInterpolationAlways */)
 {
   InitializeFromArguments();
-  if (itsGridPointRectSizeX && itsGridPointRectSizeY)
+  if ((itsGridPointRectSizeX != 0) && (itsGridPointRectSizeY != 0))
   {
     NFmiLocationCache locCache = itsInfo->CalcLocationCache(theCalculationParams.itsLatlon);
     if (!locCache.NoValue())
@@ -2381,7 +2381,7 @@ double NFmiInfoAreaMaskProbFunc::Value(const NFmiCalculationParams &theCalculati
       }
       itsInfo->TimeIndex(origTimeIndex);
 
-      if (calculatedGridPoints)
+      if (calculatedGridPoints != 0.0)
         return itsConditionFullfilledGridPointCount / calculatedGridPoints * 100.;
     }
   }

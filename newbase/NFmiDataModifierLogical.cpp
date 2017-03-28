@@ -53,7 +53,8 @@ NFmiDataModifierLogical::NFmiDataModifierLogical(NFmiDataModifierBoolean *theCon
 
 double NFmiDataModifierLogical::FloatValue()
 {
-  if (itsCondition && itsPrimaryModifier && itsSecondaryModifier)
+  if ((itsCondition != nullptr) && (itsPrimaryModifier != nullptr) &&
+      (itsSecondaryModifier != nullptr))
     return itsCondition->BooleanValue() ? itsPrimaryModifier->FloatValue()
                                         : itsSecondaryModifier->FloatValue();
 

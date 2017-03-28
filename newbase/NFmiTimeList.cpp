@@ -84,7 +84,7 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeBag &theTimes)
 bool NFmiTimeList::Next(NFmiMetTime **theItem) const
 {
   *theItem = Current();
-  if (*theItem)
+  if (*theItem != nullptr)
   {
     Next();
     return true;
@@ -407,7 +407,7 @@ std::istream &NFmiTimeList::Read(std::istream &file)
   {
     file >> year >> month >> day >> hour >> min >> sec;
     aItem = new NFmiMetTime(year, month, day, hour, min, sec, 1);
-    if (sec) aItem->SetSec(sec);
+    if (sec != 0) aItem->SetSec(sec);
 
     Add(aItem, true);  // true= sallitaan duplikaatit
   }

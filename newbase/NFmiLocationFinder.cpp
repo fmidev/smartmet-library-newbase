@@ -127,7 +127,7 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
   // Process one line at a time
 
   string line;
-  while (getline(in, line))
+  while (getline(in, line) != nullptr)
   {
     // Ignore the line if it is a comment line
 
@@ -220,7 +220,7 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
   string line;
   int nerr = 0;
   int nlong = 0;
-  while (getline(in, line))
+  while (getline(in, line) != nullptr)
   {
     // Ignore the line if it is a comment line or "thrash" line
 

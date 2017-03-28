@@ -100,7 +100,7 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
     if (forceBinaryFormat) ::ForceBinaryFormatWrite(*this);
 
     ofstream dataFile(filename.c_str(), ios::binary | ios::out);
-    if (dataFile)
+    if (dataFile != nullptr)
       dataFile << *this;
     else
       throw std::runtime_error(
@@ -310,8 +310,8 @@ void NFmiQueryData::swap(NFmiQueryData &theOther)
 
 void NFmiQueryData::Destroy()
 {
-  if (itsQueryInfo) delete itsQueryInfo;
-  if (itsRawData) delete itsRawData;
+  if (itsQueryInfo != nullptr) delete itsQueryInfo;
+  if (itsRawData != nullptr) delete itsRawData;
 }
 
 // ----------------------------------------------------------------------
@@ -322,7 +322,7 @@ void NFmiQueryData::Destroy()
 
 bool NFmiQueryData::Init()
 {
-  bool status = (itsQueryInfo && itsRawData->Init(itsQueryInfo->Size()));
+  bool status = ((itsQueryInfo != nullptr) && itsRawData->Init(itsQueryInfo->Size()));
   return status;
 }
 
@@ -335,10 +335,10 @@ bool NFmiQueryData::Init()
 
 bool NFmiQueryData::Init(const NFmiQueryInfo &theInfo)
 {
-  if (itsQueryInfo) delete itsQueryInfo;
+  if (itsQueryInfo != nullptr) delete itsQueryInfo;
 
   itsQueryInfo = theInfo.Clone();
-  if (itsRawData) delete itsRawData;
+  if (itsRawData != nullptr) delete itsRawData;
 
   itsRawData = new NFmiRawData();
   itsRawData->Init(itsQueryInfo->Size());
@@ -356,7 +356,7 @@ bool NFmiQueryData::Init(const std::string &theHeader,
                          const std::string &theFilename,
                          bool fInitialize)
 {
-  if (!itsQueryInfo) return false;
+  if (itsQueryInfo == nullptr) return false;
 
   return itsRawData->Init(itsQueryInfo->Size(), theHeader, theFilename, fInitialize);
 }
@@ -639,7 +639,7 @@ void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
 
 bool NFmiQueryData::Advise(FmiAdvice theAdvice)
 {
-  if (!itsRawData) return false;
+  if (itsRawData == nullptr) return false;
 
   return itsRawData->Advise(theAdvice);
 }

@@ -49,7 +49,7 @@ NFmiModifiedDataIterator::NFmiModifiedDataIterator(NFmiInfoModifier* theData,
 
 void NFmiModifiedDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  if (theDataModifier == nullptr) return;
 
   theDataModifier->Clear();
 

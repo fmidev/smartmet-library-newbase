@@ -421,7 +421,7 @@ NFmiArea *NFmiArea::DoPossiblePacificFix() const
     if (createNewArea)
     {
       NFmiArea *newArea = NewArea(bottomleft, topright);
-      if (newArea)
+      if (newArea != nullptr)
       {
         newArea->PacificView(usedPacificViewState);
         return newArea;
@@ -442,7 +442,7 @@ NFmiArea *NFmiArea::DoForcePacificFix() const
     ::FixPacificLongitude(toprightLatlon);
 
     NFmiArea *newArea = NewArea(bottomleftLatlon, toprightLatlon, false);
-    if (newArea)
+    if (newArea != nullptr)
     {
       newArea->PacificView(true);
       return newArea;

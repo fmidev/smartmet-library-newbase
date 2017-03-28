@@ -782,7 +782,7 @@ inline bool NFmiFastQueryInfo::FirstTime()
 
 inline float NFmiFastQueryInfo::IndexFloatValue(size_t theIndex) const
 {
-  return itsRefRawData ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
+  return itsRefRawData != nullptr ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

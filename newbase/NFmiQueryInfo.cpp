@@ -331,7 +331,7 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
       fDoEndianByteSwap(false),
       fHasNonFiniteValueSet(false)
 {
-  if (theVPlaceDescriptor.Size())
+  if (theVPlaceDescriptor.Size() != 0u)
   {
     itsVPlaceDescriptor = new NFmiVPlaceDescriptor(theVPlaceDescriptor);
   }
@@ -341,7 +341,7 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
     itsVPlaceDescriptor = new NFmiVPlaceDescriptor(theLevelBag);
   }
 
-  if (theHPlaceDescriptor.Size())
+  if (theHPlaceDescriptor.Size() != 0u)
   {
     itsHPlaceDescriptor = new NFmiHPlaceDescriptor(theHPlaceDescriptor);
   }
@@ -375,16 +375,16 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
       itsRefQueryData(theInfo)
       //  , itsStaticDataMask(0)
       ,
-      itsParamDescriptor(theInfo->Info()->itsParamDescriptor
+      itsParamDescriptor(theInfo->Info()->itsParamDescriptor != nullptr
                              ? new NFmiParamDescriptor(*(theInfo->Info()->itsParamDescriptor))
                              : nullptr),
-      itsHPlaceDescriptor(theInfo->Info()->itsHPlaceDescriptor
+      itsHPlaceDescriptor(theInfo->Info()->itsHPlaceDescriptor != nullptr
                               ? new NFmiHPlaceDescriptor(*(theInfo->Info()->itsHPlaceDescriptor))
                               : nullptr),
-      itsVPlaceDescriptor(theInfo->Info()->itsVPlaceDescriptor
+      itsVPlaceDescriptor(theInfo->Info()->itsVPlaceDescriptor != nullptr
                               ? new NFmiVPlaceDescriptor(*(theInfo->Info()->itsVPlaceDescriptor))
                               : nullptr),
-      itsTimeDescriptor(theInfo->Info()->itsTimeDescriptor
+      itsTimeDescriptor(theInfo->Info()->itsTimeDescriptor != nullptr
                             ? new NFmiTimeDescriptor(*(theInfo->Info()->itsTimeDescriptor))
                             : nullptr),
       itsHeaderText(nullptr),
@@ -404,7 +404,7 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
       fDoEndianByteSwap(false),
       fHasNonFiniteValueSet(false)
 {
-  if (theParamDescriptor)
+  if (theParamDescriptor != nullptr)
   {
     itsParamDescriptor->Reset();
     while (itsParamDescriptor->Next())
@@ -420,7 +420,7 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
     }
   }
 
-  if (theTimeDescriptor)
+  if (theTimeDescriptor != nullptr)
   {
     itsTimeDescriptor->Reset();
     while (itsTimeDescriptor->Next())
@@ -436,7 +436,7 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
     }
   }
 
-  if (theHPlaceDescriptor)
+  if (theHPlaceDescriptor != nullptr)
   {
     itsHPlaceDescriptor->Reset();
     while (itsHPlaceDescriptor->Next())
@@ -452,7 +452,7 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
     }
   }
 
-  if (theVPlaceDescriptor)
+  if (theVPlaceDescriptor != nullptr)
   {
     itsVPlaceDescriptor->Reset();
     while (itsVPlaceDescriptor->Next())
@@ -468,9 +468,10 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
     }
   }
 
-  if (theInfo->Info()->Header()) itsHeaderText = new NFmiStringList(*(theInfo->Info()->Header()));
+  if (theInfo->Info()->Header() != nullptr)
+    itsHeaderText = new NFmiStringList(*(theInfo->Info()->Header()));
 
-  if (theInfo->Info()->PostProcText())
+  if (theInfo->Info()->PostProcText() != nullptr)
     itsPostProc = new NFmiStringList(*(theInfo->Info()->PostProcText()));
 
   // tehdään First, niin Info-iteraattori on heti käytettävissä
@@ -495,23 +496,24 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiQueryInfo &theInfo)
       itsRefQueryData(theInfo.itsRefQueryData)
       //  , itsStaticDataMask(theInfo.itsStaticDataMask)
       ,
-      itsParamDescriptor(theInfo.itsParamDescriptor
+      itsParamDescriptor(theInfo.itsParamDescriptor != nullptr
                              ? new NFmiParamDescriptor(*(theInfo.itsParamDescriptor))
                              : nullptr),
-      itsHPlaceDescriptor(theInfo.itsHPlaceDescriptor
+      itsHPlaceDescriptor(theInfo.itsHPlaceDescriptor != nullptr
                               ? new NFmiHPlaceDescriptor(*(theInfo.itsHPlaceDescriptor))
                               : nullptr),
-      itsVPlaceDescriptor(theInfo.itsVPlaceDescriptor
+      itsVPlaceDescriptor(theInfo.itsVPlaceDescriptor != nullptr
                               ? new NFmiVPlaceDescriptor(*(theInfo.itsVPlaceDescriptor))
                               : nullptr),
-      itsTimeDescriptor(theInfo.itsTimeDescriptor
+      itsTimeDescriptor(theInfo.itsTimeDescriptor != nullptr
                             ? new NFmiTimeDescriptor(*(theInfo.itsTimeDescriptor))
                             : nullptr),
       itsHeaderText(nullptr),
       itsPostProc(nullptr),
       itsNewClassIdent(theInfo.itsNewClassIdent),
-      itsCombinedParamParser(
-          theInfo.itsCombinedParamParser ? theInfo.itsCombinedParamParser->Clone() : nullptr),
+      itsCombinedParamParser(theInfo.itsCombinedParamParser != nullptr
+                                 ? theInfo.itsCombinedParamParser->Clone()
+                                 : nullptr),
       itsInfoVersion(theInfo.InfoVersion()),
       itsGridXNumber(theInfo.itsGridXNumber),
       itsGridYNumber(theInfo.itsGridYNumber)
@@ -525,13 +527,13 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiQueryInfo &theInfo)
       fDoEndianByteSwap(theInfo.fDoEndianByteSwap),
       fHasNonFiniteValueSet(theInfo.fHasNonFiniteValueSet)
 {
-  if (theInfo.itsHeaderText)
+  if (theInfo.itsHeaderText != nullptr)
   {
     itsHeaderText = new NFmiStringList;
     *itsHeaderText = *theInfo.itsHeaderText;
   }
 
-  if (theInfo.itsPostProc)
+  if (theInfo.itsPostProc != nullptr)
   {
     itsPostProc = new NFmiStringList;
     *itsPostProc = *theInfo.itsPostProc;
@@ -627,43 +629,43 @@ NFmiQueryInfo::~NFmiQueryInfo()
 
 void NFmiQueryInfo::Destroy()
 {
-  if (itsHeaderText)
+  if (itsHeaderText != nullptr)
   {
     delete itsHeaderText;
     itsHeaderText = nullptr;
   }
 
-  if (itsPostProc)
+  if (itsPostProc != nullptr)
   {
     delete itsPostProc;
     itsPostProc = nullptr;
   }
 
-  if (itsTimeDescriptor)
+  if (itsTimeDescriptor != nullptr)
   {
     delete itsTimeDescriptor;
     itsTimeDescriptor = nullptr;
   }
 
-  if (itsHPlaceDescriptor)
+  if (itsHPlaceDescriptor != nullptr)
   {
     delete itsHPlaceDescriptor;
     itsHPlaceDescriptor = nullptr;
   }
 
-  if (itsVPlaceDescriptor)
+  if (itsVPlaceDescriptor != nullptr)
   {
     delete itsVPlaceDescriptor;
     itsVPlaceDescriptor = nullptr;
   }
 
-  if (itsParamDescriptor)
+  if (itsParamDescriptor != nullptr)
   {
     delete itsParamDescriptor;
     itsParamDescriptor = nullptr;
   }
 
-  if (itsCombinedParamParser)
+  if (itsCombinedParamParser != nullptr)
   {
     delete itsCombinedParamParser;
     itsCombinedParamParser = nullptr;
@@ -859,7 +861,7 @@ NFmiQueryInfo NFmiQueryInfo::Combine(const NFmiQueryInfo &theCombine)
 
 const NFmiString NFmiQueryInfo::Owner()
 {
-  if (!itsHeaderText) return NFmiString();
+  if (itsHeaderText == nullptr) return NFmiString();
 
   if (!itsHeaderText->Reset()) return NFmiString("Unsigned");
 
@@ -874,7 +876,7 @@ const NFmiString NFmiQueryInfo::Owner()
 
 const NFmiString NFmiQueryInfo::TimeStamp()
 {
-  if (!itsHeaderText) return NFmiString();
+  if (itsHeaderText == nullptr) return NFmiString();
 
   if (!itsHeaderText->Reset()) return NFmiString("Unsigned");
 
@@ -891,7 +893,7 @@ const NFmiString NFmiQueryInfo::TimeStamp()
 
 const NFmiString NFmiQueryInfo::Leader()
 {
-  if (!itsHeaderText) return NFmiString();
+  if (itsHeaderText == nullptr) return NFmiString();
 
   if (!itsHeaderText->Reset()) return NFmiString("Unsigned");
 
@@ -910,7 +912,7 @@ const NFmiString NFmiQueryInfo::Leader()
 
 void NFmiQueryInfo::Header(NFmiStringList *theHeader)
 {
-  if (theHeader)
+  if (theHeader != nullptr)
   {
     itsHeaderText = new NFmiStringList(*theHeader);
   }
@@ -935,7 +937,7 @@ NFmiStringList *NFmiQueryInfo::Header() const { return itsHeaderText; }
 
 const NFmiString NFmiQueryInfo::Text() const
 {
-  if (!itsHeaderText) return NFmiString();
+  if (itsHeaderText == nullptr) return NFmiString();
 
   return *(itsHeaderText->Current());
 }
@@ -948,7 +950,7 @@ const NFmiString NFmiQueryInfo::Text() const
 
 bool NFmiQueryInfo::ResetText()
 {
-  if (itsHeaderText) return false;
+  if (itsHeaderText != nullptr) return false;
 
   if (!itsHeaderText->Reset()) return false;
 
@@ -967,7 +969,7 @@ bool NFmiQueryInfo::ResetText()
 
 bool NFmiQueryInfo::NextText()
 {
-  if (itsHeaderText) return false;
+  if (itsHeaderText != nullptr) return false;
 
   if (!itsHeaderText->Next()) return false;
 
@@ -982,7 +984,7 @@ bool NFmiQueryInfo::NextText()
 
 void NFmiQueryInfo::PostProcText(NFmiStringList *theHeader)
 {
-  if (theHeader)
+  if (theHeader != nullptr)
   {
     itsPostProc = new NFmiStringList(*theHeader);
   }
@@ -1007,7 +1009,7 @@ NFmiStringList *NFmiQueryInfo::PostProcText() const { return itsPostProc; }
 
 bool NFmiQueryInfo::ResetPostProc()
 {
-  if (!itsPostProc) return false;
+  if (itsPostProc == nullptr) return false;
 
   if (!itsPostProc->Reset()) return false;
 
@@ -1022,7 +1024,7 @@ bool NFmiQueryInfo::ResetPostProc()
 
 bool NFmiQueryInfo::NextPostProc()
 {
-  if (!itsPostProc) return false;
+  if (itsPostProc == nullptr) return false;
 
   if (!itsPostProc->Next()) return false;
 
@@ -1037,7 +1039,7 @@ bool NFmiQueryInfo::NextPostProc()
 
 const NFmiString NFmiQueryInfo::PostProc() const
 {
-  if (!itsPostProc) return NFmiString();
+  if (itsPostProc == nullptr) return NFmiString();
 
   return *(itsPostProc->Current());
 }
@@ -1062,7 +1064,7 @@ void * NFmiQueryInfo::VoidValue(void)
 
 const NFmiGrid NFmiQueryInfo::GridValue()
 {
-  if (Grid())
+  if (Grid() != nullptr)
   {
     NFmiDataPool theDataPool;
     NFmiGrid theGrid(*Grid());
@@ -1107,12 +1109,13 @@ NFmiQueryInfo &NFmiQueryInfo::operator=(const NFmiQueryInfo &theInfo)
   itsRefRawData = theInfo.itsRefRawData;
   itsRefQueryData = theInfo.itsRefQueryData;
 
-  if (theInfo.Header()) itsHeaderText = new NFmiStringList(*(theInfo.Header()));
+  if (theInfo.Header() != nullptr) itsHeaderText = new NFmiStringList(*(theInfo.Header()));
 
-  if (theInfo.PostProcText()) itsPostProc = new NFmiStringList(*(theInfo.PostProcText()));
+  if (theInfo.PostProcText() != nullptr)
+    itsPostProc = new NFmiStringList(*(theInfo.PostProcText()));
 
   itsCombinedParamParser = nullptr;  // ei tarvita, jos kutsutaan Destroy():ta
-  if (theInfo.itsCombinedParamParser)
+  if (theInfo.itsCombinedParamParser != nullptr)
     itsCombinedParamParser = theInfo.itsCombinedParamParser->Clone();
   itsTimeUnCertaintyStart = theInfo.itsTimeUnCertaintyStart;
   itsTimeUnCertaintyEnd = theInfo.itsTimeUnCertaintyEnd;
@@ -1172,7 +1175,7 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
        << "0 " << std::endl;  // Varalla tulevaisuuta varten
 
   // Lisätty 9.3.1998/Vili
-  if (itsHeaderText)
+  if (itsHeaderText != nullptr)
     file << *itsHeaderText;
   else
   {
@@ -1180,7 +1183,7 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     file << tmp;
   }
 
-  if (itsPostProc)
+  if (itsPostProc != nullptr)
     file << *itsPostProc;
   else
   {
@@ -1188,17 +1191,17 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     file << tmp;
   }
 
-  if (itsParamDescriptor)
+  if (itsParamDescriptor != nullptr)
     file << *itsParamDescriptor;
   else
     file << 0 << " NFmiParamDescriptor" << std::endl;
 
-  if (itsHPlaceDescriptor)
+  if (itsHPlaceDescriptor != nullptr)
     file << *itsHPlaceDescriptor;
   else
     file << 0 << " NFmiHPlaceDescriptor" << std::endl;
 
-  if (itsVPlaceDescriptor)
+  if (itsVPlaceDescriptor != nullptr)
     file << *itsVPlaceDescriptor;
   else
   {
@@ -1206,7 +1209,7 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     file << theVPlaceDescriptor;
   }
 
-  if (itsTimeDescriptor)
+  if (itsTimeDescriptor != nullptr)
     file << *itsTimeDescriptor;
   else
     file << 0 << " NFmiTimeDescriptor" << std::endl;
@@ -1310,7 +1313,7 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
     itsVPlaceDescriptor = new NFmiVPlaceDescriptor;
     file >> *itsVPlaceDescriptor;
 
-    if (!itsVPlaceDescriptor->Size())
+    if (itsVPlaceDescriptor->Size() == 0u)
     {
       delete itsVPlaceDescriptor;
       itsVPlaceDescriptor = nullptr;
@@ -1351,7 +1354,8 @@ static const double gInterpolatedValueEps = 0.00001;
 
 float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint)
 {
-  if (!Param().GetParam()) return kFloatMissing;  // parametria ei ole asetettu kohdalleen!!!!
+  if (Param().GetParam() == nullptr)
+    return kFloatMissing;  // parametria ei ole asetettu kohdalleen!!!!
 
   if (IsGrid())
   {
@@ -1409,7 +1413,7 @@ float NFmiQueryInfo::InterpolatedValueForCombinedParam(const NFmiPoint &theGridP
     dy = 1;
   }
 
-  if (itsCombinedParamParser) delete itsCombinedParamParser;
+  if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
   itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
   itsCombinedParamParser->SetToWeightedMean(&bottomLeftweather,
                                             float((1. - dx) * (1. - dy)),
@@ -1468,7 +1472,7 @@ float NFmiQueryInfo::InterpolatedValueForWeatherAndCloudiness(const NFmiPoint &t
     dy = 1;
   }
 
-  if (itsCombinedParamParser) delete itsCombinedParamParser;
+  if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
   itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
   itsCombinedParamParser->SetToWeightedMean(&bottomLeftweather,
                                             float((1. - dx) * (1. - dy)),
@@ -1537,7 +1541,7 @@ float NFmiQueryInfo::InterpolatedValueForWeatherAndCloudiness(const NFmiMetTime 
     dy = 1;
   }
 
-  if (itsCombinedParamParser) delete itsCombinedParamParser;
+  if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
   itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
   itsCombinedParamParser->SetToWeightedMean(&bottomLeftweather,
                                             float((1. - dx) * (1. - dy)),
@@ -1597,7 +1601,7 @@ float NFmiQueryInfo::InterpolatedValueForTotalWind(const NFmiPoint &theGridPoint
     dy = 1;
   }
 
-  if (itsCombinedParamParser) delete itsCombinedParamParser;
+  if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
   itsCombinedParamParser = new NFmiTotalWind(itsInfoVersion);
   itsCombinedParamParser->SetToWeightedMean(&bottomLeftweather,
                                             float((1. - dx) * (1. - dy)),
@@ -1665,7 +1669,7 @@ float NFmiQueryInfo::InterpolatedValueForTotalWind(const NFmiMetTime &theTime,
     dy = 1;
   }
 
-  if (itsCombinedParamParser) delete itsCombinedParamParser;
+  if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
   itsCombinedParamParser = new NFmiTotalWind(itsInfoVersion);
   itsCombinedParamParser->SetToWeightedMean(&bottomLeftweather,
                                             float((1. - dx) * (1. - dy)),
@@ -1974,7 +1978,7 @@ bool NFmiQueryInfo::FindSubParam(const NFmiDataIdent &theDataIdent)
 
 bool NFmiQueryInfo::ChangeCombinedParamParser(const NFmiDataIdent &theParam)
 {
-  if (itsCombinedParamParser)
+  if (itsCombinedParamParser != nullptr)
   {
     delete itsCombinedParamParser;
     itsCombinedParamParser = nullptr;
@@ -2002,7 +2006,8 @@ bool NFmiQueryInfo::ChangeCombinedParamParser(const NFmiDataIdent &theParam)
 
 NFmiProducer *NFmiQueryInfo::Producer()
 {
-  return (itsParamDescriptor ? itsParamDescriptor->ParamBag()->Current()->GetProducer() : nullptr);
+  return (itsParamDescriptor != nullptr ? itsParamDescriptor->ParamBag()->Current()->GetProducer()
+                                        : nullptr);
 }
 
 // ----------------------------------------------------------------------
@@ -2020,7 +2025,7 @@ NFmiDataIdent &NFmiQueryInfo::Param() const { return itsParamDescriptor->Param(f
 
 float NFmiQueryInfo::SubParamFloatValue() const
 {
-  if (itsCombinedParamParser)
+  if (itsCombinedParamParser != nullptr)
   {
     float fValue = IndexFloatValue(Index());
     itsCombinedParamParser->TransformFromFloatValue(fValue);
@@ -2039,7 +2044,7 @@ float NFmiQueryInfo::SubParamFloatValue() const
 
 bool NFmiQueryInfo::SubParamFloatValue(float theFloatData)
 {
-  if (itsCombinedParamParser)
+  if (itsCombinedParamParser != nullptr)
   {
     size_t index = Index();
     float fValue = IndexFloatValue(index);
@@ -2060,7 +2065,7 @@ bool NFmiQueryInfo::SubParamFloatValue(float theFloatData)
 
 float NFmiQueryInfo::SubParamFloatValue(size_t theIndex) const
 {
-  if (itsCombinedParamParser)
+  if (itsCombinedParamParser != nullptr)
   {
     float fValue = IndexFloatValue(theIndex);
     itsCombinedParamParser->TransformFromFloatValue(fValue);
@@ -2087,7 +2092,7 @@ float NFmiQueryInfo::TimePeriodFloatValue(unsigned long period,
 {
   if (UseSubParam())
   {
-    if (itsCombinedParamParser) delete itsCombinedParamParser;
+    if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
     // case: onko tuuli
     itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
 
@@ -2119,7 +2124,7 @@ float NFmiQueryInfo::TimePeriodFloatValue(const NFmiMetTime &theStartTime,
 {
   if (UseSubParam())
   {
-    if (itsCombinedParamParser) delete itsCombinedParamParser;
+    if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
     // case: onko tuuli
     itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
     itsCombinedParamParser->SetToWeightedPeriod(
@@ -2153,7 +2158,7 @@ float NFmiQueryInfo::InterpolatedTimePeriodFloatValue(const NFmiPoint &latlon,
 {
   if (UseSubParam())
   {
-    if (itsCombinedParamParser) delete itsCombinedParamParser;
+    if (itsCombinedParamParser != nullptr) delete itsCombinedParamParser;
     itsCombinedParamParser = new NFmiWeatherAndCloudiness(itsInfoVersion);
     itsCombinedParamParser->SetToWeightedPeriod(this,
                                                 latlon,
@@ -2320,9 +2325,9 @@ void NFmiQueryInfo::CalcLocationData(NFmiDataModifier *theModifier,
                                      NFmiArea *theArea,
                                      NFmiLocationBag *theLocationBag)
 {
-  if (theArea)
+  if (theArea != nullptr)
     CalcLocationData2(theModifier, theArea);
-  else if (theLocationBag)
+  else if (theLocationBag != nullptr)
     CalcLocationData2(theModifier, theLocationBag);
   else
     CalcLocationData2(theModifier);
@@ -2349,7 +2354,7 @@ void NFmiQueryInfo::CalcLevelData(NFmiDataModifier *theModifier)
 
 void NFmiQueryInfo::CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *theTimeBag)
 {
-  if (theTimeBag)
+  if (theTimeBag != nullptr)
   {
     if (static_cast<unsigned long>(theTimeBag->Resolution()) == TimeResolution())
     {
@@ -2387,7 +2392,7 @@ void NFmiQueryInfo::CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *the
 
 void NFmiQueryInfo::CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeDescriptor &theTimeDesc)
 {
-  if (theTimeDesc.ValidTimeBag())
+  if (theTimeDesc.ValidTimeBag() != nullptr)
     CalcTimeData(theModifier,
                  theTimeDesc.ValidTimeBag());  // jos on timebagi, käyttää valmista funktiota
   else
@@ -2558,12 +2563,12 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
                                             NFmiQueryInfo *theQueryInfoCopy,
                                             NFmiTimeBag *theTimeBag)
 {
-  if (!theTimeBag)
+  if (theTimeBag == nullptr)
   {
-    if (theQueryInfoCopy) theQueryInfoCopy->ResetTime();
+    if (theQueryInfoCopy != nullptr) theQueryInfoCopy->ResetTime();
     for (ResetTime(); NextTime();)
     {
-      if (theQueryInfoCopy) theQueryInfoCopy->NextTime();
+      if (theQueryInfoCopy != nullptr) theQueryInfoCopy->NextTime();
       ModifyLocationData(theModifier, theQueryInfoCopy);
     }
   }
@@ -2572,7 +2577,7 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
     for (theTimeBag->Reset(); theTimeBag->Next();)
     {
       if (!Time(theTimeBag->CurrentTime())) continue;
-      if (theQueryInfoCopy)
+      if (theQueryInfoCopy != nullptr)
         if (!theQueryInfoCopy->Time(theTimeBag->CurrentTime())) continue;
       ModifyLocationData(theModifier, theQueryInfoCopy);
     }
@@ -2586,7 +2591,7 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
   for (theTimeDescriptor.Reset(); theTimeDescriptor.Next();)
   {
     if (!Time(theTimeDescriptor.Time())) continue;
-    if (theQueryInfoCopy)
+    if (theQueryInfoCopy != nullptr)
       if (!theQueryInfoCopy->Time(theTimeDescriptor.Time())) continue;
     ModifyLocationData(theModifier, theQueryInfoCopy);
   }
@@ -2690,11 +2695,11 @@ void NFmiQueryInfo::ModifyLocationData(NFmiDataModifier *theModifier,
                                        NFmiArea *theArea,
                                        NFmiLocationBag *theLocationBag)
 {
-  if (theQueryInfoCopy) theQueryInfoCopy->ResetLocation();
+  if (theQueryInfoCopy != nullptr) theQueryInfoCopy->ResetLocation();
 
-  if (theArea)
+  if (theArea != nullptr)
     ModifyLocationData2(theModifier, theQueryInfoCopy, theArea);
-  else if (theLocationBag)
+  else if (theLocationBag != nullptr)
     ModifyLocationData2(theModifier, theQueryInfoCopy, theLocationBag);
   else
     ModifyLocationData2(theModifier, theQueryInfoCopy);
@@ -2709,7 +2714,7 @@ void NFmiQueryInfo::ModifyLocationData(NFmiDataModifier *theModifier,
 
 void NFmiQueryInfo::ModifyTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *theTimeBag)
 {
-  if (theTimeBag)
+  if (theTimeBag != nullptr)
   {
     for (theTimeBag->Reset(); theTimeBag->Next();)
       if (Time(theTimeBag->CurrentTime())) FloatValue(theModifier->FloatOperation(FloatValue()));
@@ -2776,7 +2781,7 @@ bool NFmiQueryInfo::SetDescriptors(NFmiQueryInfo *theQueryInfo, bool fIgnoreLeve
   // Mika 08.11.2001 : Paluuarvoa ei kayteta - onko sivuvaikutus??
   // bool boo = theQueryInfo->IsLevel();
   theQueryInfo->IsLevel();
-  if (!fIgnoreLevel && theQueryInfo->Level())
+  if (!fIgnoreLevel && (theQueryInfo->Level() != nullptr))
   {
     if (!Level(*(theQueryInfo->Level()))) returnValue = false;
   }
@@ -2795,7 +2800,7 @@ bool NFmiQueryInfo::SetDescriptors(NFmiQueryInfo *theQueryInfo, bool fIgnoreLeve
     {
       if (!Location(theQueryInfo->LatLon())) returnValue = false;
     }
-    else if (theQueryInfo->Location())
+    else if (theQueryInfo->Location() != nullptr)
     {
       if (!Location(*(theQueryInfo->Location()))) returnValue = false;
     }
@@ -2845,7 +2850,7 @@ void NFmiQueryInfo::CalcLocationDataWithExtremePlace(NFmiDataModifierExtremePlac
 
 void NFmiQueryInfo::CalcLocationData2(NFmiDataModifier *theModifier, NFmiArea *theArea)
 {
-  if (theArea)
+  if (theArea != nullptr)
   {
     for (ResetLocation(); NextLocation();)
     {
@@ -2865,7 +2870,7 @@ void NFmiQueryInfo::CalcLocationData2(NFmiDataModifier *theModifier, NFmiArea *t
 void NFmiQueryInfo::CalcLocationData2(NFmiDataModifier *theModifier,
                                       NFmiLocationBag *theLocationBag)
 {
-  if (theLocationBag)
+  if (theLocationBag != nullptr)
   {
     for (theLocationBag->Reset(); theLocationBag->Next();)
     {
@@ -2884,11 +2889,11 @@ void NFmiQueryInfo::CalcLocationData2(NFmiDataModifier *theModifier,
 void NFmiQueryInfo::ModifyLocationData2(NFmiDataModifier *theModifier,
                                         NFmiQueryInfo *theQueryInfoCopy)
 {
-  if (theQueryInfoCopy) theQueryInfoCopy->ResetLocation();
+  if (theQueryInfoCopy != nullptr) theQueryInfoCopy->ResetLocation();
 
   for (ResetLocation(); NextLocation();)
   {
-    if (theQueryInfoCopy) theQueryInfoCopy->LocationIndex(LocationIndex());
+    if (theQueryInfoCopy != nullptr) theQueryInfoCopy->LocationIndex(LocationIndex());
     FloatValue(theModifier->FloatOperation(FloatValue()));
   }
 }
@@ -2905,9 +2910,9 @@ void NFmiQueryInfo::ModifyLocationData2(NFmiDataModifier *theModifier,
                                         NFmiQueryInfo *theQueryInfoCopy,
                                         NFmiArea *theArea)
 {
-  if (theQueryInfoCopy) theQueryInfoCopy->ResetLocation();
+  if (theQueryInfoCopy != nullptr) theQueryInfoCopy->ResetLocation();
 
-  if (theArea)
+  if (theArea != nullptr)
   {
     for (ResetLocation(); NextLocation();)
     {
@@ -2931,15 +2936,15 @@ void NFmiQueryInfo::ModifyLocationData2(NFmiDataModifier *theModifier,
                                         NFmiQueryInfo *theQueryInfoCopy,
                                         NFmiLocationBag *theLocationBag)
 {
-  if (theQueryInfoCopy) theQueryInfoCopy->ResetLocation();
+  if (theQueryInfoCopy != nullptr) theQueryInfoCopy->ResetLocation();
 
-  if (theLocationBag)
+  if (theLocationBag != nullptr)
   {
     for (theLocationBag->Reset(); theLocationBag->Next();)
     {
       if (Location(*theLocationBag->Location()))
       {
-        if (theQueryInfoCopy) theQueryInfoCopy->Location(*theLocationBag->Location());
+        if (theQueryInfoCopy != nullptr) theQueryInfoCopy->Location(*theLocationBag->Location());
         FloatValue(theModifier->FloatOperation(FloatValue()));
       }
     }
@@ -2962,9 +2967,9 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
   if (Time(theTime)) tmpValue = FloatValue();
   if (tmpValue == kFloatMissing)
   {  // jos ei löytynyt suoraan arvoa, aletaan interpolointi...
-    if (itsTimeDescriptor->ValidTimeBag())
+    if (itsTimeDescriptor->ValidTimeBag() != nullptr)
       tmpValue = InterpolatedValueFromTimeBag(theTime, theMaxMinuteRange);
-    else if (itsTimeDescriptor->ValidTimeList())
+    else if (itsTimeDescriptor->ValidTimeList() != nullptr)
       tmpValue = InterpolatedValueFromTimeList(theTime, theMaxMinuteRange);
   }
   TimeIndex(oldTimeIndex);  // asetetaan lopuksi indeksi takaisin siihen, missä se oli
@@ -2974,7 +2979,7 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
 float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, int theMaxMinuteRange)
 {
   NFmiTimeBag *timeBag = itsTimeDescriptor->ValidTimeBag();
-  if (timeBag && timeBag->IsInside(theTime))
+  if ((timeBag != nullptr) && timeBag->IsInside(theTime))
   {
     int sizeTimes = SizeTimes();
     int timeIndex = TimeIndex();
@@ -3013,7 +3018,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
         value1 = PeekTimeValue(i);
         if (!(value1 == kFloatMissing || value1 == kTCombinedWeatherFloatMissing))
         {
-          if (theMaxMinuteRange && theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
+          if ((theMaxMinuteRange != 0) &&
+              theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
             value1 = kFloatMissing;
           break;
         }
@@ -3026,7 +3032,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
         value2 = PeekTimeValue(i);
         if (!(value2 == kFloatMissing || value2 == kTCombinedWeatherFloatMissing))
         {
-          if (theMaxMinuteRange && theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
+          if ((theMaxMinuteRange != 0) &&
+              theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
             value2 = kFloatMissing;
           break;
         }
@@ -3176,7 +3183,7 @@ float NFmiQueryInfo::CalcTimeOffsetToLastTime(const NFmiMetTime &theTime,
 {
   auto totalDiff = static_cast<float>(time2.DifferenceInMinutes(time1));
   auto diff1 = static_cast<float>(theTime.DifferenceInMinutes(time1));
-  if (totalDiff)
+  if (totalDiff != 0.0f)
   {
     // offset1 nimi on ehkä hämäävä, tarkoittaa että jos offset on 1, ollaan time1:n kohdalla ja
     // palautetaan theValue1
@@ -3270,7 +3277,7 @@ NFmiLocationCache NFmiQueryInfo::CalcLocationCache(const NFmiPoint &theLatlon,
 bool NFmiQueryInfo::CalcLatlonCachePoints(NFmiQueryInfo &theTargetInfo,
                                           NFmiDataMatrix<NFmiLocationCache> &theLocationCache)
 {
-  if (Grid() && theTargetInfo.Grid())
+  if ((Grid() != nullptr) && (theTargetInfo.Grid() != nullptr))
   {
     unsigned long sourceSizeX = Grid()->XNumber();
     unsigned long sourceSizeY = Grid()->YNumber();
@@ -3346,7 +3353,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
   unsigned long oldTimeIndex = TimeIndex();
   float returnValue = kFloatMissing;
   NFmiTimeList *timeList = itsTimeDescriptor->ValidTimeList();
-  if (timeList)
+  if (timeList != nullptr)
   {
     if (theTime < timeList->FirstTime())
       return kFloatMissing;  // jos 1. aika oli jo suurempi kuin  haluttu, ei voida interpoloida.
@@ -3362,7 +3369,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
 
     int index1 = 0, index2 = 0;
     if ((index1 = timeList->FindNearestTimes(
-             theTime, theMaxMinuteRange ? theMaxMinuteRange : kLongMissing, time1, time2)) != -1)
+             theTime, theMaxMinuteRange != 0 ? theMaxMinuteRange : kLongMissing, time1, time2)) !=
+        -1)
     {
       FmiInterpolationMethod interpolationMethod = Param().GetParam()->InterpolationMethod();
       if (interpolationMethod == kNearestPoint || interpolationMethod == kNoneInterpolation)
@@ -4456,8 +4464,8 @@ void NFmiQueryInfo::UseStaticMask(bool newValue)
 
 void NFmiQueryInfo::SetProducer(const NFmiProducer &newProducer)
 {
-  if (itsParamDescriptor) itsParamDescriptor->SetProducer(newProducer);
-  if (RefQueryData()) RefQueryData()->Info()->SetProducer(newProducer);
+  if (itsParamDescriptor != nullptr) itsParamDescriptor->SetProducer(newProducer);
+  if (RefQueryData() != nullptr) RefQueryData()->Info()->SetProducer(newProducer);
 }
 
 // ----------------------------------------------------------------------
@@ -4473,14 +4481,14 @@ void NFmiQueryInfo::SetProducer(const NFmiProducer &newProducer)
 
 bool NFmiQueryInfo::ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *theTimeBag)
 {
-  if (!theReplaceData) return false;
+  if (theReplaceData == nullptr) return false;
   NFmiMetTime TheFirstTime;
   NFmiMetTime TheLastTime;
 
   First();
   theReplaceData->First();
 
-  if (!theTimeBag)
+  if (theTimeBag == nullptr)
   {
     TheFirstTime = theReplaceData->TimeDescriptor().FirstTime();
     TheLastTime = theReplaceData->TimeDescriptor().LastTime();
@@ -4723,7 +4731,8 @@ bool NFmiQueryInfo::Right()  // toimii vain gridi datalle oikein!!!
 
 bool NFmiQueryInfo::FindFirstKey(const NFmiString &theKey)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->FindFirstKey(theKey);
 
   itsHeaderText->Reset();
@@ -4743,7 +4752,8 @@ bool NFmiQueryInfo::FindFirstKey(const NFmiString &theKey)
 
 bool NFmiQueryInfo::FindNextKey(const NFmiString &theKey)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->FindNextKey(theKey);
 
   for (; itsHeaderText->Next();)
@@ -4767,7 +4777,8 @@ bool NFmiQueryInfo::AddKey(const NFmiString &theKey,
                            const NFmiString &theValue,
                            bool fClearDuplicatesFirst)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->AddKey(theKey, theValue, fClearDuplicatesFirst);
 
   if (fClearDuplicatesFirst) RemoveAllKeys(theKey);
@@ -4787,7 +4798,8 @@ bool NFmiQueryInfo::AddKey(const NFmiString &theKey,
 
 bool NFmiQueryInfo::SetCurrentKeyValue(const NFmiString &newValue)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->SetCurrentKeyValue(newValue);
 
   if (IsCurrentAnyKey())  // pitää tarkistaa ollaako oikeasti minkään avaimen kohdalla ensin
@@ -4805,7 +4817,8 @@ bool NFmiQueryInfo::SetCurrentKeyValue(const NFmiString &newValue)
 
 const NFmiString NFmiQueryInfo::GetCurrentKeyValue()
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->GetCurrentKeyValue();
 
   if (IsCurrentAnyKey()) return ExtractCurrentKeyValue();
@@ -4823,7 +4836,8 @@ const NFmiString NFmiQueryInfo::GetCurrentKeyValue()
 
 bool NFmiQueryInfo::RemoveCurrentKey()
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->RemoveCurrentKey();
 
   if (IsCurrentAnyKey()) return itsHeaderText->Remove();
@@ -4841,7 +4855,8 @@ bool NFmiQueryInfo::RemoveCurrentKey()
 
 bool NFmiQueryInfo::RemoveAllKeys()
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->RemoveAllKeys();
 
   if (FindFirstAnyKey())
@@ -4873,7 +4888,8 @@ bool NFmiQueryInfo::RemoveAllKeys()
 
 bool NFmiQueryInfo::RemoveAllKeys(const NFmiString &theKey)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->RemoveAllKeys(theKey);
 
   if (FindFirstKey(theKey))
@@ -4905,7 +4921,8 @@ bool NFmiQueryInfo::RemoveAllKeys(const NFmiString &theKey)
 
 const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->GetAllKeys(fRemoveDuplicates);
 
   NFmiStringList list;
@@ -4936,7 +4953,8 @@ const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
 
 const NFmiString NFmiQueryInfo::GetCurrentKey()
 {
-  if (itsRefQueryData)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
+  if (itsRefQueryData !=
+      nullptr)  // jos this-info on jonkin datan iteraattori, tällöin välitä käsky datalle
     return itsRefQueryData->GetCurrentKey();
 
   if (IsCurrentAnyKey()) return ExtractCurrentKey();
@@ -5014,7 +5032,7 @@ bool NFmiQueryInfo::FindNextAnyKey()
 bool NFmiQueryInfo::IsCurrentAnyKey()
 {
   NFmiString *currentStr = itsHeaderText->Current();
-  if (currentStr)
+  if (currentStr != nullptr)
   {
     NFmiString searchStr(gInfoHeaderKeyWord);
     int pos = 0;
@@ -5022,7 +5040,7 @@ bool NFmiQueryInfo::IsCurrentAnyKey()
         1)  // tuloksen pitää olla 1 (= etsitty teksti löytyy heti stringin alusta)
     {
       unsigned char test = currentStr->operator[](5);
-      if (!isspace(test))  // FMI_ jälkeen ei saa olla whitespacea
+      if (isspace(test) == 0)  // FMI_ jälkeen ei saa olla whitespacea
       {
         NFmiString searchStr2("=");
         if (currentStr->Search(searchStr2, pos + 2) >
@@ -5046,7 +5064,7 @@ bool NFmiQueryInfo::IsCurrentAnyKey()
 bool NFmiQueryInfo::IsCurrentKey(const NFmiString &theKey)
 {
   NFmiString *currentStr = itsHeaderText->Current();
-  if (currentStr)
+  if (currentStr != nullptr)
   {
     NFmiString searchStr(gInfoHeaderKeyWord);
     searchStr += theKey;
@@ -5070,7 +5088,7 @@ bool NFmiQueryInfo::IsCurrentKey(const NFmiString &theKey)
 bool NFmiQueryInfo::ReplaceCurrentKeyValue(const NFmiString &newValue)
 {
   NFmiString *currentStr = itsHeaderText->Current();
-  if (currentStr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
+  if (currentStr != nullptr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
   {
     NFmiString replaceStr(gInfoHeaderKeyWord);
     replaceStr += ExtractCurrentKey();
@@ -5095,7 +5113,7 @@ const NFmiString NFmiQueryInfo::ExtractCurrentKeyValue()
 {
   NFmiString returnVal;
   NFmiString *currentStr = itsHeaderText->Current();
-  if (currentStr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
+  if (currentStr != nullptr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
   {
     NFmiString searchStr("=");
     int pos = 0;
@@ -5121,7 +5139,7 @@ const NFmiString NFmiQueryInfo::ExtractCurrentKey()
 {
   NFmiString returnVal;
   NFmiString *currentStr = itsHeaderText->Current();
-  if (currentStr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
+  if (currentStr != nullptr)  // tämän pitäisi löytyä, koska se on jo tarkistettu!!
   {
     NFmiString searchStr("=");
     int pos = 0;                                     // '='-merkin paikka
@@ -5198,7 +5216,7 @@ checkedVector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
 // Huom!!! Muutokset sallitaan ainoastaan saman kokoisille descriptoreille.
 void NFmiQueryInfo::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
 {
-  if (!itsHPlaceDescriptor)
+  if (itsHPlaceDescriptor == nullptr)
     throw runtime_error(
         "NFmiQueryInfo::SetHPlaceDescriptor - HPlaceDescriptoria ei oltu alustettu.");
   if (newDesc.Size() != Size())
@@ -5207,13 +5225,13 @@ void NFmiQueryInfo::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
   else
     *itsHPlaceDescriptor = newDesc;
 
-  if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
+  if (itsRefQueryData != nullptr)  // pitää laittaa sisuskalutkin kuntoon!!!
     itsRefQueryData->SetHPlaceDescriptor(newDesc);
 }
 
 void NFmiQueryInfo::SetVPlaceDescriptor(const NFmiVPlaceDescriptor &newDesc)
 {
-  if (!itsVPlaceDescriptor)
+  if (itsVPlaceDescriptor == nullptr)
     throw runtime_error(
         "NFmiQueryInfo::SetVPlaceDescriptor - VPlaceDescriptoria ei oltu alustettu.");
   if (newDesc.Size() == SizeLevels())
@@ -5222,13 +5240,13 @@ void NFmiQueryInfo::SetVPlaceDescriptor(const NFmiVPlaceDescriptor &newDesc)
     throw runtime_error(
         "NFmiQueryInfo::SetVPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
 
-  if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
+  if (itsRefQueryData != nullptr)  // pitää laittaa sisuskalutkin kuntoon!!!
     itsRefQueryData->Info()->SetVPlaceDescriptor(newDesc);
 }
 
 void NFmiQueryInfo::SetTimeDescriptor(const NFmiTimeDescriptor &newDesc)
 {
-  if (!itsTimeDescriptor)
+  if (itsTimeDescriptor == nullptr)
     throw runtime_error("NFmiQueryInfo::SetTimeDescriptor - TimeDescriptoria ei oltu alustettu.");
   if (newDesc.Size() == SizeTimes())
     *itsTimeDescriptor = newDesc;
@@ -5236,13 +5254,13 @@ void NFmiQueryInfo::SetTimeDescriptor(const NFmiTimeDescriptor &newDesc)
     throw runtime_error(
         "NFmiQueryInfo::SetTimeDescriptor - ei voi asettaa erikokoista descriptoria.");
 
-  if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
+  if (itsRefQueryData != nullptr)  // pitää laittaa sisuskalutkin kuntoon!!!
     itsRefQueryData->Info()->SetTimeDescriptor(newDesc);
 }
 
 void NFmiQueryInfo::SetParamDescriptor(const NFmiParamDescriptor &newDesc)
 {
-  if (!itsParamDescriptor)
+  if (itsParamDescriptor == nullptr)
     throw runtime_error("NFmiQueryInfo::SetParamDescriptor - ParamDescriptoria ei oltu alustettu.");
   if (newDesc.Size() == SizeParams())
     *itsParamDescriptor = newDesc;
@@ -5250,7 +5268,7 @@ void NFmiQueryInfo::SetParamDescriptor(const NFmiParamDescriptor &newDesc)
     throw runtime_error(
         "NFmiQueryInfo::SetParamDescriptor - ei voi asettaa erikokoista descriptoria.");
 
-  if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
+  if (itsRefQueryData != nullptr)  // pitää laittaa sisuskalutkin kuntoon!!!
     itsRefQueryData->Info()->SetParamDescriptor(newDesc);
 }
 
@@ -5292,7 +5310,7 @@ bool NFmiQueryInfo::IsInside(const NFmiMetTime &theTime) const
 const NFmiTimeBag &NFmiQueryInfo::ValidTimes() const
 {
   NFmiTimeBag *bag = itsTimeDescriptor->ValidTimeBag();
-  if (bag) return *bag;
+  if (bag != nullptr) return *bag;
   throw std::runtime_error("Attempt to access timebag from querydata without one would crash");
 }
 
@@ -5305,7 +5323,7 @@ const NFmiTimeBag &NFmiQueryInfo::ValidTimes() const
 const NFmiParamBag &NFmiQueryInfo::ParamBag() const
 {
   NFmiParamBag *bag = itsParamDescriptor->ParamBag();
-  if (bag) return *bag;
+  if (bag != nullptr) return *bag;
   throw std::runtime_error("Attempt to access parambag from querydata without one would crash");
 }
 

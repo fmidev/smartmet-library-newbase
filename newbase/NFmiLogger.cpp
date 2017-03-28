@@ -312,8 +312,8 @@ bool NFmiLogger::Store(const string & theFileName)
 
 bool NFmiLogger::LogMessage(const string &theMessage, Level theMessageLevel)
 {
-  if (fOperational && (itsUsedLoggingLevels & theMessageLevel) && itsUsedLoggingDevices &&
-      itsUsedLoggingDevices != kNoDevice)
+  if (fOperational && ((itsUsedLoggingLevels & theMessageLevel) != 0) &&
+      (itsUsedLoggingDevices != 0) && itsUsedLoggingDevices != kNoDevice)
   {
     itsCurrentTime = NFmiTime();
     bool status = LogMessage(theMessage, theMessageLevel, itsUsedLoggingDevices);
@@ -341,11 +341,11 @@ bool NFmiLogger::LogMessage(const string &theMessage, Level theMessageLevel, int
     finalString = MakeFinalMessage(theMessage, theMessageLevel);
 
   bool status = true;  // Huom! jos yksikin lähetyksistä epäonnistuu, palautuu false
-  if (theDevices & kFile) status &= Log2File(finalString);
-  if (theDevices & kGsm) status &= Log2Gsm(finalString);
-  if (theDevices & kEmail) status &= Log2Email(finalString);
-  if (theDevices & kStdOut) status &= Log2StdOut(finalString);
-  if (theDevices & kStdErr) status &= Log2StdErr(finalString);
+  if ((theDevices & kFile) != 0) status &= static_cast<int>(Log2File(finalString));
+  if ((theDevices & kGsm) != 0) status &= static_cast<int>(Log2Gsm(finalString));
+  if ((theDevices & kEmail) != 0) status &= static_cast<int>(Log2Email(finalString));
+  if ((theDevices & kStdOut) != 0) status &= static_cast<int>(Log2StdOut(finalString));
+  if ((theDevices & kStdErr) != 0) status &= static_cast<int>(Log2StdErr(finalString));
   return status;
 }
 
@@ -523,7 +523,7 @@ bool NFmiLogger::Log2StdErr(const std::string &theFinalMessage)
 bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, ofstream &theFile)
 {
   theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-  if (theFile) return true;
+  if (theFile != nullptr) return true;
   if (DirectoryExist(thePath))  // hakemisto on, mutta tiedostoa ei voi luoda/avata, palauta false
     return false;
   else  // muuten yritä luoda hakemisto ja sitten tiedosto
@@ -533,7 +533,7 @@ bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, 
       theFile.clear();  // asettaa bad-bitin pois päältä, että voidaan yrittää tiedoston luomista
                         // uudestaan (ja kysyä onnistuiko)
       theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-      if (theFile) return true;
+      if (theFile != nullptr) return true;
 
       return false;  // edelleenkään tiedostoa ei saatu luotua
     }
@@ -757,7 +757,7 @@ const string NFmiLogger::MakeBackupFileFilter()
 
 bool NFmiLogger::TooOldBackupFileTimeStamp(time_t theFileTimeStamp)
 {
-  if (theFileTimeStamp)
+  if (theFileTimeStamp != 0)
   {
     NFmiTime t(theFileTimeStamp);
     int diffInDays = itsCurrentTime.DifferenceInDays(t);

@@ -159,11 +159,11 @@ bool NFmiCmdLine::GetSpaceStringValue(NFmiString &theString, NFmiString &theValu
 {
   theString.TrimL();
 
-  if (!theString.GetLen()) return false;
+  if (theString.GetLen() == 0u) return false;
 
   int theSpaceIndex = theString.Search(NFmiString(" "));
 
-  if (!theSpaceIndex) theSpaceIndex = theString.GetLen() + 1;
+  if (theSpaceIndex == 0) theSpaceIndex = theString.GetLen() + 1;
 
   NFmiString theStr1(theString.GetChars(1, theSpaceIndex - 1));
   NFmiString theStr2(theString.GetChars(theSpaceIndex, theString.GetLen() - theSpaceIndex + 1));

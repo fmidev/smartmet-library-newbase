@@ -1979,7 +1979,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       if (!locationMissing) newInfo->InterpolatedValue(theLonLat);
 
       const auto *weather = static_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
-      if (weather)
+      if (weather != nullptr)
       {
         if (newInfo->Time() < info->Time())
         {
@@ -2164,7 +2164,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       if (!locationMissing) newInfo->InterpolatedValue(theLonLat);
 
       const auto *weather = static_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
-      if (weather)
+      if (weather != nullptr)
       {
         if (newInfo->Time() < info->Time())
         {
@@ -3403,11 +3403,11 @@ double NFmiWeatherAndCloudiness::HighCloudsV7(unsigned long theValue) const
 unsigned long NFmiWeatherAndCloudiness::IntegratedSubValue(
     FmiParameterName theParam, NFmiIntegrationSelector *theSelector) const
 {
-  if (fIntegrationMode && fIntegrationReady && theSelector)
+  if (fIntegrationMode && fIntegrationReady && (theSelector != nullptr))
   {
     NFmiDataModifierCombi *integrator =
         const_cast<NFmiWeatherAndCloudiness *>(this)->FindSubParamIntegrator(theParam);
-    if (integrator)
+    if (integrator != nullptr)
     {
       NFmiIntegrationSelector tmpSelector(*theSelector);
       switch (theParam)
@@ -3459,7 +3459,7 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedSubValue(
 
 unsigned long NFmiWeatherAndCloudiness::IntegratedLongValue(NFmiIntegrationSelector *theSelector)
 {
-  if (!theSelector) return kUnsignedLongMissing;
+  if (theSelector == nullptr) return kUnsignedLongMissing;
 
   NFmiWeatherAndCloudiness newval(itsInfoVersion);
   newval.SubValue(SubValue(kFmiTotalCloudCover, theSelector), kFmiTotalCloudCover);
@@ -3484,7 +3484,7 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedLongValue(NFmiIntegrationSelec
 
 unsigned long NFmiWeatherAndCloudiness::IntegratedHsade(NFmiIntegrationSelector *theSelector)
 {
-  if (!theSelector) return kUnsignedLongMissing;
+  if (theSelector == nullptr) return kUnsignedLongMissing;
 
   NFmiWeatherAndCloudiness newval(
       IntegratedLongValue(theSelector), kFmiPackedWeather, kFloatMissing, itsInfoVersion);
@@ -3500,7 +3500,7 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedHsade(NFmiIntegrationSelector 
 
 unsigned long NFmiWeatherAndCloudiness::IntegratedHessaa(NFmiIntegrationSelector *theSelector)
 {
-  if (!theSelector) return kUnsignedLongMissing;
+  if (theSelector == nullptr) return kUnsignedLongMissing;
 
   NFmiWeatherAndCloudiness newval(
       IntegratedLongValue(theSelector), kFmiPackedWeather, kFloatMissing, itsInfoVersion);
@@ -3521,17 +3521,17 @@ double NFmiWeatherAndCloudiness::SubValue(FmiParameterName theParam,
   unsigned long tempValue = 0;
   double returnValue = kFloatMissing;
   bool scaleIt = true;
-  if (theSelector && theSelector->Type() == kFmiProb) scaleIt = false;
+  if ((theSelector != nullptr) && theSelector->Type() == kFmiProb) scaleIt = false;
   switch (theParam)
   {
     case kFmiTotalCloudCover:
-      if (theSelector)
+      if (theSelector != nullptr)
         returnValue = IntegratedSubValue(theParam, theSelector);
       else
         returnValue = TotalCloudinessValue();
       break;
     case kFmiLowCloudCover:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = LowClouds();
@@ -3539,7 +3539,7 @@ double NFmiWeatherAndCloudiness::SubValue(FmiParameterName theParam,
         returnValue = scaleIt ? 10 * tempValue : tempValue;
       break;
     case kFmiMediumCloudCover:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = MiddleClouds();
@@ -3547,7 +3547,7 @@ double NFmiWeatherAndCloudiness::SubValue(FmiParameterName theParam,
         returnValue = scaleIt ? 10 * tempValue : tempValue;
       break;
     case kFmiHighCloudCover:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
       {
@@ -3562,54 +3562,54 @@ double NFmiWeatherAndCloudiness::SubValue(FmiParameterName theParam,
         returnValue = scaleIt ? 10 * tempValue : tempValue;
       break;
     case kFmiPrecipitation1h:
-      if (theSelector)
+      if (theSelector != nullptr)
         returnValue = IntegratedSubValue(theParam, theSelector);
       else
         returnValue = Precipitation1hValue();
       break;
     case kFmiPrecipitationType:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = PrecipitationType();
       if (tempValue != kT2BitMissing && tempValue != kUnsignedLongMissing) returnValue = tempValue;
       break;
     case kFmiPrecipitationForm:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = PrecipitationForm();
       if (tempValue != kT3BitMissing && tempValue != kUnsignedLongMissing) returnValue = tempValue;
       break;
     case kFmiProbabilityThunderstorm:
-      if (theSelector)
+      if (theSelector != nullptr)
         returnValue = IntegratedSubValue(theParam, theSelector);
       else
         returnValue = ThunderProbabilityValue();
       break;
     case kFmiFogIntensity:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = FogIntensity();
       if (tempValue != kT2BitMissing && tempValue != kUnsignedLongMissing) returnValue = tempValue;
       break;
     case kFmiWeatherSymbol3:
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedHessaa(theSelector);
       else
         tempValue = ToHessaa();
       if (tempValue != kUnsignedLongMissing) returnValue = tempValue;
       break;
     case kFmiWeatherSymbol1:  // hsade
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedHsade(theSelector);
       else
         tempValue = ToHsade();
       if (tempValue != kUnsignedLongMissing) returnValue = tempValue;
       break;
     case kFmiMiddleAndLowCloudCover:  // ala- ja keskipilvet
-      if (theSelector)
+      if (theSelector != nullptr)
         tempValue = IntegratedSubValue(theParam, theSelector);
       else
         tempValue = LowAndMiddleClouds();
@@ -4425,7 +4425,7 @@ void NFmiWeatherAndCloudiness::CheckIfPrecipZeroAndCleanTypeAndForm()
 
 void NFmiWeatherAndCloudiness::CreateIntegrators()
 {
-  if (!itsSubParams) return;
+  if (itsSubParams == nullptr) return;
 
   itsIntegrators = new NFmiDataModifierCombi *[itsSubParams->GetSize()];
 

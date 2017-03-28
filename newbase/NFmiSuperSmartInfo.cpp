@@ -238,7 +238,7 @@ void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& 
 
   // poikkeustapauksessa voi olla 0-pointteri, pitää tarkistaa kloonattaessa
   for (size_t i = 0; i < size; i++)
-    if (helperBinaryMaskList[i])
+    if (helperBinaryMaskList[i] != nullptr)
       itsHelperBinaryMaskList[i] =
           static_cast<NFmiBitmapAreaMask*>(helperBinaryMaskList[i]->Clone());
   SetCurrentHelperBinaryMask();
@@ -762,9 +762,9 @@ size_t NFmiSuperSmartInfo::Index() const
 
 bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
 {
-  if (fUseAreaMask && itsAreaMask)
+  if (fUseAreaMask && (itsAreaMask != nullptr))
   {
-    if (fUseHelperBinaryMasks && itsCurrentHelperBinaryMask)
+    if (fUseHelperBinaryMasks && (itsCurrentHelperBinaryMask != nullptr))
       return itsCurrentHelperBinaryMask->IsMasked(theLocationIndex);
 
     return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
@@ -781,7 +781,7 @@ bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
 
 float NFmiSuperSmartInfo::VarianceFloatValue() const
 {
-  if (fUseVarianceCalculator && itsCurrentVarianceCalculator)
+  if (fUseVarianceCalculator && (itsCurrentVarianceCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -806,7 +806,7 @@ float NFmiSuperSmartInfo::VarianceFloatValue() const
 
 float NFmiSuperSmartInfo::VariationFloatValue() const
 {
-  if (fUseVariationCalculator && itsVariationCalculator)
+  if (fUseVariationCalculator && (itsVariationCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -833,7 +833,7 @@ float NFmiSuperSmartInfo::VariationFloatValue() const
 
 float NFmiSuperSmartInfo::TimeIntegrationFloatValue() const
 {
-  if (fUseTimeIntegrationCalculator && itsTimeIntegrationCalculator)
+  if (fUseTimeIntegrationCalculator && (itsTimeIntegrationCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -859,7 +859,7 @@ float NFmiSuperSmartInfo::TimeIntegrationFloatValue() const
 
 NFmiCombinedParam* NFmiSuperSmartInfo::VariationCombinedValue()
 {
-  if (fUseVariationCalculator && itsVariationCalculator)
+  if (fUseVariationCalculator && (itsVariationCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -886,7 +886,7 @@ NFmiCombinedParam* NFmiSuperSmartInfo::VariationCombinedValue()
 
 NFmiCombinedParam* NFmiSuperSmartInfo::CalculationCombinedValue()
 {
-  if (fUseCalculator && itsCalculator)
+  if (fUseCalculator && (itsCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -913,7 +913,7 @@ NFmiCombinedParam* NFmiSuperSmartInfo::CalculationCombinedValue()
 
 float NFmiSuperSmartInfo::CalculationFloatValue() const
 {
-  if (fUseCalculator && itsCalculator)
+  if (fUseCalculator && (itsCalculator != nullptr))
   {
     // accessleveliä pitää säätää tässä väliaikaisesti, että
     // calculator pääsee käsiksi 'alemman' tason dataan
@@ -942,7 +942,7 @@ float NFmiSuperSmartInfo::CalculationFloatValue() const
 void NFmiSuperSmartInfo::SetCalculator(NFmiCalculator* theCalculator, bool useCalculator)
 {
   itsCalculator = theCalculator;
-  if (theCalculator)
+  if (theCalculator != nullptr)
     fUseCalculator = useCalculator;
   else  // jos 0-pointteri, otetaan pois käytöstä!!!
     fUseCalculator = false;
@@ -1164,7 +1164,7 @@ bool NFmiSuperSmartInfo::TimeIndex(unsigned long theIndex)
 // ----------------------------------------------------------------------
 void NFmiSuperSmartInfo::UpdateVarianceCalculator()
 {
-  if (itsDataModifierDescriptor)
+  if (itsDataModifierDescriptor != nullptr)
   {
     const NFmiDataIdent& param = NFmiFastQueryInfo::Param();
     const NFmiLevel* level = Level();
@@ -1182,7 +1182,7 @@ void NFmiSuperSmartInfo::UpdateVarianceCalculator()
 
 void NFmiSuperSmartInfo::UpdateAreaMaskTime()
 {
-  if (fUseAreaMask && itsAreaMask)
+  if (fUseAreaMask && (itsAreaMask != nullptr))
   {
     SetCurrentHelperBinaryMask();
   }
@@ -1265,7 +1265,7 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateHelperBinaryMask(int theUsedVariat
 
   auto* helperMask =
       new NFmiBitmapAreaMask(itsGridXNumber, itsGridYNumber, Area(), &Param(), Level());
-  if (!helperMask) return nullptr;
+  if (helperMask == nullptr) return nullptr;
 
   int moveByX = theUsedVariationFactor * 2 + 1;
   int moveByY = theUsedVariationFactor * 2 + 1;
@@ -1312,7 +1312,7 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateZeroVariationHelperBinaryMask()
 {
   NFmiAreaMask* mask = AreaMask();
   auto* helperMask = new NFmiBitmapAreaMask;
-  if (mask && mask->Info() && helperMask)
+  if ((mask != nullptr) && mask->Info() && (helperMask != nullptr))
   {
     unsigned int oldLocationIndex = LocationIndex();
     bool oldUseAreaMaskStatus = UseAreaMask();
@@ -1402,7 +1402,7 @@ NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFa
   NFmiString returnStr;
   NFmiAreaMask* mask = AreaMask();
   NFmiBitmapAreaMask* helperMask = HelperBinaryMask(theUsedVariationFactor);
-  if (mask && helperMask)
+  if ((mask != nullptr) && (helperMask != nullptr))
   {
     unsigned int oldLocationIndex = LocationIndex();
     bool oldUseAreaMaskStatus = UseAreaMask();
@@ -1488,7 +1488,7 @@ void NFmiSuperSmartInfo::TimeChanged(unsigned long theOldTimeIndex)
 {
   if (theOldTimeIndex != itsTimeIndex)
     UpdateAreaMaskTime();  // hoitaa myös SetCurrentHelperBinaryMask-kutsun
-  if (itsVariationCalculator)
+  if (itsVariationCalculator != nullptr)
   {
     int uncertainty = CalcAreaUnCertainty();
     itsVariationCalculator->DataIterator()->SetDimensions(
@@ -1523,7 +1523,7 @@ bool NFmiSuperSmartInfo::SetNearestPointMask(const NFmiPoint& theLatLonPoint,
                                              bool newValue,
                                              bool fClearFirst)
 {
-  if (itsAreaMask)
+  if (itsAreaMask != nullptr)
   {
     unsigned long oldIndex = LocationIndex();
     bool status = Location(theLatLonPoint);

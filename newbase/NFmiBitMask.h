@@ -120,7 +120,7 @@ class _FMI_DLL NFmiBitMask
 
 inline NFmiBitMask::~NFmiBitMask()
 {
-  if (itsMaskData) delete[] itsMaskData;
+  if (itsMaskData != nullptr) delete[] itsMaskData;
 }
 
 // ----------------------------------------------------------------------

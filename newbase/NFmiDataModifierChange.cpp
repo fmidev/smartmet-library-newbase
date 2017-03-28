@@ -55,7 +55,7 @@ void NFmiDataModifierChange::Calculate(float theValue)
 
 void NFmiDataModifierChange::Calculate(NFmiQueryInfo* theQI)
 {
-  if (theQI) Calculate(theQI->FloatValue());
+  if (theQI != nullptr) Calculate(theQI->FloatValue());
 }
 
 // ----------------------------------------------------------------------

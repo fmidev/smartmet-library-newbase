@@ -210,7 +210,7 @@ inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
     : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod)
       //				 theBase)
       ,
-      itsArea(theArea ? theArea->Clone() : 0)
+      itsArea(theArea != nullptr ? theArea->Clone() : 0)
 {
 }
 

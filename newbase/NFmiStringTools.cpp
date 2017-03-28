@@ -697,7 +697,7 @@ std::string &TrimL(std::string &theString, char theChar)
 #ifdef PERKELEEN_296
     while (pos < theString.size() && isspace(theString[pos]))
 #else
-    while (pos < theString.size() && ::isspace(static_cast<unsigned char>(theString[pos])))
+    while (pos < theString.size() && (::isspace(static_cast<unsigned char>(theString[pos])) != 0))
 // while(pos<theString.size() && ::isspace(theString[pos]))
 #endif
       pos++;
@@ -726,7 +726,7 @@ std::string &TrimR(std::string &theString, char theChar)
     while (pos >= 0 && isspace(theString[pos]))
 #else
     // while(pos>=0 && ::isspace(theString[pos]))
-    while (pos >= 0 && ::isspace(static_cast<unsigned char>(theString[pos])))
+    while (pos >= 0 && (::isspace(static_cast<unsigned char>(theString[pos])) != 0))
 #endif
       pos--;
   }

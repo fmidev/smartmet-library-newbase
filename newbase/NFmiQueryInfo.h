@@ -715,7 +715,7 @@ inline void NFmiQueryInfo::ResetLocation() { itsHPlaceDescriptor->Reset(); }
 
 inline void NFmiQueryInfo::ResetLevel()
 {
-  if (itsVPlaceDescriptor) itsVPlaceDescriptor->Reset();
+  if (itsVPlaceDescriptor != nullptr) itsVPlaceDescriptor->Reset();
 }
 
 // ----------------------------------------------------------------------
@@ -740,7 +740,7 @@ inline bool NFmiQueryInfo::IsLocation() const { return (itsHPlaceDescriptor->IsL
 
 inline bool NFmiQueryInfo::IsLevel() const
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->IsLevel() : false);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->IsLevel() : false);
 }
 
 // ----------------------------------------------------------------------
@@ -807,7 +807,7 @@ inline bool NFmiQueryInfo::PreviousLocation() { return (itsHPlaceDescriptor->Pre
 
 inline bool NFmiQueryInfo::NextLevel()
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Next() : false);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Next() : false);
 }
 
 // ----------------------------------------------------------------------
@@ -818,7 +818,7 @@ inline bool NFmiQueryInfo::NextLevel()
 
 inline bool NFmiQueryInfo::PreviousLevel()
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Previous() : false);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Previous() : false);
 }
 
 // ----------------------------------------------------------------------
@@ -864,7 +864,7 @@ inline bool NFmiQueryInfo::NextActiveLocation() { return (itsHPlaceDescriptor->N
 
 inline bool NFmiQueryInfo::NextActiveLevel()
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Next() : false);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Next() : false);
 }
 
 // ----------------------------------------------------------------------
@@ -875,7 +875,7 @@ inline bool NFmiQueryInfo::NextActiveLevel()
 
 inline bool NFmiQueryInfo::PreviousActiveLevel()
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Previous() : false);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Previous() : false);
 }
 
 // ----------------------------------------------------------------------
@@ -981,7 +981,7 @@ inline bool NFmiQueryInfo::NearestPoint(const NFmiPoint &theLatLonPoint)
 
 inline bool NFmiQueryInfo::Level(const NFmiLevel &theLevel)
 {
-  return itsVPlaceDescriptor ? itsVPlaceDescriptor->Level(theLevel) : false;
+  return itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Level(theLevel) : false;
 }
 
 // ----------------------------------------------------------------------
@@ -1038,7 +1038,7 @@ inline const NFmiLocation *NFmiQueryInfo::Location() const
 
 inline const NFmiLevel *NFmiQueryInfo::Level() const
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Level() : 0);
+  return (itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->Level() : 0);
 }
 
 // ----------------------------------------------------------------------
@@ -1087,7 +1087,7 @@ inline const NFmiMetTime &NFmiQueryInfo::Time() const
 
 inline bool NFmiQueryInfo::IsLocalTime() const
 {
-  return (itsTimeDescriptor ? (itsTimeDescriptor->TimeLocalzation() != kUTC) : false);
+  return (itsTimeDescriptor != nullptr ? (itsTimeDescriptor->TimeLocalzation() != kUTC) : false);
 }
 
 // ----------------------------------------------------------------------
@@ -1134,7 +1134,7 @@ inline bool NFmiQueryInfo::ActivateLocation(bool newState)
 
 inline bool NFmiQueryInfo::ActivateLevel(bool newState)
 {
-  return itsVPlaceDescriptor ? itsVPlaceDescriptor->SetActivity(newState) : false;
+  return itsVPlaceDescriptor != nullptr ? itsVPlaceDescriptor->SetActivity(newState) : false;
 }
 
 // ----------------------------------------------------------------------
@@ -1278,7 +1278,7 @@ inline unsigned long NFmiQueryInfo::SizeActiveParams() const
 
 inline unsigned long NFmiQueryInfo::SizeActiveTimes() const
 {
-  return itsTimeDescriptor ? itsTimeDescriptor->SizeActive() : 0;
+  return itsTimeDescriptor != nullptr ? itsTimeDescriptor->SizeActive() : 0;
 }
 
 // ----------------------------------------------------------------------
@@ -1324,7 +1324,7 @@ inline NFmiLevel &NFmiQueryInfo::EditLevel() { return *(itsVPlaceDescriptor->Lev
 
 inline bool NFmiQueryInfo::IndexFloatValue(size_t theIndex, float theValue)
 {
-  return itsRefRawData ? itsRefRawData->SetValue(theIndex, theValue) : false;
+  return itsRefRawData != nullptr ? itsRefRawData->SetValue(theIndex, theValue) : false;
 }
 
 // ----------------------------------------------------------------------
@@ -1336,7 +1336,7 @@ inline bool NFmiQueryInfo::IndexFloatValue(size_t theIndex, float theValue)
 
 inline float NFmiQueryInfo::IndexFloatValue(size_t theIndex) const
 {
-  return itsRefRawData ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
+  return itsRefRawData != nullptr ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

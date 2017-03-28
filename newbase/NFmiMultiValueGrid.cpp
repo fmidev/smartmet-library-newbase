@@ -24,13 +24,13 @@
 
 NFmiMultiValuedGrid::~NFmiMultiValuedGrid()
 {
-  if (itsParamDescriptor) delete itsParamDescriptor;
+  if (itsParamDescriptor != nullptr) delete itsParamDescriptor;
   itsParamDescriptor = nullptr;
-  if (itsTimeDescriptor) delete itsTimeDescriptor;
+  if (itsTimeDescriptor != nullptr) delete itsTimeDescriptor;
   itsTimeDescriptor = nullptr;
-  if (itsVPlaceDescriptor) delete itsVPlaceDescriptor;
+  if (itsVPlaceDescriptor != nullptr) delete itsVPlaceDescriptor;
   itsVPlaceDescriptor = nullptr;
-  if (itsMultiData) delete itsMultiData;
+  if (itsMultiData != nullptr) delete itsMultiData;
 }
 
 // ----------------------------------------------------------------------
@@ -97,7 +97,7 @@ bool NFmiMultiValuedGrid::Save()
 {
   float *sourceAddress = nullptr;
 
-  if (!itsMultiData) return false;
+  if (itsMultiData == nullptr) return false;
 
   // Mika: unsigned int
   // if(NFmiQueryInfo::Index() < 0 || NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
@@ -119,7 +119,7 @@ bool NFmiMultiValuedGrid::Edit()
 {
   float *sourceAddress = nullptr;
 
-  if (!itsMultiData) return false;
+  if (itsMultiData == nullptr) return false;
   // Mika: Index() is unsigned int
   // if(NFmiQueryInfo::Index() < 0 || NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
 

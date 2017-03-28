@@ -23,7 +23,7 @@
 
 NFmiMetBoxQueryData::~NFmiMetBoxQueryData()
 {
-  if (itsMetBox) delete itsMetBox;
+  if (itsMetBox != nullptr) delete itsMetBox;
 }
 
 // ----------------------------------------------------------------------

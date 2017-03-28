@@ -26,7 +26,7 @@
 
 NFmiCombinedParam::~NFmiCombinedParam()
 {
-  if (itsSubParams)
+  if (itsSubParams != nullptr)
   {
     int size = itsSubParams->GetSize();
     for (int i = 0; i < size; i++)
@@ -65,7 +65,8 @@ NFmiCombinedParam::NFmiCombinedParam(double theInfoVersion)
 // ----------------------------------------------------------------------
 
 NFmiCombinedParam::NFmiCombinedParam(const NFmiCombinedParam &theParam)
-    : itsSubParams(theParam.itsSubParams ? new NFmiParamBag(*theParam.itsSubParams) : nullptr),
+    : itsSubParams(theParam.itsSubParams != nullptr ? new NFmiParamBag(*theParam.itsSubParams)
+                                                    : nullptr),
       itsIntegrators(nullptr)  // Tässä pitäisi käyttää ParamModifierListin copy construktoria, vaan
                                // ei ole vielä
       ,
@@ -76,8 +77,8 @@ NFmiCombinedParam::NFmiCombinedParam(const NFmiCombinedParam &theParam)
       fAutoUpdate(theParam.fAutoUpdate),
       itsInfoVersion(theParam.InfoVersion())
 {
-  int size = itsSubParams ? itsSubParams->GetSize() : 0;
-  if (size)
+  int size = itsSubParams != nullptr ? itsSubParams->GetSize() : 0;
+  if (size != 0)
   {
     itsIntegrators = new NFmiDataModifierCombi *[size];
     for (int i = 0; i < size; i++)
@@ -99,7 +100,8 @@ NFmiCombinedParam &NFmiCombinedParam::operator=(const NFmiCombinedParam &thePara
 {
   if (this != &theParam)
   {
-    itsSubParams = (theParam.itsSubParams ? new NFmiParamBag(*theParam.itsSubParams) : nullptr);
+    itsSubParams =
+        (theParam.itsSubParams != nullptr ? new NFmiParamBag(*theParam.itsSubParams) : nullptr);
     itsIntegrators =
         nullptr;  // Tässä pitäisi käyttää ParamModifierListin operator=, vaan ei ole vielä
     fIntegrationMode = theParam.fIntegrationMode;
@@ -109,8 +111,8 @@ NFmiCombinedParam &NFmiCombinedParam::operator=(const NFmiCombinedParam &thePara
     fAutoUpdate = theParam.fAutoUpdate;
     itsInfoVersion = theParam.InfoVersion();
 
-    int size = itsSubParams ? itsSubParams->GetSize() : 0;
-    if (size)
+    int size = itsSubParams != nullptr ? itsSubParams->GetSize() : 0;
+    if (size != 0)
     {
       itsIntegrators = new NFmiDataModifierCombi *[size];
       for (int i = 0; i < size; i++)
@@ -206,12 +208,12 @@ void NFmiCombinedParam::ClearIntegration()
   fIntegrationMode = true;
   fIntegrationStarted = false;
   fIntegrationReady = false;
-  if (itsSubParams)
+  if (itsSubParams != nullptr)
   {
     for (unsigned int idx = 0; idx < itsSubParams->GetSize(); idx++)
     {
       NFmiDataModifier *integrator = GetSubIntegrator(idx);
-      if (integrator)
+      if (integrator != nullptr)
       {
         integrator->Clear();
       }
@@ -229,7 +231,7 @@ void NFmiCombinedParam::EndIntegration()
 {
   if (!fIntegrationMode) return;
 
-  if (fIntegrationStarted && itsSubParams)
+  if (fIntegrationStarted && (itsSubParams != nullptr))
   {
     itsSubParams->Reset();
     int idx = 0;
@@ -239,7 +241,7 @@ void NFmiCombinedParam::EndIntegration()
       // NFmiDataModifierCombi *integrator =
       // GetSubIntegrator(index);itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
       NFmiDataModifierCombi *integrator = GetSubIntegrator(idx);
-      if (integrator)
+      if (integrator != nullptr)
       {
         //				SubValue(integrator->CalculationResult(),
         // itsSubParams->CurrentParam());
@@ -267,7 +269,7 @@ void NFmiCombinedParam::Integrate(float theValue)
   if (!fIntegrationMode) return;
   fIntegrationStarted = true;
 
-  if (itsSubParams)
+  if (itsSubParams != nullptr)
   {
     NFmiCombinedParam *addNewValue = CreateNew(theValue);
     itsSubParams->Reset();
@@ -276,7 +278,7 @@ void NFmiCombinedParam::Integrate(float theValue)
     {
       NFmiDataModifier *integrator = GetSubIntegrator(
           idx);  // itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
-      if (integrator)
+      if (integrator != nullptr)
       {
         integrator->Calculate(
             static_cast<float>(addNewValue->RawSubValue(itsSubParams->CurrentParam())));
@@ -328,7 +330,7 @@ NFmiDataModifierCombi *NFmiCombinedParam::FindSubParamIntegrator(FmiParameterNam
 
 int NFmiCombinedParam::FindSubParamIntegratorIndex(FmiParameterName theName)
 {
-  if (itsIntegrators && itsSubParams)
+  if ((itsIntegrators != nullptr) && (itsSubParams != nullptr))
   {
     int i = 0;
     for (itsSubParams->Reset(); itsSubParams->Next();)

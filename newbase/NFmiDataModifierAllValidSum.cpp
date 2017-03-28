@@ -68,10 +68,10 @@ void NFmiDataModifierAllValidSum::Calculate(NFmiQueryInfo* theQI)
     if (itsCounter == 0) fCalculationResultOk = true;
 
     // sadetta -1 ei saa ottaa
-    if (!(theQI && ((theQI->Param().GetParam()->MinValue() != kFloatMissing &&
-                     value <= theQI->Param().GetParam()->MinValue()) ||
-                    (theQI->Param().GetParam()->MaxValue() != kFloatMissing &&
-                     value >= theQI->Param().GetParam()->MaxValue()))))
+    if (!((theQI != nullptr) && ((theQI->Param().GetParam()->MinValue() != kFloatMissing &&
+                                  value <= theQI->Param().GetParam()->MinValue()) ||
+                                 (theQI->Param().GetParam()->MaxValue() != kFloatMissing &&
+                                  value >= theQI->Param().GetParam()->MaxValue()))))
       itsSum += value;
   }
   else

@@ -142,7 +142,8 @@ void NFmiTimeCache::CalcIsInterpolationNeeded()
 // ----------------------------------------------------------------------
 
 NFmiGrid::NFmiGrid(const NFmiGrid &theGrid, FmiDirection theStartingCorner)
-    : NFmiGridBase(theGrid), itsArea(theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr)
+    : NFmiGridBase(theGrid),
+      itsArea(theGrid.itsArea != nullptr ? theGrid.itsArea->Clone() : nullptr)
 {
   if (theStartingCorner != kBase)
   {
@@ -157,7 +158,7 @@ NFmiGrid &NFmiGrid::operator=(const NFmiGrid &theGrid)
   if (this != &theGrid)
   {
     NFmiGridBase::operator=(theGrid);
-    itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr;
+    itsArea = theGrid.itsArea != nullptr ? theGrid.itsArea->Clone() : nullptr;
   }
   return *this;
 }
@@ -186,7 +187,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
     counter++;
   }
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
   itsData->Init(Size(), values);
 
@@ -233,7 +234,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
     counter++;
   }
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
   itsData->Init(Size(), values);
 
@@ -308,7 +309,7 @@ double NFmiGrid::Coverage(const NFmiGrid &theGrid, unsigned long theStep)
     }
   }
 
-  return sum ? counter / sum : 0.;
+  return sum != 0.0 ? counter / sum : 0.;
 }
 
 // ----------------------------------------------------------------------
@@ -347,7 +348,7 @@ NFmiGrid *NFmiGrid::CreateNewGrid(NFmiArea *newArea,
 
 std::ostream &NFmiGrid::Write(std::ostream &file) const
 {
-  if (itsArea)
+  if (itsArea != nullptr)
   {
     file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
     file << *itsArea;
@@ -379,12 +380,12 @@ std::istream &NFmiGrid::Read(std::istream &file)
   file >> classId;
   file >> className;
 
-  if (classId)
+  if (classId != 0u)
   {
     itsArea = static_cast<NFmiArea *>(CreateSaveBase(classId));
     file >> *itsArea;
     NFmiArea *fixedArea = itsArea->DoPossiblePacificFix();
-    if (fixedArea)
+    if (fixedArea != nullptr)
     {
       delete itsArea;
       itsArea = fixedArea;
@@ -469,7 +470,7 @@ bool NFmiGrid::NearestLatLon(double newLon,
                              NFmiPoint *theGridPoint)
 {
   NFmiPoint gridPoint = LatLonToGrid(newLon, newLat);
-  if (theGridPoint) *theGridPoint = gridPoint;
+  if (theGridPoint != nullptr) *theGridPoint = gridPoint;
   if (!GridPoint(gridPoint.X(), gridPoint.Y())) return false;
   if (theMaxDistance == kFloatMissing * 1000.)  // optimization..
     return true;
@@ -500,7 +501,7 @@ static bool SeekStartingPoint(ifstream &in,
                               unsigned int theStartOffsetInBytes,
                               const string &theDataStartsAfterString)
 {
-  if (theStartOffsetInBytes)
+  if (theStartOffsetInBytes != 0u)
   {
     in.ignore(theStartOffsetInBytes);
     return !in.fail();
@@ -601,7 +602,7 @@ bool NFmiGrid::Init(const std::string &theFileName,
 
   bool status = NFmiGridBase::Init(nx, ny);
   ifstream in(theFileName.c_str(), ios::in | ios::binary);
-  if (status && in)
+  if (status && (in != nullptr))
   {
     unsigned long rowByteSize = nx * theElementSizeInBytes;
     checkedVector<char> buffer(rowByteSize);
@@ -757,7 +758,7 @@ bool NFmiGrid::operator==(const NFmiGrid &theGrid) const
 
   if (NFmiGridBase::operator==(theGrid))
   {
-    if (itsArea && theGrid.itsArea)
+    if ((itsArea != nullptr) && (theGrid.itsArea != nullptr))
     {
       if (*itsArea == *(theGrid.itsArea)) return true;
     }
@@ -818,7 +819,7 @@ bool NFmiGrid::IsInside(const NFmiPoint &theLatLon) const
 // (-180, -90) -> (179.5, 90)
 bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
 {
-  if (theGrid.Area() && theGrid.Area()->ClassId() == kNFmiLatLonArea)
+  if ((theGrid.Area() != nullptr) && theGrid.Area()->ClassId() == kNFmiLatLonArea)
   {
     const NFmiArea &area = *(theGrid.Area());
     if (area.PacificView())

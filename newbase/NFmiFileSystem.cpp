@@ -1162,7 +1162,7 @@ bool ReadFile2String(const std::string &theFileName,
   {
     size_t fileSize = FileSize(theFileName);
     ifstream in(theFileName.c_str(), std::ios::binary);
-    if (fileSize > 0 && static_cast<long>(fileSize) <= theMaxByteSize && in)
+    if (fileSize > 0 && static_cast<long>(fileSize) <= theMaxByteSize && (in != nullptr))
     {
       vector<char> buffer(fileSize);
       // Luetaan vectoriin mieluummin kuin suoraan stringiin, koska standardi ei
@@ -1192,7 +1192,7 @@ bool ReadFileStart2String(const std::string &theFileName,
   {
     size_t fileSize = FileSize(theFileName);
     ifstream in(theFileName.c_str(), std::ios::binary);
-    if (fileSize > 0 && in)
+    if (fileSize > 0 && (in != nullptr))
     {
       size_t readBytes = std::min(static_cast<long>(fileSize), theBytesFromStart);
       vector<char> buffer(readBytes + 1);  // +1 tekee tilaa 0-merkille
@@ -1233,7 +1233,7 @@ bool CopyFile(const std::string &theSrcFileName, const std::string &theDstFileNa
   {
     ifstream in(theSrcFileName.c_str(), std::ios::binary | std::ios::in);
     ofstream out(theDstFileName.c_str(), std::ios::binary | std::ios::out);
-    if (in && out)
+    if ((in != nullptr) && (out != nullptr))
     {
       out << in.rdbuf();
       return (!out.fail()) && (!in.fail());
@@ -1413,7 +1413,7 @@ void CleanDirectory(const std::string &thePath,
     if (currentTime - modtime > theMaxFileAgeInHours * 3600)
     {
       bool status = RemoveFile(filename);
-      if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
+      if ((theDeletedFilesOut != nullptr) && status) theDeletedFilesOut->push_back(filename);
     }
   }
 }
@@ -1457,7 +1457,7 @@ void CleanFilePattern(const std::string &theFilePattern,
 
     std::string &filename = (*mapIt).second;
     bool status = RemoveFile(filename);
-    if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
+    if ((theDeletedFilesOut != nullptr) && status) theDeletedFilesOut->push_back(filename);
   }
 }
 
@@ -1574,7 +1574,7 @@ bool IsAbsolutePath(const std::string &thePath)
 
     if (thePath.size() >= 3)
     {
-      if (std::isalpha(thePath[0]) && thePath[1] == ':' &&
+      if ((std::isalpha(thePath[0]) != 0) && thePath[1] == ':' &&
           (thePath[2] == '\\' || thePath[2] == '/'))
         return true;
     }

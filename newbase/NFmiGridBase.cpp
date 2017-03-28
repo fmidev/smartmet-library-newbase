@@ -30,7 +30,7 @@ const double kFmiEps = 0.0001;
 // ----------------------------------------------------------------------
 
 NFmiGridBase::NFmiGridBase(const NFmiGridBase &theGridBase)
-    : itsData(theGridBase.itsData ? new NFmiDataPool(*(theGridBase.itsData)) : nullptr),
+    : itsData(theGridBase.itsData != nullptr ? new NFmiDataPool(*(theGridBase.itsData)) : nullptr),
       itsFloatData(nullptr),
       itsStartingCorner(theGridBase.itsStartingCorner),
       itsInterpolationMethod(theGridBase.itsInterpolationMethod),
@@ -55,7 +55,7 @@ NFmiGridBase::NFmiGridBase(const NFmiGridBase &theGridBase)
 {
   // itsFloatData array of floats will NOT be copied
 
-  if (itsData) itsData->InitMissingValues(*theGridBase.DataPool());
+  if (itsData != nullptr) itsData->InitMissingValues(*theGridBase.DataPool());
 }
 
 // ----------------------------------------------------------------------
@@ -69,7 +69,7 @@ bool NFmiGridBase::Init(NFmiDataPool *theData)
 {
   if (Size() != theData->Number()) return false;
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
 
   itsData = new NFmiDataPool(*theData);
 
@@ -101,7 +101,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
   float theYScaleFactor =
       (static_cast<float>(theData->YNumber() - 1)) / (static_cast<float>(YNumber() - 1));
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
 
   if (!itsData->InitMissingValues(*(theData->DataPool()))) return false;
@@ -135,7 +135,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
 
     // Create a array of float data just to avoid "item-by-item" type casting
 
-    if (itsFloatData) delete[] itsFloatData;
+    if (itsFloatData != nullptr) delete[] itsFloatData;
 
     itsFloatData = new float[numberOfGridItems];
 
@@ -506,7 +506,7 @@ bool NFmiGridBase::ResetCrop()
 
 bool NFmiGridBase::FloatValue(double data) const
 {
-  if (!itsData) return false;
+  if (itsData == nullptr) return false;
   return itsData->FloatValue(DataIndex(), static_cast<float>(data));
 }
 
@@ -525,7 +525,7 @@ double NFmiGridBase::FloatValue(long dx, long dy) const
   if (static_cast<long>(itsCurrentX) + dx < 0 || static_cast<long>(itsCurrentY) + dy < 0)
     return kFloatMissing;
   if (!IsInsideGrid(itsCurrentX + dx, itsCurrentY + dy)) return kFloatMissing;
-  if (!itsData) return kFloatMissing;
+  if (itsData == nullptr) return kFloatMissing;
   return static_cast<float>(itsData->IndexFloatValue(
       static_cast<unsigned long>(DataIndex(itsCurrentX + dx, itsCurrentY + dy))));
 }
@@ -559,7 +559,7 @@ bool NFmiGridBase::FloatValue(double data, const NFmiPoint &gridPoint)
   if (!IsInsideGrid(static_cast<unsigned long>(gridPoint.X()),
                     static_cast<unsigned long>(gridPoint.Y())))
     return false;
-  if (!itsData) return false;
+  if (itsData == nullptr) return false;
   return itsData->FloatValue(DataIndex(static_cast<unsigned long>(gridPoint.X()),
                                        static_cast<unsigned long>(gridPoint.Y())),
                              static_cast<float>(data));
@@ -933,7 +933,7 @@ bool NFmiGridBase::Swap()
 
   if (datapool.Data() == nullptr) return false;
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
 
   if (!itsData->Init(Size())) return false;
@@ -1029,7 +1029,7 @@ void NFmiGridBase::MeanFilter(unsigned long numOfSteps)
           }
         }
       }
-      if (!num) continue;
+      if (num == 0.0) continue;
       sum = sum / num;
       for (dy = 0; dy < numOfSteps; dy++)
       {
@@ -1071,7 +1071,7 @@ bool NFmiGridBase::ReadBinaryData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (!itsData) itsData = new NFmiDataPool();
+  if (itsData == nullptr) itsData = new NFmiDataPool();
 
   return itsData->ReadBinaryData(numberOfItems, theFileName);
 }
@@ -1093,7 +1093,7 @@ bool NFmiGridBase::ReadTextData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (!itsData) itsData = new NFmiDataPool();
+  if (itsData == nullptr) itsData = new NFmiDataPool();
 
   return itsData->ReadTextData(numberOfItems, theFileName);
 }
@@ -1114,7 +1114,7 @@ bool NFmiGridBase::WriteBinaryData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (itsData) return itsData->WriteBinaryData(numberOfItems, theFileName);
+  if (itsData != nullptr) return itsData->WriteBinaryData(numberOfItems, theFileName);
 
   return false;
 }
@@ -1135,7 +1135,7 @@ bool NFmiGridBase::WriteTextData(const char *theFileName)
   ResetCrop();
   unsigned long numberOfItems = XNumber() * YNumber();
 
-  if (itsData) return itsData->WriteBinaryData(numberOfItems, theFileName);
+  if (itsData != nullptr) return itsData->WriteBinaryData(numberOfItems, theFileName);
 
   return false;
 }
@@ -1156,7 +1156,7 @@ std::ostream &NFmiGridBase::Write(std::ostream &file) const
   file << itsXNumber << " ";
   file << itsYNumber << std::endl;
 
-  if (itsData)
+  if (itsData != nullptr)
     file << *itsData;
   else
   {
@@ -1194,7 +1194,7 @@ std::istream &NFmiGridBase::Read(std::istream &file)
   itsFirstY = 0;
   itsLastY = itsYNumber - 1;
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
 
   itsData = new NFmiDataPool();
   file >> *itsData;
@@ -1251,7 +1251,7 @@ bool NFmiGridBase::Init(unsigned long theXNumber, unsigned long theYNumber)
   itsBottomLeftValue = kMaxDouble;
   itsBottomRightValue = kMaxDouble;
 
-  if (itsData) delete itsData;
+  if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
   return itsData->Init(theXNumber * theYNumber) == true;
 }
@@ -1289,7 +1289,7 @@ bool NFmiGridBase::Swap(FmiDirection theCurrentDirection)
 
 NFmiGridBase &NFmiGridBase::operator=(const NFmiGridBase &theBase)
 {
-  theBase.itsData ? itsData = new NFmiDataPool(*(theBase.itsData)) : itsData = nullptr;
+  theBase.itsData != nullptr ? itsData = new NFmiDataPool(*(theBase.itsData)) : itsData = nullptr;
   itsFloatData = nullptr;
   itsStartingCorner = theBase.itsStartingCorner;
   itsInterpolationMethod = theBase.itsInterpolationMethod;
@@ -1313,7 +1313,7 @@ NFmiGridBase &NFmiGridBase::operator=(const NFmiGridBase &theBase)
 
   // itsFloatData array of floats will NOT be copied
 
-  if (itsData) itsData->InitMissingValues(*theBase.DataPool());
+  if (itsData != nullptr) itsData->InitMissingValues(*theBase.DataPool());
   return *this;
 }
 

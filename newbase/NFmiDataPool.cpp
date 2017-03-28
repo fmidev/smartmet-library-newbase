@@ -83,7 +83,7 @@ NFmiDataPool::NFmiDataPool(const NFmiDataPool &theDataPool)
 // ----------------------------------------------------------------------
 void NFmiDataPool::Destroy()
 {
-  if (itsData)
+  if (itsData != nullptr)
   {
     delete[] itsData;
     itsData = nullptr;
@@ -99,7 +99,7 @@ void NFmiDataPool::Destroy()
 
 bool NFmiDataPool::Init(unsigned long theNumber)
 {
-  if (!theNumber) return false;
+  if (theNumber == 0u) return false;
 
   Destroy();
 
@@ -123,7 +123,7 @@ bool NFmiDataPool::Init(unsigned long theNumber)
   }
 #endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
 
-  if (itsData)
+  if (itsData != nullptr)
   {
     // Test
     Reset();
@@ -145,7 +145,7 @@ bool NFmiDataPool::Init(unsigned long theNumber)
 
 bool NFmiDataPool::Init(unsigned long theNumber, const float *theData)
 {
-  if (!theNumber) return false;
+  if (theNumber == 0u) return false;
 
   Destroy();
 
@@ -206,7 +206,7 @@ bool NFmiDataPool::Index(unsigned long newIndex)
 
 bool NFmiDataPool::Next(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex += numberOfSteps)) return true;
+  if ((numberOfSteps != 0u) && IsInside(itsIndex += numberOfSteps)) return true;
 
   return false;
 }
@@ -220,7 +220,7 @@ bool NFmiDataPool::Next(unsigned long numberOfSteps)
 
 bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex -= numberOfSteps)) return true;
+  if ((numberOfSteps != 0u) && IsInside(itsIndex -= numberOfSteps)) return true;
 
   return false;
 }
@@ -253,7 +253,7 @@ bool NFmiDataPool::FloatValueAddress(unsigned long theIndex, float **address) co
 
 bool NFmiDataPool::MemCopy(unsigned long theNumber, float *theData)
 {
-  if (!(theNumber && itsData && (itsIndex != -1))) return false;
+  if (!((theNumber != 0u) && (itsData != nullptr) && (itsIndex != -1))) return false;
 
   if ((itsSize - itsIndex) >= theNumber)
   {

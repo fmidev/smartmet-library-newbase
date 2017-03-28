@@ -77,8 +77,8 @@ const string find_newest_querydata(const string &thePath)
 
 NFmiStreamQueryData::~NFmiStreamQueryData()
 {
-  if (!itsOwnerData && itsQueryData) delete itsQueryData;
-  if (itsQueryDataIter) delete itsQueryDataIter;
+  if (!itsOwnerData && (itsQueryData != nullptr)) delete itsQueryData;
+  if (itsQueryDataIter != nullptr) delete itsQueryDataIter;
 }
 
 // ----------------------------------------------------------------------
@@ -113,9 +113,9 @@ NFmiStreamQueryData::NFmiStreamQueryData(NFmiQueryData *theQueryData, bool isOwn
 
 NFmiFastQueryInfo *NFmiStreamQueryData::QueryInfoIter()
 {
-  if (itsQueryData)
+  if (itsQueryData != nullptr)
   {
-    if (!itsQueryDataIter)
+    if (itsQueryDataIter == nullptr)
     {
       itsQueryDataIter = new NFmiFastQueryInfo(itsQueryData);
     }
@@ -150,7 +150,7 @@ NFmiQueryData *NFmiStreamQueryData::QueryData(bool theOwnerData)
 
 bool NFmiStreamQueryData::IsData()
 {
-  if (itsQueryData) return true;
+  if (itsQueryData != nullptr) return true;
 
   return false;
 }
@@ -172,9 +172,9 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
   if (FmiInfoVersion < 5) FmiInfoVersion = 5;
 
   ofstream dataFile(theFileName, ios::binary | ios::out);
-  if (dataFile)
+  if (dataFile != nullptr)
   {
-    if (theQueryData)
+    if (theQueryData != nullptr)
     {
       //		  theQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio 7:ssa
       // pitää asentaa 'sisäinen' versio numerokin
@@ -183,7 +183,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
     }
     else
     {
-      if (itsQueryData)
+      if (itsQueryData != nullptr)
       {
         //			  itsQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio
         // 7:ssa pitää asentaa 'sisäinen' versio numerokin
@@ -272,7 +272,7 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
     return false;
 
   dataFile.open(theFileName, ios::in | ios::binary);
-  if (dataFile)
+  if (dataFile != nullptr)
   {
     try
     {
@@ -328,7 +328,7 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
   itsQueryData = nullptr;
   itsQueryDataIter = nullptr;
 
-  if (theQueryData)
+  if (theQueryData != nullptr)
   {
     itsOwnerData = true;
     *theQueryData =
@@ -411,7 +411,7 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
   itsQueryData = nullptr;
   itsQueryDataIter = nullptr;
 
-  if (theQueryData)
+  if (theQueryData != nullptr)
   {
     itsOwnerData = true;
     theQueryData = theTempData;
@@ -433,7 +433,7 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
 
 bool NFmiStreamQueryData::WriteCout(NFmiQueryData *theQueryData) const
 {
-  NFmiQueryData *tempData = theQueryData ? theQueryData : itsQueryData;
+  NFmiQueryData *tempData = theQueryData != nullptr ? theQueryData : itsQueryData;
   tempData->UseBinaryStorage(true);
   if (tempData->InfoVersion() < 6.)  // jos datan infoversio on alle 6, pitää muuttaa 6:ksi
     tempData->InfoVersion(6.);

@@ -48,7 +48,7 @@ bool EatWhiteSpaces(istream& theInput)
   do
   {
     ch = static_cast<char>(theInput.get());
-  } while (isspace(ch));
+  } while (isspace(ch) != 0);
   if (theInput.fail()) return false;  // jos stremin lopussa, epäonnistuu
 
   theInput.unget();
@@ -212,7 +212,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
     // Kuitenkin jos vanha käsky oli moveto, muutetaan
     // se automaattisesti lineto käskyksi.
 
-    if (isalpha(elementTypeChar))
+    if (isalpha(elementTypeChar) != 0)
     {
       strStream.get(elementTypeChar);
       eType = CharToSvgElement(elementTypeChar);
@@ -385,7 +385,7 @@ std::istream& NFmiSvgPath::Read(std::istream& file)
 {
   itsBBoxValid = false;
 
-  if (file)
+  if (file != nullptr)
   {
     clear();  // Pitääkö tyhjentää olemassa oleva polku ennen lukua?!?! Nyt tyhjenee.
     string polygonDataStr;

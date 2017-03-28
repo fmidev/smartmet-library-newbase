@@ -22,7 +22,7 @@
 
 NFmiLevelBag::~NFmiLevelBag()
 {
-  if (itsLevels) delete[] static_cast<NFmiLevel *>(itsLevels);
+  if (itsLevels != nullptr) delete[] static_cast<NFmiLevel *>(itsLevels);
 }
 
 // ----------------------------------------------------------------------
@@ -45,8 +45,9 @@ NFmiLevelBag::NFmiLevelBag(FmiLevelType theLevelType,
                            float theMinValue,
                            float theMaxValue,
                            float theStep)
-    : NFmiSize(theStep ? static_cast<unsigned long>(((theMaxValue - theMinValue) / theStep) + 1)
-                       : 1),
+    : NFmiSize(theStep != 0.0f
+                   ? static_cast<unsigned long>(((theMaxValue - theMinValue) / theStep) + 1)
+                   : 1),
       itsLevels(nullptr),
       itsStep(theStep)
 {
@@ -66,7 +67,7 @@ NFmiLevelBag::NFmiLevelBag(FmiLevelType theLevelType,
 
 NFmiLevelBag::NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels)
     : NFmiSize(numOfLevels),
-      itsLevels(theLevelArray ? new NFmiLevel[GetSize()] : nullptr),
+      itsLevels(theLevelArray != nullptr ? new NFmiLevel[GetSize()] : nullptr),
       itsStep(0ul)
 {
   for (unsigned int i = 0; i < GetSize(); i++)
@@ -83,7 +84,7 @@ NFmiLevelBag::NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels)
 
 NFmiLevelBag::NFmiLevelBag(const NFmiLevelBag &theBag)
     : NFmiSize(theBag.itsIndex, theBag.itsSize),
-      itsLevels(theBag.itsLevels ? new NFmiLevel[itsSize] : nullptr),
+      itsLevels(theBag.itsLevels != nullptr ? new NFmiLevel[itsSize] : nullptr),
       itsStep(theBag.itsStep)
 {
   for (unsigned int i = 0; i < itsSize; i++)
@@ -144,7 +145,7 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 
     tempLevels[j] = theLevel;
 
-    if (itsLevels) delete[] itsLevels;
+    if (itsLevels != nullptr) delete[] itsLevels;
 
     itsLevels = new NFmiLevel[itsSize + 1];
     itsSize = GetSize() + 1;
@@ -199,7 +200,7 @@ bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
   if (itsSize == theLevelBag.itsSize)
   {
     for (int i = 0;
-         i < static_cast<int>(this->GetSize()) && static_cast<int>(theLevelBag.GetSize());
+         i < static_cast<int>(this->GetSize()) && (static_cast<int>(theLevelBag.GetSize()) != 0);
          i++)
     {
       if (!(this->itsLevels[i] == theLevelBag.itsLevels[i])) return false;
@@ -243,10 +244,10 @@ std::ostream &NFmiLevelBag::Write(std::ostream &file) const
 
 std::istream &NFmiLevelBag::Read(std::istream &file)
 {
-  if (itsLevels) delete[] static_cast<NFmiLevel *>(itsLevels);
+  if (itsLevels != nullptr) delete[] static_cast<NFmiLevel *>(itsLevels);
 
   NFmiSize::Read(file);
-  if (GetSize())  // 11.02.97 Vili Add size check
+  if (GetSize() != 0u)  // 11.02.97 Vili Add size check
     itsLevels = new NFmiLevel[GetSize()];
 
   for (unsigned long i = 0; i < GetSize(); i++)

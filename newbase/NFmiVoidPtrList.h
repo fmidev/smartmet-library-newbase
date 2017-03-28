@@ -9,8 +9,8 @@
 
 #include "NFmiGlobals.h"
 
-const int kDelete = true;
-const int kNoDelete = false;
+const int kDelete = 1;
+const int kNoDelete = 0;
 const long kNotInList = -1;
 
 // ----------------------------------------------------------------------
@@ -30,7 +30,7 @@ class _FMI_DLL NFmiVoidPtrData
  public:
   NFmiVoidPtrData(void* value) : itsDataValue(value), itsReferenceCount(0) {}
   void* GetVoidPtr() { return itsDataValue; }
-  bool Remove() { return --itsReferenceCount ? false : true; }
+  bool Remove() { return --itsReferenceCount != 0 ? false : true; }
 
  private:
   NFmiVoidPtrData(const NFmiVoidPtrData& theData);
@@ -62,7 +62,7 @@ class _FMI_DLL NFmiVoidPtrItem
 
   NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = 0) : itsNextItem(item), itsValue()
   {
-    if (value->itsReferenceCount)
+    if (value->itsReferenceCount != 0)
     {
       itsValue = value;
     }
@@ -107,7 +107,7 @@ class _FMI_DLL NFmiVoidPtrList
   virtual void AddEnd(NFmiVoidPtrData* value);
   virtual void AddBefore(NFmiVoidPtrData* value);
   virtual void Remove(NFmiVoidPtrData* removeValue);
-  virtual void Clear(bool doDelete = kNoDelete);
+  virtual void Clear(bool doDelete = kNoDelete != 0);
 
   int NumberOfItems() { return itsNumberOffItems; }
   NFmiVoidPtrItem* FirstItem() { return itsFirstItem; }

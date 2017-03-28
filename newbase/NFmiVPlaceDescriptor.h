@@ -75,7 +75,7 @@ inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels() const { return itsLeve
 
 inline void NFmiVPlaceDescriptor::Reset()
 {
-  if (itsLevelBag) itsLevelBag->Reset();
+  if (itsLevelBag != nullptr) itsLevelBag->Reset();
 }
 
 // ----------------------------------------------------------------------

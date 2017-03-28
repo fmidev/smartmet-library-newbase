@@ -73,7 +73,7 @@ bool NFmiSortedList::Add(NFmiSortable *theItem, bool fAddDuplicates)
 
 bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (!itsNumberOffItems)
+  if (itsNumberOffItems == 0)
   {
     AddEnd(theItem);
     return true;
@@ -107,7 +107,7 @@ bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
 
 bool NFmiSortedList::AddDescending(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (!itsNumberOffItems)
+  if (itsNumberOffItems == 0)
   {
     AddEnd(theItem);
     return true;

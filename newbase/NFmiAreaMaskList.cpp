@@ -196,7 +196,7 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
       if (index->IsEnabled())
       {
         tempValue = index->MaskValue(theLatLon);
-        if (!tempValue)
+        if (tempValue == 0.0)
         {
           return 0.;
         }
@@ -208,7 +208,7 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
         }
       }
     }
-    if (count) return sum / count;
+    if (count != 0) return sum / count;
   }
   return 1.;
 }

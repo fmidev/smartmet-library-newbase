@@ -90,7 +90,8 @@ NFmiCalculatedAreaMask::NFmiCalculatedAreaMask(const NFmiDataIdent& theParam,
 
 NFmiCalculatedAreaMask::NFmiCalculatedAreaMask(const NFmiCalculatedAreaMask& theMask)
     : NFmiAreaMaskImpl(theMask),
-      itsDataIdent(theMask.itsDataIdent ? new NFmiDataIdent(*theMask.itsDataIdent) : nullptr)
+      itsDataIdent(theMask.itsDataIdent != nullptr ? new NFmiDataIdent(*theMask.itsDataIdent)
+                                                   : nullptr)
 {
 }
 
@@ -109,7 +110,8 @@ NFmiCalculatedAreaMask& NFmiCalculatedAreaMask::operator=(const NFmiCalculatedAr
   if (this != &theMask)
   {
     NFmiAreaMaskImpl::operator=(theMask);
-    itsDataIdent = theMask.itsDataIdent ? new NFmiDataIdent(*theMask.itsDataIdent) : nullptr;
+    itsDataIdent =
+        theMask.itsDataIdent != nullptr ? new NFmiDataIdent(*theMask.itsDataIdent) : nullptr;
   }
   return *this;
 }
@@ -125,7 +127,7 @@ NFmiCalculatedAreaMask& NFmiCalculatedAreaMask::operator=(const NFmiCalculatedAr
 bool NFmiCalculatedAreaMask::IsWantedParam(const NFmiDataIdent& theParam,
                                            const NFmiLevel* /* theLevel */) const
 {
-  if (itsDataIdent && (*itsDataIdent == theParam)) return true;
+  if ((itsDataIdent != nullptr) && (*itsDataIdent == theParam)) return true;
   return false;
 }
 
@@ -144,7 +146,7 @@ const NFmiDataIdent* NFmiCalculatedAreaMask::DataIdent() const { return itsDataI
 
 const NFmiParam* NFmiCalculatedAreaMask::Param() const
 {
-  if (itsDataIdent) return itsDataIdent->GetParam();
+  if (itsDataIdent != nullptr) return itsDataIdent->GetParam();
   return nullptr;
 }
 

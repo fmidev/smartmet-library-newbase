@@ -52,9 +52,9 @@ NFmiRegressionItem::NFmiRegressionItem(double theCoefficient,
 
 void NFmiRegressionItem::Calculate(NFmiQueryInfo *theData)
 {
-  if (itsParam)
+  if (itsParam != nullptr)
   {
-    if (theData)
+    if (theData != nullptr)
     {
       NFmiDataIdent tmpIdent(theData->Param());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!
       theData->Param(*itsParam);
@@ -81,9 +81,9 @@ float NFmiRegressionItem::CalculationResult() { return static_cast<float>(itsRet
 
 double NFmiRegressionItem::FloatValue()
 {
-  if (itsParam)
+  if (itsParam != nullptr)
   {
-    if (itsData)
+    if (itsData != nullptr)
     {
       NFmiParam tmpParam(
           *itsData->Param().GetParam());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!

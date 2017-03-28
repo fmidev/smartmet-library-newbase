@@ -63,7 +63,7 @@ NFmiStringList::NFmiStringList(const NFmiStringList &theList) : itsList(), itsIn
 bool NFmiStringList::Next(NFmiString **theItem)
 {
   *theItem = Current();
-  if (*theItem)
+  if (*theItem != nullptr)
   {
     Next();
     return true;
@@ -217,7 +217,7 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
     ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLenght);
     // if line feed not found, the end of the word which is longer than lineLenght must be splitt
     // into the next line
-    if (!ind) ind = lineLenght;
+    if (ind == 0u) ind = lineLenght;
     // the line feed found stays at the end of the line added to the list
     tempStr = new NFmiString(strLeft->GetChars(1, ind));
     Add(tempStr);
@@ -371,7 +371,7 @@ bool NFmiStringList::Find(const NFmiString &str)
 
 bool NFmiStringList::Remove()
 {
-  if (Current())
+  if (Current() != nullptr)
   {
     auto iter = itsList.begin() + itsIndex;
     delete *iter;

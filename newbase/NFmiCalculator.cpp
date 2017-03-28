@@ -57,12 +57,12 @@ NFmiCalculator::NFmiCalculator(NFmiQueryInfo* theData, NFmiDataModifier* theData
 
 double NFmiCalculator::FloatValue()
 {
-  if (itsDataIterator && itsDataModifier)
+  if ((itsDataIterator != nullptr) && (itsDataModifier != nullptr))
   {
     itsDataIterator->DoForEach(itsDataModifier);
     return itsDataModifier->CalculationResult();
   }
-  if (itsData && itsDataModifier)
+  if ((itsData != nullptr) && (itsDataModifier != nullptr))
   {
     return itsDataModifier->FloatValue();
   }
@@ -77,7 +77,7 @@ double NFmiCalculator::FloatValue()
 
 NFmiCombinedParam* NFmiCalculator::CombinedValue()
 {
-  if (itsDataIterator && itsDataModifier)
+  if ((itsDataIterator != nullptr) && (itsDataModifier != nullptr))
   {
     itsDataIterator->DoForEach(itsDataModifier);
     return itsDataModifier->CombinedCalculationResult();
@@ -93,7 +93,7 @@ NFmiCombinedParam* NFmiCalculator::CombinedValue()
 
 NFmiDataModifier* NFmiCalculator::CalculatedModifier()
 {
-  if (itsDataIterator && itsDataModifier)
+  if ((itsDataIterator != nullptr) && (itsDataModifier != nullptr))
   {
     itsDataIterator->DoForEach(itsDataModifier);
     return itsDataModifier;

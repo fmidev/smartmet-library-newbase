@@ -67,7 +67,7 @@ NFmiDataModifierWindChill::NFmiDataModifierWindChill(NFmiQueryInfo* theQueryInfo
 
 void NFmiDataModifierWindChill::Calculate(float /* theValue */)
 {
-  if (itsQueryInfo)
+  if (itsQueryInfo != nullptr)
   {
     auto oldParam = FmiParameterName(itsQueryInfo->Param().GetParamIdent());
 

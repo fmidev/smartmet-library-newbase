@@ -58,7 +58,10 @@ class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
                  // kaikki arvot halutuksi.
 
   const NFmiDataIdent* DataIdent() const override { return itsDataIdent; }
-  const NFmiParam* Param() const override { return itsDataIdent ? itsDataIdent->GetParam() : 0; }
+  const NFmiParam* Param() const override
+  {
+    return itsDataIdent != nullptr ? itsDataIdent->GetParam() : 0;
+  }
   using NFmiAreaMaskImpl::Level;
   const NFmiLevel* Level() const override { return itsLevel; }
 

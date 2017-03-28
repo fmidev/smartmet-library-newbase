@@ -25,11 +25,11 @@ unsigned long NFmiTimeBag::GetSize() const
 {
   if (itsResolution.IsDate())
   {
-    if (itsResolution.Year())
+    if (itsResolution.Year() != 0)
       return (itsLastTime.GetYear() - itsFirstTime.GetYear()) / itsResolution.Year() + 1;
     // Esim (1997 - 1927) / 5 = 4
 
-    if (itsResolution.Month())
+    if (itsResolution.Month() != 0)
     {
       return (itsLastTime.GetYear() - itsFirstTime.GetYear()) * 12 +
                          ((itsLastTime.GetMonth() - itsFirstTime.GetMonth())) <
@@ -43,11 +43,11 @@ unsigned long NFmiTimeBag::GetSize() const
     //
     //		last   first         l    f
 
-    if (itsResolution.Day())
+    if (itsResolution.Day() != 0)
       return itsLastTime.DifferenceInDays(itsFirstTime) / itsResolution.Day() + 1;
   }
 
-  if (!itsResolution) return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
+  if (itsResolution == 0) return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
   // throw runtime_error("NFmiTimeBag::GetSize() itsResolution = 0 ");
 
   if (itsFirstTime <= itsLastTime)
@@ -165,8 +165,8 @@ bool NFmiTimeBag::SetCurrent(const NFmiMetTime &theTime)
             static_cast<long>(itsSize))  // tarkistetaan vielä, ettei mene yli lastTimen
     {
       itsCurrentTime = itsFirstTime;
-      if (diffFromFirstTimeInMinutes)  // pientä optimointia, pitäisi tehdä NFmiTime-luokan
-                                       // ChangeBy???-metodeissa!!!!
+      if (diffFromFirstTimeInMinutes != 0)  // pientä optimointia, pitäisi tehdä NFmiTime-luokan
+                                            // ChangeBy???-metodeissa!!!!
         itsCurrentTime.ChangeByMinutes(diffFromFirstTimeInMinutes);
       itsIndex = diffFromFirstTimeInMinutes / resolutionInMinutes;
       return true;
@@ -249,14 +249,14 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
     itsCurrentTime = itsFirstTime;
     if (theIndex > 0 && itsResolution.IsDate())
     {
-      if (itsResolution.Year())
+      if (itsResolution.Year() != 0)
         itsCurrentTime.SetYear(
             static_cast<short>(itsCurrentTime.GetYear() + (theIndex * itsResolution.Year())));
-      if (itsResolution.Month())
+      if (itsResolution.Month() != 0)
         throw runtime_error("NFmiTimeBag::SetTime: Kuukausi resoluutiossa ei toimi vielä.");
       //	itsCurrentTime.ChangeByMonth(theIndex * itsResolution.Month()); // TEE
       // ChangeByMonth-metodi!!!!
-      if (itsResolution.Day()) itsCurrentTime.ChangeByDays(theIndex * itsResolution.Day());
+      if (itsResolution.Day() != 0) itsCurrentTime.ChangeByDays(theIndex * itsResolution.Day());
       return true;
     }
 

@@ -467,30 +467,30 @@ void NFmiStaticTime::FromStr(const NFmiString theTimeString, const unsigned long
 {
   unsigned short theYearStep = 0;
 
-  if (kShortYear & theTimeMask)
+  if ((kShortYear & theTimeMask) != 0u)
   {
     theYearStep = 2;
     SetYear(static_cast<short>(NFmiValueString(theTimeString.GetChars(1, theYearStep))));
   }
-  else if (kLongYear & theTimeMask)
+  else if ((kLongYear & theTimeMask) != 0u)
   {
     theYearStep = 4;
     SetYear(static_cast<short>(NFmiValueString(theTimeString.GetChars(1, theYearStep))));
   }
 
-  if (kMonth & theTimeMask)
+  if ((kMonth & theTimeMask) != 0u)
     SetMonth(static_cast<short>(NFmiValueString(theTimeString.GetChars((theYearStep + 1), 2))));
 
-  if (kDay & theTimeMask)
+  if ((kDay & theTimeMask) != 0u)
     SetDay(static_cast<short>(NFmiValueString(theTimeString.GetChars(theYearStep + 3, 2))));
 
-  if (kHour & theTimeMask)
+  if ((kHour & theTimeMask) != 0u)
     SetHour(static_cast<short>(NFmiValueString(theTimeString.GetChars(theYearStep + 5, 2))));
 
-  if (kMinute & theTimeMask)
+  if ((kMinute & theTimeMask) != 0u)
     SetMin(static_cast<short>(NFmiValueString(theTimeString.GetChars(theYearStep + 7, 2))));
 
-  if (kSecond & theTimeMask)
+  if ((kSecond & theTimeMask) != 0u)
     SetSec(static_cast<short>(NFmiValueString(theTimeString.GetChars(theYearStep + 9, 2))));
 }
 
@@ -505,20 +505,20 @@ const NFmiString NFmiStaticTime::ToStr(const unsigned long theTimeMask) const
 {
   NFmiValueString theString;
 
-  if (kShortYear & theTimeMask)
+  if ((kShortYear & theTimeMask) != 0u)
     theString += NFmiValueString(GetYear(), "%02d").GetChars(3, 2);
-  else if (kLongYear & theTimeMask)
+  else if ((kLongYear & theTimeMask) != 0u)
     theString += NFmiValueString(GetYear(), "%04d");
 
-  if (kMonth & theTimeMask) theString += NFmiValueString(GetMonth(), "%02d");
+  if ((kMonth & theTimeMask) != 0u) theString += NFmiValueString(GetMonth(), "%02d");
 
-  if (kDay & theTimeMask) theString += NFmiValueString(GetDay(), "%02d");
+  if ((kDay & theTimeMask) != 0u) theString += NFmiValueString(GetDay(), "%02d");
 
-  if (kHour & theTimeMask) theString += NFmiValueString(GetHour(), "%02d");
+  if ((kHour & theTimeMask) != 0u) theString += NFmiValueString(GetHour(), "%02d");
 
-  if (kMinute & theTimeMask) theString += NFmiValueString(GetMin(), "%02d");
+  if ((kMinute & theTimeMask) != 0u) theString += NFmiValueString(GetMin(), "%02d");
 
-  if (kSecond & theTimeMask) theString += NFmiValueString(GetSec(), "%02d");
+  if ((kSecond & theTimeMask) != 0u) theString += NFmiValueString(GetSec(), "%02d");
 
   return theString;
 }

@@ -106,7 +106,7 @@ bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
   bool retBool = false;
   if (IsValid()) return retBool;
 
-  if (itsInfo)
+  if (itsInfo != nullptr)
   {
     retBool = true;
     delete theInfo;
@@ -115,7 +115,7 @@ bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
   {
     retBool = true;
   }
-  if (itsInfo) *theInfo = new NFmiQueryInfo(*itsInfo);
+  if (itsInfo != nullptr) *theInfo = new NFmiQueryInfo(*itsInfo);
   return retBool;
 }
 
@@ -127,7 +127,7 @@ bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
 
 bool NFmiSnapShotInterface::IsValid()
 {
-  if (!itsInfo || time(nullptr) - itsStartingTime > itsUpdateInterval)
+  if ((itsInfo == nullptr) || time(nullptr) - itsStartingTime > itsUpdateInterval)
   {
     return false;
   }
@@ -164,7 +164,7 @@ bool NFmiSnapShotInterface::ReadData()
   NFmiString fileName = NFmiString(itsWorkingDirectory) += itsDataFileName;
   ifstream localFile;
   localFile.open(fileName, ios::in | ios::binary);
-  if (localFile)
+  if (localFile != nullptr)
   {
     itsData = new NFmiQueryData();
     localFile >> *itsData;
@@ -175,7 +175,7 @@ bool NFmiSnapShotInterface::ReadData()
     ifstream remoteFile;
     fileName = NFmiString(itsSourceDirectory) += itsDataFileName;
     remoteFile.open(fileName, ios::in | ios::binary);
-    if (remoteFile)
+    if (remoteFile != nullptr)
     {
       itsData = new NFmiQueryData();
       remoteFile >> *itsData;

@@ -50,7 +50,7 @@ void NFmiDataIterator::DoForEach(NFmiDataModifier* /* theDataModifier */) {}
 
 void NFmiDataIterator::CheckIfMaskIsUsed()
 {
-  if (itsMask && itsMask->IsEnabled())
+  if ((itsMask != nullptr) && itsMask->IsEnabled())
     fMaskInUse = true;
   else
     fMaskInUse = false;
@@ -65,7 +65,7 @@ void NFmiDataIterator::CheckIfMaskIsUsed()
 
 bool NFmiDataIterator::IsMasked(const NFmiPoint& theLatLonPoint)
 {
-  if (fMaskInUse && itsMask) return itsMask->IsMasked(theLatLonPoint);
+  if (fMaskInUse && (itsMask != nullptr)) return itsMask->IsMasked(theLatLonPoint);
 
   return false;
 }

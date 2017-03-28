@@ -54,12 +54,12 @@ NFmiDataIdent::NFmiDataIdent(const NFmiParam &theParam,
       fContainsIndividualParams(containsIndividualParams),
       fIsDataParam(isDataParam),
       fHasDataParams(hasDataParam),
-      itsDataParams(theSubParamBag ? new NFmiParamBag(*theSubParamBag) : nullptr),
+      itsDataParams(theSubParamBag != nullptr ? new NFmiParamBag(*theSubParamBag) : nullptr),
       itsSecondaryProducers(nullptr),
       itsSecondaryProducerIterator(nullptr),
       itsCurrentSecondaryProducer(nullptr)
 {
-  if (theSecondaryProducerList && theSecondaryProducerList->NumberOfItems() > 0)
+  if ((theSecondaryProducerList != nullptr) && theSecondaryProducerList->NumberOfItems() > 0)
   {
     itsSecondaryProducers = new NFmiVoidPtrList;
     NFmiVoidPtrIterator it(theSecondaryProducerList);
@@ -89,13 +89,15 @@ NFmiDataIdent::NFmiDataIdent(const NFmiDataIdent &theDataIdent)
       fContainsIndividualParams(theDataIdent.fContainsIndividualParams),
       fIsDataParam(theDataIdent.fIsDataParam),
       fHasDataParams(theDataIdent.fHasDataParams),
-      itsDataParams(theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams))
-                                               : nullptr),
+      itsDataParams(theDataIdent.itsDataParams != nullptr
+                        ? new NFmiParamBag(*(theDataIdent.itsDataParams))
+                        : nullptr),
       itsSecondaryProducers(nullptr),
       itsSecondaryProducerIterator(nullptr),
       itsCurrentSecondaryProducer(nullptr)
 {
-  if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+  if ((theDataIdent.itsSecondaryProducers != nullptr) &&
+      theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
   {
     itsSecondaryProducers = new NFmiVoidPtrList;
     NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
@@ -119,7 +121,7 @@ void NFmiDataIdent::Destroy()
   delete itsParam;
   delete itsProducer;
   delete itsDataParams;
-  if (itsSecondaryProducers)
+  if (itsSecondaryProducers != nullptr)
   {
     NFmiVoidPtrIterator iter(itsSecondaryProducers);
     void *vPt;  // iter.Reset() ??
@@ -142,7 +144,7 @@ void NFmiDataIdent::Destroy()
 
 bool NFmiDataIdent::IsDataParam(const FmiParameterName &theParam)
 {
-  if (itsDataParams)
+  if (itsDataParams != nullptr)
   {
     for (ResetDataParams(); NextDataParam();)
     {
@@ -163,7 +165,7 @@ bool NFmiDataIdent::IsDataParam(const FmiParameterName &theParam)
 
 bool NFmiDataIdent::IsDataParam(const NFmiDataIdent &theDataIdent)
 {
-  if (itsDataParams)
+  if (itsDataParams != nullptr)
   {
     for (ResetDataParams(); NextDataParam();)
     {
@@ -211,9 +213,11 @@ NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
   fContainsIndividualParams = theDataIdent.fContainsIndividualParams;
   fIsDataParam = theDataIdent.fIsDataParam;
   fHasDataParams = theDataIdent.fHasDataParams;
-  itsDataParams =
-      theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
-  if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+  itsDataParams = theDataIdent.itsDataParams != nullptr
+                      ? new NFmiParamBag(*(theDataIdent.itsDataParams))
+                      : nullptr;
+  if ((theDataIdent.itsSecondaryProducers != nullptr) &&
+      theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
   {
     itsSecondaryProducers = new NFmiVoidPtrList;
     NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
@@ -263,7 +267,7 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
       file << *itsDataParams;
     }
 
-    if (itsSecondaryProducers)
+    if (itsSecondaryProducers != nullptr)
     {
       file << itsSecondaryProducers->NumberOfItems() << std::endl;
 
@@ -324,7 +328,7 @@ std::istream &NFmiDataIdent::Read(std::istream &file)
     long theNumberOfItems;
     file >> theNumberOfItems;
 
-    if (theNumberOfItems)
+    if (theNumberOfItems != 0)
     {
       itsSecondaryProducers = new NFmiVoidPtrList;
 
@@ -427,7 +431,7 @@ NFmiDataIdent &NFmiDataIdent::CurrentActiveDataParam() { return *(itsDataParams-
 
 void NFmiDataIdent::SetParam(const NFmiParam &theParam)
 {
-  if (itsParam) delete itsParam;
+  if (itsParam != nullptr) delete itsParam;
   itsParam = theParam.Clone();
   fIsDataParam = true;
 }
@@ -440,9 +444,9 @@ void NFmiDataIdent::SetParam(const NFmiParam &theParam)
 
 void NFmiDataIdent::SetProducer(const NFmiProducer &theProducer)
 {
-  if (itsProducer) delete itsProducer;
+  if (itsProducer != nullptr) delete itsProducer;
   itsProducer = new NFmiProducer(theProducer);
-  if (itsDataParams) itsDataParams->SetProducer(theProducer);
+  if (itsDataParams != nullptr) itsDataParams->SetProducer(theProducer);
 }
 
 // ----------------------------------------------------------------------

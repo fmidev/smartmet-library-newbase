@@ -114,7 +114,7 @@ bool NFmiCommentStripper::ReadFile(const string& theFileName)
 #else
   itsFileName = theFileName;
 #endif
-  if (in)
+  if (in != nullptr)
   {
     itsString = "";  // nollaa lopullinen stringi
 
@@ -123,7 +123,7 @@ bool NFmiCommentStripper::ReadFile(const string& theFileName)
 
     // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
 
-    while (getline(in, rowbuffer))
+    while (getline(in, rowbuffer) != nullptr)
     {
       if (!rowbuffer.empty())
       {
@@ -176,7 +176,7 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
   itsFileName = theFileName;
 #endif
 
-  if (in)
+  if (in != nullptr)
   {
     itsString = "";  // nollaa lopullinen stringi
 
@@ -185,7 +185,7 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
 
     // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
 
-    while (getline(in, rowbuffer))
+    while (getline(in, rowbuffer) != nullptr)
     {
       if (!rowbuffer.empty())
       {

@@ -384,7 +384,7 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
 {
   if (index >= itsSize) return kFloatMissing;
 
-  if (itsData) return itsData[index];
+  if (itsData != nullptr) return itsData[index];
 
   const auto *ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
   return ptr[index];
@@ -400,7 +400,7 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
 {
   if (index >= itsSize) return false;
 
-  if (itsData)
+  if (itsData != nullptr)
   {
     itsData[index] = value;
     return true;

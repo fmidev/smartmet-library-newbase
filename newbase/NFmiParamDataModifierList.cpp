@@ -97,7 +97,7 @@ void NFmiParamDataModifierList::Clear(bool fDeleteData) { itsList.Clear(fDeleteD
 bool NFmiParamDataModifierList::Index(unsigned long theIndex)
 {
   itsIter = itsList.Index(theIndex);
-  if (Current()) return true;
+  if (Current() != nullptr) return true;
   return false;
 }
 
@@ -114,7 +114,7 @@ bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam)
   for (Reset(); Next();)
   {
     paramPtr = Current()->Param();
-    if (paramPtr && (*paramPtr == theParam)) return true;
+    if ((paramPtr != nullptr) && (*paramPtr == theParam)) return true;
   }
   return false;
 }

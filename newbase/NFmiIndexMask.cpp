@@ -454,7 +454,7 @@ NFmiIndexMask operator^(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
 void NFmiIndexMask::Move(int theXMove, int theYMove)
 {
   // Have to have knowledge about the original grid in able to operate
-  if (itsXSize && itsYSize)
+  if ((itsXSize != 0u) && (itsYSize != 0u))
   {
     // pitää täyttää uusi set-otus, koska ei voida editoida suoraan
     // set:issä olevaa dataa

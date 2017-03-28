@@ -72,7 +72,7 @@ void NFmiDataModifierAllValidAvg::Calculate(float theValue)
 
 void NFmiDataModifierAllValidAvg::Calculate(NFmiQueryInfo* theQI)
 {
-  if (theQI)
+  if (theQI != nullptr)
   {
     float value = theQI->FloatValue();
     if (CheckMissingValues(value))

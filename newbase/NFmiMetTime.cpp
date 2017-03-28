@@ -109,7 +109,7 @@ NFmiMetTime NFmiMetTime::now()
 
 bool NFmiMetTime::IsEqual(const NFmiSortable &aFmiTest) const
 {
-  if (itsNegativeRange || itsPositiveRange)
+  if ((itsNegativeRange != 0) || (itsPositiveRange != 0))
   {
     long diff = DifferenceInMinutes(*static_cast<const NFmiTime *>(&aFmiTest));
     return diff <= itsNegativeRange && (-diff) <= itsPositiveRange;
@@ -298,7 +298,8 @@ void NFmiMetTime::NextMetTime(const NFmiTimePerioid &thePerioid)
 
     SetYear(short(GetYear() + thePerioid.Year()));
     SetMonth(short(GetMonth() + thePerioid.Month()));
-    if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
+    if (thePerioid.Day() != 0)
+      DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
     return;
   }
 
@@ -346,7 +347,8 @@ void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
 
     SetYear(short(GetYear() - thePerioid.Year()));
     SetMonth(short(GetMonth() - thePerioid.Month()));
-    if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
+    if (thePerioid.Day() != 0)
+      DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
     return;
   }
 

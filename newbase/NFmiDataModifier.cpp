@@ -36,11 +36,12 @@ NFmiDataModifier::NFmiDataModifier(FmiJoinOperator theJoinOperator,
                                    bool missingValuesAllowed,
                                    NFmiCombinedParam* thePotentialCombinedParam)
     : NFmiDataModifierBase(theJoinOperator),
-      itsCombinedParam(thePotentialCombinedParam ? thePotentialCombinedParam->Clone() : nullptr),
+      itsCombinedParam(thePotentialCombinedParam != nullptr ? thePotentialCombinedParam->Clone()
+                                                            : nullptr),
       fCalculationResultOk(true),
       fMissingValuesAllowed(missingValuesAllowed),
       itsNumberOfMissingValues(0),
-      fIsCombinedParam(thePotentialCombinedParam ? true : false),
+      fIsCombinedParam(thePotentialCombinedParam != nullptr ? true : false),
       fIsLimitCheck(false),
       itsLowerLimit(),
       itsUpperLimit()
@@ -57,7 +58,8 @@ NFmiDataModifier::NFmiDataModifier(FmiJoinOperator theJoinOperator,
 
 NFmiDataModifier::NFmiDataModifier(const NFmiDataModifier& theModier)
     : NFmiDataModifierBase(theModier),
-      itsCombinedParam(theModier.itsCombinedParam ? theModier.itsCombinedParam->Clone() : nullptr),
+      itsCombinedParam(theModier.itsCombinedParam != nullptr ? theModier.itsCombinedParam->Clone()
+                                                             : nullptr),
       fCalculationResultOk(theModier.fCalculationResultOk),
       fMissingValuesAllowed(theModier.fMissingValuesAllowed),
       itsNumberOfMissingValues(theModier.itsNumberOfMissingValues),

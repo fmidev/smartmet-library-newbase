@@ -48,9 +48,9 @@ void NFmiVoidPtrList::Add(NFmiVoidPtrData *value) { AddEnd(value); }
 
 void NFmiVoidPtrList::AddStart(NFmiVoidPtrData *value)
 {
-  if (value)
+  if (value != nullptr)
   {
-    if (itsFirstItem)
+    if (itsFirstItem != nullptr)
       itsFirstItem = new NFmiVoidPtrItem(value, itsFirstItem);
     else
       itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value, itsFirstItem);
@@ -67,16 +67,16 @@ void NFmiVoidPtrList::AddStart(NFmiVoidPtrData *value)
 
 void NFmiVoidPtrList::AddEnd(NFmiVoidPtrData *value)
 {
-  if (value)
+  if (value != nullptr)
   {
     ++itsNumberOffItems;
-    if (!itsFirstItem)
+    if (itsFirstItem == nullptr)
     {
       itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value);
     }
     else
     {
-      while (itsCurrentItem->itsNextItem)
+      while (itsCurrentItem->itsNextItem != nullptr)
         itsCurrentItem = itsCurrentItem->itsNextItem;
       itsCurrentItem->itsNextItem = new NFmiVoidPtrItem(value);
       itsPreviousItem = itsCurrentItem;
@@ -93,11 +93,11 @@ void NFmiVoidPtrList::AddEnd(NFmiVoidPtrData *value)
 
 void NFmiVoidPtrList::AddBefore(NFmiVoidPtrData *value)
 {
-  if (value)
+  if (value != nullptr)
   {
-    if (!itsCurrentItem)  // empty list
+    if (itsCurrentItem == nullptr)  // empty list
       AddEnd(value);
-    else if (!itsPreviousItem)  // added before first item
+    else if (itsPreviousItem == nullptr)  // added before first item
     {
       itsFirstItem = itsPreviousItem = new NFmiVoidPtrItem(value);
       itsFirstItem->itsNextItem = itsCurrentItem;
@@ -129,7 +129,7 @@ void NFmiVoidPtrList::Remove(NFmiVoidPtrData *removeValue)
   }
   NFmiVoidPtrItem *previousItem = nullptr;
 
-  for (; temp; previousItem = temp, temp = temp->itsNextItem)
+  for (; temp != nullptr; previousItem = temp, temp = temp->itsNextItem)
     if (temp->itsValue == removeValue)
     {
       previousItem->itsNextItem = temp->itsNextItem;
@@ -148,7 +148,7 @@ void NFmiVoidPtrList::Remove(NFmiVoidPtrData *removeValue)
 void NFmiVoidPtrList::Clear(
     bool /* doDelete */)  // miksi ei tarkisteta tätä ja jätetä deletoimatta tarvittaessa?
 {
-  while (itsFirstItem)
+  while (itsFirstItem != nullptr)
   {
     DeleteItem();
   }
@@ -180,7 +180,7 @@ void NFmiVoidPtrList::DeleteItem()
 void NFmiVoidPtrList::CopyList(const NFmiVoidPtrList &listItem)
 {
   NFmiVoidPtrItem *temp = listItem.itsFirstItem;
-  for (; temp; temp = temp->itsNextItem)
+  for (; temp != nullptr; temp = temp->itsNextItem)
   {
     AddEnd(temp->itsValue);
   }
@@ -253,7 +253,7 @@ void NFmiVoidPtrIterator::Reset()
 void *NFmiVoidPtrIterator::Next()
 {
   NFmiVoidPtrItem *temp = itsCurrentItem;
-  if (temp)
+  if (temp != nullptr)
   {
     itsListItem->itsPreviousItem = itsPreviousItem;
     itsListItem->itsCurrentItem = temp;
@@ -273,7 +273,7 @@ void *NFmiVoidPtrIterator::Next()
 
 void NFmiVoidPtrIterator::NextPreviousPtr()
 {
-  if (itsPreviousItem)
+  if (itsPreviousItem != nullptr)
     itsPreviousItem = itsPreviousItem->itsNextItem;
   else
     itsPreviousItem = itsListItem->itsFirstItem;
@@ -288,7 +288,7 @@ void NFmiVoidPtrIterator::NextPreviousPtr()
 NFmiVoidPtrData *NFmiVoidPtrIterator::NextPtr()
 {
   NFmiVoidPtrItem *temp = itsCurrentItem;
-  if (temp)
+  if (temp != nullptr)
   {
     itsPreviousItem = itsCurrentItem;
     itsCurrentItem = itsCurrentItem->itsNextItem;
@@ -316,7 +316,7 @@ NFmiVoidPtrData *NFmiVoidPtrIterator::CurrentPtr() { return itsCurrentItem->itsV
 bool NFmiVoidPtrIterator::Next(void *&theItem)
 {
   theItem = Next();
-  return *&theItem ? true : false;
+  return *&theItem != nullptr ? true : false;
 }
 
 // ----------------------------------------------------------------------
@@ -329,7 +329,7 @@ bool NFmiVoidPtrIterator::Next(void *&theItem)
 bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
 {
   theItem = NextPtr();
-  return *&theItem ? true : false;
+  return *&theItem != nullptr ? true : false;
 }
 
 // ----------------------------------------------------------------------
@@ -339,7 +339,7 @@ bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
 // ----------------------------------------------------------------------
 void *NFmiVoidPtrIterator::Current()
 {
-  return itsCurrentItem ? itsCurrentItem->itsValue->itsDataValue : nullptr;
+  return itsCurrentItem != nullptr ? itsCurrentItem->itsValue->itsDataValue : nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -366,7 +366,7 @@ bool NFmiVoidPtrIterator::Index(long theNewValue)
     {
       return true;
     }
-  } while (Next());
+  } while (Next() != nullptr);
   return false;
 }
 

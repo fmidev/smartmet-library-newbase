@@ -44,8 +44,8 @@ NFmiParamDataModifier::NFmiParamDataModifier(NFmiDataIdent* theParam,
                                              NFmiLevel* theLevel,
                                              FmiJoinOperator theJoinOperator)
     : NFmiDataModifier(theJoinOperator),
-      itsParam(theParam ? new NFmiDataIdent(*theParam) : nullptr),
-      itsLevel(theLevel ? new NFmiLevel(*theLevel) : nullptr),
+      itsParam(theParam != nullptr ? new NFmiDataIdent(*theParam) : nullptr),
+      itsLevel(theLevel != nullptr ? new NFmiLevel(*theLevel) : nullptr),
       itsSubList(nullptr)
 {
   itsSubList = new NFmiDataModifierList;
@@ -64,8 +64,9 @@ bool NFmiParamDataModifier::Match(const NFmiDataIdent& theParam, const NFmiLevel
   // HUOM!!! Tarkistus tehdään ainakin aluksi parId tasolla ja levelID tasolla!!!!!!
   if (*itsParam->GetParam() == *theParam.GetParam())
   {
-    if (itsLevel && theLevel && (*itsLevel == *theLevel)) return true;
-    if (!(itsLevel && theLevel))  // jos molemmat ovat 0-pointtereita myös true
+    if ((itsLevel != nullptr) && (theLevel != nullptr) && (*itsLevel == *theLevel)) return true;
+    if (!((itsLevel != nullptr) &&
+          (theLevel != nullptr)))  // jos molemmat ovat 0-pointtereita myös true
       return true;
   }
   return false;

@@ -231,7 +231,7 @@ inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList() const { return itsTimeL
 
 inline unsigned long NFmiTimeDescriptor::ForecastPeriod() const
 {
-  return itsTimeList ? 0 : (ValidTime().DifferenceInMinutes(OriginTime()));
+  return itsTimeList != nullptr ? 0 : (ValidTime().DifferenceInMinutes(OriginTime()));
 }
 
 // ----------------------------------------------------------------------

@@ -49,7 +49,8 @@ NFmiDataModifierPrecFormUnion::NFmiDataModifierPrecFormUnion(FmiJoinOperator the
 
 float NFmiDataModifierPrecFormUnion::Result()
 {
-  return static_cast<float>(fIsRain * 1 + fIsSleet * 2 + fIsSnow * 4 + fIsFreezing * 8);
+  return static_cast<float>(static_cast<int>(fIsRain) * 1 + static_cast<int>(fIsSleet) * 2 +
+                            static_cast<int>(fIsSnow) * 4 + static_cast<int>(fIsFreezing) * 8);
 }
 
 // ----------------------------------------------------------------------

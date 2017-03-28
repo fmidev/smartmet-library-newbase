@@ -61,7 +61,7 @@ NFmiDataModifierBoolean::operator bool() { return BooleanValue(); }
 
 bool NFmiDataModifierBoolean::BooleanValue()
 {
-  if (itsFirstValue && itsSecondValue)
+  if ((itsFirstValue != nullptr) && (itsSecondValue != nullptr))
   {
     switch (itsCondition)
     {

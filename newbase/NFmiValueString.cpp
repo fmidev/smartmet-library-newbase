@@ -283,7 +283,7 @@ bool NFmiValueString::IsShort() const
 
   if (itsValueType == eShort) return true;
 
-  if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>("."))) return false;
+  if (!IsNumeric() || (Search(reinterpret_cast<const unsigned char *>(".")) != 0u)) return false;
 
   if (itsValueType == eChar) return sscanf(CharPtr(), "%hd", &returnValue) == 1 ? true : false;
 
@@ -326,8 +326,8 @@ unsigned int NFmiValueString::SignificantDecimals() const
 bool NFmiValueString::IsNumeric(int theStart, int theSize) const
 {
   bool digitFound = false;
-  for (unsigned int idx = theStart; idx < (theSize ? theSize : GetLen()); idx++)
-    if (!isdigit(fChar[idx]))
+  for (unsigned int idx = theStart; idx < (theSize != 0 ? theSize : GetLen()); idx++)
+    if (isdigit(fChar[idx]) == 0)
     {
       if ((fChar[idx] != ' ') && (fChar[idx] != '.') && (fChar[idx] != '+') && (fChar[idx] != '-'))
         return false;
@@ -335,7 +335,7 @@ bool NFmiValueString::IsNumeric(int theStart, int theSize) const
     else
       digitFound = true;
 
-  return GetLen() && digitFound ? true : false;
+  return (GetLen() != 0u) && digitFound ? true : false;
 }
 
 // ----------------------------------------------------------------------
@@ -353,7 +353,7 @@ unsigned long NFmiValueString::SearchNumeric(unsigned long start) const
   int len = GetLen();
   while (static_cast<int>(index) < len)
   {
-    if (isdigit(fChar[index])) return index + 1;
+    if (isdigit(fChar[index]) != 0) return index + 1;
     index++;
   }
   return 0;
@@ -371,7 +371,7 @@ bool NFmiValueString::IsInt(int theStart, int theSize) const
 {
   int returnValue;
 
-  if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>("."))) return false;
+  if (!IsNumeric() || (Search(reinterpret_cast<const unsigned char *>(".")) != 0u)) return false;
 
   return ConvertToInt(returnValue, theStart, theSize);
 }
@@ -426,7 +426,7 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
 
   if (!IsNumeric()) return false;
 
-  return (sscanf(theSize ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
+  return (sscanf(theSize != 0 ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
                  "%lf",
                  &returnValue) == 1);
 }
@@ -442,8 +442,8 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
 
 bool NFmiValueString::ConvertToInt(int &theValue, const int theStart, const int theSize) const
 {
-  if (theSize) return sscanf(GetChars(theStart, theSize), "%d", &theValue) ? true : false;
-  return sscanf(CharPtr(), "%d", &theValue) ? true : false;
+  if (theSize != 0) return sscanf(GetChars(theStart, theSize), "%d", &theValue) != 0 ? true : false;
+  return sscanf(CharPtr(), "%d", &theValue) != 0 ? true : false;
 }
 
 // ----------------------------------------------------------------------
@@ -459,12 +459,12 @@ bool NFmiValueString::ConvertToLong(long &theValue, const int theStart, const in
 {
   NFmiString theConvertStr;
 
-  if (theSize)
+  if (theSize != 0)
     theConvertStr = GetChars(theStart, theSize);
   else
     theConvertStr = CharPtr();
 
-  if (sscanf(theConvertStr, "%ld", &theValue)) return true;
+  if (sscanf(theConvertStr, "%ld", &theValue) != 0) return true;
 
   return false;
 }
@@ -482,7 +482,7 @@ bool NFmiValueString::ConvertToFloat(float &theValue, const int theStart, const 
 {
   NFmiString theConvertStr;
 
-  if (theSize)
+  if (theSize != 0)
     theConvertStr = GetChars(theStart, theSize);
   else
     theConvertStr = CharPtr();
@@ -517,7 +517,7 @@ NFmiValueString::operator short() const
 {
   short returnValue;
 
-  return short(sscanf(CharPtr(), "%hd", &returnValue) ? returnValue : 0);
+  return short(sscanf(CharPtr(), "%hd", &returnValue) != 0 ? returnValue : 0);
 }
 
 // ----------------------------------------------------------------------
@@ -596,7 +596,7 @@ const NFmiString NFmiValueString::GetStringWithMaxDecimalsSmartWay(double value,
   char buffer2[128] = "";
   int precisionValue = maxDecimals;
   NFmiString format;
-  if (precisionValue)
+  if (precisionValue != 0)
   {
     for (double tmp = fabs(value); tmp > 1; tmp /= 10.)
       precisionValue++;

@@ -86,7 +86,7 @@ long NFmiMetBox::CalcTimeAddition()
 
 long NFmiMetBox::CalcStationAddition()
 {
-  return itsParamDescriptor ? itsParamDescriptor->GetSize() : 0;
+  return itsParamDescriptor != nullptr ? itsParamDescriptor->GetSize() : 0;
 }
 
 // ----------------------------------------------------------------------
@@ -189,13 +189,13 @@ std::istream &NFmiMetBox::Read(std::istream &file)
     file.putback(ver);
   }
 
-  if (!itsTimeDescriptor) itsTimeDescriptor = new NFmiTimeBag;
-  if (!itsParamDescriptor) itsParamDescriptor = new NFmiParamBag;
-  if (!itsStationDescriptor) itsStationDescriptor = new NFmiLocationBag;
+  if (itsTimeDescriptor == nullptr) itsTimeDescriptor = new NFmiTimeBag;
+  if (itsParamDescriptor == nullptr) itsParamDescriptor = new NFmiParamBag;
+  if (itsStationDescriptor == nullptr) itsStationDescriptor = new NFmiLocationBag;
 
   file >> *itsTimeDescriptor >> *itsParamDescriptor >> *itsStationDescriptor;
 
-  if (!itsData)
+  if (itsData == nullptr)
     itsData = new NFmiBox(CalcSize());
   else
     itsData->Initialize(CalcSize());

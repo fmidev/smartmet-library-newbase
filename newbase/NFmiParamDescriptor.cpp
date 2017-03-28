@@ -57,7 +57,7 @@ NFmiParamDescriptor::NFmiParamDescriptor(const NFmiParamBag &theParamBag, bool i
 
 NFmiParamDescriptor::NFmiParamDescriptor(const NFmiParamDescriptor &theParamDescriptor)
     : NFmiDataDescriptor(),
-      itsParamBag(theParamDescriptor.itsParamBag
+      itsParamBag(theParamDescriptor.itsParamBag != nullptr
                       ? new NFmiParamBag(*(theParamDescriptor.itsParamBag))
                       : nullptr),
       itsActivity(nullptr),
@@ -228,10 +228,11 @@ NFmiParamDescriptor &NFmiParamDescriptor::operator=(const NFmiParamDescriptor &t
 {
   Destroy();
 
-  itsParamBag =
-      theParamDescriptor.itsParamBag ? new NFmiParamBag(*theParamDescriptor.itsParamBag) : nullptr;
+  itsParamBag = theParamDescriptor.itsParamBag != nullptr
+                    ? new NFmiParamBag(*theParamDescriptor.itsParamBag)
+                    : nullptr;
 
-  if (itsParamBag)
+  if (itsParamBag != nullptr)
   {
     itsActivity = new bool[itsParamBag->GetSize()];
     for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
@@ -257,7 +258,7 @@ bool NFmiParamDescriptor::operator==(const NFmiParamDescriptor &theParamDescript
     for (int i = 0; i < static_cast<int>(Size()); i++)
       if (!(this->itsActivity[i] == theParamDescriptor.itsActivity[i])) return false;
   }
-  if (this->itsParamBag && theParamDescriptor.itsParamBag)
+  if ((this->itsParamBag != nullptr) && (theParamDescriptor.itsParamBag != nullptr))
   {
     return ((this->fInterpolate == theParamDescriptor.fInterpolate) &&
             (*(this->itsParamBag) == *(theParamDescriptor.itsParamBag)));
@@ -273,11 +274,11 @@ bool NFmiParamDescriptor::operator==(const NFmiParamDescriptor &theParamDescript
 
 const NFmiParamDescriptor NFmiParamDescriptor::Combine(const NFmiParamDescriptor &theCombine)
 {
-  if (itsParamBag && theCombine.itsParamBag)
+  if ((itsParamBag != nullptr) && (theCombine.itsParamBag != nullptr))
     return NFmiParamDescriptor(itsParamBag->Combine(*(theCombine).itsParamBag));
-  if (itsParamBag)
+  if (itsParamBag != nullptr)
     return NFmiParamDescriptor(*itsParamBag);
-  else if (theCombine.itsParamBag)
+  else if (theCombine.itsParamBag != nullptr)
     return NFmiParamDescriptor(*theCombine.itsParamBag);
   else
     return NFmiParamDescriptor();
@@ -375,7 +376,7 @@ NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSu
   // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
   // pielessä)
 
-  if (param) return *param;
+  if (param != nullptr) return *param;
 
   // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
   // jolloin palautetaan 1. parametrin tuottaja
@@ -404,7 +405,7 @@ NFmiDataIdent &NFmiParamDescriptor::EditParam(unsigned long theIndex, bool fIgno
   // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
   // pielessä)
 
-  if (param) return *param;
+  if (param != nullptr) return *param;
 
   // 28.12.2001/Marko Tämä on hätäviritys virhetilanteeseen.
   static NFmiParam dummyParam(kFmiBadParameter, "virheparametri, korjaa koodiasi");
