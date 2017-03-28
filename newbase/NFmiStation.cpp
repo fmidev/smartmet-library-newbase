@@ -108,13 +108,13 @@ NFmiStation::NFmiStation(const NFmiStation &theStation)
 bool NFmiStation::IsEqual(const NFmiSortable &theLocation) const
 {
   return ((GetIdent() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->GetIdent())) &&
           (GetName() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->GetName())) &&
           (IdentType() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->IdentType())));
 }
 
@@ -164,7 +164,7 @@ NFmiStation &NFmiStation::operator=(const NFmiStation &theStation)
 void NFmiStation::SetLocation(const NFmiLocation &theLocation)
 {
   NFmiIndividual::operator=(
-      *(static_cast<const NFmiIndividual *>(static_cast<const NFmiStation *>(&theLocation))));
+      *(static_cast<const NFmiIndividual *>(dynamic_cast<const NFmiStation *>(&theLocation))));
 
   NFmiLocation::SetLocation(theLocation);
 }

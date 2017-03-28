@@ -85,7 +85,7 @@ inline std::istream &operator>>(std::istream &file, NFmiStationBag &ob) { return
 
 inline const NFmiStation NFmiStationBag::Current() const
 {
-  return *static_cast<NFmiStation *>(itsLocations[itsIndex]);
+  return *dynamic_cast<NFmiStation *>(itsLocations[itsIndex]);
 }
 
 // ----------------------------------------------------------------------
@@ -115,7 +115,7 @@ inline bool NFmiStationBag::Current(const NFmiStation &theStation)
 
 inline const NFmiLocation *NFmiStationBag::Location() const
 {
-  return (static_cast<NFmiStation *>(itsLocations[itsIndex]));
+  return (dynamic_cast<NFmiStation *>(itsLocations[itsIndex]));
 }
 
 // ----------------------------------------------------------------------

@@ -798,10 +798,10 @@ bool NFmiTotalWind::SetToWeightedMean(NFmiCombinedParam *theCombinedParam1,
                                       float fac4)
 
 {
-  auto *theWind1 = static_cast<NFmiTotalWind *>(theCombinedParam1);
-  auto *theWind2 = static_cast<NFmiTotalWind *>(theCombinedParam2);
-  auto *theWind3 = static_cast<NFmiTotalWind *>(theCombinedParam3);
-  auto *theWind4 = static_cast<NFmiTotalWind *>(theCombinedParam4);
+  auto *theWind1 = dynamic_cast<NFmiTotalWind *>(theCombinedParam1);
+  auto *theWind2 = dynamic_cast<NFmiTotalWind *>(theCombinedParam2);
+  auto *theWind3 = dynamic_cast<NFmiTotalWind *>(theCombinedParam3);
+  auto *theWind4 = dynamic_cast<NFmiTotalWind *>(theCombinedParam4);
 
   float factorSum = fac1 + fac2;
   if (fac3 != kFloatMissing) factorSum += fac3;

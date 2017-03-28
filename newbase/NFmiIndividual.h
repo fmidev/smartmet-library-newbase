@@ -85,7 +85,7 @@ inline std::istream &operator>>(std::istream &file, NFmiIndividual &ob) { return
 
 inline bool NFmiIndividual::IsEqual(const NFmiSortable &theSortable) const
 {
-  return itsIdent == (static_cast<const NFmiIndividual &>(theSortable)).itsIdent;
+  return itsIdent == (dynamic_cast<const NFmiIndividual &>(theSortable)).itsIdent;
 }
 
 // ----------------------------------------------------------------------
@@ -97,7 +97,7 @@ inline bool NFmiIndividual::IsEqual(const NFmiSortable &theSortable) const
 
 inline bool NFmiIndividual::IsLessThan(const NFmiSortable &theSortable) const
 {
-  return itsIdent > (static_cast<const NFmiIndividual &>(theSortable)).itsIdent;
+  return itsIdent > (dynamic_cast<const NFmiIndividual &>(theSortable)).itsIdent;
 }
 
 // ======================================================================

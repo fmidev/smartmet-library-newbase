@@ -344,7 +344,8 @@ inline const NFmiLocation NFmiQueryData::Location() const { return (*(itsQueryIn
 
 inline const NFmiStation NFmiQueryData::Station() const
 {
-  return (*(const_cast<NFmiStation *>(static_cast<const NFmiStation *>(itsQueryInfo->Location()))));
+  return (
+      *(const_cast<NFmiStation *>(dynamic_cast<const NFmiStation *>(itsQueryInfo->Location()))));
 }
 
 // ----------------------------------------------------------------------

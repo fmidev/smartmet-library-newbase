@@ -202,7 +202,7 @@ double degrees_from_projparam(const string &inParam)
     throw runtime_error(errStr);
   }
 }
-} // namespace
+}  // namespace
 
 namespace NFmiAreaFactory
 {
@@ -473,8 +473,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
       if (proj == "invrotlatlon")
       {
-        BL = (static_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(BL);
-        TR = (static_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(TR);
+        BL = (dynamic_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(BL);
+        TR = (dynamic_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(TR);
       }
 
       area.reset(area->NewArea(BL, TR));

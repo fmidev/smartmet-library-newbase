@@ -214,17 +214,17 @@ NFmiStaticTime &NFmiStaticTime::operator=(const NFmiStaticTime &from)
 
 bool NFmiStaticTime::IsEqual(const NFmiSortable &aFmiTest) const
 {
-  if (GetYear() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return false;
+  if (GetYear() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return false;
 
-  if (GetMonth() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return false;
+  if (GetMonth() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return false;
 
-  if (GetDay() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return false;
+  if (GetDay() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return false;
 
-  if (GetHour() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return false;
+  if (GetHour() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return false;
 
-  if (GetMin() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return false;
+  if (GetMin() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return false;
 
-  if (GetSec() != (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetSec()) return false;
+  if (GetSec() != (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetSec()) return false;
 
   return true;
 }
@@ -238,22 +238,22 @@ bool NFmiStaticTime::IsEqual(const NFmiSortable &aFmiTest) const
 
 bool NFmiStaticTime::IsLessThan(const NFmiSortable &aFmiTest) const
 {
-  if (GetYear() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return false;
-  if (GetYear() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return true;
+  if (GetYear() > (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return false;
+  if (GetYear() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetYear()) return true;
 
-  if (GetMonth() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return false;
-  if (GetMonth() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return true;
+  if (GetMonth() > (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return false;
+  if (GetMonth() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMonth()) return true;
 
-  if (GetDay() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return false;
-  if (GetDay() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return true;
+  if (GetDay() > (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return false;
+  if (GetDay() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetDay()) return true;
 
-  if (GetHour() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return false;
-  if (GetHour() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return true;
+  if (GetHour() > (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return false;
+  if (GetHour() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetHour()) return true;
 
-  if (GetMin() > (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return false;
-  if (GetMin() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return true;
+  if (GetMin() > (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return false;
+  if (GetMin() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetMin()) return true;
 
-  if (GetSec() < (static_cast<const NFmiStaticTime *>(&aFmiTest))->GetSec()) return true;
+  if (GetSec() < (dynamic_cast<const NFmiStaticTime *>(&aFmiTest))->GetSec()) return true;
 
   return false;
 }

@@ -40,7 +40,7 @@ bool fDefaultPrecipitationTypeIsLargeScale = false;
 
 const float gMinimumPrecipitationForV6 = 0.1f;
 const float gMinimumPrecipitationForV7 = 0.015f;
-} // namespace
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -853,10 +853,10 @@ bool NFmiWeatherAndCloudiness::SetToWeightedMean(NFmiCombinedParam *theCombinedP
   // käytetään qinfosta painotettujen keskiarvojen laskemiseen
   // (latlon:n ympäröivistä 4:stä pisteestä)
 
-  auto *theWeatherAndCloudiness1 = static_cast<NFmiWeatherAndCloudiness *>(theCombinedParam1);
-  auto *theWeatherAndCloudiness2 = static_cast<NFmiWeatherAndCloudiness *>(theCombinedParam2);
-  auto *theWeatherAndCloudiness3 = static_cast<NFmiWeatherAndCloudiness *>(theCombinedParam3);
-  auto *theWeatherAndCloudiness4 = static_cast<NFmiWeatherAndCloudiness *>(theCombinedParam4);
+  auto *theWeatherAndCloudiness1 = dynamic_cast<NFmiWeatherAndCloudiness *>(theCombinedParam1);
+  auto *theWeatherAndCloudiness2 = dynamic_cast<NFmiWeatherAndCloudiness *>(theCombinedParam2);
+  auto *theWeatherAndCloudiness3 = dynamic_cast<NFmiWeatherAndCloudiness *>(theCombinedParam3);
+  auto *theWeatherAndCloudiness4 = dynamic_cast<NFmiWeatherAndCloudiness *>(theCombinedParam4);
 
   float factorSum = fac1 + fac2;
   if (fac3 != kFloatMissing) factorSum += fac3;
@@ -1978,7 +1978,8 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       // jos lonlat annettu  pitää ottaa paikan mukaan interpoloitu
       if (!locationMissing) newInfo->InterpolatedValue(theLonLat);
 
-      const auto *weather = static_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
+      const auto *weather =
+          dynamic_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
       if (weather != nullptr)
       {
         if (newInfo->Time() < info->Time())
@@ -2163,7 +2164,8 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       // jos lonlat annettu  pitää ottaa paikan mukaan interpoloitu
       if (!locationMissing) newInfo->InterpolatedValue(theLonLat);
 
-      const auto *weather = static_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
+      const auto *weather =
+          dynamic_cast<const NFmiWeatherAndCloudiness *>(newInfo->CombinedParam());
       if (weather != nullptr)
       {
         if (newInfo->Time() < info->Time())

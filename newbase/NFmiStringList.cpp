@@ -334,7 +334,7 @@ bool NFmiStringList::FindWithStatus(long status)
   {
     if (Current()->ClassId() == kNFmiStatusString ||
         Current()->ClassId() == kNFmiStatusPositionString)
-      if (status == (static_cast<NFmiStatusString *>(Current())->Status())) return true;
+      if (status == (dynamic_cast<NFmiStatusString *>(Current())->Status())) return true;
   }
   Reset();
   return false;

@@ -278,7 +278,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
   return (!strStream.fail());
 }
 
-} // namespace
+}  // namespace
 
 // ----------------------------------------------------------------------
 //			CLASS METHODS

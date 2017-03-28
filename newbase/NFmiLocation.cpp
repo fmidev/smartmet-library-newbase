@@ -73,8 +73,8 @@ bool NFmiLocation::operator<(const NFmiLocation &theLocation) const
 
 bool NFmiLocation::IsEqual(const NFmiSortable &theSortable) const
 {
-  return (itsLatlon.Y() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
-          itsLatlon.X() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  return (itsLatlon.Y() == (dynamic_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
+          itsLatlon.X() == (dynamic_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
 }
 
 // ----------------------------------------------------------------------
@@ -86,8 +86,8 @@ bool NFmiLocation::IsEqual(const NFmiSortable &theSortable) const
 
 bool NFmiLocation::IsLessThan(const NFmiSortable &theSortable) const
 {
-  return (itsLatlon.Y() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
-          itsLatlon.X() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  return (itsLatlon.Y() > (dynamic_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
+          itsLatlon.X() > (dynamic_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
 }
 
 // ----------------------------------------------------------------------

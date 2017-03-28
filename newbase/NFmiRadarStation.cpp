@@ -106,13 +106,13 @@ bool NFmiRadarStation::IsEqual(const NFmiSortable &theLocation) const
 {
   return (NFmiStation::IsEqual(theLocation) &&
           (Resolution() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiRadarStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->Resolution())) &&
           (XNumber() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiRadarStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->XNumber())) &&
           (YNumber() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+           (dynamic_cast<const NFmiRadarStation *>(dynamic_cast<const NFmiLocation *>(&theLocation))
                 ->YNumber())));
 }
 

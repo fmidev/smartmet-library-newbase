@@ -381,7 +381,7 @@ inline const NFmiMetTime NFmiMetBoxIterator::CurrentTime()
 
 inline unsigned long NFmiMetBoxIterator::CurrentStation()
 {
-  return (static_cast<const NFmiStation *>(itsStationDescriptor->Location())->GetIdent());
+  return (dynamic_cast<const NFmiStation *>(itsStationDescriptor->Location())->GetIdent());
 }
 
 // ----------------------------------------------------------------------
@@ -411,7 +411,7 @@ inline const NFmiMetTime NFmiMetBoxIterator::Time() { return itsTimeDescriptor->
 inline const NFmiStation NFmiMetBoxIterator::Station()
 {
   return *(const_cast<NFmiStation *>(
-      static_cast<const NFmiStation *>(itsStationDescriptor->Location())));
+      dynamic_cast<const NFmiStation *>(itsStationDescriptor->Location())));
 }
 
 // ----------------------------------------------------------------------

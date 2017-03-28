@@ -567,7 +567,7 @@ bool NFmiKKJArea::operator!=(const NFmiKKJArea &theArea) const { return (!(*this
 
 bool NFmiKKJArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == *(static_cast<const NFmiKKJArea *>(&theArea));
+  return *this == *(dynamic_cast<const NFmiKKJArea *>(&theArea));
 }
 
 // ----------------------------------------------------------------------

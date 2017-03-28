@@ -428,7 +428,7 @@ const std::string NFmiMercatorArea::WKT() const
 
 bool NFmiMercatorArea::operator==(const NFmiArea& theArea) const
 {
-  return *this == static_cast<const NFmiMercatorArea&>(theArea);
+  return *this == dynamic_cast<const NFmiMercatorArea&>(theArea);
 }
 
 // ----------------------------------------------------------------------

@@ -113,7 +113,7 @@ const NFmiPoint toreglatlon(const NFmiPoint &theRotLatLonPoint,
 
   return NFmiPoint(XReg.Value(), YReg.Value());
 }
-} // namespace
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -334,7 +334,7 @@ const std::string NFmiRotatedLatLonArea::WKT() const
 
 bool NFmiRotatedLatLonArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiRotatedLatLonArea &>(theArea);
+  return *this == dynamic_cast<const NFmiRotatedLatLonArea &>(theArea);
 }
 
 // ----------------------------------------------------------------------

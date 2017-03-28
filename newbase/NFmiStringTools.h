@@ -162,6 +162,6 @@ inline const std::string Join(const T &theWords, const std::string &theSeparator
   }
   return ret;
 }
-} // namespace NFmiStringTools
+}  // namespace NFmiStringTools
 
 // ======================================================================

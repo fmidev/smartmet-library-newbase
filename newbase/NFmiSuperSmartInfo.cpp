@@ -240,7 +240,7 @@ void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& 
   for (size_t i = 0; i < size; i++)
     if (helperBinaryMaskList[i] != nullptr)
       itsHelperBinaryMaskList[i] =
-          static_cast<NFmiBitmapAreaMask*>(helperBinaryMaskList[i]->Clone());
+          dynamic_cast<NFmiBitmapAreaMask*>(helperBinaryMaskList[i]->Clone());
   SetCurrentHelperBinaryMask();
 }
 // ----------------------------------------------------------------------

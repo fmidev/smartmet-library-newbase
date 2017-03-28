@@ -296,7 +296,7 @@ bool NFmiGdalArea::operator!=(const NFmiGdalArea &theArea) const { return !(*thi
 
 bool NFmiGdalArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiGdalArea &>(theArea);
+  return *this == dynamic_cast<const NFmiGdalArea &>(theArea);
 }
 
 // ----------------------------------------------------------------------

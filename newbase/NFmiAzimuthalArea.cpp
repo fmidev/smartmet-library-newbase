@@ -801,7 +801,7 @@ bool NFmiAzimuthalArea::operator!=(const NFmiAzimuthalArea &theArea) const
 
 bool NFmiAzimuthalArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiAzimuthalArea &>(theArea);
+  return *this == dynamic_cast<const NFmiAzimuthalArea &>(theArea);
 }
 
 // ----------------------------------------------------------------------

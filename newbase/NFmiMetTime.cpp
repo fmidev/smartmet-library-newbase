@@ -111,7 +111,7 @@ bool NFmiMetTime::IsEqual(const NFmiSortable &aFmiTest) const
 {
   if ((itsNegativeRange != 0) || (itsPositiveRange != 0))
   {
-    long diff = DifferenceInMinutes(*static_cast<const NFmiTime *>(&aFmiTest));
+    long diff = DifferenceInMinutes(*dynamic_cast<const NFmiTime *>(&aFmiTest));
     return diff <= itsNegativeRange && (-diff) <= itsPositiveRange;
   }
   return NFmiTime::IsEqual(aFmiTest);

@@ -166,7 +166,8 @@ NFmiString::~NFmiString() { delete[] fChar; }
 bool NFmiString::IsEqual(const NFmiSortable &fFmi) const
 {
   return strcmp(reinterpret_cast<char *>(fChar),
-                reinterpret_cast<const char *>((static_cast<const NFmiString &>(fFmi)).fChar)) == 0;
+                reinterpret_cast<const char *>((dynamic_cast<const NFmiString &>(fFmi)).fChar)) ==
+         0;
 }
 
 // ----------------------------------------------------------------------
@@ -326,7 +327,7 @@ void NFmiString::SetCharPtr(unsigned char *aChar)
 bool NFmiString::IsLessThan(const NFmiSortable &fFmi) const
 {
   return (strcmp(reinterpret_cast<char *>(fChar),
-                 (reinterpret_cast<char *>((static_cast<const NFmiString &>(fFmi)).fChar))) < 0);
+                 (reinterpret_cast<char *>((dynamic_cast<const NFmiString &>(fFmi)).fChar))) < 0);
 }
 
 // ----------------------------------------------------------------------

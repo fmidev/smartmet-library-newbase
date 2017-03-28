@@ -56,7 +56,7 @@ void NFmiMaskedDataIterator::DoForEach(NFmiDataModifier *theDataModifier)
 {
   if (theDataModifier == nullptr) return;
 
-  auto *superDataInfo = static_cast<NFmiSuperSmartInfo *>(itsData);
+  auto *superDataInfo = dynamic_cast<NFmiSuperSmartInfo *>(itsData);
   unsigned long oldLocationIndex = superDataInfo->LocationIndex();
   theDataModifier->Clear();
   superDataInfo->ResetLocation();
@@ -64,7 +64,7 @@ void NFmiMaskedDataIterator::DoForEach(NFmiDataModifier *theDataModifier)
   {
     if (fIsCombinedParam)
     {
-      auto *combParam = static_cast<NFmiWeatherAndCloudiness *>(superDataInfo->CombinedValue());
+      auto *combParam = dynamic_cast<NFmiWeatherAndCloudiness *>(superDataInfo->CombinedValue());
       if (combParam != nullptr)
         theDataModifier->Calculate(
             NFmiWeatherAndCloudiness(combParam->IntegratedLongValue(itsIntegrationSelector),

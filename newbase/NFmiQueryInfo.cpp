@@ -1381,16 +1381,16 @@ float NFmiQueryInfo::InterpolatedValueForCombinedParam(const NFmiPoint &theGridP
 
   PeekLocationValue(0 - xShift, 0 - yShift);
   NFmiWeatherAndCloudiness bottomLeftweather(
-      *static_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
+      *dynamic_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
   PeekLocationValue(1 - xShift, 0 - yShift);
   NFmiWeatherAndCloudiness bottomRightweather(
-      *static_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
+      *dynamic_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
   PeekLocationValue(0 - xShift, 1 - yShift);
   NFmiWeatherAndCloudiness topLeftweather(
-      *static_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
+      *dynamic_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
   PeekLocationValue(1 - xShift, 1 - yShift);
   NFmiWeatherAndCloudiness topRightweather(
-      *static_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
+      *dynamic_cast<NFmiWeatherAndCloudiness *>(itsCombinedParamParser));
 
   double dx = theGridPoint.X() - int(theGridPoint.X());
   double dy = theGridPoint.Y() - int(theGridPoint.Y());

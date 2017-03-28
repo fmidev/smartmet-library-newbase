@@ -98,10 +98,10 @@ bool MyGrid::operator<(const MyGrid &theGrid) const
     if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea ||
         itsArea->ClassId() == kNFmiGnomonicArea)
     {
-      if (static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
-          static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
-        return static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() <
-               static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation();
+      if (dynamic_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
+          dynamic_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
+        return dynamic_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() <
+               dynamic_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation();
     }
   }
   return false;
@@ -4239,7 +4239,7 @@ struct less<NFmiDataIdent>
     return lhs.GetParamIdent() < rhs.GetParamIdent();
   }
 };
-} // namespace std
+}  // namespace std
 
 static NFmiParamDescriptor MakeParamDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorIn)
@@ -4270,7 +4270,7 @@ struct less<NFmiLevel>
     return lhs.LevelValue() < rhs.LevelValue();
   }
 };
-} // namespace std
+}  // namespace std
 
 static NFmiVPlaceDescriptor MakeVPlaceDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorIn)
@@ -5077,8 +5077,8 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
         if (theArea1->ClassId() == kNFmiStereographicArea ||
             theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
         {
-          return static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-                 static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
+          return dynamic_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+                 dynamic_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
         }
         else
           return true;
@@ -5095,8 +5095,8 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
     if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea ||
         theArea1->ClassId() == kNFmiGnomonicArea)
     {
-      return static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-             static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
+      return dynamic_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+             dynamic_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
     }
     else if (theArea1->ClassId() == theArea2->ClassId())
       return true;

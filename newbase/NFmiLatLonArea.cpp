@@ -284,7 +284,7 @@ const std::string NFmiLatLonArea::WKT() const
 
 bool NFmiLatLonArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiLatLonArea &>(theArea);
+  return *this == dynamic_cast<const NFmiLatLonArea &>(theArea);
 }
 
 // ----------------------------------------------------------------------
