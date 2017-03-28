@@ -99,8 +99,8 @@ class _FMI_DLL NFmiMetBoxIterator
   void ResetParam(FmiDirection directionToIter = kForward);
   void Reset(FmiDirection directionToIter = kForward);
 
-  const TMetTime FirstTime();
-  const TMetTime LastTime();
+  const NFmiMetTime FirstTime();
+  const NFmiMetTime LastTime();
   unsigned long TimeFromStart();
   bool NextTime();
   bool NextStation();
@@ -122,17 +122,17 @@ class _FMI_DLL NFmiMetBoxIterator
 
   float CurrentValue();
 
-  const TMetTime CurrentTime();
+  const NFmiMetTime CurrentTime();
   unsigned long CurrentStation();
   FmiParameterName CurrentParam();
 
-  const TMetTime Time();
+  const NFmiMetTime Time();
   const NFmiStation Station();
   const NFmiDataIdent Param();
 
   unsigned long TimeResolution();
 
-  bool CurrentTime(const TMetTime &newTime);
+  bool CurrentTime(const NFmiMetTime &newTime);
   bool CurrentStation(unsigned long newStation);
   bool CurrentParam(FmiParameterName newParam);
   bool CurrentParam(const NFmiDataIdent &newParam);
@@ -344,14 +344,14 @@ inline void NFmiMetBoxIterator::Reset(FmiDirection directionToIter)
  */
 // ----------------------------------------------------------------------
 
-inline const TMetTime NFmiMetBoxIterator::FirstTime() { return itsTimeDescriptor->FirstTime(); }
+inline const NFmiMetTime NFmiMetBoxIterator::FirstTime() { return itsTimeDescriptor->FirstTime(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const TMetTime NFmiMetBoxIterator::LastTime() { return itsTimeDescriptor->LastTime(); }
+inline const NFmiMetTime NFmiMetBoxIterator::LastTime() { return itsTimeDescriptor->LastTime(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -369,7 +369,10 @@ inline unsigned long NFmiMetBoxIterator::TimeFromStart()
  */
 // ----------------------------------------------------------------------
 
-inline const TMetTime NFmiMetBoxIterator::CurrentTime() { return itsTimeDescriptor->CurrentTime(); }
+inline const NFmiMetTime NFmiMetBoxIterator::CurrentTime()
+{
+  return itsTimeDescriptor->CurrentTime();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -398,7 +401,7 @@ inline FmiParameterName NFmiMetBoxIterator::CurrentParam()
  */
 // ----------------------------------------------------------------------
 
-inline const TMetTime NFmiMetBoxIterator::Time() { return itsTimeDescriptor->CurrentTime(); }
+inline const NFmiMetTime NFmiMetBoxIterator::Time() { return itsTimeDescriptor->CurrentTime(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -436,7 +439,7 @@ inline unsigned long NFmiMetBoxIterator::TimeResolution()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiMetBoxIterator::CurrentTime(const TMetTime &newTime)
+inline bool NFmiMetBoxIterator::CurrentTime(const NFmiMetTime &newTime)
 {
   return itsTimeDescriptor->SetCurrent(newTime);
 }

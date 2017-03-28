@@ -108,11 +108,6 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
 
 };  // class NFmiMetTime
 
-//! Undocumented, should be removed
-typedef NFmiMetTime* PTMetTime;
-//! Undocumented, should be removed
-typedef NFmiMetTime TMetTime;
-
 // ----------------------------------------------------------------------
 /*!
  * Constructor

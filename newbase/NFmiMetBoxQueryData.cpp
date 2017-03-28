@@ -72,14 +72,14 @@ NFmiMetBox* NFmiMetBoxQueryData::Value()
   NextParam();
 
   // Set TimeBag Descritor
-  TMetTime theFirstTime(ValidTime());
+  NFmiMetTime theFirstTime(ValidTime());
   unsigned long theNumber = TimeDesc()->Size();
   unsigned int i;
   for (i = 1; i < theNumber; i++)
   {
     NextTime();
   }
-  TMetTime theLastTime(ValidTime());
+  NFmiMetTime theLastTime(ValidTime());
   unsigned long theResolution = 180;
   NFmiTimeBag* theTimeBag = new NFmiTimeBag(theFirstTime, theLastTime, theResolution);
 
