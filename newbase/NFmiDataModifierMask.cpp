@@ -76,7 +76,7 @@ bool NFmiDataModifierMask::BoolOperation(float theValue)
     case kFmiMaskLessThanOrGreaterOrEqual:
       return (theValue < its1Limit || theValue >= its2Limit);
     case kFmiMaskEqualOrEqual:
-      return (round(theValue) == its1Limit || round(theValue) == its2Limit);
+      return (std::round(theValue) == its1Limit || std::round(theValue) == its2Limit);
     case kFmiMaskAll:
       return true;
     case kFmiMaskRisingRamp:

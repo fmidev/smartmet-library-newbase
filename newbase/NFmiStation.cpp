@@ -67,8 +67,8 @@ NFmiStation::NFmiStation(long theIdent,
  */
 // ----------------------------------------------------------------------
 
-NFmiStation::NFmiStation(NFmiIndividual theIdent,
-                         NFmiLocation theLocation,
+NFmiStation::NFmiStation(const NFmiIndividual &theIdent,
+                         const NFmiLocation &theLocation,
                          double theMaxDistance,
                          FmiStationType theIdentType)
     : NFmiLocation(theIdent.GetIdent(),

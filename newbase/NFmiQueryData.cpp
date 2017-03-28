@@ -35,6 +35,7 @@
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
+#include <utility>
 #endif
 
 //#ifndef  NDEBUG
@@ -675,7 +676,7 @@ boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
 
 void NFmiQueryData::SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache)
 {
-  itsLatLonCache = newCache;
+  itsLatLonCache = std::move(newCache);
 }
 
 // ----------------------------------------------------------------------

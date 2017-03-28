@@ -106,7 +106,7 @@ class _FMI_DLL NFmiTime : public NFmiStaticTime
   void SetZoneDifferenceHour();
   short CalcZoneDifferenceHour(float theLongitude) const;
   const NFmiString RelativeDay(FmiLanguage theLanguage,
-                               NFmiString theFormat,
+                               const NFmiString &theFormat,
                                int &thePlusInd) const;
 
   static std::string GetDictionaryString(const char *theMagicWord);

@@ -315,7 +315,7 @@ bool NFmiPreProcessor::Include()
   while (pos != string::npos)
   {
     newString += oldString.substr(0, pos);
-    posHelp = oldString.find_first_of("\n", pos + lenDef + 1);
+    posHelp = oldString.find_first_of('\n', pos + lenDef + 1);
     fileName = oldString.substr(pos + lenDef + 1, posHelp - pos - lenDef - 1);
     NFmiStringTools::TrimR(fileName);  // tämä viritys johtuu metkun editorin smarttool dialogista,
                                        // poistetaan mahd. white spacet nimen lopusta
@@ -356,7 +356,7 @@ bool NFmiPreProcessor::Include()
 
 bool NFmiPreProcessor::CompleteFileName(string &theFileName)
 {
-  if (theFileName.find(".") == string::npos)
+  if (theFileName.find('.') == string::npos)
   {
     if (!itsIncludeExtension.empty())
     {
@@ -364,7 +364,7 @@ bool NFmiPreProcessor::CompleteFileName(string &theFileName)
       theFileName += itsIncludeExtension;
     }
   }
-  if (theFileName.find(":") == string::npos && !itsIncludePath.empty())
+  if (theFileName.find(':') == string::npos && !itsIncludePath.empty())
   {
     string prefix = itsIncludePath;
     prefix += kFmiDirectorySeparator;
@@ -654,7 +654,7 @@ bool NFmiPreProcessor::SetReplaceMap(const std::map<std::string, std::string> &t
  */
 // ----------------------------------------------------------------------
 
-bool NFmiPreProcessor::AddReplaceString(const std::string fromString, const std::string toString)
+bool NFmiPreProcessor::AddReplaceString(const std::string &fromString, const std::string &toString)
 {
   auto ret = itsReplaceMap.insert(std::pair<std::string, std::string>(fromString, toString));
 

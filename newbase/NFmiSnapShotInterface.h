@@ -25,8 +25,8 @@ class _FMI_DLL NFmiSnapShotInterface
  public:
   virtual ~NFmiSnapShotInterface();
   NFmiSnapShotInterface(NFmiString theDataFileName = "KEPA",
-                        NFmiString theWorkingDirectory = kFmiWorkingDirectory,
-                        NFmiString theSourceDirectory = kFmiSourceDirectory,
+                        const NFmiString& theWorkingDirectory = kFmiWorkingDirectory,
+                        const NFmiString& theSourceDirectory = kFmiSourceDirectory,
                         time_t theUpdateInterval = /*24*60**/ 60);
 
   bool IsValid();

@@ -40,7 +40,7 @@ class _FMI_DLL NFmiIndividual : public NFmiSortable
   virtual std::istream &Read(std::istream &file);
 
   virtual const char *ClassName() const { return "NFmiIndividual"; }
-  void SetContents(long ident, NFmiString name);
+  void SetContents(long ident, const NFmiString &name);
 
   std::size_t HashValue() const;
 

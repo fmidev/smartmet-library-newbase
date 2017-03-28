@@ -1086,7 +1086,7 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
 // ----------------------------------------------------------------------
 
 const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
-                                       NFmiString theFormat,
+                                       const NFmiString &theFormat,
                                        int &thePlusInd) const
 {
   NFmiTime currentTime;

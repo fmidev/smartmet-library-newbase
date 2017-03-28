@@ -28,6 +28,7 @@
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
 
+#include <cmath>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -2379,7 +2380,7 @@ float CalcLogModLinearInterpolatedValue(
       y = y1 != kFloatMissing ? y1 : y2;
     else if (y1 != kFloatMissing && y2 != kFloatMissing)
     {
-      float w = (::log(x) - ::log(x1)) / (::log(x2) - ::log(x1));
+      float w = (std::log(x) - std::log(x1)) / (std::log(x2) - std::log(x1));
       y = static_cast<float>(NFmiInterpolation::ModLinear(w, y1, y2, modulo));
     }
     else if (y1 != kFloatMissing)  // jos toinen -arvoista puuttuu annetaan arvoksi toinen
@@ -2871,7 +2872,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
         auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
         if (param == kFmiWindDirection || param == kFmiWaveDirection)
         {
-          float factor = ::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue);
+          float factor = std::fabs(P - lastPressure) / std::fabs(lastPressure - pressureValue);
           value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
         }
         else
@@ -2880,7 +2881,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
       }
       else
       {  // muut tapaukset eli nearest interpolointi
-        if (::fabs(P - pressureValue) < ::fabs(P - lastPressure))
+        if (std::fabs(P - pressureValue) < std::fabs(P - lastPressure))
           value = value1;
         else
           value = value2;
@@ -2925,7 +2926,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P, const NFmiPoint &theLatlon)
       if (param != kFmiWindDirection && param != kFmiWaveDirection)
         return static_cast<float>(CalcLogInterpolatedValue(p1, p2, P, value1, value2));
 
-      float factor = ::fabs(P - p1) / ::fabs(p2 - p1);
+      float factor = std::fabs(P - p1) / std::fabs(p2 - p1);
       return static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
     }
   }
@@ -3019,7 +3020,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
           FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
           if (IsGrid() && interp == kLinearly)
           {  // lineaarinen interpolointi
-            float factor = ::fabs(theHeight - lastHeight) / ::fabs(lastHeight - heightValue);
+            float factor = std::fabs(theHeight - lastHeight) / std::fabs(lastHeight - heightValue);
             auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
             if (param == kFmiWindDirection || param == kFmiWaveDirection)
               value = static_cast<float>(
@@ -3029,7 +3030,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
           }
           else
           {  // muut tapaukset eli nearest interpolointi
-            if (::fabs(theHeight - heightValue) < ::fabs(theHeight - lastHeight))
+            if (std::fabs(theHeight - heightValue) < std::fabs(theHeight - lastHeight))
               value = value1;
             else
               value = value2;
@@ -3263,7 +3264,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
       return static_cast<float>(CalcLogInterpolatedValue(p1, p2, theP, value1, value2));
     else if (theInterpolationMethod == kNearestPoint)
     {
-      if (::fabs(theP - p1) < ::fabs(theP - p2)) return value1;
+      if (std::fabs(theP - p1) < std::fabs(theP - p2)) return value1;
 
       return value2;
     }
@@ -4876,7 +4877,7 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValueDewPoint(float theHeight,
   const float L = 2.501e6;  // specific latent heat of evaporation of water
 
   t2m += 273.15;  // convert to Kelvins
-  return t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15;
+  return t2m / (1 - t2m * std::log(rh / 100) * Rw / L) - 273.15;
 }
 
 // ----------------------------------------------------------------------
@@ -4947,7 +4948,7 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
       if ((t2m != kFloatMissing) && (rh != kFloatMissing))
       {
         t2m += 273.15;
-        theLandscapedMatrix[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15;
+        theLandscapedMatrix[i][j] = t2m / (1 - t2m * std::log(rh / 100) * Rw / L) - 273.15;
       }
       else if (cropNativeGrid)
         theLandscapedMatrix[i][j] = theMatrix[i][j];

@@ -2991,7 +2991,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
       timeIndex = TimeIndex();
     }
     float returnValue = kFloatMissing;
-    NFmiMetTime firstTime(timeBag->FirstTime());
+    const NFmiMetTime &firstTime(timeBag->FirstTime());
     int timeResolution = timeBag->Resolution();
     int minuteOffSetOfWantedTimeInTimeBag =
         theTime.DifferenceInMinutes(firstTime) - (timeResolution * timeIndex);

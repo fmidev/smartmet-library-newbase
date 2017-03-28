@@ -120,11 +120,11 @@ NFmiTimeCache::NFmiTimeCache()
 NFmiTimeCache::~NFmiTimeCache() = default;
 void NFmiTimeCache::CalcIsInterpolationNeeded()
 {
-  double diff = ::fabs(itsOffset - ::round(itsOffset));
+  double diff = ::fabs(itsOffset - std::round(itsOffset));
 
   if (diff < gGridPointEpsilon)  // käytetään tässä samaa epsilonia
   {
-    itsOffset = static_cast<float>(::round(itsOffset));
+    itsOffset = static_cast<float>(std::round(itsOffset));
     if (itsOffset == 0)
       itsTimeIndex1 = itsTimeIndex2;
     else

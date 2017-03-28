@@ -192,7 +192,7 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
         string::size_type pos = rowbuffer.find(theOptionText);
         if (pos != string::npos)
         {
-          string::size_type lastPos = rowbuffer.find_first_of(" ", pos);
+          string::size_type lastPos = rowbuffer.find_first_of(' ', pos);
           string option = rowbuffer.substr(pos, lastPos - pos);
           theOptionTexts.insert(option);
         }

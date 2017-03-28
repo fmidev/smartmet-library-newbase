@@ -21,6 +21,7 @@
 #include "NFmiQueryDataUtil.h"
 
 #include <cassert>
+#include <cmath>
 #include <utility>
 
 // HUOM!!! Jostain syystä kun käytin täällä boost::math::iround -funktiota, se ei mennyt parissa
@@ -954,7 +955,7 @@ double NFmiInfoAreaMaskGrad::Value(const NFmiCalculationParams &theCalculationPa
       return divergence;
     }
 
-    float gradScalar = ::sqrt((gradX * gradX) + (gradY * gradY));  // lasketaan komponenttien
+    float gradScalar = std::sqrt((gradX * gradX) + (gradY * gradY));  // lasketaan komponenttien
     // avulla pituus ja käytetään
     // sitä paluuarvona (skalaari
     // arvo, vaikka gradientti on
@@ -1225,10 +1226,10 @@ double NFmiInfoAreaMaskRotor::Value(const NFmiCalculationParams &theCalculationP
       locationCache, false, locationCache.itsGridPoint.Y(), itsGridSizeY);  // y-komponentti
   if (itsMetFunctionDirection == DirectionXandY && rotX != kFloatMissing && rotY != kFloatMissing)
   {
-    float rotScalar = ::sqrt((rotX * rotX) + (rotY * rotY));  // lasketaan komponenttien avulla
-                                                              // pituus ja käytetään sitä
-                                                              // paluuarvona (skalaari arvo, vaikka
-                                                              // rotor on oikeasti vektori suure)
+    float rotScalar = std::sqrt((rotX * rotX) + (rotY * rotY));  // lasketaan komponenttien avulla
+                                                                 // pituus ja käytetään sitä
+    // paluuarvona (skalaari arvo, vaikka
+    // rotor on oikeasti vektori suure)
     return rotScalar;
   }
   if (itsMetFunctionDirection == DirectionX)
@@ -1450,7 +1451,7 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
           // alarajan etsintä koodia
           if (minStartDiff > 0)  // ei ole vielä löytynyt tarkkaa leveliä
           {
-            float currentDiff = ::fabs(itsStartLevelValue - aLevel->LevelValue());
+            float currentDiff = std::fabs(itsStartLevelValue - aLevel->LevelValue());
             if (currentDiff < minStartDiff)
             {
               // closestInsideStartLevelValue = aLevel->LevelValue();
@@ -1462,7 +1463,7 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
           // ylärajan etsintä koodia
           if (minEndDiff > 0)  // ei ole vielä löytynyt tarkkaa leveliä
           {
-            float currentDiff = ::fabs(itsEndLevelValue - aLevel->LevelValue());
+            float currentDiff = std::fabs(itsEndLevelValue - aLevel->LevelValue());
             if (currentDiff < minEndDiff)
             {
               // closestInsideEndLevelValue = aLevel->LevelValue();
@@ -1703,7 +1704,7 @@ float NFmiInfoAreaMaskVertFunc::DoVerticalGrad(const NFmiLocationCache &theLocat
   float value2 = DoGetFunction(theLocationCache, theCalculationParams, itsEndLevelValue);
   if (value1 != kFloatMissing && value2 != kFloatMissing)
   {
-    float result = ::fabs(value2 - value1) / ::fabs(itsEndLevelValue - itsStartLevelValue);
+    float result = std::fabs(value2 - value1) / std::fabs(itsEndLevelValue - itsStartLevelValue);
     return result;
   }
 

@@ -26,8 +26,8 @@ class _FMI_DLL NFmiStation : public NFmiLocation
               double theMaxDistance = static_cast<double>(kFloatMissing),
               FmiStationType theIdentType = kWMO);
 
-  NFmiStation(NFmiIndividual theIdent,
-              NFmiLocation theLocation,
+  NFmiStation(const NFmiIndividual& theIdent,
+              const NFmiLocation& theLocation,
               double theMaxDistance = static_cast<double>(kFloatMissing),
               FmiStationType theIdentType = kWMO);
 

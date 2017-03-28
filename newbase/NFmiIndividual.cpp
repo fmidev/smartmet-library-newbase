@@ -88,7 +88,7 @@ std::istream& NFmiIndividual::Read(std::istream& file)
   return file;
 }
 
-void NFmiIndividual::SetContents(long ident, NFmiString name)
+void NFmiIndividual::SetContents(long ident, const NFmiString& name)
 {
   itsIdent = ident;
   itsName = name;

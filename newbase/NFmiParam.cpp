@@ -36,7 +36,7 @@ NFmiParam::NFmiParam(unsigned long theIdent,
                      double theMaxValue,
                      float theScale,
                      float theBase,
-                     const NFmiString thePrecision,
+                     const NFmiString &thePrecision,
                      FmiInterpolationMethod theInterpolationMethod)
     : NFmiIndividual(theIdent, theName),
       itsMinValue(theMinValue),

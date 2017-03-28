@@ -184,7 +184,7 @@ inline NFmiString &NFmiString::operator+=(const NFmiString &aFmiString)
 {
   if (this == &aFmiString)
   {
-    NFmiString tmpStr(aFmiString);
+    const NFmiString &tmpStr(aFmiString);
     Add(tmpStr.GetCharPtr());
     return *this;
   }

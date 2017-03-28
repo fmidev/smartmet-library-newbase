@@ -75,7 +75,7 @@ float NFmiModMeanCalculator::operator()() const
   if (!itsValid || itsCount == 0 || itsWeightSum == 0) return kFloatMissing;
 
   float mean = itsWeightedSum / itsWeightSum;
-  mean -= itsModulo * floor(mean / itsModulo);
+  mean -= itsModulo * std::floor(mean / itsModulo);
   return mean;
 }
 

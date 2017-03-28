@@ -1585,7 +1585,7 @@ NFmiTimeBag MakeReferenceTimeBagCheck(const NFmiTimeBag &theTimeBag,
                                       NFmiTimeBag *thePossibleReferenceTimeBag)
 {
   NFmiMetTime startTime(theTimeBag.FirstTime());
-  NFmiMetTime startRefTime(thePossibleReferenceTimeBag->FirstTime());
+  const NFmiMetTime &startRefTime(thePossibleReferenceTimeBag->FirstTime());
   int resolutionInMinutes = theTimeBag.Resolution();
   int shiftInMinutes = abs(startTime.DifferenceInMinutes(startRefTime) % resolutionInMinutes);
   if (shiftInMinutes == 0) return theTimeBag;
@@ -3301,8 +3301,9 @@ bool NFmiQueryDataUtil::DoNowCastFiltering(const NFmiString &theData1FileName,
     // Tulos tiedostoon
     if (newQueryData != nullptr)
     {
-      NFmiString realOutFileName(theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
-                                                      // outputFileName koska jakelija ei osaa
+      const NFmiString &realOutFileName(
+          theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
+                               // outputFileName koska jakelija ei osaa
       // hoitaa muuttunutta tiedoston nimeä vielä
       ofstream out(realOutFileName, ios::binary);
       if (out != nullptr)
@@ -4135,7 +4136,7 @@ void NFmiQueryDataUtil::AddRange(NFmiThreadCallBacks *theThreadCallBacks, int va
 // Oletuksia: theFilesIn on tiedostojen uutuus järjestyksessä.
 // Jos theBaseQData:ssa on data, haetaan vain sen viimeistä dataa uudemmat queryDatat,
 // eli loopin voi lopettaa 1. missä ajat vanhempia (tiedostojen aika järjestys)
-static void ReadQueryDataFiles(boost::shared_ptr<NFmiQueryData> theBaseQData,
+static void ReadQueryDataFiles(const boost::shared_ptr<NFmiQueryData> &theBaseQData,
                                const std::string &theDirName,
                                std::vector<std::string> &theFilesIn,
                                std::vector<boost::shared_ptr<NFmiQueryData> > &theQDataVectorOut,
