@@ -300,7 +300,7 @@ bool NFmiPreProcessor::Include()
     return false;
   }
   itsCurNumOfIncludes++;
-  string newString = "";
+  string newString;
   string oldString(itsString);
   string fileContents, fileName;
   std::string::size_type lenDef = itsIncludeDirective.length();
@@ -425,7 +425,7 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
                                        const string &theEndDirective2)
 {
   string oldString(itsString);
-  string newString = "";
+  string newString;
   string::size_type posbigalku = oldString.find(theBeginDirective);
   string::size_type posbigloppu, posbigloppu2;
   string::size_type len = theEndDirective.length();

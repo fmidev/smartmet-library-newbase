@@ -327,7 +327,7 @@ bool NFmiCommentStripper::CollectAndStripNested(const string& theBeginDirective,
 bool NFmiCommentStripper::StripDoubleSlashes()  // from to endline
 {
   string oldString(itsString);
-  string newString = "";
+  string newString;
   string doubleSlash = "//";
   string::size_type posbigalku = oldString.find(doubleSlash);
   string::size_type posbigloppu;
@@ -364,7 +364,7 @@ bool NFmiCommentStripper::StripDoubleSlashes()  // from to endline
 bool NFmiCommentStripper::StripPounds()  // from pound to end of line
 {
   string oldString(itsString);
-  string newString = "";
+  string newString;
   string pound = "#";
   string::size_type posbigalku = oldString.find(pound);
   string::size_type posbigloppu;
@@ -399,7 +399,7 @@ bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
                                       const string& theEndDirective)
 {
   string oldString(itsString);
-  string newString = "";
+  string newString;
   string::size_type posbigalku = oldString.find(theBeginDirective);
   string::size_type posbigloppu;
   string::size_type len = theEndDirective.length();
@@ -440,7 +440,7 @@ bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
 bool NFmiCommentStripper::StripSubStrings(const string& theString)
 {
   string oldString(itsString);
-  string newString = "";
+  string newString;
   string::size_type posbigalku = oldString.find(theString);
   string::size_type posbigloppu;
   string::size_type len = theString.length();
