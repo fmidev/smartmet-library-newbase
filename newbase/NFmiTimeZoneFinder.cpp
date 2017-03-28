@@ -487,7 +487,7 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
   boost::shared_ptr<NFmiTimeZoneRing> ring;
 
   string command;
-  while ((input >> (command) != nullptr))
+  while (input >> command)
   {
     if (command == "timezone")
     {

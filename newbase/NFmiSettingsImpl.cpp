@@ -703,7 +703,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 
       istringstream lineinput(line);
       string val, word;
-      while ((lineinput >> (word) != nullptr))
+      while (lineinput >> word)
       {
         if (!val.empty()) val += ' ';
         val += word;
