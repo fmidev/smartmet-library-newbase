@@ -202,7 +202,7 @@ double degrees_from_projparam(const string &inParam)
     throw runtime_error(errStr);
   }
 }
-}
+} // namespace
 
 namespace NFmiAreaFactory
 {

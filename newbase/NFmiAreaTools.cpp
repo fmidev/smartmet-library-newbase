@@ -44,7 +44,7 @@ void update_bbox(const NFmiPoint& thePoint,
   theMaxLat = std::max(theMaxLat, thePoint.Y());
 }
 
-}  // namespace anonymous
+} // namespace
 
 namespace NFmiAreaTools
 {

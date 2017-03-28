@@ -333,7 +333,7 @@ std::string expand(const std::string& value,
 
   return ret;
 }
-}
+} // namespace
 
 // ----------------------------------------------------------------------
 /*!

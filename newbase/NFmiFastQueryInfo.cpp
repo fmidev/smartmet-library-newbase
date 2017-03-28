@@ -67,7 +67,7 @@ void PeekCellValues(NFmiFastQueryInfo &theInfo,
   topLeftValue = theInfo.PeekLocationValue(dx, dy + 1, theTime);
   topRightValue = theInfo.PeekLocationValue(dx + 1, dy + 1, theTime);
 }
-}
+} // namespace
 
 // ----------------------------------------------------------------------
 /*!

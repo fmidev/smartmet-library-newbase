@@ -4239,7 +4239,7 @@ struct less<NFmiDataIdent>
     return lhs.GetParamIdent() < rhs.GetParamIdent();
   }
 };
-}
+} // namespace std
 
 static NFmiParamDescriptor MakeParamDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorIn)
@@ -4270,7 +4270,7 @@ struct less<NFmiLevel>
     return lhs.LevelValue() < rhs.LevelValue();
   }
 };
-}
+} // namespace std
 
 static NFmiVPlaceDescriptor MakeVPlaceDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorIn)

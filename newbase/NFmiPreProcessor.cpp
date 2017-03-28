@@ -120,7 +120,7 @@ using namespace std;
 namespace
 {
 const int kMaxNumOfStripperIncludes = 200;
-}
+} // namespace
 
 // ----------------------------------------------------------------------
 /*!

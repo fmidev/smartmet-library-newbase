@@ -198,6 +198,6 @@ inline T OptionalRange(const std::string& theName,
 
   return RequireRange<T>(theName, theLowerLimit, theUpperLimit);
 }
-}
+} // namespace NFmiSettings
 
 // ======================================================================

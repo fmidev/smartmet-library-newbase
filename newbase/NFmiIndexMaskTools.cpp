@@ -692,7 +692,7 @@ void Insert(NFmiNearTree<NFmiPoint> &theTree, const NFmiSvgPath &thePath, double
   }
 }
 
-}  // namespace anonymous
+} // namespace
 
 namespace NFmiIndexMaskTools
 {

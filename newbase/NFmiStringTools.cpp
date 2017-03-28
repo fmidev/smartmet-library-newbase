@@ -582,7 +582,7 @@ int todec(unsigned char theHex)
   else
     return (theHex - 'A' + 10);
 }
-}
+} // namespace
 
 namespace NFmiStringTools
 {

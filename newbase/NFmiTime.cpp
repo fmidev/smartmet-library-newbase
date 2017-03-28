@@ -269,7 +269,7 @@ const char *reldays[] =  // OBS also in NFmiPressTime ??
      "Parit",
      "ylivuoto"};
 
-}  // namespace anonymous
+} // namespace
 
 // ----------------------------------------------------------------------
 /*!

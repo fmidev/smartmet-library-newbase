@@ -40,7 +40,7 @@ bool fDefaultPrecipitationTypeIsLargeScale = false;
 
 const float gMinimumPrecipitationForV6 = 0.1f;
 const float gMinimumPrecipitationForV7 = 0.015f;
-}
+} // namespace
 
 // ----------------------------------------------------------------------
 /*!
