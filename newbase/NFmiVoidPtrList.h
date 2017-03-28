@@ -93,7 +93,7 @@ class _FMI_DLL NFmiVoidPtrList
   friend class NFmiVoidPtrIterator;
 
  public:
-  virtual ~NFmiVoidPtrList() { Clear(0); }
+  virtual ~NFmiVoidPtrList() { Clear(false); }
   NFmiVoidPtrList();
   NFmiVoidPtrList(const NFmiVoidPtrList& listItem);
 
