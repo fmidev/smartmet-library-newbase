@@ -1057,7 +1057,7 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 
   itsIsLocalTime = FmiTimeLocalzation(theIsLocalTime);
 
-  if (itsTimeBagIdent == true)
+  if (itsTimeBagIdent)
   {
     {
       auto theSize = static_cast<int>(itsValidTimeBag != nullptr ? itsValidTimeBag->GetSize()

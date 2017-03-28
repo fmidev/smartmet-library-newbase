@@ -764,18 +764,15 @@ NFmiAzimuthalArea &NFmiAzimuthalArea::operator=(const NFmiAzimuthalArea &theArea
 
 bool NFmiAzimuthalArea::operator==(const NFmiAzimuthalArea &theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsCentralLongitude == theArea.itsCentralLongitude) &&
-      (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
-      (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) &&
-      (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
-      (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange))
-    return true;
-
-  return false;
+  return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+         (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+         (itsCentralLongitude == theArea.itsCentralLongitude) &&
+         (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
+         (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
+         (itsXScaleFactor == theArea.itsXScaleFactor) &&
+         (itsYScaleFactor == theArea.itsYScaleFactor) &&
+         (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
+         (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange);
 }
 
 // ----------------------------------------------------------------------

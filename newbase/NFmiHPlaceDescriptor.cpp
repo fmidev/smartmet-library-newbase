@@ -427,9 +427,7 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
       tempBoolean = itsLocationBag->Next();
       if (!tempBoolean) break;
     } while (!(itsLocationBag->Location()->GetIdent() == theIdent));
-    if (tempBoolean) return true;
-
-    return false;
+    return tempBoolean;
   }
   else
     return false;
@@ -466,9 +464,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
       theLocationUpperCase.UpperCase();
     } while (!(theLocationUpperCase == theUpperName));
 
-    if (tempBoolean) return true;
-
-    return false;
+    return tempBoolean;
   }
   else
     return false;
@@ -519,9 +515,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
                                                               // voidaan etsiä myös locationilla
                                                               // stationeita
 
-    if (tempBoolean) return true;
-
-    return false;
+    return tempBoolean;
   }
   else if (IsGrid())
     return itsGrid->NearestLatLon(theLocation.GetLongitude(), theLocation.GetLatitude());

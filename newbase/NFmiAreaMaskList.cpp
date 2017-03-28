@@ -93,17 +93,13 @@ bool NFmiAreaMaskList::Reset()
 bool NFmiAreaMaskList::Next()
 {
   itsCurrentIndex++;
-  if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size()) return true;
-
-  return false;
+  return static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size();
 }
 
 // Tämä tarkistaa vektori-taulukkoon osoittavia indeksejä, jotka alkavat 0:sta.
 bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 {
-  if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size()) return true;
-
-  return false;
+  return theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size();
 }
 
 // ----------------------------------------------------------------------

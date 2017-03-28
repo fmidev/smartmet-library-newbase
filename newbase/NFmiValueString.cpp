@@ -285,7 +285,7 @@ bool NFmiValueString::IsShort() const
 
   if (!IsNumeric() || (Search(reinterpret_cast<const unsigned char *>(".")) != 0u)) return false;
 
-  if (itsValueType == eChar) return sscanf(CharPtr(), "%hd", &returnValue) == 1 ? true : false;
+  if (itsValueType == eChar) return sscanf(CharPtr(), "%hd", &returnValue) == 1;
 
   return false;
 }
@@ -335,7 +335,7 @@ bool NFmiValueString::IsNumeric(int theStart, int theSize) const
     else
       digitFound = true;
 
-  return (GetLen() != 0u) && digitFound ? true : false;
+  return (GetLen() != 0u) && digitFound;
 }
 
 // ----------------------------------------------------------------------
@@ -442,8 +442,8 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
 
 bool NFmiValueString::ConvertToInt(int &theValue, const int theStart, const int theSize) const
 {
-  if (theSize != 0) return sscanf(GetChars(theStart, theSize), "%d", &theValue) != 0 ? true : false;
-  return sscanf(CharPtr(), "%d", &theValue) != 0 ? true : false;
+  if (theSize != 0) return sscanf(GetChars(theStart, theSize), "%d", &theValue) != 0;
+  return sscanf(CharPtr(), "%d", &theValue) != 0;
 }
 
 // ----------------------------------------------------------------------
@@ -464,9 +464,7 @@ bool NFmiValueString::ConvertToLong(long &theValue, const int theStart, const in
   else
     theConvertStr = CharPtr();
 
-  if (sscanf(theConvertStr, "%ld", &theValue) != 0) return true;
-
-  return false;
+  return sscanf(theConvertStr, "%ld", &theValue) != 0;
 }
 
 // ----------------------------------------------------------------------
@@ -487,9 +485,7 @@ bool NFmiValueString::ConvertToFloat(float &theValue, const int theStart, const 
   else
     theConvertStr = CharPtr();
 
-  if (sscanf(theConvertStr, "%f", &theValue) > 0) return true;
-
-  return false;
+  return sscanf(theConvertStr, "%f", &theValue) > 0;
 }
 
 // ----------------------------------------------------------------------

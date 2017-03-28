@@ -275,9 +275,7 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
 
 bool NFmiTimeBag::IsInside(const NFmiMetTime &theTime) const
 {
-  if (theTime >= itsFirstTime && theTime <= itsLastTime) return true;
-
-  return false;
+  return theTime >= itsFirstTime && theTime <= itsLastTime;
 }
 
 // ----------------------------------------------------------------------
@@ -379,10 +377,9 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
     else       // if(timeIsLeftFromTimeBag)
       Next();  // the first time of this timebag
   }
-  if (noTimeRange ||
-      labs(theTime.DifferenceInMinutes(CurrentTime())) <= static_cast<long>(theTimeRangeInMinutes))
-    return true;
-  return false;
+  return noTimeRange ||
+         labs(theTime.DifferenceInMinutes(CurrentTime())) <=
+             static_cast<long>(theTimeRangeInMinutes);
 }
 
 // ----------------------------------------------------------------------
@@ -413,11 +410,8 @@ NFmiTimeBag &NFmiTimeBag::operator=(const NFmiTimeBag &theBag)
 
 bool NFmiTimeBag::operator==(const NFmiTimeBag &theTimeBag) const
 {
-  if (itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
-      itsResolution == theTimeBag.itsResolution)
-    return true;
-
-  return false;
+  return itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
+         itsResolution == theTimeBag.itsResolution;
 }
 
 // ----------------------------------------------------------------------

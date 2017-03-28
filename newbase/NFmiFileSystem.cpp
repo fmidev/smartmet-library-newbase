@@ -315,7 +315,7 @@ bool FileReadable(const string &theFile)
     rmask = S_IRGRP;
   else
     rmask = S_IROTH;
-  return ((st.st_mode & rmask) != 0 ? true : false);
+  return ((st.st_mode & rmask) != 0);
 #else
   return true;
 #endif
@@ -346,7 +346,7 @@ bool FileWritable(const string &theFile)
     wmask = S_IWGRP;
   else
     wmask = S_IWOTH;
-  return ((st.st_mode & wmask) != 0 ? true : false);
+  return ((st.st_mode & wmask) != 0);
 #else
   return true;
 #endif
@@ -377,7 +377,7 @@ bool FileExecutable(const string &theFile)
     xmask = S_IXGRP;
   else
     xmask = S_IXOTH;
-  return ((st.st_mode & xmask) != 0 ? true : false);
+  return ((st.st_mode & xmask) != 0);
 #else
   return true;
 #endif
@@ -507,7 +507,7 @@ long FileAge(const string &theFile)
 
 bool DirectoryExists(const string &theFile)
 {
-  if (theFile.empty() == true) return false;
+  if (theFile.empty()) return false;
   FMI_stat st;
 
   char ch = theFile[theFile.size() - 1];
@@ -550,7 +550,7 @@ bool DirectoryReadable(const string &theFile)
     rmask = S_IRGRP;
   else
     rmask = S_IROTH;
-  return ((st.st_mode & rmask) != 0 ? true : false);
+  return ((st.st_mode & rmask) != 0);
 #else
   return true;
 #endif
@@ -581,7 +581,7 @@ bool DirectoryWritable(const string &theFile)
     wmask = S_IWGRP;
   else
     wmask = S_IWOTH;
-  return ((st.st_mode & wmask) != 0 ? true : false);
+  return ((st.st_mode & wmask) != 0);
 #else
   return true;
 #endif

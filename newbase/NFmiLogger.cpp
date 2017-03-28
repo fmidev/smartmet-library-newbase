@@ -155,7 +155,7 @@ void NFmiLogger::InitFromSettings(const std::string &theBaseNameSpace)
 
 void NFmiLogger::StoreToSettings()
 {
-  if (itsBaseNameSpace.empty() == false)
+  if (!itsBaseNameSpace.empty())
   {
     NFmiSettings::Set(itsBaseNameSpace + "::UsedLoggingLevels",
                       NFmiStringTools::Convert(itsUsedLoggingLevels),
@@ -533,9 +533,7 @@ bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, 
       theFile.clear();  // asettaa bad-bitin pois päältä, että voidaan yrittää tiedoston luomista
                         // uudestaan (ja kysyä onnistuiko)
       theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-      if (theFile != nullptr) return true;
-
-      return false;  // edelleenkään tiedostoa ei saatu luotua
+      return theFile != nullptr;  // edelleenkään tiedostoa ei saatu luotua
     }
     else
       return false;  // hakemistoa ei saatu luotua

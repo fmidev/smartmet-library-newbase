@@ -180,9 +180,7 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
     if (!tempBoolean) break;
   } while (!(*itsLevelBag->Level() == theLevel));
 
-  if (tempBoolean) return true;
-
-  return false;
+  return tempBoolean;
 }
 
 // ----------------------------------------------------------------------
@@ -233,12 +231,7 @@ unsigned long NFmiVPlaceDescriptor::Size() const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiVPlaceDescriptor::IsLevel() const
-{
-  if (itsLevelBag != nullptr) return true;
-
-  return false;
-}
+bool NFmiVPlaceDescriptor::IsLevel() const { return itsLevelBag != nullptr; }
 
 // ----------------------------------------------------------------------
 /*!

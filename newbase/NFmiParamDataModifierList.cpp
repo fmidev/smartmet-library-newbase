@@ -38,7 +38,7 @@ NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter() {}
 
 bool NFmiParamDataModifierList::Add(NFmiParamDataModifier* theModifier)
 {
-  return itsList.AddEnd(theModifier) == true;
+  return itsList.AddEnd(theModifier);
 }
 
 // ----------------------------------------------------------------------
@@ -59,7 +59,7 @@ bool NFmiParamDataModifierList::Reset()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamDataModifierList::Next() { return itsIter.Next() == true; }
+bool NFmiParamDataModifierList::Next() { return itsIter.Next(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -74,11 +74,7 @@ NFmiParamDataModifier* NFmiParamDataModifierList::Current() { return itsIter.Cur
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamDataModifierList::Remove(bool fDeleteData)
-{
-  if (itsIter.Remove(fDeleteData)) return true;
-  return false;
-}
+bool NFmiParamDataModifierList::Remove(bool fDeleteData) { return itsIter.Remove(fDeleteData); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -97,8 +93,7 @@ void NFmiParamDataModifierList::Clear(bool fDeleteData) { itsList.Clear(fDeleteD
 bool NFmiParamDataModifierList::Index(unsigned long theIndex)
 {
   itsIter = itsList.Index(theIndex);
-  if (Current() != nullptr) return true;
-  return false;
+  return Current() != nullptr;
 }
 
 // ----------------------------------------------------------------------

@@ -67,13 +67,12 @@ bool NFmiFileString::HasExtension() const
 #endif
 
   unsigned long lastSlash = SearchLast(slash);
-  return Search(find, std::max(lastSlash, 1ul)) > 0 ? true : false;
+  return Search(find, std::max(lastSlash, 1ul)) > 0;
 }
 
 bool NFmiFileString::IsAbsolutePath() const
 {
-  if (fChar[0] == '/' || fChar[0] == '\\' || Device() != NFmiString("")) return true;
-  return false;
+  return fChar[0] == '/' || fChar[0] == '\\' || Device() != NFmiString("");
 }
 
 // ----------------------------------------------------------------------
@@ -158,7 +157,7 @@ const NFmiString NFmiFileString::Path() const
   {
     if (fChar[0] == '.')  // Lasse 23.9.98 suht polku
       return GetChars(1, last);
-    if (IsAbsolutePath() == false)  // suhteellinen polku ilman .-merkkiä alussa
+    if (!IsAbsolutePath())  // suhteellinen polku ilman .-merkkiä alussa
       return GetChars(1, last);
     else
       return GetChars(first, (last + 1) - first);

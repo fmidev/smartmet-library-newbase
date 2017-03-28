@@ -41,7 +41,7 @@ NFmiDataModifier::NFmiDataModifier(FmiJoinOperator theJoinOperator,
       fCalculationResultOk(true),
       fMissingValuesAllowed(missingValuesAllowed),
       itsNumberOfMissingValues(0),
-      fIsCombinedParam(thePotentialCombinedParam != nullptr ? true : false),
+      fIsCombinedParam(thePotentialCombinedParam != nullptr),
       fIsLimitCheck(false),
       itsLowerLimit(),
       itsUpperLimit()
@@ -82,10 +82,8 @@ bool NFmiDataModifier::IsInside(float theValue)
 {
   if (!fIsLimitCheck) return true;
 
-  return (((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
-          ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)))
-             ? false
-             : true;
+  return !(((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
+           ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)));
 }
 
 // ----------------------------------------------------------------------

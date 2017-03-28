@@ -613,7 +613,7 @@ bool NFmiFastQueryInfo::Location(const NFmiLocation &theLocation)
 
 bool NFmiFastQueryInfo::Location(const unsigned long &theIdent)
 {
-  if (itsFastStationIdSeekList.empty() == false)
+  if (!itsFastStationIdSeekList.empty())
   {  // jos on rakennettu fast-seeker, käytetään sitä
     StationIdSeekContainer::iterator it = itsFastStationIdSeekList.find(theIdent);
     if (it != itsFastStationIdSeekList.end())
@@ -2229,8 +2229,8 @@ void NFmiFastQueryInfo::Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
                                float H)
 {
   theValues.Resize(theLatlonMatrix.NX(), theLatlonMatrix.NY(), kFloatMissing);
-  if (HPlaceDescriptor().IsGrid() == false) return;  // ei gridi dataa, interpolaatio ei onnistu
-  if (IsInside(theTime) == false) return;            // aikainterpolointi ei onnistu
+  if (!HPlaceDescriptor().IsGrid()) return;  // ei gridi dataa, interpolaatio ei onnistu
+  if (!IsInside(theTime)) return;            // aikainterpolointi ei onnistu
 
   bool doNormalInterpolation = (P == kFloatMissing && H == kFloatMissing);
   for (NFmiDataMatrix<NFmiPoint>::size_type j = 0; j < theLatlonMatrix.NY(); j++)
@@ -2323,7 +2323,7 @@ bool NFmiFastQueryInfo::LastParam(bool fIgnoreSubParam)
 {
   itsParamIndex = itsParamSize - 1;
   fUseSubParam = false;
-  if (fIgnoreSubParam == false)
+  if (!fIgnoreSubParam)
   {
     // tämä on viritys, etsitään mahd. viimeinen aliparametreista paramDescriptorista loopissa
     for (; itsParamDescriptor->Next(false);)
@@ -3186,7 +3186,7 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
   checkedVector<float> &tmpVec = theHValues[theColumn];
   // Teen theHeight:ille range-checkin ensin ja jos ollaan ala ja ylä arvojen ulkopuolella,
   // palautetaan missing arvo.
-  if (::IsInsideRange(tmpVec, theHeight) == false) return kFloatMissing;
+  if (!::IsInsideRange(tmpVec, theHeight)) return kFloatMissing;
 
   // haetaan 1. theHeight:ia suuremman arvon sijainti
   auto pos = std::lower_bound(tmpVec.begin(), tmpVec.end(), theHeight);
@@ -3236,7 +3236,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
   // tässä funktiossa loppujen lopuksi pitäisi tehdä, se pitäisi joskus tarkistaa... (teen kuitenkin
   // theP:lle range-checkin ensin
   // ja jos ollaan ala ja ylä arvojen ulkopuolella, palautetaan missing arvo.)
-  if (::IsInsideRange(tmpVec, theP) == false) return kFloatMissing;
+  if (!::IsInsideRange(tmpVec, theP)) return kFloatMissing;
 
   auto pos = std::lower_bound(tmpVec.rbegin(), tmpVec.rend(), theP);
   if (pos == tmpVec.rend())  // ei voida interpoloida korkeuden mukaan niss tapauksissa
@@ -3285,7 +3285,7 @@ static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInf
     bool fTimeFound = theInfo.Time(theTime);
     theInfo.FirstLevel();  // pitää varmistaa, että voidaan kysyä level tietoa
     if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
-        ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+        ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
     {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
       theInfo.ResetLevel();
       for (unsigned int j = 0; j < values.NY(); j++)
@@ -3460,7 +3460,7 @@ void NFmiFastQueryInfo::CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
                                                const checkedVector<NFmiPoint> &theLatlonPoints)
 {
   theValues.Resize(theLatlonPoints.size(), thePressures.size(), kFloatMissing);
-  if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
+  if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
   // paine-dataa, katsotaan löytyykö
   // siitä korkeus dataa
   {
@@ -3532,8 +3532,8 @@ static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &th
   // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
   NFmiDataMatrix<float> values(theTimes.GetSize(), theInfo.SizeLevels(), kFloatMissing);
   float tmpValue = 0.f;
-  if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising() == true) ||
-      ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+  if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
+      ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
   {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
     theInfo.ResetLevel();
     for (unsigned int j = 0; j < values.NY(); j++)
@@ -3663,7 +3663,7 @@ void NFmiFastQueryInfo::TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theVal
                    thePressures.size(),
                    kFloatMissing);  // xnumberissa pitäisi olla poikkileikkaus pisteiden määrä ja
                                     // ynumberissa haluttujen korkeuksien määrä
-  if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
+  if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
   // paine-dataa, katsotaan löytyykö
   // siitä korkeus dataa
   {
@@ -3734,7 +3734,7 @@ static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
   NFmiDataMatrix<float> values(theLatlonPoints.size(), theInfo.SizeLevels(), kFloatMissing);
   float tmpValue = 0.f;
   if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
-      ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+      ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
   {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
     theInfo.ResetLevel();
     for (unsigned int j = 0; j < values.NY(); j++)
@@ -3989,7 +3989,7 @@ void NFmiFastQueryInfo::RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theVa
                                                                     // poikkileikkaus pisteiden
                                                                     // määrä ja ynumberissa
   // haluttujen korkeuksien määrä
-  if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
+  if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
   // paine-dataa, katsotaan löytyykö
   // siitä korkeus dataa
   {
@@ -4047,8 +4047,8 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
                                               const checkedVector<NFmiPoint> &theLatlonPoints,
                                               const checkedVector<NFmiMetTime> &thePointTimes)
 {
-  if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei lï¿½ydy
-                                                                  // paine-dataa, katsotaan
+  if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei lï¿½ydy
+                                                          // paine-dataa, katsotaan
   // lï¿½ytyykï¿½ siitï¿½ korkeus
   // dataa
   {
@@ -4166,7 +4166,7 @@ void NFmiFastQueryInfo::PressureValues(NFmiDataMatrix<float> &theValues,
                                        const NFmiMetTime &theInterpolatedTime,
                                        float wantedPressureLevel)
 {
-  if (PressureDataAvailable() == false)
+  if (!PressureDataAvailable())
     throw std::runtime_error(
         "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
         "unsuitable.");
@@ -4209,7 +4209,7 @@ void NFmiFastQueryInfo::PressureValues(NFmiDataMatrix<float> &theValues,
                                        const NFmiMetTime &theInterpolatedTime,
                                        float wantedPressureLevel)
 {
-  if (PressureDataAvailable() == false)
+  if (!PressureDataAvailable())
     throw std::runtime_error(
         "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
         "unsuitable.");
@@ -4288,7 +4288,7 @@ void NFmiFastQueryInfo::GridValues(NFmiDataMatrix<float> &theValues,
 {
   NFmiGrid usedGrid(theWantedGrid);
   theValues.Resize(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
-  bool timeInterpolationNeeded = (Time(theInterpolatedTime) == false);
+  bool timeInterpolationNeeded = (!Time(theInterpolatedTime));
 
   auto id = FmiParameterName(Param().GetParam()->GetIdent());
 
@@ -4369,7 +4369,7 @@ void NFmiFastQueryInfo::HeightValues(NFmiDataMatrix<float> &theValues,
                                      const NFmiMetTime &theInterpolatedTime,
                                      float wantedHeightLevel)
 {
-  if (HeightDataAvailable() == false)
+  if (!HeightDataAvailable())
     throw std::runtime_error(
         "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
   theValues.Resize(GridXNumber(), GridYNumber(), kFloatMissing);
@@ -4387,7 +4387,7 @@ void NFmiFastQueryInfo::HeightValues(NFmiDataMatrix<float> &theValues,
                                      const NFmiMetTime &theInterpolatedTime,
                                      float wantedHeightLevel)
 {
-  if (HeightDataAvailable() == false)
+  if (!HeightDataAvailable())
     throw std::runtime_error(
         "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
   NFmiGrid usedGrid(theWantedGrid);

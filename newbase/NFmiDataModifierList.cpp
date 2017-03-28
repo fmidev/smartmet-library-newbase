@@ -53,7 +53,7 @@ bool NFmiDataModifierList::IsCombinedParam() { return false; }
 
 bool NFmiDataModifierList::Add(NFmiDataModifier* theModifier)
 {
-  return itsList.AddEnd(theModifier) == true;
+  return itsList.AddEnd(theModifier);
 }
 
 // ----------------------------------------------------------------------
@@ -74,7 +74,7 @@ bool NFmiDataModifierList::Reset()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierList::Next() { return itsIter.Next() == true; }
+bool NFmiDataModifierList::Next() { return itsIter.Next(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -89,11 +89,7 @@ NFmiDataModifier* NFmiDataModifierList::Current() { return itsIter.CurrentPtr();
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierList::Remove(bool fDeleteData)
-{
-  if (itsIter.Remove(fDeleteData)) return true;
-  return false;
-}
+bool NFmiDataModifierList::Remove(bool fDeleteData) { return itsIter.Remove(fDeleteData); }
 
 // ----------------------------------------------------------------------
 /*!

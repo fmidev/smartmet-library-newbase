@@ -62,7 +62,7 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeList &theList)
 NFmiTimeList::NFmiTimeList(const NFmiTimeBag &theTimes)
     : itsVectorList(theTimes.GetSize()),
       itsIndex(theTimes.CurrentIndex()),
-      itsIsReset(theTimes.CurrentIndex() >= 0 ? false : true)
+      itsIsReset(theTimes.CurrentIndex() < 0)
 {
   NFmiTimeBag tmpBag(theTimes);
   tmpBag.Reset();
@@ -120,8 +120,7 @@ bool NFmiTimeList::Next() const
 
 bool NFmiTimeList::IndexOk(int theIndex) const
 {
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size()) return true;
-  return false;
+  return theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size();
 }
 
 // ----------------------------------------------------------------------
@@ -560,10 +559,7 @@ bool NFmiTimeList::IsSearchedTimeInRange(checkedVector<NFmiMetTime *>::iterator 
                                          unsigned long theTimeRangeInMinutes)
 {
   if (theTimeRangeInMinutes == kUnsignedLongMissing) return true;
-  if (theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter))))
-    return true;
-  else
-    return false;
+  return theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter)));
 }
 
 bool NFmiTimeList::CheckFoundTimeIter(checkedVector<NFmiMetTime *>::iterator &foundTimeIter,
@@ -593,11 +589,9 @@ bool NFmiTimeList::CheckFoundTimeIter(checkedVector<NFmiMetTime *>::iterator &fo
 bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
                                      unsigned long theTimeRangeInMinutes)
 {
-  if (theTimeRangeInMinutes == kUnsignedLongMissing ||
-      static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
-          theTimeRangeInMinutes)
-    return true;
-  return false;
+  return theTimeRangeInMinutes == kUnsignedLongMissing ||
+         static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
+             theTimeRangeInMinutes;
 }
 
 // ----------------------------------------------------------------------

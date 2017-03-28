@@ -324,9 +324,7 @@ bool NFmiTransformList::Equal(NFmiPoint& p1, NFmiPoint& p2)
   diffX = fabs(p1.X() - p2.X());
   diffY = fabs(p1.Y() - p2.Y());
 
-  if ((diffX < itsEps.X()) && (diffY < itsEps.Y())) return true;
-
-  return false;
+  return (diffX < itsEps.X()) && (diffY < itsEps.Y());
 }
 
 // ----------------------------------------------------------------------

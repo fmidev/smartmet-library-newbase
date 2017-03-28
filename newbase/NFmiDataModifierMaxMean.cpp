@@ -96,7 +96,7 @@ void NFmiDataModifierMaxMean::Clear()
 float NFmiDataModifierMaxMean::CalculationResult()
 {
   float avg = kFloatMissing, max = kFloatMissing;
-  if (fCalculationResultOk == true)
+  if (fCalculationResultOk)
     avg = itsAverage;
   else
     avg = kFloatMissing;

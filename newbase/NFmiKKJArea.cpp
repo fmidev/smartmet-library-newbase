@@ -540,13 +540,10 @@ NFmiKKJArea &NFmiKKJArea::operator=(const NFmiKKJArea &theArea)
 
 bool NFmiKKJArea::operator==(const NFmiKKJArea &theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-    return true;
-
-  return false;
+  return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+         (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+         (itsXScaleFactor == theArea.itsXScaleFactor) &&
+         (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect);
 }
 
 // ----------------------------------------------------------------------

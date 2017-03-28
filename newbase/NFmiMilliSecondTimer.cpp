@@ -52,7 +52,7 @@ std::string NFmiMilliSecondTimer::EasyTimeDiffStr(int theDiffInMS, bool fIgnoreM
   }
   //	sekunnit tulee aina
   result += NFmiStringTools::Convert<int>(seconds) + " s ";
-  if (fIgnoreMilliSeconds == false)
+  if (!fIgnoreMilliSeconds)
   {
     NFmiValueString valStr(msecs, "%03d");
     result += valStr.CharPtr();

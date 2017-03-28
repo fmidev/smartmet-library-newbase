@@ -63,7 +63,7 @@ static void FixAtlanticLongitude(NFmiPoint &lonLat)
 
 const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 {
-  if (PacificView() && theArea->PacificView() == false)
+  if (PacificView() && !theArea->PacificView())
   {
     NFmiPoint topLeftLatlon = theArea->ToLatLon(theArea->TopLeft());
     ::FixPacificLongitude(topLeftLatlon);
@@ -75,7 +75,7 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
     NFmiRect rect(topLeft, bottomRight);
     return rect;
   }
-  if (PacificView() == false && theArea->PacificView())
+  if (!PacificView() && theArea->PacificView())
   {
     std::unique_ptr<NFmiArea> pacificAreaFromThis(DoForcePacificFix());
 
@@ -349,9 +349,7 @@ const NFmiPoint NFmiArea::CenterLatLon() const
 
 bool NFmiArea::IsPacificLongitude(double theLongitude)
 {
-  if (theLongitude > 180 && theLongitude <= 360) return true;
-
-  return false;
+  return theLongitude > 180 && theLongitude <= 360;
 }
 
 void NFmiArea::CheckForPacificView()

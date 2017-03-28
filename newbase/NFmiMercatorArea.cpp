@@ -443,13 +443,10 @@ bool NFmiMercatorArea::operator==(const NFmiArea& theArea) const
 
 bool NFmiMercatorArea::operator==(const NFmiMercatorArea& theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-    return true;
-
-  return false;
+  return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+         (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+         (itsXScaleFactor == theArea.itsXScaleFactor) &&
+         (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect);
 }
 
 // ======================================================================

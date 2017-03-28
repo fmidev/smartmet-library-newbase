@@ -158,7 +158,7 @@ NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theTimeSize)
     : itsStartTimeIndex(0),
       itsEndTimeIndex(theTimeSize - 1),
       itsCurrentTimeIndex(0),
-      fNoMoreWork((theTimeSize > 0) ? false : true)
+      fNoMoreWork(theTimeSize <= 0)
 {
 }
 
@@ -167,7 +167,7 @@ NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theStartTimeIndex
     : itsStartTimeIndex(theStartTimeIndex),
       itsEndTimeIndex(theEndTimeIndex),
       itsCurrentTimeIndex(theStartTimeIndex),
-      fNoMoreWork((theStartTimeIndex <= theEndTimeIndex) ? false : true)
+      fNoMoreWork(theStartTimeIndex > theEndTimeIndex)
 {
 }
 
@@ -187,7 +187,7 @@ NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(unsigned long
       itsEndLocationIndex(theLocationSize - 1),
       itsCurrentLocationIndex(0),
       itsChunkSize(theChunkSize),
-      fNoMoreWork((theLocationSize > 0) ? false : true)
+      fNoMoreWork(theLocationSize <= 0)
 {
 }
 
@@ -199,7 +199,7 @@ NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(
       itsEndLocationIndex(theEndLocationIndex),
       itsCurrentLocationIndex(theStartLocationIndex),
       itsChunkSize(theChunkSize),
-      fNoMoreWork((theStartLocationIndex <= theEndLocationIndex) ? false : true)
+      fNoMoreWork(theStartLocationIndex > theEndLocationIndex)
 {
 }
 
@@ -266,8 +266,7 @@ void AddProducerIds(NFmiFastQueryInfo &theDestInfo, NFmiFastQueryInfo &theSource
 static bool IsParamCircularValued(const NFmiParam *theParam)
 {
   // circular toimii siis vain nyt tuulen suunnalle, lisää muita jos tarpeen
-  if (theParam->GetIdent() == kFmiWindDirection) return true;
-  return false;
+  return theParam->GetIdent() == kFmiWindDirection;
 }
 
 NFmiQueryDataUtil::LimitChecker::LimitChecker(float theLowerLimit,
@@ -4145,7 +4144,7 @@ static void ReadQueryDataFiles(boost::shared_ptr<NFmiQueryData> theBaseQData,
 {
   bool doTimeCheck = false;
   NFmiMetTime lastBaseTime;
-  if (fDoRebuildCheck == false && theBaseQData)
+  if (!fDoRebuildCheck && theBaseQData)
   {
     doTimeCheck = true;
     lastBaseTime = theBaseQData->Info()->TimeDescriptor().LastTime();
@@ -4462,7 +4461,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
 {
   std::vector<boost::shared_ptr<NFmiFastQueryInfo> > fInfoVector;
   ::MakeFastInfos(theQDataVector, fInfoVector);
-  if (fDoRebuild == false && theBaseQData)
+  if (!fDoRebuild && theBaseQData)
     fInfoVector.push_back(
         boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theBaseQData.get())));
 
@@ -4491,7 +4490,7 @@ static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &th
 {
   boost::shared_ptr<NFmiQueryData> qDataPtr;
   std::string fileName = NFmiFileSystem::NewestPatternFileName(theBaseDataFileFilter);
-  if (fileName.empty() == false)
+  if (!fileName.empty())
   {
     if (NFmiFileSystem::FileReadable(fileName))
     {
@@ -4589,7 +4588,7 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
       (theTargetInfo.SizeLevels() ==
        1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
   bool doLocationInterpolation =
-      (NFmiQueryDataUtil::AreGridsEqual(theSourceInfo.Grid(), theTargetInfo.Grid()) == false);
+      (!NFmiQueryDataUtil::AreGridsEqual(theSourceInfo.Grid(), theTargetInfo.Grid()));
 
   unsigned long targetXSize = theTargetInfo.GridXNumber();
   for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
@@ -4614,16 +4613,16 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
         {
           for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
           {
-            if (theTargetInfo.TimeIndex(i) == false) continue;
+            if (!theTargetInfo.TimeIndex(i)) continue;
             NFmiMetTime targetTime = theTargetInfo.Time();
             bool doTimeInterpolation =
                 false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
             if (theSourceInfo.Time(theTargetInfo.Time()) ||
                 (doTimeInterpolation =
-                     theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) == true)
+                     theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())))
             {
               NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-              if (doLocationInterpolation == false)
+              if (!doLocationInterpolation)
               {
                 if (doTimeInterpolation)
                   theSourceInfo.Values(gridValues, targetTime);
@@ -4757,7 +4756,7 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
     NFmiFastQueryInfo source1(theSource);
     NFmiFastQueryInfo target1(theTarget);
     bool doLocationInterpolation =
-        (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
+        (!NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()));
     NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
     if (doLocationInterpolation) source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
     checkedVector<NFmiTimeCache> timeCacheVector;
@@ -4904,13 +4903,12 @@ static void FillSingleTimeGridDataInThread(
       theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
     }
 
-    if (theTargetInfo.TimeIndex(workedTimeIndex) == false) continue;
+    if (!theTargetInfo.TimeIndex(workedTimeIndex)) continue;
     NFmiMetTime targetTime = theTargetInfo.Time();
     bool doTimeInterpolation =
         false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
     if (theSourceInfo.Time(theTargetInfo.Time()) ||
-        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) ==
-            true)
+        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())))
     {
       const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
       for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
@@ -4922,7 +4920,7 @@ static void FillSingleTimeGridDataInThread(
           {
             if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
             {
-              if (fDoLocationInterpolation == false)
+              if (!fDoLocationInterpolation)
               {
                 if (doTimeInterpolation)
                   theSourceInfo.Values(gridValues, targetTime);
@@ -4972,7 +4970,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
     NFmiFastQueryInfo source1(theSource);
     NFmiFastQueryInfo target1(theTarget);
     bool doLocationInterpolation =
-        (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
+        (!NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()));
     NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
     if (doLocationInterpolation) source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
     checkedVector<NFmiTimeCache> timeCacheVector;
@@ -5078,11 +5076,8 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
         if (theArea1->ClassId() == kNFmiStereographicArea ||
             theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
         {
-          if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-              static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
-            return true;
-
-          return false;
+          return static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+                 static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
         }
         else
           return true;
@@ -5099,11 +5094,8 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
     if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea ||
         theArea1->ClassId() == kNFmiGnomonicArea)
     {
-      if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-          static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
-        return true;
-
-      return false;
+      return static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+             static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation();
     }
     else if (theArea1->ClassId() == theArea2->ClassId())
       return true;
@@ -5117,7 +5109,7 @@ NFmiQueryData *NFmiQueryDataUtil::ReadNewestData(const std::string &theFileFilte
   std::time_t timeOfFile = NFmiFileSystem::FindFile(theFileFilter, true, &tmpFileName);
   if (timeOfFile == 0) return nullptr;
   std::string foundFileName = NFmiFileSystem::PathFromPattern(theFileFilter);
-  if (foundFileName.empty() == false) foundFileName += kFmiDirectorySeparator;
+  if (!foundFileName.empty()) foundFileName += kFmiDirectorySeparator;
   foundFileName += tmpFileName;
   auto *data = new NFmiQueryData(foundFileName, true);
   return data;

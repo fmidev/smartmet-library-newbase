@@ -32,17 +32,12 @@
 
 static bool IsFindFunction(NFmiAreaMask::FunctionType theFunction)
 {
-  if (theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC) return true;
-
-  return false;
+  return theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC;
 }
 
 static bool IsFindConditionalFunction(NFmiAreaMask::FunctionType theFunction)
 {
-  if (theFunction >= NFmiAreaMask::ProbOver && theFunction <= NFmiAreaMask::ProbBetweenEq)
-    return true;
-
-  return false;
+  return theFunction >= NFmiAreaMask::ProbOver && theFunction <= NFmiAreaMask::ProbBetweenEq;
 }
 
 static bool CheckProbabilityCondition(NFmiAreaMask::FunctionType condition,
@@ -179,7 +174,7 @@ bool NFmiInfoAreaMask::Time(const NFmiMetTime &theTime)
   if (itsInfo)
   {
     itsTime = NFmiFastInfoUtils::GetUsedTimeIfModelClimatologyData(itsInfo, theTime);
-    bool status = (true == itsInfo->Time(theTime));
+    bool status = (itsInfo->Time(theTime));
     fIsTimeIntepolationNeededInValue = !status;  // jos tämän jälkeen käytetään samaa aikaa
                                                  // Value-metodissa, ei aikainterpolointia tarvitse
                                                  // tehdä, jos aika löytyi.
@@ -702,7 +697,7 @@ NFmiLocationCache NFmiInfoAreaMaskMetFuncBase::CalcLocationCache(const NFmiPoint
 
 void NFmiInfoAreaMaskMetFuncBase::SetGridSizeVariables()
 {
-  if (IsDataOperatable(itsInfo) == false)
+  if (!IsDataOperatable(itsInfo))
     throw std::runtime_error("Error: given data for Met-function was not grid-data");
 
   itsGridSizeX = itsInfo->Grid()->XNumber();
@@ -718,8 +713,7 @@ void NFmiInfoAreaMaskMetFuncBase::SetGridSizeVariables()
 bool NFmiInfoAreaMaskMetFuncBase::IsDataOperatable(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo) const
 {
-  if (theInfo && (theInfo->Grid() != nullptr)) return true;
-  return false;
+  return theInfo && (theInfo->Grid() != nullptr);
 }
 
 NFmiLocationCache NFmiInfoAreaMaskMetFuncBase::CalcPeekedLocation(
@@ -885,7 +879,7 @@ NFmiInfoAreaMaskGrad::CalcFactorVector NFmiInfoAreaMaskGrad::itsMiddleAreaFactor
 
 void NFmiInfoAreaMaskGrad::InitCalcFactorVectors()
 {
-  if (NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized == false)
+  if (!NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized)
   {
     NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.push_back(std::make_pair(2, -1.f));
     NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.push_back(std::make_pair(1, 4.f));
@@ -1099,7 +1093,7 @@ NFmiInfoAreaMaskLaplace::CalcFactorVector NFmiInfoAreaMaskLaplace::itsMiddleArea
 
 void NFmiInfoAreaMaskLaplace::InitCalcFactorVectors()
 {
-  if (NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized == false)
+  if (!NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized)
   {
     NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.push_back(std::make_pair(2, 1.f));
     NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.push_back(std::make_pair(1, -2.f));
@@ -1541,7 +1535,7 @@ void NFmiInfoAreaMaskVertFunc::FindCalculatedLeves(const NFmiLocationCache &theL
     }
     else
     {
-      if (itsInfo->HeightParamIsRising() == false)
+      if (!itsInfo->HeightParamIsRising())
         itsLevelIncrement = -1;  // HeightParamIsRising = false -> levelien vertikaali suunta on
                                  // alaspäin (avaruudesta kohti maanpintaa)
     }

@@ -127,8 +127,7 @@ NFmiCalculatedAreaMask& NFmiCalculatedAreaMask::operator=(const NFmiCalculatedAr
 bool NFmiCalculatedAreaMask::IsWantedParam(const NFmiDataIdent& theParam,
                                            const NFmiLevel* /* theLevel */) const
 {
-  if ((itsDataIdent != nullptr) && (*itsDataIdent == theParam)) return true;
-  return false;
+  return (itsDataIdent != nullptr) && (*itsDataIdent == theParam);
 }
 
 // ----------------------------------------------------------------------

@@ -478,8 +478,8 @@ bool NFmiGrid::NearestLatLon(double newLon,
   NFmiPoint currentPoint = LatLon();
   NFmiLocation location1(currentPoint.X(), currentPoint.Y());
   NFmiLocation location2(newLon, newLat);
-  if (location1.Distance(location2) <= theMaxDistance) return true;
-  return false;  // doesn't set iterator into the original GridPoint
+  return location1.Distance(location2) <=
+         theMaxDistance;  // doesn't set iterator into the original GridPoint
 }
 
 //***********************************************************************************
@@ -607,7 +607,7 @@ bool NFmiGrid::Init(const std::string &theFileName,
     unsigned long rowByteSize = nx * theElementSizeInBytes;
     checkedVector<char> buffer(rowByteSize);
     checkedVector<float> floatData(nx);  // tehdään float taulu, johon mahtuu rivin arvot
-    if ((status = SeekStartingPoint(in, theStartOffsetInBytes, theDataStartsAfterString)) == true)
+    if ((status = SeekStartingPoint(in, theStartOffsetInBytes, theDataStartsAfterString)))
     {
       for (unsigned long i = 0; i < ny; i++)
       {

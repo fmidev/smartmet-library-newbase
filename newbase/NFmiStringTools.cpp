@@ -657,7 +657,7 @@ std::string &ReplaceAll(std::string &theString,
   // Sitten found-indeksi kasvaa yhdellä ja indeksin 1 kohdalle lisätään toStr. Ja tämä jatkuu
   // ikuisesti...
   // Siksi jos fromStr on tyhjä, ei tehdä mitään.
-  if (fromStr.empty() == false)
+  if (!fromStr.empty())
   {
     string::size_type advanceThis = toStr.length();  // etsinnässä pitää edetä korvaus stringin
                                                      // verran eteenpäin, muuten voi jäädä
@@ -777,7 +777,7 @@ std::string TrimAll(std::string &theString, bool replaceInsideNewlinesWithSpace)
     if (replaceInsideNewlinesWithSpace ? (i == ' ' || i == '\t' || i == '\r' || i == '\n')
                                        : (i == ' ' || i == '\t'))
     {
-      if (wordBreak == false)
+      if (!wordBreak)
       {
         wordBreak = true;
         result.push_back(' ');  // laitetaan aina sanan perään yksi space

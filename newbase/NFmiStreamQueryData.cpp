@@ -148,12 +148,7 @@ NFmiQueryData *NFmiStreamQueryData::QueryData(bool theOwnerData)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStreamQueryData::IsData()
-{
-  if (itsQueryData != nullptr) return true;
-
-  return false;
-}
+bool NFmiStreamQueryData::IsData() { return itsQueryData != nullptr; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -178,7 +173,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
     {
       //		  theQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio 7:ssa
       // pitää asentaa 'sisäinen' versio numerokin
-      theQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+      theQueryData->UseBinaryStorage(theLibVersion > 5);
       dataFile << *theQueryData;
     }
     else
@@ -187,7 +182,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
       {
         //			  itsQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio
         // 7:ssa pitää asentaa 'sisäinen' versio numerokin
-        itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+        itsQueryData->UseBinaryStorage(theLibVersion > 5);
         dataFile << *itsQueryData;
       }
       else

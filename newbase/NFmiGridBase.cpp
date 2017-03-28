@@ -110,9 +110,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
   {
     // Gridit saman kokoisia hiloja --> voidaan kopioida suoraan interpoloimatta
 
-    if (!itsData->Init(Size(), theData->DataPool()->Data())) return false;
-
-    return true;
+    return itsData->Init(Size(), theData->DataPool()->Data());
   }
 
   if (!itsData->Init(Size())) return false;
@@ -574,10 +572,8 @@ bool NFmiGridBase::FloatValue(double data, const NFmiPoint &gridPoint)
 
 bool NFmiGridBase::IsInsideOriginalGrid(double xGrid, double yGrid) const
 {
-  if (!(xGrid + kFmiEps >= 0 && xGrid - kFmiEps <= itsXNumber - 1 && yGrid + kFmiEps >= 0 &&
-        yGrid - kFmiEps <= itsYNumber - 1))
-    return false;
-  return true;
+  return xGrid + kFmiEps >= 0 && xGrid - kFmiEps <= itsXNumber - 1 && yGrid + kFmiEps >= 0 &&
+         yGrid - kFmiEps <= itsYNumber - 1;
 }
 
 // ----------------------------------------------------------------------
@@ -595,8 +591,7 @@ bool NFmiGridBase::NearestGridPoint(double &x_, double &y_) const
   x_ = ::round(x_);
   y_ = ::round(y_);
 
-  if (!IsInsideGrid(static_cast<unsigned long>(x_), static_cast<unsigned long>(y_))) return false;
-  return true;
+  return IsInsideGrid(static_cast<unsigned long>(x_), static_cast<unsigned long>(y_));
 }
 
 // ----------------------------------------------------------------------
@@ -1253,7 +1248,7 @@ bool NFmiGridBase::Init(unsigned long theXNumber, unsigned long theYNumber)
 
   if (itsData != nullptr) delete itsData;
   itsData = new NFmiDataPool();
-  return itsData->Init(theXNumber * theYNumber) == true;
+  return itsData->Init(theXNumber * theYNumber);
 }
 
 // ----------------------------------------------------------------------
@@ -1275,7 +1270,7 @@ bool NFmiGridBase::Swap(FmiDirection theCurrentDirection)
   FmiDirection oldDirection =
       itsStartingCorner;  // itsStartingCorner pitäisi pitää sisällään bottomleft:in
   itsStartingCorner = theCurrentDirection;
-  bool status = Swap() == true;
+  bool status = Swap();
   itsStartingCorner =
       oldDirection;  // asetetaan bottomleft taas kulmaksi, koska data on muutettu sen mukaiseksi.
   return status;

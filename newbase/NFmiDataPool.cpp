@@ -206,9 +206,7 @@ bool NFmiDataPool::Index(unsigned long newIndex)
 
 bool NFmiDataPool::Next(unsigned long numberOfSteps)
 {
-  if ((numberOfSteps != 0u) && IsInside(itsIndex += numberOfSteps)) return true;
-
-  return false;
+  return (numberOfSteps != 0u) && IsInside(itsIndex += numberOfSteps);
 }
 
 // ----------------------------------------------------------------------
@@ -220,9 +218,7 @@ bool NFmiDataPool::Next(unsigned long numberOfSteps)
 
 bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 {
-  if ((numberOfSteps != 0u) && IsInside(itsIndex -= numberOfSteps)) return true;
-
-  return false;
+  return (numberOfSteps != 0u) && IsInside(itsIndex -= numberOfSteps);
 }
 
 // ----------------------------------------------------------------------

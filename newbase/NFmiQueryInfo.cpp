@@ -2616,7 +2616,7 @@ class TimeToModifyCalculator
     WriteLock lock(itsMutex);
     if (fNoMoreWork) return false;
     theTime = itsTimeDescriptor.Time();
-    if (itsTimeDescriptor.Next() == false) fNoMoreWork = true;
+    if (!itsTimeDescriptor.Next()) fNoMoreWork = true;
     return true;
   }
 

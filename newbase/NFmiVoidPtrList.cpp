@@ -316,7 +316,7 @@ NFmiVoidPtrData *NFmiVoidPtrIterator::CurrentPtr() { return itsCurrentItem->itsV
 bool NFmiVoidPtrIterator::Next(void *&theItem)
 {
   theItem = Next();
-  return *&theItem != nullptr ? true : false;
+  return *&theItem != nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -329,7 +329,7 @@ bool NFmiVoidPtrIterator::Next(void *&theItem)
 bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
 {
   theItem = NextPtr();
-  return *&theItem != nullptr ? true : false;
+  return *&theItem != nullptr;
 }
 
 // ----------------------------------------------------------------------

@@ -274,8 +274,7 @@ class _FMI_DLL NFmiDataMatrix
   template <typename X>
   static bool IsEqualEnough(X value1, X value2, X usedEpsilon)
   {
-    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon) return true;
-    return false;
+    return static_cast<bool>(::fabs(static_cast<double>(value1 - value2)) < usedEpsilon);
   }
 
   double FixIndexOnEdges(double index, size_type matrixSize) const

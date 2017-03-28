@@ -713,9 +713,7 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
 bool NFmiString::FirstCharIsUpper() const
 {
   char c = fChar[0];
-  if ((c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305') return true;
-
-  return false;
+  return (c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305';
 }
 
 // ----------------------------------------------------------------------

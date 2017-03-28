@@ -409,11 +409,8 @@ NFmiRect operator-(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 
 bool NFmiRect::Intersect(const NFmiRect &theRect) const
 {
-  if (this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
-      this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top())
-    return true;
-
-  return false;
+  return this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
+         this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top();
 }
 
 // ----------------------------------------------------------------------

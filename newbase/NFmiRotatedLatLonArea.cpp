@@ -348,10 +348,7 @@ bool NFmiRotatedLatLonArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiRotatedLatLonArea::operator==(const NFmiRotatedLatLonArea &theArea) const
 {
-  if ((itsSouthernPole == theArea.itsSouthernPole) && NFmiLatLonArea::operator==(theArea))
-    return true;
-
-  return false;
+  return (itsSouthernPole == theArea.itsSouthernPole) && NFmiLatLonArea::operator==(theArea);
 }
 
 // ----------------------------------------------------------------------

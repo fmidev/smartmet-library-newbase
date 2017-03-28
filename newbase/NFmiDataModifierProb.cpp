@@ -94,8 +94,7 @@ void NFmiDataModifierProb::Clear()
 
 bool NFmiDataModifierProb::CheckParams(double theValue)
 {
-  if (theValue == kFloatMissing || its1Limit == kFloatMissing) return false;
-  return true;
+  return !(theValue == kFloatMissing || its1Limit == kFloatMissing);
 }
 
 // ----------------------------------------------------------------------

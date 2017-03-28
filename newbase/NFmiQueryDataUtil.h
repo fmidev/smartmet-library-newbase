@@ -352,8 +352,7 @@ class _FMI_DLL NFmiQueryDataUtil
   template <typename T>
   static bool IsEqualEnough(T value1, T value2, T usedEpsilon)
   {
-    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon) return true;
-    return false;
+    return static_cast<bool>(::fabs(static_cast<double>(value1 - value2)) < usedEpsilon);
   }
 
   static NFmiQueryData *ReadNewestData(const std::string &theFileFilter);

@@ -37,7 +37,7 @@ bool NFmiBox::Initialize(unsigned long newSize)
     itsValues = nullptr;
   }
   if (itsSize > 0) itsValues = new float[itsSize];
-  return itsValues != nullptr ? true : false;
+  return itsValues != nullptr;
 }
 
 // ----------------------------------------------------------------------

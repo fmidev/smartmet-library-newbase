@@ -193,7 +193,7 @@ void NFmiMultiQueryInfo::Init()
         auto res = time_index.insert(idx);
 
         // Resolve conflict when multiple datas provide the same valid time
-        if (res.second == false)
+        if (!res.second)
         {
           std::size_t old_index = res.first->info_index;
 

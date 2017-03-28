@@ -417,9 +417,7 @@ bool NFmiQueryData::Next()
 
   ResetLocation();
   NextLocation();
-  if (NextTime()) return true;
-
-  return false;
+  return NextTime();
 }
 
 // ----------------------------------------------------------------------
@@ -622,7 +620,7 @@ std::istream &NFmiQueryData::Read(std::istream &file)
 // THIS IS NOT THREAD SAFE!!
 void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
 {
-  if ((Info()->HPlaceDescriptor() == newDesc) == false)
+  if (!(Info()->HPlaceDescriptor() == newDesc))
   {
     itsQueryInfo->SetHPlaceDescriptor(newDesc);
     MakeLatLonCache();  // tämä alustaa latlon cachen uudestaan

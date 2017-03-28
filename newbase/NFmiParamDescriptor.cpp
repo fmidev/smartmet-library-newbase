@@ -138,7 +138,7 @@ unsigned long NFmiParamDescriptor::SizeActive() const
   unsigned long theActiveSize = 0;
 
   for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
-    if (itsActivity[i] == true) theActiveSize++;
+    if (itsActivity[i]) theActiveSize++;
 
   return theActiveSize;
 }
@@ -154,7 +154,7 @@ unsigned long NFmiParamDescriptor::SizeActive() const
 bool NFmiParamDescriptor::SetActivity(bool theActivityState, bool fIgnoreSubParam)
 {
   // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
-  return itsParamBag->SetCurrentActive(theActivityState == true, fIgnoreSubParam == true);
+  return itsParamBag->SetCurrentActive(theActivityState, fIgnoreSubParam);
 }
 
 // ----------------------------------------------------------------------
@@ -167,7 +167,7 @@ bool NFmiParamDescriptor::SetActivity(bool theActivityState, bool fIgnoreSubPara
 bool NFmiParamDescriptor::SetActivity(bool theActivityState)
 {
   // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
-  return itsParamBag->SetCurrentActive(theActivityState == true);
+  return itsParamBag->SetCurrentActive(theActivityState);
 }
 
 // ----------------------------------------------------------------------
@@ -183,7 +183,7 @@ bool NFmiParamDescriptor::SetActivity(bool theActivityState,
                                       unsigned long theIndex,
                                       bool fIgnoreSubParam)
 {
-  return itsParamBag->SetActive(theIndex, theActivityState, fIgnoreSubParam == true);
+  return itsParamBag->SetActive(theIndex, theActivityState, fIgnoreSubParam);
 }
 
 // ----------------------------------------------------------------------
@@ -370,7 +370,7 @@ NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSu
   // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
   // jos 0-pointteri.
 
-  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
+  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam);
 
   // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
   // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
@@ -380,7 +380,7 @@ NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSu
 
   // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
   // jolloin palautetaan 1. parametrin tuottaja
-  return *(itsParamBag->Param(0, fIgnoreSubParam == true));
+  return *(itsParamBag->Param(0, fIgnoreSubParam));
 }
 
 // ----------------------------------------------------------------------
@@ -399,7 +399,7 @@ NFmiDataIdent &NFmiParamDescriptor::EditParam(unsigned long theIndex, bool fIgno
   // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
   // jos 0-pointteri.
 
-  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
+  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam);
 
   // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
   // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on

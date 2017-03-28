@@ -108,8 +108,7 @@ void NFmiDataModifierCombi::Clear()
 
 bool NFmiDataModifierCombi::CheckParams(double theValue)
 {
-  if (theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0) return false;
-  return true;
+  return !(theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0);
 }
 
 // ----------------------------------------------------------------------

@@ -127,12 +127,7 @@ bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
 
 bool NFmiSnapShotInterface::IsValid()
 {
-  if ((itsInfo == nullptr) || time(nullptr) - itsStartingTime > itsUpdateInterval)
-  {
-    return false;
-  }
-
-  return true;
+  return !((itsInfo == nullptr) || time(nullptr) - itsStartingTime > itsUpdateInterval);
 }
 
 // ----------------------------------------------------------------------

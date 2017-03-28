@@ -3720,9 +3720,7 @@ double NFmiWeatherAndCloudiness::RawSubValue(FmiParameterName theParam)
 bool NFmiWeatherAndCloudiness::IsPrecipitationOk() const
 {
   if (!DataOk()) return false;
-  if (TotalPrecipitation() != TotalPrecipitationMissingValue()) return true;
-
-  return false;
+  return TotalPrecipitation() != TotalPrecipitationMissingValue();
 }
 
 // ----------------------------------------------------------------------
