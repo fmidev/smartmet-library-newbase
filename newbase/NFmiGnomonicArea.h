@@ -79,7 +79,7 @@ class _FMI_DLL NFmiGnomonicArea : public NFmiAzimuthalArea
 };  // class NFmiGnomonicArea
 
 //! Undocumented, should be removed
-typedef NFmiGnomonicArea* PNFmiGnomonicArea;
+using PNFmiGnomonicArea = NFmiGnomonicArea*;
 
 // ----------------------------------------------------------------------
 /*!

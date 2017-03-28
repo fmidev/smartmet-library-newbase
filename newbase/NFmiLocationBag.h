@@ -72,13 +72,13 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
 
   void Add(const NFmiLocation &theLocation);
 
-  typedef checkedVector<NFmiLocation *> StorageType;
+  using StorageType = checkedVector<NFmiLocation *>;
   StorageType itsLocations;
 
  private:
   // This could also have been a map to vector indices.
   // The pointer is the same as in the vector
-  typedef std::set<NFmiLocation> SortedStorageType;
+  using SortedStorageType = std::set<NFmiLocation>;
   SortedStorageType itsSortedLocations;
 
   // NearTree of the locations

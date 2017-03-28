@@ -58,7 +58,7 @@ class _FMI_DLL NFmiLatLonArea : public NFmiArea
 };  // class NFmiLatLonArea
 
 //! Undocumented, should be removed
-typedef NFmiLatLonArea* PNFmiLatLonArea;
+using PNFmiLatLonArea = NFmiLatLonArea*;
 
 // ----------------------------------------------------------------------
 /*!

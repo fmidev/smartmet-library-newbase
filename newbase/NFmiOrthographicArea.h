@@ -95,7 +95,7 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
 };  // class NFmiOrthographicArea
 
 //! Undocumented, should be removed
-typedef NFmiOrthographicArea *PNFmiOrthographicArea;
+using PNFmiOrthographicArea = NFmiOrthographicArea *;
 
 // ----------------------------------------------------------------------
 /*!

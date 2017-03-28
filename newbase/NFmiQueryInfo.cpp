@@ -2595,10 +2595,10 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
 class TimeToModifyCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  using MutexType = boost::shared_mutex;
+  using ReadLock = boost::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                   // sen tähän, jos joskus tarvitaankin
+  using WriteLock = boost::unique_lock<MutexType>;
 
   TimeToModifyCalculator(const NFmiTimeDescriptor &theTimeDescriptor)
       : itsTimeDescriptor(theTimeDescriptor), fNoMoreWork(false)

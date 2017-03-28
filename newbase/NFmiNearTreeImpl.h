@@ -122,8 +122,8 @@ template <typename T, typename F>
 class _FMI_DLL NFmiNearTreeImpl
 {
  public:
-  typedef T value_type;
-  typedef F functor_type;
+  using value_type = T;
+  using functor_type = F;
 
   ~NFmiNearTreeImpl();
   NFmiNearTreeImpl() = default;

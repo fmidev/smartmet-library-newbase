@@ -19,11 +19,11 @@ class NFmiIndexMaskIterator;
 class NFmiIndexMask
 {
  public:
-  typedef unsigned long value_type;
-  typedef unsigned long size_type;
-  typedef long difference_type;
-  typedef std::vector<value_type> storage_type;
-  typedef storage_type::const_iterator const_iterator;
+  using value_type = unsigned long;
+  using size_type = unsigned long;
+  using difference_type = long;
+  using storage_type = std::vector<value_type>;
+  using const_iterator = storage_type::const_iterator;
 
   ~NFmiIndexMask();
   NFmiIndexMask();

@@ -58,7 +58,7 @@ class _FMI_DLL NFmiRotatedLatLonArea : public NFmiLatLonArea
 };  // class NFmiRotatedLatLonArea
 
 //! Undocumented, should be removed
-typedef NFmiRotatedLatLonArea *PNFmiRotatedLatLonArea;
+using PNFmiRotatedLatLonArea = NFmiRotatedLatLonArea *;
 
 //! ----------------------------------------------------------------------
 /*!

@@ -170,7 +170,7 @@ void NFmiMultiQueryInfo::Init()
   // we must compare the modification time of the respective files.
   // Otherwise we may miss fixes to model data etc.
 
-  typedef std::set<MultiIndex> MultiIndexSet;
+  using MultiIndexSet = std::set<MultiIndex>;
   MultiIndexSet time_index;
 
   for (std::size_t i = 0; i < itsInfos.size(); i++)

@@ -118,10 +118,10 @@ class _FMI_DLL NFmiTime : public NFmiStaticTime
 };  // class NFmiTime
 
 //! Undocumented, should be removed
-typedef NFmiTime *PTFmiTime;
+using PTFmiTime = NFmiTime *;
 
 //! Undocumented, should be removed
-typedef NFmiTime TFmiTime;
+using TFmiTime = NFmiTime;
 
 // ----------------------------------------------------------------------
 /*!

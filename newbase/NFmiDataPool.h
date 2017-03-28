@@ -18,7 +18,7 @@
 class NFmiTransformList;
 
 //! This is not used in newbase, and should hence be removed
-typedef unsigned char FmiByte;
+using FmiByte = unsigned char;
 
 //! Undocumented
 const int kMaxNumberOfDifferentMissingValues = 10;

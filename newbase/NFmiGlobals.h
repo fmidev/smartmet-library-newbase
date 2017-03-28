@@ -197,7 +197,7 @@ const double kEpsPacific = 0.00001;
 #endif  // __cplusplus
 
 //! Undocumented
-typedef unsigned short FmiCounter;
+using FmiCounter = unsigned short;
 
 // Tämä on kaikille u-long tyyppisille indekseille puuttuva tai alustamaton arvo.
 // Sitä voi käyttää newbase indeksien tutkimiseen, ilman ikäviä static_cast:eja.

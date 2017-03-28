@@ -109,6 +109,6 @@ inline bool NFmiSortable::operator<=(const NFmiSortable& aObjTest) const
 
 // Marko trying to get rid of fmibase library
 //! Undocumented, should be removed.
-typedef NFmiSortable TSortable;
+using TSortable = NFmiSortable;
 
 // ======================================================================

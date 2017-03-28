@@ -32,7 +32,7 @@ class _FMI_DLL NFmiMap
 
 //! Undocumented, should be removed
 
-typedef NFmiMap *PNFmiMap;
+using PNFmiMap = NFmiMap *;
 
 // ----------------------------------------------------------------------
 /*!

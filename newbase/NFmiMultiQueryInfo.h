@@ -148,7 +148,7 @@ class _FMI_DLL NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::non
     bool operator<(const NFmiMetTime& t) const { return valid_time < t; }
   };
 
-  typedef std::vector<MultiIndex> MultiIndexes;
+  using MultiIndexes = std::vector<MultiIndex>;
   MultiIndexes itsMultiIndexes;
 
   unsigned long itsMultiTimeIndex;

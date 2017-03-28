@@ -87,7 +87,7 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
 };  // class NFmiLambertEqualArea
 
 //! Undocumented, should be removed
-typedef NFmiLambertEqualArea* PNFmiLambertEqualArea;
+using PNFmiLambertEqualArea = NFmiLambertEqualArea*;
 
 // ----------------------------------------------------------------------
 /*!

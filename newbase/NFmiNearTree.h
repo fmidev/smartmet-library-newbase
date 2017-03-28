@@ -126,8 +126,8 @@ template <typename T, typename F = NFmiNearTreeDistance<T> >
 class _FMI_DLL NFmiNearTree
 {
  public:
-  typedef T value_type;
-  typedef F functor_type;
+  using value_type = T;
+  using functor_type = F;
 
   ~NFmiNearTree();
   NFmiNearTree();
@@ -153,7 +153,7 @@ class _FMI_DLL NFmiNearTree
   NFmiNearTree& operator=(const NFmiNearTree& theTree);
 
   mutable NFmiNearTreeImpl<value_type, functor_type> itsImpl;
-  typedef std::vector<value_type> buffer_type;
+  using buffer_type = std::vector<value_type>;
   mutable buffer_type itsInputBuffer;
 
 };  // class NFmiNearTree

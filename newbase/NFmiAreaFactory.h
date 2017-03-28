@@ -19,7 +19,7 @@ class NFmiArea;
 
 namespace NFmiAreaFactory
 {
-typedef boost::shared_ptr<NFmiArea> return_type;
+using return_type = boost::shared_ptr<NFmiArea>;
 
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
                           NFmiPoint &topRightLatlon,

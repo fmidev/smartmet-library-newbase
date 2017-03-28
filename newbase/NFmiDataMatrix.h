@@ -80,11 +80,11 @@ template <class T>
 class checkedVector : public std::vector<T>  // inherit from std::vector<T>
 {
  public:
-  typedef typename std::vector<T> base_type;
-  typedef typename base_type::size_type size_type;
-  typedef typename base_type::difference_type difference_type;
-  typedef typename base_type::reference reference;
-  typedef typename base_type::const_reference const_reference;
+  using base_type = std::vector<T>;
+  using size_type = typename base_type::size_type;
+  using difference_type = typename base_type::difference_type;
+  using reference = typename base_type::reference;
+  using const_reference = typename base_type::const_reference;
 
   // type names like iterator etc. are also inherited
   checkedVector() {}
@@ -173,7 +173,7 @@ class _FMI_DLL NFmiDataMatrix
     : public checkedVector<checkedVector<T> >  // tämä on ns. debug versio, jos tarvetta
 {
  public:
-  typedef typename checkedVector<T>::size_type size_type;
+  using size_type = typename checkedVector<T>::size_type;
 
  protected:
   size_type itsNX;  //!< Matrix width
@@ -610,7 +610,7 @@ class _FMI_DLL NFmiDataMatrix
 template <class T>
 inline std::ostream& operator<<(std::ostream& s, const NFmiDataMatrix<T>& m)
 {
-  typedef typename NFmiDataMatrix<T>::size_type sz_type;
+  using sz_type = typename NFmiDataMatrix<T>::size_type;
   sz_type rows = m.NY();
   sz_type columns = m.NX();
 
@@ -653,7 +653,7 @@ inline std::ostream& operator<<(std::ostream& s, const NFmiDataMatrix<T>& m)
 template <class T>
 inline std::istream& operator>>(std::istream& s, NFmiDataMatrix<T>& m)
 {
-  typedef typename NFmiDataMatrix<T>::size_type sz_type;
+  using sz_type = typename NFmiDataMatrix<T>::size_type;
   sz_type rows = 0;
   sz_type columns = 0;
 

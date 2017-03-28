@@ -43,7 +43,7 @@ class _FMI_DLL NFmiStringList
   int Index() const;
 
  private:
-  typedef checkedVector<NFmiString *> StorageType;
+  using StorageType = checkedVector<NFmiString *>;
   StorageType itsList;
 
   //! Note: For backward compatibility this index runs from 0 to N-1
@@ -54,7 +54,7 @@ class _FMI_DLL NFmiStringList
 };  // class NFmiStringList
 
 //! Undocumented, should be removed
-typedef NFmiStringList *PNFmiStringList;
+using PNFmiStringList = NFmiStringList *;
 
 // ----------------------------------------------------------------------
 /*!

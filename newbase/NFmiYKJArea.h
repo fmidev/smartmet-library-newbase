@@ -76,7 +76,7 @@ class _FMI_DLL NFmiYKJArea : public NFmiKKJArea
 };  // class NFmiYKJArea
 
 //! Undocumented, should be removed
-typedef NFmiYKJArea* PNFmiYKJArea;
+using PNFmiYKJArea = NFmiYKJArea*;
 
 // ----------------------------------------------------------------------
 /*!

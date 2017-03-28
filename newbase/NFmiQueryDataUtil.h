@@ -233,10 +233,10 @@ class NFmiStopThreadException
 class NFmiTimeIndexCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  using MutexType = boost::shared_mutex;
+  using ReadLock = boost::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                   // sen tähän, jos joskus tarvitaankin
+  using WriteLock = boost::unique_lock<MutexType>;
 
   NFmiTimeIndexCalculator(unsigned long theTimeSize);
   NFmiTimeIndexCalculator(unsigned long theStartTimeIndex, unsigned long theEndTimeIndex);
@@ -260,10 +260,10 @@ class NFmiTimeIndexCalculator
 class NFmiLocationIndexRangeCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  using MutexType = boost::shared_mutex;
+  using ReadLock = boost::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                   // sen tähän, jos joskus tarvitaankin
+  using WriteLock = boost::unique_lock<MutexType>;
 
   NFmiLocationIndexRangeCalculator(unsigned long theLocationSize, unsigned long theChunkSize);
   NFmiLocationIndexRangeCalculator(unsigned long theStartLocationIndex,
@@ -290,7 +290,7 @@ class NFmiLocationIndexRangeCalculator
 class _FMI_DLL NFmiQueryDataUtil
 {
  public:
-  typedef checkedVector<GridRecordData *> GridDataVector;
+  using GridDataVector = checkedVector<GridRecordData *>;
   using SoundingLevelContainer = std::vector<unsigned long>;
   using SignificantSoundingLevels = std::unique_ptr<SoundingLevelContainer>;
   static SignificantSoundingLevels GetSignificantSoundingLevelIndices(NFmiFastQueryInfo &theInfo);

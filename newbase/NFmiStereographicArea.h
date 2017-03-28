@@ -87,7 +87,7 @@ class _FMI_DLL NFmiStereographicArea : public NFmiAzimuthalArea
 };  // class NFmiStereographicArea
 
 //! Undocumented, should be removed
-typedef NFmiStereographicArea* PNFmiStereographicArea;
+using PNFmiStereographicArea = NFmiStereographicArea*;
 
 // ----------------------------------------------------------------------
 /*!

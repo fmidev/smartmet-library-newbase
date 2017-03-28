@@ -56,7 +56,7 @@ class _FMI_DLL NFmiMercatorArea : public NFmiArea
 };  // class NFmiMercatorArea
 
 //! Undocumented, should be removed
-typedef NFmiMercatorArea *PNFmiMercatorArea;
+using PNFmiMercatorArea = NFmiMercatorArea *;
 
 // ----------------------------------------------------------------------
 /*!
