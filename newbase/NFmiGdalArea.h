@@ -24,15 +24,15 @@ class _FMI_DLL NFmiGdalArea : public NFmiArea
 
   NFmiGdalArea(const NFmiGdalArea& theGdalArea);
 
-  NFmiGdalArea(const std::string& theDatum,
-               const std::string& theDescription,
+  NFmiGdalArea(std::string theDatum,
+               std::string theDescription,
                const NFmiPoint& theBottomLeftLatLon,
                const NFmiPoint& theTopRightLatLon,
                const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
                bool usePacificView = false);
 
-  NFmiGdalArea(const std::string& theDatum,
+  NFmiGdalArea(std::string theDatum,
                const OGRSpatialReference& theCRS,
                const NFmiPoint& theBottomLeftLatLon,
                const NFmiPoint& theTopRightLatLon,
@@ -40,7 +40,7 @@ class _FMI_DLL NFmiGdalArea : public NFmiArea
                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
                bool usePacificView = false);
 
-  NFmiGdalArea(const std::string& theDatum,
+  NFmiGdalArea(std::string theDatum,
                const OGRSpatialReference& theCRS,
                double theXmin,
                double theYmin,

@@ -146,10 +146,10 @@ class _FMI_DLL NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiForecastHourAreaMask() override;
-  NFmiForecastHourAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo);
+  NFmiForecastHourAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo);
   NFmiForecastHourAreaMask(const NFmiForecastHourAreaMask& theMask);
   NFmiForecastHourAreaMask& operator=(const NFmiForecastHourAreaMask& theMask);
-  NFmiForecastHourAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiForecastHourAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                            const NFmiDataIdent& theParam,
                            const NFmiCalculationCondition& theOperation);
   NFmiAreaMask* Clone() const override;
@@ -168,10 +168,10 @@ class _FMI_DLL NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiTimeStepAreaMask() override;
-  NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo);
+  NFmiTimeStepAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo);
   NFmiTimeStepAreaMask(const NFmiTimeStepAreaMask& theMask);
   NFmiTimeStepAreaMask& operator=(const NFmiTimeStepAreaMask& theMask);
-  NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiTimeStepAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                        const NFmiDataIdent& theParam,
                        const NFmiCalculationCondition& theOperation);
   NFmiAreaMask* Clone() const override;
@@ -193,8 +193,8 @@ class _FMI_DLL NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiGridSizeAreaMask() override;
-  NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo, bool calcXValue);
-  NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiGridSizeAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo, bool calcXValue);
+  NFmiGridSizeAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                        const NFmiDataIdent& theParam,
                        const NFmiCalculationCondition& theOperation,
                        bool calcXValue);

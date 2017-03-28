@@ -41,12 +41,14 @@
 // ======================================================================
 
 #include "NFmiCalculatedAreaMask.h"
+
 #include "NFmiArea.h"
 #include "NFmiDataIdent.h"
 #include "NFmiFastQueryInfo.h"
 #include "NFmiGrid.h"
 #include "NFmiLocation.h"
 #include "NFmiPoint.h"
+#include <utility>
 
 // ----------------------------------------------------------------------
 /*!
@@ -533,9 +535,8 @@ const NFmiString NFmiMinuteAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
-    const boost::shared_ptr<NFmiFastQueryInfo>& theInfo)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
+NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo)
+    : NFmiElevationAngleAreaMask(), itsInfo(std::move(theInfo))
 {
 }
 
@@ -549,11 +550,10 @@ NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
  */
 // ----------------------------------------------------------------------
 
-NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
-    const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
-    const NFmiDataIdent& theParam,
-    const NFmiCalculationCondition& theOperation)
-    : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(theInfo)
+NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
+                                                   const NFmiDataIdent& theParam,
+                                                   const NFmiCalculationCondition& theOperation)
+    : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(std::move(theInfo))
 {
 }
 
@@ -632,8 +632,8 @@ const NFmiString NFmiForecastHourAreaMask::MakeSubMaskString() const
 }
 
 NFmiTimeStepAreaMask::~NFmiTimeStepAreaMask() = default;
-NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
+NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo)
+    : NFmiElevationAngleAreaMask(), itsInfo(std::move(theInfo))
 {
 }
 
@@ -652,10 +652,10 @@ NFmiTimeStepAreaMask& NFmiTimeStepAreaMask::operator=(const NFmiTimeStepAreaMask
   return *this;
 }
 
-NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                                            const NFmiDataIdent& theParam,
                                            const NFmiCalculationCondition& theOperation)
-    : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(theInfo)
+    : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(std::move(theInfo))
 {
 }
 
@@ -690,17 +690,19 @@ double NFmiTimeStepAreaMask::Value(const NFmiCalculationParams& theCalculationPa
 // **********************************************************
 
 NFmiGridSizeAreaMask::~NFmiGridSizeAreaMask() = default;
-NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                                            bool calcXValue)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo), fCalcXValue(calcXValue)
+    : NFmiElevationAngleAreaMask(), itsInfo(std::move(theInfo)), fCalcXValue(calcXValue)
 {
 }
 
-NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
                                            const NFmiDataIdent& theParam,
                                            const NFmiCalculationCondition& theOperation,
                                            bool calcXValue)
-    : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(theInfo), fCalcXValue(calcXValue)
+    : NFmiElevationAngleAreaMask(theParam, theOperation),
+      itsInfo(std::move(theInfo)),
+      fCalcXValue(calcXValue)
 {
 }
 

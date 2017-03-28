@@ -157,13 +157,13 @@ class _FMI_DLL NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
                           Type theMaskType,
                           NFmiInfoData::Type theDataType,
                           const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                          const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+                          boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
                           int theXOffset,
                           int theYOffset,
                           BinaryOperator thePostBinaryOperator = kNoValue);
 
   NFmiInfoAreaMaskPeekXY2(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                          const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+                          boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
                           int theXOffset,
                           int theYOffset,
                           BinaryOperator thePostBinaryOperator = kNoValue);
@@ -201,13 +201,13 @@ class _FMI_DLL NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
                           Type theMaskType,
                           NFmiInfoData::Type theDataType,
                           const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                          const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+                          boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
                           double theXOffsetInKM,
                           double theYOffsetInKM,
                           BinaryOperator thePostBinaryOperator = kNoValue);
 
   NFmiInfoAreaMaskPeekXY3(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                          const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+                          boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
                           double theXOffsetInKM,
                           double theYOffsetInKM,
                           BinaryOperator thePostBinaryOperator = kNoValue);
@@ -345,8 +345,8 @@ class _FMI_DLL NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
                             Type theMaskType,
                             NFmiInfoData::Type theDataType,
                             const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                            const boost::shared_ptr<NFmiFastQueryInfo> &theInfoUwind,
-                            const boost::shared_ptr<NFmiFastQueryInfo> &theInfoVwind,
+                            boost::shared_ptr<NFmiFastQueryInfo> theInfoUwind,
+                            boost::shared_ptr<NFmiFastQueryInfo> theInfoVwind,
                             bool thePeekAlongTudes,
                             MetFunctionDirection theMetFuncDirection,
                             BinaryOperator thePostBinaryOperator = kNoValue);

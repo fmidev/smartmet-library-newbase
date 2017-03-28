@@ -14,6 +14,7 @@
 #include <gdal/ogr_spatialref.h>
 #include <cmath>
 #include <iomanip>
+#include <utility>
 
 using namespace std;
 
@@ -72,16 +73,16 @@ NFmiGdalArea &NFmiGdalArea::operator=(const NFmiGdalArea &theArea) = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
-                           const std::string &theDescription,
+NFmiGdalArea::NFmiGdalArea(std::string theDatum,
+                           std::string theDescription,
                            const NFmiPoint &theBottomLeftLatLon,
                            const NFmiPoint &theTopRightLatLon,
                            const NFmiPoint &theTopLeftXY,
                            const NFmiPoint &theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsDatum(theDatum),
-      itsDescription(theDescription),
+      itsDatum(std::move(theDatum)),
+      itsDescription(std::move(theDescription)),
       itsBottomLeftLatLon(theBottomLeftLatLon),
       itsTopRightLatLon(theTopRightLatLon),
       itsWorldRect()
@@ -95,7 +96,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
+NFmiGdalArea::NFmiGdalArea(std::string theDatum,
                            const OGRSpatialReference &theCRS,
                            const NFmiPoint &theBottomLeftLatLon,
                            const NFmiPoint &theTopRightLatLon,
@@ -103,7 +104,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
                            const NFmiPoint &theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsDatum(theDatum),
+      itsDatum(std::move(theDatum)),
       itsDescription(),
       itsBottomLeftLatLon(theBottomLeftLatLon),
       itsTopRightLatLon(theTopRightLatLon),
@@ -136,7 +137,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
+NFmiGdalArea::NFmiGdalArea(std::string theDatum,
                            const OGRSpatialReference &theCRS,
                            double theXmin,
                            double theYmin,
@@ -146,7 +147,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
                            const NFmiPoint &theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsDatum(theDatum),
+      itsDatum(std::move(theDatum)),
       itsDescription(),
       itsBottomLeftLatLon(),
       itsTopRightLatLon(),

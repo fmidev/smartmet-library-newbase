@@ -26,6 +26,7 @@
 #endif
 
 #include <cstdlib>
+#include <utility>
 // atoi()
 
 using namespace std;
@@ -81,15 +82,15 @@ NFmiLogger::NFmiLogger()
   UpdateFileNamesAndPaths(true);
 }
 
-NFmiLogger::NFmiLogger(const std::string &theLogFilePath,
-                       const std::string &theLogFileBaseName,
+NFmiLogger::NFmiLogger(std::string theLogFilePath,
+                       std::string theLogFileBaseName,
                        bool theUseBackupSystem,
                        bool theCleanBackupFiles,
                        Period theLoggingPeriod)
     : itsUsedLoggingLevels(127),
-      itsLogFilePath(theLogFilePath),
+      itsLogFilePath(std::move(theLogFilePath)),
       itsAbsolutLogFilePath(),
-      itsLogFileBaseName(theLogFileBaseName),
+      itsLogFileBaseName(std::move(theLogFileBaseName)),
       itsTimeStampStringFormat("126"),
       itsTimeStampStringIntegerFormat(126)  // 126 = YYYYMMDDHHmmss ks. NFmiStaticTime.h
       ,

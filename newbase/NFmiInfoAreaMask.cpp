@@ -21,6 +21,7 @@
 #include "NFmiQueryDataUtil.h"
 
 #include <cassert>
+#include <utility>
 
 // HUOM!!! Jostain syystä kun käytin täällä boost::math::iround -funktiota, se ei mennyt parissa
 // VC++ 2013 projektissa linkkerin läpi (Unknown variable blaa blaa). Esim. SmartMet projekti meni
@@ -485,27 +486,27 @@ NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2(
     Type theMaskType,
     NFmiInfoData::Type theDataType,
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
     int theXOffset,
     int theYOffset,
     BinaryOperator thePostBinaryOperator)
     : NFmiInfoAreaMask(theOperation, theMaskType, theDataType, theInfo, thePostBinaryOperator),
       itsXOffset(theXOffset),
       itsYOffset(theYOffset),
-      itsEditedInfo(theEditedInfo)
+      itsEditedInfo(std::move(theEditedInfo))
 {
 }
 
 NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
     int theXOffset,
     int theYOffset,
     BinaryOperator thePostBinaryOperator)
     : NFmiInfoAreaMask(theInfo, thePostBinaryOperator),
       itsXOffset(theXOffset),
       itsYOffset(theYOffset),
-      itsEditedInfo(theEditedInfo)
+      itsEditedInfo(std::move(theEditedInfo))
 {
 }
 
@@ -565,27 +566,27 @@ NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
     Type theMaskType,
     NFmiInfoData::Type theDataType,
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
     double theXOffsetInKM,
     double theYOffsetInKM,
     BinaryOperator thePostBinaryOperator)
     : NFmiInfoAreaMask(theOperation, theMaskType, theDataType, theInfo, thePostBinaryOperator),
       itsXOffsetInKM(theXOffsetInKM),
       itsYOffsetInKM(theYOffsetInKM),
-      itsEditedInfo(theEditedInfo)
+      itsEditedInfo(std::move(theEditedInfo))
 {
 }
 
 NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    boost::shared_ptr<NFmiFastQueryInfo> theEditedInfo,
     double theXOffsetInKM,
     double theYOffsetInKM,
     BinaryOperator thePostBinaryOperator)
     : NFmiInfoAreaMask(theInfo, thePostBinaryOperator),
       itsXOffsetInKM(theXOffsetInKM),
       itsYOffsetInKM(theYOffsetInKM),
-      itsEditedInfo(theEditedInfo)
+      itsEditedInfo(std::move(theEditedInfo))
 {
 }
 
@@ -999,8 +1000,8 @@ NFmiInfoAreaMaskAdvection::NFmiInfoAreaMaskAdvection(
     Type theMaskType,
     NFmiInfoData::Type theDataType,
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfoUwind,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfoVwind,
+    boost::shared_ptr<NFmiFastQueryInfo> theInfoUwind,
+    boost::shared_ptr<NFmiFastQueryInfo> theInfoVwind,
     bool thePeekAlongTudes,
     MetFunctionDirection theMetFuncDirection,
     BinaryOperator thePostBinaryOperator)
@@ -1011,8 +1012,8 @@ NFmiInfoAreaMaskAdvection::NFmiInfoAreaMaskAdvection(
                            thePeekAlongTudes,
                            theMetFuncDirection,
                            thePostBinaryOperator),
-      itsInfoUwind(theInfoUwind),
-      itsInfoVwind(theInfoVwind)
+      itsInfoUwind(std::move(theInfoUwind)),
+      itsInfoVwind(std::move(theInfoVwind))
 {
 }
 
