@@ -1883,7 +1883,7 @@ bool NFmiInfoAreaMaskVertConditionalFunc::InitializeFromArguments()
 }
 
 double NFmiInfoAreaMaskVertConditionalFunc::Value(const NFmiCalculationParams &theCalculationParams,
-                                                  bool fUseTimeInterpolationAlways)
+                                                  bool /*fUseTimeInterpolationAlways*/)
 {
   float value = kFloatMissing;
   if (InitializeFromArguments())

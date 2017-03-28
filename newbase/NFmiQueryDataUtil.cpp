@@ -4748,7 +4748,7 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                                      unsigned long theStartTimeIndex,
                                      unsigned long theEndTimeIndex,
                                      NFmiLogger *theLogger,
-                                     bool fUseOnlyOneThread)
+                                     bool /*fUseOnlyOneThread*/)
 {
   if ((theSource != nullptr) && (theTarget != nullptr) && theSource->IsGrid() &&
       theTarget->IsGrid())

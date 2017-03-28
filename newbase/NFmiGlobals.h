@@ -218,8 +218,8 @@ enum Logical
 //#define	FmiMin(x, y)		((x) < (y) ? (x) : (y))
 #define FmiRad(theAngle) ((theAngle)*kPii / 180.)
 #define FmiDeg(theRadian) ((theRadian)*180. / kPii)
-#define FmiKnot(theMeter) (theMeter / 0.5144)
-#define FmiMeter(theKnot) (theKnot * 0.5144)
+#define FmiKnot(theMeter) ((theMeter) / 0.5144)
+#define FmiMeter(theKnot) ((theKnot)*0.5144)
 
 // use C99 math.h instead of these:
 //#if 0  //poisto päälle taas kun Lassella uusi newbase

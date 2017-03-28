@@ -69,7 +69,7 @@ class _FMI_DLL NFmiBitMask
   }
 
   template <class T>
-  void Operation(NFmiBitMask& theMask, T theMaskOperation)
+  void Operation(NFmiBitMask& /*theMask*/, T /*theMaskOperation*/)
   {
   }
 

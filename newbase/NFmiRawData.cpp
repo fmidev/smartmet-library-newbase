@@ -504,7 +504,7 @@ void NFmiRawData::Pimple::Undo(char *ptr)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiRawData::Pimple::Advise(FmiAdvice advice)
+bool NFmiRawData::Pimple::Advise(FmiAdvice /*advice*/)
 {
   // was supported with boost::interprocess, not with boost::iostreams
   return false;
