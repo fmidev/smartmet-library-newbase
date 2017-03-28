@@ -46,8 +46,8 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
                            float theTemperature = kFloatMissing,
                            double theInfoVersion = 7.);
 
-  NFmiWeatherAndCloudiness(unsigned long theCloudValue,
-                           unsigned long theWeatherValue,
+  NFmiWeatherAndCloudiness(unsigned long theSynopCloudValue,
+                           unsigned long theSynopWeatherValue,
                            float theTemperature = kFloatMissing,
                            double theInfoVersion = 7.);
 
@@ -99,24 +99,24 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
                              NFmiVoidPtrList* theSecondaryProducerList = 0) const;
 
   float MeanFloatValue(
-      FmiParameterName theParam,
+      FmiParameterName param,
       bool isTimePeriod,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness1,
-      float factor1,
+      float fac1,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness2,
-      float factor2,
+      float fac2,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness3 = NFmiWeatherAndCloudiness(),
-      float factor3 = kFloatMissing,
+      float fac3 = kFloatMissing,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness4 = NFmiWeatherAndCloudiness(),
-      float factor4 = kFloatMissing) const;
+      float fac4 = kFloatMissing) const;
 
-  bool SetToWeightedMean(NFmiCombinedParam* theWeatherAndCloudiness1,
+  bool SetToWeightedMean(NFmiCombinedParam* theCombinedParam1,
                          float fac1,
-                         NFmiCombinedParam* theWeatherAndCloudiness2,
+                         NFmiCombinedParam* theCombinedParam2,
                          float fac2,
-                         NFmiCombinedParam* theWeatherAndCloudiness3 = 0,
+                         NFmiCombinedParam* theCombinedParam3 = 0,
                          float fac3 = kFloatMissing,
-                         NFmiCombinedParam* theWeatherAndCloudiness4 = 0,
+                         NFmiCombinedParam* theCombinedParam4 = 0,
                          float fac4 = kFloatMissing) override;
 
   const NFmiWeatherAndCloudiness MeanWeather(
@@ -133,16 +133,16 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
   bool SetToWeightedPeriod(NFmiQueryInfo* info,
                            const NFmiPoint& theLonLat,
                            unsigned long period,
-                           bool considerPrecipitationMax,
+                           bool considerMax,
                            float factor1 = 1.,
                            float factor2 = 1.,
                            float factor3 = 1.) override;
 
   bool SetToWeightedPeriod(NFmiQueryInfo* info,
                            const NFmiPoint& theLonLat,
-                           const NFmiMetTime& startTime,
-                           const NFmiMetTime& endTime,
-                           bool considerPrecipitationMax,
+                           const NFmiMetTime& theStartTime,
+                           const NFmiMetTime& theEndTime,
+                           bool considerMax,
                            float factor1 = 1.,
                            float factor2 = 1.,
                            float factor3 = 1.) override;
@@ -201,13 +201,13 @@ class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
 
   unsigned long TimeIntegratedHessaa(
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness1,
-      float factor1,
+      float fac1,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness2,
-      float factor2,
+      float fac2,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness3 = NFmiWeatherAndCloudiness(),
-      float factor3 = kFloatMissing,
+      float fac3 = kFloatMissing,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness4 = NFmiWeatherAndCloudiness(),
-      float factor4 = kFloatMissing);
+      float fac4 = kFloatMissing);
 
   unsigned long CalcTotalPrecipitation() const;
   unsigned long CalcPrecipitationFromHessaa(unsigned long theValue);

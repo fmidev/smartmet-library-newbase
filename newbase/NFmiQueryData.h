@@ -91,8 +91,8 @@ class _FMI_DLL NFmiQueryData
 
   bool Param(NFmiDataIdent theDataIdent);
   bool Location(NFmiLocation theLocation);
-  bool Station(NFmiStation theStation);
-  bool Time(NFmiMetTime theOriginTime);
+  bool Station(NFmiStation theLocation);
+  bool Time(NFmiMetTime theValidTime);
   bool Level(NFmiLevel theLevel);
 
   float FloatValue();

@@ -29,7 +29,7 @@ void Set(const std::string& theName, const std::string& theValue, bool modifyOnl
 bool IsSet(const std::string& theName);
 
 template <typename T>
-T Require(const std::string& thename);
+T Require(const std::string& theName);
 
 template <typename T>
 T RequireRange(const std::string& theName, const T& theLowerLimit, const T& theUpperLimit);

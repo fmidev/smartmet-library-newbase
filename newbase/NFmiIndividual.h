@@ -33,8 +33,8 @@ class _FMI_DLL NFmiIndividual : public NFmiSortable
   void SetName(const NFmiString &theName) { itsName = theName; }
   NFmiIndividual &operator=(const NFmiIndividual &theIndividual);
 
-  bool IsEqual(const NFmiSortable &aFmiTest) const override;
-  bool IsLessThan(const NFmiSortable &aFmiTest) const override;
+  bool IsEqual(const NFmiSortable &theSortable) const override;
+  bool IsLessThan(const NFmiSortable &theSortable) const override;
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);

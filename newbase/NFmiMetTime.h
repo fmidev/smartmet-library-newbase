@@ -45,7 +45,7 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
   boost::posix_time::ptime PosixTime() const;
 
   // Implicit conversion to and from boost::posix_time::ptime
-  NFmiMetTime(const boost::posix_time::ptime& thePosixTime);
+  NFmiMetTime(const boost::posix_time::ptime& theTime);
   operator boost::posix_time::ptime() const { return PosixTime(); }
   // And local_date_time
   NFmiMetTime(const boost::local_time::local_date_time& theLocalTime);
@@ -60,10 +60,10 @@ class _FMI_DLL NFmiMetTime : public NFmiTime
 
   void NextMetTime();
   void NextMetTime(long deltaInMinutes);
-  void NextMetTime(const NFmiTimePerioid& perioid);
+  void NextMetTime(const NFmiTimePerioid& thePerioid);
   void PreviousMetTime();
   void PreviousMetTime(long deltaInMinutes);
-  void PreviousMetTime(const NFmiTimePerioid& perioid);
+  void PreviousMetTime(const NFmiTimePerioid& thePerioid);
   void NearestMetTime(FmiDirection theDirect = kNoDirection);
   void NearestMetTime(long deltaInMinutes, FmiDirection theDirect = kNoDirection);
   void NearestMetTime(const NFmiTimePerioid& perioid, FmiDirection theDirect = kNoDirection);

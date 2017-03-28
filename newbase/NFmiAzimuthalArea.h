@@ -31,7 +31,7 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
                     double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    double theCenterLatitude = 90.,
+                    double theCentralLatitude = 90.,
                     double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
@@ -39,7 +39,7 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
                     double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    double theCenterLatitude = 90.,
+                    double theCentralLatitude = 90.,
                     double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
@@ -47,7 +47,7 @@ class _FMI_DLL NFmiAzimuthalArea : public NFmiArea
                     double theCentralLongitude = 0.,
                     const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                     const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                    double theCenterLatitude = 90.,
+                    double theCentralLatitude = 90.,
                     double theTrueLatitude = 60.,
                     bool usePacificView = false);
 

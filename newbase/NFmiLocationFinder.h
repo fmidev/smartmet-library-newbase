@@ -20,7 +20,7 @@ class _FMI_DLL NFmiLocationFinder
   NFmiLocationFinder();
   NFmiLocationFinder(const NFmiLocationFinder& theLocationFinder);
 
-  bool AddFile(const NFmiString& theFileName, bool lonFirst = true, bool optionalType = false);
+  bool AddFile(const NFmiString& theFileName, bool lonFirst = true, bool optionalFileType = false);
   const NFmiPoint Find(const NFmiString& theName);
   unsigned long FindWmo(const NFmiString& theName);
 

@@ -20,7 +20,7 @@ class _FMI_DLL NFmiLevelBag : public NFmiSize
  public:
   ~NFmiLevelBag() override;
   NFmiLevelBag();
-  NFmiLevelBag(const NFmiLevelBag &theLevelBag);
+  NFmiLevelBag(const NFmiLevelBag &theBag);
   NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels);
 
   NFmiLevelBag(FmiLevelType theLevelType, float theMinValue, float theMaxValue, float theStep);

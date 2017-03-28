@@ -342,7 +342,7 @@ class NFmiTimeZoneFinderPimple
 {
  public:
   NFmiTimeZoneFinderPimple() : itsData() {}
-  float Find(const NFmiPoint& thePoint) const;
+  float Find(const NFmiPoint& theLatLon) const;
 
   using storage_type = list<NFmiTimeZonePolygon>;
   storage_type itsData;
@@ -487,7 +487,7 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
   boost::shared_ptr<NFmiTimeZoneRing> ring;
 
   string command;
-  while (input >> command != nullptr)
+  while ((input >> (command) != nullptr))
   {
     if (command == "timezone")
     {

@@ -39,7 +39,7 @@ class _FMI_DLL NFmiParamDescriptor : public NFmiDataDescriptor
 
   bool IsActive() const override;
   virtual bool IsActive(bool fIgnoreSubParam) const;
-  virtual bool IsActive(unsigned long index, bool fIgnoreSubParam = true) const;
+  virtual bool IsActive(unsigned long theIndex, bool fIgnoreSubParam = true) const;
   bool SetActivity(bool theActivityState) override;
   virtual bool SetActivity(bool theActivityState, bool fIgnoreSubParam);
   virtual bool SetActivity(bool theActivityState,

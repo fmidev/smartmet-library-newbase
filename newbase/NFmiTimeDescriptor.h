@@ -46,7 +46,7 @@ class _FMI_DLL NFmiTimeDescriptor : public NFmiDataDescriptor
 
   NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag, unsigned long theForecastPeriod);
 
-  NFmiTimeDescriptor(const NFmiMetTime &theOriginTimeBag,
+  NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
                      unsigned long theForecastPeriodMin,
                      unsigned long theForecastPeriodMax);
 

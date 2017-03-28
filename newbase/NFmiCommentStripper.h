@@ -34,7 +34,7 @@ class _FMI_DLL NFmiCommentStripper
 
   bool ReadFile(const std::string& theFileName);
   bool ReadFileCheckingOptions(const std::string& theFileName,
-                               const std::string& theOptionBody,
+                               const std::string& theOptionText,
                                std::set<std::string>& theOptionTexts);
   bool ReadAndStripFile(const std::string& theFileName);
   const std::string GetMessage() const { return itsMessage; };

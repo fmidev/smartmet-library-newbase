@@ -28,10 +28,10 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
  public:
   ~NFmiLocationBag() override;
   NFmiLocationBag();
-  NFmiLocationBag(const NFmiLocationBag &theBag);
+  NFmiLocationBag(const NFmiLocationBag &theLocationBag);
   NFmiLocationBag(const NFmiLocation &theLocation);
-  NFmiLocationBag(const NFmiLocation *theLocationArray, unsigned long theNumberOfLocations);
-  NFmiLocationBag(const NFmiStation *theLocationArray, unsigned long theNumberOfLocations);
+  NFmiLocationBag(const NFmiLocation *theLocationArray, unsigned long numberOfLocations);
+  NFmiLocationBag(const NFmiStation *theLocationArray, unsigned long numberOfLocations);
 
   NFmiLocationBag &operator=(const NFmiLocationBag &theLocationBag);
   bool operator==(const NFmiLocationBag &theLocationBag) const;
@@ -68,7 +68,7 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
   std::size_t HashValue() const;
 
  protected:
-  NFmiLocationBag(NFmiLocation **theLocationBag, unsigned long theNumberOfLocations);
+  NFmiLocationBag(NFmiLocation **theLocationArray, unsigned long numberOfLocations);
 
   void Add(const NFmiLocation &theLocation);
 

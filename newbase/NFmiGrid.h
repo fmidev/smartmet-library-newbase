@@ -69,7 +69,7 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
            FmiInterpolationMethod theInterpolationMethod = kLinearly);
   //		   bool theBase = false);
 
-  NFmiGrid(const NFmiGrid &theGrid, FmiDirection theDirection = kBase);
+  NFmiGrid(const NFmiGrid &theGrid, FmiDirection theStartingCorner = kBase);
 
   using NFmiGridBase::Init;
   bool Init(NFmiDataPool *theData) override;
@@ -103,11 +103,11 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
       double theMaxDistance = kFloatMissing) const;
 
   const NFmiPoint XYToGrid(double x, double y) const;
-  const NFmiPoint XYToGrid(const NFmiPoint &theXYPoint) const;
+  const NFmiPoint XYToGrid(const NFmiPoint &xy) const;
   const NFmiPoint GridToXY(double x_, double y_) const;
   const NFmiPoint GridToXY(const NFmiPoint &theGridPoint) const;
   const NFmiPoint LatLonToGrid(double theLon, double theLat) const;
-  const NFmiPoint LatLonToGrid(const NFmiPoint &theLatLon) const;
+  const NFmiPoint LatLonToGrid(const NFmiPoint &theLatLonPoint) const;
   const NFmiPoint GridToLatLon(double x_, double y_) const;
   const NFmiPoint GridToLatLon(const NFmiPoint &theGridPoint) const;
   const NFmiPoint GridToWorldXY(double x_, double y_) const;

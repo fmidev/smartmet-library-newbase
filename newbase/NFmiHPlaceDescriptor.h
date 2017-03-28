@@ -87,7 +87,7 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
   void LocationList(const NFmiLocationBag &theLocationBag);
   bool Location(const NFmiLocation &theLocation);
   bool Location(long theIdent);
-  bool Location(const NFmiString &theLocationName);
+  bool Location(const NFmiString &theName);
   bool Location(const NFmiPoint &theLonLatPoint, NFmiPoint *theGridPoint = 0);
 
   void Reset();
@@ -102,7 +102,7 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
   unsigned long Size() const override;
 
   virtual FmiStationType SelectedType() const;
-  virtual void SelectedType(FmiStationType thelocationType);
+  virtual void SelectedType(FmiStationType theStationType);
 
   virtual unsigned long MaxNumberOfSources() const;
   virtual void MaxNumberOfSources(unsigned long theMaxNumberOfSources);

@@ -20,7 +20,7 @@ float FmiDegreeDays(float value, int month);
 float FmiFeelsLikeTemperature(float wind, float rh, float temp, float rad);
 float FmiWindChill(float wind, float temp);
 float FmiOldWindChill(float wind, float temp);
-float FmiSummerSimmerIndex(float rh, float temp);
+float FmiSummerSimmerIndex(float rh, float t);
 float FmiOldConvectiveHumanHeatFlux(float wind, float temp);
 float FmiApparentTemperature(float wind, float rh, float temp);
 float FmiSnowLowerLimit(float prec);

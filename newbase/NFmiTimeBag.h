@@ -53,7 +53,7 @@ class _FMI_DLL NFmiTimeBag : public NFmiSize
 
   const char *ClassName() const override;
 
-  NFmiTimeBag &operator=(const NFmiTimeBag &theTimeBag);
+  NFmiTimeBag &operator=(const NFmiTimeBag &theBag);
   bool operator==(const NFmiTimeBag &theTimeBag) const;
 
  private:

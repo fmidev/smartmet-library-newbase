@@ -23,7 +23,7 @@ class _FMI_DLL NFmiParam : public NFmiIndividual
                      double theMaxValue = kFloatMissing,
                      float theScale = kFloatMissing,
                      float theBase = kFloatMissing,
-                     NFmiString itsPrecision = "%.1f",
+                     NFmiString thePrecision = "%.1f",
                      FmiInterpolationMethod theInterpolationMethod = kNearestPoint);
 
   NFmiParam &operator=(const NFmiParam &theParam);

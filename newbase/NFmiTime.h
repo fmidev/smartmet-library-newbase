@@ -84,8 +84,7 @@ class _FMI_DLL NFmiTime : public NFmiStaticTime
 
   using NFmiStaticTime::ToStr;
 
-  virtual const NFmiString ToStr(NFmiString theTimeFormat,
-                                 FmiLanguage theLanguage = kFinnish) const;
+  virtual const NFmiString ToStr(NFmiString theTimeCode, FmiLanguage theLanguage = kFinnish) const;
 
   void PrintWeekday() const;
   short GetJulianDay() const;

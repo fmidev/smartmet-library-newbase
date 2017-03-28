@@ -262,7 +262,7 @@ class _FMI_DLL NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
   NFmiLocationCache CalcLocationCache(const NFmiPoint &theLatlon);
   void SetGridSizeVariables();
   bool IsDataOperatable(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo) const;
-  float Peek(const NFmiLocationCache &theLocationCachePoint, int offsetX, int offsetY);
+  float Peek(const NFmiLocationCache &theLocationCachePoint, int theOffsetX, int theOffsetY);
   NFmiLocationCache CalcPeekedLocation(const NFmiLocationCache &theLocationCachePoint,
                                        int theOffsetX,
                                        int theOffsetY);

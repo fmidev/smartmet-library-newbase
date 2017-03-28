@@ -47,7 +47,7 @@ class _FMI_DLL NFmiQueryInfo
                 const NFmiVPlaceDescriptor &theVPlaceDescriptor = NFmiVPlaceDescriptor(),
                 double theInfoVersion = 7.);
 
-  NFmiQueryInfo(NFmiQueryData *data,
+  NFmiQueryInfo(NFmiQueryData *theInfo,
                 NFmiParamDescriptor *theParamDescriptor = 0,
                 NFmiTimeDescriptor *theTimeDescriptor = 0,
                 NFmiHPlaceDescriptor *theHPlaceDescriptor = 0,
@@ -93,7 +93,7 @@ class _FMI_DLL NFmiQueryInfo
   bool ActivateLocation(bool newState);
   bool ActivateLevel(bool newState);
   bool ActivateTime(bool newState);
-  bool ActivateTimePeriod(bool newState, const NFmiTimeBag &period);
+  bool ActivateTimePeriod(bool theActivityState, const NFmiTimeBag &thePeriod);
   const NFmiTimeBag GetActiveTimePeriod();
 
   bool IsLocation() const;
@@ -131,7 +131,7 @@ class _FMI_DLL NFmiQueryInfo
       int theMaxWantedLocations,
       double theMaxDistance = kFloatMissing) const;
 
-  virtual bool Level(const NFmiLevel &theLevelValue);
+  virtual bool Level(const NFmiLevel &theLevel);
   virtual bool Time(const NFmiMetTime &theTime);
   virtual bool TimeToNearestStep(const NFmiMetTime &theTime,
                                  FmiDirection /*theDirection*/ = kForward,
@@ -245,7 +245,7 @@ class _FMI_DLL NFmiQueryInfo
   const NFmiString Text() const;
 
   // PostProc method
-  void PostProcText(NFmiStringList *thePostProc);
+  void PostProcText(NFmiStringList *theHeader);
   NFmiStringList *PostProcText() const;
 
   bool ResetPostProc();
@@ -357,7 +357,7 @@ class _FMI_DLL NFmiQueryInfo
   // ************************************************************
   //  virtual NFmiQueryData * CreateSubQueryData(NFmiQueryInfo * theSubInfo);
 
-  bool ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *TheTimeBag = 0);
+  bool ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *theTimeBag = 0);
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
@@ -374,13 +374,13 @@ class _FMI_DLL NFmiQueryInfo
                              float centreWeight = 1.,
                              float endWeight = 1.);
 
-  float TimePeriodFloatValue(const NFmiMetTime &firstTime,
-                             const NFmiMetTime &lastTime,
+  float TimePeriodFloatValue(const NFmiMetTime &theStartTime,
+                             const NFmiMetTime &theEndTime,
                              float startWeight = 1.,
                              float centreWeight = 1.,
                              float endWeight = 1.);
 
-  float InterpolatedTimePeriodFloatValue(const NFmiPoint &theLonLat,
+  float InterpolatedTimePeriodFloatValue(const NFmiPoint &latlon,
                                          const NFmiMetTime &theStartTime,
                                          const NFmiMetTime &theEndTime,
                                          float startWeight = 1.,
@@ -395,15 +395,15 @@ class _FMI_DLL NFmiQueryInfo
   void CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *theTimeBag = 0);
   void CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeDescriptor &theTimeDesc);
   void CalcTimeData(NFmiDataModifier *theModifier,
-                    const NFmiMetTime &startTime,
-                    const NFmiMetTime &endTime);
+                    const NFmiMetTime &theStartTime,
+                    const NFmiMetTime &theEndTime);
   void CalcTimeDataWithExtremeTime(NFmiDataModifierExtreme *theModifier,
-                                   const NFmiMetTime &startTime,
-                                   const NFmiMetTime &endTime);
+                                   const NFmiMetTime &theStartTime,
+                                   const NFmiMetTime &theEndTime);
   void CalcInterpolatedTimeData(NFmiDataModifier *theModifier,
-                                const NFmiMetTime &startTime,
-                                const NFmiMetTime &endTime,
-                                const NFmiPoint &lonlat);
+                                const NFmiMetTime &theStartTime,
+                                const NFmiMetTime &theEndTime,
+                                const NFmiPoint &lonLat);
   void CalcInterpolatedTimeData(NFmiDataModifier *theModifier,
                                 NFmiTimeDescriptor &theTimeDesc,
                                 const NFmiPoint &lonLat);
@@ -569,8 +569,8 @@ class _FMI_DLL NFmiQueryInfo
                         float factor2 = 1.,
                         float factor3 = 1.);
   float TimePeriodValue(const NFmiPoint &theLonLat,
-                        const NFmiMetTime &startTime,
-                        const NFmiMetTime &endTime,
+                        const NFmiMetTime &theStartTime,
+                        const NFmiMetTime &theEndTime,
                         float factor1 = 1.,
                         float factor2 = 1.,
                         float factor3 = 1.);
@@ -599,7 +599,7 @@ class _FMI_DLL NFmiQueryInfo
                                                                 // asetus (jos indeksi on voitu
                                                                 // laskea toisaalla)
   virtual float SubParamFloatValue(size_t theIndex) const;      // käytetään ed. metodissa
-  bool FindSubParam(const NFmiDataIdent &theParam);
+  bool FindSubParam(const NFmiDataIdent &theDataIdent);
   bool FindSubParam(const NFmiParam &theParam);
   bool ChangeCombinedParamParser(const NFmiDataIdent &theParam);
   void CalcLocationData2(NFmiDataModifier *theModifier);

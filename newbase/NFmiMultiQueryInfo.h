@@ -90,7 +90,7 @@ class _FMI_DLL NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::non
   using NFmiFastQueryInfo::Time;
 
   NFmiMultiQueryInfo(const std::string& thePath);
-  NFmiMultiQueryInfo(const std::list<std::string>& thePaths);
+  NFmiMultiQueryInfo(const std::list<std::string>& theFiles);
   NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQueryInfo> >& theInfos);
 
   using NFmiFastQueryInfo::OriginTime;

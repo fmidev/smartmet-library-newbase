@@ -38,11 +38,11 @@ class _FMI_DLL NFmiFileString : public NFmiString
   void DeleteDirectory();
   void ReplaceDirectory(const NFmiString& theDirectory);
 
-  void Extension(const char* theExtension);
-  void FileName(const char* theExtension);
-  void Header(const char* theExtension);
-  void Path(const char* theExtension);
-  void Device(const char* theExtension);
+  void Extension(const char* theExt);
+  void FileName(const char* theFileName);
+  void Header(const char* theHeader);
+  void Path(const char* thePath);
+  void Device(const char* theDevice);
 
   void NormalizeDelimiter();
   void ChangeScandinavian();

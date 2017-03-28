@@ -18,7 +18,7 @@ class _FMI_DLL NFmiStatusString : public NFmiString
   NFmiStatusString(const NFmiStatusString& theStatusString);
   NFmiStatusString(const NFmiString& theString, long theStatus);
 
-  NFmiStatusString& operator=(const NFmiStatusString& theStausString);
+  NFmiStatusString& operator=(const NFmiStatusString& theStatusString);
 
   long Status();
   const NFmiString& String();

@@ -196,10 +196,10 @@ class _FMI_DLL NFmiPtrList
   bool AddEnd(Type *theItem);
   bool RemoveStart(bool fDeleteItem = false);
   bool RemoveEnd(bool fDeleteItem = false);
-  bool Remove(unsigned long index, bool fDeleteItem = false);
+  bool Remove(unsigned long theIndex, bool fDeleteItem = false);
   unsigned long NumberOfItems();
-  Iterator Index(unsigned long index);
-  bool Add(Type *theItem, unsigned long index);
+  Iterator Index(unsigned long theIndex);
+  bool Add(Type *theItem, unsigned long theIndex);
   bool Swap(unsigned long ind1, unsigned long ind2);
   bool Sort(bool fAscendingOrder = true);
   bool Find(const Type &theValue, Iterator &theFoundItemIterator);

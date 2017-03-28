@@ -20,8 +20,8 @@ class _FMI_DLL NFmiTimeZoneFinder
  public:
   ~NFmiTimeZoneFinder();
   NFmiTimeZoneFinder();
-  NFmiTimeZoneFinder(const NFmiTimeZoneFinder& theTimeZoneFinder);
-  NFmiTimeZoneFinder& operator=(const NFmiTimeZoneFinder& theTimeZoneFinder);
+  NFmiTimeZoneFinder(const NFmiTimeZoneFinder& theFinder);
+  NFmiTimeZoneFinder& operator=(const NFmiTimeZoneFinder& theFinder);
 
   bool ReadFile(const std::string& theFileName);
   float Find(const NFmiPoint& theLatLon) const;

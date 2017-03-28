@@ -34,8 +34,8 @@ class _FMI_DLL NFmiLagrange
   double Interpolate(double s, double t);
 
   // 1D interpolation:
-  bool Init(const double* si, const double* yi, int sn);
-  bool UpdateData(const double* si, const double* yi);
+  bool Init(const double* si, const double* yij, int sn);
+  bool UpdateData(const double* si, const double* yij);
   double Interpolate(double s);
 
  private:
@@ -49,7 +49,7 @@ class _FMI_DLL NFmiLagrange
 
   double L(
       const checkedVector<double>& xi, double x, checkedVector<double>& denominator, int i, int n);
-  double Ls(double s, int i);
+  double Ls(double s, int j);
   double Lt(double t, int i);
 
   int itsSn;

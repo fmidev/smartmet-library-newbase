@@ -35,7 +35,7 @@ class _FMI_DLL NFmiEnumConverter
   ~NFmiEnumConverter();
   NFmiEnumConverter(FmiEnumSpace theEnumspace = kParamNames);
 
-  const char *ToCharPtr(int theValue);
+  const char *ToCharPtr(int theName);
   const std::string ToString(int theValue);
 
   int ToEnum(const char *s);

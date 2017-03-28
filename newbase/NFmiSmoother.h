@@ -50,7 +50,7 @@ class _FMI_DLL NFmiSmoother
   const checkedVector<float> Smoothen(const checkedVector<float>& theX,
                                       const checkedVector<float>& theY) const;
 
-  float Weight(float distance) const;
+  float Weight(float theDistance) const;
 
  private:
   // Disable void constructor

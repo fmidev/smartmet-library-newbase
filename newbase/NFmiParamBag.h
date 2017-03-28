@@ -24,8 +24,8 @@ class _FMI_DLL NFmiParamBag : public NFmiSize
   NFmiParamBag(NFmiDataIdent *theParamArray, unsigned long numberOfParams);
   NFmiParamBag(const NFmiParamBag &theBag);
 
-  NFmiParamBag &operator=(const NFmiParamBag &theParam);
-  bool operator==(const NFmiParamBag &theParam) const;
+  NFmiParamBag &operator=(const NFmiParamBag &theBag);
+  bool operator==(const NFmiParamBag &theOtherParams) const;
 
   void Reset(FmiDirection directionToIter = kForward) override;
   bool First() override;

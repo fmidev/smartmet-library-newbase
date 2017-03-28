@@ -38,7 +38,7 @@ class _FMI_DLL NFmiStaticTime : public NFmiSortable
  public:
   ~NFmiStaticTime() override {}
   NFmiStaticTime();
-  NFmiStaticTime(const NFmiStaticTime& theTime);
+  NFmiStaticTime(const NFmiStaticTime& from);
   NFmiStaticTime(short year, short month, short day);
   NFmiStaticTime(short year, short month, short day, short hour, short minute = 0, short sec = 0);
   NFmiStaticTime(std::time_t theTime, bool fMakeLocal);
@@ -46,7 +46,7 @@ class _FMI_DLL NFmiStaticTime : public NFmiSortable
   bool IsEqual(const NFmiSortable& aFmiTest) const override;
   bool IsLessThan(const NFmiSortable& aFmiTest) const override;
 
-  NFmiStaticTime& operator=(const NFmiStaticTime& theTime);
+  NFmiStaticTime& operator=(const NFmiStaticTime& from);
 
   void SetDate(short year, short month, short day);
   void GetDate(short& year, short& month, short& day) const;
@@ -80,7 +80,7 @@ class _FMI_DLL NFmiStaticTime : public NFmiSortable
 
   virtual const char* ClassName() const;
 
-  virtual std::ostream& Write(std::ostream& file) const;
+  virtual std::ostream& Write(std::ostream& oStream) const;
 
   std::time_t EpochTime() const;
   static std::time_t my_timegm(struct ::tm* t);

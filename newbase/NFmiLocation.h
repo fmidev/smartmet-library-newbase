@@ -80,8 +80,8 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
                                 bool& isPolarNight);
 
   NFmiLocation& operator=(const NFmiLocation& theLocation);
-  bool IsEqual(const NFmiSortable& aFmiTest) const override;
-  bool IsLessThan(const NFmiSortable& aFmiTest) const override;
+  bool IsEqual(const NFmiSortable& theSortable) const override;
+  bool IsLessThan(const NFmiSortable& theSortable) const override;
 
   virtual NFmiLocation* Clone() const;
   virtual unsigned long ClassId() const { return kNFmiLocation; }
@@ -91,7 +91,7 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
   std::size_t HashValue() const;
 
  protected:
-  virtual void SetLocation(const NFmiLocation& theLocations);
+  virtual void SetLocation(const NFmiLocation& theLocation);
 
   explicit NFmiLocation(long theIdent,
                         const NFmiString& theName = "undefined",

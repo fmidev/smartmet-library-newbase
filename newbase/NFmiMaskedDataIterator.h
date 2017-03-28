@@ -21,7 +21,7 @@ class _FMI_DLL NFmiMaskedDataIterator : public NFmiDataIterator
                          bool isCombinedParam = false,
                          NFmiIntegrationSelector* theIntegrationSelector = 0);
 
-  void DoForEach(NFmiDataModifier* theModifier) override;
+  void DoForEach(NFmiDataModifier* theDataModifier) override;
 
   bool fIsCombinedParam;
   NFmiIntegrationSelector* itsIntegrationSelector;

@@ -29,37 +29,37 @@ class _FMI_DLL NFmiValueString : public NFmiString
   NFmiValueString();
 
   NFmiValueString(short theValue, const char *theFormat = "%hd");
-  NFmiValueString(int theValue, const char *format = "%d");
-  NFmiValueString(float theValue, const char *format = "%f");
-  NFmiValueString(long theValue, const char *format = "%ld");
-  NFmiValueString(double theValue, const char *format = "%lf");
+  NFmiValueString(int theValue, const char *theFormat = "%d");
+  NFmiValueString(float theValue, const char *theFormat = "%f");
+  NFmiValueString(long theValue, const char *theFormat = "%ld");
+  NFmiValueString(double theValue, const char *theFormat = "%lf");
 
   NFmiValueString(const char * /*theValue*/);
   NFmiValueString(const unsigned char * /*theValue*/);
   NFmiValueString(const NFmiString & /*theValue*/);
   NFmiValueString(const NFmiValueString & /*theValue*/);
 
-  void SetValue(short value, const char *format = "%hd");
-  void SetValue(int value, const char *format = "%d");
-  void SetValue(float value, const char *format = "%f");
-  void SetValue(long value, const char *format = "%ld");
-  void SetValue(double value, const char *format = "%lf");
+  void SetValue(short theValue, const char *theFormat = "%hd");
+  void SetValue(int theValue, const char *theFormat = "%d");
+  void SetValue(float theValue, const char *theFormat = "%f");
+  void SetValue(long theValue, const char *theFormat = "%ld");
+  void SetValue(double theValue, const char *theFormat = "%lf");
 
-  bool ConvertToInt(int &convertValue, int start = 0, int size = 0) const;
-  bool ConvertToFloat(float &convertValue, int start = 0, int size = 0) const;
-  bool ConvertToLong(long &convertValue, int start = 0, int size = 0) const;
-  bool ConvertToDouble(double &convertValue, int start = 0, int size = 0) const;
+  bool ConvertToInt(int &theValue, int theStart = 0, int theSize = 0) const;
+  bool ConvertToFloat(float &theValue, int theStart = 0, int theSize = 0) const;
+  bool ConvertToLong(long &theValue, int theStart = 0, int theSize = 0) const;
+  bool ConvertToDouble(double &theValue, int theStart = 0, int theSize = 0) const;
 
   unsigned int SignificantDecimals() const;
 
-  bool IsNumeric(int start = 0, int size = 0) const;
+  bool IsNumeric(int theStart = 0, int theSize = 0) const;
   unsigned long SearchNumeric(unsigned long start = 1) const;
 
   bool IsShort() const;
-  bool IsInt(int start = 0, int size = 0) const;
-  bool IsFloat(int start = 0, int size = 0) const;
-  bool IsLong(int start = 0, int size = 0) const;
-  bool IsDouble(int start = 0, int size = 0) const;
+  bool IsInt(int theStart = 0, int theSize = 0) const;
+  bool IsFloat(int theStart = 0, int theSize = 0) const;
+  bool IsLong(int theStart = 0, int theSize = 0) const;
+  bool IsDouble(int theStart = 0, int theSize = 0) const;
 
   operator float() const;
   operator int() const;

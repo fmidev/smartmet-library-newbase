@@ -26,7 +26,9 @@ class _FMI_DLL NFmiString : public NFmiSortable
   NFmiString(const std::string &str);
 
   bool IsValue() const;
-  void Set(const unsigned char *text, unsigned long len, bool fSetLengthToRealStringLength = false);
+  void Set(const unsigned char *aText,
+           unsigned long len,
+           bool fSetLengthToRealStringLength = false);
   virtual unsigned long ClassId() const;
 
   NFmiString &Add(const unsigned char *aChar);
@@ -49,8 +51,8 @@ class _FMI_DLL NFmiString : public NFmiSortable
 
   bool FirstCharIsUpper() const;
 
-  unsigned long Search(const unsigned char *searchChar, unsigned long fromPos = 1) const;
-  unsigned long SearchLast(const unsigned char *searchChar) const;
+  unsigned long Search(const unsigned char *searChar, unsigned long fromPos = 1) const;
+  unsigned long SearchLast(const unsigned char *searChar) const;
   unsigned long SearchLast(const unsigned char *searchChar, unsigned long limit) const;
   int CharCount(unsigned char theChar) const;
   virtual NFmiString *Clone() const;
@@ -58,8 +60,8 @@ class _FMI_DLL NFmiString : public NFmiSortable
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
-  NFmiString &operator=(const unsigned char *aChar);
-  NFmiString &operator=(const char *aChar);
+  NFmiString &operator=(const unsigned char *FmiChar);
+  NFmiString &operator=(const char *FmiChar);
   NFmiString &operator=(const NFmiString & /*aFmiString*/);
   NFmiString &operator+=(const unsigned char *aChar);
   NFmiString &operator+=(const char *aChar);
@@ -81,8 +83,8 @@ class _FMI_DLL NFmiString : public NFmiSortable
   bool Replace(const NFmiString &newChars, unsigned long fromIndex);
   void RemoveExtraSpaces();
 
-  bool IsLessThan(const NFmiSortable &aFmiTest) const override;
-  bool IsEqual(const NFmiSortable &aFmiTest) const override;
+  bool IsLessThan(const NFmiSortable &fFmi) const override;
+  bool IsEqual(const NFmiSortable &fFmi) const override;
 
   std::size_t HashValue() const;
 

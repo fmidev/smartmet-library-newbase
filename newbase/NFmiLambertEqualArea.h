@@ -25,7 +25,7 @@ class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
                        double theCentralLongitude = 10.,
                        const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                        const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                       double theCentralLatitude = 52.,
+                       double theCenterLatitude = 52.,
                        double theTrueLatitude = 90.,
                        bool usePacificView = false);
 

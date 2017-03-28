@@ -22,7 +22,7 @@ class _FMI_DLL NFmiGdalArea : public NFmiArea
 
   NFmiGdalArea();
 
-  NFmiGdalArea(const NFmiGdalArea& theGdalArea);
+  NFmiGdalArea(const NFmiGdalArea& theArea);
 
   NFmiGdalArea(std::string theDatum,
                std::string theDescription,

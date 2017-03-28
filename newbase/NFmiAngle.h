@@ -22,7 +22,7 @@ class _FMI_DLL NFmiAngle
   //! Destruktori
   virtual ~NFmiAngle() {}
   //! Konstruktori
-  NFmiAngle(double theAngle = 0.0, FmiAngleUnit theUnit = kDeg);
+  NFmiAngle(double theValue = 0.0, FmiAngleUnit theUnit = kDeg);
 
   //! Kulman asetus optionaalisessa yksikössä
   void SetValue(double theValue, FmiAngleUnit theUnit = kDeg);
@@ -96,7 +96,7 @@ class _FMI_DLL NFmiWindDirection : public NFmiAngle
 {
  public:
   //! Konstruktori suunnan perusteella
-  NFmiWindDirection(double theAngle, FmiAngleUnit theUnit = kDeg);
+  NFmiWindDirection(double theValue, FmiAngleUnit theUnit = kDeg);
 
   //! Konstruktori suunnan U- ja V-komponenttien perusteella
   NFmiWindDirection(double theU, double theV);
@@ -167,7 +167,7 @@ class _FMI_DLL NFmiLongitude : public NFmiAngle
 
   NFmiLongitude() : fPacificView(false) {}
   //! Longitudin muutosmetodi
-  void SetValue(double theValue, FmiAngleUnit theUnit = kDeg);
+  void SetValue(double theAngle, FmiAngleUnit theUnit = kDeg);
 
   //! Longitudin vähennysoperaattori
   NFmiLongitude &operator-=(const NFmiLongitude &theAngle);

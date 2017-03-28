@@ -15,8 +15,8 @@ class _FMI_DLL NFmiRect
  public:
   virtual ~NFmiRect() {}
   NFmiRect();
-  NFmiRect(const NFmiPoint &theTopLeftCorner, const NFmiPoint &theBottomRightCorner);
-  NFmiRect(double Left, double Top, double Right, double Bottom);
+  NFmiRect(const NFmiPoint &firstCorner, const NFmiPoint &oppositeCorner);
+  NFmiRect(double left, double top, double right, double bottom);
 
   void Set(const NFmiPoint &theTopLeftCorner, const NFmiPoint &theBottomRightCorner);
   void Top(double theValue);
@@ -24,9 +24,9 @@ class _FMI_DLL NFmiRect
   void Left(double theValue);
   void Right(double theValue);
 
-  void Inflate(double theXYValue);          // Resize as centered
-  void Inflate(double x, double y);         // Resize as centered
-  void Inflate(const NFmiPoint &theValue);  // Resize as centered
+  void Inflate(double theValue);                     // Resize as centered
+  void Inflate(double theXValue, double theYValue);  // Resize as centered
+  void Inflate(const NFmiPoint &theValue);           // Resize as centered
 
   double Top() const;
   double Bottom() const;
@@ -61,8 +61,8 @@ class _FMI_DLL NFmiRect
 
   const NFmiPoint NearestCorner(const NFmiPoint &thePoint) const;
 
-  const NFmiRect ToAbs(const NFmiRect &theRect) const;
-  const NFmiPoint ToAbs(const NFmiPoint &thePoint) const;
+  const NFmiRect ToAbs(const NFmiRect &theRelativeRect) const;
+  const NFmiPoint ToAbs(const NFmiPoint &theRelativePoint) const;
 
   bool AdjustAspectRatio(double theRatioXperY,
                          bool fKeepX = true,

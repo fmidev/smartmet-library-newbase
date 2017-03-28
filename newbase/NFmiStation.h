@@ -47,7 +47,7 @@ class _FMI_DLL NFmiStation : public NFmiLocation
   std::istream& Read(std::istream& file) override;
 
  protected:
-  void SetLocation(const NFmiLocation& theLocations) override;
+  void SetLocation(const NFmiLocation& theLocation) override;
 
   double itsMaxDistance;
   FmiStationType itsIdentType;

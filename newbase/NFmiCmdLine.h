@@ -14,7 +14,7 @@ class _FMI_DLL NFmiCmdLine
 {
  public:
   ~NFmiCmdLine();
-  NFmiCmdLine(int argc, const char** argv, const char* optionsallowed);
+  NFmiCmdLine(int argc, const char** argv, const char* optallow);
   NFmiCmdLine(const NFmiString& theString, const char* optallow);
 
   char* Command() const;
@@ -30,7 +30,7 @@ class _FMI_DLL NFmiCmdLine
 
  protected:
   NFmiStatus itsStatus;
-  void Init(int argc, const char** argv, const char* optionsallowed);
+  void Init(int argc, const char** argv, const char* optallow);
   bool GetSpaceStringValue(NFmiString& theString, NFmiString& theValueString);
   int GetSpaceStringSize(const NFmiString& theString);
 

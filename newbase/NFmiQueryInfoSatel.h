@@ -25,7 +25,7 @@ class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
                      const NFmiHPlaceDescriptor& theHPlaceDescriptor,
                      const NFmiVPlaceDescriptor& theVPlaceDescriptor = NFmiVPlaceDescriptor());
 
-  NFmiQueryInfoSatel(NFmiQueryData* data,
+  NFmiQueryInfoSatel(NFmiQueryData* theInfo,
                      NFmiParamDescriptor* theParamDescriptor = 0,
                      NFmiTimeDescriptor* theTimeDescriptor = 0,
                      NFmiHPlaceDescriptor* theHPlaceDescriptor = 0,

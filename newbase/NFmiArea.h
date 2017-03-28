@@ -131,7 +131,7 @@ class _FMI_DLL NFmiArea
 
  protected:
   int Sign(double theValue) const;
-  double FixLongitude(double theLongitude) const;
+  double FixLongitude(double theLon) const;
 
  private:
   NFmiRect itsXYRectArea;

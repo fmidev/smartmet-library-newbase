@@ -20,8 +20,8 @@ class _FMI_DLL NFmiSettingsImpl
  public:
   static NFmiSettingsImpl& Instance();
   void Clear();
-  bool Init(const std::string& theFile = "") const;
-  bool Read(const std::string& theFile) const;
+  bool Init(const std::string& theFilename = "") const;
+  bool Read(const std::string& theFilename) const;
 
   const std::string Value(const std::string& theName, const std::string& theAlternate = "") const;
   const std::string Require(const std::string& theName) const;

@@ -53,7 +53,7 @@ class _FMI_DLL NFmiPreProcessor : public NFmiCommentStripper
                     const std::string& theIncludePath = "",
                     const std::string& theIncludeExtension = "inc");
 
-  bool SetDefine(const std::string& theDefineDirective = "#define", bool useReplace = false);
+  bool SetDefine(const std::string& theDirective = "#define", bool useReplace = false);
 
   bool SetConditionalStripping(bool theCondValue,
                                const std::string& theConditionalBeginDirective,

@@ -31,7 +31,7 @@ class _FMI_DLL NFmiStringList
   NFmiString *Current() const;
 
   bool FindWithStatus(long status);
-  bool Find(const NFmiString &string);
+  bool Find(const NFmiString &str);
   int NumberOfItems() const;
   void Clear(bool fDeleteData = false);
   bool Remove();

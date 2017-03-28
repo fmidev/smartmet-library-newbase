@@ -16,8 +16,8 @@ class _FMI_DLL NFmiStationBag : public NFmiLocationBag
 {
  public:
   NFmiStationBag();
-  NFmiStationBag(unsigned long *theStationArray, unsigned long theNumberOfStations);
-  NFmiStationBag(NFmiStation *theStationArray, unsigned long theNumberOfStations);
+  NFmiStationBag(unsigned long *theStationArray, unsigned long numberOfStations);
+  NFmiStationBag(NFmiStation *theStationArray, unsigned long numberOfStations);
   NFmiStationBag(NFmiLocation *theLocationArray,
                  unsigned long theNumberOfStations,
                  NFmiIndividual *theStationArray);

@@ -35,8 +35,8 @@ class _FMI_DLL NFmiAreaMaskList
   bool CheckIfMaskUsed();
   bool SyncronizeMaskTime(const NFmiMetTime &theTime);
 
-  bool Index(unsigned long index);    // 1:sta alkava indeksi, sisäinen muuttuja itsCurrentIndex on
-                                      // taas 0:sta alkava
+  bool Index(unsigned long theIndex);  // 1:sta alkava indeksi, sisäinen muuttuja itsCurrentIndex on
+                                       // taas 0:sta alkava
   bool Find(unsigned long theIndex);  // 1:sta alkava indeksi, sisäinen muuttuja itsCurrentIndex on
                                       // taas 0:sta alkava
   bool Find(const NFmiDataIdent &theParam);

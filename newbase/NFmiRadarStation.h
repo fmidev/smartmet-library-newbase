@@ -24,7 +24,7 @@ class _FMI_DLL NFmiRadarStation : public NFmiStation
                    unsigned long theXNumber,
                    unsigned long theYNumber);
 
-  NFmiRadarStation& operator=(const NFmiRadarStation& NFmiRadarStation);
+  NFmiRadarStation& operator=(const NFmiRadarStation& theStation);
   bool IsEqual(const NFmiSortable& theLocation) const override;
 
   unsigned long Resolution() const;

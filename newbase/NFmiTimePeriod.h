@@ -21,7 +21,7 @@ class _FMI_DLL NFmiTimePerioid
   NFmiTimePerioid(const NFmiTimePerioid &theTimePerioid);
   NFmiTimePerioid(long minutes);
   NFmiTimePerioid(long years,
-                  long month,
+                  long months,
                   long days,
                   long hours,
                   long minutes,

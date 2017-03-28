@@ -94,7 +94,9 @@ class _FMI_DLL NFmiGridBase
   void Origo(FmiDirection theStartingCorner);
   FmiDirection Origo() const;
 
-  bool Crop(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight, bool theMinimize = true);
+  bool Crop(const NFmiPoint& theBottomLeft,
+            const NFmiPoint& theTopRight,
+            bool theMinimizedCrop = true);
   bool ResetCrop();
   bool IsCropped() const;
 
@@ -116,13 +118,18 @@ class _FMI_DLL NFmiGridBase
   bool BiLinearInterpolation(double x, double y, double& theValue);
   bool FastBiVariateInterpolation(double x, double y, double& theValue);
   double DataValue(int x, int y);
-  bool NearestPointInterpolation(double x, double y, double& theValue);
+  bool NearestPointInterpolation(double x_, double y_, double& theValue);
 
-  bool InterpolateToGridPoint(double x, double y, double& theValue);
-  bool InterpolateToGridPoint(const NFmiPoint& xy, double& theValue);
+  bool InterpolateToGridPoint(double x_, double y_, double& theValue);
+  bool InterpolateToGridPoint(const NFmiPoint& xy_, double& theValue);
 
-  bool InterpolateToGridPoint(double x, double y, double& theValue, FmiInterpolationMethod method);
-  bool InterpolateToGridPoint(const NFmiPoint& xy, double& theValue, FmiInterpolationMethod method);
+  bool InterpolateToGridPoint(double x_,
+                              double y_,
+                              double& theValue,
+                              FmiInterpolationMethod method);
+  bool InterpolateToGridPoint(const NFmiPoint& xy_,
+                              double& theValue,
+                              FmiInterpolationMethod method);
 
   void MeanFilter(unsigned long numOfSteps);
 
@@ -156,7 +163,7 @@ class _FMI_DLL NFmiGridBase
   bool Init(unsigned long theXNumber, unsigned long theYNumber);
   bool Swap(FmiDirection theCurrentDirection);
 
-  bool NearestGridPoint(double& x, double& y) const;
+  bool NearestGridPoint(double& x_, double& y_) const;
 
   virtual void CalcX(unsigned long theIndex);
   virtual void CalcY(unsigned long theIndex);

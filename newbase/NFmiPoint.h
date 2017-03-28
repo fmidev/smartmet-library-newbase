@@ -29,7 +29,7 @@ class _FMI_DLL NFmiPoint
   // NFmiPoint & operator=(const NFmiPoint & thePoint);
 
   //@{ \name Asetus-funktiot
-  void Set(double newX, double newY);
+  void Set(double theX, double theY);
   void X(double newValue);
   void Y(double newValue);
   //@}

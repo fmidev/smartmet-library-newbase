@@ -65,7 +65,7 @@ class _FMI_DLL NFmiPKJArea : public NFmiKKJArea
   int ZoneNumberByEasting(double easting) const override;
 
  private:
-  NFmiPoint CornerWorldXY(const NFmiPoint& latlonPoint) const;
+  NFmiPoint CornerWorldXY(const NFmiPoint& theLatLonPoint) const;
 
 };  // class NFmiPKJArea
 

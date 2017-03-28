@@ -149,8 +149,8 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
   bool UseVariationCalculator() const;
   bool UseTimeIntegrationCalculator();
   void UseTimeIntegrationCalculator(bool value);
-  void SetCalculator(NFmiCalculator* value, bool useCalculator = true);
-  void SetDataModifierDescriptor(NFmiDataModifierDescriptor* value);
+  void SetCalculator(NFmiCalculator* theCalculator, bool useCalculator = true);
+  void SetDataModifierDescriptor(NFmiDataModifierDescriptor* theDescriptor);
   NFmiDataModifierDescriptor* DataModifierDescriptor();
   NFmiCalculator* Calculator() const;
   NFmiCalculator* CurrentVarianceCalculator() const;

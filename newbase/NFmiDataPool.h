@@ -31,7 +31,7 @@ class _FMI_DLL NFmiDataPool
   NFmiDataPool();
   NFmiDataPool(const NFmiDataPool& theDataPool);
 
-  bool Init(unsigned long theNumber, const float* thePoolData);
+  bool Init(unsigned long theNumber, const float* theData);
   bool Init(unsigned long theNumber);
   bool InitMissingValues(const NFmiDataPool& theDataPool);
   virtual void Destroy();

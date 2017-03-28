@@ -19,7 +19,7 @@ class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
 
   NFmiOrthographicArea();
 
-  NFmiOrthographicArea(const NFmiOrthographicArea &thePerspectiveArea);
+  NFmiOrthographicArea(const NFmiOrthographicArea &theOrthographicArea);
 
   NFmiOrthographicArea(const NFmiPoint &theCentralLatLonPoint,
                        double theRadialRange = kRearth,

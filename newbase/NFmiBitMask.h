@@ -20,7 +20,7 @@ class _FMI_DLL NFmiBitMask
  public:
   virtual ~NFmiBitMask();
   explicit NFmiBitMask(long theSize = 32);
-  NFmiBitMask(const NFmiBitMask& theMaskData);
+  NFmiBitMask(const NFmiBitMask& theBitMask);
 
   NFmiBitMask& operator=(const NFmiBitMask& theBitMask);
   bool operator==(const NFmiBitMask& theBitMask) const;
