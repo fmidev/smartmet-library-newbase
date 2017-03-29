@@ -587,15 +587,13 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
   {
     theSolarTime.ChangeByHours(-1);
     angle1 = ElevationAngleFromSolarTime(theSolarTime);
-    if (static_cast<int>((angle1 < kRefractCorr) ^ static_cast<int>(angle2 < kRefractCorr)) !=
-        0)  // XOR
+    if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
     {
       do
       {
         theSolarTime.ChangeByMinutes(1);
         angle2 = ElevationAngleFromSolarTime(theSolarTime);
-        if (static_cast<int>((angle1 < kRefractCorr) ^ static_cast<int>(angle2 < kRefractCorr)) !=
-            0)  // XOR
+        if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
         {
           if (fabs(angle1 + kRefractCorr) < fabs(angle2 + kRefractCorr))
             theSolarTime.ChangeByMinutes(-1);  // rounding to a nearest minute
