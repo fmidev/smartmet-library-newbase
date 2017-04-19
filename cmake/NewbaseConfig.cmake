@@ -1,0 +1,6 @@
+get_filename_component(INSTALLED_PREFIX ${Newbase_DIR} DIRECTORY)
+get_filename_component(INSTALLED_PREFIX ${INSTALLED_PREFIX} DIRECTORY)
+get_filename_component(INSTALLED_PREFIX ${INSTALLED_PREFIX} DIRECTORY)
+set(Newbase_INSTALLED_INCLUDE_DIRS ${INSTALLED_PREFIX}/include/newbase)
+set(Newbase_INSTALLED_LIBRARIES ${INSTALLED_PREFIX}/lib/Newbase.lib)
+
