@@ -5,6 +5,8 @@ if(WIN32)
     set(CMAKE_MFC_FLAG 0)
 endif()
 
+include(cmake/${CMAKE_SYSTEM_NAME}.cmake OPTIONAL)
+
 file( GLOB SOURCE_FILES newbase/* )
 
 add_library( 
