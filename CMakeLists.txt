@@ -28,7 +28,7 @@ if(Newbase_FOUND)
         ${Newbase_DIR}
 	${Newbase_INSTALLED_INCLUDE_DIRS}
 	${Newbase_INSTALLED_LIBRARIES})
-    add_custom_target(UNINSTALL_OLD_FILES rm -rf ${INSTALLED_FILES})
+    add_custom_target(uninstall rm -rf ${INSTALLED_FILES})
     message(STATUS "Already installed Newbase files: ${INSTALLED_FILES}")
 endif()
 
