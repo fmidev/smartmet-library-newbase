@@ -15,9 +15,13 @@ add_library(
     )
 
 if(NOT Boost_INCLUDE_DIRS)
-    find_package(Boost 1.60.0 QUIET)
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_MULTITHREADED ON)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+    find_package(Boost 1.60.0 QUIET COMPONENTS filesystem regex thread)
     if(Boost_FOUND)
         include_directories(${Boost_INCLUDE_DIRS})
+        target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
     endif()
 endif()
 
