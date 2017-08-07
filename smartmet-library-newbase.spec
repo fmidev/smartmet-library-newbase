@@ -75,6 +75,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Upcoming
+- Ignore use of NFmiGdalArea in NFmiArea if not UNIX
+
 * Tue Aug 1 2017 Ville Ilkka <ville.ilkka@fmi.fi> - 17.8.1-1.fmi
 - Added a new parameter for 5cm snow accumulation days
 

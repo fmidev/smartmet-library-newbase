@@ -489,8 +489,9 @@ std::size_t NFmiArea::HashValue() const
 
 std::size_t NFmiArea::HashValueKludge() const
 {
+#ifdef UNIX
   if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this)) return a->HashValue();
-
+#endif
   if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this)) return a->HashValue();
 
   if (const auto *a = dynamic_cast<const NFmiLambertEqualArea *>(this)) return a->HashValue();
