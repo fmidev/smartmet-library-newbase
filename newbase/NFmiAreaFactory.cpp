@@ -432,6 +432,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           new NFmiEquidistArea(bottomleft, topright, clon, corner1, corner2, clat, usePacificView));
     }
 #ifdef UNIX
+#ifndef DISABLED_GDAL
     else
     {
       // Allow FMI: or WGS84: prefix to identify datum, default is WGS84
@@ -448,6 +449,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       area.reset(
           new NFmiGdalArea(datum, proj, bottomleft, topright, corner1, corner2, usePacificView));
     }
+#endif  // DISABLED_GDAL
 #endif  // UNIX
 
     // recalculate corners if center coordinate was given

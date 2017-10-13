@@ -490,7 +490,9 @@ std::size_t NFmiArea::HashValue() const
 std::size_t NFmiArea::HashValueKludge() const
 {
 #ifdef UNIX
+#ifndef DISABLED_GDAL
   if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this)) return a->HashValue();
+#endif
 #endif
   if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this)) return a->HashValue();
 

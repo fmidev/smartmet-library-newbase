@@ -28,6 +28,12 @@ objdir = obj
 
 DEFINES = -DUNIX -D_REENTRANT -DFMI_COMPRESSION -DBOOST -DBOOST_IOSTREAMS_NO_LIB
 
+# Say 'yes' to disable Gdal
+DISABLED_GDAL=
+ifeq ($(DISABLED_GDAL),yes)
+  DEFINES += -DDISABLED_GDAL
+endif
+
 ifeq ($(CXX), clang++)
 
  FLAGS = \
@@ -76,8 +82,10 @@ CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 LIBS = -L$(libdir) \
 	-lboost_filesystem \
 	-lboost_regex \
-	-lboost_thread \
-	-lgdal
+	-lboost_thread
+ifneq ($(DISABLED_GDAL),yes)
+  LIBS += -lgdal
+endif
 
 # What to install
 

@@ -78,8 +78,10 @@ void *CreateSaveBase(unsigned int classId)
     case kNFmiStationBag:
       return static_cast<void *>(new NFmiStationBag);
 #ifdef UNIX
+#ifndef DISABLED_GDAL
     case kNFmiGdalArea:
       return static_cast<void *>(new NFmiGdalArea);
+#endif
 #endif
 
     default:

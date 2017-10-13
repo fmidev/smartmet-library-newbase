@@ -6,6 +6,7 @@
 // ======================================================================
 
 #ifdef UNIX
+#ifndef DISABLED_GDAL
 
 #include "NFmiGdalArea.h"
 #include "NFmiString.h"
@@ -586,6 +587,7 @@ std::size_t NFmiGdalArea::HashValue() const
   return hash;
 }
 
+#endif  // DISABLED_GDAL
 #endif  // UNIX
 
 // ======================================================================
