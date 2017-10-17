@@ -449,7 +449,17 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       area.reset(
           new NFmiGdalArea(datum, proj, bottomleft, topright, corner1, corner2, usePacificView));
     }
+#else
+    else
+    {
+      throw std::runtime_error("gdal disabled");
+    }
 #endif  // DISABLED_GDAL
+#else
+    else
+    {
+      throw std::runtime_error("unsupported projection");
+    }
 #endif  // UNIX
 
     // recalculate corners if center coordinate was given
