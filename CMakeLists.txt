@@ -55,3 +55,8 @@ install(DIRECTORY newbase/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/newbase
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install(DIRECTORY cmake/ DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/newbase
         FILES_MATCHING PATTERN "*onfig.cmake")
+
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  include(cmake/package.cmake OPTIONAL)
+endif()
