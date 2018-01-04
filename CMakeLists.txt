@@ -9,9 +9,9 @@ include(cmake/${CMAKE_SYSTEM_NAME}.cmake OPTIONAL)
 
 file( GLOB SOURCE_FILES newbase/* )
 
-add_library( 
-    ${PROJECT_NAME} STATIC
-    ${SOURCE_FILES} 
+add_library(
+    ${PROJECT_NAME}
+    ${SOURCE_FILES}
     )
 
 if(NOT Boost_INCLUDE_DIRS)
