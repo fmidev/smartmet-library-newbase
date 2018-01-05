@@ -1,0 +1,66 @@
+BuildRoot:      %_topdir/@CPACK_PACKAGE_FILE_NAME@@CPACK_RPM_PACKAGE_COMPONENT_PART_PATH@
+Summary:        @CPACK_RPM_PACKAGE_SUMMARY@
+Name:           @CPACK_RPM_PACKAGE_NAME@
+Version:        @CPACK_RPM_PACKAGE_VERSION@
+Release:        @CPACK_RPM_PACKAGE_RELEASE@%{?dist}.fmi
+License:        @CPACK_RPM_PACKAGE_LICENSE@
+Group:          @CPACK_RPM_PACKAGE_GROUP@
+Vendor:         @CPACK_RPM_PACKAGE_VENDOR@
+URL:            @CPACK_RPM_PACKAGE_URL@
+
+%description
+@CPACK_RPM_PACKAGE_DESCRIPTION@
+
+BuildRequires: gcc-c++
+BuildRequires: make
+BuildRequires: boost-devel >= 1.65.0
+BuildRequires: bzip2-devel
+BuildRequires: geos-devel >= 3.5.0
+BuildRequires: gdal-devel
+Requires: boost-date-time >= 1.65.0
+Requires: boost-regex >= 1.65.0
+Requires: boost-filesystem >= 1.65.0
+Requires: boost-iostreams >= 1.65.0
+Requires: boost-system >= 1.65.0
+Requires: gdal
+Requires: geos >= 3.5.0
+
+
+%define _rpmdir %_topdir/RPMS
+%define _srcrpmdir %_topdir/SRPMS
+@FILE_NAME_DEFINE@
+%define _unpackaged_files_terminate_build 0
+
+%prep
+mv $RPM_BUILD_ROOT %_topdir/tmpBBroot
+
+%install
+if [ -e $RPM_BUILD_ROOT ];
+then
+  rm -rf $RPM_BUILD_ROOT
+fi
+mv %_topdir/tmpBBroot $RPM_BUILD_ROOT
+
+%clean
+
+%post
+@RPM_SYMLINK_POSTINSTALL@
+@CPACK_RPM_SPEC_POSTINSTALL@
+
+%postun
+@CPACK_RPM_SPEC_POSTUNINSTALL@
+
+%pre
+@CPACK_RPM_SPEC_PREINSTALL@
+
+%preun
+@CPACK_RPM_SPEC_PREUNINSTALL@
+
+
+%files
+%defattr(0664,-,-,0775)
+@CPACK_PACKAGING_INSTALL_PREFIX@/include/newbase/*.h
+@CPACK_PACKAGING_INSTALL_PREFIX@/lib/@CMAKE_STATIC_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_STATIC_LIBRARY_SUFFIX@
+@CPACK_PACKAGING_INSTALL_PREFIX@/lib/cmake/newbase/NewbaseConfig.cmake
+
+%changelog
