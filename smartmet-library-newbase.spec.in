@@ -57,10 +57,57 @@ mv %_topdir/tmpBBroot $RPM_BUILD_ROOT
 @CPACK_RPM_SPEC_PREUNINSTALL@
 
 
-%files
-%defattr(0664,-,-,0775)
+
+%package -n @CPACK_PACKAGE_FILE_NAME@-devel
+Summary: FMI newbase development files
+Provides: @CPACK_PACKAGE_FILE_NAME@-devel
+%if @BUILD_SHARED_LIBS@ == "ON"
+Requires: @CPACK_PACKAGE_FILE_NAME@
+%else
+Requires: @CPACK_PACKAGE_FILE_NAME@-static
+%endif
+Obsoletes: libsmartmet-newbase-devel < 16.12.19
+
+%description -n @CPACK_PACKAGE_FILE_NAME@-devel
+FMI newbase development files
+
+%files -n @CPACK_PACKAGE_FILE_NAME@-devel
+%defattr(0664,root,root,0775)
 @CPACK_PACKAGING_INSTALL_PREFIX@/include/newbase/*.h
-@CPACK_PACKAGING_INSTALL_PREFIX@/lib/@CMAKE_STATIC_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_STATIC_LIBRARY_SUFFIX@
 @CPACK_PACKAGING_INSTALL_PREFIX@/lib/cmake/newbase/NewbaseConfig.cmake
+
+
+
+%if @BUILD_SHARED_LIBS@ == "ON"
+
+%package -n @CPACK_PACKAGE_FILE_NAME@
+Summary: FMI newbase shared library
+Provides: @CPACK_PACKAGE_FILE_NAME@
+
+%description -n @CPACK_PACKAGE_FILE_NAME@
+FMI newbase shared library
+
+%files -n @CPACK_PACKAGE_FILE_NAME@
+%defattr(0664,root,root,0775)
+@CPACK_PACKAGING_INSTALL_PREFIX@/lib/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@
+
+%endif
+
+
+
+%if @BUILD_SHARED_LIBS@ == "OFF"
+
+%package -n @CPACK_PACKAGE_FILE_NAME@-static
+Summary: FMI newbase static library
+Provides: @CPACK_PACKAGE_FILE_NAME@-static
+
+%description -n @CPACK_PACKAGE_FILE_NAME@-static
+FMI newbase static library
+
+%files -n @CPACK_PACKAGE_FILE_NAME@-static
+%defattr(0664,root,root,0775)
+@CPACK_PACKAGING_INSTALL_PREFIX@/lib/@CMAKE_STATIC_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_STATIC_LIBRARY_SUFFIX@
+
+%endif
 
 %changelog
