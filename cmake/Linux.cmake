@@ -1,7 +1,7 @@
 message(STATUS "System Name: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Install Prefix: ${CMAKE_INSTALL_PREFIX}")
 
-option(BUILD_SHARED_LIBS "Build shared libs" OFF)
+option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(DISABLE_GDAL "Disable GDAL" OFF)
 
 set(CMAKE_CXX_FLAGS "-DUNIX -D_REENTRANT -DFMI_COMPRESSION -DBOOST -DBOOST_IOSTREAMS_NO_LIB")
