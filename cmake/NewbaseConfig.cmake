@@ -4,7 +4,11 @@ get_filename_component(INSTALLED_PREFIX ${INSTALLED_PREFIX} DIRECTORY)
 set(Newbase_INCLUDE_DIRS ${INSTALLED_PREFIX}/include)
 set(Newbase_INSTALLED_INCLUDE_DIRS ${INSTALLED_PREFIX}/include/newbase)
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    option(Newbase_USE_STATIC_LIBS "Newbase use static libs" OFF)
+    # If static and shared library is available, one can select
+    # which one to use. By default use shared one.
+    if(NOT ${PROJECT_NAME} MATCHES "Newbase")
+        option(Newbase_USE_STATIC_LIBS "Newbase use static libs" OFF)
+    endif()
 
     if(Newbase_USE_STATIC_LIBS)
         set(Newbase_LIBRARIES  ${INSTALLED_PREFIX}/lib/libNewbase.a)
