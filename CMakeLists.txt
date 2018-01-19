@@ -25,17 +25,6 @@ if(NOT Boost_INCLUDE_DIRS)
     endif()
 endif()
 
-find_package(Newbase QUIET)
-if(Newbase_FOUND)
-    include(${Newbase_CONFIG})
-    file(GLOB INSTALLED_FILES
-        ${Newbase_DIR}
-	${Newbase_INSTALLED_INCLUDE_DIRS}
-	${Newbase_INSTALLED_LIBRARIES})
-    add_custom_target(uninstall rm -rf ${INSTALLED_FILES})
-    message(STATUS "Already installed Newbase files: ${INSTALLED_FILES}")
-endif()
-
 target_include_directories( 
     ${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/newbase
@@ -56,6 +45,19 @@ install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 install(DIRECTORY cmake/ DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/newbase
         FILES_MATCHING PATTERN "*onfig.cmake")
 
+# uninstall target
+if(NOT TARGET uninstall)
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+        IMMEDIATE @ONLY
+    )
+
+    add_custom_target(
+        uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    )
+endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   include(cmake/package.cmake OPTIONAL)
