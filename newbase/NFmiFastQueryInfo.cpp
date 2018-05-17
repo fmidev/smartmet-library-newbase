@@ -4468,6 +4468,33 @@ void NFmiFastQueryInfo::PressureValues(NFmiDataMatrix<float> &theValues,
   }
 }
 
+void NFmiFastQueryInfo::PressureValues(NFmiDataMatrix<float> &theValues,
+                                       const NFmiGrid &theWantedGrid,
+                                       const NFmiMetTime &theInterpolatedTime,
+                                       float wantedPressureLevel,
+                                       bool relative_uv)
+{
+  if (relative_uv)
+  {
+    PressureValues(theValues, theWantedGrid, theInterpolatedTime, wantedPressureLevel);
+    return;
+  }
+
+  if (PressureDataAvailable() == false)
+    throw std::runtime_error(
+        "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
+        "unsuitable.");
+
+  NFmiGrid usedGrid(theWantedGrid);
+  theValues.Resize(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
+
+  for (usedGrid.Reset(); usedGrid.Next();)
+  {
+    float value = PressureLevelValue(wantedPressureLevel, usedGrid.LatLon(), theInterpolatedTime);
+    theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
+  }
+}
+
 void NFmiFastQueryInfo::GridValues(NFmiDataMatrix<float> &theValues,
                                    const NFmiGrid &theWantedGrid,
                                    const NFmiMetTime &theInterpolatedTime)
@@ -4545,6 +4572,30 @@ void NFmiFastQueryInfo::GridValues(NFmiDataMatrix<float> &theValues,
       theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
           value;
     }
+  }
+}
+
+void NFmiFastQueryInfo::GridValues(NFmiDataMatrix<float> &theValues,
+                                   const NFmiGrid &theWantedGrid,
+                                   const NFmiMetTime &theInterpolatedTime,
+                                   bool relative_uv)
+{
+  if (relative_uv)
+  {
+    GridValues(theValues, theWantedGrid, theInterpolatedTime);
+    return;
+  }
+
+  NFmiGrid usedGrid(theWantedGrid);
+  theValues.Resize(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
+  bool timeInterpolationNeeded = (Time(theInterpolatedTime) == false);
+
+  for (usedGrid.Reset(); usedGrid.Next();)
+  {
+    float value = timeInterpolationNeeded
+                      ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
+                      : InterpolatedValue(usedGrid.LatLon());
+    theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
   }
 }
 
@@ -4642,6 +4693,32 @@ void NFmiFastQueryInfo::HeightValues(NFmiDataMatrix<float> &theValues,
       theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
           value;
     }
+  }
+}
+
+void NFmiFastQueryInfo::HeightValues(NFmiDataMatrix<float> &theValues,
+                                     const NFmiGrid &theWantedGrid,
+                                     const NFmiMetTime &theInterpolatedTime,
+                                     float wantedHeightLevel,
+                                     bool relative_uv)
+{
+  if (relative_uv)
+  {
+    HeightValues(theValues, theWantedGrid, theInterpolatedTime, wantedHeightLevel);
+    return;
+  }
+
+  if (HeightDataAvailable() == false)
+    throw std::runtime_error(
+        "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
+
+  NFmiGrid usedGrid(theWantedGrid);
+  theValues.Resize(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
+
+  for (usedGrid.Reset(); usedGrid.Next();)
+  {
+    float value = HeightValue(wantedHeightLevel, usedGrid.LatLon(), theInterpolatedTime);
+    theValues[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
   }
 }
 

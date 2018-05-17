@@ -335,6 +335,10 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   void GridValues(NFmiDataMatrix<float> &theValues,
                   const NFmiGrid &theWantedGrid,
                   const NFmiMetTime &theInterpolatedTime);
+  void GridValues(NFmiDataMatrix<float> &theValues,
+                  const NFmiGrid &theWantedGrid,
+                  const NFmiMetTime &theInterpolatedTime,
+                  bool relative_uv);
 
   // 12.09.2013 Anssi.R changed methods to virtual to be able to override in NFmiMultiQueryInfo
   // Tämä hakee hilan sellaisenaan (datan originaali hila ja alue) halutulle painepinnalle.
@@ -346,6 +350,11 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                               const NFmiGrid &theWantedGrid,
                               const NFmiMetTime &theInterpolatedTime,
                               float wantedPressureLevel);
+  virtual void PressureValues(NFmiDataMatrix<float> &theValues,
+                              const NFmiGrid &theWantedGrid,
+                              const NFmiMetTime &theInterpolatedTime,
+                              float wantedPressureLevel,
+                              bool relative_uv);
   // Tämä hakee hilan sellaisenaan (datan originaali hila ja alue) halutulle korkeudelle [m].
   // Jos haluat lentopinnoille dataa (Flight Level) on lentopinta -> metri kerroin = 30.5
   // eli esim. lentopinta 50 saadaan laskulla 50 * 30.5 eli 1525 [m].
@@ -357,6 +366,11 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                     const NFmiGrid &theWantedGrid,
                     const NFmiMetTime &theInterpolatedTime,
                     float wantedHeightLevel);
+  void HeightValues(NFmiDataMatrix<float> &theValues,
+                    const NFmiGrid &theWantedGrid,
+                    const NFmiMetTime &theInterpolatedTime,
+                    float wantedHeightLevel,
+                    bool relative_uv);
 
   bool HeightDataAvailable(void) const
   {
