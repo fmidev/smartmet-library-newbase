@@ -5,20 +5,22 @@ pipeline {
       agent {
         docker {
           image 'centos:latest'
-	  args '-v ${PWD}:/work -w /work'	  
-	  reuseNode true
+          args '-v ${PWD}:/work -w /work'
+          reuseNode true
         }
+
       }
       steps {
         sh 'ls > Contents ; ls'
+        sh 'git -xfd'
       }
     }
     stage('Install') {
       agent {
         docker {
           image 'centos:latest'
-	  args '-v ${PWD}:/work -w /work'	  
-	  reuseNode true
+          args '-v ${PWD}:/work -w /work'
+          reuseNode true
         }
 
       }
