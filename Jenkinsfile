@@ -7,17 +7,26 @@ pipeline {
   }
   stages {
     stage('Build') {
-      agent {
-        docker {
-          image 'centos:latest'
-          args '-v ${PWD}:/work -w /work'
-          reuseNode true
-        }
+      parallel {
+        stage('Build') {
+          agent {
+            docker {
+              image 'centos:latest'
+              args '-v ${PWD}:/work -w /work'
+              reuseNode true
+            }
 
-      }
-      steps {
-        sh 'ls > Contents ; ls'
-        sh 'git -xfd'
+          }
+          steps {
+            sh 'ls ; ls > Contents ; ls'
+          }
+        }
+        stage('Prepare') {
+          steps {
+            sh '''git clean -xdf
+'''
+          }
+        }
       }
     }
     stage('Install') {
