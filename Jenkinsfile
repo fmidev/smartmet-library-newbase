@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'centos:latest'
-	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
+	  args '-v ${PWD}:/work -w /work'	  
 	  reuseNode true
         }
       }
@@ -17,7 +17,7 @@ pipeline {
       agent {
         docker {
           image 'centos:latest'
-	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
+	  args '-v ${PWD}:/work -w /work'	  
 	  reuseNode true
         }
 
