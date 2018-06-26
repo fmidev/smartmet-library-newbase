@@ -2,11 +2,14 @@ pipeline {
   agent any
   stages {
     stage('Build') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'ls'
+      agent {
+        docker {
+          image 'centos:latest'
         }
 
+      }
+      steps {
+        sh 'ls > Contents ; ls'
       }
     }
     stage('Install') {
