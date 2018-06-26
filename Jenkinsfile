@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent none
   stages {
     stage('Build') {
       agent {
@@ -13,11 +13,14 @@ pipeline {
       }
     }
     stage('Install') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'pwd'
+      agent {
+        docker {
+          image 'centos:latest'
         }
 
+      }
+      steps {
+        sh 'cat Contents'
       }
     }
     stage('Test') {
