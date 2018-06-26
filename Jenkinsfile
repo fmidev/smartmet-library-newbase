@@ -5,8 +5,9 @@ pipeline {
       agent {
         docker {
           image 'centos:latest'
+	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
+	  reuseNode True
         }
-
       }
       steps {
         sh 'ls > Contents ; ls'
@@ -16,6 +17,8 @@ pipeline {
       agent {
         docker {
           image 'centos:latest'
+	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
+	  reuseNode True
         }
 
       }
@@ -23,21 +26,7 @@ pipeline {
         sh 'cat Contents'
       }
     }
-    stage('Test') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'echo Kuuk'
-        }
-
-      }
-    }
-    stage('Save to repository') {
-      steps {
-        sh '''pwd
-ls'''
-      }
-    }
-    stage('Prepare') {
+    stage('Final') {
       agent any
       steps {
         sh 'pwd ; ls -la ; docker info | tee docker.out'
