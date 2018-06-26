@@ -6,7 +6,7 @@ pipeline {
         docker {
           image 'centos:latest'
 	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
-	  reuseNode True
+	  reuseNode true
         }
       }
       steps {
@@ -18,7 +18,7 @@ pipeline {
         docker {
           image 'centos:latest'
 	  args '-v ${PWD}:${PWD} -w ${PWD}'	  
-	  reuseNode True
+	  reuseNode true
         }
 
       }
