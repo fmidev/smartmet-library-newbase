@@ -66,5 +66,11 @@ yum-builddep -y *.spec ; make rpm
 ls'''
       }
     }
+    stage('Prepare') {
+      agent any
+      steps {
+        sh 'pwd ; ls -la ; docker info | tee docker.out'
+      }
+    }
   }
 }
