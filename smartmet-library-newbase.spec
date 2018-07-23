@@ -81,6 +81,7 @@ FMI newbase static library
 
 %changelog
 * Upcoming
+- Fixed potential segfault in NFmiQueryInfo::Size
 - Fixed NFmiString self assignment
 
 * Wed Jun 13 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.13-1.fmi
