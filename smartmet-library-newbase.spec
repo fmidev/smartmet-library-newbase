@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.6.13
+Version: 18.7.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -80,7 +80,8 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
-* Upcoming
+* Mon Jul 23 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.7.23-1.fmi
+- Fixed NFmiQueryInfo::ResetText
 - Fixed potential segfault in NFmiQueryInfo::Size
 - Fixed NFmiString self assignment
 

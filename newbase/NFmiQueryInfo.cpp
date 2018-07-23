@@ -941,7 +941,7 @@ const NFmiString NFmiQueryInfo::Text() const
 
 bool NFmiQueryInfo::ResetText()
 {
-  if (itsHeaderText) return false;
+  if (!itsHeaderText) return false;
 
   if (!itsHeaderText->Reset()) return false;
 
