@@ -80,6 +80,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Upcoming
+- Fixed NFmiString self assignment
+
 * Wed Jun 13 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.13-1.fmi
 - Removed -DBOOST, -DFMI_COMPRESSION and -DBOOST_IOSTREAMS_NO_LIB options as obsolete
 

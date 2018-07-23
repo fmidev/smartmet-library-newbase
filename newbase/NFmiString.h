@@ -134,7 +134,7 @@ inline bool NFmiString::IsValue(void) const { return bool(fLength >= 1); }
 
 inline NFmiString &NFmiString::operator=(const NFmiString &aFmiString)
 {
-  Set(aFmiString.fChar, aFmiString.fLength);
+  if (this != &aFmiString) Set(aFmiString.fChar, aFmiString.fLength);
   return *this;
 }
 
