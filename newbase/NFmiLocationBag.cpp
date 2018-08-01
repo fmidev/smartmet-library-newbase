@@ -20,10 +20,7 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
-
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
-
 #include <functional>
 
 using namespace std;
@@ -294,9 +291,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
     double dist = theLocation.Distance(*itsLocations[i]);
     if (dist <= theMaxDistance && (!found || dist < best_distance))
     {
-      if (theArea->IsInside(
-              itsLocations[i]
-                  ->GetLocation()))  // optimointi kysymys, kumpi hitaampi Distance vai IsInside?
+      if (theArea->IsInside(itsLocations[i]->GetLocation()))  // optimointi kysymys, kumpi hitaampi
+                                                              // Distance vai IsInside?
       {
         found = true;
         best_index = i;
@@ -637,7 +633,7 @@ std::size_t NFmiLocationBag::HashValue() const
 {
   std::size_t hash = 0;
 
-  BOOST_FOREACH (NFmiLocation *location, itsLocations)
+  for (NFmiLocation *location : itsLocations)
   {
     if (location != nullptr) boost::hash_combine(hash, location->HashValue());
   }

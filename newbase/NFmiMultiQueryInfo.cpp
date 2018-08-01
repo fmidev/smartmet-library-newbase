@@ -24,13 +24,10 @@
 #include "NFmiFileSystem.h"
 #include "NFmiMetTime.h"
 #include "NFmiQueryData.h"
-
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/foreach.hpp>
-
 #include <cassert>
 #include <utility>
 
@@ -78,7 +75,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
     // Construct from multiple querydatas
     std::list<std::string> dirfiles = NFmiFileSystem::DirectoryFiles(thePath);
 
-    BOOST_FOREACH (const std::string &name, dirfiles)
+    for (const std::string &name : dirfiles)
     {
       if (name.empty() || name[0] == '.') continue;
 
@@ -134,7 +131,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQue
 
 void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
 {
-  BOOST_FOREACH (const std::string &filename, theFiles)
+  for (const std::string &filename : theFiles)
   {
     boost::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
     itsDatas.push_back(qd);
@@ -221,7 +218,7 @@ void NFmiMultiQueryInfo::Init()
   // time -> index set correspondance is now established, initialize the data structures accordingly
 
   // int j = 0;
-  BOOST_FOREACH (const auto &idx, time_index)
+  for (const auto &idx : time_index)
   {
     itsMultiIndexes.push_back(idx);
   }

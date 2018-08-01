@@ -8,7 +8,6 @@
 #include "NFmiHPlaceDescriptor.h"
 #include "NFmiQueryData.h"
 #include "NFmiStringTools.h"
-#include <boost/foreach.hpp>
 #include <regression/tframe.h>
 #include <fstream>
 #include <stdexcept>
