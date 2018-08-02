@@ -130,7 +130,7 @@ class _FMI_DLL NFmiDataPool
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataPool::~NFmiDataPool() { Destroy(); }
+inline NFmiDataPool::~NFmiDataPool() { NFmiDataPool::Destroy(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

@@ -78,7 +78,7 @@ inline NFmiTimeBag::NFmiTimeBag(void)
       itsLastTime(itsFirstTime),
       itsResolution(0)
 {
-  Reset();
+  NFmiTimeBag::Reset();
 }
 
 // ----------------------------------------------------------------------
@@ -96,7 +96,7 @@ inline NFmiTimeBag::NFmiTimeBag(const NFmiMetTime &theFirstTime,
       itsLastTime(theLastTime),
       itsResolution(theTimeResolution)
 {
-  Reset();
+  NFmiTimeBag::Reset();
 }
 
 // ----------------------------------------------------------------------
