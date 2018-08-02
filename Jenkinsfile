@@ -16,7 +16,7 @@ pipeline {
 
       }
       steps {
-        sh 'ls ; ls > Contents ; ls'
+        sh 'make rpm'
       }
     }
     stage('Install') {
