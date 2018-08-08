@@ -31,7 +31,7 @@ yum-builddep -y *.spec ; make rpm
 
       }
       steps {
-        sh 'for i in * ; do yum install *.rom ; done'
+        sh 'ls -la *.rpm ; for i in *.rpm ; do yum install -y $i ; done'
       }
     }
     stage('Final') {
