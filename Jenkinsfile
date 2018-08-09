@@ -17,8 +17,10 @@ pipeline {
       }
       steps {
         sh '''
-yum-builddep -y *.spec ; make rpm
-'''
+ccache -s
+yum-builddep -y *.spec
+make rpm
+ccache -s'''
       }
     }
     stage('Install') {
