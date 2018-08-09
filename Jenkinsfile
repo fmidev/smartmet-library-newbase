@@ -17,6 +17,7 @@ pipeline {
       }
       steps {
         sh '''
+ccache -s
 git clean -ffxd
 rpmlint *.spec
 mkdir -p tmp
@@ -27,6 +28,7 @@ make rpm
 mkdir -p dist
 find tmp -name \*.rpm | xargs -I RPM mv RPM dist/
 rm -rf tmp
+ccache -s
 '''
       }
     }
@@ -40,7 +42,7 @@ rm -rf tmp
 
       }
       steps {
-        sh 'for i in dist/*.rpm ; do yum install -y "$i" ; done'
+        sh 'ls -la dist/*.rpm ; for i in dist/*.rpm ; do yum install -y "$i" ; done'
       }
     }
     stage('Final') {
