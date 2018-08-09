@@ -26,7 +26,7 @@ echo %_srcrpmdir `pwd`/tmp >> $HOME/.rpmmacros
 yum-builddep -y *.spec
 make rpm
 mkdir -p dist
-find tmp -name \*.rpm | xargs -I RPM mv RPM dist/
+find tmp -name *.rpm | xargs -I RPM mv RPM dist/
 rm -rf tmp
 ccache -s
 '''
