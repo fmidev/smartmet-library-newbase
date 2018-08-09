@@ -17,7 +17,16 @@ pipeline {
       }
       steps {
         sh '''
-yum-builddep -y *.spec ; make rpm
+git clean -ffxd
+rpmlint *.spec
+mkdir -p tmp
+echo %_rpmdir `pwd`/tmp > $HOME/.rpmmacros
+echo %_srcrpmdir `pwd`/tmp >> $HOME/.rpmmacros
+yum-builddep -y *.spec
+make rpm
+mkdir -p dist
+find tmp -name \*.rpm | xargs -I RPM mv RPM dist/
+rm -rf tmp
 '''
       }
     }
@@ -31,7 +40,7 @@ yum-builddep -y *.spec ; make rpm
 
       }
       steps {
-        sh 'for i in * ; do yum install *.rom ; done'
+        sh 'for i in dist/*.rpm ; do yum install -y "$i" ; done'
       }
     }
     stage('Final') {
