@@ -25,8 +25,10 @@ echo %_rpmdir `pwd`/tmp > $HOME/.rpmmacros
 echo %_srcrpmdir `pwd`/tmp >> $HOME/.rpmmacros
 yum-builddep -y *.spec
 make rpm
-mkdir -p dist
-find tmp -name *.rpm | xargs -I RPM mv RPM dist/
+mkdir -p dist/src
+mkdir -p dist/bin
+find tmp -name *.src.rpm | xargs -I RPM mv RPM dist/src/
+find tmp -name *.rpm | xargs -I RPM mv RPM dist/bin/
 rm -rf tmp
 ccache -s
 '''
@@ -42,7 +44,7 @@ ccache -s
 
       }
       steps {
-        sh 'ls -la dist/*.rpm ; for i in dist/*.rpm ; do yum install -y "$i" ; done'
+        sh 'ls --recursive -la dist/ ; for i in dist/bin/*.rpm ; do yum install -y "$i" ; done'
       }
     }
     stage('Final') {
