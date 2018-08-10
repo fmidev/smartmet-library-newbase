@@ -20,16 +20,17 @@ pipeline {
 ccache -s
 git clean -ffxd
 rpmlint *.spec
-mkdir -p tmp
-echo %_rpmdir `pwd`/tmp > $HOME/.rpmmacros
-echo %_srcrpmdir `pwd`/tmp >> $HOME/.rpmmacros
+rm -rf /tmp/$JOB_NAME
+mkdir -p /tmp/$JOB_NAME
+echo %_rpmdir /tmp/$JOB_NAME > $HOME/.rpmmacros
+echo %_srcrpmdir /tmp/$JOB_NAME >> $HOME/.rpmmacros
 yum-builddep -y *.spec
 make rpm
 mkdir -p dist/src
 mkdir -p dist/bin
-find tmp -name *.src.rpm | xargs -I RPM mv RPM dist/src/
-find tmp -name *.rpm | xargs -I RPM mv RPM dist/bin/
-rm -rf tmp
+find /tmp/$JOB_NAME -name *.src.rpm | xargs -I RPM mv RPM dist/src/
+find /tmp/$JOB_NAME -name *.rpm | xargs -I RPM mv RPM dist/bin/
+rm -rf /tmp/$JOB_NAME
 ccache -s
 '''
       }
