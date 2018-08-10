@@ -37,7 +37,6 @@ ccache -s'''
       }
     }
     stage('Final') {
-      agent any
       steps {
         sh 'pwd ; ls --recursive -l dist/'
         archiveArtifacts(artifacts: 'dist/*', fingerprint: true, onlyIfSuccessful: true)
