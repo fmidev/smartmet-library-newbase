@@ -50,7 +50,8 @@ ccache -s
     stage('Final') {
       agent any
       steps {
-        sh 'pwd ; ls -la ; docker info | tee docker.out'
+        sh 'pwd ; ls --recursive -l dist/'
+        archiveArtifacts(artifacts: 'dist/*', fingerprint: true, onlyIfSuccessful: true)
       }
     }
   }
