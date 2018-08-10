@@ -50,7 +50,7 @@ ccache -s
     stage('Final') {
       steps {
         sh 'pwd ; ls --recursive -l dist/'
-        archiveArtifacts(artifacts: 'dist/*', fingerprint: true, onlyIfSuccessful: true)
+        archiveArtifacts(artifacts: 'dist/**/*.rpm', fingerprint: true, onlyIfSuccessful: true)
       }
     }
   }
