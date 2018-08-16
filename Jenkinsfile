@@ -17,10 +17,20 @@ pipeline {
       }
       steps {
         sh '''
-ccache -s
+git clean -ffxd
+rpmlint *.spec
+rm -rf /tmp/$JOB_NAME
+mkdir -p /tmp/$JOB_NAME
+echo %_rpmdir /tmp/$JOB_NAME > $HOME/.rpmmacros
+echo %_srcrpmdir /tmp/$JOB_NAME >> $HOME/.rpmmacros
 yum-builddep -y *.spec
 make rpm
-ccache -s'''
+mkdir -p dist/src
+mkdir -p dist/bin
+find /tmp/$JOB_NAME -name *.src.rpm | xargs -I RPM mv RPM dist/src/
+find /tmp/$JOB_NAME -name *.rpm | xargs -I RPM mv RPM dist/bin/
+rm -rf /tmp/$JOB_NAME
+'''
       }
     }
     stage('Install') {
@@ -33,69 +43,13 @@ ccache -s'''
 
       }
       steps {
-        sh 'ls -la *.rpm ; for i in *.rpm ; do yum install -y $i ; done'
+        sh 'ls --recursive -la dist/ ; yum install -y dist/bin/*.rpm ; rpm -qp dist/bin/*.rpm | xargs rpm --query'
       }
     }
     stage('Final') {
       steps {
         sh 'pwd ; ls --recursive -l dist/'
         archiveArtifacts(artifacts: 'dist/**/*.rpm', fingerprint: true, onlyIfSuccessful: true)
-      }
-    }
-    stage('Install') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'pwd'
-        }
-
-      }
-    }
-    stage('Test') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'echo Kuuk'
-        }
-
-      }
-    }
-    stage('Save to repository') {
-      steps {
-        sh '''pwd
-ls'''
-      }
-    }
-    stage('Prepare') {
-      agent any
-      steps {
-        sh 'pwd ; ls -la ; docker info | tee docker.out'
-      }
-    }
-    stage('Install') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'pwd'
-        }
-
-      }
-    }
-    stage('Test') {
-      steps {
-        dockerNode(image: 'centos:latest') {
-          sh 'echo Kuuk'
-        }
-
-      }
-    }
-    stage('Save to repository') {
-      steps {
-        sh '''pwd
-ls'''
-      }
-    }
-    stage('Prepare') {
-      agent any
-      steps {
-        sh 'pwd ; ls -la ; docker info | tee docker.out'
       }
     }
   }
