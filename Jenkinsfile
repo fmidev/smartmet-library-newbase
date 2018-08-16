@@ -17,7 +17,6 @@ pipeline {
       }
       steps {
         sh '''
-ccache -s
 git clean -ffxd
 rpmlint *.spec
 rm -rf /tmp/$JOB_NAME
@@ -31,7 +30,6 @@ mkdir -p dist/bin
 find /tmp/$JOB_NAME -name *.src.rpm | xargs -I RPM mv RPM dist/src/
 find /tmp/$JOB_NAME -name *.rpm | xargs -I RPM mv RPM dist/bin/
 rm -rf /tmp/$JOB_NAME
-ccache -s
 '''
       }
     }
@@ -45,7 +43,7 @@ ccache -s
 
       }
       steps {
-        sh 'ls --recursive -la dist/ ; for i in dist/bin/*.rpm ; do yum install -y "$i" ; done'
+        sh 'ls --recursive -la dist/ ; yum install -y dist/bin/*.rpm ; rpm -qp dist/bin/*.rpm | xargs rpm --query'
       }
     }
     stage('Final') {
