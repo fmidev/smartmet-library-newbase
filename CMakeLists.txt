@@ -60,6 +60,7 @@ if(NOT TARGET uninstall)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  target_link_libraries(${PROJECT_NAME} ${Fmt_LIBRARIES})
   include(cmake/package.cmake OPTIONAL)
 endif()
 

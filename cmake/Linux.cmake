@@ -11,3 +11,12 @@ if(DISABLE_GDAL)
 endif()
 
 add_compile_options(-std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter)
+
+find_package(Fmt REQUIRED)
+if (Fmt_FOUND)
+  find_library(Fmt_LIBRARIES fmt ${CMAKE_INSTALL_PREFIX} PATH_SUFFIXES a so)
+  if (Fmt_LIBRARIES-NOTFOUND)
+    message(FATAL_ERROR "Fmt library not found")
+  endif()
+  message(STATUS "Fmt: ${Fmt_LIBRARIES}")
+endif()
