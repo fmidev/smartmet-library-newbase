@@ -17,6 +17,7 @@ BuildRequires: boost-devel >= 1.65.0
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
 BuildRequires: gdal-devel
+BuildRequires: fmt-devel
 Requires: boost-date-time >= 1.65.0
 Requires: boost-regex >= 1.65.0
 Requires: boost-filesystem >= 1.65.0
@@ -24,6 +25,7 @@ Requires: boost-iostreams >= 1.65.0
 Requires: boost-system >= 1.65.0
 Requires: gdal
 Requires: geos >= 3.5.0
+Requires: fmt
 Requires: postgis < 2.1
 
 
