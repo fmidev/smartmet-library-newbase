@@ -106,7 +106,6 @@ static bool IsWinDir(const struct _finddata_t &fileinfo)
  */
 // ----------------------------------------------------------------------
 
-#ifdef UNIX
 namespace Unix
 {
 // ----------------------------------------------------------------------
@@ -174,7 +173,7 @@ string regex_of_msdos_pattern(const string &theMsPattern)
 
 }  // namespace Unix
 
-#else   // #ifdef UNIX
+#ifndef UNIX
 
 // Tein winkkari puolelle FMI-versiot findfirst, findnext ja findclose -funktioista, koska
 // haluan napata kaikki mahdolliset poikkeukset kiinni ja jatkaa kuten virhetilanteessa normaalisti.
