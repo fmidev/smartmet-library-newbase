@@ -53,6 +53,7 @@
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
 #include <map>
+#include <vector>
 
 using namespace std;
 
