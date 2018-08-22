@@ -8,7 +8,11 @@ set(CMAKE_CXX_FLAGS "-DUNIX -D_REENTRANT")
 
 if(DISABLE_GDAL)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDISABLED_GDAL")
+else()
+    find_package(GDAL REQUIRED)
 endif()
+
+find_package(Boost 1.55.0 REQUIRED COMPONENTS regex thread filesystem system date_time)
 
 add_compile_options(-std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter)
 
