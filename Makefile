@@ -81,6 +81,7 @@ CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 
 LIBS = -L$(libdir) \
 	-lfmt \
+	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_regex \
 	-lboost_thread
