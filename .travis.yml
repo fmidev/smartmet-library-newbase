@@ -1,0 +1,10 @@
+language: bash
+
+services:
+  - docker
+
+script:
+  - docker run -h rpmbuild-el7.fmi.fi -v $TRAVIS_BUILD_DIR:/home/rpmbuild/rpmbuild/SOURCES/smartmet-library-newbase --rm fmidev/rpmbuild:el7 smartmet-library-newbase
+
+after_success:
+  - echo "Success"
