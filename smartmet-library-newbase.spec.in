@@ -17,7 +17,11 @@ BuildRequires: boost-devel >= 1.65.0
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
 BuildRequires: gdal-devel
+%if @BUILD_SHARED_LIBS@ == ON
 BuildRequires: fmt-devel
+%else
+BuildRequires: fmt-static
+%endif
 Requires: boost-date-time >= 1.65.0
 Requires: boost-regex >= 1.65.0
 Requires: boost-filesystem >= 1.65.0
@@ -25,7 +29,9 @@ Requires: boost-iostreams >= 1.65.0
 Requires: boost-system >= 1.65.0
 Requires: gdal
 Requires: geos >= 3.5.0
+%if @BUILD_SHARED_LIBS@ == ON
 Requires: fmt
+%endif
 Requires: postgis < 2.1
 
 
@@ -64,7 +70,7 @@ mv %_topdir/tmpBBroot $RPM_BUILD_ROOT
 %package -n @CPACK_PACKAGE_FILE_NAME@-devel
 Summary: FMI newbase development files
 Provides: @CPACK_PACKAGE_FILE_NAME@-devel
-%if @BUILD_SHARED_LIBS@ == "ON"
+%if @BUILD_SHARED_LIBS@ == ON
 Requires: @CPACK_PACKAGE_FILE_NAME@
 %else
 Requires: @CPACK_PACKAGE_FILE_NAME@-static
@@ -81,7 +87,7 @@ FMI newbase development files
 
 
 
-%if @BUILD_SHARED_LIBS@ == "ON"
+%if @BUILD_SHARED_LIBS@ == ON
 
 %package -n @CPACK_PACKAGE_FILE_NAME@
 Summary: FMI newbase shared library
@@ -94,11 +100,7 @@ FMI newbase shared library
 %defattr(0664,root,root,0775)
 @CPACK_PACKAGING_INSTALL_PREFIX@/lib/@CMAKE_SHARED_LIBRARY_PREFIX@@PROJECT_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@
 
-%endif
-
-
-
-%if @BUILD_SHARED_LIBS@ == "OFF"
+%else
 
 %package -n @CPACK_PACKAGE_FILE_NAME@-static
 Summary: FMI newbase static library
