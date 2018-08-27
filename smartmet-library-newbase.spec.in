@@ -15,8 +15,10 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel >= 1.65.0
 BuildRequires: bzip2-devel
+%if @DISABLE_GDAL@ == OFF
 BuildRequires: geos-devel >= 3.5.0
 BuildRequires: gdal-devel
+%endif
 %if @BUILD_SHARED_LIBS@ == ON
 BuildRequires: fmt-devel
 %else
@@ -27,8 +29,10 @@ Requires: boost-regex >= 1.65.0
 Requires: boost-filesystem >= 1.65.0
 Requires: boost-iostreams >= 1.65.0
 Requires: boost-system >= 1.65.0
+%if @DISABLE_GDAL@ == OFF
 Requires: gdal
 Requires: geos >= 3.5.0
+%endif
 %if @BUILD_SHARED_LIBS@ == ON
 Requires: fmt
 %endif
