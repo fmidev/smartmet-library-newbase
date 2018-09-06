@@ -2,21 +2,56 @@ version: 2
 jobs:
   build:
     docker:
-      - image: fmidev/rpmbuild:el7
-        entrypoint: bash
+      - image: centos:latest
     steps:
       - checkout
       - run:
-          name: Create local repo
-          command: createrepo /home/rpmbuild/rpmbuild/RPMS/x86_64
+          name: Update
+          command: .circleci/build.sh update
       - run:
-          name: Install dependencies
-          command: sudo yum-builddep -y *.spec 
+          name: Install base tools and FMI repositories
+          command: .circleci/build.sh fmiprep
       - run:
-          name: Make rpm
-          command: make rpm
+          name: Install build dependencies
+          command: .circleci/build.sh deps
       - run:
-          name: Move artifacts
-          command: sudo cp -av /home/rpmbuild/rpmbuild/RPMS /
+          name: Build RPM
+          command: .circleci/build.sh rpm
+      - persist_to_workspace:
+          root: /root/dist
+          paths: ./*.rpm
+  test:
+    docker:
+      - image: centos:latest
+    steps:
+      - checkout
+      - run:
+          name: Update
+          command: .circleci/build.sh update
+      - run:
+          name: Install base tools and FMI repositories
+          command: .circleci/build.sh fmiprep
+      - attach_workspace:
+          at: /dist
+      - run:
+          name: Installation test
+          command: yum install -y /dist/*.rpm
+# Testing does not work yet, commented out	  
+#      - run:
+#          name: Test prepare
+#          command: .circleci/build.sh testprep
+#      - run:
+#          name: Test
+#          command: .circleci/build.sh test
       - store_artifacts:
-          path: /RPMS
+          path: /dist
+          destination: dist/
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
