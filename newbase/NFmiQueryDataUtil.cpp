@@ -2980,8 +2980,8 @@ static bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
   if (fAllowLessParamsWhenCreatingWeather)
   {
     if (theInfo.Param(kFmiTotalCloudCover) &&
-        (theInfo.Param(kFmiPrecipitationRate) || theInfo.Param(kFmiPrecipitation3h) ||
-         theInfo.Param(kFmiPrecipitation6h)))
+        (theInfo.Param(kFmiPrecipitationRate) || theInfo.Param(kFmiPrecipitation1h) ||
+         theInfo.Param(kFmiPrecipitation3h) || theInfo.Param(kFmiPrecipitation6h)))
       return true;
   }
   else
