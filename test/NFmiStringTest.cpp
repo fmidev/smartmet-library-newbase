@@ -50,16 +50,12 @@ void uppercase()
   tmp.UpperCase();
   if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'TEST'");
 
-  tmp = "ääliö";
-  tmp.UpperCase();
-  if (string(tmp) != "ÄÄLIÖ") TEST_FAILED("Failed to convert '<E4><E4>li<F6>'");
-
-  tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö01234567890!#%&/()=?+*^~,;.:-_ ";
+  tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½abcdefghijklmnopqrstuvwxyzï¿½ï¿½ï¿½01234567890!#%&/()=?+*^~,;.:-_ ";
   tmp.UpperCase();
   if (string(tmp) !=
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/()=?+*^~,;.:-_ ")
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½01234567890!#%&/()=?+*^~,;.:-_ ")
     TEST_FAILED("Failed to convert the alphabet:\n" + tmp +
-                "\nABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/"
+                "\nABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½01234567890!#%&/"
                 "()=?+*^~,;.:-_ \n");
 
   TEST_PASSED();
