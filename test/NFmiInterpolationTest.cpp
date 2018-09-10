@@ -342,9 +342,9 @@ void windinterpolator()
   calc(10, 150, 1);
   if ((res = calc.Speed()) != 10)
     TEST_FAILED("Should return speed 10 when it is the only number, not " + Convert(res));
-  if ((res = calc.Direction()) != 150)
+  res = calc.Direction() ;
+  if ( res<149.99999 || res>150.000001 )
     TEST_FAILED("Should return direction 150 when it is the only number, not " + Convert(res));
-
   calc.Reset();
   calc(10, 0, 0.5);
   calc(20, 90, 0.5);

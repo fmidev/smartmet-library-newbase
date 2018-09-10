@@ -50,10 +50,6 @@ void uppercase()
   tmp.UpperCase();
   if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'TEST'");
 
-  tmp = "ääliö";
-  tmp.UpperCase();
-  if (string(tmp) != "ÄÄLIÖ") TEST_FAILED("Failed to convert '<E4><E4>li<F6>'");
-
   tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö01234567890!#%&/()=?+*^~,;.:-_ ";
   tmp.UpperCase();
   if (string(tmp) !=
