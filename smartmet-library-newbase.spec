@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.9.6
+Version: 18.9.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -80,6 +80,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Sep 10 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.10-1.fmi
+- Fixed NFmiGdalArea AreaStr to return the datum given to it
+
 * Thu Sep  6 2018 Pertti Kinnia <pertti.kinnia@fmi.fi> - 18.9.6-1.fmi
 - Added missing parameter check preventing kFmiPrecipitation1h being used to produce 'weatherandcloudiness' object
 

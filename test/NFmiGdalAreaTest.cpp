@@ -45,7 +45,7 @@ void areastr()
 {
   NFmiGdalArea area("FMI", "EPSG:2393", NFmiPoint(20, 60), NFmiPoint(40, 70));
 
-  std::string expected = "EPSG:2393";
+  std::string expected = "FMI:EPSG:2393|20,60,40,70";
 
   std::string result = area.AreaStr();
   if (result != expected) TEST_FAILED("Expected " + expected + ", got " + result + " instead");
