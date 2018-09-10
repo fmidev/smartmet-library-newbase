@@ -9,7 +9,8 @@ cd `dirname $0`
 cd ..
 
 set -x
-circleci update check || ( circleci update install && circleci update build-agent )
+circleci update install
+circleci update build-agent
 circleci config validate
 docker pull centos:latest
 mkdir -p /tmp/ccache
