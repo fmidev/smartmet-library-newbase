@@ -50,12 +50,12 @@ void uppercase()
   tmp.UpperCase();
   if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'TEST'");
 
-  tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½abcdefghijklmnopqrstuvwxyzï¿½ï¿½ï¿½01234567890!#%&/()=?+*^~,;.:-_ ";
+  tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö01234567890!#%&/()=?+*^~,;.:-_ ";
   tmp.UpperCase();
   if (string(tmp) !=
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½01234567890!#%&/()=?+*^~,;.:-_ ")
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/()=?+*^~,;.:-_ ")
     TEST_FAILED("Failed to convert the alphabet:\n" + tmp +
-                "\nABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½01234567890!#%&/"
+                "\nABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/"
                 "()=?+*^~,;.:-_ \n");
 
   TEST_PASSED();
