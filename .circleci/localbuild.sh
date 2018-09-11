@@ -8,6 +8,16 @@ echo
 cd `dirname $0`
 cd ..
 
+# Test if proxy is needed
+wget -q -t 1 --spider www.google.com || \
+    export http_proxy=http://wwwproxy.fmi.fi:8080 && \
+    export https_proxy=http://wwwproxy.fmi.fi:8080
+
+# Pass some things to circleci environment
+ENVSTR="-e LOCALUID=`id -u`"
+test -z "$http_proxy" || ENVSTR="$ENVSTR -e http_proxy=$http_proxy"
+test -z "$https_proxy" || ENVSTR="$ENVSTR -e https_proxy=$https_proxy"
+
 set -x
 circleci update install
 circleci update build-agent
@@ -33,6 +43,6 @@ if [ "$#" == "0" ] ; then
 fi
 
 while (( "$#" )) ; do
-    circleci local execute -v /tmp/yum-cache:/var/cache/yum -v /tmp/ccache:/ccache -v ${PWD}/dist:/root/dist -v ${PWD}/dist:/dist --job "$1"
+    circleci local execute $ENVSTR -v /tmp/yum-cache:/var/cache/yum -v /tmp/ccache:/ccache -v ${PWD}/dist:/root/dist -v ${PWD}/dist:/dist --job "$1"
     shift
 done

@@ -20,6 +20,13 @@ function insudo {
 jobs=`fgrep processor /proc/cpuinfo | wc -l`
 
 set -ex
+# Make sure we are using proxy, if that is needed
+test -z "$http_proxy" || (
+    grep -q "^proxy=" /etc/yum.conf || \
+       echo proxy=$http_proxy | \
+           insudo tee -a /etc/yum.conf
+)
+
 for step in $* ; do
     case $step in
 	update)
