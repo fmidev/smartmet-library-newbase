@@ -20,7 +20,7 @@ function insudo {
 jobs=`fgrep processor /proc/cpuinfo | wc -l`
 
 # Try to find/create suitable directory for build time distribution files
-if [ -n "$DISTDIR" ] ; then
+if [ -z "$DISTDIR" ] ; then
     test ! -d "/dist" || DISTDIR="/dist"
     test ! -d "/root/dist" || DISTDIR="/root/dist"
     test ! -d "$HOME/dist" || DISTDIR="$HOME/dist"
@@ -30,6 +30,7 @@ test -d "$DISTDIR/." || mkdir -p "$DISTDIR"
 export DISTDIR
 
 set -ex
+echo DISTDIR: $DISTDIR
 # Make sure we are using proxy, if that is needed
 test -z "$http_proxy" || (
     grep -q "^proxy=" /etc/yum.conf || \
