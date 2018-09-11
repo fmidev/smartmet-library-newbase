@@ -26,6 +26,9 @@
 
 namespace NFmiStringTools
 {
+char toupperfi(char theChar);
+char tolowerfi(char theChar);
+
 std::string &FirstCharToUpper(std::string &theString);
 std::string &LowerCase(std::string &theString);
 std::string &UpperCase(std::string &theString);

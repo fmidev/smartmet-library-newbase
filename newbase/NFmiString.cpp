@@ -19,6 +19,7 @@
 #endif
 
 #include "NFmiString.h"
+#include "NFmiStringTools.h"
 
 #include <boost/functional/hash.hpp>
 
@@ -642,14 +643,12 @@ void NFmiString::UpperCase(void)
 void NFmiString::UpperCase()
 {
   char *p;
-  setlocale(LC_ALL, "Finnish");
   p = reinterpret_cast<char *>(fChar);
   while (*p != '\0')
   {
-    *p = toupper(*p);
+    *p = NFmiStringTools::toupperfi(*p);
     p++;
   }
-  setlocale(LC_ALL, "C");
 }
 #endif
 
@@ -669,14 +668,12 @@ void NFmiString::LowerCase(void)
 void NFmiString::LowerCase()
 {
   char *p;
-  setlocale(LC_ALL, "Finnish");
   p = reinterpret_cast<char *>(fChar);
   while (*p != '\0')
   {
-    *p = tolower(*p);
+    *p = NFmiStringTools::tolowerfi(*p);
     p++;
   }
-  setlocale(LC_ALL, "C");
 }
 #endif
 

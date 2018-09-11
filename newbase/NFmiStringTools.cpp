@@ -552,20 +552,6 @@ const unsigned char iso_8859_1_upper[256] = {0,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Platform independent toupper function in Finnish
- */
-// ----------------------------------------------------------------------
-
-char toupperfi(char theChar) { return iso_8859_1_upper[static_cast<unsigned char>(theChar)]; }
-// ----------------------------------------------------------------------
-/*!
- * \brief Platform independent tolower function in Finnish
- */
-// ----------------------------------------------------------------------
-
-char tolowerfi(char theChar) { return iso_8859_1_lower[static_cast<unsigned char>(theChar)]; }
-// ----------------------------------------------------------------------
-/*!
  * \brief Convert a hexadecimal character to a decimal value
  *
  * The value is undefined if the character is not hexadecimal
@@ -587,6 +573,21 @@ int todec(unsigned char theHex)
 
 namespace NFmiStringTools
 {
+// ----------------------------------------------------------------------
+/*!
+ * \brief Platform independent toupper function in Finnish
+ */
+// ----------------------------------------------------------------------
+
+char toupperfi(char theChar) { return iso_8859_1_upper[static_cast<unsigned char>(theChar)]; }
+// ----------------------------------------------------------------------
+/*!
+ * \brief Platform independent tolower function in Finnish
+ */
+// ----------------------------------------------------------------------
+
+char tolowerfi(char theChar) { return iso_8859_1_lower[static_cast<unsigned char>(theChar)]; }
+
 // ----------------------------------------------------------------------
 /*!
  * Convert the first character to upper case. The code is stolen from
