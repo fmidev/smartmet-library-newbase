@@ -464,14 +464,13 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       if (proj.substr(0, 4) == "FMI:")
       {
         datum = "FMI";
-        proj = projection.substr(4, std::string::npos);
+        proj = proj.substr(4, std::string::npos);
       }
       else if (proj.substr(0, 6) == "WGS84:")
       {
-        proj = projection.substr(6, std::string::npos);
+        proj = proj.substr(6, std::string::npos);
       }
-      else
-        proj = projection;
+
       area.reset(
           new NFmiGdalArea(datum, proj, bottomleft, topright, corner1, corner2, usePacificView));
     }

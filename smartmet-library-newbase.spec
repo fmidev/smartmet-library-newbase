@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.9.10
+Version: 18.9.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Sep 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.11-1.fmi
+- Fixed NFmiAreaFactory handling of GDAL area definitions
+
 * Mon Sep 10 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.10-1.fmi
 - Fixed NFmiGdalArea AreaStr to return the datum given to it
 
