@@ -50,13 +50,20 @@ void uppercase()
   tmp.UpperCase();
   if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'TEST'");
 
-  tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖabcdefghijklmnopqrstuvwxyzåäö01234567890!#%&/()=?+*^~,;.:-_ ";
+  tmp =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ\xC5\xC4\xD6"
+      "abcdefghijklmnopqrstuvwxyz\xE5\xE4\xF6"
+      "01234567890!#%&/"
+      "()=?+*^~,;.:-_ ";
+  const static char *shouldbe =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ\xC5\xC4\xD6"
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ\xC5\xC4\xD6"
+      "01234567890!#%&/"
+      "()=?+*^~,;.:-_ ";
+
   tmp.UpperCase();
-  if (string(tmp) !=
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/()=?+*^~,;.:-_ ")
-    TEST_FAILED("Failed to convert the alphabet:\n" + tmp +
-                "\nABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ01234567890!#%&/"
-                "()=?+*^~,;.:-_ \n");
+  if (string(tmp) != string(shouldbe))
+    TEST_FAILED("Failed to convert the alphabet:\n" + tmp + "\n" + shouldbe + "\n");
 
   TEST_PASSED();
 }
