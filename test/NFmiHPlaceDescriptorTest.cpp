@@ -118,15 +118,6 @@ void isinside()
       TEST_FAILED("Should not have found 0,0 from the grid data");
   }
 
-  // Test current data
-  {
-    NFmiQueryData qd("/smartmet/data/pal/skandinavia/pinta_xh/querydata/");
-    const NFmiHPlaceDescriptor& h = qd.Info()->HPlaceDescriptor();
-
-    if (h.IsInside(NFmiPoint(5.58, 52.14), 10 * 1000))
-      TEST_FAILED("Should have failed for coordinate 5.58 52.14");
-  }
-
   TEST_PASSED();
 }
 
