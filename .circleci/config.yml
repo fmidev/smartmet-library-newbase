@@ -36,13 +36,12 @@ jobs:
       - run:
           name: Installation test
           command: yum install -y /dist/*.rpm
-# Testing does not work yet, commented out	  
-#      - run:
-#          name: Test prepare
-#          command: .circleci/build.sh testprep
-#      - run:
-#          name: Test
-#          command: .circleci/build.sh test
+      - run:
+          name: Test prepare
+          command: .circleci/build.sh testprep
+      - run:
+          name: Test
+          command: .circleci/build.sh test
       - store_artifacts:
           path: /dist
           destination: dist/
