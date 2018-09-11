@@ -59,6 +59,8 @@ for step in $* ; do
 	    insudo yum-builddep -y *.spec
 	    ;;
 	testprep)
+           rpm -qlp dist/*.rpm | grep '[.]so$' | \
+               xargs --no-run-if-empty -I LIB -P "$jobs" -n 1 ln -svf LIB .
 	    sed -e 's/^BuildRequires:/#BuildRequires:/' -e 's/^#TestRequires:/BuildRequires:/' < *.spec > /tmp/test.spec
 	    insudo yum-builddep -y /tmp/test.spec
 	    ;;
