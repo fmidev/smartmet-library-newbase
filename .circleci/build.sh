@@ -24,6 +24,7 @@ if [ -n "$DISTDIR" ] ; then
     test ! -d "/dist" || DISTDIR="/dist"
     test ! -d "/root/dist" || DISTDIR="/root/dist"
     test ! -d "$HOME/dist" || DISTDIR="$HOME/dist"
+    test -z "$DISTDIR" || DISTDIR="/dist" # The default
 fi
 test -d "$DISTDIR/." || mkdir -p "$DISTDIR"
 export DISTDIR

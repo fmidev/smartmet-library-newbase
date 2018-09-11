@@ -18,7 +18,7 @@ jobs:
           name: Build RPM
           command: .circleci/build.sh rpm
       - persist_to_workspace:
-          root: /root/dist
+          root: /dist
           paths: ./*.rpm
   test:
     docker:
