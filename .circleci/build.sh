@@ -19,6 +19,15 @@ function insudo {
 
 jobs=`fgrep processor /proc/cpuinfo | wc -l`
 
+# Try to find/create suitable directory for build time distribution files
+if [ -n "$DISTDIR" ] ; then
+    test ! -d "/dist" || DISTDIR="/dist"
+    test ! -d "/root/dist" || DISTDIR="/root/dist"
+    test ! -d "$HOME/dist" || DISTDIR="$HOME/dist"
+fi
+test -d "$DISTDIR/." || mkdir -p "$DISTDIR"
+export DISTDIR
+
 set -ex
 # Make sure we are using proxy, if that is needed
 test -z "$http_proxy" || (
@@ -59,7 +68,7 @@ for step in $* ; do
 	    insudo yum-builddep -y *.spec
 	    ;;
 	testprep)
-           rpm -qlp dist/*.rpm | grep '[.]so$' | \
+           rpm -qlp $DISTDIR/*.rpm | grep '[.]so$' | \
                xargs --no-run-if-empty -I LIB -P "$jobs" -n 1 ln -svf LIB .
 	    sed -e 's/^BuildRequires:/#BuildRequires:/' -e 's/^#TestRequires:/BuildRequires:/' < *.spec > /tmp/test.spec
 	    insudo yum-builddep -y /tmp/test.spec
@@ -71,12 +80,11 @@ for step in $* ; do
 	    make -j "$jobs" rpm
 	    mkdir -p $HOME/dist
 	    for d in /root/rpmbuild $HOME/rpmbuild ; do
-	    	test ! -d "$d" || find "$d" -name \*.rpm -exec mv -v {} $HOME/dist/ \; 
+	    	test ! -d "$d" || find "$d" -name \*.rpm -exec mv -v {} $DISTDIR \; 
 	    done
 	    set +x
-	    echo "Distribution files are in $HOME/dist:"
-	    ls -l $HOME/dist
-#	    test ! -d /dist || cp -av $HOME/dist /dist
+	    echo "Distribution files are in $DISTDIR:"
+	    ls -l $DISTDIR
 	    ;;
 	*)
 	    echo "Unknown build step $step"
