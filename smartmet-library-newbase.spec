@@ -27,6 +27,14 @@ Requires: gdal
 Requires: geos >= 3.5.0
 Requires: fmt
 Requires: postgis < 2.1
+#TestRequires: make
+#TestRequires: gcc-c++
+#TestRequires: boost-devel
+#TestRequires: smartmet-library-regression
+#TestRequires: gdal-devel
+#TestRequires: bzip2-devel
+#TestRequires: zlib-devel
+#TestRequires: smartmet-timezones
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
