@@ -34,6 +34,7 @@ clean:
 
 test: $(PROG)
 	@echo Running tests:
+	@rm -f *.err
 	@for prog in $(PROG); do \
 	  ( ./$$prog || touch $$prog.err ) ; \
 	done
