@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 echo "Testing circleci build and test locally"
 echo
 
@@ -9,16 +7,18 @@ cd `dirname $0`
 cd ..
 
 # Test if proxy is needed
-wget -q -t 1 --spider www.google.com || \
+wget -q -t 1 --spider www.google.com
+if [ "$?" != "0" ] ; then
     export http_proxy=http://wwwproxy.fmi.fi:8080 && \
     export https_proxy=http://wwwproxy.fmi.fi:8080
+fi
 
 # Pass some things to circleci environment
 ENVSTR="-e LOCALUID=`id -u`"
 test -z "$http_proxy" || ENVSTR="$ENVSTR -e http_proxy=$http_proxy"
 test -z "$https_proxy" || ENVSTR="$ENVSTR -e https_proxy=$https_proxy"
 
-set -x
+set -ex
 circleci update install
 circleci update build-agent
 circleci config validate
