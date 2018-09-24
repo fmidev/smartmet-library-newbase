@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.9.11
-Release: 2%{?dist}.fmi
+Version: 18.9.24
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Sep 24 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.24-1.fmi
+- Added MetCoop global radiation fractile parameters
+
 * Tue Sep 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.11-1.fmi
 - Fixed NFmiAreaFactory handling of GDAL area definitions
 

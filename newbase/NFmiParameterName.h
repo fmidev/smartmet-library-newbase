@@ -1499,6 +1499,16 @@ enum FmiParameterName
   kFmiPressureF25,
   kFmiPressureF10,
 
+  // Metcoop fractiles
+
+  kFmiRadiationGlobalF0 = 4672,
+  kFmiRadiationGlobalF10 = 4673,
+  kFmiRadiationGlobalF25 = 4674,
+  kFmiRadiationGlobalF50 = 4675,
+  kFmiRadiationGlobalF75 = 4676,
+  kFmiRadiationGlobalF90 = 4677,
+  kFmiRadiationGlobalF100 = 4678,
+
   /* START SOUNDING INDEX PARAMETERS */
 
   /*
