@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.9.24
+Version: 18.9.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -25,7 +25,7 @@ Requires: boost-iostreams
 Requires: boost-system
 Requires: gdal
 Requires: geos >= 3.5.0
-Requires: fmt
+Requires: fmt >= 5.2.0
 Requires: postgis < 2.1
 #TestRequires: make
 #TestRequires: gcc-c++
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Sat Sep 29 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.29-1.fmi
+- Upgraded fmt
+
 * Mon Sep 24 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.24-1.fmi
 - Added MetCoop global radiation fractile parameters
 
