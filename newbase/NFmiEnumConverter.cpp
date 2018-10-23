@@ -524,6 +524,8 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "GroundFrost", kFmiGroundFrost},
       { "GroundHumidityForest", kFmiGroundHumidityForest},
       { "GroundTemperature", kFmiGroundTemperature},
+	  { "GroundWaterLevel", kFmiGroundWaterLevel},
+	  { "GroundWaterLevelIndex", kFmiGroundWaterLevelIndex},
       { "GrowingDegreeDays", kFmiGrowingDegreeDays},
       { "GrowthPeriodDeviationInDays", kFmiGrowthPeriodDeviationInDays},
       { "GrowthPeriodDeviationInPrcnt", kFmiGrowthPeriodDeviationInPrcnt},

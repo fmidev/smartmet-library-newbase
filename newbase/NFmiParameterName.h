@@ -374,6 +374,9 @@ enum FmiParameterName
   kFmiSurfaceTypeFraction = 394,
   kFmiSoilType = 395,
 
+  kFmiGroundWaterLevel = 396,
+  kFmiGroundWaterLevelIndex = 397,
+
   kFmiVegetationType = 399,
   kFmiForecasterCode = 400,
   kFmiWmoBlockNumber = 401,
