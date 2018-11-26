@@ -1258,6 +1258,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "SnowDepthF95", kFmiSnowDepthF95},
       { "SnowDepthF97.5", kFmiSnowDepthF97_5},
       { "SnowDepthF99", kFmiSnowDepthF99},
+      { "SnowDriftIndex", kFmiSnowDriftIndex},
       { "SnowLoad", kFmiSnowLoad},
       { "SnowLoadType", kFmiSnowLoadType},
       { "SnowMixingRatio", kFmiSnowMixingRatio},
