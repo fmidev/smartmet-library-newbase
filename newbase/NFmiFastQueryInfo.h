@@ -521,7 +521,6 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const NFmiDataMatrix<float> &lapseRateMatrix,
                                    const NFmiDataMatrix<float> &maskMatrix);
 
- protected:
   size_t Index(void) const;
 
   float IndexFloatValue(size_t theIndex) const;
@@ -531,6 +530,8 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const unsigned long &theLocationIndex,
                                    const unsigned long &theLevelIndex,
                                    const unsigned long &theTimeIndex) const;
+
+ protected:
   void InitFastInfo(void);
   std::vector<float> CalcPressureLevelDataPressures(void);
   std::vector<float> CalcHeightLevelDataHeights(void);

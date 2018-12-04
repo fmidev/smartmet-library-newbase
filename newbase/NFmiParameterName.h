@@ -509,6 +509,7 @@ enum FmiParameterName
   kFmiPackedAviationCloud4,
   kFmiLandCover = 530,
 
+  kFmiGrassFireIndex = 531,
   kFmiIceCover = 532,
   kFmiDeepSoilTemperature = 533,
   kFmiDeepSoilMoistureContent = 534,
@@ -516,6 +517,7 @@ enum FmiParameterName
   kFmiFieldGroundHumidity = 536,
   kFmiPrecipitation5d = 537,
   kFmiForestFireWarning = 538,
+  kFmiForestFireIndex = 539,
 
   kFmiGroundHumidityForest = 540,
   kFmiClusterTemperature1 = 541,
