@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 18.12.4
+Version: 19.1.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Jan 18 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.1.18-1.fmi
+- Added parameter FreezingDegreeDays
+
 * Tue Dec  4 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.12.4-1.fmi
 - Added GrassFireIndex and ForestFireIndex
 - Made some protected NFmiFastQueryInfo methods public to enable fast multithreaded writing
