@@ -1516,6 +1516,14 @@ enum FmiParameterName
   kFmiRadiationGlobalF90 = 4677,
   kFmiRadiationGlobalF100 = 4678,
 
+  kFmiSnowLoadF0 = 4679,
+  kFmiSnowLoadF10,
+  kFmiSnowLoadF25,
+  kFmiSnowLoadF50,
+  kFmiSnowLoadF75,
+  kFmiSnowLoadF90,
+  kFmiSnowLoadF100,
+
   /* START SOUNDING INDEX PARAMETERS */
 
   /*
