@@ -1314,6 +1314,11 @@ enum FmiParameterName
   kFmiSnowDriftIndex,
   kFmiFreezingDegreeDays,
 
+  kFmiTotalCloudCover2 = 1395,
+  kFmiLowCloudCover2,
+  kFmiMediumCloudCover2,
+  kFmiHighCloudCover2,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
