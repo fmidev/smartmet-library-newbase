@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.1.28
+Version: 19.2.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Feb  6 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.6-1.fmi
+- Added secondary parameters for cloud cover (total, low, middle, high)
+
 * Mon Jan 28 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.1.28-1.fmi
 - Added parameters for snow load fractiles 0, 10, 25, 50, 75, 90 and 100
 
