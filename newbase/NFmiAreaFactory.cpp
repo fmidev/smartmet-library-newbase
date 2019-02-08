@@ -27,6 +27,7 @@
  * ykj
  * pkj
  * mercator
+ * webmercator
  * rotlatlon,polelatitude=-90,polelongitude=0
  * invrotlatlon,polelatitude=-90,polelongitude=0
  * orthographic,azimuth=0
@@ -117,6 +118,7 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiStringTools.h"
+#include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
 #include <boost/algorithm/string.hpp>
@@ -388,6 +390,12 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       if (pvec.size() > 0) throw runtime_error("mercator area requires no parameters");
 
       area.reset(new NFmiMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
+    }
+    else if (proj == "webmercator")
+    {
+      if (pvec.size() > 0) throw runtime_error("webmercator area requires no parameters");
+
+      area.reset(new NFmiWebMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
     }
     else if (proj == "rotlatlon")
     {
@@ -749,6 +757,17 @@ return_type CreateProj(const std::string &projString,
     // Mercator projection
     result = return_type(
         new NFmiMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
+  }
+
+  else if (projId == "webmerc")
+  {
+    // WebMercator, newbase supports only +datum=WGS84
+    map_it = projParams.find("datum");
+    if (map_it == projParams.end() || map_it->second == "WGS84")
+      result = return_type(
+          new NFmiWebMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
+    else
+      throw runtime_error("Datum " + map_it->second + " not supported for WebMercator");
   }
 
   else if (projId == "tmerc")

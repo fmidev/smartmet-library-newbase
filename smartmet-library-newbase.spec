@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.2.6
+Version: 19.2.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Feb  8 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.8-1.fmi
+- Added WebMercator projection (EPSG:3857)
+
 * Wed Feb  6 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.6-1.fmi
 - Added secondary parameters for cloud cover (total, low, middle, high)
 

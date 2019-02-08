@@ -17,6 +17,7 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStationBag.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
 #include "NFmiVersion.h"
@@ -65,6 +66,8 @@ void *CreateSaveBase(unsigned int classId)
       return static_cast<void *>(new NFmiEquidistArea);
     case kNFmiMercatorArea:
       return static_cast<void *>(new NFmiMercatorArea);
+    case kNFmiWebMercatorArea:
+      return static_cast<void *>(new NFmiWebMercatorArea);
     case kNFmiGnomonicArea:
       return static_cast<void *>(new NFmiGnomonicArea);
 

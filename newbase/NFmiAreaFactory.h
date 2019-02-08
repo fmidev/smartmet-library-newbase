@@ -2,9 +2,6 @@
 /*!
  * \file
  * \brief Interface of namespace NFmiAreaFactory
- *
- * HUOM!!! NFmiAreaFactory ei ole käytössä MSVC60:lla koska
- * NFmiStringTools-funktiot eivät ole käytössä.
  */
 // ======================================================================
 

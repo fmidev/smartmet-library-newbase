@@ -72,6 +72,8 @@ const unsigned int kNFmiVilInfo = 80;
 const unsigned int kNFmiGribInfo = 81;
 const unsigned int kNFmiGrib = 82;
 
+const unsigned int kNFmiWebMercatorArea = 83;
+
 const unsigned int KNFmiMaxClass = 99;
 
 void* CreateSaveBase(unsigned int classId);
