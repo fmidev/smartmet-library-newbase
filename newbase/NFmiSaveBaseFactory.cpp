@@ -10,6 +10,7 @@
 #include "NFmiGdalArea.h"
 #include "NFmiGnomonicArea.h"
 #include "NFmiGrid.h"
+#include "NFmiLamberConformalConicArea.h"
 #include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
 #include "NFmiMercatorArea.h"
@@ -70,6 +71,8 @@ void *CreateSaveBase(unsigned int classId)
       return static_cast<void *>(new NFmiWebMercatorArea);
     case kNFmiGnomonicArea:
       return static_cast<void *>(new NFmiGnomonicArea);
+    case kNFmiLambertConformalConicArea:
+      return static_cast<void *>(new NFmiConformalConicArea);
 
     case kNFmiQueryData:
       return static_cast<void *>(new NFmiQueryData);
