@@ -1529,6 +1529,24 @@ enum FmiParameterName
   kFmiSnowLoadF90,
   kFmiSnowLoadF100,
 
+  kFmiTemperatureSeaF90 = 4686,
+  kFmiTemperatureSeaF75,
+  kFmiTemperatureSeaF25,
+  kFmiTemperatureSeaF10,
+
+  kFmiCAPEF90 = 4690,
+  kFmiCAPEF75,
+  kFmiCAPEF25,
+  kFmiCAPEF10,
+
+  kFmiTotalColumnWaterVapourF100 = 4694,
+  kFmiTotalColumnWaterVapourF90,
+  kFmiTotalColumnWaterVapourF75,
+  kFmiTotalColumnWaterVapourF50,
+  kFmiTotalColumnWaterVapourF25,
+  kFmiTotalColumnWaterVapourF10,
+  kFmiTotalColumnWaterVapourF0,
+
   /* START SOUNDING INDEX PARAMETERS */
 
   /*
