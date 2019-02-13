@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.2.8
+Version: 19.2.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Feb 13 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.13-1.fmi
+- New fractile parameters for ERA5 data
+
 * Fri Feb  8 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.8-1.fmi
 - Added WebMercator projection (EPSG:3857)
 
