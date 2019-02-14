@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.2.13
+Version: 19.2.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Feb 14 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.14-1.fmi
+- Added Lambert Conformal Conic projection
+
 * Wed Feb 13 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.13-1.fmi
 - New fractile parameters for ERA5 data
 

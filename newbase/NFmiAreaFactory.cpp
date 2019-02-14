@@ -33,6 +33,7 @@
  * orthographic,azimuth=0
  * stereographic,centrallongitude=0,centrallatitude=90,truelatitude=60
  * lambertequal,centrallongitude=10,centrallatitude=0,truelatitude=52
+ * lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371220
  * gnomonic,centrallongitude=0,centrallatitude=90,truelatitude=60
  * equidist,centrallongitude=0,centrallatitude=90
  * \endcode
@@ -110,6 +111,7 @@
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
 #include "NFmiGnomonicArea.h"
+#include "NFmiLambertConformalConicArea.h"
 #include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
 #include "NFmiMercatorArea.h"
@@ -445,6 +447,20 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
       area.reset(new NFmiLambertEqualArea(
           bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+    }
+    else if (proj == "lcc")
+    {
+      // *
+      // lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371220
+      if (pvec.size() < 3 || pvec.size() > 5)
+        throw runtime_error("lcc area requires max 3-5 parameters");
+      const double clon = check_longitude(pvec[0], usePacificView);
+      const double clat = check_latitude(pvec[1]);
+      const double tlat1 = check_latitude(pvec[2]);
+      const double tlat2 = check_latitude(pvec.size() >= 4 ? pvec[3] : tlat1);
+      const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
+      area.reset(new NFmiLambertConformalConicArea(
+          bottomleft, topright, clon, clat, tlat1, tlat2, rad, usePacificView));
     }
     else if (proj == "gnomonic")
     {
