@@ -14,12 +14,13 @@ class _FMI_DLL NFmiLambertConformalConicArea : public NFmiArea
   NFmiLambertConformalConicArea(const NFmiPoint& theBottomLeftLatLon,
                                 const NFmiPoint& theTopRightLatLon,
                                 double theCentralLongitude,
+                                double theCentralLatitude,
                                 double theTrueLatitude1,
                                 double theTrueLatitude2,
                                 double theRadius = kRearth,
+                                bool usePacificView = false,
                                 const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
-                                bool usePacificView = false);
+                                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
 
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
@@ -61,9 +62,17 @@ class _FMI_DLL NFmiLambertConformalConicArea : public NFmiArea
   NFmiPoint itsBottomLeftLatLon;
   NFmiPoint itsTopRightLatLon;
   double itsCentralLongitude;
+  double itsCentralLatitude;
   double itsTrueLatitude1;
   double itsTrueLatitude2;
   double itsRadius = kRearth;
   NFmiRect itsWorldRect;
+
+  // Unique derived coefficients per projection:
+  double itsXScaleFactor = 0;
+  double itsYScaleFactor = 0;
+  double itsN = 0;
+  double itsF = 0;
+  double itsRho0 = 0;
 
 };  // class NFmiLambertConformalConicArea
