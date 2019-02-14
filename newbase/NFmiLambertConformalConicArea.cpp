@@ -266,7 +266,22 @@ const std::string NFmiLambertConformalConicArea::AreaStr() const
 
 // ----------------------------------------------------------------------
 
-const std::string NFmiLambertConformalConicArea::WKT() const { return "shit"; }
+const std::string NFmiLambertConformalConicArea::WKT() const
+{
+  const char *fmt = R"(PROJCS["FMI_LambertConic",)"
+                    R"(GEOGCS["Unknown",)"
+                    R"(DATUM["Unknown",SPHEROID["Sphere",{:.0f},0]],)"
+                    R"(PRIMEM["Greenwich",0],)"
+                    R"(UNIT["Degree",0.0174532925199433]],)"
+                    R"(PROJECTION["Lambert_Conformal_Conic_2SP"],)"
+                    R"(PARAMETER["latitude_of_origin",{}],)"
+                    R"(PARAMETER["central_meridian",{}],)"
+                    R"(PARAMETER["standard_parallel_1",{}],)"
+                    R"(PARAMETER["standard_parallel_2",{}],)"
+                    R"(UNIT["Metre",1.0]])";
+  return fmt::format(
+      fmt, itsRadius, itsCentralLatitude, itsCentralLongitude, itsTrueLatitude1, itsTrueLatitude2);
+}
 
 const NFmiPoint NFmiLambertConformalConicArea::LatLonToWorldXY(
     const NFmiPoint &theLatLonPoint) const
