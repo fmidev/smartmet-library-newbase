@@ -536,7 +536,7 @@ enum FmiParameterName
   kFmiEFIWindSpeed = 556,
   kFmiEFITemperature = 557,
   kFmiEFIWindGust = 558,
-  kFmiEFIWindPrecipitation = 559,
+  kFmiEFIPrecipitation = 559,
   kFmiProbabilityOfTemp = 560,
   kFmiProbabilityOfTempLimit1 = 561,  // EPS: tod.n. T-poikkeama alle -8 astetta / T < -15
   kFmiProbabilityOfTempLimit2 = 562,  // EPS: tod.n. T-poikkeama alle -4 astetta / T < -20
@@ -1318,6 +1318,9 @@ enum FmiParameterName
   kFmiLowCloudCover2,
   kFmiMediumCloudCover2,
   kFmiHighCloudCover2,
+  kFmiMonthlyMaximumSnowDepth,
+  kFmiSOTWindGust,
+  kFmiSOTPrecipitation,
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
