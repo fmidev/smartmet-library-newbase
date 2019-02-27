@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.2.21
+Version: 19.2.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Feb 27 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.27-1.fmi
+- Fixed LCC WorldXyToLatLon longitude calculation to use radians in all intermediate stages
+
 * Thu Feb 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.21-1.fmi
 - New parameters: EFIWindPrecipitation, MonthlyMaximumSnowDepth, SOTWWindGust, SOTPrecipitation (Shift Of Tails)
 

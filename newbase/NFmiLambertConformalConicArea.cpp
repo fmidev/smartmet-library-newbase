@@ -321,7 +321,7 @@ const NFmiPoint NFmiLambertConformalConicArea::WorldXYToLatLon(const NFmiPoint &
       y = -y;
     }
     phi = 2 * atan(pow(itsRadius * itsF / rho, 1 / itsN)) - half_pi;
-    lambda = atan2(x, y) / itsN + itsCentralLongitude;
+    lambda = atan2(x, y) / itsN + FmiRad(itsCentralLongitude);
   }
 
   return NFmiPoint(FmiDeg(lambda), FmiDeg(phi));
