@@ -116,6 +116,7 @@ enum FmiParameterName
   kFmiThickness = 101,
   kFmiWaterTemperature = 102,
 
+  kFmiRadarPrecipitation1h = 106,
   kFmiRadarPrecipitation1d = 107,
   kFmiRadarBorder = 108,  // is the point at the border of two radar measurements
   kFmiRadarProducer = 109,
