@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.3.1
+Version: 19.3.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Mar  6 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.6-1.fmi
+- Added ERA5 fractile parameters for MaximumTemperature, MinimumTemperature and Precipitation24h
+
 * Fri Mar  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.1-1.fmi
 - Added parameter RadarPrecipitation1h
 
