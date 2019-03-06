@@ -1551,6 +1551,22 @@ enum FmiParameterName
   kFmiTotalColumnWaterVapourF10,
   kFmiTotalColumnWaterVapourF0,
 
+  kFmiMaximumTemperatureF90 = 4701,
+  kFmiMaximumTemperatureF75,
+  kFmiMaximumTemperatureF25,
+  kFmiMaximumTemperatureF10,
+  kFmiMinimumTemperatureF90,
+  kFmiMinimumTemperatureF75,
+  kFmiMinimumTemperatureF25,
+  kFmiMinimumTemperatureF10,
+  kFmiPrecipitation24hF100 = 4709,
+  kFmiPrecipitation24hF90,
+  kFmiPrecipitation24hF75,
+  kFmiPrecipitation24hF50,
+  kFmiPrecipitation24hF25,
+  kFmiPrecipitation24hF10,
+  kFmiPrecipitation24hF0,
+
   /* START SOUNDING INDEX PARAMETERS */
 
   /*
