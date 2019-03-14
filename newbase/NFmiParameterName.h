@@ -1544,14 +1544,15 @@ enum FmiParameterName
   kFmiCAPEF10,
 
   kFmiTotalColumnWaterVapourF100 = 4694,
+  kFmiTotalColumnWaterVapourF97_5,
   kFmiTotalColumnWaterVapourF90,
   kFmiTotalColumnWaterVapourF75,
   kFmiTotalColumnWaterVapourF50,
   kFmiTotalColumnWaterVapourF25,
   kFmiTotalColumnWaterVapourF10,
+  kFmiTotalColumnWaterVapourF2_5,
   kFmiTotalColumnWaterVapourF0,
-
-  kFmiMaximumTemperatureF90 = 4701,
+  kFmiMaximumTemperatureF90 = 4703,
   kFmiMaximumTemperatureF75,
   kFmiMaximumTemperatureF25,
   kFmiMaximumTemperatureF10,
@@ -1559,12 +1560,14 @@ enum FmiParameterName
   kFmiMinimumTemperatureF75,
   kFmiMinimumTemperatureF25,
   kFmiMinimumTemperatureF10,
-  kFmiPrecipitation24hF100 = 4709,
+  kFmiPrecipitation24hF100 = 4711,
+  kFmiPrecipitation24hF97_5,
   kFmiPrecipitation24hF90,
   kFmiPrecipitation24hF75,
   kFmiPrecipitation24hF50,
   kFmiPrecipitation24hF25,
   kFmiPrecipitation24hF10,
+  kFmiPrecipitation24hF2_5,
   kFmiPrecipitation24hF0,
 
   /* START SOUNDING INDEX PARAMETERS */
@@ -1669,6 +1672,9 @@ enum FmiParameterName
   kFmiPM10Concentration,
   kFmiPM25Concentration,
   kFmiSO2Concentration,
+
+  kFmiTotalPrecipitationF97_5,
+  kFmiTotalPrecipitationF2_5,
 
   cf_acoustic_signal_roundtrip_travel_time_in_sea_water = 10000,
   cf_aerodynamic_particle_diameter = 10001,
