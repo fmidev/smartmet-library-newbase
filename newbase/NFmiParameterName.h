@@ -1664,7 +1664,8 @@ enum FmiParameterName
   // WindMill icing forecasts (Karoliina Hämäläinen, SOL-4545)
   kFmiIcingRate = 4820,
   kFmiIceMass = 4821,
-
+  // Volumetric soil water layer for 0-28 cm (SOL-7344)
+  kFmiVolumetricSoilWaterLayer28 = 4850,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
   kFmiNO2Concentration,
