@@ -12,6 +12,15 @@
 #include "NFmiSaveBaseFactory.h"
 #include <string>
 
+#ifdef UNIX
+
+#include <boost/shared_ptr.hpp>
+
+class OGRSpatialReference;
+class OGRCoordinateTransformation;
+
+#endif
+
 struct PacificPointFixerData
 {
   PacificPointFixerData(void) : itsBottomLeftLatlon(), itsTopRightLatlon(), fIsPacific(false) {}
@@ -140,6 +149,29 @@ class _FMI_DLL NFmiArea
   NFmiRect itsXYRectArea;
   bool fPacificView;
 
+#ifdef UNIX
+
+  // New additions using GDAL + PROJ.4. Do not use virtual methods.
+
+ public:
+  NFmiPoint Wgs84ToLatLon(const NFmiPoint &theWgs84) const;
+  NFmiPoint LatLonToWgs84(const NFmiPoint &theLatLon) const;
+  NFmiPoint Wgs84ToWorldXY(const NFmiPoint &theWgs84) const;
+  NFmiPoint WorldXYToWgs84(const NFmiPoint &theWorldXY) const;
+
+ protected:
+  void InitWgs84Conversions(const std::string &theProjection, const std::string &theEllipsoid);
+
+ private:
+  boost::shared_ptr<OGRSpatialReference> itsSpatialReference;
+
+  boost::shared_ptr<OGRCoordinateTransformation> itsWgs84ToLatLonConverter;
+  boost::shared_ptr<OGRCoordinateTransformation> itsLatLonToWgs84Converter;
+
+  boost::shared_ptr<OGRCoordinateTransformation> itsWgs84ToWorldXYConverter;
+  boost::shared_ptr<OGRCoordinateTransformation> itsWorldXYToWgs84Converter;
+#endif
+
 };  // class NFmiArea
 
 //! Undocumented, should be removed
@@ -230,7 +262,13 @@ inline const NFmiPoint NFmiArea::BottomLeft() const { return itsXYRectArea.Botto
 // ----------------------------------------------------------------------
 
 inline NFmiArea::NFmiArea(const NFmiArea &theArea)
-    : itsXYRectArea(theArea.TopLeft(), theArea.BottomRight()), fPacificView(theArea.fPacificView)
+    : itsXYRectArea(theArea.TopLeft(), theArea.BottomRight()),
+      fPacificView(theArea.fPacificView),
+      itsSpatialReference(theArea.itsSpatialReference),
+      itsWgs84ToLatLonConverter(theArea.itsWgs84ToLatLonConverter),
+      itsLatLonToWgs84Converter(theArea.itsLatLonToWgs84Converter),
+      itsWgs84ToWorldXYConverter(theArea.itsWgs84ToWorldXYConverter),
+      itsWorldXYToWgs84Converter(theArea.itsWorldXYToWgs84Converter)
 {
 }
 
@@ -249,6 +287,12 @@ inline NFmiArea &NFmiArea::operator=(const NFmiArea &theArea)
   {
     itsXYRectArea = theArea.itsXYRectArea;
     fPacificView = theArea.fPacificView;
+
+    itsSpatialReference = theArea.itsSpatialReference;
+    itsWgs84ToLatLonConverter = theArea.itsWgs84ToLatLonConverter;
+    itsLatLonToWgs84Converter = theArea.itsLatLonToWgs84Converter;
+    itsWgs84ToWorldXYConverter = theArea.itsWgs84ToWorldXYConverter;
+    itsWorldXYToWgs84Converter = theArea.itsWorldXYToWgs84Converter;
   }
   return *this;
 }

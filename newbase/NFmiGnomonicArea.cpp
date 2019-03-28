@@ -417,7 +417,7 @@ void NFmiGnomonicArea::Init(bool fKeepWorldRect)
 const std::string NFmiGnomonicArea::AreaStr() const
 {
   std::ostringstream out;
-  out << "stereographic," << CentralLongitude() << ',' << CentralLatitude() << ','
+  out << "gnomonic," << CentralLongitude() << ',' << CentralLatitude() << ','
       << itsTrueLatitude.Value() << ':' << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y()
       << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
   return out.str();
@@ -442,16 +442,18 @@ const std::string NFmiGnomonicArea::AreaStr() const
 
 const std::string NFmiGnomonicArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_Gnomonic",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Gnomonic"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+  const char *fmt =
+      R"(PROJCS["FMI_Gnomonic",)"
+      R"(GEOGCS["FMI_Sphere",)"
+      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.0174532925199433]],)"
+      R"(PROJECTION["Gnomonic"],)"
+      R"(PARAMETER["central_meridian",{}],)"
+      R"(PARAMETER["latitude_of_origin",{}],)"
+      R"(UNIT["Metre",1.0],)"
+      R"(EXTENSION["PROJ4","proj4 = +proj=gnom +lat_0=90 +lon_0=25 +x_0=0 +y_0=0 +a=6371220 +b=6371220 +units=m +wktext +towgs84=0,0,0 +no_defs"]])";
+  return fmt::format(fmt, kRearth, itsCentralLongitude, itsCentralLatitude.Value());
 }
 
 // ----------------------------------------------------------------------

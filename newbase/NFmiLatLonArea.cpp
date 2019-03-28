@@ -102,6 +102,12 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
   itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
 
   NFmiArea::Init(fKeepWorldRect);
+
+#ifdef UNIX
+  auto sphere =
+      fmt::format("+proj=latlong +a={:.0f} +b={:.0f} +towgs84=0,0,0 +no_defs", kRearth, kRearth);
+  InitWgs84Conversions(WKT(), sphere);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -265,11 +271,13 @@ const std::string NFmiLatLonArea::AreaStr() const
 
 const std::string NFmiLatLonArea::WKT() const
 {
-  const char *fmt = R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]])";
-  return fmt::format(fmt, kRearth);
+  const char *fmt =
+      R"(GEOGCS["FMI_Sphere",)"
+      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.0174532925199433],)"
+      R"(EXTENSION["PROJ4", "proj4 = +proj=longlat +a={:.0f} +b={:.0f} +wktext +over +towgs84=0,0,0 +no_defs"]])";
+  return fmt::format(fmt, kRearth, kRearth, kRearth);
 }
 
 // ----------------------------------------------------------------------

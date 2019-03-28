@@ -95,7 +95,6 @@
 // ======================================================================
 
 #include "NFmiYKJArea.h"
-#include <fmt/format.h>
 #include <cmath>
 #include <cstdlib>
 #include <string>
@@ -247,6 +246,13 @@ void NFmiYKJArea::Init(bool fKeepWorldRect)
   itsBottomLeftLatLon = BottomLeftLatLon();
 
   NFmiKKJArea::Init(fKeepWorldRect);
+
+#ifdef UNIX
+  std::string sphere =
+      "+proj=latlong +ellps=intl "
+      "+towgs84-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+  InitWgs84Conversions(WKT(), sphere);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -424,6 +430,13 @@ std::ostream &NFmiYKJArea::Write(std::ostream &file) const
 std::istream &NFmiYKJArea::Read(std::istream &file)
 {
   NFmiKKJArea::Read(file);
+
+#ifdef UNIX
+  std::string sphere =
+      "+proj=latlong +ellps=intl "
+      "+towgs84-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+  InitWgs84Conversions(WKT(), sphere);
+#endif
   return file;
 }
 
@@ -467,7 +480,9 @@ const std::string NFmiYKJArea::WKT() const
       R"(PARAMETER["scale_factor",1],)"
       R"(PARAMETER["false_easting",3500000],)"
       R"(PARAMETER["false_northing",0],)"
-      R"(UNIT["metre",1]])";
+      R"(UNIT["metre",1],)"
+      R"(EXTENSION["PROJ4","proj4 = +proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext +towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs"]])";
+
   return fmt;
 }
 

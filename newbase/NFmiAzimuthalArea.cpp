@@ -91,6 +91,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
+#include <fmt/format.h>
 
 using namespace std;
 
@@ -287,6 +288,12 @@ void NFmiAzimuthalArea::Init(bool /* fKeepWorldRect */)
 
   itsTopRightLatLon = TopRightLatLon();
   itsBottomLeftLatLon = BottomLeftLatLon();
+
+#ifdef UNIX
+  auto sphere =
+      fmt::format("+proj=latlong +a={:.0f} +b={:.0f} +towgs84=0,0,0 +no_defs", kRearth, kRearth);
+  InitWgs84Conversions(WKT(), sphere);
+#endif
 }
 
 // ----------------------------------------------------------------------

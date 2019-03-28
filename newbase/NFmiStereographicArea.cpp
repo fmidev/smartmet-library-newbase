@@ -257,6 +257,12 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
   }
   NFmiAzimuthalArea::Init();
+
+#ifdef UNIX
+  auto sphere =
+      fmt::format("+proj=latlong +a={:.0f} +b={:.0f} +towgs84=0,0,0 +no_defs", kRearth, kRearth);
+  InitWgs84Conversions(WKT(), sphere);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -449,6 +455,11 @@ std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 std::istream &NFmiStereographicArea::Read(std::istream &file)
 {
   NFmiAzimuthalArea::Read(file);
+#ifdef UNIX
+  auto sphere =
+      fmt::format("+proj=latlong +a={:.0f} +b={:.0f} +towgs84=0,0,0 +no_defs", kRearth, kRearth);
+  InitWgs84Conversions(WKT(), sphere);
+#endif
   return file;
 }
 
@@ -473,34 +484,6 @@ const std::string NFmiStereographicArea::AreaStr() const
 // ----------------------------------------------------------------------
 /*!
  * \brief Return Well Known Text representation of the GCS
- *
- * Geneerinen:
- *
- * PROJCS["FMI_Stereographic",
- *  GEOGCS["FMI_Sphere",
- *         DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],
- *         PRIMEM["Greenwich",0],
- *         UNIT["Degree",0.0174532925199433]],
- *  PROJECTION["Stereographic"],
- *  PARAMETER["latitude_of_origin",lat_0],
- *  PARAMETER["central_meridian",lon_0],
- *  PARAMETER["false_easting",x_0],
- *  PARAMETER["false_northing",y_0],
- *  UNIT["Metre",1.0]]
- *
- * Polaaristereograafinen:
- *
- * PROJCS["FMI_Polar_Stereographic",
- *  GEOGCS["FMI_Sphere",
- *         DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],
- *         PRIMEM["Greenwich",0],
- *         UNIT["Degree",0.0174532925199433]],
- *  PROJECTION["Polar_Stereographic"],
- *  PARAMETER["latitude_of_origin",lat_ts],
- *  PARAMETER["central_meridian",lon],
- *  PARAMETER["false_easting",x_0],
- *  PARAMETER["false_northing",y_0],
- *  UNIT["Metre",1.0]]
  */
 // ----------------------------------------------------------------------
 
@@ -508,30 +491,48 @@ const std::string NFmiStereographicArea::WKT() const
 {
   if (itsCentralLatitude.Value() != 90)
   {
-    const char *fmt = R"(PROJCS["FMI_Stereographic",)"
-                      R"(GEOGCS["FMI_Sphere",)"
-                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                      R"(PRIMEM["Greenwich",0],)"
-                      R"(UNIT["Degree",0.0174532925199433]],)"
-                      R"(PROJECTION["Stereographic"],)"
-                      R"(PARAMETER["latitude_of_origin",{}],)"
-                      R"(PARAMETER["central_meridian",{}],)"
-                      R"(UNIT["Metre",1.0]])";
+    const char *fmt =
+        R"(PROJCS["FMI_Stereographic",)"
+        R"(GEOGCS["FMI_Sphere",)"
+        R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+        R"(PRIMEM["Greenwich",0],)"
+        R"(UNIT["Degree",0.0174532925199433]],)"
+        R"(PROJECTION["Stereographic"],)"
+        R"(PARAMETER["latitude_of_origin",{}],)"
+        R"(PARAMETER["central_meridian",{}],)"
+        R"(UNIT["Metre",1.0],)"
+        R"(EXTENSION["PROJ4","proj4 = +proj=stere +lat_0={} +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs"]])";
 
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+    return fmt::format(fmt,
+                       kRearth,
+                       itsCentralLatitude.Value(),
+                       itsCentralLongitude,
+                       itsCentralLatitude.Value(),
+                       itsTrueLatitude.Value(),
+                       itsCentralLongitude,
+                       kRearth,
+                       kRearth);
   }
+  const char *fmt =
+      R"(PROJCS["FMI_Polar_Stereographic",)"
+      R"(GEOGCS["FMI_Sphere",)"
+      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.0174532925199433]],)"
+      R"(PROJECTION["Polar_Stereographic"],)"
+      R"(PARAMETER["latitude_of_origin",{}],)"
+      R"(PARAMETER["central_meridian",{}],)"
+      R"(UNIT["Metre",1.0],)"
+      R"(EXTENSION["PROJ4","proj4 = +proj=stere +lat_0=90 +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs"]])";
 
-  const char *fmt = R"(PROJCS["FMI_Polar_Stereographic",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Polar_Stereographic"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-
-  return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude);
+  return fmt::format(fmt,
+                     kRearth,
+                     itsTrueLatitude.Value(),
+                     itsCentralLongitude,
+                     itsTrueLatitude.Value(),
+                     itsCentralLongitude,
+                     kRearth,
+                     kRearth);
 }
 
 // ----------------------------------------------------------------------

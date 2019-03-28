@@ -336,15 +336,6 @@ const std::string NFmiRotatedLatLonArea::AreaStr() const
 // ----------------------------------------------------------------------
 /*!
  * \brief Return Well Known Text representation of the GCS
- *  PROJCS["Plate_Carree",
- *    GEOGCS["FMI_Sphere",
- *           DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],
- *           PRIMEM["Greenwich",0],
- *           UNIT["Degree",0.017453292519943295]],
- *    PROJECTION["Plate_Carree"],
- *    EXTENSION["PROJ4","+proj=ob_tran +o_proj=longlat +o_lon_p=XXX +o_lat_p=YYY +a=R +k=1
- * +wktext"],
- *    UNIT["Meter",1]]
  */
 // ----------------------------------------------------------------------
 
@@ -354,15 +345,15 @@ const std::string NFmiRotatedLatLonArea::WKT() const
   auto plat = -itsSouthernPole.Y();
   auto plon = (plat == 90 ? 90 : fmod(itsSouthernPole.X() - 180, 360.0));
 
-  const char *fmt = R"(PROJCS["Plate_Carree",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.017453292519943295]],)"
-                    R"(PROJECTION["Plate_Carree"],)"
-                    R"(EXTENSION["PROJ4","+proj=ob_tran +o_proj=longlat +o_lon_p={})"
-                    R"( +o_lat_p={} +a={:.0f} +k=1 +wktext"],)"
-                    R"(UNIT["Meter",1]])";
+  const char *fmt =
+      R"(PROJCS["Plate_Carree",)"
+      R"(GEOGCS["FMI_Sphere",)"
+      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.017453292519943295]],)"
+      R"(PROJECTION["Plate_Carree"],)"
+      R"(UNIT["Meter",1],)"
+      R"(EXTENSION["PROJ4","+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +k=1 +wktext +over +towgs84=0,0,0 +no_defs"]])";
   return fmt::format(fmt, kRearth, plon, plat, kRearth);
 }
 

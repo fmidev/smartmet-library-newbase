@@ -31,6 +31,10 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
 
+#ifdef UNIX
+#include <gdal/ogr_geometry.h>
+#endif
+
 // ----------------------------------------------------------------------
 /*!
  * \bug Turha argumentti konstruktorille
@@ -517,3 +521,125 @@ std::size_t NFmiArea::HashValueKludge() const
 
   return HashValue();
 }
+
+#ifdef UNIX
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize WGS84 coordinate transformations
+ */
+// ----------------------------------------------------------------------
+
+void NFmiArea::InitWgs84Conversions(const std::string &theProjection,
+                                    const std::string &theEllipsoid)
+{
+  itsSpatialReference.reset(new OGRSpatialReference);
+  auto err = itsSpatialReference->SetFromUserInput(theProjection.c_str());
+  if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference from WKT");
+
+  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  err = wgs84->SetFromUserInput("WGS84");
+  if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference for WGS84");
+
+  std::unique_ptr<OGRSpatialReference> ellipsoid(new OGRSpatialReference);
+  err = ellipsoid->SetFromUserInput(theEllipsoid.c_str());
+  if (err != OGRERR_NONE)
+    throw std::runtime_error("Failed to create spatial reference for the projection ellipsoid");
+
+  itsWgs84ToLatLonConverter.reset(OGRCreateCoordinateTransformation(wgs84.get(), ellipsoid.get()));
+  if (itsWgs84ToLatLonConverter == nullptr)
+    throw std::runtime_error(
+        "Failed to create coordinate transformation from WGS84 to projection ellipsoid");
+
+  itsLatLonToWgs84Converter.reset(OGRCreateCoordinateTransformation(ellipsoid.get(), wgs84.get()));
+  if (itsLatLonToWgs84Converter == nullptr)
+    throw std::runtime_error(
+        "Failed to create coordinate transformation from projection ellipsoid to WGS84");
+
+  itsWgs84ToWorldXYConverter.reset(
+      OGRCreateCoordinateTransformation(wgs84.get(), itsSpatialReference.get()));
+  if (itsWgs84ToWorldXYConverter == nullptr)
+    throw std::runtime_error("Failed to create coordinate transformation from WGS84");
+
+  itsWorldXYToWgs84Converter.reset(
+      OGRCreateCoordinateTransformation(itsSpatialReference.get(), wgs84.get()));
+  if (itsWorldXYToWgs84Converter == nullptr)
+    throw std::runtime_error("Failed to create coordinate transformation to WGS84");
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from WGS84 to native geodetic coordinate
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::Wgs84ToLatLon(const NFmiPoint &theWgs84) const
+{
+  if (!itsWgs84ToLatLonConverter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  double x = theWgs84.X();
+  double y = theWgs84.Y();
+
+  if (itsWgs84ToLatLonConverter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
+
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from native geodetic coordinate to WGS84
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::LatLonToWgs84(const NFmiPoint &theLatLon) const
+{
+  if (!itsLatLonToWgs84Converter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  double x = theLatLon.X();
+  double y = theLatLon.Y();
+
+  if (itsLatLonToWgs84Converter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
+
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from WGS84 to native metric/geographic coordinates
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::Wgs84ToWorldXY(const NFmiPoint &theWgs84) const
+{
+  if (!itsWgs84ToWorldXYConverter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  double x = theWgs84.X();
+  double y = theWgs84.Y();
+
+  if (itsWgs84ToWorldXYConverter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
+
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from native metric/geographic coordinates to WGS84
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::WorldXYToWgs84(const NFmiPoint &theWorldXY) const
+{
+  if (!itsWorldXYToWgs84Converter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  double x = theWorldXY.X();
+  double y = theWorldXY.Y();
+
+  if (itsWorldXYToWgs84Converter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
+
+  return NFmiPoint(x, y);
+}
+
+#endif

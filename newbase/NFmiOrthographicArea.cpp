@@ -511,6 +511,7 @@ const std::string NFmiOrthographicArea::AreaStr() const
 
 const std::string NFmiOrthographicArea::WKT() const
 {
+  // TODO: PROJ.4
   const char *fmt = R"(PROJCS["FMI_Orthographic",)"
                     R"(GEOGCS["FMI_Sphere",)"
                     R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"

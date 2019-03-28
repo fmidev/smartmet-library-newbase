@@ -424,32 +424,30 @@ const std::string NFmiEquidistArea::AreaStr() const
 // ----------------------------------------------------------------------
 /*!
  * \brief Return Well Known Text representation of the GCS
- * PROJCS["FMI_Azimuthal_Equidistant",
- *  GEOGCS["FMI_Sphere",
- *         DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],
- *         PRIMEM["Greenwich",0],
- *         UNIT["Degree",0.0174532925199433]],
- *  PROJECTION["Azimuthal_Equidistant"],
- *  PARAMETER["latitude_of_center",lat_0],
- *  PARAMETER["longitude_of_center",lon_0],
- *  PARAMETER["false_easting",x_0],
- *  PARAMETER["false_northing",y_0],
- *  UNIT["Metre",1.0]]
  */
 // ----------------------------------------------------------------------
 
 const std::string NFmiEquidistArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_Azimuthal_Equidistant",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Azimuthal_Equidistant"],)"
-                    R"(PARAMETER["latitude_of_center",{}],)"
-                    R"(PARAMETER["longitude_of_center",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+  const char *fmt =
+      R"(PROJCS["FMI_Azimuthal_Equidistant",)"
+      R"(GEOGCS["FMI_Sphere",)"
+      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.0174532925199433]],)"
+      R"(PROJECTION["Azimuthal_Equidistant"],)"
+      R"(PARAMETER["latitude_of_center",{}],)"
+      R"(PARAMETER["longitude_of_center",{}],)"
+      R"(UNIT["Metre",1.0],)"
+      R"(EXTENSION["PROJ4","proj4 = +proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs"]])";
+  return fmt::format(fmt,
+                     kRearth,
+                     itsCentralLatitude.Value(),
+                     itsCentralLongitude,
+                     itsCentralLatitude.Value(),
+                     itsCentralLongitude,
+                     kRearth,
+                     kRearth);
 }
 
 // ----------------------------------------------------------------------

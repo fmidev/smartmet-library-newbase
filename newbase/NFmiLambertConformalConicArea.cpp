@@ -68,6 +68,12 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
 
   itsXScaleFactor = Width() / itsWorldRect.Width();
   itsYScaleFactor = Height() / itsWorldRect.Height();
+
+#ifdef UNIX
+  auto sphere = fmt::format(
+      "+proj=latlong +a={:.0f} +b={:.0f} +towgs84=0,0,0 +no_defs", itsRadius, itsRadius);
+  InitWgs84Conversions(WKT(), sphere);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -268,19 +274,32 @@ const std::string NFmiLambertConformalConicArea::AreaStr() const
 
 const std::string NFmiLambertConformalConicArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_LambertConic",)"
-                    R"(GEOGCS["Unknown",)"
-                    R"(DATUM["Unknown",SPHEROID["Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Lambert_Conformal_Conic_2SP"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(PARAMETER["standard_parallel_1",{}],)"
-                    R"(PARAMETER["standard_parallel_2",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(
-      fmt, itsRadius, itsCentralLatitude, itsCentralLongitude, itsTrueLatitude1, itsTrueLatitude2);
+  const char *fmt =
+      R"(PROJCS["FMI_LambertConic",)"
+      R"(GEOGCS["Unknown",)"
+      R"(DATUM["Unknown",SPHEROID["Sphere",{:.0f},0]],)"
+      R"(PRIMEM["Greenwich",0],)"
+      R"(UNIT["Degree",0.0174532925199433]],)"
+      R"(PROJECTION["Lambert_Conformal_Conic_2SP"],)"
+      R"(PARAMETER["latitude_of_origin",{}],)"
+      R"(PARAMETER["central_meridian",{}],)"
+      R"(PARAMETER["standard_parallel_1",{}],)"
+      R"(PARAMETER["standard_parallel_2",{}],)"
+      R"(UNIT["Metre",1.0],)"
+      R"(EXTENSION["PROJ4","proj4 = +proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs"]])";
+
+  return fmt::format(fmt,
+                     itsRadius,
+                     itsCentralLatitude,
+                     itsCentralLongitude,
+                     itsTrueLatitude1,
+                     itsTrueLatitude2,
+                     itsTrueLatitude1,
+                     itsTrueLatitude2,
+                     itsCentralLatitude,
+                     itsCentralLongitude,
+                     itsRadius,
+                     itsRadius);
 }
 
 const NFmiPoint NFmiLambertConformalConicArea::LatLonToWorldXY(
