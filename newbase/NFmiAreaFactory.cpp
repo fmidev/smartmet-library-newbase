@@ -108,23 +108,19 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
+#include "NFmiArea.h"
+#include "NFmiStringTools.h"
+#ifndef WGS84
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
-#include "NFmiGnomonicArea.h"
 #include "NFmiLambertConformalConicArea.h"
-#include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
-#include "NFmiMercatorArea.h"
-#include "NFmiOrthographicArea.h"
-#include "NFmiPKJArea.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
-#include "NFmiStringTools.h"
-#include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-
+#endif
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
+#include <fmt/printf.h>
 #include <algorithm>
 #include <deque>
 #include <list>
@@ -176,29 +172,29 @@ double degrees_from_projparam(const string &inParam)
     // North
     if (boost::iends_with(inParam, "n"))
     {
-      return boost::lexical_cast<double>(inParam.substr(0, length - 1));
+      return std::stod(inParam.substr(0, length - 1));
     }
     // South
     else if (boost::iends_with(inParam, "s"))
     {
-      return -boost::lexical_cast<double>(inParam.substr(0, length - 1));
+      return -std::stod(inParam.substr(0, length - 1));
     }
     // East
     else if (boost::iends_with(inParam, "e"))
     {
-      return boost::lexical_cast<double>(inParam.substr(0, length - 1));
+      return std::stod(inParam.substr(0, length - 1));
     }
     // West
     else if (boost::iends_with(inParam, "w"))
     {
-      return -boost::lexical_cast<double>(inParam.substr(0, length - 1));
+      return -std::stod(inParam.substr(0, length - 1));
     }
     else
     {
-      return boost::lexical_cast<double>(inParam);
+      return std::stod(inParam);
     }
   }
-  catch (boost::bad_lexical_cast &e)
+  catch (std::exception &e)
   {
     string errStr;
     errStr += "Bad cast to double in parameter: ";
@@ -317,7 +313,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
     const vector<string> aparts = NFmiStringTools::Split<vector<string> >(parts[1], "/");
     const vector<double> avec = NFmiStringTools::Split<vector<double> >(aparts[0]);
-    double aspect = (aparts.size() == 1 ? 1 : NFmiStringTools::Convert<double>(aparts[1]));
 
     deque<double> gvec =
         NFmiStringTools::Split<deque<double> >(parts.size() == 2 ? "0,0,1,1" : parts[2]);
@@ -355,13 +350,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     NFmiPoint bottomleft = NFmiPoint(avec[0], avec[1]);
     NFmiPoint topright = (centered ? bottomleft : NFmiPoint(avec[2], avec[3]));
 
-    bool usePacificView = NFmiArea::IsPacificView(bottomleft, topright);
-    DoPossiblePacificFix(bottomleft, topright, usePacificView);
-
-    check_longitude(bottomleft.X(), usePacificView);
-    check_latitude(bottomleft.Y());
-    check_longitude(topright.X(), usePacificView);
-    check_latitude(topright.Y());
+    const double width = gvec[2] - gvec[0];
+    const double height = gvec[3] - gvec[1];
 
     // More validity checks
 
@@ -369,203 +359,189 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       throw runtime_error(
           "Cannot use a centered projection speficiation with grid size of specific length");
 
-    const NFmiPoint corner1(gvec[0], gvec[1]);
-    const NFmiPoint corner2(gvec[2], gvec[3]);
+    if (units && (width <= 0 || height <= 0))
+      throw runtime_error("Cannot use negative lengths when specifying the grid size");
+
+    // Generate PROJ.4 string for the projection and the spatial reference used for the
+    // corners, center coordinate or bottom left corner for GRIB stuff
+
+    std::string proj4;
+    std::string sphere;
 
     if (proj == "latlon")
     {
       if (pvec.size() != 0) throw runtime_error("latlon area does not require any parameters");
-      area.reset(new NFmiLatLonArea(bottomleft, topright, corner1, corner2, usePacificView));
+
+      proj4 =
+          fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
+                       kRearth,
+                       kRearth);
+      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
     }
     else if (proj == "ykj")
     {
       if (pvec.size() != 0) throw runtime_error("ykj area does not require any parameters");
-      area.reset(new NFmiYKJArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
-    else if (proj == "pkj")
-    {
-      if (pvec.size() != 0) throw runtime_error("pkj area does not require any parameters");
-      area.reset(new NFmiPKJArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
-    else if (proj == "mercator")
-    {
-      if (pvec.size() > 0) throw runtime_error("mercator area requires no parameters");
-
-      area.reset(new NFmiMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
-    else if (proj == "webmercator")
-    {
-      if (pvec.size() > 0) throw runtime_error("webmercator area requires no parameters");
-
-      area.reset(new NFmiWebMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
+      proj4 =
+          "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+      sphere = "+proj=longlat +ellps=intl +no_defs";
     }
     else if (proj == "rotlatlon")
     {
       if (pvec.size() > 2) throw runtime_error("rotlatlon area requires max 2 parameters");
-      const double pole_lon = check_longitude(pvec.size() >= 2 ? pvec[1] : 0, usePacificView);
-      const double pole_lat = check_latitude(pvec.size() >= 1 ? pvec[0] : -90);
-      area.reset(new NFmiRotatedLatLonArea(
-          bottomleft, topright, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView));
+      auto spole_lon = (pvec.size() >= 2 ? pvec[1] : 0);
+      auto spole_lat = (pvec.size() >= 1 ? pvec[0] : -90);
+
+      auto npole_lat = -spole_lat;
+      auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
+
+      proj4 = fmt::sprintf(
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+towgs84=0,0,0 +no_defs",
+          npole_lon,
+          npole_lat,
+          kRearth,
+          kRearth);
+      sphere = fmt::sprintf(
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
+          "+no_defs",
+          npole_lon,
+          npole_lat,
+          kRearth,
+          kRearth);
     }
     else if (proj == "invrotlatlon")
     {
-      if (pvec.size() > 2) throw runtime_error("invrotlatlon area requires max 2 parameters");
-      const double pole_lon = check_longitude(pvec.size() >= 2 ? pvec[1] : 0, usePacificView);
-      const double pole_lat = check_latitude(pvec.size() >= 1 ? pvec[0] : -90);
+      if (pvec.size() > 2) throw runtime_error("rotlatlon area requires max 2 parameters");
+      auto spole_lon = (pvec.size() >= 2 ? pvec[1] : 0);
+      auto spole_lat = (pvec.size() >= 1 ? pvec[0] : -90);
 
-      // Invert the coordinates. Note that only the pole really matters in
-      // the following constructor
+      auto npole_lat = -spole_lat;
+      auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
-      NFmiRotatedLatLonArea rot(bottomleft, topright, NFmiPoint(pole_lon, pole_lat));
-      NFmiPoint bl = rot.ToRegLatLon(bottomleft);
-      NFmiPoint tr = rot.ToRegLatLon(topright);
-
-      area.reset(new NFmiRotatedLatLonArea(
-          bl, tr, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView));
-    }
-    else if (proj == "orthographic")
-    {
-      if (pvec.size() > 1) throw runtime_error("orthographi area requires max 1 parameter");
-      const double azimuth = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      area.reset(new NFmiOrthographicArea(
-          bottomleft, topright, azimuth, corner1, corner2, usePacificView));
-    }
-    else if (proj == "stereographic")
-    {
-      if (pvec.size() > 3) throw runtime_error("stereographic area requires max 3 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-      area.reset(new NFmiStereographicArea(
-          bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
-    }
-    else if (proj == "lambertequal")
-    {
-      if (pvec.size() > 3) throw runtime_error("lambertequal area requires max 3 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-      area.reset(new NFmiLambertEqualArea(
-          bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+      proj4 = fmt::sprintf(
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+towgs84=0,0,0 +no_defs",
+          npole_lon,
+          npole_lat,
+          kRearth,
+          kRearth);
+      sphere = fmt::sprintf(
+          "+proj=longlat +a={:.0f} +b={:.0f} +over "
+          "+no_defs",
+          kRearth,
+          kRearth);
     }
     else if (proj == "lcc")
     {
-      // *
       // lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371220
       if (pvec.size() < 3 || pvec.size() > 5)
         throw runtime_error("lcc area requires max 3-5 parameters");
-      const double clon = check_longitude(pvec[0], usePacificView);
-      const double clat = check_latitude(pvec[1]);
-      const double tlat1 = check_latitude(pvec[2]);
-      const double tlat2 = check_latitude(pvec.size() >= 4 ? pvec[3] : tlat1);
+      const double clon = pvec[0];
+      const double clat = pvec[1];
+      const double tlat1 = pvec[2];
+      const double tlat2 = (pvec.size() >= 4 ? pvec[3] : tlat1);
       const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
-      area.reset(new NFmiLambertConformalConicArea(
-          bottomleft, topright, clon, clat, tlat1, tlat2, rad, usePacificView));
-    }
-    else if (proj == "gnomonic")
-    {
-      if (pvec.size() > 3) throw runtime_error("gnomonic area requires max 3 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-      area.reset(new NFmiGnomonicArea(
-          bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+
+      proj4 = fmt::sprintf(
+          "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} "
+          "+units=m +wktext +towgs84=0,0,0 +no_defs",
+          tlat1,
+          tlat2,
+          clat,
+          clon,
+          rad,
+          rad);
+      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", rad, rad);
     }
     else if (proj == "equidist")
     {
       if (pvec.size() > 2) throw runtime_error("equidist area requires max 2 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      area.reset(
-          new NFmiEquidistArea(bottomleft, topright, clon, corner1, corner2, clat, usePacificView));
+      const double clon = (pvec.size() >= 1 ? pvec[0] : 0);
+      const double clat = (pvec.size() >= 2 ? pvec[1] : 90);
+
+      proj4 = fmt::sprintf(
+          "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+towgs84=0,0,0 +no_defs",
+          clat,
+          clon,
+          kRearth,
+          kRearth);
+
+      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
     }
-#ifdef UNIX
-#ifndef DISABLED_GDAL
     else
     {
-      // Allow FMI: or WGS84: prefix to identify datum, default is WGS84
-      std::string datum = "WGS84";
+      // Legacy code: Allow FMI: or WGS84: prefix to identify corner coordinate datum
+
       if (proj.substr(0, 4) == "FMI:")
       {
-        datum = "FMI";
-        proj = proj.substr(4, std::string::npos);
+        sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
+        proj4 = proj.substr(4, std::string::npos);
       }
       else if (proj.substr(0, 6) == "WGS84:")
       {
-        proj = proj.substr(6, std::string::npos);
+        sphere = "WGS84";
+        proj4 = proj.substr(6, std::string::npos);
       }
-
-      area.reset(
-          new NFmiGdalArea(datum, proj, bottomleft, topright, corner1, corner2, usePacificView));
+      else
+        sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs",
+                              kRearth,
+                              kRearth);  // backward compatibility
     }
-#else
-    else
-    {
-      throw std::runtime_error("Unknown projection (GDAL not linked in): " + theProjection);
-    }
-#endif  // DISABLED_GDAL
-#else
-    else
-    {
-      throw std::runtime_error("Unknown projection: " + theProjection);
-    }
-#endif  // UNIX
-
-    // recalculate corners if center coordinate was given
-    // instead of corners
-
-    const double width = gvec[2] - gvec[0];
-    const double height = gvec[3] - gvec[1];
-
-    if (units && (width <= 0 || height <= 0))
-      throw runtime_error("Cannot use negative lengths when specifying the grid size");
 
     if (centered)
     {
-      if (width <= 0 || height <= 0)
-        throw runtime_error("Width and height must be positive when center coordinate is given");
+      double aspect = (aparts.size() == 1 ? 1 : NFmiStringTools::Convert<double>(aparts[1]));
 
-      const double scale = avec[2];
-      const NFmiPoint c = area->LatLonToWorldXY(bottomleft);  // bottomleft = center here
-      const NFmiPoint bl(c.X() - scale * 1000 * width, c.Y() - scale * 1000 * aspect * height);
-      const NFmiPoint tr(c.X() + scale * 1000 * width, c.Y() + scale * 1000 * aspect * height);
-      NFmiPoint BL = area->WorldXYToLatLon(bl);
-      NFmiPoint TR = area->WorldXYToLatLon(tr);
+      // 1000 is used to convert from meters to kilometers. Number 2 is for legacy reasons:
+      // due to a bug originally the width meant the width from center to edge. Since the new
+      // constructor handles width correctly by adding/substracting the width divided by two,
+      // we must multiply by two here to get the original scale.
 
-      if (proj == "invrotlatlon")
+      double scale = 2 * 1000 * avec[2];
+      area.reset(NFmiArea::CreateFromCenter(
+          proj4, sphere, bottomleft, scale * width, scale * aspect * height));
+    }
+    else
+      area.reset(NFmiArea::CreateFromCorners(proj4, sphere, bottomleft, topright));
+
+    // Set image area
+
+    const NFmiPoint corner1(gvec[0], gvec[1]);
+    const NFmiPoint corner2(gvec[2], gvec[3]);
+
+    area->SetXYArea(NFmiRect(corner1, corner2));
+
+    if (!centered)
+    {
+      if (width < 0 && height > 0)
       {
-        BL = (static_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(BL);
-        TR = (static_cast<NFmiRotatedLatLonArea *>(area.get()))->ToRegLatLon(TR);
+        // calculate width to preserve aspect ratio
+        double scale = area->WorldXYAspectRatio();
+        double w = round(scale * height);
+        NFmiRect rect(gvec[0], gvec[1], gvec[0] + w, gvec[3]);
+        area->SetXYArea(rect);
       }
-
-      area.reset(area->NewArea(BL, TR));
-    }
-    else if (width < 0 && height > 0)
-    {
-      // calculate width to preserve aspect ratio
-      double scale = area->WorldXYAspectRatio();
-      double w = round(scale * height);
-      NFmiRect rect(gvec[0], gvec[1], gvec[0] + w, gvec[3]);
-      area->SetXYArea(rect);
-    }
-    else if (height < 0 && width > 0)
-    {
-      // calculate height to preserve aspect ratio
-      double scale = area->WorldXYAspectRatio();
-      double h = round(width / scale);
-      NFmiRect rect(gvec[0], gvec[1], gvec[2], gvec[1] + h);
-      area->SetXYArea(rect);
-    }
-    else if (width < 0 && height < 0)
-      throw runtime_error("Width and height cannot both be negative");
-    else if (units)
-    {
-      double w = area->WorldXYWidth();
-      double h = area->WorldXYHeight();
-      auto xsize = static_cast<int>(round(w / (unitfactor * width)));
-      auto ysize = static_cast<int>(round(h / (unitfactor * height)));
-      NFmiRect rect(0, 0, xsize, ysize);
-      area->SetXYArea(rect);
+      else if (height < 0 && width > 0)
+      {
+        // calculate height to preserve aspect ratio
+        double scale = area->WorldXYAspectRatio();
+        double h = round(width / scale);
+        NFmiRect rect(gvec[0], gvec[1], gvec[2], gvec[1] + h);
+        area->SetXYArea(rect);
+      }
+      else if (width < 0 && height < 0)
+        throw runtime_error("Width and height cannot both be negative");
+      else if (units)
+      {
+        double w = area->WorldXYWidth();
+        double h = area->WorldXYHeight();
+        auto xsize = static_cast<int>(round(w / (unitfactor * width)));
+        auto ysize = static_cast<int>(round(h / (unitfactor * height)));
+        NFmiRect rect(0, 0, xsize, ysize);
+        area->SetXYArea(rect);
+      }
     }
   }
   catch (std::runtime_error &e)
@@ -580,7 +556,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 /*!
  * \brief Create the desired projection from Proj4 string
  *
- * Throws if there is an error in the projection description or when the projection is not supported
+ * Throws if there is an error in the projection description or when the projection is not
+ * supported
  *
  * \param projString String description of the projection
  * \return The created projection
@@ -596,339 +573,13 @@ return_type CreateProj(const std::string &projString,
                        const NFmiPoint &topLeftXY,
                        const NFmiPoint &bottomRightXY)
 {
-  // Map to hold the parameters
-  map<string, string> projParams;
+  // Assume FMI sphere
+  auto sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
 
-  // Map to hold parameters that are actually used in parsing, this can be used to print parameters
-  // that are ignored
-  set<string> usedParams;
-
-  // Tokenize the input string
-  vector<string> tokens, splitToken;
-  boost::split(tokens, projString, boost::is_any_of(" \t\n"), boost::token_compress_on);
-
-  // The result
-  return_type result;
-
-  // Build token map, while validating the proj-string
-  for (auto &token : tokens)
-  {
-    // Split token into key->value pairs
-    boost::split(splitToken, token, boost::is_any_of("="));
-
-    if (!boost::starts_with(splitToken[0], "+"))
-    {
-      // Proj parameter keys start with a "+"
-
-      throw runtime_error("Proj4 parameters must start with a '+'");
-    }
-
-    if (splitToken.size() < 2)
-    {
-      // Only key but no value, use empty string as value
-      projParams.insert(make_pair(splitToken[0].erase(0, 1), string("")));
-    }
-
-    projParams.insert(make_pair(splitToken[0].erase(0, 1), splitToken[1]));
-  }
-
-  //	print_parameter_map(projParams);
-  // Now parameter map is ready for processing
-  map<string, string>::iterator map_it;
-  map_it = projParams.find("proj");
-  if (map_it == projParams.end())
-  {
-    throw runtime_error("No projection specified");
-  }
-
-  usedParams.insert(map_it->first);
-  string projId = map_it->second;
-
-  if (projId == "stere")
-  {
-    // Stereographic projection, find mandatory parameters
-
-    // Central longitude
-    map_it = projParams.find("lon_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error(
-          "Central meridian 'lon_0' must be specified for stereographic projection");
-    }
-
-    double centralLon = degrees_from_projparam(map_it->second);
-
-    usedParams.insert(map_it->first);
-
-    // True scale latitude
-    map_it = projParams.find("lat_ts");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error(
-          "True scale latitude 'lat_ts' must be specified for stereographic projection");
-    }
-    double truescaleLat = degrees_from_projparam(map_it->second);
-
-    usedParams.insert(map_it->first);
-    // Center latitude
-    map_it = projParams.find("lat_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Center latitude 'lat_0' must be specified for stereographic projection");
-    }
-    double centerLat = degrees_from_projparam(map_it->second);
-
-    usedParams.insert(map_it->first);
-
-    result = return_type(new NFmiStereographicArea(bottomLeftLatLon,
-                                                   topRightLatLon,
-                                                   centralLon,
-                                                   topLeftXY,
-                                                   bottomRightXY,
-                                                   centerLat,
-                                                   truescaleLat));
-  }
-
-  else if (projId == "aeqd")
-  {
-    // Azimuthal equidistant projection
-
-    map_it = projParams.find("lat_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error(
-          "Center latitude 'lat_0' must be specified for azimuthal equidistant projection");
-    }
-    double centerLat = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("lon_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error(
-          "Center latitude 'lat_0' must be specified for azimuthal equidistant projection");
-    }
-    double centerLon = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    result = return_type(new NFmiEquidistArea(
-        bottomLeftLatLon, topRightLatLon, centerLon, topLeftXY, bottomRightXY, centerLat));
-  }
-
-  else if ((projId == "latlon") || (projId == "lonlat"))
-  {
-    // Latlon area
-
-    result =
-        return_type(new NFmiLatLonArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "ortho")
-  {
-    // Orthographic projection
-    result = return_type(
-        new NFmiOrthographicArea(bottomLeftLatLon, topRightLatLon, 0, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "gnom")
-  {
-    // Gnomonic projection
-    map_it = projParams.find("lon_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Central meridian 'lon_0' must be specified for gnomonic projection");
-    }
-    double centralLon = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    // True scale latitude
-    map_it = projParams.find("lat_ts");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("True scale latitude 'lat_ts' must be specified for gnomonic projection");
-    }
-    double truescaleLat = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    // Center latitude
-    map_it = projParams.find("lat_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Center latitude 'lat_0' must be specified for gnomonic projection");
-    }
-    double centerLat = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    result = return_type(new NFmiGnomonicArea(bottomLeftLatLon,
-                                              topRightLatLon,
-                                              centralLon,
-                                              topLeftXY,
-                                              bottomRightXY,
-                                              centerLat,
-                                              truescaleLat));
-  }
-
-  else if (projId == "merc")
-  {
-    // Mercator projection
-    result = return_type(
-        new NFmiMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "webmerc")
-  {
-    // WebMercator, newbase supports only +datum=WGS84
-    map_it = projParams.find("datum");
-    if (map_it == projParams.end() || map_it->second == "WGS84")
-      result = return_type(
-          new NFmiWebMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-    else
-      throw runtime_error("Datum " + map_it->second + " not supported for WebMercator");
-  }
-
-  else if (projId == "tmerc")
-  {
-    // The only supported Transverse Mercator projection is YKJ-projection (EPSG:2393), must check
-    // that other proj-params are
-    // according to http://spatialreference.org/ref/epsg/2393/proj4/. Fails otherwise.
-    // Validates using string comparisons
-    map_it = projParams.find("lon_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Central meridian 'lon_0' must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "27")
-    {
-      string errStr;
-      errStr += "Invalid lon_0 for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be 27";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("lat_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Center latitude 'lat_0' must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "0")
-    {
-      string errStr;
-      errStr += "Invalid lat_0 for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be 0";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("k");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("k must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "1")
-    {
-      string errStr;
-      errStr += "Invalid k for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be 1";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("x_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("x_0 must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "3500000")
-    {
-      string errStr;
-      errStr += "Invalid k for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be 3500000";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    // y_0 can be left out as it is 0
-    map_it = projParams.find("y_0");
-    if (!(map_it == projParams.end()))
-    {
-      if (map_it->second != "0")
-      {
-        string errStr;
-        errStr += "Invalid y_0 for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be 0";
-        throw runtime_error(errStr);
-      }
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("ellps");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("ellps must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "intl")
-    {
-      string errStr;
-      errStr += "Invalid ellps for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be intl";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("units");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("units must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    if (map_it->second != "m")
-    {
-      string errStr;
-      errStr += "Invalid units for YKJ projection: ";
-      errStr += map_it->second;
-      errStr += ". Should be m";
-      throw runtime_error(errStr);
-    }
-    usedParams.insert(map_it->first);
-
-    map_it = projParams.find("no_defs");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("no_defs must be specified for YKJ projection");
-    }
-    usedParams.insert(map_it->first);
-
-    // If we are here the projection is valid YKJ (EPSG 2393)
-    result =
-        return_type(new NFmiYKJArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-  }
-
-  else
-  {
-    string errStr = "Unsupported projection: ";
-    errStr += projId;
-    throw runtime_error(errStr);
-  }
-
-  return result;
+  return_type area(
+      NFmiArea::CreateFromCorners(projString, sphere, bottomLeftLatLon, topRightLatLon));
+  area->SetXYArea(NFmiRect(topLeftXY, bottomRightXY));
+  return area;
 }
 
 }  // namespace NFmiAreaFactory

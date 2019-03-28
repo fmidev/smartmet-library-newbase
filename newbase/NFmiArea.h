@@ -15,60 +15,36 @@
 #ifdef UNIX
 
 #include <boost/shared_ptr.hpp>
+#include <gdal/ogr_geometry.h>
 
-class OGRSpatialReference;
 class OGRCoordinateTransformation;
 
 #endif
-
-struct PacificPointFixerData
-{
-  PacificPointFixerData(void) : itsBottomLeftLatlon(), itsTopRightLatlon(), fIsPacific(false) {}
-  PacificPointFixerData(const NFmiPoint &theBottomLeftLatlon,
-                        const NFmiPoint &theTopRightLatlon,
-                        bool isPacific)
-      : itsBottomLeftLatlon(theBottomLeftLatlon),
-        itsTopRightLatlon(theTopRightLatlon),
-        fIsPacific(isPacific)
-  {
-  }
-
-  NFmiPoint itsBottomLeftLatlon;
-  NFmiPoint itsTopRightLatlon;
-  bool fIsPacific;
-};
 
 //! Undocumented
 class _FMI_DLL NFmiArea
 {
  public:
-  virtual ~NFmiArea();
-  NFmiArea();
-  NFmiArea(const NFmiArea &theArea);
-  NFmiArea(const NFmiPoint &theTopLeftCorner,
-           const NFmiPoint &theBottomRightCorner,
-           bool usePacificView = false);
-  NFmiArea(double theLeft,
-           double theTop,
-           double theRight,
-           double theBottom,
-           bool usePacificView = false);
+  ~NFmiArea() = default;
+  NFmiArea(const NFmiArea &theArea) = default;
+  NFmiArea &operator=(const NFmiArea &theArea) = default;
 
-  NFmiArea &operator=(const NFmiArea &theArea);
+  // Needed for reading legacy classes from a file. An immediate Read() call is expected.
+  NFmiArea(int theClassId);
 
   bool IsInside(const NFmiPoint &theLatLonPoint) const;
   bool IsInside(const NFmiArea &theArea) const;
 
-  const NFmiPoint TopLeftLatLon() const;
-  const NFmiPoint TopRightLatLon() const;
-  const NFmiPoint BottomLeftLatLon() const;
-  const NFmiPoint BottomRightLatLon() const;
-  const NFmiPoint CenterLatLon() const;
+  NFmiPoint TopLeftLatLon() const;
+  NFmiPoint TopRightLatLon() const;
+  NFmiPoint BottomLeftLatLon() const;
+  NFmiPoint BottomRightLatLon() const;
+  NFmiPoint CenterLatLon() const;
 
-  const NFmiPoint TopLeft() const;
-  const NFmiPoint BottomRight() const;
-  const NFmiPoint TopRight() const;
-  const NFmiPoint BottomLeft() const;
+  NFmiPoint TopLeft() const;
+  NFmiPoint BottomRight() const;
+  NFmiPoint TopRight() const;
+  NFmiPoint BottomLeft() const;
 
   void Place(const NFmiPoint &newPlace);
   void Size(const NFmiPoint &newSize);
@@ -79,423 +55,137 @@ class _FMI_DLL NFmiArea
   double Right() const;
   double Height() const;
   double Width() const;
+
   const NFmiRect &XYArea() const;
+  void SetXYArea(const NFmiRect &newArea);
+  NFmiRect XYArea(const NFmiArea *theArea) const;
 
-  virtual NFmiArea *Clone() const;
-  virtual NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
+  NFmiRect WorldRect() const;
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual void SetXYArea(const NFmiRect &newArea);
-  virtual const NFmiRect XYArea(const NFmiArea *theArea) const;
-  virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const = 0;
-  virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const = 0;
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const = 0;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const = 0;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const = 0;
+  NFmiPoint WorldXYPlace() const;
+  NFmiPoint WorldXYSize() const;
+  double WorldXYWidth() const;
+  double WorldXYHeight() const;
+  double WorldXYAspectRatio() const;
 
-  virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                            const NFmiPoint &theTopRightLatLon,
-                            bool allowPacificFix = true) const = 0;
-  virtual NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
-                                  const NFmiPoint &theTopRightLatLon) const;
-  //  virtual NFmiArea * CreateNewArea(const NFmiRect & theRect);
-  virtual NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
-  virtual NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
-                                  FmiDirection theFixedPoint,
-                                  bool fShrinkArea);
+  NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
+                             double theLatitudeEpsilon = 0.001) const;
 
-  virtual const NFmiRect WorldRect() const = 0;
+  NFmiArea *Clone() const;
 
-  virtual const NFmiPoint WorldXYPlace() const;
-  virtual const NFmiPoint WorldXYSize() const;
-  virtual double WorldXYWidth() const;
-  virtual double WorldXYHeight() const;
-  virtual double WorldXYAspectRatio() const;
+#ifndef WGS84
+  void Init(bool fKeepWorldRect = false);
+#endif
 
-  virtual const NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
-                                           double theLatitudeEpsilon = 0.001) const;
+  NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
+  NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
+  NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
+  NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
+  NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
-  virtual unsigned long ClassId() const;
-  virtual const char *ClassName() const;
-  virtual const std::string AreaStr() const = 0;
-  virtual const std::string WKT() const = 0;
+  NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
+  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
+                    const NFmiPoint &theTopRightLatLon,
+                    bool allowPacificFix = true) const;
+  NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
+                          const NFmiPoint &theTopRightLatLon) const;
+  //   NFmiArea * CreateNewArea(const NFmiRect & theRect);
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
+  NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
+                          FmiDirection theFixedPoint,
+                          bool fShrinkArea);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  unsigned long ClassId() const;
+  const char *ClassName() const;
+  std::string AreaStr() const;
+  std::string WKT() const;
 
-  virtual bool operator==(const NFmiArea &theArea) const;
-  virtual bool operator!=(const NFmiArea &theArea) const;
-  bool PacificView(void) const { return fPacificView; }
-  void PacificView(bool newValue) { fPacificView = newValue; }
-  void CheckForPacificView(void);
+  std::ostream &Write(std::ostream &file) const;
+  std::istream &Read(std::istream &file);
 
-  static PacificPointFixerData PacificPointFixer(const NFmiPoint &theBottomLeftLatlon,
-                                                 const NFmiPoint &theTopRightLatlon);
-  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon);
-  static bool IsPacificLongitude(double theLongitude);
-  NFmiArea *DoPossiblePacificFix(void) const;
-  NFmiArea *DoForcePacificFix(void) const;
+  bool operator==(const NFmiArea &theArea) const;
+  bool operator!=(const NFmiArea &theArea) const;
 
   std::size_t HashValue() const;
 
-  // Temporary fix until the above method is fixed to be virtual
+  // Temporary fix until the above method is fixed to be
   std::size_t HashValueKludge() const;
 
+#ifndef WGS84
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;
+#endif
 
  private:
-  NFmiRect itsXYRectArea;
-  bool fPacificView;
+  class SpatialReferenceProxy
+  {
+   public:
+    SpatialReferenceProxy(const OGRSpatialReference &theSR) : itsSR(theSR) {}
+    SpatialReferenceProxy(const std::string &theSR)
+    {
+      auto err = itsSR.SetFromUserInput(theSR.c_str());
+      if (err != OGRERR_NONE)
+        throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
+    }
 
-#ifdef UNIX
+    const OGRSpatialReference &operator*() const { return itsSR; }
+    OGRSpatialReference *get() { return &itsSR; }
 
-  // New additions using GDAL + PROJ.4. Do not use virtual methods.
+   private:
+    OGRSpatialReference itsSR{NULL};
+  };
 
  public:
-  NFmiPoint Wgs84ToLatLon(const NFmiPoint &theWgs84) const;
-  NFmiPoint LatLonToWgs84(const NFmiPoint &theLatLon) const;
-  NFmiPoint Wgs84ToWorldXY(const NFmiPoint &theWgs84) const;
-  NFmiPoint WorldXYToWgs84(const NFmiPoint &theWorldXY) const;
+  // Intentional API design choice since the object has internal reference counting
+  OGRSpatialReference *SpatialReference() { return &itsSpatialReference; }
 
- protected:
-  void InitWgs84Conversions(const std::string &theProjection, const std::string &theEllipsoid);
+  // Named constructors used to clarify intent of the parameters. s
+
+  static NFmiArea *CreateFromBBox(SpatialReferenceProxy theSR,
+                                  const NFmiPoint &theBottomLeft,
+                                  const NFmiPoint &theTopRight);
+
+  static NFmiArea *CreateFromCenter(SpatialReferenceProxy theSR,
+                                    SpatialReferenceProxy theCenterSR,
+                                    const NFmiPoint &theCenter,
+                                    double theWidth,
+                                    double theHeight);
+
+  static NFmiArea *CreateFromCorners(SpatialReferenceProxy theSR,
+                                     SpatialReferenceProxy theBBoxSR,
+                                     const NFmiPoint &theBottomLeft,
+                                     const NFmiPoint &theTopRight);
+
+  static NFmiArea *CreateFromWGS84Corners(SpatialReferenceProxy theSR,
+                                          const NFmiPoint &theBottomLeft,
+                                          const NFmiPoint &theTopRight);
+
+  static NFmiArea *CreateFromGRIBSettings(SpatialReferenceProxy theSR,
+                                          SpatialReferenceProxy theCornerSR,
+                                          const NFmiPoint &theBottomLeft,
+                                          double theWidth,
+                                          double theHeight);
 
  private:
-  boost::shared_ptr<OGRSpatialReference> itsSpatialReference;
+  // We allow only the Create* static methods to construct projections
 
-  boost::shared_ptr<OGRCoordinateTransformation> itsWgs84ToLatLonConverter;
-  boost::shared_ptr<OGRCoordinateTransformation> itsLatLonToWgs84Converter;
+  NFmiArea() = default;
+  void InitSpatialReference(const std::string &theProjection);
+  void InitConversions();
 
-  boost::shared_ptr<OGRCoordinateTransformation> itsWgs84ToWorldXYConverter;
-  boost::shared_ptr<OGRCoordinateTransformation> itsWorldXYToWgs84Converter;
-#endif
+  OGRSpatialReference itsSpatialReference{NULL};
+
+  boost::shared_ptr<OGRCoordinateTransformation> itsToLatLonConverter;
+  boost::shared_ptr<OGRCoordinateTransformation> itsToWorldXYConverter;
+
+  NFmiRect itsWorldRect;               // bbox in native WorldXY coordinates
+  NFmiRect itsXYRectArea{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
+
+  // This is only needed when reading legacy files from disk
+  int itsClassId = kNFmiArea;
 
 };  // class NFmiArea
 
-//! Undocumented, should be removed
-
-typedef NFmiArea *PNFmiArea;
-
-// ----------------------------------------------------------------------
-/*!
- * Destructor
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea::~NFmiArea() {}
-// ----------------------------------------------------------------------
-/*!
- * Void constructor
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea::NFmiArea() : itsXYRectArea(), fPacificView(false) {}
-// ----------------------------------------------------------------------
-/*!
- * Constructor based on corner points
- *
- * \param theTopLeftCorner The top left corner coordinates
- * \param theBottomRightCorner The bottom right corner coordinates
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea::NFmiArea(const NFmiPoint &theTopLeftCorner,
-                          const NFmiPoint &theBottomRightCorner,
-                          bool usePacificView)
-    : itsXYRectArea(theTopLeftCorner, theBottomRightCorner), fPacificView(usePacificView)
-{
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Constuctor based on edge coordinates
- *
- * \param theLeft The left edge X-coordinate
- * \param theTop The top edge Y-coordinate
- * \param theRight The right edge X-coordinate
- * \param theBottom The bottom edge Y-coordinate
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea::NFmiArea(
-    double theLeft, double theTop, double theRight, double theBottom, bool usePacificView)
-    : itsXYRectArea(theLeft, theTop, theRight, theBottom), fPacificView(usePacificView)
-{
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::TopLeft() const { return itsXYRectArea.TopLeft(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::BottomRight() const { return itsXYRectArea.BottomRight(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::TopRight() const { return itsXYRectArea.TopRight(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::BottomLeft() const { return itsXYRectArea.BottomLeft(); }
-// ----------------------------------------------------------------------
-/*!
- * Copy constructor
- *
- * \param theArea The object to copy
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea::NFmiArea(const NFmiArea &theArea)
-    : itsXYRectArea(theArea.TopLeft(), theArea.BottomRight()),
-      fPacificView(theArea.fPacificView),
-      itsSpatialReference(theArea.itsSpatialReference),
-      itsWgs84ToLatLonConverter(theArea.itsWgs84ToLatLonConverter),
-      itsLatLonToWgs84Converter(theArea.itsLatLonToWgs84Converter),
-      itsWgs84ToWorldXYConverter(theArea.itsWgs84ToWorldXYConverter),
-      itsWorldXYToWgs84Converter(theArea.itsWorldXYToWgs84Converter)
-{
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Assignment operator
- *
- * \param theArea The object to copy
- * \return The object assigned to
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea &NFmiArea::operator=(const NFmiArea &theArea)
-{
-  if (this != &theArea)
-  {
-    itsXYRectArea = theArea.itsXYRectArea;
-    fPacificView = theArea.fPacificView;
-
-    itsSpatialReference = theArea.itsSpatialReference;
-    itsWgs84ToLatLonConverter = theArea.itsWgs84ToLatLonConverter;
-    itsLatLonToWgs84Converter = theArea.itsLatLonToWgs84Converter;
-    itsWgs84ToWorldXYConverter = theArea.itsWgs84ToWorldXYConverter;
-    itsWorldXYToWgs84Converter = theArea.itsWorldXYToWgs84Converter;
-  }
-  return *this;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \param theLatLonPoint Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiArea::IsInside(const NFmiPoint &theLatLonPoint) const
-{
-  NFmiPoint xyPoint = ToXY(theLatLonPoint);
-  if (xyPoint == NFmiPoint::gMissingLatlon)
-  {
-    return false;
-  }
-  return itsXYRectArea.IsInside(xyPoint);
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::TopLeftLatLon() const { return ToLatLon(TopLeft()); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::TopRightLatLon() const { return ToLatLon(TopRight()); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::BottomLeftLatLon() const { return ToLatLon(BottomLeft()); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiPoint NFmiArea::BottomRightLatLon() const { return ToLatLon(BottomRight()); }
-// ----------------------------------------------------------------------
-/*!
- * \param theArea Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiArea::IsInside(const NFmiArea &theArea) const
-{
-  return IsInside(theArea.TopLeftLatLon()) && IsInside(theArea.TopRightLatLon()) &&
-         IsInside(theArea.BottomLeftLatLon()) && IsInside(theArea.BottomRightLatLon());
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \param newPlace Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline void NFmiArea::Place(const NFmiPoint &newPlace) { itsXYRectArea.Place(newPlace); }
-// ----------------------------------------------------------------------
-/*!
- * \param newSize Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline void NFmiArea::Size(const NFmiPoint &newSize) { itsXYRectArea.Size(newSize); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Top() const { return itsXYRectArea.Top(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Bottom() const { return itsXYRectArea.Bottom(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Left() const { return itsXYRectArea.Left(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Right() const { return itsXYRectArea.Right(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Height() const { return itsXYRectArea.Height(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline double NFmiArea::Width() const { return itsXYRectArea.Width(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiRect &NFmiArea::XYArea() const { return itsXYRectArea; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline NFmiArea *NFmiArea::Clone() const { return 0; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiArea::ClassId() const { return kNFmiArea; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const char *NFmiArea::ClassName() const { return "NFmiArea"; }
-// ----------------------------------------------------------------------
-/*!
- * Equality comparison
- *
- * \param theArea The object to compare against
- * \return True if the objects are equal
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiArea::operator==(const NFmiArea &theArea) const
-{
-  return itsXYRectArea == theArea.itsXYRectArea;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Inequality comparison
- *
- * \param theArea The object to compare against
- * \return True if the objects are not equal
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiArea::operator!=(const NFmiArea &theArea) const
-{
-  return itsXYRectArea != theArea.itsXYRectArea;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \param theValue Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline int NFmiArea::Sign(double theValue) const { return theValue < 0 ? -1 : 1; }
-// ----------------------------------------------------------------------
-/*!
- * Output operator for class NFmiArea
- *
- * \param file The output stream to write to
- * \param ob The object to write
- * \return The output stream written to
- */
-// ----------------------------------------------------------------------
-
-inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
-// ----------------------------------------------------------------------
-/*!
- * Input operator for class NFmiArea
- *
- * \param file The input stream to read from
- * \param ob The object into which to read the new contents
- * \return The input stream read from
- */
-// ----------------------------------------------------------------------
-
-inline std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }
-
-// ======================================================================
+std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
+std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }

@@ -383,12 +383,14 @@ std::istream &NFmiGrid::Read(std::istream &file)
   {
     itsArea = static_cast<NFmiArea *>(CreateSaveBase(classId));
     file >> *itsArea;
+#ifndef WGS84
     NFmiArea *fixedArea = itsArea->DoPossiblePacificFix();
     if (fixedArea)
     {
       delete itsArea;
       itsArea = fixedArea;
     }
+#endif
   }
 
   NFmiGridBase::Read(file);
@@ -824,9 +826,11 @@ bool NFmiGrid::IsInside(const NFmiPoint &theLatLon) const
 // (-180, -90) -> (179.5, 90)
 bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
 {
+#ifndef WGS84
   if (theGrid.Area() && theGrid.Area()->ClassId() == kNFmiLatLonArea)
   {
     const NFmiArea &area = *(theGrid.Area());
+
     if (area.PacificView())
     {
       const NFmiPoint globalBL(0, -90);
@@ -839,6 +843,7 @@ bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
       }
     }
   }
+#endif
   return false;
 }
 
