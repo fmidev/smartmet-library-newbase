@@ -110,17 +110,11 @@
 #include "NFmiAreaFactory.h"
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
-#include "NFmiGnomonicArea.h"
 #include "NFmiLambertConformalConicArea.h"
-#include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
-#include "NFmiMercatorArea.h"
-#include "NFmiOrthographicArea.h"
-#include "NFmiPKJArea.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiStringTools.h"
-#include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
 #include <boost/algorithm/string.hpp>
@@ -382,23 +376,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       if (pvec.size() != 0) throw runtime_error("ykj area does not require any parameters");
       area.reset(new NFmiYKJArea(bottomleft, topright, corner1, corner2, usePacificView));
     }
-    else if (proj == "pkj")
-    {
-      if (pvec.size() != 0) throw runtime_error("pkj area does not require any parameters");
-      area.reset(new NFmiPKJArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
-    else if (proj == "mercator")
-    {
-      if (pvec.size() > 0) throw runtime_error("mercator area requires no parameters");
-
-      area.reset(new NFmiMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
-    else if (proj == "webmercator")
-    {
-      if (pvec.size() > 0) throw runtime_error("webmercator area requires no parameters");
-
-      area.reset(new NFmiWebMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
-    }
     else if (proj == "rotlatlon")
     {
       if (pvec.size() > 2) throw runtime_error("rotlatlon area requires max 2 parameters");
@@ -423,13 +400,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       area.reset(new NFmiRotatedLatLonArea(
           bl, tr, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView));
     }
-    else if (proj == "orthographic")
-    {
-      if (pvec.size() > 1) throw runtime_error("orthographi area requires max 1 parameter");
-      const double azimuth = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      area.reset(new NFmiOrthographicArea(
-          bottomleft, topright, azimuth, corner1, corner2, usePacificView));
-    }
     else if (proj == "stereographic")
     {
       if (pvec.size() > 3) throw runtime_error("stereographic area requires max 3 parameters");
@@ -437,15 +407,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
       const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
       area.reset(new NFmiStereographicArea(
-          bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
-    }
-    else if (proj == "lambertequal")
-    {
-      if (pvec.size() > 3) throw runtime_error("lambertequal area requires max 3 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-      area.reset(new NFmiLambertEqualArea(
           bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
     }
     else if (proj == "lcc")
@@ -461,15 +422,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
       area.reset(new NFmiLambertConformalConicArea(
           bottomleft, topright, clon, clat, tlat1, tlat2, rad, usePacificView));
-    }
-    else if (proj == "gnomonic")
-    {
-      if (pvec.size() > 3) throw runtime_error("gnomonic area requires max 3 parameters");
-      const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-      const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-      const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-      area.reset(new NFmiGnomonicArea(
-          bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
     }
     else if (proj == "equidist")
     {
@@ -721,69 +673,6 @@ return_type CreateProj(const std::string &projString,
 
     result =
         return_type(new NFmiLatLonArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "ortho")
-  {
-    // Orthographic projection
-    result = return_type(
-        new NFmiOrthographicArea(bottomLeftLatLon, topRightLatLon, 0, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "gnom")
-  {
-    // Gnomonic projection
-    map_it = projParams.find("lon_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Central meridian 'lon_0' must be specified for gnomonic projection");
-    }
-    double centralLon = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    // True scale latitude
-    map_it = projParams.find("lat_ts");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("True scale latitude 'lat_ts' must be specified for gnomonic projection");
-    }
-    double truescaleLat = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    // Center latitude
-    map_it = projParams.find("lat_0");
-    if (map_it == projParams.end())
-    {
-      throw runtime_error("Center latitude 'lat_0' must be specified for gnomonic projection");
-    }
-    double centerLat = degrees_from_projparam(map_it->second);
-    usedParams.insert(map_it->first);
-
-    result = return_type(new NFmiGnomonicArea(bottomLeftLatLon,
-                                              topRightLatLon,
-                                              centralLon,
-                                              topLeftXY,
-                                              bottomRightXY,
-                                              centerLat,
-                                              truescaleLat));
-  }
-
-  else if (projId == "merc")
-  {
-    // Mercator projection
-    result = return_type(
-        new NFmiMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-  }
-
-  else if (projId == "webmerc")
-  {
-    // WebMercator, newbase supports only +datum=WGS84
-    map_it = projParams.find("datum");
-    if (map_it == projParams.end() || map_it->second == "WGS84")
-      result = return_type(
-          new NFmiWebMercatorArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
-    else
-      throw runtime_error("Datum " + map_it->second + " not supported for WebMercator");
   }
 
   else if (projId == "tmerc")

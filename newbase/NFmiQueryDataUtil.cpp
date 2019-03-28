@@ -95,8 +95,7 @@ bool MyGrid::operator<(const MyGrid &theGrid) const
     if (itsArea->TopRightLatLon() != theGrid.itsArea->TopRightLatLon())
       return itsArea->TopRightLatLon() < theGrid.itsArea->TopRightLatLon();
 
-    if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea ||
-        itsArea->ClassId() == kNFmiGnomonicArea)
+    if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea)
     {
       if (static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
           static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
@@ -5215,7 +5214,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
           theArea1->TopRightLatLon() == theArea2->TopRightLatLon())
       {
         if (theArea1->ClassId() == kNFmiStereographicArea ||
-            theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
+            theArea1->ClassId() == kNFmiEquiDistArea)
         {
           if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
               static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
@@ -5235,8 +5234,7 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
 {
   if (theArea1 && theArea2)
   {
-    if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea ||
-        theArea1->ClassId() == kNFmiGnomonicArea)
+    if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea)
     {
       if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
           static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())

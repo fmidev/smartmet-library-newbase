@@ -8,20 +8,15 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
-#include "NFmiGnomonicArea.h"
 #include "NFmiGrid.h"
 #include "NFmiLambertConformalConicArea.h"
-#include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
-#include "NFmiMercatorArea.h"
 #include "NFmiQueryData.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStationBag.h"
 #include "NFmiStereographicArea.h"
-#include "NFmiWebMercatorArea.h"
-#include "NFmiYKJArea.h"
-
 #include "NFmiVersion.h"
+#include "NFmiYKJArea.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -53,8 +48,6 @@ void *CreateSaveBase(unsigned int classId)
     case kNFmiGrid:
       return static_cast<void *>(new NFmiGrid);
 
-    case kNFmiLambertEqualArea:
-      return static_cast<void *>(new NFmiLambertEqualArea);
     case kNFmiLatLonArea:
       return static_cast<void *>(new NFmiLatLonArea);
     case kNFmiRotatedLatLonArea:
@@ -65,12 +58,6 @@ void *CreateSaveBase(unsigned int classId)
       return static_cast<void *>(new NFmiYKJArea);
     case kNFmiEquiDistArea:
       return static_cast<void *>(new NFmiEquidistArea);
-    case kNFmiMercatorArea:
-      return static_cast<void *>(new NFmiMercatorArea);
-    case kNFmiWebMercatorArea:
-      return static_cast<void *>(new NFmiWebMercatorArea);
-    case kNFmiGnomonicArea:
-      return static_cast<void *>(new NFmiGnomonicArea);
     case kNFmiLambertConformalConicArea:
       return static_cast<void *>(new NFmiLambertConformalConicArea);
 
