@@ -1323,6 +1323,16 @@ enum FmiParameterName
   kFmiSOTWindGust,
   kFmiSOTPrecipitation,
 
+  kFmiMonthlyPrecipitationF100 = 1402,
+  kFmiMonthlyPrecipitationF97_5,
+  kFmiMonthlyPrecipitationF90,
+  kFmiMonthlyPrecipitationF75,
+  kFmiMonthlyPrecipitationF50,
+  kFmiMonthlyPrecipitationF25,
+  kFmiMonthlyPrecipitationF10,
+  kFmiMonthlyPrecipitationF2_5,
+  kFmiMonthlyPrecipitationF0,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
