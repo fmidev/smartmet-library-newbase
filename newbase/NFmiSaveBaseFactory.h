@@ -13,17 +13,17 @@ const unsigned int kNFmiArea = 1;
 #ifdef UNIX
 const unsigned int kNFmiGdalArea = 8;
 #endif
-// const unsigned int kNFmiLambertEqualArea = 9;  // Epsg:3035
+const unsigned int kNFmiLambertEqualArea = 9;
 const unsigned int kNFmiLatLonArea = 10;
 const unsigned int kNFmiRotatedLatLonArea = 11;
 // const unsigned int kNFmiPolSterArea			= 12;	// deprecated
 const unsigned int kNFmiStereographicArea = 13;
-// const unsigned int kNFmiPKJArea = 14;
+const unsigned int kNFmiPKJArea = 14;
 const unsigned int kNFmiYKJArea = 15;
 const unsigned int kNFmiEquiDistArea = 16;
-// const unsigned int kNFmiGnomonicArea = 17;
+const unsigned int kNFmiGnomonicArea = 17;
 const unsigned int kNFmiKKJArea = 18;
-// const unsigned int kNFmiMercatorArea = 19;
+const unsigned int kNFmiMercatorArea = 19;
 
 const unsigned int kNFmiQueryData = 20;
 const unsigned int kNFmiQueryInfo = 21;

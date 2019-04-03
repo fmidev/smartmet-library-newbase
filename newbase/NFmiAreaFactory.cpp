@@ -366,7 +366,13 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     // corners, center coordinate or bottom left corner for GRIB stuff
 
     std::string proj4;
-    std::string sphere;
+
+    // FMI legacy sphere is the default
+    auto sphere = fmt::sprintf(
+        "+proj=longlat +a={:.0f} +b={:.0f} +over "
+        "+no_defs",
+        kRearth,
+        kRearth);
 
     if (proj == "latlon")
     {
@@ -376,15 +382,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
                        kRearth,
                        kRearth);
-      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
-    }
-    else if (proj == "ykj")
-    {
-      if (pvec.size() != 0) throw runtime_error("ykj area does not require any parameters");
-      proj4 =
-          "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
-          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
-      sphere = "+proj=longlat +ellps=intl +no_defs";
     }
     else if (proj == "rotlatlon")
     {
@@ -426,11 +423,44 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           npole_lat,
           kRearth,
           kRearth);
-      sphere = fmt::sprintf(
-          "+proj=longlat +a={:.0f} +b={:.0f} +over "
-          "+no_defs",
+    }
+    else if (proj == "mercator")
+    {
+      if (pvec.size() > 0) throw runtime_error("mercator area requires no parameters");
+
+      proj4 = fmt::sprintf("+proj=merc +wktext +over +towgs84=0,0,0 +no_defs");
+    }
+    else if (proj == "stereographic")
+    {
+      if (pvec.size() > 3) throw runtime_error("stereographic area requires max 3 parameters");
+      const double clon = (pvec.size() >= 1 ? pvec[0] : 0);
+      const double clat = (pvec.size() >= 2 ? pvec[1] : 90);
+      const double tlat = (pvec.size() >= 3 ? pvec[2] : 60);
+
+      proj4 = fmt::format(
+          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} "
+          "+units=m +wktext +towgs84=0,0,0 +no_defs",
+          clat,
+          tlat,
+          clon,
           kRearth,
           kRearth);
+    }
+    else if (proj == "gnomonic")
+    {
+      throw std::runtime_error("gnomonic was never in old style FMI projections");
+    }
+    else if (proj == "lambertequal")
+    {
+      throw std::runtime_error("lambertequal was never in old style FMI projections");
+    }
+    else if (proj == "ykj")
+    {
+      if (pvec.size() != 0) throw runtime_error("ykj area does not require any parameters");
+      proj4 =
+          "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+      sphere = "+proj=longlat +ellps=intl +no_defs";
     }
     else if (proj == "lcc")
     {
@@ -467,27 +497,18 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           clon,
           kRearth,
           kRearth);
-
-      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
     }
     else
     {
       // Legacy code: Allow FMI: or WGS84: prefix to identify corner coordinate datum
 
       if (proj.substr(0, 4) == "FMI:")
-      {
-        sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
         proj4 = proj.substr(4, std::string::npos);
-      }
       else if (proj.substr(0, 6) == "WGS84:")
       {
         sphere = "WGS84";
         proj4 = proj.substr(6, std::string::npos);
       }
-      else
-        sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs",
-                              kRearth,
-                              kRearth);  // backward compatibility
     }
 
     if (centered)

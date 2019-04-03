@@ -97,8 +97,8 @@ class _FMI_DLL NFmiArea
 
   unsigned long ClassId() const;
   const char *ClassName() const;
-  std::string AreaStr() const;
   std::string WKT() const;
+  std::string Proj() const;
 
   std::ostream &Write(std::ostream &file) const;
   std::istream &Read(std::istream &file);
@@ -181,8 +181,8 @@ class _FMI_DLL NFmiArea
   boost::shared_ptr<OGRCoordinateTransformation> itsToLatLonConverter;
   boost::shared_ptr<OGRCoordinateTransformation> itsToWorldXYConverter;
 
-  NFmiRect itsWorldRect;               // bbox in native WorldXY coordinates
-  NFmiRect itsXYRectArea{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
+  NFmiRect itsWorldRect;           // bbox in native WorldXY coordinates
+  NFmiRect itsXYRect{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
 
   // This is only needed when reading legacy files from disk
   int itsClassId = kNFmiArea;

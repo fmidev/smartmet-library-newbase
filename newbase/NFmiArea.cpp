@@ -14,7 +14,9 @@
 
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
+#include "NFmiString.h"
 #include <boost/functional/hash.hpp>
+#include <fmt/printf.h>
 
 std::unique_ptr<OGRSpatialReference> make_sr(const std::string &theSR)
 {
@@ -33,28 +35,28 @@ NFmiArea::NFmiArea(int theClassId) : itsClassId(theClassId) {}
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopLeft() const { return itsXYRectArea.TopLeft(); }
+NFmiPoint NFmiArea::TopLeft() const { return itsXYRect.TopLeft(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomRight() const { return itsXYRectArea.BottomRight(); }
+NFmiPoint NFmiArea::BottomRight() const { return itsXYRect.BottomRight(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopRight() const { return itsXYRectArea.TopRight(); }
+NFmiPoint NFmiArea::TopRight() const { return itsXYRect.TopRight(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomLeft() const { return itsXYRectArea.BottomLeft(); }
+NFmiPoint NFmiArea::BottomLeft() const { return itsXYRect.BottomLeft(); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -70,7 +72,7 @@ bool NFmiArea::IsInside(const NFmiPoint &theLatLonPoint) const
   {
     return false;
   }
-  return itsXYRectArea.IsInside(xyPoint);
+  return itsXYRect.IsInside(xyPoint);
 }
 
 // ----------------------------------------------------------------------
@@ -120,63 +122,63 @@ bool NFmiArea::IsInside(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiArea::Place(const NFmiPoint &newPlace) { itsXYRectArea.Place(newPlace); }
+void NFmiArea::Place(const NFmiPoint &newPlace) { itsXYRect.Place(newPlace); }
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiArea::Size(const NFmiPoint &newSize) { itsXYRectArea.Size(newSize); }
+void NFmiArea::Size(const NFmiPoint &newSize) { itsXYRect.Size(newSize); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Top() const { return itsXYRectArea.Top(); }
+double NFmiArea::Top() const { return itsXYRect.Top(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Bottom() const { return itsXYRectArea.Bottom(); }
+double NFmiArea::Bottom() const { return itsXYRect.Bottom(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Left() const { return itsXYRectArea.Left(); }
+double NFmiArea::Left() const { return itsXYRect.Left(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Right() const { return itsXYRectArea.Right(); }
+double NFmiArea::Right() const { return itsXYRect.Right(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Height() const { return itsXYRectArea.Height(); }
+double NFmiArea::Height() const { return itsXYRect.Height(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Width() const { return itsXYRectArea.Width(); }
+double NFmiArea::Width() const { return itsXYRect.Width(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect &NFmiArea::XYArea() const { return itsXYRectArea; }
+const NFmiRect &NFmiArea::XYArea() const { return itsXYRect; }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -307,7 +309,8 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  file << itsXYRectArea;
+  NFmiString txt = Proj();
+  file << itsXYRect << txt << itsWorldRect;
   return file;
 }
 
@@ -320,8 +323,154 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
 std::istream &NFmiArea::Read(std::istream &file)
 {
-  file >> itsXYRectArea;
-  return file;
+  NFmiString txt;
+  NFmiPoint bottomleft;
+  NFmiPoint topright;
+  double dummy;
+
+  file >> itsXYRect;
+
+  // FMI legacy sphere
+  auto sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
+
+  switch (itsClassId)
+  {
+    case kNFmiArea:
+    {
+      // Generic PROJ area
+      file >> txt >> itsWorldRect;
+      InitSpatialReference(txt.CharPtr());
+      return file;
+    }
+    case kNFmiLatLonArea:
+    {
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy;
+      auto proj =
+          fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
+                       kRearth,
+                       kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiRotatedLatLonArea:
+    {
+      NFmiPoint southpole;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> southpole;
+
+      auto npole_lat = -southpole.Y();
+      auto npole_lon = (npole_lat == 90 ? 90 : fmod(southpole.X() - 180, 360.0));
+
+      auto proj = fmt::sprintf(
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+towgs84=0,0,0 +no_defs",
+          npole_lon,
+          npole_lat,
+          kRearth,
+          kRearth);
+      sphere = fmt::sprintf(
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
+          "+no_defs",
+          npole_lon,
+          npole_lat,
+          kRearth,
+          kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiStereographicArea:
+    {
+      double clon, clat, truelat;
+      file >> bottomleft >> topright >> clon >> clat >> truelat >> dummy >> dummy >> dummy >>
+          itsWorldRect;
+      auto proj = fmt::sprintf(
+          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+towgs84=0,0,0 +no_defs",
+          clat,
+          truelat,
+          clon,
+          kRearth,
+          kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiEquiDistArea:
+    {
+      double clon, clat;
+      file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
+          itsWorldRect;
+      auto proj = fmt::sprintf(
+          "+proj=aeqd +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
+          "+no_defs",
+          clat,
+          clon,
+          kRearth,
+          kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiMercatorArea:
+    {
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy;
+      auto proj =
+          fmt::sprintf("+proj=merc +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
+                       kRearth,
+                       kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiLambertEqualArea:
+    {
+      double clon, clat;
+      file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
+          itsWorldRect;
+      auto proj = fmt::sprintf(
+          "+proj=laea +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
+          "+no_defs",
+          clat,
+          clon,
+          kRearth,
+          kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiGnomonicArea:
+    {
+      double clon, clat;
+      file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
+          itsWorldRect;
+      auto proj = fmt::sprintf(
+          "+proj=gnom +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
+          "+no_defs",
+          clat,
+          clon,
+          kRearth,
+          kRearth);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiYKJArea:
+    {
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
+          itsWorldRect;
+      std::string proj =
+          "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+      // For legacy reasons corners are in YKJ ellipsoid coordinates
+      std::string sphere = "+proj=longlat +ellps=intl +no_defs";
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
+    case kNFmiGdalArea:
+      throw std::runtime_error("GDAL areas are no longer supported");
+    case kNFmiPKJArea:
+      throw std::runtime_error("PKJ projection is no longer supported in Finland");
+    case kNFmiKKJArea:
+      throw std::runtime_error("KKJ projection is no longer supported in Finland");
+    default:
+      // kFmiPolSetArea, perhaps some other legacy classes too
+      throw std::runtime_error("Projection number " + std::to_string(itsClassId) +
+                               " is no longer supported");
+  }
 }
 
 // ----------------------------------------------------------------------
