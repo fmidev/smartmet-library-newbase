@@ -5236,12 +5236,12 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
   return false;
 }
 
-bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2)
+bool NFmiQueryDataUtil::AreAreasSameKind(NFmiArea *theArea1, NFmiArea *theArea2)
 {
   if (theArea1 && theArea2)
   {
 #ifdef WGS84
-    return theArea1->SpatialReference().IsSameGeogCS(&theArea2->SpatialReference());
+    return theArea1->SpatialReference()->IsSameGeogCS(theArea2->SpatialReference());
 #else
     if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea)
     {

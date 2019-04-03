@@ -879,11 +879,11 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromGRIBSettings(SpatialReferenceProxy theSR,
-                                           SpatialReferenceProxy theCornerSR,
-                                           const NFmiPoint &theBottomLeft,
-                                           double theWidth,
-                                           double theHeight)
+NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
+                                            SpatialReferenceProxy theCornerSR,
+                                            const NFmiPoint &theBottomLeft,
+                                            double theWidth,
+                                            double theHeight)
 {
   auto area = new NFmiArea;
   try

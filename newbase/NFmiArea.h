@@ -118,14 +118,15 @@ class _FMI_DLL NFmiArea
 #endif
 
  private:
+  // A private proxy class to avoid unnecessary *CreateFrom duplicates. This proxy
+  // implicitly converts acceptable spatial reference types into an actual spatial reference.
   class SpatialReferenceProxy
   {
    public:
     SpatialReferenceProxy(const OGRSpatialReference &theSR) : itsSR(theSR) {}
     SpatialReferenceProxy(const std::string &theSR)
     {
-      auto err = itsSR.SetFromUserInput(theSR.c_str());
-      if (err != OGRERR_NONE)
+      if (OGRERR_NONE != itsSR.SetFromUserInput(theSR.c_str()))
         throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
     }
 
@@ -140,7 +141,8 @@ class _FMI_DLL NFmiArea
   // Intentional API design choice since the object has internal reference counting
   OGRSpatialReference *SpatialReference() { return &itsSpatialReference; }
 
-  // Named constructors used to clarify intent of the parameters. s
+  // Named constructors used to clarify intent of the parameters. Note that the proxy
+  // may accept actual spatial references or strings from which to construct them.
 
   static NFmiArea *CreateFromBBox(SpatialReferenceProxy theSR,
                                   const NFmiPoint &theBottomLeft,
@@ -161,11 +163,11 @@ class _FMI_DLL NFmiArea
                                           const NFmiPoint &theBottomLeft,
                                           const NFmiPoint &theTopRight);
 
-  static NFmiArea *CreateFromGRIBSettings(SpatialReferenceProxy theSR,
-                                          SpatialReferenceProxy theCornerSR,
-                                          const NFmiPoint &theBottomLeft,
-                                          double theWidth,
-                                          double theHeight);
+  static NFmiArea *CreateFromCornerAndSize(SpatialReferenceProxy theSR,
+                                           SpatialReferenceProxy theCornerSR,
+                                           const NFmiPoint &theBottomLeft,
+                                           double theWidth,
+                                           double theHeight);
 
  private:
   // We allow only the Create* static methods to construct projections
@@ -187,5 +189,5 @@ class _FMI_DLL NFmiArea
 
 };  // class NFmiArea
 
-std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
-std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
+inline std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }

@@ -20,6 +20,7 @@
 #include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
+#include <fmt/printf.h>
 
 namespace NFmiSvgTools
 {
@@ -117,26 +118,34 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
   if (thePath.empty()) return -1;
 
   // Nurkilla ei ole väliä
-  NFmiEquidistArea area(NFmiPoint(20, 50),
-                        NFmiPoint(40, 70),
-                        thePoint.X(),
-                        NFmiPoint(0, 0),
-                        NFmiPoint(1, 1),
-                        thePoint.Y());
+
+  auto proj4 = fmt::sprintf(
+      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext "
+      "+towgs84=0,0,0 +no_defs",
+      thePoint.Y(),
+      thePoint.X(),
+      kRearth,
+      kRearth);
+
+  auto sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
+
+  const double any_distance = 1000;
+  std::unique_ptr<NFmiArea> area(
+      NFmiArea::CreateFromCenter(proj4, sphere, thePoint, any_distance, any_distance));
 
   double minDist = -1;
 
   NFmiPoint firstPoint =
-      area.LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
+      area->LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
   NFmiPoint lastPoint = firstPoint;
-  NFmiPoint center = area.LatLonToWorldXY(thePoint);
+  NFmiPoint center = area->LatLonToWorldXY(thePoint);
 
   for (const auto& it : thePath)
   {
     switch (it.itsType)
     {
       case NFmiSvgPath::kElementMoveto:
-        lastPoint = area.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+        lastPoint = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
         firstPoint = lastPoint;
         break;
       case NFmiSvgPath::kElementClosePath:
@@ -150,7 +159,7 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
       }
       case NFmiSvgPath::kElementLineto:
       {
-        NFmiPoint p = area.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+        NFmiPoint p = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
         double dist = NFmiGeoTools::DistanceFromLineSegment(
             center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), p.X(), p.Y());
 
