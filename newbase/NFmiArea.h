@@ -129,6 +129,7 @@ class _FMI_DLL NFmiArea
    public:
     SpatialReferenceProxy(const OGRSpatialReference &theSR) : itsSR(theSR) {}
     SpatialReferenceProxy(const std::string &theSR);
+    SpatialReferenceProxy(const char *theSR);
 
     const OGRSpatialReference &operator*() const { return itsSR; }
     OGRSpatialReference *get() { return &itsSR; }
