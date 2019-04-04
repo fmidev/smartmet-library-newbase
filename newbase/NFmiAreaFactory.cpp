@@ -368,7 +368,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     std::string proj4;
 
     // FMI legacy sphere is the default
-    auto sphere = fmt::sprintf(
+    auto sphere = fmt::format(
         "+proj=longlat +a={:.0f} +b={:.0f} +over "
         "+no_defs",
         kRearth,
@@ -378,10 +378,9 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     {
       if (pvec.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-      proj4 =
-          fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
-                       kRearth,
-                       kRearth);
+      proj4 = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
+                          kRearth,
+                          kRearth);
     }
     else if (proj == "rotlatlon")
     {
@@ -392,14 +391,14 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lat = -spole_lat;
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
-      proj4 = fmt::sprintf(
+      proj4 = fmt::format(
           "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth,
           kRearth);
-      sphere = fmt::sprintf(
+      sphere = fmt::format(
           "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
           "+no_defs",
           npole_lon,
@@ -416,7 +415,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lat = -spole_lat;
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
-      proj4 = fmt::sprintf(
+      proj4 = fmt::format(
           "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
@@ -428,7 +427,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     {
       if (pvec.size() > 0) throw runtime_error("mercator area requires no parameters");
 
-      proj4 = fmt::sprintf("+proj=merc +wktext +over +towgs84=0,0,0 +no_defs");
+      proj4 = fmt::format("+proj=merc +wktext +over +towgs84=0,0,0 +no_defs");
     }
     else if (proj == "stereographic")
     {
@@ -473,7 +472,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double tlat2 = (pvec.size() >= 4 ? pvec[3] : tlat1);
       const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
 
-      proj4 = fmt::sprintf(
+      proj4 = fmt::format(
           "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} "
           "+units=m +wktext +towgs84=0,0,0 +no_defs",
           tlat1,
@@ -482,7 +481,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           clon,
           rad,
           rad);
-      sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", rad, rad);
+      sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", rad, rad);
     }
     else if (proj == "equidist")
     {
@@ -490,7 +489,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double clon = (pvec.size() >= 1 ? pvec[0] : 0);
       const double clat = (pvec.size() >= 2 ? pvec[1] : 90);
 
-      proj4 = fmt::sprintf(
+      proj4 = fmt::format(
           "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext "
           "+towgs84=0,0,0 +no_defs",
           clat,
@@ -510,6 +509,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         proj4 = proj.substr(6, std::string::npos);
       }
     }
+
+    std::cout << "PROJ: " << proj << "\nSPHERE: " << sphere << std::endl;
 
     if (centered)
     {
@@ -595,7 +596,7 @@ return_type CreateProj(const std::string &projString,
                        const NFmiPoint &bottomRightXY)
 {
   // Assume FMI sphere
-  auto sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
+  auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
 
   return_type area(
       NFmiArea::CreateFromCorners(projString, sphere, bottomLeftLatLon, topRightLatLon));

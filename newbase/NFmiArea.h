@@ -83,13 +83,16 @@ class _FMI_DLL NFmiArea
   NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
   NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
-  NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
+#ifdef WGS84
+  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon, const NFmiPoint &theTopRightLatLon) const;
+#else
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                     const NFmiPoint &theTopRightLatLon,
                     bool allowPacificFix = true) const;
+#endif
+  NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
   NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                           const NFmiPoint &theTopRightLatLon) const;
-  //   NFmiArea * CreateNewArea(const NFmiRect & theRect);
   NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
   NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                           FmiDirection theFixedPoint,
@@ -98,6 +101,7 @@ class _FMI_DLL NFmiArea
   unsigned long ClassId() const;
   const char *ClassName() const;
   std::string WKT() const;
+  std::string PrettyWKT() const;
   std::string Proj() const;
 
   std::ostream &Write(std::ostream &file) const;
@@ -175,6 +179,7 @@ class _FMI_DLL NFmiArea
   NFmiArea() = default;
   void InitSpatialReference(const std::string &theProjection);
   void InitConversions();
+  void InitRectConversions();
 
   OGRSpatialReference itsSpatialReference{NULL};
 
@@ -186,6 +191,10 @@ class _FMI_DLL NFmiArea
 
   // This is only needed when reading legacy files from disk
   int itsClassId = kNFmiArea;
+
+  // For speeding up coordinate conversions
+  double itsXScaleFactor;
+  double itsYScaleFactor;
 
 };  // class NFmiArea
 

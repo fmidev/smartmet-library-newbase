@@ -200,6 +200,7 @@ unsigned long NFmiArea::ClassId() const { return kNFmiArea; }
 // ----------------------------------------------------------------------
 
 const char *NFmiArea::ClassName() const { return "NFmiArea"; }
+
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -331,7 +332,7 @@ std::istream &NFmiArea::Read(std::istream &file)
   file >> itsXYRect;
 
   // FMI legacy sphere
-  auto sphere = fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
+  auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
 
   switch (itsClassId)
   {
@@ -346,9 +347,9 @@ std::istream &NFmiArea::Read(std::istream &file)
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy;
       auto proj =
-          fmt::sprintf("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
-                       kRearth,
-                       kRearth);
+          fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
+                      kRearth,
+                      kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       return file;
     }
@@ -360,14 +361,14 @@ std::istream &NFmiArea::Read(std::istream &file)
       auto npole_lat = -southpole.Y();
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(southpole.X() - 180, 360.0));
 
-      auto proj = fmt::sprintf(
+      auto proj = fmt::format(
           "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth,
           kRearth);
-      sphere = fmt::sprintf(
+      sphere = fmt::format(
           "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
           "+no_defs",
           npole_lon,
@@ -382,7 +383,8 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat, truelat;
       file >> bottomleft >> topright >> clon >> clat >> truelat >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::sprintf(
+
+      auto proj = fmt::format(
           "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext "
           "+towgs84=0,0,0 +no_defs",
           clat,
@@ -390,6 +392,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           clon,
           kRearth,
           kRearth);
+
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       return file;
     }
@@ -398,7 +401,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::sprintf(
+      auto proj = fmt::format(
           "+proj=aeqd +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
           "+no_defs",
           clat,
@@ -412,9 +415,9 @@ std::istream &NFmiArea::Read(std::istream &file)
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy;
       auto proj =
-          fmt::sprintf("+proj=merc +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
-                       kRearth,
-                       kRearth);
+          fmt::format("+proj=merc +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
+                      kRearth,
+                      kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       return file;
     }
@@ -423,7 +426,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::sprintf(
+      auto proj = fmt::format(
           "+proj=laea +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
           "+no_defs",
           clat,
@@ -438,7 +441,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::sprintf(
+      auto proj = fmt::format(
           "+proj=gnom +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
           "+no_defs",
           clat,
@@ -508,147 +511,6 @@ double NFmiArea::WorldXYHeight() const { return WorldRect().Height(); }
 // ----------------------------------------------------------------------
 
 double NFmiArea::WorldXYAspectRatio() const { return WorldXYWidth() / WorldXYHeight(); }
-// ----------------------------------------------------------------------
-/*!
- * Creates a new area from the current one by altering the corner points only.
- * Previously this method required the new area to be inside the original
- * one, but I failed to see the point in restricing the functionality - Mika
- *
- * \param theBottomLeftLatLon Undocumented
- * \param theTopRightLatLon Undocumented
- * \return Undocumented
- *
- * \todo Should return an boost::shared_ptr
- * \todo Remove the unnecessary cast in the last return statement
- */
-// ----------------------------------------------------------------------
-
-NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
-                                  const NFmiPoint &theTopRightLatLon) const
-{
-  return NewArea(theBottomLeftLatLon, theTopRightLatLon);
-}
-
-// ----------------------------------------------------------------------
-/*!
- *
- * Creates a new sub-area inside the current "mother" area.
- * The new area is defined by the input local rectangle 'theRect'
- *
- * \note
- *   - the input rectangle defines a local XY coordinate area only, NOT the metric
- *     XY world rectangle
- *   - the sub-area MUST fit completely inside the current local area
- *   - the sub-area gets all the projection-specific properties but its dimensions
- *     from its "mother" area. For example, the orientation stays the same.
- *
- * \param theRect Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
-{
-  NFmiPoint newBottomLeftXY = theRect.BottomLeft();
-  NFmiPoint newTopRightXY = theRect.TopRight();
-
-  NFmiPoint newBottomLeftLatLon = ToLatLon(newBottomLeftXY);
-  NFmiPoint newTopRightLatLon = ToLatLon(newTopRightXY);
-
-  NFmiArea *newArea = NewArea(newBottomLeftLatLon, newTopRightLatLon);
-  return newArea;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Creates a new area with its aspect ratio defined by the input parameters
- *
- * \note
- *    - the new area MAY OR MAY NOT completely reside inside the current local area
- *    - the new area gets all the projection-specific properties but its dimensions
- *      from its "mother" area. For example, the orientation stays the same.
- *
- * \param theNewAspectRatioXperY Undocumented
- * \param theFixedPoint Undocumented
- * \param fShrinkArea Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
-                                  FmiDirection theFixedPoint,
-                                  bool fShrinkArea)
-{
-  double originalAspectRatio = WorldXYAspectRatio();
-
-  bool keepWidth;
-
-  if (fShrinkArea)
-  {
-    // The new area will be "shrunk" to completely fit inside the current area
-    if ((theNewAspectRatioXperY < originalAspectRatio))
-      keepWidth = false;  // Maintain height, compute width
-    else
-      keepWidth = true;  // Maintain width, compute height
-  }
-  else
-  {
-    // The new area will in part grow out of the current area
-    if ((theNewAspectRatioXperY < originalAspectRatio))
-      keepWidth = true;  // Maintain width, compute height
-    else
-      keepWidth = false;  // Maintain height, compute width
-  }
-
-  // Create copy of the original "world rectangle" to be freely modified
-  NFmiRect newWorldRect = WorldRect();
-
-  // REDIMENSIONING OF THE WORLD RECTANGLE
-  //----------------------------------------
-
-  if (!newWorldRect.AdjustAspectRatio(theNewAspectRatioXperY, keepWidth, theFixedPoint))
-    return nullptr;
-
-  // Create a new area with the new aspect ratio
-  NFmiArea *newArea =
-      NewArea(WorldXYToLatLon(newWorldRect.TopLeft()), WorldXYToLatLon(newWorldRect.BottomRight()));
-
-  // Return the re-dimensioned copy of the original area
-  return newArea;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Creates a new sub-area inside the current "mother" area.
- * The new area is defined by the input metric rectangle 'theWorldRect'
- *
- * \note
- *   - the input rectangle defines a metric XY world rectangle
- *   - the sub-area MUST fit completely inside the current local area
- *   - the sub-area gets all the projection-specific properties but its dimensions
- *   - from its "mother" area. For example, the orientation stays the same.
- *
- * \param theWorldRect
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
-{
-  NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
-  NFmiPoint newTopRightXY = theWorldRect.TopRight();
-
-  NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
-  NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
-
-  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon)) return nullptr;
-
-  auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
-
-  if (!IsInside(*newArea)) return nullptr;
-
-  return newArea;
-}
 
 // ----------------------------------------------------------------------
 /*!
@@ -913,6 +775,54 @@ NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Convert coordinate from image XY to WGS84
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
+{
+  // Transform local xy-coordinates into world xy-coordinates (meters).
+
+  auto x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  auto y = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+
+  // Transform world xy-coordinates into WGS84
+
+  return WorldXYToLatLon(NFmiPoint(x, y));
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from WGS84 to image XY
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::ToXY(const NFmiPoint &theLatLonPoint) const
+{
+  auto worldxy = LatLonToWorldXY(theLatLonPoint);
+  if (worldxy == NFmiPoint::gMissingLatlon) return worldxy;
+
+  // Transform world xy-coordinates into local xy-coordinates
+  auto x = Left() + itsXScaleFactor * (worldxy.X() - itsWorldRect.Left());
+  auto y = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - worldxy.Y());
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from image XY to projection XY
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
+{
+  auto x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  auto y = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize the spatial reference
  */
 // ----------------------------------------------------------------------
@@ -942,6 +852,12 @@ void NFmiArea::InitConversions()
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");
 }
 
+void NFmiArea::InitRectConversions()
+{
+  itsXScaleFactor = itsXYRect.Width() / itsWorldRect.Width();
+  itsYScaleFactor = itsXYRect.Height() / itsWorldRect.Height();
+}
+
 NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
                                    const NFmiPoint &theBottomLeft,
                                    const NFmiPoint &theTopRight)
@@ -953,6 +869,7 @@ NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
     area->InitConversions();
     area->itsWorldRect =
         NFmiRect(theBottomLeft.X(), theTopRight.Y(), theTopRight.X(), theBottomLeft.Y());
+    area->InitRectConversions();
     return area;
   }
   catch (...)
@@ -990,6 +907,7 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
       throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
+    area->InitRectConversions();
     return area;
   }
   catch (...)
@@ -1019,6 +937,7 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
       throw std::runtime_error("Failed to initialize projection from WGS84 corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
+    area->InitRectConversions();
     return area;
   }
   catch (...)
@@ -1056,7 +975,7 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
           "Failed to initialize projection from bottom left corner coordinates");
 
     area->itsWorldRect = NFmiRect(x, y + theHeight, x + theWidth, y);
-
+    area->InitRectConversions();
     return area;
   }
   catch (...)
@@ -1095,6 +1014,7 @@ NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
     area->itsWorldRect =
         NFmiRect(x - theWidth / 2, y + theHeight / 2, x + theWidth / 2, y - theHeight / 2);
 
+    area->InitRectConversions();
     return area;
   }
   catch (...)
@@ -1102,6 +1022,128 @@ NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
     delete area;
     throw;
   }
+}
+
+std::string NFmiArea::WKT() const
+{
+  char *out;
+  itsSpatialReference.exportToWkt(&out);
+  std::string ret = out;
+  OGRFree(out);
+  return ret;
+}
+
+std::string NFmiArea::PrettyWKT() const
+{
+  char *out;
+  itsSpatialReference.exportToPrettyWkt(&out);
+  std::string ret = out;
+  OGRFree(out);
+  return ret;
+}
+
+std::string NFmiArea::Proj() const
+{
+  char *out;
+  itsSpatialReference.exportToProj4(&out);
+  std::string ret = out;
+  OGRFree(out);
+  return ret;
+}
+
+NFmiRect NFmiArea::WorldRect() const { return itsWorldRect; }
+
+#ifdef WGS84
+NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
+                            const NFmiPoint &theTopRightLatLon) const
+{
+  return CreateNewArea(theBottomLeftLatLon, theTopRightLatLon);
+}
+#else
+NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
+                            const NFmiPoint &theTopRightLatLon,
+                            bool allowPacificFix = true) const
+{
+  // Ignoring Pacific "fix" for now
+  return CreateNewArea(theBottomLeftLatLon, theTopRightLatLon);
+}
+#endif
+
+NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
+{
+  return CreateFromBBox(itsSpatialReference, theRect.BottomLeft(), theRect.TopRight());
+}
+
+NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
+                                  const NFmiPoint &theTopRightLatLon) const
+{
+  // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly to
+  // use other spatial references.
+  auto sphere = fmt::format(
+      "+proj=longlat +a={:.0f} +b={:.0f} +over "
+      "+no_defs",
+      kRearth,
+      kRearth);
+  return CreateFromCorners(itsSpatialReference, sphere, theBottomLeftLatLon, theTopRightLatLon);
+}
+
+NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
+{
+  NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
+  NFmiPoint newTopRightXY = theWorldRect.TopRight();
+
+  NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
+  NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
+
+  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon)) return nullptr;
+
+  auto *newArea = CreateFromBBox(itsSpatialReference, newBottomLeftXY, newTopRightXY);
+
+  if (!IsInside(*newArea)) return nullptr;
+
+  return newArea;
+}
+
+NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
+                                  FmiDirection theFixedPoint,
+                                  bool fShrinkArea)
+{
+  double originalAspectRatio = WorldXYAspectRatio();
+
+  bool keepWidth;
+
+  if (fShrinkArea)
+  {
+    // The new area will be "shrunk" to completely fit inside the current area
+    if ((theNewAspectRatioXperY < originalAspectRatio))
+      keepWidth = false;  // Maintain height, compute width
+    else
+      keepWidth = true;  // Maintain width, compute height
+  }
+  else
+  {
+    // The new area will in part grow out of the current area
+    if ((theNewAspectRatioXperY < originalAspectRatio))
+      keepWidth = true;  // Maintain width, compute height
+    else
+      keepWidth = false;  // Maintain height, compute width
+  }
+
+  // Create copy of the original "world rectangle" to be freely modified
+  NFmiRect newWorldRect = WorldRect();
+
+  // REDIMENSIONING OF THE WORLD RECTANGLE
+  //----------------------------------------
+
+  if (!newWorldRect.AdjustAspectRatio(theNewAspectRatioXperY, keepWidth, theFixedPoint))
+    return nullptr;
+
+  // Create a new area with the new aspect ratio
+  NFmiArea *newArea =
+      CreateFromBBox(itsSpatialReference, newWorldRect.BottomLeft(), newWorldRect.TopRight());
+
+  // Return the re-dimensioned copy of the original area
+  return newArea;
 }
 
 #endif
