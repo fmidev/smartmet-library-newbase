@@ -27,6 +27,23 @@ std::unique_ptr<OGRSpatialReference> make_sr(const std::string &theSR)
   return sr;
 }
 
+NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR)
+{
+  int err = 0;
+
+  if (theSR == "FMI")
+  {
+    // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
+    auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
+    err = itsSR.SetFromUserInput(sphere.c_str());
+  }
+  else
+    err = itsSR.SetFromUserInput(theSR.c_str());
+
+  if (err != OGRERR_NONE)
+    throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
+}
+
 NFmiArea::NFmiArea(int theClassId) : itsClassId(theClassId) {}
 
 // ----------------------------------------------------------------------

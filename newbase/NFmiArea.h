@@ -128,11 +128,7 @@ class _FMI_DLL NFmiArea
   {
    public:
     SpatialReferenceProxy(const OGRSpatialReference &theSR) : itsSR(theSR) {}
-    SpatialReferenceProxy(const std::string &theSR)
-    {
-      if (OGRERR_NONE != itsSR.SetFromUserInput(theSR.c_str()))
-        throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
-    }
+    SpatialReferenceProxy(const std::string &theSR);
 
     const OGRSpatialReference &operator*() const { return itsSR; }
     OGRSpatialReference *get() { return &itsSR; }

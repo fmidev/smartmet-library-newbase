@@ -367,12 +367,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
     std::string proj4;
 
-    // FMI legacy sphere is the default
-    auto sphere = fmt::format(
-        "+proj=longlat +a={:.0f} +b={:.0f} +over "
-        "+no_defs",
-        kRearth,
-        kRearth);
+    // FMI legacy sphere is the default, and NFmiArea;;SpatialReferenceProxy supports it
+    std::string sphere = "FMI";
 
     if (proj == "latlon")
     {
