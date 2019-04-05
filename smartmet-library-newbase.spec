@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.3.21
+Version: 19.4.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Apr  5 2019 Santeri Oksman <santeri.oksman@fmi.fi> - 19.4.5-1.fmi
+- Added parameters VolumetricSoilWaterLayer28 and VolumetricSoilWaterLayerAnomaly28(SOL-7344)
+
 * Thu Mar 21 2019 Pertti Kinnia <pertti.kinnia@fmi.fi> - 19.3.21-1.fmi
 - Fixed bug in creating GDalArea
 
