@@ -1666,6 +1666,7 @@ enum FmiParameterName
   kFmiIceMass = 4821,
   // Volumetric soil water layer for 0-28 cm (SOL-7344)
   kFmiVolumetricSoilWaterLayer28 = 4850,
+  kFmiVolumetricSoilWaterLayerAnomaly28 = 4851,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
   kFmiNO2Concentration,

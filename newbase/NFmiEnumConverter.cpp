@@ -1559,6 +1559,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "VolumetricSoilWaterLayer3", kFmiVolumetricSoilWaterLayer3},
       { "VolumetricSoilWaterLayer4", kFmiVolumetricSoilWaterLayer4},
       { "VolumetricSoilWaterLayer28", kFmiVolumetricSoilWaterLayer28},
+      { "VolumetricSoilWaterLayerAnomaly28", kFmiVolumetricSoilWaterLayerAnomaly28},
       { "VorticityAbsolute", kFmiVorticityAbsolute},
       { "VorticityAdvectionAbsolute", kFmiVorticityAdvectionAbsolute},
       { "VorticityAdvectionGeostr", kFmiVorticityAdvectionGeostr},
