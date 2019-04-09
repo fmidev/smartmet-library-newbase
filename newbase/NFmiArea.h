@@ -141,6 +141,7 @@ class _FMI_DLL NFmiArea
  public:
   // Intentional API design choice since the object has internal reference counting
   OGRSpatialReference *SpatialReference() { return &itsSpatialReference; }
+  const OGRSpatialReference *SpatialReference() const { return &itsSpatialReference; }
 
   // Named constructors used to clarify intent of the parameters. Note that the proxy
   // may accept actual spatial references or strings from which to construct them.

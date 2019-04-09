@@ -368,7 +368,7 @@ std::istream &NFmiArea::Read(std::istream &file)
   file >> itsXYRect;
 
   // FMI legacy sphere
-  auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
+  std::string sphere = "FMI";
 
   switch (itsClassId)
   {
@@ -381,37 +381,32 @@ std::istream &NFmiArea::Read(std::istream &file)
     }
     case kNFmiLatLonArea:
     {
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy;
       auto proj =
           fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
                       kRearth,
                       kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
       return file;
     }
     case kNFmiRotatedLatLonArea:
     {
       NFmiPoint southpole;
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> southpole;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
+          southpole;
 
-      auto npole_lat = -southpole.Y();
-      auto npole_lon = (npole_lat == 90 ? 90 : fmod(southpole.X() - 180, 360.0));
+      auto npole_lat = -southpole.Y();  // reflect the pole
+      auto npole_lon = southpole.X();   // either this or 360-southpole.X() is correct // TODO
 
       auto proj = fmt::format(
-          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
-          "+towgs84=0,0,0 +no_defs",
+          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlon +o_lon_p={} +o_lat_p={} "
+          "+a={:.0f} +b={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth,
           kRearth);
-      sphere = fmt::format(
-          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
-          "+no_defs",
-          npole_lon,
-          npole_lat,
-          kRearth,
-          kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+
+      *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
       return file;
     }
     case kNFmiStereographicArea:
