@@ -467,6 +467,24 @@ std::istream &NFmiArea::Read(std::istream &file)
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       return file;
     }
+    case kNFmiLambertConformalConicArea:
+    {
+      double clon, clat, tlat1, tlat2, radius;
+      file >> bottomleft >> topright >> clon >> clat >> tlat1 >> tlat2 >> radius >> itsWorldRect;
+      auto proj = fmt::format(
+          "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+towgs84=0,0,0 "
+          "+no_defs",
+          clat,
+          clon,
+          tlat1,
+          tlat2,
+          radius,
+          radius);
+      auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", radius, radius);
+      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      return file;
+    }
     case kNFmiGnomonicArea:
     {
       double clon, clat;
