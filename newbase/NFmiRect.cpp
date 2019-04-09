@@ -16,6 +16,7 @@
 #include <boost/functional/hash.hpp>
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 // ----------------------------------------------------------------------
 /*!
