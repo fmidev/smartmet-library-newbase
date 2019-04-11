@@ -346,6 +346,54 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
+  // Legacy FMI sphere projections
+
+  if (Proj().GetDouble("a") == kRearth && Proj().GetDouble("b") == kRearth)
+  {
+    if (Proj().GetString("proj") == std::string("latlon"))
+    {
+      std::cout << "FMI latlon area\n";
+      // return file;
+    }
+    if (Proj().GetString("proj") == std::string("merc"))
+    {
+      std::cout << "FMI Mercator area\n";
+      // return file;
+    }
+    if (Proj().GetString("proj") == std::string("stere"))
+    {
+      std::cout << "FMI Stereographic area\n";
+      // return file;
+    }
+    if (Proj().GetString("proj") == std::string("aeqd"))
+    {
+      std::cout << "FMI equidistant area\n";
+      // return file;
+    }
+
+    if (Proj().GetString("proj") == std::string("ob_tran") &&
+        Proj().GetString("o_proj") == std::string("latlon"))
+    {
+      std::cout << "FMI Rotated lat lon\n";
+      // return file;
+    }
+
+    std::cout << "Possible FMI sphere but discared\n";
+  }
+
+  if (Proj().GetString("ellps") == std::string("intl") &&
+      Proj().GetString("proj") == std::string("tmerc") && Proj().GetDouble("x_0") == 3500000.0 &&
+      Proj().GetDouble("lat_0") == 0.0 && Proj().GetDouble("lon_0") == 27.0 &&
+      Proj().GetString("towgs84") ==
+          std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+  {
+    std::cout << "YKJ\n";
+    // return file;
+  }
+
+  std::cout << "New PROJ area\n";
+
+  // modern GDAL/PROJ.4 projections
   NFmiString txt = ProjStr();
   file << itsXYRect << txt << itsWorldRect;
   return file;
