@@ -346,7 +346,7 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  NFmiString txt = Proj();
+  NFmiString txt = ProjStr();
   file << itsXYRect << txt << itsWorldRect;
   return file;
 }
@@ -377,7 +377,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       // Generic PROJ area
       file >> txt >> itsWorldRect;
       InitSpatialReference(txt.CharPtr());
-      return file;
+      break;
     }
     case kNFmiLatLonArea:
     {
@@ -387,7 +387,7 @@ std::istream &NFmiArea::Read(std::istream &file)
                       kRearth,
                       kRearth);
       *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiRotatedLatLonArea:
     {
@@ -407,7 +407,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           kRearth);
 
       *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiStereographicArea:
     {
@@ -425,7 +425,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           kRearth);
 
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiEquiDistArea:
     {
@@ -440,7 +440,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiMercatorArea:
     {
@@ -450,7 +450,7 @@ std::istream &NFmiArea::Read(std::istream &file)
                       kRearth,
                       kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiLambertEqualArea:
     {
@@ -465,7 +465,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiLambertConformalConicArea:
     {
@@ -483,7 +483,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           radius);
       auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", radius, radius);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiGnomonicArea:
     {
@@ -498,7 +498,7 @@ std::istream &NFmiArea::Read(std::istream &file)
           kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiYKJArea:
     {
@@ -510,7 +510,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       // For legacy reasons corners are in YKJ ellipsoid coordinates
       std::string sphere = "+proj=longlat +ellps=intl +no_defs";
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
-      return file;
+      break;
     }
     case kNFmiGdalArea:
       throw std::runtime_error("GDAL areas are no longer supported");
@@ -523,6 +523,9 @@ std::istream &NFmiArea::Read(std::istream &file)
       throw std::runtime_error("Projection number " + std::to_string(itsClassId) +
                                " is no longer supported");
   }
+
+  itsProj = NFmiProj(ProjStr());
+  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -881,10 +884,10 @@ void NFmiArea::InitSpatialReference(const std::string &theProjection)
   auto err = itsSpatialReference.SetFromUserInput(theProjection.c_str());
   if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference from WKT");
 
-  InitConversions();
+  InitProj();
 }
 
-void NFmiArea::InitConversions()
+void NFmiArea::InitProj()
 {
   std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
   auto err = wgs84->SetFromUserInput("WGS84");
@@ -899,6 +902,9 @@ void NFmiArea::InitConversions()
 
   if (itsToLatLonConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");
+
+  // Init PROJ.4 settings
+  itsProj = NFmiProj(ProjStr());
 }
 
 void NFmiArea::InitRectConversions()
@@ -915,7 +921,7 @@ NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
   try
   {
     area->itsSpatialReference = *theSR;
-    area->InitConversions();
+    area->InitProj();
     area->itsWorldRect =
         NFmiRect(theBottomLeft.X(), theTopRight.Y(), theTopRight.X(), theBottomLeft.Y());
     area->InitRectConversions();
@@ -937,7 +943,7 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
   try
   {
     area->itsSpatialReference = *theSR;
-    area->InitConversions();
+    area->InitProj();
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theBBoxSR.get(), area->SpatialReference()));
@@ -974,7 +980,7 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
   try
   {
     area->itsSpatialReference = *theSR;
-    area->InitConversions();
+    area->InitProj();
 
     double x1 = theBottomLeft.X();
     double y1 = theBottomLeft.Y();
@@ -1006,7 +1012,7 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
   try
   {
     area->itsSpatialReference = *theSR;
-    area->InitConversions();
+    area->InitProj();
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCornerSR.get(), theSR.get()));
@@ -1044,7 +1050,7 @@ NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
   try
   {
     area->itsSpatialReference = *theSR;
-    area->InitConversions();
+    area->InitProj();
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCenterSR.get(), theSR.get()));
@@ -1091,7 +1097,7 @@ std::string NFmiArea::PrettyWKT() const
   return ret;
 }
 
-std::string NFmiArea::Proj() const
+std::string NFmiArea::ProjStr() const
 {
   char *out;
   itsSpatialReference.exportToProj4(&out);

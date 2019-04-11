@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiAngle.h"
+#include "NFmiProj.h"
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
 #include <string>
@@ -102,7 +103,7 @@ class _FMI_DLL NFmiArea
   const char *ClassName() const;
   std::string WKT() const;
   std::string PrettyWKT() const;
-  std::string Proj() const;
+  std::string ProjStr() const;
 
   std::ostream &Write(std::ostream &file) const;
   std::istream &Read(std::istream &file);
@@ -171,12 +172,14 @@ class _FMI_DLL NFmiArea
                                            double theWidth,
                                            double theHeight);
 
+  const NFmiProj &Proj() const { return itsProj; }
+
  private:
   // We allow only the Create* static methods to construct projections
 
   NFmiArea() = default;
   void InitSpatialReference(const std::string &theProjection);
-  void InitConversions();
+  void InitProj();
   void InitRectConversions();
 
   OGRSpatialReference itsSpatialReference{NULL};
@@ -193,6 +196,10 @@ class _FMI_DLL NFmiArea
   // For speeding up coordinate conversions
   double itsXScaleFactor;
   double itsYScaleFactor;
+
+  // For providing PROJ.4 parameter information
+
+  NFmiProj itsProj;
 
 };  // class NFmiArea
 
