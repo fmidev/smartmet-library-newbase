@@ -48,8 +48,12 @@ NFmiProj::NFmiProj(const std::string& theProj)
 
       try
       {
-        auto value = std::stod(string_value);
-        itsDoubles[name] = value;
+        std::size_t pos = 0;
+        auto value = std::stod(string_value, &pos);
+        if (pos == string_value.size())
+          itsDoubles[name] = value;
+        else
+          itsStrings[name] = string_value;
       }
       catch (...)
       {
