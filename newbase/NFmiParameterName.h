@@ -1323,6 +1323,19 @@ enum FmiParameterName
   kFmiSOTWindGust,
   kFmiSOTPrecipitation,
 
+  kFmiMonthlyPrecipitationF100 = 1402,
+  kFmiMonthlyPrecipitationF97_5,
+  kFmiMonthlyPrecipitationF90,
+  kFmiMonthlyPrecipitationF75,
+  kFmiMonthlyPrecipitationF50,
+  kFmiMonthlyPrecipitationF25,
+  kFmiMonthlyPrecipitationF10,
+  kFmiMonthlyPrecipitationF2_5,
+  kFmiMonthlyPrecipitationF0,
+
+  kFmiConvectiveSeverityIndex,
+  kFmiFogProbabilityLimit1,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
@@ -1664,7 +1677,9 @@ enum FmiParameterName
   // WindMill icing forecasts (Karoliina Hämäläinen, SOL-4545)
   kFmiIcingRate = 4820,
   kFmiIceMass = 4821,
-
+  // Volumetric soil water layer for 0-28 cm (SOL-7344)
+  kFmiVolumetricSoilWaterLayer28 = 4850,
+  kFmiVolumetricSoilWaterLayerAnomaly28 = 4851,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
   kFmiNO2Concentration,

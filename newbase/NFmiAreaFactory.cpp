@@ -326,7 +326,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     if (gvec.size() != 2 && units)
       throw runtime_error("grid specification must have 2 numbers when length units are used");
 
-    string proj = pparts.front();
+    string proj = gdalArea ? parts[0] : pparts.front();
     pparts.pop_front();
 
     vector<double> pvec;
