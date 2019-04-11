@@ -113,11 +113,11 @@ bool NFmiProj::GetBool(const std::string& theName) const
 void NFmiProj::Dump(std::ostream& theOutput) const
 {
   for (const auto& name_double : itsDoubles)
-    theOutput << name_double.first << " = " << name_double.second << "\n";
+    theOutput << '+' << name_double.first << " = " << name_double.second << "\n";
 
   for (const auto& name_string : itsStrings)
-    theOutput << name_string.first << " = \"" << name_string.second << "\"\n";
+    theOutput << '+' << name_string.first << " = \"" << name_string.second << "\"\n";
 
   for (const auto& name : itsOptions)
-    theOutput << name << "\n";
+    theOutput << '+' << name << "\n";
 }
