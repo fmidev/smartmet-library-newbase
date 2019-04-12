@@ -40,6 +40,7 @@ void *CreateSaveBase(unsigned int classId)
     case kNFmiGrid:
       return static_cast<void *>(new NFmiGrid);
 
+    case kNFmiProjArea:
     case kNFmiLatLonArea:
     case kNFmiRotatedLatLonArea:
     case kNFmiStereographicArea:

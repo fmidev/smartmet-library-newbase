@@ -15,6 +15,7 @@
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiString.h"
+#include "NFmiVersion.h"
 #include <boost/functional/hash.hpp>
 #include <fmt/printf.h>
 
@@ -36,7 +37,7 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR)
   if (sr == "FMI")
   {
     // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
-    auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
+    auto sphere = fmt::format("+proj=latlon +a={:.0f} +b={:.0f} +over +no_defs", kRearth, kRearth);
     err = itsSR.SetFromUserInput(sphere.c_str());
   }
   else
@@ -339,6 +340,30 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Helper method for Write() to keep original corners intact
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::BottomLeftCorner() const
+{
+  if (itsBottomLeftCorner) return *itsBottomLeftCorner;
+  return BottomLeftLatLon();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Helper method for Write() to keep original corners intact
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::TopRightCorner() const
+{
+  if (itsTopRightCorner) return *itsTopRightCorner;
+  return TopRightLatLon();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param file Undocumented
  * \return Undocumented
  */
@@ -348,54 +373,144 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 {
   // Legacy FMI sphere projections
 
+  if (itsClassId == kNFmiArea)
+  {
+    file << kNFmiArea << " kNFmiArea\n";
+    return file;
+  }
+
+#if 0
+  std::cout << "Class id = " << itsClassId << "\n";
+  Proj().Dump(std::cout);
+#endif
+
+  // TODO: No idea why latlon and rotlatlon yscalefactor has to be negated to get correct output.
+  // Perhaps original calculation is reversed too?
+
   if (Proj().GetDouble("a") == kRearth && Proj().GetDouble("b") == kRearth)
   {
-    if (Proj().GetString("proj") == std::string("latlon"))
+    if (Proj().GetString("proj") == std::string("longlat"))
     {
-      std::cout << "FMI latlon area\n";
-      // return file;
-    }
-    if (Proj().GetString("proj") == std::string("merc"))
-    {
-      std::cout << "FMI Mercator area\n";
-      // return file;
-    }
-    if (Proj().GetString("proj") == std::string("stere"))
-    {
-      std::cout << "FMI Stereographic area\n";
-      // return file;
-    }
-    if (Proj().GetString("proj") == std::string("aeqd"))
-    {
-      std::cout << "FMI equidistant area\n";
-      // return file;
+      file << kNFmiLatLonArea << " kNFmiLatLonArea\n"
+           << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
+           << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n';
+      return file;
     }
 
     if (Proj().GetString("proj") == std::string("ob_tran") &&
-        Proj().GetString("o_proj") == std::string("latlon"))
+        Proj().GetString("o_proj") == std::string("longlat") &&
+        Proj().GetString("towgs84") == std::string("0,0,0"))
     {
-      std::cout << "FMI Rotated lat lon\n";
-      // return file;
+      auto plat = Proj().GetDouble("o_lat_p");
+      auto plon = Proj().GetDouble("o_lon_p");
+      if (plon && plat)
+      {
+        // Note: the world rect print order is correct, top left then bottom right
+        NFmiPoint southpole(*plon, -(*plat));
+        file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
+             << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
+             << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n'
+             << southpole;
+        return file;
+      }
     }
 
-    std::cout << "Possible FMI sphere but discared\n";
+    if (Proj().GetString("proj") == std::string("merc"))
+    {
+      file << kNFmiMercatorArea << " kNFmiMercatorArea\n"
+           << BottomLeftCorner() << TopRightCorner() << "0 0\n0 0\n"
+           << itsXScaleFactor << ' ' << itsYScaleFactor << '\n';
+      return file;
+    }
+
+    if (Proj().GetString("proj") == std::string("stere"))
+    {
+      auto clon = Proj().GetDouble("lon_0");
+      auto clat = Proj().GetDouble("lat_0");
+      auto tlat = Proj().GetDouble("lat_ts");
+
+      if (clon && clat && tlat)
+      {
+        file << kNFmiStereographicArea << " kNFmiStereographicArea\n"
+             << itsXYRect << BottomLeftCorner() << TopRightCorner() << *clon << '\n'
+             << *clat << '\n'
+             << *tlat << '\n';
+
+        if (FmiInfoVersion >= 5) file << "0 0 0\n";
+
+        int oldPrec = file.precision();
+        file.precision(15);
+        file << itsWorldRect << '\n';
+        file.precision(oldPrec);
+
+        return file;
+      }
+    }
+
+    if (Proj().GetString("proj") == std::string("aeqd"))
+    {
+      auto clon = Proj().GetDouble("lon_0");
+      auto clat = Proj().GetDouble("lat_0");
+
+      if (clon && clat)
+      {
+        // legacy tlat = 90
+        file << kNFmiEquiDistArea << " kNFmiEquiDistArea\n"
+             << itsXYRect << BottomLeftCorner() << TopRightCorner() << *clon << '\n'
+             << *clat << "\n90\n";
+
+        if (FmiInfoVersion >= 5) file << "0 0 0\n";
+
+        int oldPrec = file.precision();
+        file.precision(15);
+        file << itsWorldRect << '\n';
+        file.precision(oldPrec);
+
+        return file;
+      }
+    }
+
+    if (Proj().GetString("proj") == std::string("lcc"))
+    {
+      auto clon = Proj().GetDouble("lon_0");
+      auto clat = Proj().GetDouble("lat_0");
+      auto lat1 = Proj().GetDouble("lat_1");
+      auto lat2 = Proj().GetDouble("lat_2");
+      if (clon && clat && lat1 && lat2)
+      {
+        file << kNFmiLambertConformalConicArea << " kNFmiLambertConformalConicArea\n"
+             << itsXYRect << BottomLeftCorner() << TopRightCorner() << *clon << ' ' << *clat << ' '
+             << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
+
+        int oldPrec = file.precision();
+        file.precision(15);
+        file << itsWorldRect << '\n';
+        file.precision(oldPrec);
+
+        return file;
+      }
+    }
+
+    // Possible FMI sphere but discared for being unknown
   }
 
-  if (Proj().GetString("ellps") == std::string("intl") &&
-      Proj().GetString("proj") == std::string("tmerc") && Proj().GetDouble("x_0") == 3500000.0 &&
-      Proj().GetDouble("lat_0") == 0.0 && Proj().GetDouble("lon_0") == 27.0 &&
-      Proj().GetString("towgs84") ==
-          std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+  else if (Proj().GetString("ellps") == std::string("intl") &&
+           Proj().GetString("proj") == std::string("tmerc") &&
+           Proj().GetDouble("x_0") == 3500000.0 && Proj().GetDouble("lat_0") == 0.0 &&
+           Proj().GetDouble("lon_0") == 27.0 &&
+           Proj().GetString("towgs84") ==
+               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
   {
-    std::cout << "YKJ\n";
-    // return file;
+    file << kNFmiYKJArea << " kNFmiYKJArea\n"
+         << itsXYRect << BottomLeftCorner() << TopRightCorner() << "0 0\n0 0\n"
+         << itsXScaleFactor << ' ' << itsYScaleFactor << '\n'
+         << itsWorldRect;
+    return file;
   }
-
-  std::cout << "New PROJ area\n";
 
   // modern GDAL/PROJ.4 projections
   NFmiString txt = ProjStr();
-  file << itsXYRect << txt << itsWorldRect;
+  file << kNFmiProjArea << " kNFmiProjArea\n" << itsXYRect << txt << itsWorldRect;
   return file;
 }
 
@@ -422,6 +537,11 @@ std::istream &NFmiArea::Read(std::istream &file)
   {
     case kNFmiArea:
     {
+      // empty class
+      return file;
+    }
+    case kNFmiProjArea:
+    {
       // Generic PROJ area
       file >> txt >> itsWorldRect;
       InitSpatialReference(txt.CharPtr());
@@ -447,7 +567,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       auto npole_lon = southpole.X();   // either this or 360-southpole.X() is correct // TODO
 
       auto proj = fmt::format(
-          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlon +o_lon_p={} +o_lat_p={} "
+          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
           "+a={:.0f} +b={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
@@ -556,7 +676,11 @@ std::istream &NFmiArea::Read(std::istream &file)
           "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
           "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
       // For legacy reasons corners are in YKJ ellipsoid coordinates
-      std::string sphere = "+proj=longlat +ellps=intl +no_defs";
+#if 0                                        
+      std::string sphere =
+          "+proj=longlat +ellps=intl "
+          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+#endif
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;
     }
@@ -788,7 +912,6 @@ NFmiArea *NFmiArea::DoForcePacificFix() const
  * \brief Return hash value for the base NFmiArea components
  */
 // ----------------------------------------------------------------------
-
 std::size_t NFmiArea::HashValue() const
 {
   std::size_t hash = itsWorldRect.HashValue();
@@ -953,6 +1076,9 @@ void NFmiArea::InitProj()
 
   // Init PROJ.4 settings
   itsProj = NFmiProj(ProjStr());
+
+  // Switch writer to ProjArea if we were not reading a legacy projection
+  if (itsClassId == kNFmiArea) itsClassId = kNFmiProjArea;
 }
 
 void NFmiArea::InitRectConversions()
@@ -1011,6 +1137,11 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
     area->InitRectConversions();
+
+    // save legacy corner coordinates for Write()
+    area->itsBottomLeftCorner = theBottomLeft;
+    area->itsTopRightCorner = theTopRight;
+
     return area;
   }
   catch (...)
@@ -1180,8 +1311,8 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon) const
 {
-  // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly to
-  // use other spatial references.
+  // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly
+  // to use other spatial references.
   auto sphere = fmt::format(
       "+proj=longlat +a={:.0f} +b={:.0f} +over "
       "+no_defs",

@@ -9,6 +9,9 @@
 
 const unsigned long kNFmiSaveBase = 0;
 const unsigned int kNFmiArea = 1;
+#ifdef WGS84
+const unsigned int kNFmiProjArea = 2;
+#endif
 
 #ifdef UNIX
 const unsigned int kNFmiGdalArea = 8;

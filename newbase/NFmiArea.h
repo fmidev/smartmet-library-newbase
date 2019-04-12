@@ -193,7 +193,14 @@ class _FMI_DLL NFmiArea
   // This is only needed when reading legacy files from disk
   int itsClassId = kNFmiArea;
 
-  // For speeding up coordinate conversions
+  // For writing legacy projections back to disk
+
+  NFmiPoint BottomLeftCorner() const;
+  NFmiPoint TopRightCorner() const;
+  boost::optional<NFmiPoint> itsBottomLeftCorner;
+  boost::optional<NFmiPoint> itsTopRightCorner;
+
+  // For speeding up coordinate conversions and to aid legacy parts of Write()
   double itsXScaleFactor;
   double itsYScaleFactor;
 

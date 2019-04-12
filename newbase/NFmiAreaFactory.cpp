@@ -388,7 +388,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=latlon +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
@@ -505,8 +505,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         proj4 = proj.substr(6, std::string::npos);
       }
     }
-
-    std::cout << "PROJ: " << proj << "\nSPHERE: " << sphere << std::endl;
 
     if (centered)
     {
