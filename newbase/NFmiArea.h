@@ -174,6 +174,9 @@ class _FMI_DLL NFmiArea
 
   const NFmiProj &Proj() const { return itsProj; }
 
+  double XScale() const;
+  double YScale() const;
+
  private:
   // We allow only the Create* static methods to construct projections
 

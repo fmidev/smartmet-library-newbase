@@ -1380,4 +1380,7 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
   return newArea;
 }
 
+double NFmiArea::XScale() const { return 1 / itsXScaleFactor; }
+double NFmiArea::YScale() const { return 1 / itsYScaleFactor; }
+
 #endif
