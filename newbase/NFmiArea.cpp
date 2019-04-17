@@ -440,7 +440,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
         int oldPrec = file.precision();
         file.precision(15);
-        file << itsWorldRect << '\n';
+        file << itsWorldRect << ' ';
         file.precision(oldPrec);
 
         return file;
@@ -463,7 +463,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
         int oldPrec = file.precision();
         file.precision(15);
-        file << itsWorldRect << '\n';
+        file << itsWorldRect << ' ';
         file.precision(oldPrec);
 
         return file;
@@ -484,7 +484,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
         int oldPrec = file.precision();
         file.precision(15);
-        file << itsWorldRect << '\n';
+        file << itsWorldRect << ' ';
         file.precision(oldPrec);
 
         return file;
