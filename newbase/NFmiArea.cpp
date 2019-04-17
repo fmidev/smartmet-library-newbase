@@ -1131,8 +1131,7 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
     double x2 = theTopRight.X();
     double y2 = theTopRight.Y();
 
-    if (area->itsToWorldXYConverter->Transform(1, &x1, &y1) == 0 ||
-        area->itsToWorldXYConverter->Transform(1, &x2, &y2) == 0)
+    if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
       throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
