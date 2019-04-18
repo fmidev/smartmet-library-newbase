@@ -9,7 +9,7 @@
 /*!
  * \brief Parse PROJ.4 settings
  *
- * Sample input: +to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlon
+ * Sample input: +to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc
  *               +o_lon_p=0 +o_lat_p=30 +a=6371220 +b=6371220
  *               +wktext +over +towgs84=0,0,0 +no_defs
  */

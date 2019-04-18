@@ -372,11 +372,11 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
     if (proj == "latlon")
     {
+      // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
       if (pvec.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-      proj4 = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0",
-                          kRearth,
-                          kRearth);
+      proj4 = fmt::format(
+          "+proj=eqc +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth, kRearth);
     }
     else if (proj == "rotlatlon")
     {
@@ -388,14 +388,14 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth,
           kRearth);
       sphere = fmt::format(
-          "+proj=ob_tran +o_proj=latlon +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
           "+no_defs",
           npole_lon,
           npole_lat,
@@ -412,7 +412,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=latlon +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
@@ -477,7 +477,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           clon,
           rad,
           rad);
-      sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", rad, rad);
+      sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs +towgs84=0,0,0", rad, rad);
     }
     else if (proj == "equidist")
     {
@@ -553,10 +553,23 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       {
         double w = area->WorldXYWidth();
         double h = area->WorldXYHeight();
-        auto xsize = static_cast<int>(round(w / (unitfactor * width)));
-        auto ysize = static_cast<int>(round(h / (unitfactor * height)));
-        NFmiRect rect(0, 0, xsize, ysize);
-        area->SetXYArea(rect);
+
+        if (area->SpatialReference()->IsGeographic())
+        {
+          // Haven't figured out how to calculate this. Use "eqc" projection instead.
+          if (units)
+            throw std::runtime_error("Cropping metric areas from geographic data is not supported");
+
+          NFmiRect rect(0, 0, w, h);
+          area->SetXYArea(rect);
+        }
+        else
+        {
+          auto xsize = static_cast<int>(round(w / (unitfactor * width)));
+          auto ysize = static_cast<int>(round(h / (unitfactor * height)));
+          NFmiRect rect(0, 0, xsize, ysize);
+          area->SetXYArea(rect);
+        }
       }
     }
   }
@@ -589,11 +602,8 @@ return_type CreateProj(const std::string &projString,
                        const NFmiPoint &topLeftXY,
                        const NFmiPoint &bottomRightXY)
 {
-  // Assume FMI sphere
-  auto sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs", kRearth, kRearth);
-
   return_type area(
-      NFmiArea::CreateFromCorners(projString, sphere, bottomLeftLatLon, topRightLatLon));
+      NFmiArea::CreateFromCorners(projString, "FMI", bottomLeftLatLon, topRightLatLon));
   area->SetXYArea(NFmiRect(topLeftXY, bottomRightXY));
   return area;
 }

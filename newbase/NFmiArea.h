@@ -174,6 +174,10 @@ class _FMI_DLL NFmiArea
 
   const NFmiProj &Proj() const { return itsProj; }
 
+  // from spherical coordinates to WGS84
+  static NFmiPoint SphereToWGS84(const NFmiPoint &theLatLon);
+  static NFmiPoint WGS84ToSphere(const NFmiPoint &theLatLon);
+
   double XScale() const;
   double YScale() const;
 
@@ -198,10 +202,10 @@ class _FMI_DLL NFmiArea
 
   // For writing legacy projections back to disk
 
-  NFmiPoint BottomLeftCorner() const;
-  NFmiPoint TopRightCorner() const;
-  boost::optional<NFmiPoint> itsBottomLeftCorner;
-  boost::optional<NFmiPoint> itsTopRightCorner;
+  NFmiPoint TopLeftCorner() const;
+  NFmiPoint BottomRightCorner() const;
+  boost::optional<NFmiPoint> itsTopLeftCorner;
+  boost::optional<NFmiPoint> itsBottomRightCorner;
 
   // For speeding up coordinate conversions and to aid legacy parts of Write()
   double itsXScaleFactor;
