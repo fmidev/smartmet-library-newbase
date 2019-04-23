@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.4.11
+Version: 19.4.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Apr 23 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.23-1.fmi
+- Added param SoundingMaximumEBS (STU-10042)
+
 * Thu Apr 11 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.11-1.fmi
 - Add param ConvectiveSeverityIndex (STU-10042)
 - Add param FogProbabilityLimit1 (STU-9623)
