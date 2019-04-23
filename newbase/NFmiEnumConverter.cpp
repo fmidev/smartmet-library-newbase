@@ -1370,6 +1370,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "SoundingLPLHeightMostUnstable", kFmiSoundingLPLHeightMostUn},
       { "SoundingLPLPressureMostUnstable", kFmiSoundingLPLMostUn},
       { "SoundingLiftedIndex", kFmiSoundingLIFT},
+      { "SoundingMaximumEBS", kFmiSoundingMaximumEBS},
       { "SoundingMixingRatio500m", kFmiSoundingMixingRatio500m},
       { "SoundingShowalterIndex", kFmiSoundingSHOW},
       { "SoundingStormRelativeHelicity1km", kFmiSoundingSRH0_1km},
