@@ -18,17 +18,13 @@ namespace NFmiAreaFactory
 {
 typedef boost::shared_ptr<NFmiArea> return_type;
 
+#ifndef WGS84
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
                           NFmiPoint &topRightLatlon,
                           bool &pacificView);
+#endif
 
 return_type Create(const std::string &theProjection);
-
-return_type CreateProj(const std::string &projString,
-                       const NFmiPoint &bottomLeftLatLon,
-                       const NFmiPoint &topRightLatLon,
-                       const NFmiPoint &topLeftXY = NFmiPoint(0.0f, 0.0f),
-                       const NFmiPoint &bottomRightXY = NFmiPoint(1.0f, 1.0f));
 
 }  // namespace NFmiAreaFactory
 

@@ -162,6 +162,11 @@ class _FMI_DLL NFmiArea
                                      const NFmiPoint &theBottomLeftLatLon,
                                      const NFmiPoint &theTopRightLatLon);
 
+  static NFmiArea *CreateFromReverseCorners(SpatialReferenceProxy theSR,
+                                            SpatialReferenceProxy theBBoxSR,
+                                            const NFmiPoint &theTopLeftLatLon,
+                                            const NFmiPoint &theBottomRightLatLon);
+
   static NFmiArea *CreateFromWGS84Corners(SpatialReferenceProxy theSR,
                                           const NFmiPoint &theBottomLeftLatLon,
                                           const NFmiPoint &theTopRightLatLon);

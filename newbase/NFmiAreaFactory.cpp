@@ -135,6 +135,7 @@ using namespace std;
 
 namespace
 {
+#ifndef WGS84
 double check_longitude(double theLongitude, bool usePacificView)
 {
   std::string rangeStr;
@@ -153,7 +154,9 @@ double check_longitude(double theLongitude, bool usePacificView)
   msg += " is not in the required range " + rangeStr;
   throw runtime_error(msg);
 }
+#endif
 
+#ifndef WGS84
 double check_latitude(double theLatitude)
 {
   if (theLatitude >= -90 && theLatitude <= 90) return theLatitude;
@@ -162,7 +165,9 @@ double check_latitude(double theLatitude)
   msg += " is not in the required range [-90,90]";
   throw runtime_error(msg);
 }
+#endif
 
+#ifndef WGS84
 double degrees_from_projparam(const string &inParam)
 {
   // Trims the parameter containing proj degrees and returns double.
@@ -202,10 +207,13 @@ double degrees_from_projparam(const string &inParam)
     throw runtime_error(errStr);
   }
 }
+#endif
+
 }  // namespace
 
 namespace NFmiAreaFactory
 {
+#ifndef WGS84
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon, NFmiPoint &topRightLatlon, bool &pacificView)
 {
   if (pacificView)
@@ -232,6 +240,7 @@ bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon, NFmiPoint &topRightLatlon
   }
   return false;
 }
+#endif
 
 // ----------------------------------------------------------------------
 /*!
@@ -578,33 +587,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
   }
 
-  return area;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Create the desired projection from Proj4 string
- *
- * Throws if there is an error in the projection description or when the projection is not
- * supported
- *
- * \param projString String description of the projection
- * \return The created projection
- *
- * The following projections are not supported by the Proj4 factory: NFmiPKJArea,
- * NFmiRotatedLatLonArea, NFmiKKJArea
- */
-// ----------------------------------------------------------------------
-
-return_type CreateProj(const std::string &projString,
-                       const NFmiPoint &bottomLeftLatLon,
-                       const NFmiPoint &topRightLatLon,
-                       const NFmiPoint &topLeftXY,
-                       const NFmiPoint &bottomRightXY)
-{
-  return_type area(
-      NFmiArea::CreateFromCorners(projString, "FMI", bottomLeftLatLon, topRightLatLon));
-  area->SetXYArea(NFmiRect(topLeftXY, bottomRightXY));
   return area;
 }
 

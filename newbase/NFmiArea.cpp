@@ -1226,6 +1226,44 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
   }
 }
 
+NFmiArea *NFmiArea::CreateFromReverseCorners(SpatialReferenceProxy theSR,
+                                             SpatialReferenceProxy theBBoxSR,
+                                             const NFmiPoint &theTopLeftLatLon,
+                                             const NFmiPoint &theBottomRightLatLon)
+{
+  auto area = new NFmiArea;
+  try
+  {
+    area->itsSpatialReference = *theSR;
+    area->InitProj();
+
+    std::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(theBBoxSR.get(), area->SpatialReference()));
+
+    if (transformation == nullptr)
+      throw std::runtime_error(
+          "Failed to create requested coordinate transformation from bbox spatial reference");
+
+    double x1 = theTopLeftLatLon.X();
+    double y1 = theTopLeftLatLon.Y();
+    double x2 = theBottomRightLatLon.X();
+    double y2 = theBottomRightLatLon.Y();
+
+    if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
+      throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
+
+    area->itsWorldRect = NFmiRect(x1, y1, x2, y2);
+    area->InitRectConversions();
+
+    return area;
+  }
+  catch (...)
+  {
+    delete area;
+    throw;
+  }
+}
+
 NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
                                            const NFmiPoint &theBottomLeftLatLon,
                                            const NFmiPoint &theTopRightLatLon)
