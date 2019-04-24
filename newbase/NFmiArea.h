@@ -100,7 +100,7 @@ class _FMI_DLL NFmiArea
                           bool fShrinkArea);
 
   unsigned long ClassId() const;
-  const char *ClassName() const;
+  const std::string &ClassName() const;
   std::string WKT() const;
   std::string PrettyWKT() const;
   std::string ProjStr() const;
@@ -204,6 +204,7 @@ class _FMI_DLL NFmiArea
 
   // This is only needed when reading legacy files from disk
   int itsClassId = kNFmiArea;
+  std::string itsClassName = "kNFmiArea";
 
   // For writing legacy projections back to disk
 

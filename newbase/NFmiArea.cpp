@@ -29,6 +29,41 @@ std::unique_ptr<OGRSpatialReference> make_sr(const std::string &theSR)
   return sr;
 }
 
+std::string class_name_from_id(int id)
+{
+  switch (id)
+  {
+    case kNFmiArea:
+      return "kNFmiArea";
+    case kNFmiProjArea:
+      return "kNFmiProjArea";
+    case kNFmiGdalArea:
+      return "kNFmiGdalArea";
+    case kNFmiLambertEqualArea:
+      return "kNFmiLambertEqualArea";
+    case kNFmiLatLonArea:
+      return "kNFmiLatLonArea";
+    case kNFmiRotatedLatLonArea:
+      return "kNFmiRotatedLatLonArea";
+    case kNFmiStereographicArea:
+      return "kNFmiStereographicArea";
+    case kNFmiPKJArea:
+      return "kNFmiPKJArea";
+    case kNFmiYKJArea:
+      return "kNFmiYKJArea";
+    case kNFmiEquiDistArea:
+      return "kNFmiEquiDistArea";
+    case kNFmiGnomonicArea:
+      return "kNFmiGnomonicArea";
+    case kNFmiKKJArea:
+      return "kNFmiKKJArea";
+    case kNFmiMercatorArea:
+      return "kNFmiMercatorArea";
+    default:
+      throw std::runtime_error("Unknown projection class id " + std::to_string(id));
+  }
+}
+
 NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR)
 {
   int err = 0;
@@ -238,46 +273,7 @@ unsigned long NFmiArea::ClassId() const { return itsClassId; }
  */
 // ----------------------------------------------------------------------
 
-const char *NFmiArea::ClassName() const
-{
-  // Legacy FMI sphere projections
-
-  if (itsClassId == kNFmiArea) return "kNFmiArea";
-
-  if (Proj().GetDouble("a") == kRearth && Proj().GetDouble("b") == kRearth)
-  {
-    if (Proj().GetString("proj") == std::string("eqc")) return "kNFmiLatLonArea";
-
-    if (Proj().GetString("proj") == std::string("ob_tran") &&
-        Proj().GetString("o_proj") == std::string("eqc") &&
-        Proj().GetString("towgs84") == std::string("0,0,0"))
-    {
-      auto plat = Proj().GetDouble("o_lat_p");
-      auto plon = Proj().GetDouble("o_lon_p");
-      if (plat && plon) return "kNFmiRotatedLatLonArea";
-    }
-
-    if (Proj().GetString("proj") == std::string("merc")) return "kNFmiMercatorArea";
-
-    if (Proj().GetString("proj") == std::string("stere")) return "kNFmiStereographicArea";
-
-    if (Proj().GetString("proj") == std::string("aeqd")) return "kNFmiEquiDistArea";
-
-    if (Proj().GetString("proj") == std::string("lcc")) return "kNFmiLambertConformalConicArea";
-
-    // Possible FMI sphere but discared for being unknown
-  }
-
-  else if (Proj().GetString("ellps") == std::string("intl") &&
-           Proj().GetString("proj") == std::string("tmerc") &&
-           Proj().GetDouble("x_0") == 3500000.0 && Proj().GetDouble("lat_0") == 0.0 &&
-           Proj().GetDouble("lon_0") == 27.0 &&
-           Proj().GetString("towgs84") ==
-               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
-    return "kNFmiYKJArea";
-
-  return "kNFmiProjArea";
-}
+const std::string &NFmiArea::ClassName() const { return itsClassName; }
 
 // ----------------------------------------------------------------------
 /*!
@@ -1069,6 +1065,8 @@ void NFmiArea::InitProj()
   // Switch classId to legacy mode if legacy mode can be detected
 
   if (itsClassId == kNFmiProjArea) itsClassId = Proj().DetectClassId();
+
+  itsClassName = class_name_from_id(itsClassId);
 }
 
 void NFmiArea::InitRectConversions()
