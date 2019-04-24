@@ -14,6 +14,7 @@ class _FMI_DLL NFmiProj
   boost::optional<double> GetDouble(const std::string& theName) const;
   boost::optional<std::string> GetString(const std::string& theName) const;
   bool GetBool(const std::string& theName) const;
+  int DetectClassId() const;
 
   void Dump(std::ostream& theOutput) const;
 

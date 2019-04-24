@@ -1,4 +1,5 @@
 #include "NFmiProj.h"
+#include "NFmiSaveBaseFactory.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
@@ -120,4 +121,37 @@ void NFmiProj::Dump(std::ostream& theOutput) const
 
   for (const auto& name : itsOptions)
     theOutput << '+' << name << "\n";
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Guess legacy ClassID from the settings
+ */
+// ----------------------------------------------------------------------
+
+int NFmiProj::DetectClassId() const
+{
+  auto name = GetString("proj");
+  if (!name) throw std::runtime_error("Projection name not set, should be impossible");
+
+  if (GetDouble("R") == kRearth)
+  {
+    if (*name == "eqc") return kNFmiLatLonArea;
+    if (*name == "merc") return kNFmiMercatorArea;
+    if (*name == "stere") return kNFmiStereographicArea;
+    if (*name == "aeqd") return kNFmiEquiDistArea;
+    if (*name == "lcc") return kNFmiLambertConformalConicArea;
+    if (*name == "ob_tran" && GetString("o_proj") == std::string("eqc") &&
+        GetString("towgs84") == std::string("0,0,0"))
+      return kNFmiRotatedLatLonArea;
+  }
+  else if (*name == "tmerc" && GetString("ellps") == std::string("intl") &&
+           GetDouble("x_0") == 3500000.0 && GetDouble("lat_0") == 0.0 &&
+           GetDouble("lon_0") == 27.0 &&
+           GetString("towgs84") ==
+               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+    return kNFmiYKJArea;
+
+  // Not a legacy projection, use PROJ.4
+  return kNFmiProjArea;
 }

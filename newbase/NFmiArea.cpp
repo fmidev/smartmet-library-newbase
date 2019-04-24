@@ -450,147 +450,125 @@ NFmiPoint NFmiArea::BottomRightCorner() const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  // Legacy FMI sphere projections
-
-  if (itsClassId == kNFmiArea)
+  switch (itsClassId)
   {
-    file << kNFmiArea << " kNFmiArea\n";
-    return file;
-  }
-
-#if 0
-  std::cout << "Class id = " << itsClassId << "\n";
-  Proj().Dump(std::cout);
-#endif
-
-  // TODO: No idea why latlon and rotlatlon yscalefactor has to be negated to get correct output.
-  // Perhaps original calculation is reversed too?
-
-  if (Proj().GetDouble("R") == kRearth)
-  {
-    if (Proj().GetString("proj") == std::string("eqc"))
+    case kNFmiArea:
+    {
+      file << kNFmiArea << " kNFmiArea\n";
+      return file;
+    }
+    case kNFmiProjArea:
+    {
+      NFmiString txt = ProjStr();
+      file << kNFmiProjArea << " kNFmiProjArea\n" << itsXYRect << txt << itsWorldRect;
+      return file;
+    }
+    case kNFmiLatLonArea:
     {
       file << kNFmiLatLonArea << " kNFmiLatLonArea\n"
            << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
            << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n';
       return file;
     }
-
-    if (Proj().GetString("proj") == std::string("ob_tran") &&
-        Proj().GetString("o_proj") == std::string("eqc") &&
-        Proj().GetString("towgs84") == std::string("0,0,0"))
+    case kNFmiRotatedLatLonArea:
     {
       auto plat = Proj().GetDouble("o_lat_p");
       auto plon = Proj().GetDouble("o_lon_p");
-      if (plon && plat)
-      {
-        // Note: the world rect print order is correct, top left then bottom right
-        NFmiPoint southpole(*plon, -(*plat));
-        file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
-             << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
-             << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n'
-             << southpole;
-        return file;
-      }
-    }
+      if (!plon || !plat) throw std::runtime_error("Internal error in writing rotated latlon area");
 
-    if (Proj().GetString("proj") == std::string("merc"))
+      // Note: the world rect print order is correct, top left then bottom right
+      NFmiPoint southpole(*plon, -(*plat));
+      file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
+           << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
+           << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n'
+           << southpole;
+      return file;
+    }
+    case kNFmiMercatorArea:
     {
       file << kNFmiMercatorArea << " kNFmiMercatorArea\n"
            << TopLeftCorner() << BottomRightCorner() << "0 0\n0 0\n"
            << itsXScaleFactor << ' ' << itsYScaleFactor << '\n';
       return file;
     }
-
-    if (Proj().GetString("proj") == std::string("stere"))
+    case kNFmiStereographicArea:
     {
       auto clon = Proj().GetDouble("lon_0");
       auto clat = Proj().GetDouble("lat_0");
       auto tlat = Proj().GetDouble("lat_ts");
 
-      if (clon && clat && tlat)
-      {
-        file << kNFmiStereographicArea << " kNFmiStereographicArea\n"
-             << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << '\n'
-             << *clat << '\n'
-             << *tlat << '\n';
+      if (!clon || !clat || !tlat)
+        throw std::runtime_error("Internal error in writing stereographic area");
 
-        if (FmiInfoVersion >= 5) file << "0 0 0\n";
+      file << kNFmiStereographicArea << " kNFmiStereographicArea\n"
+           << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << '\n'
+           << *clat << '\n'
+           << *tlat << '\n';
 
-        int oldPrec = file.precision();
-        file.precision(15);
-        file << itsWorldRect << ' ';
-        file.precision(oldPrec);
+      if (FmiInfoVersion >= 5) file << "0 0 0\n";
 
-        return file;
-      }
+      int oldPrec = file.precision();
+      file.precision(15);
+      file << itsWorldRect << ' ';
+      file.precision(oldPrec);
+
+      return file;
     }
-
-    if (Proj().GetString("proj") == std::string("aeqd"))
+    case kNFmiEquiDistArea:
     {
       auto clon = Proj().GetDouble("lon_0");
       auto clat = Proj().GetDouble("lat_0");
 
-      if (clon && clat)
-      {
-        // legacy tlat = 90
-        file << kNFmiEquiDistArea << " kNFmiEquiDistArea\n"
-             << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << '\n'
-             << *clat << "\n90\n";
+      if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
 
-        if (FmiInfoVersion >= 5) file << "0 0 0\n";
+      // legacy tlat = 90
+      file << kNFmiEquiDistArea << " kNFmiEquiDistArea\n"
+           << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << '\n'
+           << *clat << "\n90\n";
 
-        int oldPrec = file.precision();
-        file.precision(15);
-        file << itsWorldRect << ' ';
-        file.precision(oldPrec);
+      if (FmiInfoVersion >= 5) file << "0 0 0\n";
 
-        return file;
-      }
+      int oldPrec = file.precision();
+      file.precision(15);
+      file << itsWorldRect << ' ';
+      file.precision(oldPrec);
+
+      return file;
     }
-
-    if (Proj().GetString("proj") == std::string("lcc"))
+    case kNFmiLambertConformalConicArea:
     {
       auto clon = Proj().GetDouble("lon_0");
       auto clat = Proj().GetDouble("lat_0");
       auto lat1 = Proj().GetDouble("lat_1");
       auto lat2 = Proj().GetDouble("lat_2");
-      if (clon && clat && lat1 && lat2)
-      {
-        file << kNFmiLambertConformalConicArea << " kNFmiLambertConformalConicArea\n"
-             << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << ' ' << *clat << ' '
-             << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
+      if (!clon || !clat || !lat1 || !lat2)
+        throw std::runtime_error("Internal error writing lcc area");
 
-        int oldPrec = file.precision();
-        file.precision(15);
-        file << itsWorldRect << ' ';
-        file.precision(oldPrec);
+      file << kNFmiLambertConformalConicArea << " kNFmiLambertConformalConicArea\n"
+           << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << ' ' << *clat << ' '
+           << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
 
-        return file;
-      }
+      int oldPrec = file.precision();
+      file.precision(15);
+      file << itsWorldRect << ' ';
+      file.precision(oldPrec);
+
+      return file;
+    }
+    case kNFmiYKJArea:
+    {
+      file << kNFmiYKJArea << " kNFmiYKJArea\n"
+           << itsXYRect << TopLeftCorner() << BottomRightCorner() << "0 0\n0 0\n"
+           << itsXScaleFactor << ' ' << itsYScaleFactor << '\n'
+           << itsWorldRect;
+      return file;
     }
 
-    // Possible FMI sphere but discared for being unknown
+    default:
+    {
+      throw std::runtime_error("Internal error writing unknown area");
+    }
   }
-
-  else if (Proj().GetString("ellps") == std::string("intl") &&
-           Proj().GetString("proj") == std::string("tmerc") &&
-           Proj().GetDouble("x_0") == 3500000.0 && Proj().GetDouble("lat_0") == 0.0 &&
-           Proj().GetDouble("lon_0") == 27.0 &&
-           Proj().GetString("towgs84") ==
-               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
-  {
-    file << kNFmiYKJArea << " kNFmiYKJArea\n"
-         << itsXYRect << TopLeftCorner() << BottomRightCorner() << "0 0\n0 0\n"
-         << itsXScaleFactor << ' ' << itsYScaleFactor << '\n'
-         << itsWorldRect;
-    return file;
-  }
-
-  // modern GDAL/PROJ.4 projections
-  NFmiString txt = ProjStr();
-  file << kNFmiProjArea << " kNFmiProjArea\n" << itsXYRect << txt << itsWorldRect;
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -1087,6 +1065,10 @@ void NFmiArea::InitProj()
 
   // Switch writer to ProjArea if we were not reading a legacy projection
   if (itsClassId == kNFmiArea) itsClassId = kNFmiProjArea;
+
+  // Switch classId to legacy mode if legacy mode can be detected
+
+  if (itsClassId == kNFmiProjArea) itsClassId = Proj().DetectClassId();
 }
 
 void NFmiArea::InitRectConversions()
