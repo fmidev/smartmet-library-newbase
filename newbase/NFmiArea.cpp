@@ -14,10 +14,11 @@
 
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
+#include "NFmiAreaTools.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
 #include <boost/functional/hash.hpp>
-#include <fmt/printf.h>
+#include <fmt/format.h>
 
 std::unique_ptr<OGRSpatialReference> make_sr(const std::string &theSR)
 {
@@ -465,7 +466,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
   // TODO: No idea why latlon and rotlatlon yscalefactor has to be negated to get correct output.
   // Perhaps original calculation is reversed too?
 
-  if (Proj().GetDouble("a") == kRearth && Proj().GetDouble("b") == kRearth)
+  if (Proj().GetDouble("R") == kRearth)
   {
     if (Proj().GetString("proj") == std::string("eqc"))
     {
@@ -608,9 +609,6 @@ std::istream &NFmiArea::Read(std::istream &file)
 
   file >> itsXYRect;
 
-  // FMI legacy sphere
-  std::string sphere = "FMI";
-
   switch (itsClassId)
   {
     case kNFmiArea:
@@ -628,8 +626,7 @@ std::istream &NFmiArea::Read(std::istream &file)
     case kNFmiLatLonArea:
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy;
-      auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
-      *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyLatLonArea(bottomleft, topright);
       break;
     }
     case kNFmiRotatedLatLonArea:
@@ -637,18 +634,7 @@ std::istream &NFmiArea::Read(std::istream &file)
       NFmiPoint southpole;
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
           southpole;
-
-      auto npole_lat = -southpole.Y();  // reflect the pole
-      auto npole_lon = southpole.X();   // either this or 360-southpole.X() is correct // TODO
-
-      auto proj = fmt::format(
-          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} "
-          "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-          npole_lon,
-          npole_lat,
-          kRearth);
-
-      *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyRotatedLatLonArea(bottomleft, topright, southpole);
       break;
     }
     case kNFmiStereographicArea:
@@ -657,15 +643,8 @@ std::istream &NFmiArea::Read(std::istream &file)
       file >> bottomleft >> topright >> clon >> clat >> truelat >> dummy >> dummy >> dummy >>
           itsWorldRect;
 
-      auto proj = fmt::format(
-          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext "
-          "+towgs84=0,0,0 +no_defs",
-          clat,
-          truelat,
-          clon,
-          kRearth);
-
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this =
+          *NFmiAreaTools::CreateLegacyStereographicArea(bottomleft, topright, clon, clat, truelat);
       break;
     }
     case kNFmiEquiDistArea:
@@ -673,20 +652,13 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::format(
-          "+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
-          clat,
-          clon,
-          kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyEquiDistArea(bottomleft, topright, clon, clat);
       break;
     }
     case kNFmiMercatorArea:
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy;
-      auto proj =
-          fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyMercatorArea(bottomleft, topright);
       break;
     }
     case kNFmiLambertEqualArea:
@@ -694,30 +666,15 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::format(
-          "+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-          "+no_defs",
-          clat,
-          clon,
-          kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyLambertEqualArea(bottomleft, topright, clon, clat);
       break;
     }
     case kNFmiLambertConformalConicArea:
     {
       double clon, clat, tlat1, tlat2, radius;
       file >> bottomleft >> topright >> clon >> clat >> tlat1 >> tlat2 >> radius >> itsWorldRect;
-      auto proj = fmt::format(
-          "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +R={:.0f} +units=m +wktext "
-          "+towgs84=0,0,0 "
-          "+no_defs",
-          clat,
-          clon,
-          tlat1,
-          tlat2,
-          radius);
-      auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", radius);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyLambertConformalConicArea(
+          bottomleft, topright, clon, clat, tlat1, tlat2);
       break;
     }
     case kNFmiGnomonicArea:
@@ -725,24 +682,14 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat;
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      auto proj = fmt::format(
-          "+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-          "+no_defs",
-          clat,
-          clon,
-          kRearth);
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyGnomonicArea(bottomleft, topright, clon, clat);
       break;
     }
     case kNFmiYKJArea:
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
-      std::string proj =
-          "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
-          "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
-      // For legacy reasons corners are in YKJ ellipsoid coordinates
-      *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
+      *this = *NFmiAreaTools::CreateLegacyYKJArea(bottomleft, topright);
       break;
     }
     case kNFmiGdalArea:
