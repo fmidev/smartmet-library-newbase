@@ -148,29 +148,29 @@ class _FMI_DLL NFmiArea
   // may accept actual spatial references or strings from which to construct them.
 
   static NFmiArea *CreateFromBBox(SpatialReferenceProxy theSR,
-                                  const NFmiPoint &theBottomLeft,
-                                  const NFmiPoint &theTopRight);
+                                  const NFmiPoint &theBottomLeftWorldXY,
+                                  const NFmiPoint &theTopRightWorldXY);
 
   static NFmiArea *CreateFromCenter(SpatialReferenceProxy theSR,
                                     SpatialReferenceProxy theCenterSR,
-                                    const NFmiPoint &theCenter,
-                                    double theWidth,
-                                    double theHeight);
+                                    const NFmiPoint &theCenterLatLon,
+                                    double theWidthInMeters,
+                                    double theHeightInMeters);
 
   static NFmiArea *CreateFromCorners(SpatialReferenceProxy theSR,
                                      SpatialReferenceProxy theBBoxSR,
-                                     const NFmiPoint &theBottomLeft,
-                                     const NFmiPoint &theTopRight);
+                                     const NFmiPoint &theBottomLeftLatLon,
+                                     const NFmiPoint &theTopRightLatLon);
 
   static NFmiArea *CreateFromWGS84Corners(SpatialReferenceProxy theSR,
-                                          const NFmiPoint &theBottomLeft,
-                                          const NFmiPoint &theTopRight);
+                                          const NFmiPoint &theBottomLeftLatLon,
+                                          const NFmiPoint &theTopRightLatLon);
 
   static NFmiArea *CreateFromCornerAndSize(SpatialReferenceProxy theSR,
                                            SpatialReferenceProxy theCornerSR,
-                                           const NFmiPoint &theBottomLeft,
-                                           double theWidth,
-                                           double theHeight);
+                                           const NFmiPoint &theBottomLeftLatLon,
+                                           double theWidthInMeters,
+                                           double theHeightInMeters);
 
   const NFmiProj &Proj() const { return itsProj; }
 

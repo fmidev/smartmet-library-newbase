@@ -1162,16 +1162,18 @@ void NFmiArea::InitRectConversions()
 }
 
 NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
-                                   const NFmiPoint &theBottomLeft,
-                                   const NFmiPoint &theTopRight)
+                                   const NFmiPoint &theBottomLeftWorldXY,
+                                   const NFmiPoint &theTopRightWorldXY)
 {
   auto area = new NFmiArea;
   try
   {
     area->itsSpatialReference = *theSR;
     area->InitProj();
-    area->itsWorldRect =
-        NFmiRect(theBottomLeft.X(), theTopRight.Y(), theTopRight.X(), theBottomLeft.Y());
+    area->itsWorldRect = NFmiRect(theBottomLeftWorldXY.X(),
+                                  theTopRightWorldXY.Y(),
+                                  theTopRightWorldXY.X(),
+                                  theBottomLeftWorldXY.Y());
     area->InitRectConversions();
     return area;
   }
@@ -1184,8 +1186,8 @@ NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
 
 NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
                                       SpatialReferenceProxy theBBoxSR,
-                                      const NFmiPoint &theBottomLeft,
-                                      const NFmiPoint &theTopRight)
+                                      const NFmiPoint &theBottomLeftLatLon,
+                                      const NFmiPoint &theTopRightLatLon)
 {
   auto area = new NFmiArea;
   try
@@ -1200,10 +1202,10 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
       throw std::runtime_error(
           "Failed to create requested coordinate transformation from bbox spatial reference");
 
-    double x1 = theBottomLeft.X();
-    double y1 = theBottomLeft.Y();
-    double x2 = theTopRight.X();
-    double y2 = theTopRight.Y();
+    double x1 = theBottomLeftLatLon.X();
+    double y1 = theBottomLeftLatLon.Y();
+    double x2 = theTopRightLatLon.X();
+    double y2 = theTopRightLatLon.Y();
 
     if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
       throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
@@ -1212,8 +1214,8 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
     area->InitRectConversions();
 
     // save legacy corner coordinates for Write()
-    area->itsTopLeftCorner = theBottomLeft;
-    area->itsBottomRightCorner = theTopRight;
+    area->itsTopLeftCorner = theBottomLeftLatLon;
+    area->itsBottomRightCorner = theTopRightLatLon;
 
     return area;
   }
@@ -1225,8 +1227,8 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
 }
 
 NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
-                                           const NFmiPoint &theBottomLeft,
-                                           const NFmiPoint &theTopRight)
+                                           const NFmiPoint &theBottomLeftLatLon,
+                                           const NFmiPoint &theTopRightLatLon)
 {
   auto area = new NFmiArea;
   try
@@ -1234,10 +1236,10 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
     area->itsSpatialReference = *theSR;
     area->InitProj();
 
-    double x1 = theBottomLeft.X();
-    double y1 = theBottomLeft.Y();
-    double x2 = theTopRight.X();
-    double y2 = theTopRight.Y();
+    double x1 = theBottomLeftLatLon.X();
+    double y1 = theBottomLeftLatLon.Y();
+    double x2 = theTopRightLatLon.X();
+    double y2 = theTopRightLatLon.Y();
 
     if (area->itsToWorldXYConverter->Transform(1, &x1, &y1) == 0 ||
         area->itsToWorldXYConverter->Transform(1, &x2, &y2) == 0)
@@ -1256,7 +1258,7 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
 
 NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
                                             SpatialReferenceProxy theCornerSR,
-                                            const NFmiPoint &theBottomLeft,
+                                            const NFmiPoint &theBottomLeftLatLon,
                                             double theWidth,
                                             double theHeight)
 {
@@ -1274,8 +1276,8 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
           "Failed to create requested coordinate transformation from center coordinate spatial "
           "reference");
 
-    double x = theBottomLeft.X();
-    double y = theBottomLeft.Y();
+    double x = theBottomLeftLatLon.X();
+    double y = theBottomLeftLatLon.Y();
 
     if (transformation->Transform(1, &x, &y) == 0)
       throw std::runtime_error(
@@ -1294,7 +1296,7 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
 
 NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
                                      SpatialReferenceProxy theCenterSR,
-                                     const NFmiPoint &theCenter,
+                                     const NFmiPoint &theCenterLatLon,
                                      double theWidth,
                                      double theHeight)
 {
@@ -1312,8 +1314,8 @@ NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
           "Failed to create requested coordinate transformation from center coordinate spatial "
           "reference");
 
-    double x = theCenter.X();
-    double y = theCenter.Y();
+    double x = theCenterLatLon.X();
+    double y = theCenterLatLon.Y();
 
     if (transformation->Transform(1, &x, &y) == 0)
       throw std::runtime_error("Failed to initialize projection from center coordinates");
