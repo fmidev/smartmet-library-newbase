@@ -37,8 +37,7 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR)
   if (sr == "FMI")
   {
     // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
-    auto sphere = fmt::format(
-        "+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs +towgs84=0,0,0", kRearth, kRearth);
+    auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", kRearth);
     err = itsSR.SetFromUserInput(sphere.c_str());
   }
   else
@@ -55,8 +54,7 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR)
   if (theSR == "FMI")
   {
     // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
-    auto sphere = fmt::format(
-        "+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs +towgs84=0,0,0", kRearth, kRearth);
+    auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", kRearth);
     err = itsSR.SetFromUserInput(sphere.c_str());
   }
   else
@@ -630,8 +628,7 @@ std::istream &NFmiArea::Read(std::istream &file)
     case kNFmiLatLonArea:
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy;
-      auto proj = fmt::format(
-          "+proj=eqc +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth, kRearth);
+      auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
       *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
       break;
     }
@@ -646,10 +643,9 @@ std::istream &NFmiArea::Read(std::istream &file)
 
       auto proj = fmt::format(
           "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} "
-          "+a={:.0f} +b={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+          "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
-          kRearth,
           kRearth);
 
       *this = *NFmiArea::CreateFromBBox(proj, bottomleft, topright);
@@ -662,12 +658,11 @@ std::istream &NFmiArea::Read(std::istream &file)
           itsWorldRect;
 
       auto proj = fmt::format(
-          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext "
           "+towgs84=0,0,0 +no_defs",
           clat,
           truelat,
           clon,
-          kRearth,
           kRearth);
 
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
@@ -679,11 +674,9 @@ std::istream &NFmiArea::Read(std::istream &file)
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
       auto proj = fmt::format(
-          "+proj=aeqd +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
-          "+no_defs",
+          "+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
           clat,
           clon,
-          kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;
@@ -692,9 +685,7 @@ std::istream &NFmiArea::Read(std::istream &file)
     {
       file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy;
       auto proj =
-          fmt::format("+proj=merc +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
-                      kRearth,
-                      kRearth);
+          fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;
     }
@@ -704,11 +695,10 @@ std::istream &NFmiArea::Read(std::istream &file)
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
       auto proj = fmt::format(
-          "+proj=laea +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
+          "+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
           "+no_defs",
           clat,
           clon,
-          kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;
@@ -718,17 +708,15 @@ std::istream &NFmiArea::Read(std::istream &file)
       double clon, clat, tlat1, tlat2, radius;
       file >> bottomleft >> topright >> clon >> clat >> tlat1 >> tlat2 >> radius >> itsWorldRect;
       auto proj = fmt::format(
-          "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +R={:.0f} +units=m +wktext "
           "+towgs84=0,0,0 "
           "+no_defs",
           clat,
           clon,
           tlat1,
           tlat2,
-          radius,
           radius);
-      auto sphere = fmt::format(
-          "+proj=longlat +a={:.0f} +b={:.0f} +over +no_defs +towgs84=0,0,0", radius, radius);
+      auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", radius);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;
     }
@@ -738,11 +726,10 @@ std::istream &NFmiArea::Read(std::istream &file)
       file >> bottomleft >> topright >> clon >> clat >> dummy >> dummy >> dummy >> dummy >>
           itsWorldRect;
       auto proj = fmt::format(
-          "+proj=gnom +lat_0={} +lon_0={} +a={:.0f} +b={:.0f} +units=m +wktext +towgs84=0,0,0 "
+          "+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
           "+no_defs",
           clat,
           clon,
-          kRearth,
           kRearth);
       *this = *NFmiArea::CreateFromCorners(proj, sphere, bottomleft, topright);
       break;

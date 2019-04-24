@@ -384,8 +384,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
       if (pvec.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-      proj4 = fmt::format(
-          "+proj=eqc +a={:.0f} +b={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth, kRearth);
+      proj4 = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
     }
     else if (proj == "rotlatlon")
     {
@@ -397,18 +396,16 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
-          kRearth,
           kRearth);
       sphere = fmt::format(
-          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +over "
+          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +R={:.0f} +over "
           "+no_defs",
           npole_lon,
           npole_lat,
-          kRearth,
           kRearth);
     }
     else if (proj == "invrotlatlon")
@@ -421,11 +418,10 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +a={:.0f} +b={:.0f} +wktext +over "
+          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} +wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
-          kRearth,
           kRearth);
     }
     else if (proj == "mercator")
@@ -442,12 +438,11 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double tlat = (pvec.size() >= 3 ? pvec[2] : 60);
 
       proj4 = fmt::format(
-          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} "
+          "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +R={:.0f} "
           "+units=m +wktext +towgs84=0,0,0 +no_defs",
           clat,
           tlat,
           clon,
-          kRearth,
           kRearth);
     }
     else if (proj == "gnomonic")
@@ -478,15 +473,14 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
 
       proj4 = fmt::format(
-          "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} "
+          "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} "
           "+units=m +wktext +towgs84=0,0,0 +no_defs",
           tlat1,
           tlat2,
           clat,
           clon,
-          rad,
           rad);
-      sphere = fmt::format("+proj=longlat +a={:.0f} +b={:.0f} +no_defs +towgs84=0,0,0", rad, rad);
+      sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs +towgs84=0,0,0", rad);
     }
     else if (proj == "equidist")
     {
@@ -495,11 +489,10 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       const double clat = (pvec.size() >= 2 ? pvec[1] : 90);
 
       proj4 = fmt::format(
-          "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +a={:.0f} +b={:.0f} +units=m +wktext "
+          "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
           "+towgs84=0,0,0 +no_defs",
           clat,
           clon,
-          kRearth,
           kRearth);
     }
     else

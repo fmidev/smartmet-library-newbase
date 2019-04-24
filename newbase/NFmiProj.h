@@ -18,7 +18,7 @@ class _FMI_DLL NFmiProj
   void Dump(std::ostream& theOutput) const;
 
  private:
-  std::map<std::string, double> itsDoubles;       // +a=6371220 etc
+  std::map<std::string, double> itsDoubles;       // +R=6371220 etc
   std::map<std::string, std::string> itsStrings;  // +ellps=intl etc
   std::set<std::string> itsOptions;               // +over etc
 };
