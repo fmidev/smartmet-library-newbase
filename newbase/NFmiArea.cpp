@@ -195,14 +195,22 @@ bool NFmiArea::IsInside(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiArea::Place(const NFmiPoint &newPlace) { itsXYRect.Place(newPlace); }
+void NFmiArea::Place(const NFmiPoint &newPlace)
+{
+  itsXYRect.Place(newPlace);
+  InitRectConversions();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiArea::Size(const NFmiPoint &newSize) { itsXYRect.Size(newSize); }
+void NFmiArea::Size(const NFmiPoint &newSize)
+{
+  itsXYRect.Size(newSize);
+  InitRectConversions();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -324,6 +332,7 @@ void NFmiArea::SetXYArea(const NFmiRect &newArea)
 {
   Place(newArea.TopLeft());
   Size(newArea.Size());
+  InitRectConversions();
 #ifndef WGS84
   Init();
 #endif
