@@ -11,16 +11,11 @@
 #include "NFmiProj.h"
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
-#include <string>
-
-#ifdef UNIX
-
 #include <boost/shared_ptr.hpp>
 #include <gdal/ogr_geometry.h>
+#include <string>
 
 class OGRCoordinateTransformation;
-
-#endif
 
 //! Undocumented
 class _FMI_DLL NFmiArea
