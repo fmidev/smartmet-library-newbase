@@ -396,14 +396,16 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
 
       proj4 = fmt::format(
-          "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} +wktext +over "
+          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} "
+          "+wktext +over "
           "+towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth);
-      sphere = fmt::format(
-          "+proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +R={:.0f} +over "
-          "+no_defs",
+      // the legacy corners are in rotated spherical latlon coordinates
+      auto sphere = fmt::format(
+          "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlong +o_lon_p={} +o_lat_p={} "
+          "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
           npole_lon,
           npole_lat,
           kRearth);

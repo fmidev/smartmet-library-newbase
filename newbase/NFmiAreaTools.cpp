@@ -18,6 +18,8 @@
 #include <fmt/format.h>
 #include <algorithm>
 
+#include <iostream>
+
 // Local utility functions
 
 namespace
@@ -148,7 +150,15 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
       npole_lat,
       kRearth);
 
-  return NFmiArea::CreateFromBBox(proj, theBottomLeft, theTopRight);
+  // the legacy corners are in rotated spherical latlon coordinates
+  auto sphere = fmt::format(
+      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlong +o_lon_p={} +o_lat_p={} "
+      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      npole_lon,
+      npole_lat,
+      kRearth);
+
+  return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
 
 NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
