@@ -1,3 +1,5 @@
+#include <iomanip>
+
 #include <iostream>
 // ======================================================================
 /*!
@@ -1002,7 +1004,23 @@ NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
 
   // Transform world xy-coordinates into WGS84
 
-  return WorldXYToLatLon(NFmiPoint(x, y));
+  auto res = WorldXYToLatLon(NFmiPoint(x, y));
+
+  // Return result if not a pole
+  const double eps = 0.0001;
+  if (res.X() != 0 || (res.Y() < (90 - eps) && res.Y() > (-90 + eps))) return res;
+
+  // GDAL/PROJ.4 may set longitude to zero for poles. We attempt to fix this based on the
+  // X-coordinate
+
+  x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  y = 0;
+
+  auto polex = WorldXYToLatLon(NFmiPoint(x, y));
+
+  // Return adjusted longitude
+
+  return NFmiPoint(polex.X(), res.Y());
 }
 
 // ----------------------------------------------------------------------
