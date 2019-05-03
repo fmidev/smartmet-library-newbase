@@ -133,7 +133,7 @@ void LatLonBoundingBox(const NFmiArea& theArea,
 NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
   auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
-  return NFmiArea::CreateFromBBox(proj, theBottomLeft, theTopRight);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
 NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
