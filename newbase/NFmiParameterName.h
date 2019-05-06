@@ -1335,6 +1335,7 @@ enum FmiParameterName
 
   kFmiConvectiveSeverityIndex,
   kFmiFogProbabilityLimit1,
+  kFmiProbabilityOfLightningAggregation1,
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
