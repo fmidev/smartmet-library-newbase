@@ -678,7 +678,13 @@ std::istream &NFmiArea::Read(std::istream &file)
       break;
     }
     case kNFmiGdalArea:
-      throw std::runtime_error("GDAL areas are no longer supported");
+    {
+      itsClassId = kNFmiProjArea;
+      NFmiString datum, proj;
+      file >> bottomleft >> topright >> datum >> proj;
+      *this = *NFmiArea::CreateFromCorners(proj.CharPtr(), datum.CharPtr(), bottomleft, topright);
+      break;
+    }
     case kNFmiPKJArea:
       throw std::runtime_error("PKJ projection is no longer supported in Finland");
     case kNFmiKKJArea:
