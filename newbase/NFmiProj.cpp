@@ -155,3 +155,45 @@ int NFmiProj::DetectClassId() const
   // Not a legacy projection, use PROJ.4
   return kNFmiProjArea;
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return inverse projection string to native geodetic coordinates (not WGS84!)
+ *
+ * +init is
+ */
+// ----------------------------------------------------------------------
+
+std::string NFmiProj::InverseProj() const
+{
+  auto values = itsStrings;
+  values["proj"] = "longlat";
+
+  std::string ret;
+  for (const auto& name_value : values)
+  {
+    if (!ret.empty()) ret += ' ';
+    ret += '+';
+    ret += name_value.first;
+    ret += '=';
+    ret += name_value.second;
+  }
+
+  for (const auto& name_value : itsDoubles)
+  {
+    if (!ret.empty()) ret += ' ';
+    ret += '+';
+    ret += name_value.first;
+    ret += '=';
+    ret += std::to_string(name_value.second);
+  }
+
+  for (const auto& name : itsOptions)
+  {
+    if (!ret.empty()) ret += ' ';
+    ret += '+';
+    ret += name;
+  }
+
+  return ret;
+}

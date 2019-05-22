@@ -16,6 +16,8 @@ class _FMI_DLL NFmiProj
   bool GetBool(const std::string& theName) const;
   int DetectClassId() const;
 
+  std::string InverseProj() const;
+
   void Dump(std::ostream& theOutput) const;
 
  private:
