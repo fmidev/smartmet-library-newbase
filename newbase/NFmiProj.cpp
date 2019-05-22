@@ -166,12 +166,34 @@ int NFmiProj::DetectClassId() const
 
 std::string NFmiProj::InverseProj() const
 {
+  // First we change the projection to longlat
   auto values = itsStrings;
   values["proj"] = "longlat";
+
+  // And keep only the parameters relevant to it. Note that +init is not here,
+  // it is expanded to +datum and other options prior to this stage.
+
+  std::set<std::string> keepers{"proj",
+                                "datum",
+                                "ellps",
+                                "towgs84",
+                                "over",
+                                "no_defs",
+                                "to_meter",
+                                "o_proj",
+                                "o_lon_p",
+                                "o_lat_p",
+                                "R",
+                                "a",
+                                "b",
+                                "k",
+                                "f",
+                                "wktext"};
 
   std::string ret;
   for (const auto& name_value : values)
   {
+    if (keepers.find(name_value.first) == keepers.end()) continue;
     if (!ret.empty()) ret += ' ';
     ret += '+';
     ret += name_value.first;
@@ -181,6 +203,7 @@ std::string NFmiProj::InverseProj() const
 
   for (const auto& name_value : itsDoubles)
   {
+    if (keepers.find(name_value.first) == keepers.end()) continue;
     if (!ret.empty()) ret += ' ';
     ret += '+';
     ret += name_value.first;
@@ -190,6 +213,7 @@ std::string NFmiProj::InverseProj() const
 
   for (const auto& name : itsOptions)
   {
+    if (keepers.find(name) == keepers.end()) continue;
     if (!ret.empty()) ret += ' ';
     ret += '+';
     ret += name;
