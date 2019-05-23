@@ -3,6 +3,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <fmt/format.h>
 #include <string>
 #include <vector>
 
@@ -16,7 +17,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiProj::NFmiProj(const std::string& theProj)
+NFmiProj::NFmiProj(const std::string& theProj) : itsProjStr(theProj)
 {
   // Split options by whitespace
   auto proj = boost::algorithm::trim_copy(theProj);
@@ -164,7 +165,7 @@ int NFmiProj::DetectClassId() const
  */
 // ----------------------------------------------------------------------
 
-std::string NFmiProj::InverseProj() const
+std::string NFmiProj::InverseProjStr() const
 {
   // First we change the projection to longlat
   auto values = itsStrings;
@@ -187,8 +188,13 @@ std::string NFmiProj::InverseProj() const
                                 "a",
                                 "b",
                                 "k",
+                                "k_0",
+                                "pm",
                                 "f",
+                                "axis",
                                 "wktext"};
+
+  std::set<std::string> ints{"R", "a", "b"};  // one meter accuracy is enough for these
 
   std::string ret;
   for (const auto& name_value : values)
@@ -208,7 +214,11 @@ std::string NFmiProj::InverseProj() const
     ret += '+';
     ret += name_value.first;
     ret += '=';
-    ret += std::to_string(name_value.second);
+
+    if (ints.find(name_value.first) == keepers.end())
+      ret += fmt::format("{}", name_value.second);
+    else
+      ret += fmt::format("{:.0f}", name_value.second);
   }
 
   for (const auto& name : itsOptions)
