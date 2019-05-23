@@ -178,6 +178,46 @@ NFmiPoint NFmiArea::BottomLeftLatLon() const { return ToLatLon(BottomLeft()); }
 // ----------------------------------------------------------------------
 
 NFmiPoint NFmiArea::BottomRightLatLon() const { return ToLatLon(BottomRight()); }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert projected coordinate to native latlon
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const
+{
+  double x = theWorldXY.X();
+  double y = theWorldXY.Y();
+
+  if (itsNativeToLatLonConverter->Transform(1, &x, &y) == 0)
+    throw std::runtime_error("Failed to convert coordinate to native latlon");
+
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert native latlon to projected coordinate
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const
+{
+  double x = theLatLon.X();
+  double y = theLatLon.Y();
+
+  if (itsNativeToWorldXYConverter->Transform(1, &x, &y) == 0)
+    throw std::runtime_error("Failed to convert coordinate from native latlon");
+
+  return NFmiPoint(x, y);
+}
+
+NFmiPoint NFmiArea::ToNativeLatLon(const NFmiPoint &theXY) const
+{
+  return WorldXYToNativeLatLon(XYToWorldXY(theXY));
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theArea Undocumented
@@ -1075,6 +1115,8 @@ void NFmiArea::InitSpatialReference(const std::string &theProjection)
 
 void NFmiArea::InitProj()
 {
+  // WGS84 converters
+
   std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
   auto err = wgs84->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference for WGS84");
@@ -1091,6 +1133,27 @@ void NFmiArea::InitProj()
 
   // Init PROJ.4 settings
   itsProj = NFmiProj(ProjStr());
+
+  // Init geographic coordinate conversions in native datum
+
+  auto proj = itsProj.InverseProjStr();
+
+  std::unique_ptr<OGRSpatialReference> latlon(new OGRSpatialReference);
+  err = latlon->SetFromUserInput(proj.c_str());
+  if (err != OGRERR_NONE)
+    throw std::runtime_error("Failed to create spatial reference from " + proj);
+
+  itsNativeToLatLonConverter.reset(
+      OGRCreateCoordinateTransformation(&itsSpatialReference, latlon.get()));
+
+  if (itsNativeToLatLonConverter == nullptr)
+    throw std::runtime_error("Failed to create requested coordinate transformation to " + proj);
+
+  itsNativeToWorldXYConverter.reset(
+      OGRCreateCoordinateTransformation(latlon.get(), &itsSpatialReference));
+
+  if (itsNativeToWorldXYConverter == nullptr)
+    throw std::runtime_error("Failed to create requested coordinate transformation from " + proj);
 
   // Switch writer to ProjArea if we were not reading a legacy projection
   if (itsClassId == kNFmiArea) itsClassId = kNFmiProjArea;

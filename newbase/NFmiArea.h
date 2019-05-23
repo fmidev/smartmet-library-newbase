@@ -80,6 +80,11 @@ class _FMI_DLL NFmiArea
   NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
 #ifdef WGS84
+
+  NFmiPoint ToNativeLatLon(const NFmiPoint &theXY) const;
+  NFmiPoint WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const;
+  NFmiPoint NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const;
+
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon, const NFmiPoint &theTopRightLatLon) const;
 #else
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
@@ -191,8 +196,13 @@ class _FMI_DLL NFmiArea
 
   OGRSpatialReference itsSpatialReference{NULL};
 
+  // WGS84 conversions
   boost::shared_ptr<OGRCoordinateTransformation> itsToLatLonConverter;
   boost::shared_ptr<OGRCoordinateTransformation> itsToWorldXYConverter;
+
+  // Projection geographic coordinate conversions
+  boost::shared_ptr<OGRCoordinateTransformation> itsNativeToLatLonConverter;
+  boost::shared_ptr<OGRCoordinateTransformation> itsNativeToWorldXYConverter;
 
   NFmiRect itsWorldRect;           // bbox in native WorldXY coordinates
   NFmiRect itsXYRect{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
