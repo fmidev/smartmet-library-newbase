@@ -136,6 +136,7 @@ class _FMI_DLL NFmiArea
     OGRSpatialReference *get() { return &itsSR; }
 
    private:
+    void init(const std::string &theSR);
     OGRSpatialReference itsSR{NULL};
   };
 

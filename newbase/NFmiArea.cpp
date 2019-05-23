@@ -66,8 +66,14 @@ std::string class_name_from_id(int id)
   }
 }
 
-NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR)
+NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR) { init(theSR); }
+
+NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR) { init(theSR); }
+
+void NFmiArea::SpatialReferenceProxy::init(const std::string &theSR)
 {
+  if (theSR.empty()) throw std::runtime_error("Cannot create spatial reference from empty string");
+
   int err = 0;
 
   std::string sr = theSR;
@@ -79,27 +85,10 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR)
     err = itsSR.SetFromUserInput(sphere.c_str());
   }
   else
-    err = itsSR.SetFromUserInput(theSR);
-
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to create spatial reference from '" + sr + "'");
-}
-
-NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR)
-{
-  int err = 0;
-
-  if (theSR == "FMI")
-  {
-    // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
-    auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", kRearth);
-    err = itsSR.SetFromUserInput(sphere.c_str());
-  }
-  else
     err = itsSR.SetFromUserInput(theSR.c_str());
 
   if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
+    throw std::runtime_error("Failed to create spatial reference from '" + sr + "'");
 }
 
 NFmiArea::NFmiArea(int theClassId) : itsClassId(theClassId) {}

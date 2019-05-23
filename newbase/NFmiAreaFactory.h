@@ -26,6 +26,10 @@ bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
 
 return_type Create(const std::string &theProjection);
 
+return_type CreateFromCorners(const std::string &theProjection,
+                              const NFmiPoint &theBottomLeftLatLon,
+                              const NFmiPoint &theTopRightLatLon);
+
 }  // namespace NFmiAreaFactory
 
 // ======================================================================
