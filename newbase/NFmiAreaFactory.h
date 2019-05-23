@@ -30,6 +30,11 @@ return_type CreateFromCorners(const std::string &theProjection,
                               const NFmiPoint &theBottomLeftLatLon,
                               const NFmiPoint &theTopRightLatLon);
 
+return_type CreateFromCenter(const std::string &theProjection,
+                             const NFmiPoint &theCenterLatLon,
+                             double theWidthInMeters,
+                             double theHeightInMeters);
+
 }  // namespace NFmiAreaFactory
 
 // ======================================================================

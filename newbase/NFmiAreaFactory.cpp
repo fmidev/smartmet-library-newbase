@@ -609,7 +609,7 @@ void set_grid(NFmiArea &theArea, const Grid &theGrid, const Bounds &theBounds)
  *
  * Throws if there is an error in the projection description.
  *
- * \param theProjection String description of the projection
+ * \param theProjection String description of the projection projection[:area[:grid]]
  * \return The created projection
  */
 // ----------------------------------------------------------------------
@@ -618,8 +618,6 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 {
   try
   {
-    boost::shared_ptr<NFmiArea> area;
-
     string projection = preprocess_projection(theProjection);
 
     // Extract projection:area:grid parts
@@ -643,6 +641,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     // Generate PROJ.4 string for the projection and the spatial reference used for the
     // corners, center coordinate or bottom left corner for GRIB stuff
 
+    boost::shared_ptr<NFmiArea> area;
+
     if (!bounds.center)
       area.reset(NFmiArea::CreateFromCorners(
           projstrings.proj4, projstrings.sphere, *bounds.bottomleft, *bounds.topright));
@@ -660,6 +660,67 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
     // Set image area
     set_grid(*area, grid, bounds);
+
+    return area;
+  }
+  catch (std::runtime_error &e)
+  {
+    throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create the desired projection from corners, default XY bounds
+ */
+// ----------------------------------------------------------------------
+
+boost::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
+                                              const NFmiPoint &theBottomLeftLatLon,
+                                              const NFmiPoint &theTopRightLatLon)
+{
+  try
+  {
+    string projection = preprocess_projection(theProjection);
+
+    const ProjStrings projstrings = parse_projection(projection);
+
+    // Generate PROJ.4 string for the projection and the spatial reference used for the
+    // corners, center coordinate or bottom left corner for GRIB stuff
+
+    boost::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCorners(
+        projstrings.proj4, projstrings.sphere, theBottomLeftLatLon, theTopRightLatLon)};
+
+    return area;
+  }
+  catch (std::runtime_error &e)
+  {
+    throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create the desired projection from center and size, default XY bounds
+ */
+// ----------------------------------------------------------------------
+
+boost::shared_ptr<NFmiArea> CreateFromCenter(const std::string &theProjection,
+                                             const NFmiPoint &theCenterLatLon,
+                                             double theWidthInMeters,
+                                             double theHeightInMeters)
+{
+  try
+  {
+    string projection = preprocess_projection(theProjection);
+
+    const ProjStrings projstrings = parse_projection(projection);
+
+    boost::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCenter(projstrings.proj4,
+                                                                projstrings.sphere,
+                                                                theCenterLatLon,
+                                                                theWidthInMeters,
+                                                                theHeightInMeters)};
 
     return area;
   }
