@@ -76,6 +76,7 @@ class _FMI_DLL NFmiArea
   NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
   NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
   NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
+  NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXY) const;
   NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
   NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
@@ -84,6 +85,7 @@ class _FMI_DLL NFmiArea
   NFmiPoint ToNativeLatLon(const NFmiPoint &theXY) const;
   NFmiPoint WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const;
   NFmiPoint NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const;
+  NFmiPoint NativeToXY(const NFmiPoint &theLatLon) const;
 
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon, const NFmiPoint &theTopRightLatLon) const;
 #else

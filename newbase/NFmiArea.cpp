@@ -1068,10 +1068,32 @@ NFmiPoint NFmiArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   auto worldxy = LatLonToWorldXY(theLatLonPoint);
   if (worldxy == NFmiPoint::gMissingLatlon) return worldxy;
+  return WorldXYToXY(worldxy);
+}
 
-  // Transform world xy-coordinates into local xy-coordinates
-  auto x = Left() + itsXScaleFactor * (worldxy.X() - itsWorldRect.Left());
-  auto y = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - worldxy.Y());
+// ----------------------------------------------------------------------
+/*!
+ * \brief Convert coordinate from native latlon to image XY
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::NativeToXY(const NFmiPoint &theLatLonPoint) const
+{
+  auto worldxy = NativeLatLonToWorldXY(theLatLonPoint);
+  if (worldxy == NFmiPoint::gMissingLatlon) return worldxy;
+  return WorldXYToXY(worldxy);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Transform World XY coordinate to image XY
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiArea::WorldXYToXY(const NFmiPoint &theWorldXY) const
+{
+  auto x = Left() + itsXScaleFactor * (theWorldXY.X() - itsWorldRect.Left());
+  auto y = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - theWorldXY.Y());
   return NFmiPoint(x, y);
 }
 
