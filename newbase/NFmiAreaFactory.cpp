@@ -347,7 +347,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double tlat = (params.size() >= 3 ? params[2] : 60);
 
     result.proj4 = fmt::format(
-        "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +k=1 +x_0=0 +y_0=0 +R={:.0f} "
+        "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} "
         "+units=m +wktext +towgs84=0,0,0 +no_defs",
         clat,
         tlat,
