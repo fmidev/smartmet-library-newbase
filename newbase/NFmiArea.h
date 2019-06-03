@@ -137,7 +137,11 @@ class _FMI_DLL NFmiArea
     const OGRSpatialReference &operator*() const { return itsSR; }
     OGRSpatialReference *get() { return &itsSR; }
 
+    // This is mostly for debugging
+    const std::string &ProjStr() const { return itsProjStr; }
+
    private:
+    std::string itsProjStr;  // set only if initialized from a string
     void init(const std::string &theSR);
     OGRSpatialReference itsSR{NULL};
   };

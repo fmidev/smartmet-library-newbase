@@ -1,6 +1,7 @@
+#include <boost/stacktrace.hpp>
 #include <iomanip>
-
 #include <iostream>
+
 // ======================================================================
 /*!
  * \file NFmiArea.cpp
@@ -73,6 +74,8 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR)
 void NFmiArea::SpatialReferenceProxy::init(const std::string &theSR)
 {
   if (theSR.empty()) throw std::runtime_error("Cannot create spatial reference from empty string");
+
+  itsProjStr = theSR;
 
   int err = 0;
 
@@ -1271,7 +1274,8 @@ NFmiArea *NFmiArea::CreateFromReverseCorners(SpatialReferenceProxy theSR,
     double y2 = theBottomRightLatLon.Y();
 
     if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
-      throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
+      throw std::runtime_error(
+          "Failed to initialize projection from BBOX reverse corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y1, x2, y2);
     area->InitRectConversions();
