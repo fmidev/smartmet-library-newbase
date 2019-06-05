@@ -504,8 +504,9 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiLatLonArea:
     {
+      // WGS84: Not sure if the factors are readable by legacy programs
       file << kNFmiLatLonArea << " kNFmiLatLonArea\n"
-           << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
+           << itsXYRect << TopLeftCorner() << BottomRightCorner() << "0 0\n0 0\n"
            << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n';
       return file;
     }
