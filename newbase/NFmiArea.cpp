@@ -62,6 +62,8 @@ std::string class_name_from_id(int id)
       return "kNFmiKKJArea";
     case kNFmiMercatorArea:
       return "kNFmiMercatorArea";
+    case kNFmiLambertConformalConicArea:
+      return "kNFmiLambertConformalConicArea";
     default:
       throw std::runtime_error("Unknown projection class id " + std::to_string(id));
   }
