@@ -1345,6 +1345,10 @@ enum FmiParameterName
   kFmiPrecipitation120hF10,
   kFmiPrecipitation120hF0,
 
+  kFmiProbabilityOfConvectiveSeverityIndexLimit1,
+  kFmiProbabilityOfConvectiveSeverityIndexLimit2,
+  kFmiProbabilityOfConvectiveSeverityIndexLimit3,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
