@@ -2009,7 +2009,9 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
   if (!IsInside(theInterpolatedTime))
   {
     TimeIndex(oldTimeIndex);
-    return;
+    throw std::runtime_error(std::string("Requested time ") +
+                             theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
+                             " outside the data time range");
   }
 
   // Extract leftside and rightside data values
@@ -2118,7 +2120,9 @@ void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
   if (!IsInside(theInterpolatedTime))
   {
     TimeIndex(oldTimeIndex);
-    return;
+    throw std::runtime_error(std::string("Requested time ") +
+                             theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
+                             " outside the data time range");
   }
 
   // Extract leftside and rightside data values
@@ -2228,7 +2232,9 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
     NFmiMetTime tmpTime(
         theTime);  // aikaa pitää pystyä muuttamaan, joten tehdään siitä väliaikainen muuttuja
     tmpTime.ChangeByMinutes(-theBackwardOffsetInMinutes);
-    if (!validTimes.IsInside(tmpTime)) return;  // offsetaika meni timebagin ohi, voidaan lopettaa
+    if (!validTimes.IsInside(tmpTime)) return;
+
+    // offsetaika meni timebagin ohi, voidaan lopettaa
     // Mika: Tästä tulee jostain syystä overflow varoitus
     if (!validTimes.FindNearestTime(tmpTime))
       return;  // laskettavan aikajakson alkuaikaa ei löytynyt, turha jatkaa
@@ -5530,7 +5536,9 @@ void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
   if (!IsInside(theInterpolatedTime))
   {
     TimeIndex(oldTimeIndex);
-    return;
+    throw std::runtime_error(std::string("Requested time ") +
+                             theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
+                             " outside the data time range");
   }
 
   // Extract leftside and rightside data values
@@ -5853,7 +5861,9 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
   if (!IsInside(theInterpolatedTime))
   {
     TimeIndex(oldTimeIndex);
-    return;
+    throw std::runtime_error(std::string("Requested time ") +
+                             theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
+                             " outside the data time range");
   }
 
   // Extract leftside and rightside data values
