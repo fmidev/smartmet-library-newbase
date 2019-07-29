@@ -1337,6 +1337,18 @@ enum FmiParameterName
   kFmiFogProbabilityLimit1,
   kFmiProbabilityOfLightningAggregation1,
 
+  kFmiPrecipitation120hF100 = 1414,
+  kFmiPrecipitation120hF90,
+  kFmiPrecipitation120hF75,
+  kFmiPrecipitation120hF50,
+  kFmiPrecipitation120hF25,
+  kFmiPrecipitation120hF10,
+  kFmiPrecipitation120hF0,
+
+  kFmiProbabilityOfConvectiveSeverityIndexLimit1,
+  kFmiProbabilityOfConvectiveSeverityIndexLimit2,
+  kFmiProbabilityOfConvectiveSeverityIndexLimit3,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
