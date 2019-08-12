@@ -706,9 +706,13 @@ int NFmiTimeList::FindNearestTimes(const NFmiMetTime &theTime,
   {
     if (itsIndex >= 0 && itsIndex < static_cast<int>(itsVectorList.size()) - 1)
     {
-      returnIndex = itsIndex;
-      theTime1 = *itsVectorList[itsIndex];
-      theTime2 = *itsVectorList[itsIndex + 1];
+      // Check the second time too, FindNearestTime checks the first one
+      if (std::abs(itsVectorList[itsIndex + 1]->DifferenceInMinutes(theTime) <= theMaxMinuteRange))
+      {
+        returnIndex = itsIndex;
+        theTime1 = *itsVectorList[itsIndex];
+        theTime2 = *itsVectorList[itsIndex + 1];
+      }
     }
   }
   itsIndex = oldIndex;  // palautetaan indeksi osoittamaan varmuuden vuoksi takaisin
