@@ -108,6 +108,7 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
+
 #include "NFmiArea.h"
 #include "NFmiStringTools.h"
 #ifndef WGS84
@@ -121,6 +122,7 @@
 #endif
 #include <boost/algorithm/string.hpp>
 #include <fmt/printf.h>
+
 #include <algorithm>
 #include <deque>
 #include <list>
@@ -652,11 +654,12 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       // constructor handles width correctly by adding/substracting the width divided by two,
       // we must multiply by two here to get the original scale.
 
-      area.reset(NFmiArea::CreateFromCenter(projstrings.proj4,
-                                            projstrings.sphere,
-                                            *bounds.center,
-                                            2 * 1000 * bounds.scale * grid.width(),
-                                            2 * 100 * bounds.aspect * grid.height()));
+      area.reset(
+          NFmiArea::CreateFromCenter(projstrings.proj4,
+                                     projstrings.sphere,
+                                     *bounds.center,
+                                     2 * 1000 * bounds.scale * grid.width(),
+                                     2 * 1000 * bounds.scale * bounds.aspect * grid.height()));
 
     // Set image area
     set_grid(*area, grid, bounds);
