@@ -11,8 +11,10 @@
 #include "NFmiProj.h"
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
+
 #include <boost/shared_ptr.hpp>
 #include <gdal/ogr_geometry.h>
+
 #include <string>
 
 class OGRCoordinateTransformation;
@@ -200,6 +202,7 @@ class _FMI_DLL NFmiArea
   void InitSpatialReference(const std::string &theProjection);
   void InitProj();
   void InitRectConversions();
+  void CheckRectConversions(double theXScaleFactor, double theYScaleFactor);
 
   OGRSpatialReference itsSpatialReference{NULL};
 
@@ -226,12 +229,15 @@ class _FMI_DLL NFmiArea
   boost::optional<NFmiPoint> itsBottomRightCorner;
 
   // For speeding up coordinate conversions and to aid legacy parts of Write()
-  double itsXScaleFactor;
-  double itsYScaleFactor;
+  double itsXScaleFactor = 0;
+  double itsYScaleFactor = 0;
 
   // For providing PROJ.4 parameter information
 
   NFmiProj itsProj;
+
+  // Should we flop the data?
+  bool itsFlopped = false;
 
 };  // class NFmiArea
 

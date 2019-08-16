@@ -1,4 +1,5 @@
 #include <boost/stacktrace.hpp>
+
 #include <iomanip>
 #include <iostream>
 
@@ -20,6 +21,7 @@
 #include "NFmiAreaTools.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
+
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 
@@ -626,6 +628,7 @@ std::istream &NFmiArea::Read(std::istream &file)
   NFmiPoint bottomleft;
   NFmiPoint topright;
   double dummy;
+  double xscalefactor = 0, yscalefactor = 0;
 
   file >> itsXYRect;
 
@@ -645,16 +648,19 @@ std::istream &NFmiArea::Read(std::istream &file)
     }
     case kNFmiLatLonArea:
     {
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> xscalefactor >>
+          yscalefactor;
       *this = *NFmiAreaTools::CreateLegacyLatLonArea(bottomleft, topright);
+      CheckRectConversions(xscalefactor, yscalefactor);
       break;
     }
     case kNFmiRotatedLatLonArea:
     {
       NFmiPoint southpole;
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
-          southpole;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> xscalefactor >>
+          yscalefactor >> southpole;
       *this = *NFmiAreaTools::CreateLegacyRotatedLatLonArea(bottomleft, topright, southpole);
+      CheckRectConversions(xscalefactor, yscalefactor);
       break;
     }
     case kNFmiStereographicArea:
@@ -677,8 +683,10 @@ std::istream &NFmiArea::Read(std::istream &file)
     }
     case kNFmiMercatorArea:
     {
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> xscalefactor >>
+          yscalefactor;
       *this = *NFmiAreaTools::CreateLegacyMercatorArea(bottomleft, topright);
+      CheckRectConversions(xscalefactor, yscalefactor);
       break;
     }
     case kNFmiLambertEqualArea:
@@ -707,9 +715,10 @@ std::istream &NFmiArea::Read(std::istream &file)
     }
     case kNFmiYKJArea:
     {
-      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >>
-          itsWorldRect;
+      file >> bottomleft >> topright >> dummy >> dummy >> dummy >> dummy >> xscalefactor >>
+          yscalefactor >> itsWorldRect;
       *this = *NFmiAreaTools::CreateLegacyYKJArea(bottomleft, topright);
+      CheckRectConversions(xscalefactor, yscalefactor);
       break;
     }
     case kNFmiGdalArea:
@@ -1040,24 +1049,26 @@ NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
   // Transform local xy-coordinates into world xy-coordinates (meters).
 
-  auto x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  auto y = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  auto xy = XYToWorldXY(theXYPoint);
 
   // Transform world xy-coordinates into WGS84
 
-  auto res = WorldXYToLatLon(NFmiPoint(x, y));
+  auto res = WorldXYToLatLon(xy);
 
   // Return result if not a pole
   const double eps = 0.0001;
   if (res.X() != 0 || (res.Y() < (90 - eps) && res.Y() > (-90 + eps))) return res;
 
   // GDAL/PROJ.4 may set longitude to zero for poles. We attempt to fix this based on the
-  // X-coordinate
+  // X-coordinate at the equator.
 
-  x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  y = 0;
+  double x;
+  if (!itsFlopped)
+    x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  else
+    x = itsWorldRect.Right() - (theXYPoint.X() - Left()) / itsXScaleFactor;
 
-  auto polex = WorldXYToLatLon(NFmiPoint(x, y));
+  auto polex = WorldXYToLatLon(NFmiPoint(x, 0));
 
   // Return adjusted longitude
 
@@ -1098,7 +1109,12 @@ NFmiPoint NFmiArea::NativeToXY(const NFmiPoint &theLatLonPoint) const
 
 NFmiPoint NFmiArea::WorldXYToXY(const NFmiPoint &theWorldXY) const
 {
-  auto x = Left() + itsXScaleFactor * (theWorldXY.X() - itsWorldRect.Left());
+  double x;
+  if (!itsFlopped)
+    x = Left() + itsXScaleFactor * (theWorldXY.X() - itsWorldRect.Left());
+  else
+    x = Left() - itsXScaleFactor * (theWorldXY.X() - itsWorldRect.Right());
+
   auto y = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - theWorldXY.Y());
   return NFmiPoint(x, y);
 }
@@ -1111,8 +1127,12 @@ NFmiPoint NFmiArea::WorldXYToXY(const NFmiPoint &theWorldXY) const
 
 NFmiPoint NFmiArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 {
-  auto x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  auto y = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  double x;
+  if (!itsFlopped)
+    x = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  else
+    x = itsWorldRect.Right() - (theXYPoint.X() - Left()) / itsXScaleFactor;
+  const auto y = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
   return NFmiPoint(x, y);
 }
 
@@ -1188,6 +1208,18 @@ void NFmiArea::InitRectConversions()
   itsYScaleFactor = itsXYRect.Height() / itsWorldRect.Height();
 }
 
+// Verify with scale factors read from the file, perhaps we need to flip and/or flop
+void NFmiArea::CheckRectConversions(double theXScaleFactor, double theYScaleFactor)
+{
+#if 0  
+  if (theXScaleFactor * itsXScaleFactor < 0)
+  {
+    itsXScaleFactor = -itsXScaleFactor;
+    std::cerr << "Switched! " << itsXScaleFactor << std::endl;
+  }
+#endif
+}
+
 NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
                                    const NFmiPoint &theTopRightWorldXY)
@@ -1201,6 +1233,7 @@ NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
                                   theTopRightWorldXY.Y(),
                                   theTopRightWorldXY.X(),
                                   theBottomLeftWorldXY.Y());
+    area->itsFlopped = (theBottomLeftWorldXY.X() > theTopRightWorldXY.X());
     area->InitRectConversions();
     return area;
   }
@@ -1238,6 +1271,7 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
       throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
+    area->itsFlopped = (x1 > x2);
     area->InitRectConversions();
 
     // save legacy corner coordinates for Write()
@@ -1281,6 +1315,7 @@ NFmiArea *NFmiArea::CreateFromReverseCorners(SpatialReferenceProxy theSR,
           "Failed to initialize projection from BBOX reverse corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y1, x2, y2);
+    area->itsFlopped = (x1 > x2);
     area->InitRectConversions();
 
     return area;
@@ -1312,6 +1347,7 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
       throw std::runtime_error("Failed to initialize projection from WGS84 corner coordinates");
 
     area->itsWorldRect = NFmiRect(x1, y2, x2, y1);
+    area->itsFlopped = (x1 > x2);
     area->InitRectConversions();
     return area;
   }
@@ -1350,6 +1386,7 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
           "Failed to initialize projection from bottom left corner coordinates");
 
     area->itsWorldRect = NFmiRect(x, y + theHeight, x + theWidth, y);
+    area->itsFlopped = (theWidth < 0);
     area->InitRectConversions();
     return area;
   }
@@ -1388,6 +1425,7 @@ NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
 
     area->itsWorldRect =
         NFmiRect(x - theWidth / 2, y + theHeight / 2, x + theWidth / 2, y - theHeight / 2);
+    area->itsFlopped = (theWidth < 0);
 
     area->InitRectConversions();
     return area;

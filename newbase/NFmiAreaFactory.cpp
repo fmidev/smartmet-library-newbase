@@ -301,7 +301,24 @@ ProjStrings parse_projection(const std::string &theProjection)
     auto spole_lat = (params.size() >= 1 ? params[0] : -90);
 
     auto npole_lat = -spole_lat;
-    auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
+    auto npole_lon = spole_lon;
+
+    result.proj4 = fmt::format(
+        "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} "
+        "+wktext +over "
+        "+towgs84=0,0,0 +no_defs",
+        npole_lon,
+        npole_lat,
+        kRearth);
+  }
+  else if (name == "invrotlatlon")
+  {
+    if (params.size() > 2) throw runtime_error("invrotlatlon area requires max 2 parameters");
+    auto spole_lon = (params.size() >= 2 ? params[1] : 0);
+    auto spole_lat = (params.size() >= 1 ? params[0] : -90);
+
+    auto npole_lat = -spole_lat;
+    auto npole_lon = spole_lon;
 
     result.proj4 = fmt::format(
         "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} "
@@ -314,23 +331,6 @@ ProjStrings parse_projection(const std::string &theProjection)
     result.sphere = fmt::format(
         "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=latlong +o_lon_p={} +o_lat_p={} "
         "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-        npole_lon,
-        npole_lat,
-        kRearth);
-  }
-  else if (name == "invrotlatlon")
-  {
-    if (params.size() > 2) throw runtime_error("rotlatlon area requires max 2 parameters");
-    auto spole_lon = (params.size() >= 2 ? params[1] : 0);
-    auto spole_lat = (params.size() >= 1 ? params[0] : -90);
-
-    auto npole_lat = -spole_lat;
-    auto npole_lon = (npole_lat == 90 ? 90 : fmod(spole_lon - 180, 360.0));
-
-    result.proj4 = fmt::format(
-        "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +R={:.0f} "
-        "+wktext +over "
-        "+towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
         kRearth);

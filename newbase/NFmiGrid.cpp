@@ -13,9 +13,12 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
+
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
+
 #include <boost/functional/hash.hpp>
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
