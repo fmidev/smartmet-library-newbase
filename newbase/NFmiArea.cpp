@@ -25,13 +25,81 @@
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 
-std::unique_ptr<OGRSpatialReference> make_sr(const std::string &theSR)
+namespace
 {
+// Known reference ellipsoids : those listed in PROJ.4 pj_ellps.c
+
+//  {"FMI", },
+
+std::map<std::string, std::string> known_ellipsoids = {
+    {"FMI", "+R=6371220 +over +no_defs +towgs84=0,0,0"},
+    {"MERIT", "+a=6378137 +rf=298.257"},
+    {"SGS85", "+a=6378136 +rf=298.257"},
+    {"GRS80", "+a=6378137 +rf=298.257222101"},
+    {"IAU76", "+a=6378140 +rf=298.257"},
+    {"airy", "+a=6377563.396 +b=6356256.910"},
+    {"APL4.9", "+a=6378137.0. +rf=298.25"},
+    {"NWL9D", "+a=6378145.0. +rf=298.25"},
+    {"mod_airy", "+a=6377340.189 +b=6356034.446"},
+    {"andrae", "+a=6377104.43 +rf=300.0"},
+    {"aust_SA", "+a=6378160 +rf=298.25"},
+    {"GRS67", "+a=6378160 +rf=298.2471674270"},
+    {"bessel", "+a=6377397.155 +rf=299.1528128"},
+    {"bess_nam", "+a=6377483.865 +rf=299.1528128"},
+    {"clrk66", "+a=6378206.4 +b=6356583.8"},
+    {"clrk80", "+a=6378249.145 +rf=293.4663"},
+    {"clrk80ign", "+a=6378249.2 +rf=293.4660212936269"},
+    {"CPM", "+a=6375738.7 +rf=334.29"},
+    {"delmbr", "+a=6376428. +rf=311.5"},
+    {"engelis", "+a=6378136.05 +rf=298.2566"},
+    {"evrst30", "+a=6377276.345 +rf=300.8017"},
+    {"evrst48", "+a=6377304.063 +rf=300.8017"},
+    {"evrst56", "+a=6377301.243 +rf=300.8017"},
+    {"evrst69", "+a=6377295.664 +rf=300.8017"},
+    {"evrstSS", "+a=6377298.556 +rf=300.8017"},
+    {"fschr60", "+a=6378166. +rf=298.3"},
+    {"fschr60m", "+a=6378155. +rf=298.3"},
+    {"fschr68", "+a=6378150. +rf=298.3"},
+    {"helmert", "+a=6378200. +rf=298.3"},
+    {"hough", "+a=6378270 +rf=297."},
+    {"intl", "+a=6378388 +rf=297."},
+    {"krass", "+a=6378245 +rf=298.3"},
+    {"kaula", "+a=6378163. +rf=298.24"},
+    {"lerch", "+a=6378139. +rf=298.257"},
+    {"mprts", "+a=6397300. +rf=191."},
+    {"new_intl", "+a=6378157.5 +b=6356772.2"},
+    {"plessis", "+a=6376523 +b=6355863"},
+    {"SEasia", "+a=6378155 +b=6356773.3205"},
+    {"walbeck", "+a=6376896 +b=6355834.8467"},
+    {"WGS60", "+a=6378165 +rf=298.3"},
+    {"WGS66", "+a=6378145 +rf=298.25"},
+    {"WGS72", "+a=6378135 +rf=298.26"},
+    {"WGS84", "+a=6378137 +rf=298.257223563"},
+    {"sphere", "+a=6370997 +b=6370997"}};
+
+// Utility function for creating spatial references
+
+std::unique_ptr<OGRSpatialReference> make_sr(std::string theDesc)
+{
+  if (theDesc.empty())
+    throw std::runtime_error("Cannot create spatial reference from empty string");
+
+  // Substitute for known ellipsoids
+
+  auto desc = theDesc;
+
+  auto pos = known_ellipsoids.find(desc);
+  if (pos != known_ellipsoids.end()) desc = std::string("+proj=longlat ") + pos->second;
+
   std::unique_ptr<OGRSpatialReference> sr(new OGRSpatialReference);
-  auto err = sr->SetFromUserInput(theSR.c_str());
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to create spatial reference from '" + theSR + "'");
-  return sr;
+  auto err = sr->SetFromUserInput(desc.c_str());
+
+  if (err == OGRERR_NONE) return sr;
+
+  if (theDesc == desc)
+    throw std::runtime_error("Failed to create spatial reference from '" + theDesc + "'");
+  throw std::runtime_error("Failed to create spatial reference from '" + theDesc + "' ('" + desc +
+                           "')");
 }
 
 std::string class_name_from_id(int id)
@@ -71,31 +139,16 @@ std::string class_name_from_id(int id)
   }
 }
 
+}  // namespace
+
 NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR) { init(theSR); }
 
 NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR) { init(theSR); }
 
 void NFmiArea::SpatialReferenceProxy::init(const std::string &theSR)
 {
-  if (theSR.empty()) throw std::runtime_error("Cannot create spatial reference from empty string");
-
   itsProjStr = theSR;
-
-  int err = 0;
-
-  std::string sr = theSR;
-
-  if (sr == "FMI")
-  {
-    // support for legacy FMI sphere from 'FMI' like GDAL supports 'WGS84'
-    auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", kRearth);
-    err = itsSR.SetFromUserInput(sphere.c_str());
-  }
-  else
-    err = itsSR.SetFromUserInput(theSR.c_str());
-
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to create spatial reference from '" + sr + "'");
+  itsSR = *make_sr(theSR).release();
 }
 
 NFmiArea::NFmiArea(int theClassId) : itsClassId(theClassId) {}
@@ -1144,9 +1197,8 @@ NFmiPoint NFmiArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 void NFmiArea::InitSpatialReference(const std::string &theProjection)
 {
-  auto err = itsSpatialReference.SetFromUserInput(theProjection.c_str());
-  if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference from WKT");
-
+  itsSpatialReference = *make_sr(theProjection).release();
+  InitRectConversions();
   InitProj();
 }
 
@@ -1154,9 +1206,7 @@ void NFmiArea::InitProj()
 {
   // WGS84 converters
 
-  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
-  auto err = wgs84->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE) throw std::runtime_error("Failed to create spatial reference for WGS84");
+  auto wgs84 = make_sr("WGS84");
 
   itsToWorldXYConverter.reset(OGRCreateCoordinateTransformation(wgs84.get(), &itsSpatialReference));
 
@@ -1175,10 +1225,7 @@ void NFmiArea::InitProj()
 
   auto proj = itsProj.InverseProjStr();
 
-  std::unique_ptr<OGRSpatialReference> latlon(new OGRSpatialReference);
-  err = latlon->SetFromUserInput(proj.c_str());
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to create spatial reference from " + proj);
+  auto latlon = make_sr(proj);
 
   itsNativeToLatLonConverter.reset(
       OGRCreateCoordinateTransformation(&itsSpatialReference, latlon.get()));
