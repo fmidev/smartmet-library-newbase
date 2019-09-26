@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <ctime>    // for time()
 #include <fstream>  // for time()
+#include <regex>
 #include <sstream>
 #include <stdexcept>
 #include <vector>  // for time()
@@ -828,12 +829,12 @@ const std::list<std::string> PatternFiles(const std::string &thePattern)
 
   // Search matching files
 
-  boost::regex reg(regex);
+  std::regex reg(regex);
 
   fs::directory_iterator end_dir;
   for (fs::directory_iterator it(path); it != end_dir; ++it)
   {
-    if (boost::regex_match(it->path().filename().string().c_str(), reg))
+    if (std::regex_match(it->path().filename().string().c_str(), reg))
       if (!fs::is_directory(*it))
       {
         out.emplace_back(it->path().filename().string().c_str());
@@ -988,12 +989,12 @@ time_t FindFile(const string &theFileFilter,
 
   // Search matching files
 
-  boost::regex reg(regex);
+  std::regex reg(regex);
 
   fs::directory_iterator end_dir;
   for (fs::directory_iterator it(path); it != end_dir; ++it)
   {
-    if (boost::regex_match(it->path().filename().string().c_str(), reg))
+    if (std::regex_match(it->path().filename().string().c_str(), reg))
     {
       matches.insert(make_pair(fs::last_write_time(*it), it->path().filename().string().c_str()));
     }
