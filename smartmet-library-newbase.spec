@@ -22,6 +22,7 @@ Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
+Requires: boost-regex
 Requires: gdal
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
@@ -90,7 +91,6 @@ FMI newbase static library
 - Removed global FmiInfoVersion variable
 - Added constant global DefaultInfoVersion = 7
 - Removed most of support for info versions below 6
-- Replaced boost::regex with std::regex
 - Fixed projection parser memory overflow discovered with ASAN
 - Removed NFmiMetBox as obsolete
 - Removed constructor/destructor call counters as obsolete debugging variables
