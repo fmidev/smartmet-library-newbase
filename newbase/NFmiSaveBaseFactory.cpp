@@ -20,19 +20,9 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-
 #include "NFmiVersion.h"
-
 #include <boost/lexical_cast.hpp>
-
-// Having 'extern' and initializatin is no good (gcc gives a warning).
-//  -AKa 3-Jun-10
-//
-// Note that these are GLOBALLY WRITTEN TO in 'NFmiMetBox.cpp' (looks very suspicious...)
-//  -AKa 3-Jun-10
-//
-unsigned short FmiBoxVersion = 3;
-unsigned short FmiInfoVersion = 7;
+#include <boost/atomic.hpp>
 
 // ----------------------------------------------------------------------
 /*!

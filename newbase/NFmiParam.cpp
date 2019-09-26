@@ -126,7 +126,8 @@ std::ostream &NFmiParam::Write(std::ostream &file) const
   file << itsMinValue << " " << itsMaxValue << " " << static_cast<int>(itsInterpolationMethod)
        << " ";
 
-  if (FmiInfoVersion >= 4)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file << itsScale << " " << itsBase << " " << itsPrecision;
   }
@@ -151,7 +152,8 @@ std::istream &NFmiParam::Read(std::istream &file)
   file >> itsMinValue >> itsMaxValue >> theInterpolationMethod;
   itsInterpolationMethod = FmiInterpolationMethod(theInterpolationMethod);
 
-  if (FmiInfoVersion >= 4)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file >> itsScale >> itsBase;
     file >> itsPrecision;

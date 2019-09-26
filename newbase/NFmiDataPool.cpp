@@ -735,7 +735,8 @@ std::ostream &NFmiDataPool::Write(std::ostream &file) const
   const int kFloat = 6;
   file << kFloat << std::endl;
 
-  if (FmiInfoVersion >= 6)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 6)
   {
     file << fUseBinaryStorage << std::endl;
   }
@@ -778,7 +779,8 @@ std::istream &NFmiDataPool::Read(std::istream &file)
   unsigned long theType;
   file >> theType;
 
-  if (FmiInfoVersion >= 6)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 6)
   {
     file >> fUseBinaryStorage;
   }

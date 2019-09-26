@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.8.12
+Version: 19.9.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -19,14 +19,12 @@ BuildRequires: geos-devel >= 3.5.0
 BuildRequires: gdal-devel
 BuildRequires: fmt-devel
 Requires: boost-date-time
-Requires: boost-regex
 Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
 Requires: gdal
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
-Requires: postgis < 2.1
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost-devel
@@ -88,6 +86,17 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Sep 26 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.26-1.fmi
+- Removed global FmiInfoVersion variable
+- Added constant global DefaultInfoVersion = 7
+- Removed most of support for info versions below 6
+- Replaced boost::regex with std::regex
+- Fixed projection parser memory overflow discovered with ASAN
+- Removed NFmiMetBox as obsolete
+- Removed constructor/destructor call counters as obsolete debugging variables
+- Use memcpy instead of reinterpret_cast to avoid ASAN warnings on alignment issues
+- Removed wrong dependency on postgis
+
 * Mon Aug 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.8.12-1.fmi
 - Fixed time interpolation to check the time gap to both times
 

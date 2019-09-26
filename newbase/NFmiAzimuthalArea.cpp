@@ -837,7 +837,8 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
   int oldPrec = file.precision();
   file.precision(15);
 
-  if (FmiInfoVersion >= 5)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 5)
   {
     file << itsRadialRange << " 0"
          << " 0" << endl;
@@ -871,7 +872,8 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
   file >> itsCentralLongitude;
   file >> theCentralLatitude;
   file >> theTrueLatitude;
-  if (FmiInfoVersion >= 5)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 5)
   {
     unsigned long dummy;
     file >> itsRadialRange >> dummy >> dummy;

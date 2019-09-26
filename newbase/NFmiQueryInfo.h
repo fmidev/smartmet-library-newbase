@@ -17,6 +17,7 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeDescriptor.h"
+#include "NFmiVersion.h"
 #include "NFmiVPlaceDescriptor.h"
 
 class NFmiQueryData;
@@ -37,7 +38,7 @@ class _FMI_DLL NFmiQueryInfo
  public:
   virtual ~NFmiQueryInfo();
 
-  NFmiQueryInfo(double theInfoVersion = 7.);
+  NFmiQueryInfo(double theInfoVersion = DefaultFmiInfoVersion);
 
   NFmiQueryInfo(const NFmiQueryInfo &theInfo);
 
@@ -45,7 +46,7 @@ class _FMI_DLL NFmiQueryInfo
                 const NFmiTimeDescriptor &theTimeDescriptor,
                 const NFmiHPlaceDescriptor &theHPlaceDescriptor = NFmiHPlaceDescriptor(),
                 const NFmiVPlaceDescriptor &theVPlaceDescriptor = NFmiVPlaceDescriptor(),
-                double theInfoVersion = 7.);
+                double theInfoVersion = DefaultFmiInfoVersion);
 
   NFmiQueryInfo(NFmiQueryData *data,
                 NFmiParamDescriptor *theParamDescriptor = 0,
@@ -188,7 +189,7 @@ class _FMI_DLL NFmiQueryInfo
   // ****** HUOM!!!! *******************************************
 
   // ****** Cached interpolation methods ***********************
-  // 17.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
+
   virtual float CachedInterpolation(const NFmiLocationCache &theLocationCache,
                                     const NFmiTimeCache &theTimeCache);
   float CachedInterpolation(const NFmiLocationCache &theLocationCache);
@@ -500,10 +501,6 @@ class _FMI_DLL NFmiQueryInfo
   // Lapsi luokat tarvitsevat tälläiset maski-metodit, tässä toteutetaan vain dummyna.
   virtual void MaskType(unsigned long /* theMaskType */){};
   virtual unsigned long MaskType() { return 0; };
-#ifndef NDEBUG
-  static int itsConstructorCalls;  // tämä on yritys tutkia mahdollisia vuotoja ohjelmissä
-  static int itsDestructorCalls;   // kuinka monta oliota on luotu ja tuhottu
-#endif                             // NDEBUG
 
   float CalcTimeOffsetToLastTime(const NFmiMetTime &theTime,
                                  const NFmiMetTime &time1,
@@ -514,7 +511,7 @@ class _FMI_DLL NFmiQueryInfo
                                       unsigned long thePossibleSourceSizeX = gMissingIndex,
                                       unsigned long thePossibleSourceSizeY = gMissingIndex);
   bool CalcTimeCache(NFmiQueryInfo &theTargetInfo, checkedVector<NFmiTimeCache> &theTimeCache);
-  // 17.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
+
   virtual NFmiTimeCache CalcTimeCache(const NFmiMetTime &theTime);
 
   bool HasNonFiniteValueSet(void) const { return fHasNonFiniteValueSet; }

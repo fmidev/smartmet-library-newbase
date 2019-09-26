@@ -23,7 +23,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
-
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -226,7 +225,8 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
   long datatype;
   file >> datatype;
 
-  if (FmiInfoVersion >= 6)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 6)
     file >> itsSaveAsBinaryFlag;
   else
     itsSaveAsBinaryFlag = false;
@@ -419,8 +419,14 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
 
   if (itsData) return itsData[index];
 
-  const auto *ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
-  return ptr[index];
+  auto * addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
+  float value;
+  memcpy(&value,addr,sizeof(float));
+  return value;
+
+  // ASAN does not like the reinterpret_cast here due to bad float alignment:
+  // const auto *ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
+  // return ptr[index];
 }
 
 // ----------------------------------------------------------------------
@@ -472,11 +478,11 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
   const int kFloat = 6;
   file << kFloat << endl;
 
-  if (FmiInfoVersion >= 6) file << itsSaveAsBinaryFlag << endl;
+  if (DefaultFmiInfoVersion >= 6) file << itsSaveAsBinaryFlag << endl;
 
   file << itsSize * sizeof(float) << endl;
 
-  if (itsSaveAsBinaryFlag && FmiInfoVersion >= 6)
+  if (itsSaveAsBinaryFlag && DefaultFmiInfoVersion >= 6)
   {
     if (itsData != nullptr)
     {

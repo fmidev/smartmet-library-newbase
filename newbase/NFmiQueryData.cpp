@@ -35,11 +35,6 @@
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 
-//#ifndef  NDEBUG
-int NFmiQueryData::itsConstructorCalls = 0;
-int NFmiQueryData::itsDestructorCalls = 0;
-//#endif // NDEBUG
-
 using namespace std;
 
 // Staattiset versiot querydatan luku/kirjoituksesta, ottavat huomioon mm. VC++:n binääri
@@ -120,9 +115,6 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
 NFmiQueryData::~NFmiQueryData()
 {
   Destroy();
-  //#ifndef  NDEBUG
-  NFmiQueryData::itsDestructorCalls++;
-  //#endif // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -138,9 +130,6 @@ NFmiQueryData::NFmiQueryData()
       itsLatLonCache(),
       itsLatLonCacheFlag(BOOST_ONCE_INIT)
 {
-  //#ifndef  NDEBUG
-  NFmiQueryData::itsConstructorCalls++;
-  //#endif // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -159,9 +148,6 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryInfo &theInfo)
       itsLatLonCache(),
       itsLatLonCacheFlag(BOOST_ONCE_INIT)
 {
-  //#ifndef  NDEBUG
-  NFmiQueryData::itsConstructorCalls++;
-  //#endif // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -179,9 +165,6 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryData &theData)
       itsLatLonCache(theData.itsLatLonCache),
       itsLatLonCacheFlag(theData.itsLatLonCacheFlag)
 {
-  //#ifndef  NDEBUG
-  NFmiQueryData::itsConstructorCalls++;
-  //#endif // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -196,30 +179,17 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
       itsQueryInfo(nullptr),
       itsLatLonCacheFlag(BOOST_ONCE_INIT)
 {
-  //#ifndef  NDEBUG
-  NFmiQueryData::itsConstructorCalls++;
-  //#endif // NDEBUG
-
   // Filename "-" implies standard input
 
   if (thePath == "-")
   {
-    // Laitetaan yleinen infoversio numero talteen, että se
-    // voidaan palauttaa luvun jälkeen voimaan taas
-    unsigned short oldInfoVersion = FmiInfoVersion;
     Read();
-    // palautetaan yleinen infoversion takaisen ennalleen
-    FmiInfoVersion = oldInfoVersion;
   }
   else
   {
     // If the string is a directory, scan it for the latest querydata
 
     const string filename = NFmiFileSystem::FindQueryData(thePath);
-
-    // Laitetaan yleinen infoversio numero talteen, että se
-    // voidaan palauttaa luvun jälkeen voimaan taas
-    unsigned short oldInfoVersion = FmiInfoVersion;
 
     try
     {
@@ -251,7 +221,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
 
         bool use_mmap = theMemoryMapFlag;
 
-        if (FmiInfoVersion < 6) use_mmap = false;
+        if (itsQueryInfo->InfoVersion() < 6) use_mmap = false;
 
         if (itsQueryInfo->DoEndianByteSwap()) use_mmap = false;
 
@@ -271,15 +241,10 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
     }
     catch (...)
     {
-      // palautetaan yleinen infoversion takaisen ennalleen
       delete itsQueryInfo;
       delete itsRawData;
-      FmiInfoVersion = oldInfoVersion;
       throw;
     }
-
-    // palautetaan yleinen infoversion takaisen ennalleen
-    FmiInfoVersion = oldInfoVersion;
   }
 }
 
@@ -574,17 +539,11 @@ bool NFmiQueryData::IsEqual(const NFmiQueryData &theQueryData) const
 
 std::ostream &NFmiQueryData::Write(std::ostream &file) const
 {
-  double oldInfoVersion = FmiInfoVersion;  // Laitetaan yleinen infoversio numero talteen, että se
-                                           // voidaan palauttaa luvun jälkeen voimaan taas
-  FmiInfoVersion = static_cast<unsigned short>(InfoVersion());
-
   if (InfoVersion() >= 6) UseBinaryStorage(true);
 
   file << *itsQueryInfo;
   itsRawData->Write(file);
 
-  FmiInfoVersion = static_cast<unsigned short>(
-      oldInfoVersion);  // palautetaan yleinen infoversion takaisen ennalleen
   return file;
 }
 
@@ -599,18 +558,11 @@ std::ostream &NFmiQueryData::Write(std::ostream &file) const
 
 std::istream &NFmiQueryData::Read(std::istream &file)
 {
-  // Laitetaan yleinen infoversio numero talteen, että se
-  // voidaan palauttaa luvun jälkeen voimaan taas
-  unsigned short oldInfoVersion = FmiInfoVersion;
-
   // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
   itsQueryInfo = new NFmiQueryInfo();
   file >> *itsQueryInfo;
 
   itsRawData = new NFmiRawData(file, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
-
-  // palautetaan yleinen infoversion takaisen ennalleen
-  FmiInfoVersion = oldInfoVersion;
 
   return file;
 }

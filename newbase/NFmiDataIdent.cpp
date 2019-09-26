@@ -254,7 +254,8 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
   file << fIsDataParam << " ";
   file << fHasDataParams << " ";
 
-  if (FmiInfoVersion >= 4)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file << "0 ";               // Varattu
     file << "0 " << std::endl;  // Varattu
@@ -310,7 +311,8 @@ std::istream &NFmiDataIdent::Read(std::istream &file)
   file >> fIsDataParam;
   file >> fHasDataParams;
 
-  if (FmiInfoVersion >= 4)
+  // We trust everything to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file >> fReserve;
     file >> fReserve;
