@@ -628,8 +628,8 @@ return_type CreateProj(const std::string &projString,
       // Only key but no value, use empty string as value
       projParams.insert(make_pair(splitToken[0].erase(0, 1), string("")));
     }
-
-    projParams.insert(make_pair(splitToken[0].erase(0, 1), splitToken[1]));
+    else
+      projParams.insert(make_pair(splitToken[0].erase(0, 1), splitToken[1]));
   }
 
   //	print_parameter_map(projParams);
