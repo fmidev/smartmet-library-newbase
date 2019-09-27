@@ -48,7 +48,8 @@ NFmiIndividual& NFmiIndividual::operator=(const NFmiIndividual& theIndividual)
 std::ostream& NFmiIndividual::Write(std::ostream& file) const
 {
   file << itsIdent << std::endl;
-  if (FmiBoxVersion >= 2)
+  // We trust all data to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 2)
   {
     file << itsName;
   }
@@ -73,7 +74,8 @@ std::istream& NFmiIndividual::Read(std::istream& file)
 {
   file >> itsIdent;
 
-  if (FmiBoxVersion >= 2)
+  // We trust all data to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 6)
   {
     file >> itsName;
   }

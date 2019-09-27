@@ -190,7 +190,8 @@ std::ostream &NFmiStation::Write(std::ostream &file) const
   NFmiIndividual::Write(file);
   NFmiLocation::Write(file);
 
-  if (FmiInfoVersion >= 4)
+  // We trust all data to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file << itsMaxDistance << " ";
     file << static_cast<unsigned int>(itsIdentType) << std::endl;
@@ -215,7 +216,7 @@ std::istream &NFmiStation::Read(std::istream &file)
 
   itsMaxDistance = kFloatMissing;
 
-  if (FmiInfoVersion >= 4)
+  if (DefaultFmiInfoVersion >= 4)
   {
     unsigned int theIdentType;
     file >> itsMaxDistance;

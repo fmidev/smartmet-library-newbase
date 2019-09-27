@@ -344,7 +344,8 @@ std::istream &NFmiParamDescriptor::Read(std::istream &file)
   itsParamBag->Reset();
   for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
   {
-    if (FmiInfoVersion >= 3)
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 3)
       file >> itsActivity[i];
     else
     {

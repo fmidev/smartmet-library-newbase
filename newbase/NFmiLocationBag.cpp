@@ -363,7 +363,8 @@ std::ostream &NFmiLocationBag::Write(std::ostream &file) const
 {
   NFmiSize::Write(file);
 
-  if (FmiInfoVersion >= 4)
+  // We trust all data to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file << itsLocations[0]->ClassId() << std::endl;
   }
@@ -391,7 +392,8 @@ std::istream &NFmiLocationBag::Read(std::istream &file)
   NFmiSize::Read(file);
   int classID = kNFmiStation;
 
-  if (FmiInfoVersion >= 4)
+  // We trust all data to be at least version 6 by now
+  if (DefaultFmiInfoVersion >= 4)
   {
     file >> classID;
   }

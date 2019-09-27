@@ -1078,8 +1078,9 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
       auto theSize = static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
                                                       : itsTimeList->NumberOfItems());
       itsActivity = new bool[theSize];
+      // We trust everything to be at least version 6 by now
       for (int i = 0; i < theSize; i++)
-        if (FmiInfoVersion >= 3)
+        if (DefaultFmiInfoVersion >= 3)
           file >> itsActivity[i];
         else
           itsActivity[i] = true;
@@ -1090,8 +1091,9 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
     if (itsOriginTimeBag != nullptr)
     {
       itsActivity = new bool[static_cast<int>(itsOriginTimeBag->GetSize())];
+      // We trust everything to be at least version 6 by now
       for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
-        if (FmiInfoVersion >= 3)
+        if (DefaultFmiInfoVersion >= 3)
           file >> itsActivity[i];
         else
           itsActivity[i] = true;

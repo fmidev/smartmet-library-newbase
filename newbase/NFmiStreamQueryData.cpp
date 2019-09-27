@@ -168,26 +168,24 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
                                     NFmiQueryData *theQueryData,
                                     long theLibVersion) const
 {
-  FmiInfoVersion = static_cast<unsigned short>(theLibVersion);
-  if (FmiInfoVersion < 5) FmiInfoVersion = 5;
+  auto version =  static_cast<unsigned short>(theLibVersion);
+  if (version < 5) version = 5;
 
   ofstream dataFile(theFileName, ios::binary | ios::out);
   if (dataFile)
   {
     if (theQueryData)
     {
-      //		  theQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio 7:ssa
-      // pitää asentaa 'sisäinen' versio numerokin
       theQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+      theQueryData->InfoVersion(version);
       dataFile << *theQueryData;
     }
     else
     {
       if (itsQueryData)
       {
-        //			  itsQueryData->InfoVersion(FmiInfoVersion); // uudessa data versio
-        // 7:ssa pitää asentaa 'sisäinen' versio numerokin
         itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+	itsQueryData->InfoVersion(version);
         dataFile << *itsQueryData;
       }
       else

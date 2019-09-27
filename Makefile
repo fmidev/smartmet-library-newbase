@@ -28,6 +28,9 @@ objdir = obj
 
 DEFINES = -DUNIX -DWGS84 -D_REENTRANT
 
+-include $(HOME)/.smartmet.mk
+GCC_DIAG_COLOR ?= always
+
 # Say 'yes' to disable Gdal
 DISABLED_GDAL=
 ifeq ($(DISABLED_GDAL),yes)
@@ -50,7 +53,7 @@ ifeq ($(CXX), clang++)
 
 else
 
- FLAGS = -std=c++11 -fPIC -MD -Wall -W -Wno-unused-parameter -fdiagnostics-color=always
+ FLAGS = -std=c++11 -fPIC -MD -Wall -W -Wnon-virtual-dtor -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
 
  FLAGS_DEBUG = \
 	-Wcast-align \
@@ -73,6 +76,13 @@ else
 
 endif
 
+ifeq ($(TSAN), yes)
+  FLAGS += -fsanitize=thread
+endif
+ifeq ($(ASAN), yes)
+  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
+endif
+
 # Compile options in detault, debug and profile modes
 
 CFLAGS         = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
@@ -83,10 +93,10 @@ CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
 LIBS = -L$(libdir) \
 	-lfmt \
+	-lboost_regex \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
-	-lboost_regex \
 	-lboost_thread
 ifneq ($(DISABLED_GDAL),yes)
   LIBS += -lgdal

@@ -66,11 +66,6 @@ using namespace std;
 static const NFmiString gInfoHeaderKeyWord("FMI_");
 #include "NFmiVersion.h"
 
-#ifndef NDEBUG
-int NFmiQueryInfo::itsConstructorCalls = 0;
-int NFmiQueryInfo::itsDestructorCalls = 0;
-#endif  // NDEBUG
-
 // Jos on maailma dataa, joka ei mene maailman ympäri kokonaan, vaan esim. 0 -> 359.75
 // koska tuo 360 asteen sarake olisi sama kuin 0 asteen sarake. Tällöin jos tarvitaan interpoloida
 // alueelle 359.75 - 360 arvoja, käytetään tätä indeksiä merkitsemään NFmiLocationCache -luokan
@@ -281,9 +276,6 @@ NFmiQueryInfo::NFmiQueryInfo(double theInfoVersion)
       fHasNonFiniteValueSet(false)
 {
   itsHeaderText = new NFmiStringList;
-#ifndef NDEBUG
-  NFmiQueryInfo::itsConstructorCalls++;
-#endif  // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -349,9 +341,6 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
     itsHPlaceDescriptor = new NFmiHPlaceDescriptor(theLocationBag);
   }
   itsHeaderText = new NFmiStringList;
-#ifndef NDEBUG
-  NFmiQueryInfo::itsConstructorCalls++;
-#endif  // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -475,9 +464,6 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
   // (ja mm. levelit osoittaa 1. leveliin, mikä unohtuu helposti käyttäjiltä)
 
   First();
-#ifndef NDEBUG
-  NFmiQueryInfo::itsConstructorCalls++;
-#endif  // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -534,9 +520,6 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiQueryInfo &theInfo)
     itsPostProc = new NFmiStringList;
     *itsPostProc = *theInfo.itsPostProc;
   }
-#ifndef NDEBUG
-  NFmiQueryInfo::itsConstructorCalls++;
-#endif  // NDEBUG
 }
 
 // ----------------------------------------------------------------------.
@@ -558,7 +541,7 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
       itsPostProc(nullptr),
       itsNewClassIdent(kNFmiQueryInfo),
       itsCombinedParamParser(nullptr),
-      itsInfoVersion(7.0),
+      itsInfoVersion(DefaultFmiInfoVersion),
       itsGridXNumber(0),
       itsGridYNumber(0)
       //  , fUseStaticDataMask(false)
@@ -571,10 +554,6 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
       fDoEndianByteSwap(false),
       fHasNonFiniteValueSet(false)
 {
-#ifndef NDEBUG
-  NFmiQueryInfo::itsConstructorCalls++;
-#endif  // NDEBUG
-
   ifstream file(filename.c_str(), ios::in | ios::binary);
   if (!file) throw runtime_error("Could not open '" + filename + "' for reading");
 
@@ -607,9 +586,6 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
 NFmiQueryInfo::~NFmiQueryInfo()
 {
   Destroy();
-#ifndef NDEBUG
-  NFmiQueryInfo::itsDestructorCalls++;
-#endif  // NDEBUG
 }
 
 // ----------------------------------------------------------------------
@@ -620,47 +596,26 @@ NFmiQueryInfo::~NFmiQueryInfo()
 
 void NFmiQueryInfo::Destroy()
 {
-  if (itsHeaderText)
-  {
-    delete itsHeaderText;
-    itsHeaderText = nullptr;
-  }
+  delete itsHeaderText;
+  itsHeaderText = nullptr;
 
-  if (itsPostProc)
-  {
-    delete itsPostProc;
-    itsPostProc = nullptr;
-  }
+  delete itsPostProc;
+  itsPostProc = nullptr;
 
-  if (itsTimeDescriptor)
-  {
-    delete itsTimeDescriptor;
-    itsTimeDescriptor = nullptr;
-  }
+  delete itsTimeDescriptor;
+  itsTimeDescriptor = nullptr;
 
-  if (itsHPlaceDescriptor)
-  {
-    delete itsHPlaceDescriptor;
-    itsHPlaceDescriptor = nullptr;
-  }
+  delete itsHPlaceDescriptor;
+  itsHPlaceDescriptor = nullptr;
 
-  if (itsVPlaceDescriptor)
-  {
-    delete itsVPlaceDescriptor;
-    itsVPlaceDescriptor = nullptr;
-  }
+  delete itsVPlaceDescriptor;
+  itsVPlaceDescriptor = nullptr;
 
-  if (itsParamDescriptor)
-  {
-    delete itsParamDescriptor;
-    itsParamDescriptor = nullptr;
-  }
+  delete itsParamDescriptor;
+  itsParamDescriptor = nullptr;
 
-  if (itsCombinedParamParser)
-  {
-    delete itsCombinedParamParser;
-    itsCombinedParamParser = nullptr;
-  }
+  delete itsCombinedParamParser;
+  itsCombinedParamParser = nullptr;
 
   itsNewClassIdent = kNFmiQueryInfo;
 
@@ -1255,16 +1210,15 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
     char tmp[3];
     file >> tmp;
     file >> itsInfoVersion;
-    FmiInfoVersion = static_cast<unsigned short>(itsInfoVersion);
   }
   else
   {
     throw runtime_error("NFmiQueryInfo::File is not QueryInfo-class");
   }
 
-  if (itsInfoVersion < 4)
+  if (itsInfoVersion < 6)
   {
-    throw runtime_error("NFmiQueryInfo::File is old QueryInfo-class");
+    throw runtime_error("Querydata versions below 6 are no longer supported");
   }
 
   // VERSIOHALLINTAA
