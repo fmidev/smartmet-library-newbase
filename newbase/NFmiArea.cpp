@@ -602,7 +602,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
            << *clat << '\n'
            << *tlat << '\n';
 
-      if (FmiInfoVersion >= 5) file << "0 0 0\n";
+      if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
 
       int oldPrec = file.precision();
       file.precision(15);
@@ -623,7 +623,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
            << itsXYRect << TopLeftCorner() << BottomRightCorner() << *clon << '\n'
            << *clat << "\n90\n";
 
-      if (FmiInfoVersion >= 5) file << "0 0 0\n";
+      if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
 
       int oldPrec = file.precision();
       file.precision(15);
