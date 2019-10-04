@@ -27,12 +27,28 @@
 
 namespace
 {
+// Known datums : those listed in PROJ.4 pj_datums.c
+
+std::map<std::string, std::string> known_datums = {
+    {"WGS84", "+a=6378137 +rf=298.257223563 +towgs84=0,0,0"},
+    {"GGRS87", "+a=6378137 +rf=298.257222101 +towgs84=-199.87,74.79,246.62"},
+    {"NAD83", "+a=6378137 +rf=298.257222101 +towgs84=0,0,0"},
+    {"NAD27", "+a=6378206.4 +b=6356583.8 +nadgrids=@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat"},
+    {"potsdam", "+a=6377397.155 +rf=299.1528128 +nadgrids=@BETA2007.gsb"},
+    {"carthage", "+a=6378249.2 +rf=293.4660212936269 +towgs84=-263.0,6.0,431.0"},
+    {"hermannskogel",
+     "+a=6377397.155 +rf=299.1528128 +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232"},
+    {"ire65",
+     "+a=6377340.189 +b=6356034.446 +towgs84=482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15"},
+    {"nzgd49", "+a=6378388 +rf=297. +towgs84=59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993"},
+    {"OSGB36",
+     "+a=6377563.396 +b=6356256.910 "
+     "+towgs84=446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894"}};
+
 // Known reference ellipsoids : those listed in PROJ.4 pj_ellps.c
 
-//  {"FMI", },
-
 std::map<std::string, std::string> known_ellipsoids = {
-    {"FMI", "+R=6371220 +over +no_defs +towgs84=0,0,0"},
+    {"FMI", "+R=6371220"},
     {"MERIT", "+a=6378137 +rf=298.257"},
     {"SGS85", "+a=6378136 +rf=298.257"},
     {"GRS80", "+a=6378137 +rf=298.257222101"},
@@ -84,12 +100,19 @@ std::unique_ptr<OGRSpatialReference> make_sr(std::string theDesc)
   if (theDesc.empty())
     throw std::runtime_error("Cannot create spatial reference from empty string");
 
-  // Substitute for known ellipsoids
+  // Substitute for known datums/ellipsoids
 
   auto desc = theDesc;
 
-  auto pos = known_ellipsoids.find(desc);
-  if (pos != known_ellipsoids.end()) desc = std::string("+proj=longlat ") + pos->second;
+  auto pos = known_datums.find(desc);
+  if (pos != known_datums.end())
+    desc = std::string("+proj=longlat ") + pos->second + " +over +no_defs";
+  else
+  {
+    pos = known_ellipsoids.find(desc);
+    if (pos != known_ellipsoids.end())
+      desc = std::string("+proj=longlat ") + pos->second + " +towgs84=0,0,0 +over +no_defs";
+  }
 
   std::unique_ptr<OGRSpatialReference> sr(new OGRSpatialReference);
   auto err = sr->SetFromUserInput(desc.c_str());
