@@ -30,6 +30,7 @@ namespace
 // Known datums : those listed in PROJ.4 pj_datums.c
 
 std::map<std::string, std::string> known_datums = {
+    {"FMI", "+R=6371220 +towgs84=0,0,0"},
     {"WGS84", "+a=6378137 +rf=298.257223563 +towgs84=0,0,0"},
     {"GGRS87", "+a=6378137 +rf=298.257222101 +towgs84=-199.87,74.79,246.62"},
     {"NAD83", "+a=6378137 +rf=298.257222101 +towgs84=0,0,0"},
@@ -48,7 +49,6 @@ std::map<std::string, std::string> known_datums = {
 // Known reference ellipsoids : those listed in PROJ.4 pj_ellps.c
 
 std::map<std::string, std::string> known_ellipsoids = {
-    {"FMI", "+R=6371220"},
     {"MERIT", "+a=6378137 +rf=298.257"},
     {"SGS85", "+a=6378136 +rf=298.257"},
     {"GRS80", "+a=6378137 +rf=298.257222101"},
@@ -106,12 +106,11 @@ std::unique_ptr<OGRSpatialReference> make_sr(std::string theDesc)
 
   auto pos = known_datums.find(desc);
   if (pos != known_datums.end())
-    desc = std::string("+proj=longlat ") + pos->second + " +over +no_defs";
+    desc = std::string("+proj=longlat ") + pos->second;
   else
   {
     pos = known_ellipsoids.find(desc);
-    if (pos != known_ellipsoids.end())
-      desc = std::string("+proj=longlat ") + pos->second + " +towgs84=0,0,0 +over +no_defs";
+    if (pos != known_ellipsoids.end()) desc = std::string("+proj=longlat ") + pos->second;
   }
 
   std::unique_ptr<OGRSpatialReference> sr(new OGRSpatialReference);
