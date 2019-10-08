@@ -150,8 +150,8 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
       npole_lat,
       kRearth);
 
-  // the legacy corners are in rotated spherical latlon coordinate, so a conversion to eqc
-  // does not need to handle the rotation at all - we'll just do the same thing as for LatLonArea
+  // the legacy corners are in rotated spherical latlon coordinate.
+  // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
       "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
       "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",

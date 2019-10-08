@@ -325,7 +325,9 @@ ProjStrings parse_projection(const std::string &theProjection)
         spole_lon,  // no idea why this is how it works
         npole_lat,
         kRearth);
+
     // the legacy corners are in rotated spherical latlon coordinates
+    // the +to_meter setting is necessary to avoid radians
     result.sphere = fmt::format(
         "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
         "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
