@@ -141,20 +141,21 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theSouthPole)
 {
   auto npole_lat = -theSouthPole.Y();  // reflect the pole
-  auto npole_lon = fmod(180 + theSouthPole.X(), 360);
+  // auto npole_lon = fmod(180 + theSouthPole.X(), 360);
 
   auto proj = fmt::format(
-      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} "
+      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} "
       "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-      npole_lon,
+      theSouthPole.X(),  // no idea why this is how it works
       npole_lat,
       kRearth);
 
-  // the legacy corners are in rotated spherical latlon coordinates
+  // the legacy corners are in rotated spherical latlon coordinate, so a conversion to eqc
+  // does not need to handle the rotation at all - we'll just do the same thing as for LatLonArea
   auto sphere = fmt::format(
       "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
       "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-      npole_lon,
+      theSouthPole.X(),  // no idea why this works
       npole_lat,
       kRearth);
 
