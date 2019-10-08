@@ -596,7 +596,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (!plon || !plat) throw std::runtime_error("Internal error in writing rotated latlon area");
 
       // Note: the world rect print order is correct, top left then bottom right
-      NFmiPoint southpole(*plon, -(*plat));
+      NFmiPoint southpole(180 + *plon, -(*plat));
       file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
            << itsXYRect << itsWorldRect.TopLeft() << itsWorldRect.BottomRight() << "0 0\n0 0\n"
            << itsXScaleFactor << ' ' << -itsYScaleFactor << '\n'
