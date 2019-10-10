@@ -11,10 +11,9 @@
 #include "NFmiProj.h"
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
-
 #include <boost/shared_ptr.hpp>
 #include <gdal/ogr_geometry.h>
-
+#include <memory>
 #include <string>
 
 class OGRCoordinateTransformation;
@@ -23,9 +22,10 @@ class OGRCoordinateTransformation;
 class _FMI_DLL NFmiArea
 {
  public:
-  ~NFmiArea() = default;
-  NFmiArea(const NFmiArea &theArea) = default;
-  NFmiArea &operator=(const NFmiArea &theArea) = default;
+  // These are defined since implementation is hidden
+  ~NFmiArea();
+  NFmiArea(const NFmiArea &theArea);
+  NFmiArea &operator=(const NFmiArea &theArea);
 
   // Needed for reading legacy classes from a file. An immediate Read() call is expected.
   NFmiArea(int theClassId);
@@ -126,7 +126,6 @@ class _FMI_DLL NFmiArea
   double FixLongitude(double theLongitude) const;
 #endif
 
- private:
   // A private proxy class to avoid unnecessary *CreateFrom duplicates. This proxy
   // implicitly converts acceptable spatial reference types into an actual spatial reference.
   class SpatialReferenceProxy
@@ -150,8 +149,8 @@ class _FMI_DLL NFmiArea
 
  public:
   // Intentional API design choice since the object has internal reference counting
-  OGRSpatialReference *SpatialReference() { return &itsSpatialReference; }
-  const OGRSpatialReference *SpatialReference() const { return &itsSpatialReference; }
+  OGRSpatialReference *SpatialReference();
+  const OGRSpatialReference *SpatialReference() const;
 
   // Named constructors used to clarify intent of the parameters. Note that the proxy
   // may accept actual spatial references or strings from which to construct them.
@@ -186,7 +185,7 @@ class _FMI_DLL NFmiArea
                                            double theWidthInMeters,
                                            double theHeightInMeters);
 
-  const NFmiProj &Proj() const { return itsProj; }
+  const NFmiProj &Proj() const;
 
   // from spherical coordinates to WGS84
   static NFmiPoint SphereToWGS84(const NFmiPoint &theLatLon);
@@ -197,47 +196,15 @@ class _FMI_DLL NFmiArea
 
  private:
   // We allow only the Create* static methods to construct projections
+  NFmiArea();
 
-  NFmiArea() = default;
   void InitSpatialReference(const std::string &theProjection);
   void InitProj();
   void InitRectConversions();
   void CheckRectConversions(double theXScaleFactor, double theYScaleFactor);
 
-  OGRSpatialReference itsSpatialReference{NULL};
-
-  // WGS84 conversions
-  boost::shared_ptr<OGRCoordinateTransformation> itsToLatLonConverter;
-  boost::shared_ptr<OGRCoordinateTransformation> itsToWorldXYConverter;
-
-  // Projection geographic coordinate conversions
-  boost::shared_ptr<OGRCoordinateTransformation> itsNativeToLatLonConverter;
-  boost::shared_ptr<OGRCoordinateTransformation> itsNativeToWorldXYConverter;
-
-  NFmiRect itsWorldRect;           // bbox in native WorldXY coordinates
-  NFmiRect itsXYRect{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
-
-  // This is only needed when reading legacy files from disk
-  int itsClassId = kNFmiArea;
-  std::string itsClassName = "kNFmiArea";
-
-  // For writing legacy projections back to disk
-
-  NFmiPoint TopLeftCorner() const;
-  NFmiPoint BottomRightCorner() const;
-  boost::optional<NFmiPoint> itsTopLeftCorner;
-  boost::optional<NFmiPoint> itsBottomRightCorner;
-
-  // For speeding up coordinate conversions and to aid legacy parts of Write()
-  double itsXScaleFactor = 0;
-  double itsYScaleFactor = 0;
-
-  // For providing PROJ.4 parameter information
-
-  NFmiProj itsProj;
-
-  // Should we flop the data?
-  bool itsFlopped = false;
+  struct Impl;
+  std::unique_ptr<Impl> impl;
 
 };  // class NFmiArea
 
