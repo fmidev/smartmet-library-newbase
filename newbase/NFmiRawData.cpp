@@ -419,9 +419,9 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
 
   if (itsData) return itsData[index];
 
-  auto * addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
+  auto *addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
   float value;
-  memcpy(&value,addr,sizeof(float));
+  memcpy(&value, addr, sizeof(float));
   return value;
 
   // ASAN does not like the reinterpret_cast here due to bad float alignment:

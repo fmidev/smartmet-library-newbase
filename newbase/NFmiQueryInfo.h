@@ -17,8 +17,8 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeDescriptor.h"
-#include "NFmiVersion.h"
 #include "NFmiVPlaceDescriptor.h"
+#include "NFmiVersion.h"
 
 class NFmiQueryData;
 class NFmiCombinedParam;

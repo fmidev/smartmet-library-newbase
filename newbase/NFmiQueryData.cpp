@@ -112,10 +112,7 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData::~NFmiQueryData()
-{
-  Destroy();
-}
+NFmiQueryData::~NFmiQueryData() { Destroy(); }
 
 // ----------------------------------------------------------------------
 /*!

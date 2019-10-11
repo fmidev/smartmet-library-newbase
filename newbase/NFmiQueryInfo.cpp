@@ -583,10 +583,7 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo::~NFmiQueryInfo()
-{
-  Destroy();
-}
+NFmiQueryInfo::~NFmiQueryInfo() { Destroy(); }
 
 // ----------------------------------------------------------------------
 /*!

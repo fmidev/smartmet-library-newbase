@@ -18,11 +18,11 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStationBag.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-#include "NFmiVersion.h"
-#include <boost/lexical_cast.hpp>
 #include <boost/atomic.hpp>
+#include <boost/lexical_cast.hpp>
 
 // ----------------------------------------------------------------------
 /*!
