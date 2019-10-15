@@ -30,10 +30,12 @@
 #include <io.h>
 #endif
 
+#ifdef FMI_COMPRESSION
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
+#endif
 
 using namespace std;
 
@@ -195,6 +197,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
 
       itsQueryInfo = new NFmiQueryInfo;
 
+#ifdef FMI_COMPRESSION
       if (NFmiFileSystem::IsCompressed(filename))
       {
         using namespace boost;
@@ -211,6 +214,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
         if (!filter.good()) throw runtime_error("Error while reading '" + filename + "'");
       }
       else
+#endif
       {
         // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
 

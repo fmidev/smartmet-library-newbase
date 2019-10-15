@@ -55,6 +55,7 @@ class _FMI_DLL NFmiCommentStripper
                    checkedVector<unsigned long> theEndPositions);
   bool CollectStringPositions(const std::string& theSearchString,
                               checkedVector<unsigned long>& theResVector);
+  void StripBomMarkersFromStart();
 
  protected:
   std::string itsMessage;

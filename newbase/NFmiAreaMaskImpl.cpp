@@ -17,6 +17,7 @@
 // ======================================================================
 
 #include "NFmiAreaMaskImpl.h"
+#include "NFmiSimpleCondition.h"
 
 // ----------------------------------------------------------------------
 /*!
@@ -38,7 +39,8 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl()
       itsIntegrationFunctionType(0),
       itsFunctionArgumentCount(0),
       fHasSubMasks(false),
-      fEnabled(true)
+      fEnabled(true),
+      itsSimpleCondition()
 {
 }
 
@@ -71,7 +73,8 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiCalculationCondition &theOperation,
       itsIntegrationFunctionType(0),
       itsFunctionArgumentCount(0),
       fHasSubMasks(false),
-      fEnabled(true)
+      fEnabled(true),
+      itsSimpleCondition()
 {
 }
 
@@ -89,7 +92,9 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiAreaMaskImpl &theOther)
       itsIntegrationFunctionType(theOther.itsIntegrationFunctionType),
       itsFunctionArgumentCount(theOther.itsFunctionArgumentCount),
       fHasSubMasks(theOther.fHasSubMasks),
-      fEnabled(theOther.fEnabled)
+      fEnabled(theOther.fEnabled),
+      itsSimpleCondition(theOther.itsSimpleCondition ? theOther.itsSimpleCondition->Clone()
+                                                     : nullptr)
 {
 }
 
@@ -100,6 +105,12 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiAreaMaskImpl &theOther)
 // ----------------------------------------------------------------------
 
 NFmiAreaMaskImpl::~NFmiAreaMaskImpl() = default;
+
+void NFmiAreaMaskImpl::Initialize(void)
+{
+  if (itsSimpleCondition) itsSimpleCondition->Initialize();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theLatLon Undocumented
@@ -294,3 +305,23 @@ void NFmiAreaMaskImpl::Condition(const NFmiCalculationCondition &theCondition)
 
 bool NFmiAreaMaskImpl::IsRampMask() const { return itsMaskCondition.IsRampMask(); }
 // ======================================================================
+
+void NFmiAreaMaskImpl::DoIntegrationCalculations(float value) {}
+
+void NFmiAreaMaskImpl::InitializeIntegrationValues() {}
+
+bool NFmiAreaMaskImpl::SimpleConditionCheck(const NFmiCalculationParams &theCalculationParams)
+{
+  if (itsSimpleCondition)
+    return itsSimpleCondition->CheckCondition(theCalculationParams, true);
+  else
+    return true;
+}
+
+float NFmiAreaMaskImpl::CalculationPointValue(int theOffsetX,
+                                              int theOffsetY,
+                                              const NFmiMetTime &theInterpolationTime,
+                                              bool useInterpolatedTime)
+{
+  return kFloatMissing;
+}

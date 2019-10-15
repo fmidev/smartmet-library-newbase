@@ -168,6 +168,28 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 
   // 12.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
   virtual void Values(NFmiDataMatrix<float> &theMatrix, const NFmiMetTime &theInterpolatedTime);
+  // Hakee annetun time-rangen sisällä olevan kentän interpoloituna. Jos time-range menee toiselta
+  // aikasuunnalta yli, mutta toiselta ei, palautetaan nearesr, jos niin on määrätty
+  // (doNearestTimeIfPossible = true).
+  virtual void Values(NFmiDataMatrix<float> &theMatrix,
+                      const NFmiMetTime &theInterpolatedTime,
+                      long theTimeRangeInMinutes,
+                      bool doNearestTimeIfPossible = false);
+
+  // 31.5.2017 Tavi high performance bulk query
+  bool GetValues(size_t startIndex, size_t step, size_t count, std::vector<float> &values) const;
+  bool GetValuesPartial(size_t startIndex,
+                        size_t rowCount,
+                        size_t rowStep,
+                        size_t columnCount,
+                        size_t columnStep,
+                        std::vector<float> &values) const;
+  bool GetLevelToVec(std::vector<float> &values);
+  bool GetLevelToVecPartial(size_t x1, size_t y1, size_t x2, size_t y2, std::vector<float> &values);
+  bool GetCube(std::vector<float> &values);
+
+  bool GetInterpolatedLevel(std::vector<float> &values, const NFmiMetTime &time);
+  bool GetInterpolatedCube(std::vector<float> &values, const NFmiMetTime &t);
 
   void LandscapeValues(NFmiDataMatrix<float> &theMatrix,
                        const NFmiDataMatrix<float> &theDEMMatrix,
@@ -212,12 +234,23 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
               int theBackwardOffsetInMinutes,
               int theForwardOffsetInMinutes);
 
+  virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
+                      NFmiDataMatrix<float> &theValues,
+                      float P = kFloatMissing,
+                      float H = kFloatMissing);
   // 12.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
   virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
                       NFmiDataMatrix<float> &theValues,
                       const NFmiMetTime &theTime,
                       float P = kFloatMissing,
                       float H = kFloatMissing);
+  virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
+                      NFmiDataMatrix<float> &theValues,
+                      const NFmiMetTime &theTime,
+                      float P,
+                      float H,
+                      long theTimeRangeInMinutes,
+                      bool doNearestTimeIfPossible = false);
 
   void CroppedValues(NFmiDataMatrix<float> &theMatrix, int x1, int y1, int x2, int y2) const;
   void CroppedValues(NFmiDataMatrix<float> &theMatrix,
@@ -226,7 +259,14 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                      int y1,
                      int x2,
                      int y2);
-
+  void CroppedValues(NFmiDataMatrix<float> &theMatrix,
+                     const NFmiMetTime &theInterpolatedTime,
+                     int x1,
+                     int y1,
+                     int x2,
+                     int y2,
+                     long theTimeRangeInMinutes,
+                     bool doNearestTimeIfPossible = false);
   bool SetValues(const NFmiDataMatrix<float> &theMatrix);
 
   template <typename T>
@@ -520,6 +560,9 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const NFmiDataMatrix<float> &heightMatrix,
                                    const NFmiDataMatrix<float> &lapseRateMatrix,
                                    const NFmiDataMatrix<float> &maskMatrix);
+  float GetCurrentLevelPressure(void);
+  float GetCurrentLevelPressure(const NFmiPoint &theLatlon);
+  float GetCurrentLevelPressure(const NFmiPoint &theLatlon, const NFmiMetTime &theTime);
 
   size_t Index(void) const;
 
@@ -530,12 +573,9 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                    const unsigned long &theLocationIndex,
                                    const unsigned long &theLevelIndex,
                                    const unsigned long &theTimeIndex) const;
-
- protected:
   void InitFastInfo(void);
   std::vector<float> CalcPressureLevelDataPressures(void);
   std::vector<float> CalcHeightLevelDataHeights(void);
-  float GetCurrentLevelPressure(void);
   float FindFirstPressureValue(void);
   float FindFirstHeightValue(void);
   void DoWindComponentFix(const NFmiGrid &usedGrid,
@@ -817,6 +857,49 @@ inline bool NFmiFastQueryInfo::FirstTime(void)
 inline float NFmiFastQueryInfo::IndexFloatValue(size_t theIndex) const
 {
   return itsRefRawData ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param startIndex Undocumented
+ * \param step Undocumented
+ * \param count Undocumented
+ * \param values Vector to fill (and resize to count elements) with values startIndex,
+ * startIndex+step, startIndex+step*2, ..., startIndex+step*(count-1) - current iterators are
+ * invalidated by the resizing! \return false if out-of-range, true otherwise
+ */
+// ----------------------------------------------------------------------
+inline bool NFmiFastQueryInfo::GetValues(size_t startIndex,
+                                         size_t step,
+                                         size_t count,
+                                         std::vector<float> &values) const
+{
+  return itsRefRawData ? itsRefRawData->GetValues(startIndex, step, count, values) : false;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param startIndex Undocumented
+ * \param rowCount Undocumented
+ * \param rowStep Undocumented
+ * \param columCount Undocumented
+ * \param columnStep Undocumented
+ * \param values Vector to fill (and resize to count elements) with values startIndex,
+ * startIndex+rowStep, startIndex+rowStep*2, ..., startIndex+rowStep*(count-1),
+ * startIndex+columnStep, startIndex+columnStep+rowStep ... - current iterators are invalidated by
+ * the resizing! \return false if out-of-range, true otherwise
+ */
+// ----------------------------------------------------------------------
+inline bool NFmiFastQueryInfo::GetValuesPartial(size_t startIndex,
+                                                size_t rowCount,
+                                                size_t rowStep,
+                                                size_t columnCount,
+                                                size_t columnStep,
+                                                std::vector<float> &values) const
+{
+  return itsRefRawData ? itsRefRawData->GetValuesPartial(
+                             startIndex, rowCount, rowStep, columnCount, columnStep, values)
+                       : false;
 }
 
 // ----------------------------------------------------------------------

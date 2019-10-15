@@ -55,6 +55,8 @@ enum Type
                                  // popup-valikko)
   kQ3MacroParam = 25,  // makro-parametri joka lasketaan Q3-enginellä eli esim. RESULT = T_EC -
                        // T_HIR makrolla laskettu
+  kCapData = 26,       // Kun editorilla halutaan katsoa CAP/Varoke II dataa
+  kWmsData = 27,
   kSoundingParameterData = 1000  // HUOM! tästä on tarkoitus päästä eroon, mukana nyt siksi että on
                                  // olemassa näyttömakroja, joissa on käytetty tätä.
   // Vanha käyttö: luotaus parametrien (CAPE, CIN, jne.) erikois laskelmat tätä kautta, laitoin
@@ -88,5 +90,4 @@ enum SpecialParameters
   kFmiSpMatrixDataDraw =
       9998  // isolineview-luokalla piirrettävän matriisi-dataan liittyvä piirto-parametri
 };
-
 }  // end of namespace NFmiInfoData

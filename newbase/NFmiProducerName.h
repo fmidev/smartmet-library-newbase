@@ -33,6 +33,7 @@ enum FmiProducerName
   kFmiMAST = 1099,          //!< Fmi number for Mast observations
   kFmiTestBed = 1101,       //!< Fmi number for testbed vxt data
   kFmiHakeMessages = 1107,  //!< Fmi number for HAKE message data
+  kFmiKaHaMessages = 1108,  //!< Fmi number for KaHa message data (kansalais havainto)
   kFmiMETEOR = 2001,        //!< Fmi number for meteorologist
   kFmiAUTOMATIC = 2004,     //!< Fmi number for automatic (derived) values
   kFmiTAFMET = 2011         //!< Fmi number for TAFMET
