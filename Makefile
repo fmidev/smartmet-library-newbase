@@ -29,7 +29,7 @@ objdir = obj
 -include $(HOME)/.smartmet.mk
 GCC_DIAG_COLOR ?= always
 
-DEFINES = -DUNIX -D_REENTRANT
+DEFINES = -DUNIX -D_REENTRANT -DBOOST
 
 # Say 'yes' to disable Gdal
 DISABLED_GDAL=
