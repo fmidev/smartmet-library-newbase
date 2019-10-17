@@ -654,7 +654,7 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
         theInfo->Param(kFmiWindDirection);
         std::vector<float> wdValues(4, kFloatMissing);
         theInfo->GetCachedValues(theLocationCache, wdValues);
-        for (auto index = 0; index < wsValues.size(); index++)
+        for (std::size_t index = 0; index < wsValues.size(); index++)
         {
           switch (metaParamDataHolder.possibleMetaParamId())
           {
@@ -681,7 +681,7 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
         theInfo->Param(kFmiWindVMS);
         std::vector<float> vValues(4, kFloatMissing);
         theInfo->GetCachedValues(theLocationCache, vValues);
-        for (auto index = 0; index < uValues.size(); index++)
+        for (std::size_t index = 0; index < uValues.size(); index++)
         {
           switch (metaParamDataHolder.possibleMetaParamId())
           {
