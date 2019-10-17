@@ -23,7 +23,7 @@ class _FMI_DLL NFmiProj
 
  private:
   std::string itsProjStr;
-  std::map<std::string, double> itsDoubles;       // +R=6371220 etc
+  std::map<std::string, double> itsDoubles;       // +R=radius etc
   std::map<std::string, std::string> itsStrings;  // +ellps=intl etc
   std::set<std::string> itsOptions;               // +over etc
 };

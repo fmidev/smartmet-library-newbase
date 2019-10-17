@@ -33,7 +33,7 @@
  * orthographic,azimuth=0
  * stereographic,centrallongitude=0,centrallatitude=90,truelatitude=60
  * lambertequal,centrallongitude=10,centrallatitude=0,truelatitude=52
- * lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371220
+ * lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371229
  * gnomonic,centrallongitude=0,centrallatitude=90,truelatitude=60
  * equidist,centrallongitude=0,centrallatitude=90
  * \endcode
@@ -380,7 +380,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "lcc")
   {
-    // lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371220
+    // lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371229
     if (params.size() < 3 || params.size() > 5)
       throw runtime_error("lcc area requires max 3-5 parameters");
     const double clon = params[0];
