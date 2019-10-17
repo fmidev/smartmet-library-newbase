@@ -143,7 +143,7 @@ int NFmiProj::DetectClassId() const
     if (*name == "aeqd") return kNFmiEquiDistArea;
     if (*name == "lcc") return kNFmiLambertConformalConicArea;
     if (*name == "ob_tran" && GetString("o_proj") == std::string("eqc") &&
-        GetString("towgs84") == std::string("0,0,0"))
+        GetString("towgs84") == std::string("0,0,0") && GetDouble("o_lon_p") == 0.0)
       return kNFmiRotatedLatLonArea;
   }
   else if (*name == "tmerc" && GetString("ellps") == std::string("intl") &&
@@ -174,25 +174,10 @@ std::string NFmiProj::InverseProjStr() const
   // And keep only the parameters relevant to it. Note that +init is not here,
   // it is expanded to +datum and other options prior to this stage.
 
-  std::set<std::string> keepers{"proj",
-                                "datum",
-                                "ellps",
-                                "towgs84",
-                                "over",
-                                "no_defs",
-                                "to_meter",
-                                "o_proj",
-                                "o_lon_p",
-                                "o_lat_p",
-                                "R",
-                                "a",
-                                "b",
-                                "k",
-                                "k_0",
-                                "pm",
-                                "f",
-                                "axis",
-                                "wktext"};
+  std::set<std::string> keepers{"proj",    "datum",    "ellps",  "towgs84", "over",
+                                "no_defs", "to_meter", "o_proj", "o_lon_p", "o_lat_p",
+                                "lon_0",   "R",        "a",      "b",       "k",
+                                "k_0",     "pm",       "f",      "axis",    "wktext"};
 
   std::set<std::string> ints{"R", "a", "b"};  // one meter accuracy is enough for these
 

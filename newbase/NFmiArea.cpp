@@ -648,10 +648,14 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     {
       auto plat = Proj().GetDouble("o_lat_p");
       auto plon = Proj().GetDouble("o_lon_p");
-      if (!plon || !plat) throw std::runtime_error("Internal error in writing rotated latlon area");
+      auto lon0 = Proj().GetDouble("lon_0");
+      if (!plon || !plat || !lon0)
+        throw std::runtime_error("Internal error in writing rotated latlon area");
+      if (*plon != 0)
+        throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
 
       // Note: the world rect print order is correct, top left then bottom right
-      NFmiPoint southpole(180 + *plon, -(*plat));
+      NFmiPoint southpole(*lon0, -(*plat));
       file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
            << impl->itsXYRect << impl->itsWorldRect.TopLeft() << impl->itsWorldRect.BottomRight()
            << "0 0\n0 0\n"

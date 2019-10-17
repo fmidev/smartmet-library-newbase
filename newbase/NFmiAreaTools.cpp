@@ -140,23 +140,29 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole)
 {
-  auto npole_lat = -theSouthPole.Y();  // reflect the pole
-  // auto npole_lon = fmod(180 + theSouthPole.X(), 360);
+  // north pole is on the opposite side
+  auto npole_lat = -theSouthPole.Y();
+
+  // always rotate to the new meridian
+  double npole_lon = 0;
+  double lon_0 = theSouthPole.X();
 
   auto proj = fmt::format(
-      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} "
+      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
       "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-      theSouthPole.X(),  // no idea why this is how it works
+      npole_lon,
       npole_lat,
+      lon_0,
       kRearth);
 
   // the legacy corners are in rotated spherical latlon coordinate.
   // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
-      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
+      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +lon_0={} "
       "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
-      theSouthPole.X(),  // no idea why this works
+      npole_lon,
       npole_lat,
+      lon_0,
       kRearth);
 
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
