@@ -5,7 +5,6 @@
  */
 // ======================================================================
 
-#ifdef UNIX
 #ifndef DISABLED_GDAL
 
 #pragma once
@@ -103,6 +102,5 @@ class _FMI_DLL NFmiGdalArea : public NFmiArea
 };  // class NFmiGdalArea
 
 #endif  // DISABLED_GDAL
-#endif  // UNIX
 
 // ======================================================================
