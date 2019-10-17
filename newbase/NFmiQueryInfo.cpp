@@ -1221,7 +1221,7 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
       errorMessage += " trying to read higher queryData version data than supported, ";
       errorMessage += std::to_string(itsInfoVersion);
       errorMessage += " > ";
-      errorMessage += std::to_string(itsLatestKnownInfoVersion);
+      errorMessage += std::to_string(DefaultFmiInfoVersion);
       throw runtime_error(errorMessage);
     }
   }
