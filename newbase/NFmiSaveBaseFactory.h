@@ -10,9 +10,7 @@
 const unsigned long kNFmiSaveBase = 0;
 const unsigned int kNFmiArea = 1;
 
-#ifdef UNIX
 const unsigned int kNFmiGdalArea = 8;
-#endif
 const unsigned int kNFmiLambertEqualArea = 9;  // Epsg:3035
 const unsigned int kNFmiLatLonArea = 10;
 const unsigned int kNFmiRotatedLatLonArea = 11;
