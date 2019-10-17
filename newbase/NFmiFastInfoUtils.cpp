@@ -542,23 +542,47 @@ std::vector<std::unique_ptr<NFmiDataIdent>> MakePossibleWindMetaParams(
   const auto &producer = *theInfo.Producer();
   if (metaWindParamUsage.MakeMetaWindComponents())
   {
+#ifdef UNIX
+    metaParams.push_back(
+        std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(windUBaseParam, producer)));
+    metaParams.push_back(
+        std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(windVBaseParam, producer)));
+#else
     metaParams.push_back(std::make_unique<NFmiDataIdent>(windUBaseParam, producer));
     metaParams.push_back(std::make_unique<NFmiDataIdent>(windVBaseParam, producer));
+#endif
   }
   if (metaWindParamUsage.MakeMetaWsAndWdParams())
   {
+#ifdef UNIX
+    metaParams.push_back(
+        std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(windDirectionBaseParam, producer)));
+    metaParams.push_back(
+        std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(windSpeedBaseParam, producer)));
+#else
     metaParams.push_back(std::make_unique<NFmiDataIdent>(windDirectionBaseParam, producer));
     metaParams.push_back(std::make_unique<NFmiDataIdent>(windSpeedBaseParam, producer));
+#endif
   }
   if (metaWindParamUsage.MakeMetaWindVectorParam())
   {
+#ifdef UNIX
+    metaParams.push_back(
+        std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(windVectorBaseParam, producer)));
+#else
     metaParams.push_back(std::make_unique<NFmiDataIdent>(windVectorBaseParam, producer));
+#endif
   }
   if (allowStreamlineParameter && metaWindParamUsage.IsStreamlinePossible())
   {
     if (theInfo.IsGrid())
     {
+#ifdef UNIX
+      metaParams.push_back(
+          std::unique_ptr<NFmiDataIdent>(new NFmiDataIdent(streamlineBaseParam, producer)));
+#else
       metaParams.push_back(std::make_unique<NFmiDataIdent>(streamlineBaseParam, producer));
+#endif
     }
   }
 
