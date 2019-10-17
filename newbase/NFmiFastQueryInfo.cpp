@@ -27,7 +27,6 @@
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
-
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -1184,7 +1183,7 @@ static checkedVector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theI
       locationIndexies.push_back(GetGridDataIndex(
           xSize, xSize / 2, ySize / 2));  // laitetaan ensimmäiseksi hilan puoliväli, koska
                                           // reunoista puuttuu helposti dataa
-      locationIndexies.push_back(0);                       // laitetaan 1. hilapiste
+      locationIndexies.push_back(0);      // laitetaan 1. hilapiste
       locationIndexies.push_back(theInfo->SizeLocations() -
                                  1);  // laitetaan mukaan vielä viimeinen hilapiste
       if (xSize > 4 && ySize > 4)
@@ -1977,9 +1976,9 @@ static float InterpolationHelper(float theValue1, float theValue2, float theFact
     // se puuttuva tai ei Jos theFactor1 on 1, ollaan theValue1:n ajassa kiinni ja jos se on 0,
     // ollaan theValue2:n ajassa kiinni
     if (theFactor1 <= 0.5)
-    return theValue2;
+      return theValue2;
     else
-    return theValue1;
+      return theValue1;
   }
   else
     return theFactor1 * theValue1 + (1 - theFactor1) * theValue2;
@@ -2290,7 +2289,7 @@ bool NFmiFastQueryInfo::GetCube(std::vector<float> &values)
   {
     if (itsCombinedParamParser)
     {
-      std::transform(rbegin(values), rend(values), rbegin(values), [this](const float &fVal) {
+      std::transform(values.rbegin(), values.rend(), values.rbegin(), [this](const float &fVal) {
         return SubValueFromFloat(fVal);
       });
     }
