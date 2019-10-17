@@ -8,7 +8,7 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
-#include "boost/shared_ptr.hpp"
+#include <boost/shared_ptr.hpp>
 #include <vector>
 
 class _FMI_DLL NFmiAreaMaskList

@@ -1,4 +1,4 @@
-#include <NFmiSimpleCondition.h>
+#include "NFmiSimpleCondition.h"
 
 namespace
 {
