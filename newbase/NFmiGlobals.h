@@ -164,7 +164,7 @@ const long int kLongMissing = 0xffffffffL;
 const unsigned long kUnsignedLongMissing = 0xffffffffL;
 const float kFloatMissing = 32700.0F;
 const double kPii = 3.14159265358979323846264338327950288419716939937510;
-const double kRearth = 6371220.;
+const double kRearth = 6371229.;
 const double kRedMissing = 1.0;
 const double kGreenMissing = 0.0;
 const double kBlueMissing = 0.0;
@@ -183,7 +183,7 @@ const double kEpsPacific = 0.00001;
 #define kLongMissing 0xffffffffL
 #define kFloatMissing 32700.0F
 #define kPii 3.14159265358979323846264338327950288419716939937510;
-#define kRearth 6371220.;
+#define kRearth 6371229.;
 #define kRedMissing 1.0;
 #define kGreenMissing 0.0;
 #define kBlueMissing 0.0;
