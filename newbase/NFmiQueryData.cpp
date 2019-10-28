@@ -25,6 +25,7 @@
 
 #include <fcntl.h>
 #include <fstream>
+#include <ios>
 
 #ifndef UNIX
 #include <io.h>
@@ -38,6 +39,27 @@
 #endif
 
 using namespace std;
+
+
+
+//lisää 4MB bufferin streamiin, ja poistuessaan scopessa jättää streamin käytettäväksi, mutta bufferoimattomaksi
+//linuxkääntäjillä streamin bufferi pitää vaihtaa ennen tiedoston avaamista, joten tämä vekotin ei toimi
+//https://en.cppreference.com/w/cpp/io/basic_filebuf/setbuf
+struct BufferGuard {
+
+	static constexpr const size_t bufSize = 1 << 22; //4194304 
+
+	std::vector<char> buf;
+	std::ios& strm;
+
+	BufferGuard(std::ios& stream): strm(stream) {
+		buf = std::vector<char>(bufSize);
+		strm.rdbuf()->pubsetbuf(buf.data(), bufSize);
+	}
+	~BufferGuard() {
+		strm.rdbuf()->pubsetbuf(nullptr, 0);
+	}
+};
 
 // Staattiset versiot querydatan luku/kirjoituksesta, ottavat huomioon mm. VC++:n binääri
 // asetuksista.
@@ -95,6 +117,13 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
     if (forceBinaryFormat) ::ForceBinaryFormatWrite(*this);
 
     ofstream dataFile(filename.c_str(), ios::binary | ios::out);
+
+
+#ifdef WIN32
+	auto bg = BufferGuard(dataFile);
+#endif
+
+
     if (dataFile)
       dataFile << *this;
     else
@@ -194,6 +223,10 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
     {
       ifstream file(filename.c_str(), ios::in | ios::binary);
       if (!file) throw runtime_error("Could not open '" + filename + "' for reading");
+
+#ifdef WIN32
+	  auto bg = BufferGuard(file);
+#endif
 
       itsQueryInfo = new NFmiQueryInfo;
 
