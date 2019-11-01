@@ -821,6 +821,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "PotentialPrecipitationForm", kFmiPotentialPrecipitationForm},
       { "PotentialPrecipitationType", kFmiPotentialPrecipitationType},
       { "PotentialTemperature", kFmiPotentialTemperature},
+      { "PotentialWindSpeed", kFmiPotentialWindSpeed},
       { "PrecipitableWater", kFmiPrecipitableWater},
       { "PrecipitableWater2", kFmiPrecipitableWater2},
       { "Precipitation06", kFmiPrecipitation06},

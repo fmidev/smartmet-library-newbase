@@ -1348,6 +1348,7 @@ enum FmiParameterName
   kFmiProbabilityOfConvectiveSeverityIndexLimit1,
   kFmiProbabilityOfConvectiveSeverityIndexLimit2,
   kFmiProbabilityOfConvectiveSeverityIndexLimit3,
+  kFmiPotentialWindSpeed, // wind speed observation reduced to 10m
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
