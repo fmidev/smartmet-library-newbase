@@ -168,7 +168,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
                                     NFmiQueryData *theQueryData,
                                     long theLibVersion) const
 {
-  auto version =  static_cast<unsigned short>(theLibVersion);
+  auto version = static_cast<unsigned short>(theLibVersion);
   if (version < 5) version = 5;
 
   ofstream dataFile(theFileName, ios::binary | ios::out);
@@ -185,7 +185,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
       if (itsQueryData)
       {
         itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
-	itsQueryData->InfoVersion(version);
+        itsQueryData->InfoVersion(version);
         dataFile << *itsQueryData;
       }
       else

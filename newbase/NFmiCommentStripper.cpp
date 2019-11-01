@@ -237,6 +237,7 @@ bool NFmiCommentStripper::ReadAndStripFile(const string& theFileName)
 
 bool NFmiCommentStripper::Strip()
 {
+  StripBomMarkersFromStart();
   string filt_elem2("/*"), filt_elem3("*/");
   if (fStripSlashAst)
   {
@@ -281,6 +282,15 @@ bool NFmiCommentStripper::Strip()
     itsString.resize(j);
   }
   return true;
+}
+
+void NFmiCommentStripper::StripBomMarkersFromStart()
+{
+  const std::string bomMarkers =
+      "\xEF\xBB\xBF";  // BOM characters ï»¿ must be given with hexa escape format because this cpp
+                       // file is Utf-8 encoded
+  auto pos = itsString.find(bomMarkers);
+  if (pos == 0) itsString = std::string(itsString.begin() + bomMarkers.size(), itsString.end());
 }
 
 // ----------------------------------------------------------------------

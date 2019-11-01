@@ -13,10 +13,8 @@ const unsigned int kNFmiArea = 1;
 const unsigned int kNFmiProjArea = 2;
 #endif
 
-#ifdef UNIX
 const unsigned int kNFmiGdalArea = 8;
-#endif
-const unsigned int kNFmiLambertEqualArea = 9;
+const unsigned int kNFmiLambertEqualArea = 9;  // Epsg:3035
 const unsigned int kNFmiLatLonArea = 10;
 const unsigned int kNFmiRotatedLatLonArea = 11;
 // const unsigned int kNFmiPolSterArea			= 12;	// deprecated

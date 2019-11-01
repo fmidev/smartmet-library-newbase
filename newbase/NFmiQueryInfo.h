@@ -17,8 +17,8 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeDescriptor.h"
-#include "NFmiVersion.h"
 #include "NFmiVPlaceDescriptor.h"
+#include "NFmiVersion.h"
 
 class NFmiQueryData;
 class NFmiCombinedParam;
@@ -587,6 +587,10 @@ class _FMI_DLL NFmiQueryInfo
   // 1999.08.20/Marko
   virtual float SubParamFloatValue() const;
   virtual bool SubParamFloatValue(float theFloatData);
+
+  // Muuntaa floatin subvalueksi
+  float SubValueFromFloat(float fValue) const;
+
   virtual float IndexFloatValue(
       size_t theIndex) const;  // palauttaa suoraan arvon ilman aliparametri tarkasteluja
   virtual bool IndexFloatValue(

@@ -25,17 +25,41 @@
 
 #include <fcntl.h>
 #include <fstream>
+#include <ios>
 
 #ifndef UNIX
 #include <io.h>
 #endif
 
+#ifdef FMI_COMPRESSION
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
+#endif
 
 using namespace std;
+
+
+
+//lisää 4MB bufferin streamiin, ja poistuessaan scopessa jättää streamin käytettäväksi, mutta bufferoimattomaksi
+//linuxkääntäjillä streamin bufferi pitää vaihtaa ennen tiedoston avaamista, joten tämä vekotin ei toimi
+//https://en.cppreference.com/w/cpp/io/basic_filebuf/setbuf
+struct BufferGuard {
+
+	static constexpr const size_t bufSize = 1 << 22; //4194304 
+
+	std::vector<char> buf;
+	std::ios& strm;
+
+	BufferGuard(std::ios& stream): strm(stream) {
+		buf = std::vector<char>(bufSize);
+		strm.rdbuf()->pubsetbuf(buf.data(), bufSize);
+	}
+	~BufferGuard() {
+		strm.rdbuf()->pubsetbuf(nullptr, 0);
+	}
+};
 
 // Staattiset versiot querydatan luku/kirjoituksesta, ottavat huomioon mm. VC++:n binääri
 // asetuksista.
@@ -93,6 +117,13 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
     if (forceBinaryFormat) ::ForceBinaryFormatWrite(*this);
 
     ofstream dataFile(filename.c_str(), ios::binary | ios::out);
+
+
+#ifdef WIN32
+	auto bg = BufferGuard(dataFile);
+#endif
+
+
     if (dataFile)
       dataFile << *this;
     else
@@ -112,10 +143,7 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData::~NFmiQueryData()
-{
-  Destroy();
-}
+NFmiQueryData::~NFmiQueryData() { Destroy(); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -196,8 +224,13 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
       ifstream file(filename.c_str(), ios::in | ios::binary);
       if (!file) throw runtime_error("Could not open '" + filename + "' for reading");
 
+#ifdef WIN32
+	  auto bg = BufferGuard(file);
+#endif
+
       itsQueryInfo = new NFmiQueryInfo;
 
+#ifdef FMI_COMPRESSION
       if (NFmiFileSystem::IsCompressed(filename))
       {
         using namespace boost;
@@ -214,6 +247,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
         if (!filter.good()) throw runtime_error("Error while reading '" + filename + "'");
       }
       else
+#endif
       {
         // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
 

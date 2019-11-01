@@ -665,7 +665,7 @@ template <typename T>
 struct IsMissingValue
 {
   IsMissingValue(T theMissValue) : itsMissValue(theMissValue){};
-  bool operator()(const T &theValue) { return itsMissValue == theValue; }
+  bool operator()(const T &theValue) const { return itsMissValue == theValue; }
   T itsMissValue;
 };
 
@@ -4358,7 +4358,7 @@ namespace std
 template <>
 struct less<NFmiDataIdent>
 {
-  bool operator()(const NFmiDataIdent &lhs, const NFmiDataIdent &rhs)
+  bool operator()(const NFmiDataIdent &lhs, const NFmiDataIdent &rhs) const
   {
     return lhs.GetParamIdent() < rhs.GetParamIdent();
   }
@@ -4389,7 +4389,7 @@ namespace std
 template <>
 struct less<NFmiLevel>
 {
-  bool operator()(const NFmiLevel &lhs, const NFmiLevel &rhs)
+  bool operator()(const NFmiLevel &lhs, const NFmiLevel &rhs) const
   {
     return lhs.LevelValue() < rhs.LevelValue();
   }

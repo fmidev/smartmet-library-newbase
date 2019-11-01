@@ -41,10 +41,13 @@
 #include <stdexcept>
 // abort()
 
+#include <boost/math/special_functions.hpp>
+#ifdef FMI_COMPRESSION
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
+#endif
 
 // Mika: isspace on määritelty ctypessä
 #ifdef UNIX
@@ -557,6 +560,7 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
   ifstream file(filename.c_str(), ios::in | ios::binary);
   if (!file) throw runtime_error("Could not open '" + filename + "' for reading");
 
+#ifdef FMI_COMPRESSION
   if (NFmiFileSystem::IsCompressed(filename))
   {
     using namespace boost;
@@ -575,6 +579,10 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
     Read(file);
     if (!file.good()) throw runtime_error("Error while reading '" + filename + "'");
   }
+#else
+  Read(file);
+  if (!file.good()) throw runtime_error("Error while reading '" + filename + "'");
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -583,10 +591,7 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo::~NFmiQueryInfo()
-{
-  Destroy();
-}
+NFmiQueryInfo::~NFmiQueryInfo() { Destroy(); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -915,7 +920,7 @@ bool NFmiQueryInfo::ResetText()
 
 bool NFmiQueryInfo::NextText()
 {
-  if (itsHeaderText) return false;
+  if (!itsHeaderText) return false;
 
   if (!itsHeaderText->Next()) return false;
 
@@ -1210,6 +1215,15 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
     char tmp[3];
     file >> tmp;
     file >> itsInfoVersion;
+    if (itsInfoVersion > DefaultFmiInfoVersion)
+    {
+      std::string errorMessage = __FUNCTION__;
+      errorMessage += " trying to read higher queryData version data than supported, ";
+      errorMessage += std::to_string(itsInfoVersion);
+      errorMessage += " > ";
+      errorMessage += std::to_string(DefaultFmiInfoVersion);
+      throw runtime_error(errorMessage);
+    }
   }
   else
   {
@@ -1974,9 +1988,13 @@ NFmiDataIdent &NFmiQueryInfo::Param() const { return itsParamDescriptor->Param(f
 
 float NFmiQueryInfo::SubParamFloatValue() const
 {
+  return SubValueFromFloat(IndexFloatValue(Index()));
+}
+
+float NFmiQueryInfo::SubValueFromFloat(float fValue) const
+{
   if (itsCombinedParamParser)
   {
-    float fValue = IndexFloatValue(Index());
     itsCombinedParamParser->TransformFromFloatValue(fValue);
     return float(itsCombinedParamParser->SubValue(
         FmiParameterName(itsParamDescriptor->Param(false).GetParam()->GetIdent())));
@@ -2915,8 +2933,11 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
   float tmpValue = kFloatMissing;
   unsigned long oldTimeIndex = TimeIndex();
   // Katsotaan ensin löytyykö suoraan halutulle ajalle arvoa
-  if (Time(theTime)) tmpValue = FloatValue();
-  if (tmpValue == kFloatMissing)
+  if (Time(theTime))
+  {
+    tmpValue = FloatValue();
+  }
+  else
   {  // jos ei löytynyt suoraan arvoa, aletaan interpolointi...
     if (itsTimeDescriptor->ValidTimeBag())
       tmpValue = InterpolatedValueFromTimeBag(theTime, theMaxMinuteRange);
@@ -2944,6 +2965,9 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
     float returnValue = kFloatMissing;
     NFmiMetTime firstTime(timeBag->FirstTime());
     int timeResolution = timeBag->Resolution();
+    // timeResolution voi olla 0, jos timeBagissa on vain yksi aika, tai jos alku ja loppu aika ovat
+    // samoja. Pitää estää 0:lla jako
+    if (timeResolution == 0) return kFloatMissing;
     int minuteOffSetOfWantedTimeInTimeBag =
         theTime.DifferenceInMinutes(firstTime) - (timeResolution * timeIndex);
     float wantedTimeOffsetFloat = float(minuteOffSetOfWantedTimeInTimeBag) / timeResolution;
@@ -3077,6 +3101,11 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
           {
             returnValue =
                 static_cast<float>(NFmiInterpolation::ModLinear(offset1, value1, value2, 360));
+          }
+          else if (param == kFmiWindVectorMS)
+          {
+            returnValue =
+                static_cast<float>(NFmiInterpolation::WindVector(offset1, value1, value2));
           }
           else
             returnValue = float(offset1 * value1 + (1.f - offset1) * value2);
@@ -3457,7 +3486,12 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
     }
     else  // muuten lineaarinen interpolointi
     {
-      if (param == kFmiWindDirection || param == kFmiWaveDirection)
+      if (param == kFmiWindVectorMS)
+      {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
+        returnValue =
+            static_cast<float>(NFmiInterpolation::WindVector(1 - offset1, theValue1, theValue2));
+      }
+      else if (param == kFmiWindDirection || param == kFmiWaveDirection)
       {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
         returnValue =
             static_cast<float>(NFmiInterpolation::ModLinear(1 - offset1, theValue1, theValue2));
@@ -3728,6 +3762,21 @@ static float InterpolateWindDir(std::vector<float> &theWSvalues,
   // (tämä pitää tehdä jotenkin fiksummin)
 }
 
+static float InterpolateWindVector(std::vector<float> &theWindVectorvalues,
+                                   size_t theWDStartIndex,
+                                   const NFmiPoint &theGridPoint)
+{
+  double dx = theGridPoint.X() - floor(theGridPoint.X());
+  double dy = theGridPoint.Y() - floor(theGridPoint.Y());
+  return static_cast<float>(
+      NFmiInterpolation::WindVector(dx,
+                                    dy,
+                                    theWindVectorvalues[theWDStartIndex + 3],
+                                    theWindVectorvalues[theWDStartIndex + 2],
+                                    theWindVectorvalues[theWDStartIndex + 0],
+                                    theWindVectorvalues[theWDStartIndex + 1]));
+}
+
 float NFmiQueryInfo::CachedLocationInterpolatedValue(std::vector<float> &theValues,
                                                      size_t theStartIndex,
                                                      const NFmiLocationCache &theLocationCache,
@@ -3774,8 +3823,12 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::vector<float> &theValu
       Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
       std::vector<float> WSvalues(4, kFloatMissing);
       GetCachedValues(theLocationCache, WSvalues);
-      Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+      Param(theParId);  // palautetaan tuulensuunta takaisin parametriksi
       value = ::InterpolateWindDir(WSvalues, theValues, theStartIndex, gpoint);
+    }
+    else if (theParId == kFmiWindVectorMS)
+    {
+      value = ::InterpolateWindVector(theValues, theStartIndex, gpoint);
     }
     else if (theParId == kFmiWaveDirection)
     {
@@ -3894,6 +3947,8 @@ float NFmiQueryInfo::CachedTimeInterpolatedValue(float theValue1,
         else if (theParId == kFmiWaveDirection)
           value =
               static_cast<float>(NFmiInterpolation::ModLinear(offset, theValue1, theValue2, 360));
+        else if (theParId == kFmiWindVectorMS)
+          value = static_cast<float>(NFmiInterpolation::WindVector(offset, theValue1, theValue2));
         else
           value = static_cast<float>(NFmiInterpolation::Linear(offset, theValue1, theValue2));
       }
@@ -3930,16 +3985,25 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
       if (theLocationCache.NoInterpolation())
         value = CachedInterpolation(theTimeCache);
       else
-      {  // tehdään sitten sekä aika että paikka cached interpolaatio
-        std::vector<float> values(8, kFloatMissing);
-        GetCachedValues(theLocationCache, theTimeCache, values);
+      {
+        // tehdään sitten sekä aika että paikka cached interpolaatio
         NFmiDataIdent &param = Param();
         FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+        if (interp == kNearestPoint || interp == kNoneInterpolation)
+        {
+          if (theTimeCache.itsOffset > 0.5f) TimeIndex(theTimeCache.itsTimeIndex2);
+          value = FloatValue();
+        }
+        else
+        {
+        std::vector<float> values(8, kFloatMissing);
+        GetCachedValues(theLocationCache, theTimeCache, values);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
         float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
         float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
         value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
       }
+    }
     }
     // palautetaan indeksit lopuksi
     TimeIndex(oldTimeIndex);
@@ -4151,14 +4215,15 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P,
     }
     else
     {
-      if (theLocationCache.NoInterpolation())
+      NFmiDataIdent &param = Param();
+      FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
+      if (theLocationCache.NoInterpolation() || interp == kNearestPoint ||
+          interp == kNoneInterpolation)
         value = CachedPressureLevelValue(P, theTimeCache);
       else
       {  // tehdään sitten sekä aika että paikka cached interpolaatio
         std::vector<float> values(8, kFloatMissing);
         GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values);
-        NFmiDataIdent &param = Param();
-        FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
         float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
         float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
@@ -4329,7 +4394,7 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
                                                                bottomRightValue));
           }
         }
-        if (theValue != kFloatMissing) return theValue;
+        return theValue;
       }
     }
   }
