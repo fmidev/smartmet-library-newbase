@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.10.31
+Version: 19.11.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Nov  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.1-1.fmi
+- Added PotentialWindSpeed parameter - wind speed reduced to 10 m height
+
 * Thu Oct 31 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.31-1.fmi
 - Merged changed from SmartMet Editor branch
 
