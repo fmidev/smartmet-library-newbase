@@ -26,7 +26,7 @@ objdir = obj
 
 # Compiler options
 
-DEFINES = -DUNIX -D_REENTRANT -DWGS84 -D_REENTRANT
+DEFINES = -DUNIX -D_REENTRANT -DWGS84 -DBOOST
 
 -include $(HOME)/.smartmet.mk
 GCC_DIAG_COLOR ?= always
