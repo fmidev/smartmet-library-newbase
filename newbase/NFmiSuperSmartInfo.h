@@ -277,7 +277,7 @@ class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
   NFmiRect itsXYMaskBoundingBox;
 
   // tähän talletetaan eri epävarmuus kertoimilla lasketut apumaskit (omistaa, tuhoaa)
-  checkedVector<NFmiBitmapAreaMask*> itsHelperBinaryMaskList;
+  std::vector<NFmiBitmapAreaMask*> itsHelperBinaryMaskList;
 
   // Tämä osaa luoda käyttäjän pyytämiä speciaali maskeja ja osaa mm.
   // hoitaa optimoinnin binaarimaskin rakentamisen.

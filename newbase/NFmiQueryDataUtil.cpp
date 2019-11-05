@@ -426,8 +426,8 @@ NFmiQueryData *NFmiQueryDataUtil::GridQD2NewGridQD(NFmiQueryData *theSourceData,
 // eli mitkä info2:n paikat ovat interpoloitavissa info1:sta.
 static void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
                                  NFmiFastQueryInfo &theInfo2,
-                                 checkedVector<unsigned long> &theLocationIndexies,
-                                 checkedVector<NFmiPoint> &theLatlons)
+                                 std::vector<unsigned long> &theLocationIndexies,
+                                 std::vector<NFmiPoint> &theLatlons)
 {
   if (theInfo1.IsGrid() && theInfo2.IsGrid() && theInfo1.Area())
   {
@@ -479,10 +479,10 @@ NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
     // data2:n paikat ovat interpoloitavissa data1:sta
 
     // tähän kerätään ne data1:n paikka-indeksit, jotkä todella tarvitaan
-    checkedVector<unsigned long> locationIndexies;
+    std::vector<unsigned long> locationIndexies;
 
     // ja tähän niiden paikkojen lotlon-pisteet
-    checkedVector<NFmiPoint> latlons;
+    std::vector<NFmiPoint> latlons;
 
     GetMatchingLocations(area1Info, area2Info, locationIndexies, latlons);
     for (area2Info.ResetParam(); area2Info.NextParam();)
@@ -692,7 +692,7 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
   {
     NFmiLagrange lagrange;
     static const int maxSize = 4;
-    checkedVector<double> valueVec(maxSize * maxSize);
+    std::vector<double> valueVec(maxSize * maxSize);
     static const double tVec[maxSize] = {-1, 0, 1, 2};  // arvojen t sijainnit
     static const double sVec[maxSize] = {-1, 0, 1, 2};  // arvojen s sijainnit
     float value = kFloatMissing;
@@ -1176,8 +1176,8 @@ bool InterpolateSimilarDataToLargerTimeResolution(NFmiFastQueryInfo *theDestinat
  */
 // ----------------------------------------------------------------------
 
-float GetLagrangeValue(checkedVector<double> &theValueVec,
-                       checkedVector<double> &theTimeVec,
+float GetLagrangeValue(std::vector<double> &theValueVec,
+                       std::vector<double> &theTimeVec,
                        double theInterpolatedTimePlace)
 {
   NFmiLagrange lagrange;
@@ -1230,8 +1230,8 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
     if (theOneStepBeforeTimeIndex ==
         0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
     {
-      checkedVector<double> valueVec(3);
-      checkedVector<double> timeVec(
+      std::vector<double> valueVec(3);
+      std::vector<double> timeVec(
           3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = 0;
       timeVec[1] = 1;
@@ -1245,8 +1245,8 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
                                                                     // loppu rajalla, eli tehdään
                                                                     // interpolointi 3:lla arvolla
     {
-      checkedVector<double> valueVec(3);
-      checkedVector<double> timeVec(
+      std::vector<double> valueVec(3);
+      std::vector<double> timeVec(
           3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = -1;
       timeVec[1] = 0;
@@ -1261,8 +1261,8 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
       value = kFloatMissing;
     else  // muuten tehdään normaali 4:n pisteen interpolointi
     {
-      checkedVector<double> valueVec(4);
-      checkedVector<double> timeVec(
+      std::vector<double> valueVec(4);
+      std::vector<double> timeVec(
           4);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = -1;
       timeVec[1] = 0;
@@ -1305,7 +1305,7 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
                                  double theInterpolatedTimePlace,
                                  FmiInterpolationMethod theParamInterpMethod,
                                  NFmiQueryDataUtil::LimitChecker &theLimitChecker,
-                                 checkedVector<double> &theTimeFactors)  // lagrange timeFactorit on
+                                 std::vector<double> &theTimeFactors)  // lagrange timeFactorit on
                                                                          // laskettu kerran joka
                                                                          // aika askeleelle
 {
@@ -1314,7 +1314,7 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
     return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
   else
   {
-    //	  checkedVector<double> timeVec(4); // yllä olevien arvojen suhteelliset paikat
+    //	  std::vector<double> timeVec(4); // yllä olevien arvojen suhteelliset paikat
     // aika-avaruudessa (0 - 1)
     float value = kFloatMissing;
     unsigned long oldTimeIndex = theInfo.TimeIndex();
@@ -1322,7 +1322,7 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
     if (theOneStepBeforeTimeIndex ==
         0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
     {
-      checkedVector<double> valueVec(3);
+      std::vector<double> valueVec(3);
       valueVec[0] = theInfo.PeekTimeValue(0);
       valueVec[1] = theInfo.PeekTimeValue(1);
       valueVec[2] = theInfo.PeekTimeValue(2);
@@ -1332,7 +1332,7 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
                                                                     // loppu rajalla, eli tehdään
                                                                     // interpolointi 3:lla arvolla
     {
-      checkedVector<double> valueVec(3);
+      std::vector<double> valueVec(3);
       valueVec[0] = theInfo.PeekTimeValue(-1);
       valueVec[1] = theInfo.PeekTimeValue(0);
       valueVec[2] = theInfo.PeekTimeValue(1);
@@ -1343,7 +1343,7 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
       value = kFloatMissing;
     else  // muuten tehdään normaali 4:n pisteen interpolointi
     {
-      checkedVector<double> valueVec(4);
+      std::vector<double> valueVec(4);
       valueVec[0] = theInfo.PeekTimeValue(-1);
       valueVec[1] = theInfo.PeekTimeValue(0);
       valueVec[2] = theInfo.PeekTimeValue(1);
@@ -1473,7 +1473,7 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
   double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1 avaruudessa
                                     // niiden kahden aikapisteen välissä, jotka ovat lähinnä
                                     // interpoloitavaa pistettä lähdedatassa.
-  checkedVector<double> timeFactors;  // tähän lasketaan joka aika-askeleella mahdolliset lagrange
+  std::vector<double> timeFactors;  // tähän lasketaan joka aika-askeleella mahdolliset lagrange
                                       // laskuissa tarvittavat aikakertoimet
 
   int i = 0;
@@ -2403,7 +2403,7 @@ static NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGrid
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData *NFmiQueryDataUtil::CombineTimes(checkedVector<std::string> &theFileNames,
+NFmiQueryData *NFmiQueryDataUtil::CombineTimes(std::vector<std::string> &theFileNames,
                                                int theMaxTimesInNewData)
 {
   NFmiQueryData *data = nullptr;
@@ -3839,7 +3839,7 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
 
     // HUOM! ei osaa hoitaa hommaa oikein jos datassa on aikalista jossa erilaiset aikavälit
     int sizeTimes = sourceInfo.SizeTimes();
-    checkedVector<float> relTimeLocation(
+    std::vector<float> relTimeLocation(
         sizeTimes);  // x on aika eli eri aika-askelten suhteelliset sijainnit (0,
                      // 1, 2, 3, ...)
                      //		std::accumulate(relTimeLocation.begin(),
@@ -3851,8 +3851,8 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
       relTimeLocation[j] = static_cast<float>(j);  // tarkoittaa että täytetään vektori luvuilla
     // jotka alkavat 0:sta ja kasvavat aina yhdellä
 
-    checkedVector<float> values(sizeTimes);
-    checkedVector<float> result;
+    std::vector<float> values(sizeTimes);
+    std::vector<float> result;
     NFmiSmoother smoother(static_cast<NFmiSmoother::NFmiSmootherMethod>(theSmootherMethod),
                           static_cast<int>(theFactor),
                           static_cast<float>(stepNumber / 2));  // NFmiSmoother tasoittaa dataa
@@ -4687,7 +4687,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
 static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
                                  NFmiFastQueryInfo &theTargetInfo,
                                  NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-                                 checkedVector<NFmiTimeCache> &theTimeCacheVector,
+                                 std::vector<NFmiTimeCache> &theTimeCacheVector,
                                  unsigned long theStartTimeIndex,
                                  unsigned long theEndTimeIndex,
                                  int theThreadNumber,
@@ -4900,7 +4900,7 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
         (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
     NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
     if (doLocationInterpolation) source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
-    checkedVector<NFmiTimeCache> timeCacheVector;
+    std::vector<NFmiTimeCache> timeCacheVector;
     source1.CalcTimeCache(target1, timeCacheVector);
 
     unsigned long usedStartTimeIndex = theStartTimeIndex;
@@ -5021,7 +5021,7 @@ static void FillSingleTimeGridDataInThread(
     NFmiFastQueryInfo &theTargetInfo,
     bool fDoLocationInterpolation,
     const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-    const checkedVector<NFmiTimeCache> &theTimeCacheVector,
+    const std::vector<NFmiTimeCache> &theTimeCacheVector,
     NFmiTimeIndexCalculator &theTimeIndexCalculator,
     int theThreadNumber,
     NFmiLogger *theDebugLogger)
@@ -5114,7 +5114,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
         (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
     NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
     if (doLocationInterpolation) source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
-    checkedVector<NFmiTimeCache> timeCacheVector;
+    std::vector<NFmiTimeCache> timeCacheVector;
     source1.CalcTimeCache(target1, timeCacheVector);
 
     unsigned long usedStartTimeIndex = theStartTimeIndex;

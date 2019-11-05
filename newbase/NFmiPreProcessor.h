@@ -75,8 +75,8 @@ class _FMI_DLL NFmiPreProcessor : public NFmiCommentStripper
   bool Replace(void);
   bool Include(void);
   bool Define(void);
-  bool StripNestedConditionally(checkedVector<unsigned long> theBeginPositions,
-                                checkedVector<unsigned long> theEndPositions,
+  bool StripNestedConditionally(std::vector<unsigned long> theBeginPositions,
+                                std::vector<unsigned long> theEndPositions,
                                 bool theCond);
   bool IncludeFile(const std::string& theFileName, std::string& theFileContentsToInclude);
   bool IsConditional(void) const;

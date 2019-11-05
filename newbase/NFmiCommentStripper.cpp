@@ -317,8 +317,8 @@ bool NFmiCommentStripper::Strip(const std::string& theString)
 bool NFmiCommentStripper::CollectAndStripNested(const string& theBeginDirective,
                                                 const string& theEndDirective)
 {
-  checkedVector<unsigned long> posStartFilts;
-  checkedVector<unsigned long> posEndFilts;
+  std::vector<unsigned long> posStartFilts;
+  std::vector<unsigned long> posEndFilts;
 
   if (CollectStringPositions(theBeginDirective, posStartFilts) &&
       CollectStringPositions(theEndDirective, posEndFilts))
@@ -481,8 +481,8 @@ bool NFmiCommentStripper::StripSubStrings(const string& theString)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiCommentStripper::StripNested(checkedVector<unsigned long> theBeginPositions,
-                                      checkedVector<unsigned long> theEndPositions)
+bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositions,
+                                      std::vector<unsigned long> theEndPositions)
 {
   auto startFiltsInd = theBeginPositions.begin();
   auto endFiltsInd = theEndPositions.begin();
@@ -535,7 +535,7 @@ bool NFmiCommentStripper::StripNested(checkedVector<unsigned long> theBeginPosit
 // ----------------------------------------------------------------------
 
 bool NFmiCommentStripper::CollectStringPositions(const string& theSearchString,
-                                                 checkedVector<unsigned long>& theResVector)
+                                                 std::vector<unsigned long>& theResVector)
 {
   string aString(itsString);
   string::size_type filtLen = theSearchString.length();

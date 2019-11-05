@@ -3314,7 +3314,7 @@ NFmiTimeCache NFmiQueryInfo::CalcTimeCache(const NFmiMetTime &theTime)
 // yhden pisteen avulla, joka saatetaan haluta ottaa huomioon, tällöin pitäisi käyttää vain
 // normaalia aikainterpolaatiota.
 bool NFmiQueryInfo::CalcTimeCache(NFmiQueryInfo &theTargetInfo,
-                                  checkedVector<NFmiTimeCache> &theTimeCache)
+                                  std::vector<NFmiTimeCache> &theTimeCache)
 {
   theTimeCache.clear();
   for (theTargetInfo.ResetTime(); theTargetInfo.NextTime();)
@@ -5220,7 +5220,7 @@ bool NFmiQueryInfo::Grid2Info(NFmiGrid &theSource)
  */
 // ----------------------------------------------------------------------
 
-checkedVector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
+std::vector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
     const NFmiLocation &theLocation, int theMaxWantedLocations, double theMaxDistance) const
 {
   return itsHPlaceDescriptor->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
@@ -5235,7 +5235,7 @@ checkedVector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
  */
 // ----------------------------------------------------------------------
 
-checkedVector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
+std::vector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
     const NFmiPoint &theLatLonPoint, int theMaxWantedLocations, double theMaxDistance) const
 {
   NFmiLocation location(theLatLonPoint);

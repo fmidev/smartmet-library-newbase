@@ -292,7 +292,7 @@ class NFmiLocationIndexRangeCalculator
 class _FMI_DLL NFmiQueryDataUtil
 {
  public:
-  typedef checkedVector<GridRecordData *> GridDataVector;
+  typedef std::vector<GridRecordData *> GridDataVector;
   using SoundingLevelContainer = std::vector<unsigned long>;
   using SignificantSoundingLevels = std::unique_ptr<SoundingLevelContainer>;
   static SignificantSoundingLevels GetSignificantSoundingLevelIndices(NFmiFastQueryInfo &theInfo);
@@ -430,7 +430,7 @@ class _FMI_DLL NFmiQueryDataUtil
                                      int theOriginTimeFunction,
                                      bool fMakeChangingTimeResolution);
 
-  static NFmiQueryData *CombineTimes(checkedVector<std::string> &theFileNames,
+  static NFmiQueryData *CombineTimes(std::vector<std::string> &theFileNames,
                                      int theMaxTimesInNewData);
 
   static NFmiQueryData *MakeCombineParams(NFmiFastQueryInfo &theSourceInfo,
