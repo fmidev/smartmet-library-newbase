@@ -122,12 +122,12 @@ class _FMI_DLL NFmiQueryInfo
 
   //! Hakee listan paikkaindeksi/etäisyys metreinä pareja. Listaan haetaan annettua paikkaa lähimmat
   //! datapisteet.
-  checkedVector<std::pair<int, double> > NearestLocations(
+  std::vector<std::pair<int, double> > NearestLocations(
       const NFmiLocation &theLocation,
       int theMaxWantedLocations,
       double theMaxDistance = kFloatMissing) const;
 
-  checkedVector<std::pair<int, double> > NearestLocations(
+  std::vector<std::pair<int, double> > NearestLocations(
       const NFmiPoint &theLatLonPoint,
       int theMaxWantedLocations,
       double theMaxDistance = kFloatMissing) const;
@@ -510,7 +510,7 @@ class _FMI_DLL NFmiQueryInfo
   NFmiLocationCache CalcLocationCache(const NFmiPoint &theLatlon,
                                       unsigned long thePossibleSourceSizeX = gMissingIndex,
                                       unsigned long thePossibleSourceSizeY = gMissingIndex);
-  bool CalcTimeCache(NFmiQueryInfo &theTargetInfo, checkedVector<NFmiTimeCache> &theTimeCache);
+  bool CalcTimeCache(NFmiQueryInfo &theTargetInfo, std::vector<NFmiTimeCache> &theTimeCache);
 
   virtual NFmiTimeCache CalcTimeCache(const NFmiMetTime &theTime);
 

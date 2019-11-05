@@ -42,7 +42,7 @@ class _FMI_DLL NFmiDataModifierMode : public NFmiDataModifier
     float itsValue;
     int itsCounter;
   };
-  checkedVector<Data> itsDataVector;
+  std::vector<Data> itsDataVector;
 };
 
 // ======================================================================

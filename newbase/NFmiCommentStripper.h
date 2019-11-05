@@ -51,10 +51,10 @@ class _FMI_DLL NFmiCommentStripper
  private:
   bool CollectAndStripNested(const std::string& theBeginDirective,
                              const std::string& theEndDirective);
-  bool StripNested(checkedVector<unsigned long> theBeginPositions,
-                   checkedVector<unsigned long> theEndPositions);
+  bool StripNested(std::vector<unsigned long> theBeginPositions,
+                   std::vector<unsigned long> theEndPositions);
   bool CollectStringPositions(const std::string& theSearchString,
-                              checkedVector<unsigned long>& theResVector);
+                              std::vector<unsigned long>& theResVector);
   void StripBomMarkersFromStart();
 
  protected:

@@ -51,7 +51,7 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
 
   //! Hakee listan paikkaindeksi/etäisyys metreinä pareja. Listaan haetaan annettua paikkaa lähimmat
   //! datapisteet.
-  const checkedVector<std::pair<int, double> > NearestLocations(
+  const std::vector<std::pair<int, double> > NearestLocations(
       const NFmiLocation &theLocation,
       int theMaxWantedLocations,
       double theMaxDistance = kFloatMissing) const;
@@ -72,7 +72,7 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
 
   void Add(const NFmiLocation &theLocation);
 
-  typedef checkedVector<NFmiLocation *> StorageType;
+  typedef std::vector<NFmiLocation *> StorageType;
   StorageType itsLocations;
 
  private:

@@ -76,7 +76,7 @@ class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
     return (theIndex > 0 && theIndex < (itsGridXSize * itsGridYSize));
   }
 
-  checkedVector<bool> itsBitmask;
+  std::vector<bool> itsBitmask;
   NFmiArea* itsArea;  // omistaa, tuhoaa
   int itsGridXSize;
   int itsGridYSize;

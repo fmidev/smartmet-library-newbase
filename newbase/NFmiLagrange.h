@@ -43,27 +43,27 @@ class _FMI_DLL NFmiLagrange
   double* Ti(void);
   double* Yij(void);
 
-  void Denominator(const checkedVector<double>& xi, checkedVector<double>& denominator, int n);
+  void Denominator(const std::vector<double>& xi, std::vector<double>& denominator, int n);
   void SiDenominator(void);
   void TiDenominator(void);
 
   double L(
-      const checkedVector<double>& xi, double x, checkedVector<double>& denominator, int i, int n);
+      const std::vector<double>& xi, double x, std::vector<double>& denominator, int i, int n);
   double Ls(double s, int i);
   double Lt(double t, int i);
 
   int itsSn;
   int itsTn;
 
-  checkedVector<double> itsSi;
-  checkedVector<double> itsTi;
-  checkedVector<double> itsYij;
+  std::vector<double> itsSi;
+  std::vector<double> itsTi;
+  std::vector<double> itsYij;
 
-  checkedVector<double> itsSiDenominator;
-  checkedVector<double> itsTiDenominator;
+  std::vector<double> itsSiDenominator;
+  std::vector<double> itsTiDenominator;
 
-  checkedVector<double> itsLs;
-  checkedVector<double> itsLt;
+  std::vector<double> itsLs;
+  std::vector<double> itsLt;
 
 };  // class NFmiLagrange
 
