@@ -634,7 +634,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
     const std::string projpart = parts[0];
     const std::string boxpart = (parts.size() > 1 ? parts[1] : "6,51.3,49,70.2");
-    const std::string gridpart = (parts.size() > 2 ? parts[2] : "0,1,0,1");
+    const std::string gridpart = (parts.size() > 2 ? parts[2] : "0,0,1,1");
 
     const ProjStrings projstrings = parse_projection(projpart);
     const Grid grid = parse_grid(gridpart);

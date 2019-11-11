@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.1
+Version: 19.11.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Nov 11 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.11-1.fmi
+- Bug fix to NFmiAreaFactory default grid size
+
 * Fri Nov  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.1-1.fmi
 - Added PotentialWindSpeed parameter - wind speed reduced to 10 m height
 
