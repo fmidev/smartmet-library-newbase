@@ -245,6 +245,28 @@ void LatLonToWorldXY(NFmiSvgPath& thePath, const NFmiArea& theArea)
   }
 }
 
+void PointToSvgPath(NFmiSvgPath& thePath, double x, double y)
+{
+  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x, y);
+  NFmiSvgPath::Element element2(NFmiSvgPath::kElementClosePath, 0, 0);
+  thePath.push_back(element1);
+  thePath.push_back(element2);
+}
+
+void BBoxToSvgPath(NFmiSvgPath& thePath, double x1, double y1, double x2, double y2)
+{
+  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x1, y1);
+  NFmiSvgPath::Element element2(NFmiSvgPath::kElementLineto, x1, y2);
+  NFmiSvgPath::Element element3(NFmiSvgPath::kElementLineto, x2, y2);
+  NFmiSvgPath::Element element4(NFmiSvgPath::kElementLineto, x2, y1);
+  NFmiSvgPath::Element element5(NFmiSvgPath::kElementClosePath, x1, y1);
+  thePath.push_back(element1);
+  thePath.push_back(element2);
+  thePath.push_back(element3);
+  thePath.push_back(element4);
+  thePath.push_back(element5);
+}
+
 }  // namespace NFmiSvgTools
 
 // ======================================================================
