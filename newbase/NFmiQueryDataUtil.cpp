@@ -5284,7 +5284,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
   return false;
 }
 
-bool NFmiQueryDataUtil::AreAreasSameKind(NFmiArea *theArea1, NFmiArea *theArea2)
+bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2)
 {
   if (theArea1 && theArea2)
   {
