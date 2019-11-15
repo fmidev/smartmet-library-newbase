@@ -787,8 +787,12 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
 
   if (itsArea)
   {
+#ifdef WGS84
+    file << *itsArea << '\n';
+#else
     file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
     file << *itsArea;
+#endif
   }
   else
   {

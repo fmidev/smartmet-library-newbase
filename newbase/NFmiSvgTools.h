@@ -19,6 +19,8 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint);
 void BoundingBox(
     const NFmiSvgPath& thePath, double& theXmin, double& theYmin, double& theXmax, double& theYmax);
 void LatLonToWorldXY(NFmiSvgPath& thePath, const NFmiArea& theArea);
+void PointToSvgPath(NFmiSvgPath& thePath, double x, double y);
+void BBoxToSvgPath(NFmiSvgPath& thePath, double x1, double y1, double x2, double y2);
 
 }  // namespace NFmiSvgTools
 

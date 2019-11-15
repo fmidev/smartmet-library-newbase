@@ -114,29 +114,25 @@ void geodistance(void)
   expected = 0;
   if (result != expected) TEST_FAILED("GeoDistance of (0,0) is 0");
 
-  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(-10, -10));
-  expected = NFmiGeoTools::GeoDistance(0, 0, -10, -10);
-  if (abs(result - expected) > 1) TEST_FAILED("GeoDistance of (-10,-10) failed");
+  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(-10, -10)) / 1000;
+  expected = NFmiGeoTools::GeoDistance(0, 0, -10, -10) / 1000;
+  if (abs(result - expected) > 10) TEST_FAILED("GeoDistance of (-10,-10) failed");
 
-  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(5, 0));
+  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(5, 0)) / 1000;
   expected = 0;
-  if (abs(result - expected) > 1) TEST_FAILED("GeoDistance of (5,0) is 0");
+  if (abs(result - expected) > 5) TEST_FAILED("GeoDistance of (5,0) is 0");
 
-  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(0, 5));
+  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(0, 5)) / 1000;
   expected = 0;
-  if (abs(result - expected) > 1)
-  {
-    cout << expected << ' ' << result << endl;
-    TEST_FAILED("GeoDistance of (0,5) is 0");
-  }
+  if (abs(result - expected) > 5) TEST_FAILED("GeoDistance of (0,5) is 0");
 
-  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(5, 5));
-  expected = 552465;
-  if (abs(result - expected) > 1) TEST_FAILED("GeoDistance of (5,5) is 552465");
+  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(5, 5)) / 1000;
+  expected = 552.465;
+  if (abs(result - expected) > 5) TEST_FAILED("GeoDistance of (5,5) is 552465");
 
-  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(1, 1));
-  expected = 111080;
-  if (abs(result - expected) > 1) TEST_FAILED("GeoDistance of (1,1) is 111080");
+  result = NFmiSvgTools::GeoDistance(path, NFmiPoint(1, 1)) / 1000;
+  expected = 111.080;
+  if (abs(result - expected) > 5) TEST_FAILED("GeoDistance of (1,1) is 111080");
 
   TEST_PASSED();
 }

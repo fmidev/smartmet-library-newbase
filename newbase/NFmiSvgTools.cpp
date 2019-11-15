@@ -17,10 +17,10 @@
 
 #include "NFmiSvgTools.h"
 #include "NFmiArea.h"
-#include "NFmiEquidistArea.h"
 #include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
+#include <fmt/printf.h>
 
 namespace NFmiSvgTools
 {
@@ -118,26 +118,33 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
   if (thePath.empty()) return -1;
 
   // Nurkilla ei ole väliä
-  NFmiEquidistArea area(NFmiPoint(20, 50),
-                        NFmiPoint(40, 70),
-                        thePoint.X(),
-                        NFmiPoint(0, 0),
-                        NFmiPoint(1, 1),
-                        thePoint.Y());
+
+  auto proj4 = fmt::format(
+      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
+      "+towgs84=0,0,0 +no_defs",
+      thePoint.Y(),
+      thePoint.X(),
+      kRearth);
+
+  auto sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs", kRearth);
+
+  const double any_distance = 1000;
+  std::unique_ptr<NFmiArea> area(
+      NFmiArea::CreateFromCenter(proj4, sphere, thePoint, any_distance, any_distance));
 
   double minDist = -1;
 
   NFmiPoint firstPoint =
-      area.LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
+      area->LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
   NFmiPoint lastPoint = firstPoint;
-  NFmiPoint center = area.LatLonToWorldXY(thePoint);
+  NFmiPoint center = area->LatLonToWorldXY(thePoint);
 
   for (const auto& it : thePath)
   {
     switch (it.itsType)
     {
       case NFmiSvgPath::kElementMoveto:
-        lastPoint = area.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+        lastPoint = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
         firstPoint = lastPoint;
         break;
       case NFmiSvgPath::kElementClosePath:
@@ -151,7 +158,7 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
       }
       case NFmiSvgPath::kElementLineto:
       {
-        NFmiPoint p = area.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+        NFmiPoint p = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
         double dist = NFmiGeoTools::DistanceFromLineSegment(
             center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), p.X(), p.Y());
 
@@ -243,6 +250,28 @@ void LatLonToWorldXY(NFmiSvgPath& thePath, const NFmiArea& theArea)
         break;
     }
   }
+}
+
+void PointToSvgPath(NFmiSvgPath& thePath, double x, double y)
+{
+  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x, y);
+  NFmiSvgPath::Element element2(NFmiSvgPath::kElementClosePath, 0, 0);
+  thePath.push_back(element1);
+  thePath.push_back(element2);
+}
+
+void BBoxToSvgPath(NFmiSvgPath& thePath, double x1, double y1, double x2, double y2)
+{
+  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x1, y1);
+  NFmiSvgPath::Element element2(NFmiSvgPath::kElementLineto, x1, y2);
+  NFmiSvgPath::Element element3(NFmiSvgPath::kElementLineto, x2, y2);
+  NFmiSvgPath::Element element4(NFmiSvgPath::kElementLineto, x2, y1);
+  NFmiSvgPath::Element element5(NFmiSvgPath::kElementClosePath, x1, y1);
+  thePath.push_back(element1);
+  thePath.push_back(element2);
+  thePath.push_back(element3);
+  thePath.push_back(element4);
+  thePath.push_back(element5);
 }
 
 }  // namespace NFmiSvgTools

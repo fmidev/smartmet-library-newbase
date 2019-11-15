@@ -19,7 +19,7 @@
 // querydata-otuksia.
 
 #include "NFmiQueryDataUtil.h"
-#include "NFmiAzimuthalArea.h"
+//#include "NFmiAzimuthalArea.h"
 #include "NFmiCalculationCondition.h"
 #include "NFmiCalculator.h"
 #include "NFmiCombinedParam.h"
@@ -43,7 +43,7 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
-
+#include <gdal/ogr_spatialref.h>
 #include <algorithm>
 #include <cassert>
 #include <fstream>
@@ -95,14 +95,15 @@ bool MyGrid::operator<(const MyGrid &theGrid) const
     if (itsArea->TopRightLatLon() != theGrid.itsArea->TopRightLatLon())
       return itsArea->TopRightLatLon() < theGrid.itsArea->TopRightLatLon();
 
-    if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea ||
-        itsArea->ClassId() == kNFmiGnomonicArea)
+#ifndef WGS84
+    if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea)
     {
       if (static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
           static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
         return static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() <
                static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation();
     }
+#endif
   }
   return false;
 }
@@ -5255,6 +5256,9 @@ bool NFmiQueryDataUtil::AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *
 bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2)
 {
   if (theArea1 && theArea2)
+#ifdef WGS84
+    return (theArea1 == theArea2);
+#else
   {
     if (theArea1->ClassId() == theArea2->ClassId())
     {
@@ -5263,7 +5267,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
           theArea1->TopRightLatLon() == theArea2->TopRightLatLon())
       {
         if (theArea1->ClassId() == kNFmiStereographicArea ||
-            theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
+            theArea1->ClassId() == kNFmiEquiDistArea)
         {
           if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
               static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
@@ -5276,15 +5280,18 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
       }
     }
   }
+#endif
   return false;
 }
 
-bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2)
+bool NFmiQueryDataUtil::AreAreasSameKind(NFmiArea *theArea1, NFmiArea *theArea2)
 {
   if (theArea1 && theArea2)
   {
-    if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea ||
-        theArea1->ClassId() == kNFmiGnomonicArea)
+#ifdef WGS84
+    return theArea1->SpatialReference()->IsSameGeogCS(theArea2->SpatialReference());
+#else
+    if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea)
     {
       if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
           static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
@@ -5294,6 +5301,7 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
     }
     else if (theArea1->ClassId() == theArea2->ClassId())
       return true;
+#endif
   }
   return false;
 }

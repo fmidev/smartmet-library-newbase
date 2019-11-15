@@ -74,10 +74,8 @@ void maskinside(void)
   string result = MaskString(suomi, theGrid->XNumber(), theGrid->YNumber());
   if (result != expected)
   {
-#if 0
-		cout << endl
-			 << "Difference = " << endl
-			 << maskdifference(expected,result) << endl;
+#if 1
+    cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
     TEST_FAILED("MaskInside failed for suomi.svg");
   }
@@ -102,10 +100,8 @@ void maskoutside(void)
   string result = MaskString(suomi, theGrid->XNumber(), theGrid->YNumber());
   if (result != expected)
   {
-#if 0
-		cout << endl
-			 << "Difference = " << endl
-			 << maskdifference(expected,result) << endl;
+#if 1
+    cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
     TEST_FAILED("MaskOutside failed for suomi.svg");
   }
@@ -154,10 +150,8 @@ void maskshrink(void)
   string result = MaskString(suomi, theGrid->XNumber(), theGrid->YNumber());
   if (result != expected)
   {
-#if 0
-		cout << endl
-			 << "Difference = " << endl
-			 << maskdifference(expected,result) << endl;
+#if 1
+    cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
     TEST_FAILED("MaskShrink failed for suomi.svg");
   }
@@ -183,10 +177,8 @@ void maskdistancepath(void)
     string result = MaskString(suomi, theGrid->XNumber(), theGrid->YNumber());
     if (result != expected)
     {
-#if 0
-		  cout << endl
-			   << "Difference = " << endl
-			   << maskdifference(expected,result) << endl;
+#if 1
+      cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
       TEST_FAILED("MaskDistance failed for suomi.svg");
     }
@@ -199,10 +191,8 @@ void maskdistancepath(void)
     string result = MaskString(coast, theGrid->XNumber(), theGrid->YNumber());
     if (result != expected)
     {
-#if 0
-		  cout << endl
-			   << "Difference = " << endl
-			   << maskdifference(expected,result) << endl;
+#if 1
+      cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
       TEST_FAILED("MaskDistance failed for coast.svg");
     }
@@ -229,10 +219,8 @@ void maskdistancepoint(void)
   string result = MaskString(helsinki, theGrid->XNumber(), theGrid->YNumber());
   if (result != expected)
   {
-#if 0
-		cout << endl
-			 << "Difference = " << endl
-			 << maskdifference(expected,result) << endl;
+#if 1
+    cout << endl << "Difference = " << endl << maskdifference(expected, result) << endl;
 #endif
     TEST_FAILED("MaskDistance failed for helsinki");
   }

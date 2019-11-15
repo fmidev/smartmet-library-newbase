@@ -970,6 +970,7 @@ NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(const NFmiInfoAreaMaskPeekXY3 &
 
 NFmiAreaMask *NFmiInfoAreaMaskPeekXY3::Clone() const { return new NFmiInfoAreaMaskPeekXY3(*this); }
 
+#ifndef WGS84
 static bool IsPacificViewData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   if (theInfo)
@@ -980,18 +981,28 @@ static bool IsPacificViewData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
 
   return false;
 }
+#endif
 
 NFmiCalculationParams NFmiInfoAreaMaskPeekXY3::MakeModifiedCalculationParams(
     const NFmiCalculationParams &theCalculationParams)
 {
+#ifndef WGS84
   bool usePacificView = ::IsPacificViewData(itsInfo);
+#endif
   NFmiLocation loc(theCalculationParams.itsLatlon);
   // x-suunnassa siirto ei mielestäni toimi oikein vaan piti laittaa positiiviselle ja
   // negatiiviselle tapauksille omat haarat
+#ifdef WGS84
+  if (itsXOffsetInKM > 0) loc.SetLocation(90., itsXOffsetInKM * 1000.);
+  if (itsXOffsetInKM < 0) loc.SetLocation(270., itsXOffsetInKM * 1000.);
+  // y-suunnassa offsetin merkkisyys osaa siirtää pistettä oikein
+  if (itsYOffsetInKM != 0) loc.SetLocation(360., itsYOffsetInKM * 1000.);
+#else
   if (itsXOffsetInKM > 0) loc.SetLocation(90., itsXOffsetInKM * 1000., usePacificView);
   if (itsXOffsetInKM < 0) loc.SetLocation(270., itsXOffsetInKM * 1000., usePacificView);
   // y-suunnassa offsetin merkkisyys osaa siirtää pistettä oikein
   if (itsYOffsetInKM != 0) loc.SetLocation(360., itsYOffsetInKM * 1000., usePacificView);
+#endif
 
   NFmiCalculationParams modifiedCalculationParams(theCalculationParams);
   modifiedCalculationParams.itsLatlon = loc.GetLocation();
@@ -1104,10 +1115,18 @@ NFmiLocationCache NFmiInfoAreaMaskMetFuncBase::CalcPeekedLocation(
 {
   if (fPeekAlongTudes)
   {  // lasketaan peek-piste leveys- ja pituuspiirejä pitkin
+#ifndef WGS84
     bool usePacificView = ::IsPacificViewData(itsInfo);
+#endif
     NFmiLocation loc(itsInfo->Grid()->GridToLatLon(theLocationCachePoint.itsGridPoint));
     // x-suunnassa siirto ei mielestäni toimi oikein vaan piti laittaa positiiviselle ja
     // negatiiviselle tapauksille omat haarat
+#ifdef WGS84
+    if (theOffsetX > 0) loc.SetLocation(90., theOffsetX * itsGridPointWidthInMeters);
+    if (theOffsetX < 0) loc.SetLocation(270., theOffsetX * itsGridPointWidthInMeters);
+    // y-suunnassa offsetin merkkisyys osaa siirtää pistettä oikein
+    if (theOffsetY != 0) loc.SetLocation(360., theOffsetY * itsGridPointWidthInMeters);
+#else
     if (theOffsetX > 0)
       loc.SetLocation(90., theOffsetX * itsGridPointWidthInMeters, usePacificView);
     if (theOffsetX < 0)
@@ -1115,6 +1134,7 @@ NFmiLocationCache NFmiInfoAreaMaskMetFuncBase::CalcPeekedLocation(
     // y-suunnassa offsetin merkkisyys osaa siirtää pistettä oikein
     if (theOffsetY != 0)
       loc.SetLocation(360., theOffsetY * itsGridPointWidthInMeters, usePacificView);
+#endif
     NFmiLocationCache locationCache = CalcLocationCache(loc.GetLocation());
     return locationCache;
   }

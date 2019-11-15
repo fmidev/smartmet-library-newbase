@@ -308,11 +308,15 @@ NFmiLatitude& NFmiLatitude::operator+=(const double& theAngle)
  */
 // ======================================================================
 
+#ifdef WGS84
+NFmiLongitude::NFmiLongitude(double theAngle, FmiAngleUnit theUnit) { SetValue(theAngle, theUnit); }
+#else
 NFmiLongitude::NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit theUnit)
     : fPacificView(usePacificView)
 {
   SetValue(theAngle, theUnit);
 }
+#endif
 
 // ======================================================================
 /*!
@@ -330,6 +334,21 @@ NFmiLongitude::NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit 
  */
 // ======================================================================
 
+#ifdef WGS84
+void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
+{
+  if (::fabs(theAngle - 180.) < 0.0000001)
+    itsValue = 180.;
+  else if (::fabs(theAngle + 180.) < 0.0000001)
+    itsValue = -180.;
+  else if (theAngle > 180)
+    SetValue(theAngle - 360, theUnit);
+  else if (theAngle < -180)
+    SetValue(theAngle + 360, theUnit);
+  else
+    itsValue = theAngle;
+}
+#else
 void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 {
   if (fPacificView)
@@ -359,6 +378,7 @@ void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
       itsValue = theAngle;
   }
 }
+#endif
 
 // ======================================================================
 /*!
@@ -373,7 +393,11 @@ void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 
 NFmiLongitude& NFmiLongitude::operator-=(const NFmiLongitude& theAngle)
 {
+#ifdef WGS84
+  itsValue = NFmiLongitude(itsValue - theAngle.itsValue).itsValue;
+#else
   itsValue = NFmiLongitude(itsValue - theAngle.itsValue, fPacificView).itsValue;
+#endif
   return *this;
 }
 
@@ -390,7 +414,11 @@ NFmiLongitude& NFmiLongitude::operator-=(const NFmiLongitude& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator+=(const NFmiLongitude& theAngle)
 {
+#ifdef WGS84
+  itsValue = NFmiLongitude(itsValue + theAngle.itsValue).itsValue;
+#else
   itsValue = NFmiLongitude(itsValue + theAngle.itsValue, fPacificView).itsValue;
+#endif
   return *this;
 }
 
@@ -407,7 +435,11 @@ NFmiLongitude& NFmiLongitude::operator+=(const NFmiLongitude& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator-=(const double& theAngle)
 {
+#ifdef WGS84
+  itsValue = NFmiLongitude(itsValue - theAngle).itsValue;
+#else
   itsValue = NFmiLongitude(itsValue - theAngle, fPacificView).itsValue;
+#endif
   return *this;
 }
 
@@ -424,7 +456,11 @@ NFmiLongitude& NFmiLongitude::operator-=(const double& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator+=(const double& theAngle)
 {
+#ifdef WGS84
+  itsValue = NFmiLongitude(itsValue + theAngle).itsValue;
+#else
   itsValue = NFmiLongitude(itsValue + theAngle, fPacificView).itsValue;
+#endif
   return *this;
 }
 

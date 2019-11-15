@@ -14,7 +14,11 @@
 
 #include "NFmiAreaTools.h"
 #include "NFmiArea.h"
+#include "NFmiPoint.h"
+#include <fmt/format.h>
 #include <algorithm>
+
+#include <iostream>
 
 // Local utility functions
 
@@ -124,6 +128,138 @@ void LatLonBoundingBox(const NFmiArea& theArea,
     NFmiPoint latlon(theArea.ToLatLon(xy));
     update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
   }
+}
+
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
+                                        const NFmiPoint& theTopRight,
+                                        const NFmiPoint& theSouthPole)
+{
+  // north pole is on the opposite side
+  auto npole_lat = -theSouthPole.Y();
+
+  // always rotate to the new meridian
+  double npole_lon = 0;
+  double lon_0 = theSouthPole.X();
+
+  auto proj = fmt::format(
+      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
+      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      npole_lon,
+      npole_lat,
+      lon_0,
+      kRearth);
+
+  // the legacy corners are in rotated spherical latlon coordinate.
+  // the +to_meter setting is necessary to avoid radians
+  auto sphere = fmt::format(
+      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +lon_0={} "
+      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      npole_lon,
+      npole_lat,
+      lon_0,
+      kRearth);
+
+  return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
+                                        const NFmiPoint& theTopRight,
+                                        double theCentralLongitude,
+                                        double theCentralLatitude,
+                                        double theTrueLatitude)
+{
+  auto proj = fmt::format(
+      "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext "
+      "+towgs84=0,0,0 +no_defs",
+      theCentralLatitude,
+      theTrueLatitude,
+      theCentralLongitude,
+      kRearth);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
+                                   const NFmiPoint& theTopRight,
+                                   double theCentralLongitude,
+                                   double theCentralLatitude)
+{
+  auto proj = fmt::format(
+      "+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
+      theCentralLatitude,
+      theCentralLongitude,
+      kRearth);
+
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyLambertEqualArea(const NFmiPoint& theBottomLeft,
+                                       const NFmiPoint& theTopRight,
+                                       double theCentralLongitude,
+                                       double theCentralLatitude)
+{
+  auto proj = fmt::format(
+      "+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
+      "+no_defs",
+      theCentralLatitude,
+      theCentralLongitude,
+      kRearth);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
+                                                const NFmiPoint& theTopRight,
+                                                double theCentralLongitude,
+                                                double theCentralLatitude,
+                                                double theTrueLatitude1,
+                                                double theTrueLatitude2,
+                                                double theRadius)
+{
+  auto proj = fmt::format(
+      "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +R={:.0f} +units=m +wktext "
+      "+towgs84=0,0,0 +no_defs",
+      theCentralLatitude,
+      theCentralLongitude,
+      theTrueLatitude1,
+      theTrueLatitude2,
+      theRadius);
+  auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", theRadius);
+  return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
+                                   const NFmiPoint& theTopRight,
+                                   double theCentralLongitude,
+                                   double theCentralLatitude)
+{
+  auto proj = fmt::format(
+      "+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
+      "+no_defs",
+      theCentralLatitude,
+      theCentralLongitude,
+      kRearth);
+  return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  std::string proj =
+      "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+      "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+
+  std::string sphere = "+proj=latlong +datum=intl";
+  return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
 
 }  // namespace NFmiAreaTools

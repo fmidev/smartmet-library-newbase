@@ -372,7 +372,7 @@ class _FMI_DLL NFmiQueryDataUtil
                                  NFmiLogger *theDebugLogger = 0);
   static bool AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2);
   static bool AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *theGrid2);
-  static bool AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2);
+  static bool AreAreasSameKind(NFmiArea *theArea1, NFmiArea *theArea2);
 
   static NFmiQueryData *GridQD2NewGridQD(NFmiQueryData *theSourceData,
                                          NFmiGrid *theWantedGridFormat);

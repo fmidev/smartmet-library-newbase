@@ -47,12 +47,16 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
   double GetLongitude(void) const { return itsLatlon.X(); }
   const NFmiPoint& GetLocation(void) const { return itsLatlon; }
   void SetLocation(const NFmiPoint& newLocation) { itsLatlon = newLocation; }
-  // 9.8.04/EL -->
+
+#ifdef WGS84
+  void SetLocation(double theAzimuthInDegrees, double theDistanceInMeters);
+  NFmiLocation GetLocation(double theAzimuthInDegrees, double theDistanceInMeters) const;
+#else
   void SetLocation(double theAzimuthInDegrees, double theDistanceInMeters, bool usePacificView);
   const NFmiLocation GetLocation(double theAzimuthInDegrees,
                                  double theDistanceInMeters,
                                  bool usePacificView) const;
-  // 9.8.04/EL <--
+#endif
 
   double Distance(const NFmiLocation& theLocation) const;
   double Distance(const NFmiPoint& theLonLat) const;
@@ -101,9 +105,13 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
   {
   }
 
+#ifdef WGS84
+  NFmiLocation ComputeLocation(double theAzimuthInDegrees, double theDistanceInMeters) const;
+#else
   NFmiLocation ComputeLocation(double theAzimuthInDegrees,
                                double theDistanceInMeters,
-                               bool usePacificView) const;  // 9.8.04/EL
+                               bool usePacificView) const;
+#endif
 
  private:
   double CalcDeclinationAngle(const NFmiTime& theSolarTime);
