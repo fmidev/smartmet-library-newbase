@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.14
-Release: 1%{?dist}.fmi
+Version: 19.11.19
+Release: 3%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -87,6 +87,16 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Nov 19 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.19-3.fmi
+- Improved detection of legacy FMI projections
+- Fixed creation of legacy YKJ projection to use +ellps=intl instead of +datum=intl
+
+* Tue Nov 19 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.19-2.fmi
+- Added fractile parameters for LowAndMiddleClouds
+
+* Tue Nov 19 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.19-1.fmi
+- Fixed NFmiStreamQueryData to produce version 7 querydata by default
+
 * Thu Nov 14 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.11.14-1.fmi
 - Two new functions to NFmiSvgTools
 

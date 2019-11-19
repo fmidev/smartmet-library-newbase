@@ -135,7 +135,7 @@ int NFmiProj::DetectClassId() const
   auto name = GetString("proj");
   if (!name) throw std::runtime_error("Projection name not set, should be impossible");
 
-  if (GetDouble("R") == kRearth)
+  if (GetDouble("R") == kRearth || (GetDouble("a") == kRearth && GetDouble("b") == kRearth))
   {
     if (*name == "eqc") return kNFmiLatLonArea;
     if (*name == "merc") return kNFmiMercatorArea;
@@ -143,8 +143,12 @@ int NFmiProj::DetectClassId() const
     if (*name == "aeqd") return kNFmiEquiDistArea;
     if (*name == "lcc") return kNFmiLambertConformalConicArea;
     if (*name == "ob_tran" && GetString("o_proj") == std::string("eqc") &&
-        GetString("towgs84") == std::string("0,0,0") && GetDouble("o_lon_p") == 0.0)
-      return kNFmiRotatedLatLonArea;
+        GetDouble("o_lon_p") == 0.0)
+    {
+      if (GetString("towgs84") == std::string("0,0,0") ||
+          GetString("towgs84") == std::string("0,0,0,0,0,0,0"))
+        return kNFmiRotatedLatLonArea;
+    }
   }
   else if (*name == "tmerc" && GetString("ellps") == std::string("intl") &&
            GetDouble("x_0") == 3500000.0 && GetDouble("lat_0") == 0.0 &&
