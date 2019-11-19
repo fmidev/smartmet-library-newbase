@@ -657,8 +657,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       // Note: the world rect print order is correct, top left then bottom right
       NFmiPoint southpole(*lon0, -(*plat));
       file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
-           << impl->itsXYRect << impl->itsWorldRect.TopLeft() << impl->itsWorldRect.BottomRight()
-           << "0 0\n0 0\n"
+           << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << "0 0\n0 0\n"
            << impl->itsXScaleFactor << ' ' << -impl->itsYScaleFactor << '\n'
            << southpole;
       return file;
