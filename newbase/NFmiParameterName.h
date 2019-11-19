@@ -1350,6 +1350,14 @@ enum FmiParameterName
   kFmiProbabilityOfConvectiveSeverityIndexLimit3,
   kFmiPotentialWindSpeed, // wind speed observation reduced to 10m
 
+  kFmiLowAndMiddleCloudCoverF100 = 1425,
+  kFmiLowAndMiddleCloudCoverF90,
+  kFmiLowAndMiddleCloudCoverF75,
+  kFmiLowAndMiddleCloudCoverF50,
+  kFmiLowAndMiddleCloudCoverF25,
+  kFmiLowAndMiddleCloudCoverF10,
+  kFmiLowAndMiddleCloudCoverF0,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
