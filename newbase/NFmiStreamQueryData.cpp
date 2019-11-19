@@ -429,8 +429,7 @@ bool NFmiStreamQueryData::WriteCout(NFmiQueryData *theQueryData) const
 {
   NFmiQueryData *tempData = theQueryData ? theQueryData : itsQueryData;
   tempData->UseBinaryStorage(true);
-  if (tempData->InfoVersion() < 6.)  // jos datan infoversio on alle 6, pitää muuttaa 6:ksi
-    tempData->InfoVersion(6.);
+  if (tempData->InfoVersion() < 6.) tempData->InfoVersion(DefaultFmiInfoVersion);
 
 // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
 #ifndef UNIX
