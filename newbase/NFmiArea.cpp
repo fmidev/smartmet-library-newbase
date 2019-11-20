@@ -129,33 +129,33 @@ std::string class_name_from_id(int id)
   switch (id)
   {
     case kNFmiArea:
-      return "kNFmiArea";
+      return "NFmiArea";
     case kNFmiProjArea:
-      return "kNFmiProjArea";
+      return "NFmiProjArea";
     case kNFmiGdalArea:
-      return "kNFmiGdalArea";
+      return "kNFmiGdalArea";  // legacy "k"
     case kNFmiLambertEqualArea:
-      return "kNFmiLambertEqualArea";
+      return "NFmiLambertEqualArea";
     case kNFmiLatLonArea:
-      return "kNFmiLatLonArea";
+      return "NFmiLatLonArea";
     case kNFmiRotatedLatLonArea:
-      return "kNFmiRotatedLatLonArea";
+      return "NFmiRotatedLatLonArea";
     case kNFmiStereographicArea:
-      return "kNFmiStereographicArea";
+      return "kNFmiStereographicArea";  // legacy "k"
     case kNFmiPKJArea:
-      return "kNFmiPKJArea";
+      return "NFmiPKJArea";
     case kNFmiYKJArea:
-      return "kNFmiYKJArea";
+      return "NFmiYKJArea";
     case kNFmiEquiDistArea:
-      return "kNFmiEquiDistArea";
+      return "NFmiEquiDistArea";
     case kNFmiGnomonicArea:
-      return "kNFmiGnomonicArea";
+      return "kNFmiGnomonicArea";  // legacy "k"
     case kNFmiKKJArea:
-      return "kNFmiKKJArea";
+      return "NFmiKKJArea";
     case kNFmiMercatorArea:
-      return "kNFmiMercatorArea";
+      return "NFmiMercatorArea";
     case kNFmiLambertConformalConicArea:
-      return "kNFmiLambertConformalConicArea";
+      return "kNFmiLambertConformalConicArea";  // legacy "k"
     default:
       throw std::runtime_error("Unknown projection class id " + std::to_string(id));
   }
@@ -192,7 +192,7 @@ struct NFmiArea::Impl
 
   // This is only needed when reading legacy files from disk
   int itsClassId = kNFmiArea;
-  std::string itsClassName = "kNFmiArea";
+  std::string itsClassName = "NFmiArea";
 
   // For writing legacy projections back to disk
 
@@ -627,21 +627,27 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
   {
     case kNFmiArea:
     {
-      file << kNFmiArea << " kNFmiArea\n";
+      file << kNFmiArea << " NFmiArea\n";
       return file;
     }
     case kNFmiProjArea:
     {
       NFmiString txt = ProjStr();
-      file << kNFmiProjArea << " kNFmiProjArea\n" << impl->itsXYRect << txt << impl->itsWorldRect;
+      file << kNFmiProjArea << ' ' << impl->itsClassName << '\n'
+           << impl->itsXYRect << txt << impl->itsWorldRect;
       return file;
     }
     case kNFmiLatLonArea:
     {
-      // WGS84: Not sure if the factors are readable by legacy programs
-      file << kNFmiLatLonArea << " kNFmiLatLonArea\n"
+      // Legacy scale factors for old newbase programs, new programs ignore the values:
+      auto xscalefactor =
+          (Right() - Left()) / (impl->BottomRightCorner().X() - impl->TopLeftCorner().X());
+      auto yscalefactor =
+          (Top() - Bottom()) / (impl->TopLeftCorner().Y() - impl->BottomRightCorner().Y());
+
+      file << kNFmiLatLonArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << "0 0\n0 0\n"
-           << impl->itsXScaleFactor << ' ' << -impl->itsYScaleFactor << '\n';
+           << xscalefactor << ' ' << -yscalefactor << '\n';
       return file;
     }
     case kNFmiRotatedLatLonArea:
@@ -654,17 +660,23 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (*plon != 0)
         throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
 
+      // Legacy scale factors for old newbase programs, new programs ignore the values:
+      auto xscalefactor =
+          (Right() - Left()) / (impl->BottomRightCorner().X() - impl->TopLeftCorner().X());
+      auto yscalefactor =
+          (Top() - Bottom()) / (impl->TopLeftCorner().Y() - impl->BottomRightCorner().Y());
+
       // Note: the world rect print order is correct, top left then bottom right
       NFmiPoint southpole(*lon0, -(*plat));
-      file << kNFmiRotatedLatLonArea << " kNFmiRotatedLatLonArea\n"
+      file << kNFmiRotatedLatLonArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << "0 0\n0 0\n"
-           << impl->itsXScaleFactor << ' ' << -impl->itsYScaleFactor << '\n'
+           << xscalefactor << ' ' << yscalefactor << '\n'
            << southpole;
       return file;
     }
     case kNFmiMercatorArea:
     {
-      file << kNFmiMercatorArea << " kNFmiMercatorArea\n"
+      file << kNFmiMercatorArea << ' ' << impl->itsClassName << '\n'
            << impl->TopLeftCorner() << impl->BottomRightCorner() << "0 0\n0 0\n"
            << impl->itsXScaleFactor << ' ' << impl->itsYScaleFactor << '\n';
       return file;
@@ -678,7 +690,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (!clon || !clat || !tlat)
         throw std::runtime_error("Internal error in writing stereographic area");
 
-      file << kNFmiStereographicArea << " kNFmiStereographicArea\n"
+      file << kNFmiStereographicArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << '\n'
            << *clat << '\n'
            << *tlat << '\n';
@@ -700,7 +712,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
 
       // legacy tlat = 90
-      file << kNFmiEquiDistArea << " kNFmiEquiDistArea\n"
+      file << kNFmiEquiDistArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << '\n'
            << *clat << "\n90\n";
 
@@ -722,7 +734,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (!clon || !clat || !lat1 || !lat2)
         throw std::runtime_error("Internal error writing lcc area");
 
-      file << kNFmiLambertConformalConicArea << " kNFmiLambertConformalConicArea\n"
+      file << kNFmiLambertConformalConicArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << ' '
            << *clat << ' ' << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
 
@@ -735,7 +747,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiYKJArea:
     {
-      file << kNFmiYKJArea << " kNFmiYKJArea\n"
+      file << kNFmiYKJArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << "0 0\n0 0\n"
            << impl->itsXScaleFactor << ' ' << impl->itsYScaleFactor << '\n'
            << impl->itsWorldRect;
