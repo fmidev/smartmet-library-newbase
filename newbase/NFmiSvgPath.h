@@ -44,7 +44,7 @@ class _FMI_DLL NFmiSvgPath
   typedef Element value_type;
   typedef const value_type& const_reference;
   typedef value_type& reference;
-  typedef checkedVector<value_type> storage_type;
+  typedef std::vector<value_type> storage_type;
   typedef storage_type::size_type size_type;
   typedef storage_type::difference_type difference_type;
   typedef storage_type::const_iterator const_iterator;

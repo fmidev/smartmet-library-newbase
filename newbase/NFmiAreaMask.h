@@ -387,8 +387,8 @@ class _FMI_DLL NFmiAreaMask
       const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
   static boost::shared_ptr<NFmiAreaMask> DoShallowCopy(
       const boost::shared_ptr<NFmiAreaMask> &theMask);
-  static checkedVector<boost::shared_ptr<NFmiAreaMask> > DoShallowCopy(
-      const checkedVector<boost::shared_ptr<NFmiAreaMask> > &theMaskVector);
+  static std::vector<boost::shared_ptr<NFmiAreaMask> > DoShallowCopy(
+      const std::vector<boost::shared_ptr<NFmiAreaMask> > &theMaskVector);
 
 };  // class NFmiAreaMask
 

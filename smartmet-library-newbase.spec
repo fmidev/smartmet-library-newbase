@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.19
-Release: 3%{?dist}.fmi
+Version: 19.11.20
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -87,6 +87,11 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Nov 20 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.20-1.fmi
+- Made some NFmiQueryDataUtil methods public to handle time-slice data combinations
+- Replaced checkedVector by std::vector
+- Moved NFmiDataMatrix interpolation and print methods to SmartMet Workstation library
+
 * Tue Nov 19 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.19-3.fmi
 - Improved detection of legacy FMI projections
 - Fixed creation of legacy YKJ projection to use +ellps=intl instead of +datum=intl

@@ -1135,10 +1135,10 @@ static bool GetFirstAndSecondParamValues(NFmiFastQueryInfo *theInfo,
 // Tämä siis sen takia, että datassa ei aina ole kaikilla ajan hetkillä kuin
 // puuttuvaa korkeus dataa. Tässä fiksu arvaus mitä ajan hetkiä käydää läpi, koska jos
 // käy kaikki hilapisteet ja ajat läpi, on se liian raskasta.
-static checkedVector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
+static std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
 {
   int timeSize = theInfo->SizeTimes();
-  checkedVector<unsigned long> timeIndexies;
+  std::vector<unsigned long> timeIndexies;
   if (timeSize > 0)
   {
     timeIndexies.push_back(
@@ -1172,13 +1172,13 @@ static int GetGridDataIndex(int xSize, int xInd, int yInd) { return (xSize * yIn
 // Tämä siis sen takia, että datassa ei aina ole kaikissa paikoissa kuin
 // puuttuvaa korkeus dataa. Tässä fiksu arvaus mitä paikkoja käydää läpi, koska jos
 // käy kaikki hilapisteet ja ajat läpi, on se liian raskasta.
-static checkedVector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
+static std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
 {
   if (theInfo->IsGrid())
   {  // hiladatalle palautetaan seuraavat paikkaindeksit
     int xSize = theInfo->Grid()->XNumber();
     int ySize = theInfo->Grid()->YNumber();
-    checkedVector<unsigned long> locationIndexies;
+    std::vector<unsigned long> locationIndexies;
     if (xSize > 0 && ySize > 0)
     {
       locationIndexies.push_back(GetGridDataIndex(
@@ -1212,7 +1212,7 @@ static checkedVector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theI
   else
   {  // asema datalle palautetaan seuraavat paikka indeksit
     int ssize = theInfo->SizeLocations();
-    checkedVector<unsigned long> locationIndexies;
+    std::vector<unsigned long> locationIndexies;
     if (ssize > 0)
     {
       locationIndexies.push_back(
@@ -1256,12 +1256,12 @@ static bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long thePar
   {
     unsigned long oldTimeIndex = theInfo->TimeIndex();
     unsigned long oldLocationIndex = theInfo->LocationIndex();
-    checkedVector<unsigned long> timeIndexies(FillTimeIndexies(theInfo));  // jos ei heti tärppää
+    std::vector<unsigned long> timeIndexies(FillTimeIndexies(theInfo));  // jos ei heti tärppää
                                                                            // (on puuttuvaa dataa
                                                                            // joissain ajoissa),
                                                                            // pitää käydä ehkä
                                                                            // useampia aikoja läpi
-    checkedVector<unsigned long> locIndexies(
+    std::vector<unsigned long> locIndexies(
         FillLocationIndexies(theInfo));  // jos ei heti tärppää (on puuttuvaa dataa joissain
     // pisteissä), pitää käydä ehkä useampia paikkoja läpi
     float firstValue = kFloatMissing;
@@ -3815,7 +3815,7 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
 {
   double value = kFloatMissing;
   if (theColumn > static_cast<int>(theHValues.size() - 1)) return kFloatMissing;
-  checkedVector<float> &tmpVec = theHValues[theColumn];
+  std::vector<float> &tmpVec = theHValues[theColumn];
   // Teen theHeight:ille range-checkin ensin ja jos ollaan ala ja ylä arvojen ulkopuolella,
   // palautetaan missing arvo.
   if (::IsInsideRange(tmpVec, theHeight) == false) return kFloatMissing;
@@ -3867,7 +3867,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
 {
   float value = kFloatMissing;
   if (theColumn > static_cast<int>(thePValues.size() - 1)) return kFloatMissing;
-  checkedVector<float> &tmpVec = thePValues[theColumn];
+  std::vector<float> &tmpVec = thePValues[theColumn];
   // haetaan 1. theP:a pienemmn arvon sijainti, HUOM! lower_bound-funktioon pit antaa knteiset
   // iteraattorit, koska paine vektori on laskevassa jrjestyksess.
   // HUOM2! lower_bound-funktion palauttaa 1. theP:tä suuremman arvon sijainnin, toisin kuin edellä
@@ -3914,7 +3914,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
 // Täyttää annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data täytetään joka leveliltä.
 static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
-                                                       const checkedVector<NFmiPoint> &thePoints,
+                                                       const std::vector<NFmiPoint> &thePoints,
                                                        const NFmiMetTime &theTime)
 {
   // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
@@ -3968,8 +3968,8 @@ static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInf
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data tytetn annetuilta mallipinnoilta.
 static NFmiDataMatrix<float> CalcCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
-    const checkedVector<NFmiLevel> &theLevels,
-    const checkedVector<NFmiPoint> &thePoints,
+    const std::vector<NFmiLevel> &theLevels,
+    const std::vector<NFmiPoint> &thePoints,
     const NFmiMetTime &theTime)
 {
   // matriisin pit olla siis pisteiden ja leveleiden kokoinen
@@ -4035,8 +4035,8 @@ static NFmiDataMatrix<float> CalcCrossSectionLevelValuesFromLevelCache(
 // ajalle.
 void NFmiFastQueryInfo::CrossSectionValues(NFmiDataMatrix<float> &theValues,
                                            const NFmiMetTime &theInterpolatedTime,
-                                           const checkedVector<float> &theHeights,
-                                           const checkedVector<NFmiPoint> &theLatlonPoints)
+                                           const std::vector<float> &theHeights,
+                                           const std::vector<NFmiPoint> &theLatlonPoints)
 {
   theValues.Resize(theLatlonPoints.size(), theHeights.size());
   if (HeightDataAvailable())
@@ -4079,10 +4079,10 @@ void NFmiFastQueryInfo::CrossSectionValues(NFmiDataMatrix<float> &theValues,
   }
 }
 
-checkedVector<float> NFmiFastQueryInfo::ConvertPressuresToHeights(
-    const checkedVector<float> &thePressures)
+std::vector<float> NFmiFastQueryInfo::ConvertPressuresToHeights(
+    const std::vector<float> &thePressures)
 {
-  checkedVector<float> heigths(thePressures.size(), kFloatMissing);
+  std::vector<float> heigths(thePressures.size(), kFloatMissing);
   for (size_t i = 0; i < thePressures.size(); i++)
   {
     double heightValue =
@@ -4096,8 +4096,8 @@ checkedVector<float> NFmiFastQueryInfo::ConvertPressuresToHeights(
 
 void NFmiFastQueryInfo::CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
                                                const NFmiMetTime &theInterpolatedTime,
-                                               const checkedVector<float> &thePressures,
-                                               const checkedVector<NFmiPoint> &theLatlonPoints)
+                                               const std::vector<float> &thePressures,
+                                               const std::vector<NFmiPoint> &theLatlonPoints)
 {
   theValues.Resize(theLatlonPoints.size(), thePressures.size(), kFloatMissing);
   if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
@@ -4106,7 +4106,7 @@ void NFmiFastQueryInfo::CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
   {
     // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
     // korkeus-funktion avulla.
-    checkedVector<float> heightVector = ConvertPressuresToHeights(thePressures);
+    std::vector<float> heightVector = ConvertPressuresToHeights(thePressures);
     CrossSectionValues(theValues, theInterpolatedTime, heightVector, theLatlonPoints);
   }
   else if (PressureDataAvailable())
@@ -4155,8 +4155,8 @@ void NFmiFastQueryInfo::CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
 // ajalle.
 void NFmiFastQueryInfo::CrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
                                                  const NFmiMetTime &theInterpolatedTime,
-                                                 const checkedVector<NFmiLevel> &theLevels,
-                                                 const checkedVector<NFmiPoint> &theLatlonPoints)
+                                                 const std::vector<NFmiLevel> &theLevels,
+                                                 const std::vector<NFmiPoint> &theLatlonPoints)
 {
   // Ker data halutulle parametrille (paikka+aika intepolointeineen)
   theValues =
@@ -4213,7 +4213,7 @@ static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &th
 // Matriisi on poikkileikkaus timebagin kokoinen ja data tytetn annetuilta leveleilt.
 static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
-    const checkedVector<NFmiLevel> &theLevels,
+    const std::vector<NFmiLevel> &theLevels,
     const NFmiPoint &thePoint,
     NFmiTimeBag &theTimes)
 {
@@ -4240,7 +4240,7 @@ static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldataHybrid(
 }
 
 void NFmiFastQueryInfo::TimeCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                                               checkedVector<float> &theHeights,
+                                               std::vector<float> &theHeights,
                                                const NFmiPoint &thePoint,
                                                NFmiTimeBag &theWantedTimes)
 {  // kerää dataa matriisiin siten, että alhaalla (pinnalla) olevat datat ovat
@@ -4292,7 +4292,7 @@ void NFmiFastQueryInfo::TimeCrossSectionValues(NFmiDataMatrix<float> &theValues,
 }
 
 void NFmiFastQueryInfo::TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                                   checkedVector<float> &thePressures,
+                                                   std::vector<float> &thePressures,
                                                    const NFmiPoint &thePoint,
                                                    NFmiTimeBag &theWantedTimes,
                                                    unsigned int theStartTimeIndex)
@@ -4309,7 +4309,7 @@ void NFmiFastQueryInfo::TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theVal
   {
     // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
     // korkeus-funktion avulla.
-    checkedVector<float> heightVector = ConvertPressuresToHeights(thePressures);
+    std::vector<float> heightVector = ConvertPressuresToHeights(thePressures);
     TimeCrossSectionValues(theValues, heightVector, thePoint, theWantedTimes);
   }
   else if (PressureDataAvailable())
@@ -4355,7 +4355,7 @@ void NFmiFastQueryInfo::TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theVal
 
 // 05-Oct-2011 PKi
 void NFmiFastQueryInfo::TimeCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                                     const checkedVector<NFmiLevel> &theLevels,
+                                                     const std::vector<NFmiLevel> &theLevels,
                                                      const NFmiPoint &thePoint,
                                                      NFmiTimeBag &theWantedTimes)
 {  // ker mallipintadataa (mys ground) matriisiin timebagist tulevilla ajoilla
@@ -4367,8 +4367,8 @@ void NFmiFastQueryInfo::TimeCrossSectionValuesHybrid(NFmiDataMatrix<float> &theV
 // data täytetään joka leveliltä.
 static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
     NFmiFastQueryInfo &theInfo,
-    const checkedVector<NFmiPoint> &theLatlonPoints,
-    const checkedVector<NFmiMetTime> &thePointTimes)
+    const std::vector<NFmiPoint> &theLatlonPoints,
+    const std::vector<NFmiMetTime> &thePointTimes)
 {
   // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
   NFmiDataMatrix<float> values(theLatlonPoints.size(), theInfo.SizeLevels(), kFloatMissing);
@@ -4410,9 +4410,9 @@ static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
 // data tytetn annetuilta leveleilt.
 static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
-    const checkedVector<NFmiLevel> &theLevels,
-    const checkedVector<NFmiPoint> &theLatlonPoints,
-    const checkedVector<NFmiMetTime> &thePointTimes)
+    const std::vector<NFmiLevel> &theLevels,
+    const std::vector<NFmiPoint> &theLatlonPoints,
+    const std::vector<NFmiMetTime> &thePointTimes)
 {
   // matriisin pit olla siis pisteiden ja leveleiden kokoinen
   NFmiDataMatrix<float> values(theLatlonPoints.size(), theLevels.size(), kFloatMissing);
@@ -4451,9 +4451,9 @@ static size_t MaxValueOf_1_Or_N(size_t n1, size_t n2, size_t n3)
 //
 static NFmiDataMatrix<float> CalcFlightRouteDataHybrid(
     NFmiFastQueryInfo &theInfo,
-    const checkedVector<NFmiLevel> &theLevels,
-    const checkedVector<NFmiPoint> &theLatlonPoints,
-    const checkedVector<NFmiMetTime> &thePointTimes)
+    const std::vector<NFmiLevel> &theLevels,
+    const std::vector<NFmiPoint> &theLatlonPoints,
+    const std::vector<NFmiMetTime> &thePointTimes)
 {
   // Pisteita/leveleita/aikoja pitaa olla 1 tai sama N kpl, muuten palautetaan tyhja tulos
   //
@@ -4489,9 +4489,9 @@ static NFmiDataMatrix<float> CalcFlightRouteDataHybrid(
 // Reittipoikkileikkaus eli on alku ja loppu paikat ja ajat. Jokaista paikkaa vastaa oma aika.
 // aikoja ja paikkoja pitää olla yhtä paljon.
 void NFmiFastQueryInfo::RouteCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                                                const checkedVector<float> &theHeights,
-                                                const checkedVector<NFmiPoint> &theLatlonPoints,
-                                                const checkedVector<NFmiMetTime> &thePointTimes)
+                                                const std::vector<float> &theHeights,
+                                                const std::vector<NFmiPoint> &theLatlonPoints,
+                                                const std::vector<NFmiMetTime> &thePointTimes)
 {
   theValues.Resize(
       theLatlonPoints.size(), theHeights.size(), kFloatMissing);  // xnumberissa pitäisi olla
@@ -4542,9 +4542,9 @@ void NFmiFastQueryInfo::RouteCrossSectionValues(NFmiDataMatrix<float> &theValues
 // Lentoreittihaku. Tayttaa matriisin ([N,1]) annetuille pisteille/korkeuksille/ajoille.
 //
 void NFmiFastQueryInfo::FlightRouteValues(NFmiDataMatrix<float> &theValues,
-                                          const checkedVector<float> &theHeights,
-                                          const checkedVector<NFmiPoint> &theLatlonPoints,
-                                          const checkedVector<NFmiMetTime> &thePointTimes)
+                                          const std::vector<float> &theHeights,
+                                          const std::vector<NFmiPoint> &theLatlonPoints,
+                                          const std::vector<NFmiMetTime> &thePointTimes)
 {
   if (HeightDataAvailable())
   {
@@ -4562,8 +4562,8 @@ void NFmiFastQueryInfo::FlightRouteValues(NFmiDataMatrix<float> &theValues,
 
     // Ao. koodi vaatii samanpituiset paikka- ja aikavektorit, taytetaan toinen niista tarvittaessa.
     //
-    checkedVector<NFmiPoint> latlonPoints;
-    checkedVector<NFmiMetTime> pointTimes;
+    std::vector<NFmiPoint> latlonPoints;
+    std::vector<NFmiMetTime> pointTimes;
     bool localPoints = false, localTimes = false;
 
     if (theLatlonPoints.size() != thePointTimes.size())
@@ -4580,8 +4580,8 @@ void NFmiFastQueryInfo::FlightRouteValues(NFmiDataMatrix<float> &theValues,
       }
     }
 
-    const checkedVector<NFmiPoint> &points = localPoints ? latlonPoints : theLatlonPoints;
-    const checkedVector<NFmiMetTime> &times = localTimes ? pointTimes : thePointTimes;
+    const std::vector<NFmiPoint> &points = localPoints ? latlonPoints : theLatlonPoints;
+    const std::vector<NFmiMetTime> &times = localTimes ? pointTimes : thePointTimes;
 
     FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
     // 1. Kerï¿½ï¿½ ensin level data halutulle parametrille (paikka+aika intepolointeineen)
@@ -4620,9 +4620,9 @@ void NFmiFastQueryInfo::FlightRouteValues(NFmiDataMatrix<float> &theValues,
 }
 
 void NFmiFastQueryInfo::RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                                    const checkedVector<float> &thePressures,
-                                                    const checkedVector<NFmiPoint> &theLatlonPoints,
-                                                    const checkedVector<NFmiMetTime> &thePointTimes)
+                                                    const std::vector<float> &thePressures,
+                                                    const std::vector<NFmiPoint> &theLatlonPoints,
+                                                    const std::vector<NFmiMetTime> &thePointTimes)
 {
   theValues.Resize(
       theLatlonPoints.size(), thePressures.size(), kFloatMissing);  // xnumberissa pitäisi olla
@@ -4635,7 +4635,7 @@ void NFmiFastQueryInfo::RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theVa
   {
     // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
     // korkeus-funktion avulla.
-    checkedVector<float> heightVector = ConvertPressuresToHeights(thePressures);
+    std::vector<float> heightVector = ConvertPressuresToHeights(thePressures);
     RouteCrossSectionValues(theValues, heightVector, theLatlonPoints, thePointTimes);
   }
   if (PressureDataAvailable())
@@ -4683,9 +4683,9 @@ void NFmiFastQueryInfo::RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theVa
 // Lentoreittihaku. Tayttaa matriisin ([N,1]) annetuille pisteille/paineille/ajoille.
 //
 void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
-                                              const checkedVector<float> &thePressures,
-                                              const checkedVector<NFmiPoint> &theLatlonPoints,
-                                              const checkedVector<NFmiMetTime> &thePointTimes)
+                                              const std::vector<float> &thePressures,
+                                              const std::vector<NFmiPoint> &theLatlonPoints,
+                                              const std::vector<NFmiMetTime> &thePointTimes)
 {
   if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei lï¿½ydy
                                                                   // paine-dataa, katsotaan
@@ -4694,7 +4694,7 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
   {
     // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
     // korkeus-funktion avulla.
-    checkedVector<float> heightVector = ConvertPressuresToHeights(thePressures);
+    std::vector<float> heightVector = ConvertPressuresToHeights(thePressures);
     FlightRouteValues(theValues, heightVector, theLatlonPoints, thePointTimes);
   }
   if (PressureDataAvailable())
@@ -4714,8 +4714,8 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
     // Ao. koodi vaatii samanpituiset paikka- ja aikavektorit, taytetaan toinen vektori
     // tarvittaessa.
     //
-    checkedVector<NFmiPoint> latlonPoints;
-    checkedVector<NFmiMetTime> pointTimes;
+    std::vector<NFmiPoint> latlonPoints;
+    std::vector<NFmiMetTime> pointTimes;
     bool localPoints = false, localTimes = false;
 
     if (theLatlonPoints.size() != thePointTimes.size())
@@ -4732,8 +4732,8 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
       }
     }
 
-    const checkedVector<NFmiPoint> &points = localPoints ? latlonPoints : theLatlonPoints;
-    const checkedVector<NFmiMetTime> &times = localTimes ? pointTimes : thePointTimes;
+    const std::vector<NFmiPoint> &points = localPoints ? latlonPoints : theLatlonPoints;
+    const std::vector<NFmiMetTime> &times = localTimes ? pointTimes : thePointTimes;
 
     FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
     auto paramId = static_cast<FmiParameterName>(Param().GetParam()->GetIdent());
@@ -4778,9 +4778,9 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
 // aikoja ja paikkoja pit olla yht paljon.
 void NFmiFastQueryInfo::RouteCrossSectionValuesHybrid(
     NFmiDataMatrix<float> &theValues,
-    const checkedVector<NFmiLevel> &theLevels,
-    const checkedVector<NFmiPoint> &theLatlonPoints,
-    const checkedVector<NFmiMetTime> &thePointTimes)
+    const std::vector<NFmiLevel> &theLevels,
+    const std::vector<NFmiPoint> &theLatlonPoints,
+    const std::vector<NFmiMetTime> &thePointTimes)
 {
   // Ker data halutulle parametrille (paikka+aika intepolointeineen)
   theValues =
@@ -4793,9 +4793,9 @@ void NFmiFastQueryInfo::RouteCrossSectionValuesHybrid(
 // Levelina voi olla myos ground level
 //
 void NFmiFastQueryInfo::FlightRouteValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                                const checkedVector<NFmiLevel> &theLevels,
-                                                const checkedVector<NFmiPoint> &theLatlonPoints,
-                                                const checkedVector<NFmiMetTime> &thePointTimes)
+                                                const std::vector<NFmiLevel> &theLevels,
+                                                const std::vector<NFmiPoint> &theLatlonPoints,
+                                                const std::vector<NFmiMetTime> &thePointTimes)
 {
   // Ker data halutulle parametrille (paikka+aika intepolointeineen)
   theValues = CalcFlightRouteDataHybrid(*this, theLevels, theLatlonPoints, thePointTimes);
@@ -5671,7 +5671,7 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
       if ((t2m != kFloatMissing) && (rh != kFloatMissing))
       {
         t2m += 273.15;
-        theLandscapedMatrix[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15;
+        theLandscapedMatrix[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15f;
       }
       else if (cropNativeGrid)
         theLandscapedMatrix[i][j] = theMatrix[i][j];
