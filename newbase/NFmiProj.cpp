@@ -204,7 +204,7 @@ std::string NFmiProj::InverseProjStr() const
     ret += name_value.first;
     ret += '=';
 
-    if (ints.find(name_value.first) == keepers.end())
+    if (ints.find(name_value.first) == ints.end())
       ret += fmt::format("{}", name_value.second);
     else
       ret += fmt::format("{:.0f}", name_value.second);
