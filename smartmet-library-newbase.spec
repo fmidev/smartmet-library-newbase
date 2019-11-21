@@ -89,6 +89,8 @@ FMI newbase static library
 %changelog
 * Thu Nov 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.21-1.fmi
 - Fixed NFmiProj end iterator tests for integer settings
+- Revert old interpolation behaviour of qdpoint -i options
+- Fixed eternal loop in NFmiDataMatrixUtils
 
 * Wed Nov 20 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.20-1.fmi
 - Made some NFmiQueryDataUtil methods public to handle time-slice data combinations

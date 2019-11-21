@@ -2932,18 +2932,18 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
 {
   float tmpValue = kFloatMissing;
   unsigned long oldTimeIndex = TimeIndex();
-  // Katsotaan ensin löytyykö suoraan halutulle ajalle arvoa
-  if (Time(theTime))
+
+  // Return value stored for the time if it is not missing
+  if (Time(theTime)) tmpValue = FloatValue();
+
+  if (tmpValue == kFloatMissing)
   {
-    tmpValue = FloatValue();
-  }
-  else
-  {  // jos ei löytynyt suoraan arvoa, aletaan interpolointi...
     if (itsTimeDescriptor->ValidTimeBag())
       tmpValue = InterpolatedValueFromTimeBag(theTime, theMaxMinuteRange);
     else if (itsTimeDescriptor->ValidTimeList())
       tmpValue = InterpolatedValueFromTimeList(theTime, theMaxMinuteRange);
   }
+
   TimeIndex(oldTimeIndex);  // asetetaan lopuksi indeksi takaisin siihen, missä se oli
   return tmpValue;
 }
@@ -3996,14 +3996,16 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         }
         else
         {
-        std::vector<float> values(8, kFloatMissing);
-        GetCachedValues(theLocationCache, theTimeCache, values);
-        auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-        float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
-        value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
+          std::vector<float> values(8, kFloatMissing);
+          GetCachedValues(theLocationCache, theTimeCache, values);
+          auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
+          float value1 =
+              CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+          float value2 =
+              CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
+          value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
+        }
       }
-    }
     }
     // palautetaan indeksit lopuksi
     TimeIndex(oldTimeIndex);
