@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.21
+Version: 19.11.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Nov 25 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.25-1.fmi
+- Added NFmiFastQueryInfo SpatialReference() and WorldXY() methods to enable accurate coordinate transformations
+
 * Thu Nov 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.21-1.fmi
 - Fixed NFmiProj end iterator tests for integer settings
 - Revert old interpolation behaviour of qdpoint -i options

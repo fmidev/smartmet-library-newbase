@@ -13,12 +13,11 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
-
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
-
+#include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
-
+#include <gdal/ogr_spatialref.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -709,8 +708,8 @@ typedef pair<int, double> IndDistPari;
 // ----------------------------------------------------------------------
 
 std::vector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation & /* theLocation */,
-                                                             int /* theMaxWantedLocations */,
-                                                             double /* theMaxDistance */) const
+                                                           int /* theMaxWantedLocations */,
+                                                           double /* theMaxDistance */) const
 {
   int size = 1;  //(int)this->GetSize();
   std::vector<IndDistPari> tempValues(size, make_pair(-1, kFloatMissing));
@@ -747,8 +746,7 @@ std::vector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation & 
 
     if (theMaxWantedLocations != -1)
     {
-      std::vector<IndDistPari>::iterator maxWantedPos =
-          tempValues.begin() + theMaxWantedLocations;
+      std::vector<IndDistPari>::iterator maxWantedPos = tempValues.begin() + theMaxWantedLocations;
       if (pos > maxWantedPos) pos = maxWantedPos;
     }
 
@@ -865,4 +863,28 @@ std::size_t NFmiGrid::HashValue() const
   std::size_t hash = NFmiGridBase::HashValue();
   if (itsArea != nullptr) boost::hash_combine(hash, itsArea->HashValue());
   return hash;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+OGRSpatialReference *NFmiGrid::SpatialReference()
+{
+  if (itsArea) return itsArea->SpatialReference();
+  return NFmiWGS84::SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const OGRSpatialReference *NFmiGrid::SpatialReference() const
+{
+  if (itsArea) return itsArea->SpatialReference();
+  return NFmiWGS84::SpatialReference();
 }

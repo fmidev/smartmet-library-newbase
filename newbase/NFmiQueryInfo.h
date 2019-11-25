@@ -28,6 +28,7 @@ class NFmiDataModifierExtreme;
 class NFmiDataModifierExtremePlace;
 class NFmiBitMask;
 class NFmiStation;
+class OGRSpatialReference;
 
 //! Undocumented, should be a const int
 #define HEADERMAX 3  // Poistetaan
@@ -143,8 +144,7 @@ class _FMI_DLL NFmiQueryInfo
 
   virtual const NFmiLocation *Location() const;
   virtual NFmiPoint LatLon() const;
-  virtual const NFmiPoint RelativePoint()
-      const;  // Palauttaa currentin paikan suhteellisen sijainnin (esim. gridin areassa)
+  virtual const NFmiPoint RelativePoint() const;  // relative point in grid
   virtual const NFmiLevel *Level() const;
   virtual NFmiProducer *Producer();
 
@@ -1209,6 +1209,7 @@ inline unsigned long NFmiQueryInfo::TimeIndex() const { return itsTimeDescriptor
 // ----------------------------------------------------------------------
 
 inline NFmiPoint NFmiQueryInfo::LatLon() const { return itsHPlaceDescriptor->LatLon(); }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

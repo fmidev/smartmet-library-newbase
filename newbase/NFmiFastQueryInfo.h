@@ -112,6 +112,12 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiProducer *Producer(void);
   const NFmiProducer &FirstParamProducer(void);
 
+  NFmiPoint WorldXY() const;  // actual metric coordinate, or WGS84 for point data
+  NFmiPoint WorldXY(
+      unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
+  OGRSpatialReference *SpatialReference();
+  const OGRSpatialReference *SpatialReference() const;
+
   NFmiDataIdent &Param(void) const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
 
@@ -1063,6 +1069,15 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
   itsTimeDescriptor->Time(itsTimeIndex);
   return itsTimeDescriptor->Resolution();
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return current WorldXY coordinate
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiPoint NFmiFastQueryInfo::WorldXY() const { return WorldXY(itsLocationIndex); }
+
 // ----------------------------------------------------------------------
 /*!
  * Palauttaa nykyisen indeksin koordinaatit. Koordinaatticache sijaitsee
@@ -1216,6 +1231,26 @@ inline void NFmiFastQueryInfo::Locations(NFmiDataMatrix<NFmiPoint> &theMatrix) c
   }
   else
     theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+inline OGRSpatialReference *NFmiFastQueryInfo::SpatialReference()
+{
+  return itsHPlaceDescriptor->SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+inline const OGRSpatialReference *NFmiFastQueryInfo::SpatialReference() const
+{
+  return itsHPlaceDescriptor->SpatialReference();
 }
 
 // ======================================================================

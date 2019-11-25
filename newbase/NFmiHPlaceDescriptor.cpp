@@ -18,8 +18,9 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
-
+#include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
+#include <gdal/ogr_spatialref.h>
 
 using namespace std;
 
@@ -252,6 +253,51 @@ const NFmiLocation *NFmiHPlaceDescriptor::LocationWithIndex(unsigned long theInd
 {
   if (itsLocationBag) return itsLocationBag->Location(theIndex);
   return nullptr;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the current WorldXY coordinate
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiHPlaceDescriptor::WorldXY(unsigned long index) const
+{
+  if (itsLocationBag)
+  {
+    const NFmiLocation *loc = itsLocationBag->Location(index);
+    if (loc) return loc->GetLocation();
+  }
+  else if (itsGrid)
+  {
+    return itsGrid->WorldXY(index);
+  }
+
+  return NFmiPoint::gMissingLatlon;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the spatial reference
+ */
+// ----------------------------------------------------------------------
+
+OGRSpatialReference *NFmiHPlaceDescriptor::SpatialReference()
+{
+  if (itsGrid) return itsGrid->SpatialReference();
+  return NFmiWGS84::SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the spatial reference
+ */
+// ----------------------------------------------------------------------
+
+const OGRSpatialReference *NFmiHPlaceDescriptor::SpatialReference() const
+{
+  if (itsGrid) return itsGrid->SpatialReference();
+  return NFmiWGS84::SpatialReference();
 }
 
 // ----------------------------------------------------------------------

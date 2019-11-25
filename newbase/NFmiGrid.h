@@ -10,11 +10,11 @@
 #include "NFmiArea.h"
 #include "NFmiDataMatrix.h"
 #include "NFmiGridBase.h"
-
 #include <algorithm>
 #include <string>
 
 class NFmiLocation;
+class OGRSpatialReference;
 
 // NFmiLocationCache-luokka käytetään kun halutaan optimoida paikkaan liittyviä interpolaatioita.
 class NFmiLocationCache
@@ -139,6 +139,10 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
   const NFmiPoint XY(void) const;
   NFmiArea *Area(void) const;
   bool AreGridsIdentical(const NFmiGrid &theOtherGrid) const;
+
+  NFmiPoint WorldXY() const;  // actual metric coordinate, or WGS84 for point data
+  OGRSpatialReference *SpatialReference();
+  const OGRSpatialReference *SpatialReference() const;
 
   bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,
                     NFmiPoint &theTopRightLatLon,
@@ -342,6 +346,14 @@ inline const NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) co
 {
   return GridToWorldXY(theGridPoint.X(), theGridPoint.Y());
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiPoint NFmiGrid::WorldXY() const { return GridToWorldXY(GridPoint()); }
 
 // ----------------------------------------------------------------------
 /*!
