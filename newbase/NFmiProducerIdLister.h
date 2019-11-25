@@ -35,8 +35,8 @@ class NFmiProducerIdLister
   void ModelOriginTime(int theIndex, const NFmiMetTime &theOriginTime);
 
   const NFmiTimeDescriptor &Times(void) const { return itsTimes; }
-  const checkedVector<int> &ProducerIds(void) const { return itsProducerIds; }
-  const checkedVector<NFmiMetTime> &ModelOriginTimes(void) const { return itsModelOriginTimes; }
+  const std::vector<int> &ProducerIds(void) const { return itsProducerIds; }
+  const std::vector<NFmiMetTime> &ModelOriginTimes(void) const { return itsModelOriginTimes; }
   void DefaultProducerId(int value) { itsDefaultProducerId = value; }
   int DefaultProducerId(void) const { return itsDefaultProducerId; }
   const std::string &ProducerString(void) const { return itsProducerString; }
@@ -46,8 +46,8 @@ class NFmiProducerIdLister
  private:
   NFmiTimeDescriptor itsTimes;
   std::string itsProducerString;
-  checkedVector<int> itsProducerIds;  // tähän talletetaan kunkin ajan tuottaja id
-  checkedVector<NFmiMetTime>
+  std::vector<int> itsProducerIds;  // tähän talletetaan kunkin ajan tuottaja id
+  std::vector<NFmiMetTime>
       itsModelOriginTimes;  // tähän talletetaan kunkin ajan mallin origin aika
   int itsDefaultProducerId;
 };

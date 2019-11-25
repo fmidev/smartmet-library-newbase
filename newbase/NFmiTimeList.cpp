@@ -282,7 +282,7 @@ void NFmiTimeList::Clear(bool fDeleteData)
     for (int i = 0; i < vecSize; i++)
       delete itsVectorList[i];
   }
-  checkedVector<NFmiMetTime *>().swap(itsVectorList);
+  std::vector<NFmiMetTime *>().swap(itsVectorList);
   Reset();  // vanha laittoi tyhjennyksen jälkeen Firstiin, missä ei ole järkeä
 
   /*
@@ -501,7 +501,7 @@ bool NFmiTimeList::FindNearestTime(const NFmiMetTime &theTime,
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
-bool NFmiTimeList::FindNearestBackwardTime(checkedVector<NFmiMetTime *>::iterator &firstNotLess,
+bool NFmiTimeList::FindNearestBackwardTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
                                            const NFmiMetTime &theTime,
                                            unsigned long theTimeRangeInMinutes)
 {
@@ -516,7 +516,7 @@ bool NFmiTimeList::FindNearestBackwardTime(checkedVector<NFmiMetTime *>::iterato
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
-bool NFmiTimeList::FindNearestForwardTime(checkedVector<NFmiMetTime *>::iterator &firstNotLess,
+bool NFmiTimeList::FindNearestForwardTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
                                           const NFmiMetTime &theTime,
                                           unsigned long theTimeRangeInMinutes)
 {
@@ -529,7 +529,7 @@ bool NFmiTimeList::FindNearestForwardTime(checkedVector<NFmiMetTime *>::iterator
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
-bool NFmiTimeList::FindNearestTime(checkedVector<NFmiMetTime *>::iterator &firstNotLess,
+bool NFmiTimeList::FindNearestTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
                                    const NFmiMetTime &theTime,
                                    unsigned long theTimeRangeInMinutes)
 {
@@ -561,12 +561,12 @@ bool NFmiTimeList::FindNearestTime(checkedVector<NFmiMetTime *>::iterator &first
 }
 
 // Assumption: theIter -iterator is from the itsVectorList.
-int NFmiTimeList::CalcTimeListIndex(const checkedVector<NFmiMetTime *>::iterator &theIter)
+int NFmiTimeList::CalcTimeListIndex(const std::vector<NFmiMetTime *>::iterator &theIter)
 {
   return static_cast<int>(std::distance(itsVectorList.begin(), theIter));
 }
 
-bool NFmiTimeList::IsSearchedTimeInRange(checkedVector<NFmiMetTime *>::iterator &foundTimeIter,
+bool NFmiTimeList::IsSearchedTimeInRange(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
                                          const NFmiMetTime &theTime,
                                          unsigned long theTimeRangeInMinutes)
 {
@@ -578,7 +578,7 @@ bool NFmiTimeList::IsSearchedTimeInRange(checkedVector<NFmiMetTime *>::iterator 
     return false;
 }
 
-bool NFmiTimeList::CheckFoundTimeIter(checkedVector<NFmiMetTime *>::iterator &foundTimeIter,
+bool NFmiTimeList::CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
                                       const NFmiMetTime &theTime,
                                       unsigned long theTimeRangeInMinutes)
 {
@@ -796,7 +796,7 @@ void NFmiTimeList::PruneTimes(int theMaxTimeCount, bool fFromEnd)
   {
     if (fFromEnd)
     {
-      checkedVector<NFmiMetTime *> tmpList(theMaxTimeCount);
+      std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
       std::copy(itsVectorList.begin(), itsVectorList.begin() + theMaxTimeCount, tmpList.begin());
       std::for_each(
           itsVectorList.begin() + theMaxTimeCount, itsVectorList.end(), PointerDestroyer());
@@ -804,7 +804,7 @@ void NFmiTimeList::PruneTimes(int theMaxTimeCount, bool fFromEnd)
     }
     else
     {
-      checkedVector<NFmiMetTime *> tmpList(theMaxTimeCount);
+      std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
       std::copy(itsVectorList.end() - theMaxTimeCount, itsVectorList.end(), tmpList.begin());
       std::for_each(
           itsVectorList.begin(), itsVectorList.end() - theMaxTimeCount, PointerDestroyer());

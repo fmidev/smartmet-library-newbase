@@ -27,7 +27,7 @@ class _FMI_DLL NFmiStreamQueryData
   bool SafeReadLatestData(const NFmiString& theFileName, NFmiQueryData** theQueryData = 0);
   bool WriteData(const NFmiString& theFileName,
                  NFmiQueryData* theQueryData = 0,
-                 long theLibVersion = 6) const;
+                 long theLibVersion = DefaultFmiInfoVersion) const;
 
   bool ReadIn(NFmiQueryData* theQueryData = 0);
   bool ReadIn(NFmiQueryInfo* theQueryInfo);

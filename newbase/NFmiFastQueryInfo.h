@@ -317,59 +317,59 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 
   void CrossSectionValues(NFmiDataMatrix<float> &theValues,
                           const NFmiMetTime &theInterpolatedTime,
-                          const checkedVector<float> &theHeights,
-                          const checkedVector<NFmiPoint> &theLatlonPoints);
+                          const std::vector<float> &theHeights,
+                          const std::vector<NFmiPoint> &theLatlonPoints);
   void TimeCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                              checkedVector<float> &theHeights,
+                              std::vector<float> &theHeights,
                               const NFmiPoint &thePoint,
                               NFmiTimeBag &theWantedTimes);
   void RouteCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                               const checkedVector<float> &theHeights,
-                               const checkedVector<NFmiPoint> &theLatlonPoints,
-                               const checkedVector<NFmiMetTime> &thePointTimes);
-  checkedVector<float> ConvertPressuresToHeights(const checkedVector<float> &thePressures);
+                               const std::vector<float> &theHeights,
+                               const std::vector<NFmiPoint> &theLatlonPoints,
+                               const std::vector<NFmiMetTime> &thePointTimes);
+  std::vector<float> ConvertPressuresToHeights(const std::vector<float> &thePressures);
 
   void CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
                               const NFmiMetTime &theInterpolatedTime,
-                              const checkedVector<float> &thePressures,
-                              const checkedVector<NFmiPoint> &theLatlonPoints);
+                              const std::vector<float> &thePressures,
+                              const std::vector<NFmiPoint> &theLatlonPoints);
   void TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                  checkedVector<float> &thePressures,
+                                  std::vector<float> &thePressures,
                                   const NFmiPoint &thePoint,
                                   NFmiTimeBag &theWantedTimes,
                                   unsigned int theStartTimeIndex = 0);
   void RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                   const checkedVector<float> &thePressures,
-                                   const checkedVector<NFmiPoint> &theLatlonPoints,
-                                   const checkedVector<NFmiMetTime> &thePointTimes);
+                                   const std::vector<float> &thePressures,
+                                   const std::vector<NFmiPoint> &theLatlonPoints,
+                                   const std::vector<NFmiMetTime> &thePointTimes);
 
   // 05-Oct-2011 PKi: Cross mallipinnoille ja ground levelille
   void CrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
                                 const NFmiMetTime &theInterpolatedTime,
-                                const checkedVector<NFmiLevel> &theLevels,
-                                const checkedVector<NFmiPoint> &theLatlonPoints);
+                                const std::vector<NFmiLevel> &theLevels,
+                                const std::vector<NFmiPoint> &theLatlonPoints);
   void TimeCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                    const checkedVector<NFmiLevel> &theLevels,
+                                    const std::vector<NFmiLevel> &theLevels,
                                     const NFmiPoint &thePoint,
                                     NFmiTimeBag &theWantedTimes);
   void RouteCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                     const checkedVector<NFmiLevel> &theLevels,
-                                     const checkedVector<NFmiPoint> &theLatlonPoints,
-                                     const checkedVector<NFmiMetTime> &thePointTimes);
+                                     const std::vector<NFmiLevel> &theLevels,
+                                     const std::vector<NFmiPoint> &theLatlonPoints,
+                                     const std::vector<NFmiMetTime> &thePointTimes);
 
   // 09-Mar-2015 PKi: FlightRoute
   void FlightRouteValues(NFmiDataMatrix<float> &theValues,
-                         const checkedVector<float> &theHeights,
-                         const checkedVector<NFmiPoint> &theLatlonPoints,
-                         const checkedVector<NFmiMetTime> &thePointTimes);
+                         const std::vector<float> &theHeights,
+                         const std::vector<NFmiPoint> &theLatlonPoints,
+                         const std::vector<NFmiMetTime> &thePointTimes);
   void FlightRouteValuesHybrid(NFmiDataMatrix<float> &theValues,
-                               const checkedVector<NFmiLevel> &theLevels,
-                               const checkedVector<NFmiPoint> &theLatlonPoints,
-                               const checkedVector<NFmiMetTime> &thePointTimes);
+                               const std::vector<NFmiLevel> &theLevels,
+                               const std::vector<NFmiPoint> &theLatlonPoints,
+                               const std::vector<NFmiMetTime> &thePointTimes);
   void FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
-                             const checkedVector<float> &thePressures,
-                             const checkedVector<NFmiPoint> &theLatlonPoints,
-                             const checkedVector<NFmiMetTime> &thePointTimes);
+                             const std::vector<float> &thePressures,
+                             const std::vector<NFmiPoint> &theLatlonPoints,
+                             const std::vector<NFmiMetTime> &thePointTimes);
 
   // Hakee haluttuun hilaan interpoloitua dataa halutulta ajalta
   void GridValues(NFmiDataMatrix<float> &theValues,
