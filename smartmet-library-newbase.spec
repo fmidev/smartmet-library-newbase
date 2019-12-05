@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.25
+Version: 19.12.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -23,7 +23,7 @@ Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
 Requires: boost-regex
-Requires: gdal
+Requires: gdal-libs
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
@@ -87,6 +87,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
+- Use -fno-omit-frame-pointer for a better profiling and debugging experience
+- Fixed dependency to be on gdal-libs instead of gdal
+
 * Mon Nov 25 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.25-1.fmi
 - Added NFmiFastQueryInfo SpatialReference() and WorldXY() methods to enable accurate coordinate transformations
 
