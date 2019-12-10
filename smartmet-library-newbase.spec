@@ -15,7 +15,7 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: bzip2-devel
-BuildRequires: geos-devel >= 3.5.0
+BuildRequires: geos38-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
 Requires: boost-date-time
@@ -24,7 +24,7 @@ Requires: boost-iostreams
 Requires: boost-system
 Requires: boost-regex
 Requires: gdal30-libs
-Requires: geos >= 3.5.0
+Requires: geos38
 Requires: fmt >= 5.2.0
 #TestRequires: make
 #TestRequires: gcc-c++
@@ -88,7 +88,7 @@ FMI newbase static library
 
 %changelog
 * Tue Dec 10 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.10-1.fmi
-- Upgrade to GDAL 3.0
+- Upgrade to GDAL 3.0 and GEOS 3.8
 
 * Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
 - Use -fno-omit-frame-pointer for a better profiling and debugging experience

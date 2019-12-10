@@ -21,17 +21,18 @@ CC = g++
 CFLAGS = -DUNIX -O0 -g $(FLAGS)
 
 INCLUDES = \
-	-I ../newbase \
-	-I /usr/include/smartmet \
-	-I .
+	-I../newbase \
+	-I/usr/include/smartmet \
+	-I/usr/gdal30/include \
+	-I.
 
 LIBS =  ../libsmartmet-newbase.so \
+	-L/usr/gdal30/lib -lgdal \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread \
 	-lboost_system \
-	-lgdal \
 	-lpthread -lz -lbz2 -lrt
 
 all: $(PROG)
