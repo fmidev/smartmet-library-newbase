@@ -1,5 +1,5 @@
 #include "NFmiWGS84.h"
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <memory>
 
 // ----------------------------------------------------------------------

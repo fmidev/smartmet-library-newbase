@@ -43,7 +43,7 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <algorithm>
 #include <cassert>
 #include <fstream>

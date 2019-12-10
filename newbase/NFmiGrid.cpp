@@ -17,7 +17,7 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>

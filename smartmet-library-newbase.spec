@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.12.4
+Version: 19.12.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -16,14 +16,14 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
-BuildRequires: gdal-devel
+BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
 Requires: boost-regex
-Requires: gdal-libs
+Requires: gdal30-libs
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Dec 10 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.10-1.fmi
+- Upgrade to GDAL 3.0
+
 * Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
 - Use -fno-omit-frame-pointer for a better profiling and debugging experience
 - Fixed dependency to be on gdal-libs instead of gdal

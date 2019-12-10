@@ -1590,7 +1590,7 @@ std::string NFmiArea::WKT() const
   char *out;
   impl->itsSpatialReference.exportToWkt(&out);
   std::string ret = out;
-  OGRFree(out);
+  CPLFree(out);
   return ret;
 }
 
@@ -1599,7 +1599,7 @@ std::string NFmiArea::PrettyWKT() const
   char *out;
   impl->itsSpatialReference.exportToPrettyWkt(&out);
   std::string ret = out;
-  OGRFree(out);
+  CPLFree(out);
   return ret;
 }
 
@@ -1608,7 +1608,7 @@ std::string NFmiArea::ProjStr() const
   char *out;
   impl->itsSpatialReference.exportToProj4(&out);
   std::string ret = out;
-  OGRFree(out);
+  CPLFree(out);
   return ret;
 }
 

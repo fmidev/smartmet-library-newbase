@@ -12,7 +12,7 @@
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
 #include <boost/shared_ptr.hpp>
-#include <gdal/ogr_geometry.h>
+#include <ogr_geometry.h>
 #include <memory>
 #include <string>
 

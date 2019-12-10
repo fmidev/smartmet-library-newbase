@@ -20,7 +20,7 @@
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 
 using namespace std;
 
