@@ -18,7 +18,6 @@
 #endif
 
 #include "NFmiFastQueryInfo.h"
-
 #include "NFmiCombinedParam.h"
 #include "NFmiDataModifier.h"
 #include "NFmiGrid.h"
@@ -28,6 +27,7 @@
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <ogr_spatialref.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------

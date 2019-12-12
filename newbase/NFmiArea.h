@@ -12,11 +12,14 @@
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
 #include <boost/shared_ptr.hpp>
-#include <ogr_geometry.h>
 #include <memory>
 #include <string>
 
+// We must forward declare these or many dependent modules will have to handle
+// GDAL includes and linkage, which is annoying with PGDG packages
+
 class OGRCoordinateTransformation;
+class OGRSpatialReference;
 
 //! Undocumented
 class _FMI_DLL NFmiArea
@@ -131,12 +134,17 @@ class _FMI_DLL NFmiArea
   class SpatialReferenceProxy
   {
    public:
-    SpatialReferenceProxy(const OGRSpatialReference &theSR) : itsSR(theSR) {}
+    ~SpatialReferenceProxy();
+    SpatialReferenceProxy() = delete;
+    SpatialReferenceProxy(const SpatialReferenceProxy &other) = delete;
+    SpatialReferenceProxy &operator=(const SpatialReferenceProxy &other) = delete;
+
+    SpatialReferenceProxy(OGRSpatialReference *theSR) : itsOwned(false), itsSR(theSR) {}
     SpatialReferenceProxy(const std::string &theSR);
     SpatialReferenceProxy(const char *theSR);
 
-    const OGRSpatialReference &operator*() const { return itsSR; }
-    OGRSpatialReference *get() { return &itsSR; }
+    const OGRSpatialReference &operator*() const { return *itsSR; }
+    OGRSpatialReference *get() const { return itsSR; }
 
     // This is mostly for debugging
     const std::string &ProjStr() const { return itsProjStr; }
@@ -144,7 +152,9 @@ class _FMI_DLL NFmiArea
    private:
     std::string itsProjStr;  // set only if initialized from a string
     void init(const std::string &theSR);
-    OGRSpatialReference itsSR{NULL};
+
+    bool itsOwned = false;                 // should we delete on destruction?
+    OGRSpatialReference *itsSR = nullptr;  // never null after construction
   };
 
  public:
@@ -155,32 +165,32 @@ class _FMI_DLL NFmiArea
   // Named constructors used to clarify intent of the parameters. Note that the proxy
   // may accept actual spatial references or strings from which to construct them.
 
-  static NFmiArea *CreateFromBBox(SpatialReferenceProxy theSR,
+  static NFmiArea *CreateFromBBox(const SpatialReferenceProxy &theSR,
                                   const NFmiPoint &theBottomLeftWorldXY,
                                   const NFmiPoint &theTopRightWorldXY);
 
-  static NFmiArea *CreateFromCenter(SpatialReferenceProxy theSR,
-                                    SpatialReferenceProxy theCenterSR,
+  static NFmiArea *CreateFromCenter(const SpatialReferenceProxy &theSR,
+                                    const SpatialReferenceProxy &theCenterSR,
                                     const NFmiPoint &theCenterLatLon,
                                     double theWidthInMeters,
                                     double theHeightInMeters);
 
-  static NFmiArea *CreateFromCorners(SpatialReferenceProxy theSR,
-                                     SpatialReferenceProxy theBBoxSR,
+  static NFmiArea *CreateFromCorners(const SpatialReferenceProxy &theSR,
+                                     const SpatialReferenceProxy &theBBoxSR,
                                      const NFmiPoint &theBottomLeftLatLon,
                                      const NFmiPoint &theTopRightLatLon);
 
-  static NFmiArea *CreateFromReverseCorners(SpatialReferenceProxy theSR,
-                                            SpatialReferenceProxy theBBoxSR,
+  static NFmiArea *CreateFromReverseCorners(const SpatialReferenceProxy &theSR,
+                                            const SpatialReferenceProxy &theBBoxSR,
                                             const NFmiPoint &theTopLeftLatLon,
                                             const NFmiPoint &theBottomRightLatLon);
 
-  static NFmiArea *CreateFromWGS84Corners(SpatialReferenceProxy theSR,
+  static NFmiArea *CreateFromWGS84Corners(const SpatialReferenceProxy &theSR,
                                           const NFmiPoint &theBottomLeftLatLon,
                                           const NFmiPoint &theTopRightLatLon);
 
-  static NFmiArea *CreateFromCornerAndSize(SpatialReferenceProxy theSR,
-                                           SpatialReferenceProxy theCornerSR,
+  static NFmiArea *CreateFromCornerAndSize(const SpatialReferenceProxy &theSR,
+                                           const SpatialReferenceProxy &theCornerSR,
                                            const NFmiPoint &theBottomLeftLatLon,
                                            double theWidthInMeters,
                                            double theHeightInMeters);

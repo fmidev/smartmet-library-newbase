@@ -122,11 +122,11 @@
 #endif
 #include <boost/algorithm/string.hpp>
 #include <fmt/printf.h>
-
 #include <algorithm>
 #include <deque>
 #include <list>
 #include <map>
+#include <ogr_spatialref.h>
 #include <set>
 #include <stdexcept>
 #include <string>

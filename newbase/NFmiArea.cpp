@@ -1,7 +1,6 @@
-#include <boost/stacktrace.hpp>
-
 #include <iomanip>
 #include <iostream>
+#include <ogr_geometry.h>
 
 // ======================================================================
 /*!
@@ -163,6 +162,11 @@ std::string class_name_from_id(int id)
 
 }  // namespace
 
+NFmiArea::SpatialReferenceProxy::~SpatialReferenceProxy()
+{
+  if (itsOwned) delete itsSR;
+}
+
 NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const char *theSR) { init(theSR); }
 
 NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR) { init(theSR); }
@@ -170,7 +174,7 @@ NFmiArea::SpatialReferenceProxy::SpatialReferenceProxy(const std::string &theSR)
 void NFmiArea::SpatialReferenceProxy::init(const std::string &theSR)
 {
   itsProjStr = theSR;
-  itsSR = *make_sr(theSR).release();
+  itsSR = make_sr(theSR).release();
 }
 
 // Implementation details
@@ -1368,7 +1372,7 @@ const OGRSpatialReference *NFmiArea::SpatialReference() const { return &impl->it
 
 const NFmiProj &NFmiArea::Proj() const { return impl->itsProj; }
 
-NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
+NFmiArea *NFmiArea::CreateFromBBox(const SpatialReferenceProxy &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
                                    const NFmiPoint &theTopRightWorldXY)
 {
@@ -1392,8 +1396,8 @@ NFmiArea *NFmiArea::CreateFromBBox(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
-                                      SpatialReferenceProxy theBBoxSR,
+NFmiArea *NFmiArea::CreateFromCorners(const SpatialReferenceProxy &theSR,
+                                      const SpatialReferenceProxy &theBBoxSR,
                                       const NFmiPoint &theBottomLeftLatLon,
                                       const NFmiPoint &theTopRightLatLon)
 {
@@ -1435,8 +1439,8 @@ NFmiArea *NFmiArea::CreateFromCorners(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromReverseCorners(SpatialReferenceProxy theSR,
-                                             SpatialReferenceProxy theBBoxSR,
+NFmiArea *NFmiArea::CreateFromReverseCorners(const SpatialReferenceProxy &theSR,
+                                             const SpatialReferenceProxy &theBBoxSR,
                                              const NFmiPoint &theTopLeftLatLon,
                                              const NFmiPoint &theBottomRightLatLon)
 {
@@ -1475,7 +1479,7 @@ NFmiArea *NFmiArea::CreateFromReverseCorners(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
+NFmiArea *NFmiArea::CreateFromWGS84Corners(const SpatialReferenceProxy &theSR,
                                            const NFmiPoint &theBottomLeftLatLon,
                                            const NFmiPoint &theTopRightLatLon)
 {
@@ -1506,8 +1510,8 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
-                                            SpatialReferenceProxy theCornerSR,
+NFmiArea *NFmiArea::CreateFromCornerAndSize(const SpatialReferenceProxy &theSR,
+                                            const SpatialReferenceProxy &theCornerSR,
                                             const NFmiPoint &theBottomLeftLatLon,
                                             double theWidth,
                                             double theHeight)
@@ -1545,8 +1549,8 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(SpatialReferenceProxy theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCenter(SpatialReferenceProxy theSR,
-                                     SpatialReferenceProxy theCenterSR,
+NFmiArea *NFmiArea::CreateFromCenter(const SpatialReferenceProxy &theSR,
+                                     const SpatialReferenceProxy &theCenterSR,
                                      const NFmiPoint &theCenterLatLon,
                                      double theWidth,
                                      double theHeight)
@@ -1635,7 +1639,7 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
   // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly
   // to use other spatial references.
   return CreateFromCorners(
-      impl->itsSpatialReference, "FMI", theRect.BottomLeft(), theRect.TopRight());
+      &impl->itsSpatialReference, "FMI", theRect.BottomLeft(), theRect.TopRight());
 }
 
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
@@ -1644,7 +1648,7 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
   // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly
   // to use other spatial references.
   return CreateFromCorners(
-      impl->itsSpatialReference, "FMI", theBottomLeftLatLon, theTopRightLatLon);
+      &impl->itsSpatialReference, "FMI", theBottomLeftLatLon, theTopRightLatLon);
 }
 
 NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
@@ -1657,7 +1661,7 @@ NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
 
   if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon)) return nullptr;
 
-  auto *newArea = CreateFromBBox(impl->itsSpatialReference, newBottomLeftXY, newTopRightXY);
+  auto *newArea = CreateFromBBox(&impl->itsSpatialReference, newBottomLeftXY, newTopRightXY);
 
   if (!IsInside(*newArea)) return nullptr;
 
@@ -1699,8 +1703,8 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
     return nullptr;
 
   // Create a new area with the new aspect ratio
-  NFmiArea *newArea =
-      CreateFromBBox(impl->itsSpatialReference, newWorldRect.BottomLeft(), newWorldRect.TopRight());
+  NFmiArea *newArea = CreateFromBBox(
+      &impl->itsSpatialReference, newWorldRect.BottomLeft(), newWorldRect.TopRight());
 
   // Return the re-dimensioned copy of the original area
   return newArea;
