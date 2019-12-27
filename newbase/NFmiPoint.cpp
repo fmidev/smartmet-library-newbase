@@ -33,21 +33,6 @@ const NFmiPoint NFmiPoint::gMissingLatlon = NFmiPoint(kFloatMissing, kFloatMissi
 
 // ----------------------------------------------------------------------
 /*!
- * Set the X- and Y-coordinates of the point
- *
- * \param theX The new X-coordinate
- * \param theY The new Y-coordinate
- */
-// ----------------------------------------------------------------------
-
-void NFmiPoint::Set(double theX, double theY)
-{
-  itsX = theX;
-  itsY = theY;
-}
-
-// ----------------------------------------------------------------------
-/*!
  * Addition operator
  *
  * \param thePoint The coordinates to be added to the point
@@ -161,6 +146,7 @@ std::istream& NFmiPoint::Read(std::istream& file)
 {
   file >> itsX;
   file >> itsY;
+  itsZ = 0;
   return file;
 }
 
@@ -174,5 +160,6 @@ std::size_t NFmiPoint::HashValue() const
 {
   std::size_t hash = boost::hash_value(itsX);
   boost::hash_combine(hash, boost::hash_value(itsY));
+  boost::hash_combine(hash, boost::hash_value(itsZ));
   return hash;
 }

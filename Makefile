@@ -74,7 +74,7 @@ else
  INCLUDES = \
 	-I$(includedir) \
 	-I$(includedir)/smartmet \
-	-isystem $(PREFIX)/gdal30/include
+	-I$(PREFIX)/gdal30/include
 
 endif
 
