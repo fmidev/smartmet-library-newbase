@@ -146,7 +146,6 @@ std::istream& NFmiPoint::Read(std::istream& file)
 {
   file >> itsX;
   file >> itsY;
-  itsZ = 0;
   return file;
 }
 
@@ -160,6 +159,5 @@ std::size_t NFmiPoint::HashValue() const
 {
   std::size_t hash = boost::hash_value(itsX);
   boost::hash_combine(hash, boost::hash_value(itsY));
-  boost::hash_combine(hash, boost::hash_value(itsZ));
   return hash;
 }

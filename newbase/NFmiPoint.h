@@ -19,7 +19,6 @@ class _FMI_DLL NFmiPoint
 
   NFmiPoint() = default;
   NFmiPoint(double theX, double theY) : itsX(theX), itsY(theY) {}
-  NFmiPoint(double theX, double theY, double theZ) : itsX(theX), itsY(theY), itsZ(theZ) {}
 
   void Set(double newX, double newY)
   {
@@ -29,25 +28,23 @@ class _FMI_DLL NFmiPoint
 
   void X(double newValue) { itsX = newValue; }
   void Y(double newValue) { itsY = newValue; }
-  void Z(double newValue) { itsZ = newValue; }
 
   double X() const { return itsX; }
   double Y() const { return itsY; }
-  double Z() const { return itsZ; }
 
   friend bool operator==(const NFmiPoint &lhs, const NFmiPoint &rhs)
   {
-    return lhs.itsX == rhs.itsX && lhs.itsY == rhs.itsY && lhs.itsZ == rhs.itsZ;
+    return lhs.itsX == rhs.itsX && lhs.itsY == rhs.itsY;
   }
 
   friend bool operator!=(const NFmiPoint &lhs, const NFmiPoint &rhs)
   {
-    return lhs.itsX != rhs.itsX || lhs.itsY != rhs.itsY || lhs.itsZ != rhs.itsZ;
+    return lhs.itsX != rhs.itsX || lhs.itsY != rhs.itsY;
   }
 
   friend bool operator<(const NFmiPoint &lhs, const NFmiPoint &rhs)
   {
-    return std::tie(lhs.itsX, lhs.itsY, lhs.itsZ) < std::tie(rhs.itsX, rhs.itsY, rhs.itsZ);
+    return std::tie(lhs.itsX, lhs.itsY) < std::tie(rhs.itsX, rhs.itsY);
   }
 
   NFmiPoint &operator+=(const NFmiPoint &thePoint);
@@ -73,7 +70,6 @@ class _FMI_DLL NFmiPoint
  private:
   double itsX = 0;
   double itsY = 0;
-  double itsZ = 0;
 };  // class NFmiPoint
 
 //! Undocumented, should be removed

@@ -2,6 +2,15 @@
 #include <iostream>
 #include <ogr_geometry.h>
 
+std::string exportToProj(const OGRSpatialReference &theSRS)
+{
+  char *out;
+  theSRS.exportToProj4(&out);
+  std::string ret = out;
+  CPLFree(out);
+  return ret;
+}
+
 // ======================================================================
 /*!
  * \file NFmiArea.cpp
@@ -113,6 +122,7 @@ std::unique_ptr<OGRSpatialReference> make_sr(std::string theDesc)
   }
 
   std::unique_ptr<OGRSpatialReference> sr(new OGRSpatialReference);
+  std::cout << "PROJ : " << theDesc << " --> " << desc << std::endl;
   auto err = sr->SetFromUserInput(desc.c_str());
 
   if (err == OGRERR_NONE) return sr;
@@ -255,12 +265,11 @@ NFmiPoint NFmiArea::Impl::TopLeftCorner() const
   auto tl = itsWorldRect.TopLeft();
   double x = tl.X();
   double y = tl.Y();
-  double z = tl.Z();
 
-  if (transformation->Transform(1, &x, &y, &z) == 0)
+  if (transformation->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to convert corner coordinate to native latlon");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -288,12 +297,11 @@ NFmiPoint NFmiArea::Impl::BottomRightCorner() const
   auto br = itsWorldRect.BottomRight();
   double x = br.X();
   double y = br.Y();
-  double z = br.Z();
 
-  if (transformation->Transform(1, &x, &y, &z) == 0)
+  if (transformation->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to convert corner coordinate to native latlon");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 NFmiArea::NFmiArea() : impl(new NFmiArea::Impl) {}
@@ -385,12 +393,11 @@ NFmiPoint NFmiArea::WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const
 {
   double x = theWorldXY.X();
   double y = theWorldXY.Y();
-  double z = theWorldXY.Z();
 
-  if (impl->itsNativeToLatLonConverter->Transform(1, &x, &y, &z) == 0)
+  if (impl->itsNativeToLatLonConverter->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to convert coordinate to native latlon");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -403,12 +410,11 @@ NFmiPoint NFmiArea::NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const
 {
   double x = theLatLon.X();
   double y = theLatLon.Y();
-  double z = theLatLon.Z();
 
-  if (impl->itsNativeToWorldXYConverter->Transform(1, &x, &y, &z) == 0)
+  if (impl->itsNativeToWorldXYConverter->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to convert coordinate from native latlon");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 NFmiPoint NFmiArea::ToNativeLatLon(const NFmiPoint &theXY) const
@@ -1173,7 +1179,6 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
   double y = theWgs84.Y();
 
   if (impl->itsToWorldXYConverter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
-
   return NFmiPoint(x, y);
 }
 
@@ -1190,11 +1195,10 @@ NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 
   double x = theWorldXY.X();
   double y = theWorldXY.Y();
-  double z = theWorldXY.Z();
 
-  if (impl->itsToLatLonConverter->Transform(1, &x, &y, &z) == 0) return NFmiPoint::gMissingLatlon;
+  if (impl->itsToLatLonConverter->Transform(1, &x, &y) == 0) return NFmiPoint::gMissingLatlon;
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -1226,12 +1230,11 @@ NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
   else
     x = impl->itsWorldRect.Right() - (theXYPoint.X() - Left()) / impl->itsXScaleFactor;
 
-  double z = theXYPoint.Z();
-  auto polex = WorldXYToLatLon(NFmiPoint(x, 0, z));
+  auto polex = WorldXYToLatLon(NFmiPoint(x, 0));
 
   // Return adjusted longitude
 
-  return NFmiPoint(polex.X(), res.Y(), res.Z());
+  return NFmiPoint(polex.X(), res.Y());
 }
 
 // ----------------------------------------------------------------------
@@ -1275,8 +1278,7 @@ NFmiPoint NFmiArea::WorldXYToXY(const NFmiPoint &theWorldXY) const
     x = Left() - impl->itsXScaleFactor * (theWorldXY.X() - impl->itsWorldRect.Right());
 
   auto y = Top() + impl->itsYScaleFactor * (impl->itsWorldRect.Bottom() - theWorldXY.Y());
-  auto z = theWorldXY.Z();
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -1293,8 +1295,7 @@ NFmiPoint NFmiArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
   else
     x = impl->itsWorldRect.Right() - (theXYPoint.X() - Left()) / impl->itsXScaleFactor;
   const auto y = impl->itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / impl->itsYScaleFactor;
-  auto z = theXYPoint.Z();
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -1321,6 +1322,9 @@ void NFmiArea::InitProj()
 
   if (impl->itsToWorldXYConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation from WGS84");
+
+  std::cout << "Source CS: " << exportToProj(*impl->itsToWorldXYConverter->GetSourceCS())
+            << "\nTarget CS: " << exportToProj(*impl->itsToWorldXYConverter->GetTargetCS()) << "\n";
 
   impl->itsToLatLonConverter.reset(
       OGRCreateCoordinateTransformation(&impl->itsSpatialReference, wgs84.get()));
@@ -1426,18 +1430,14 @@ NFmiArea *NFmiArea::CreateFromCorners(const SpatialReferenceProxy &theSR,
 
     double x1 = theBottomLeftLatLon.X();
     double y1 = theBottomLeftLatLon.Y();
-    double z1 = theBottomLeftLatLon.Z();
     double x2 = theTopRightLatLon.X();
     double y2 = theTopRightLatLon.Y();
-    double z2 = theTopRightLatLon.Z();
 
-    if (transformation->Transform(1, &x1, &y1, &z1) == 0 ||
-        transformation->Transform(1, &x2, &y2, &z2) == 0)
+    if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
       throw std::runtime_error("Failed to initialize projection from BBOX corner coordinates");
 
-    // Note: WorldXY always at Z=0
-    NFmiPoint tl(x1, y1, 0);
-    NFmiPoint br(x2, y2, 0);
+    NFmiPoint tl(x1, y1);
+    NFmiPoint br(x2, y2);
 
     area->impl->itsWorldRect = NFmiRect(tl, br);
     // area->impl->itsWorldRect = NFmiRect(x1, y2, x2, y1); TODO:: ORDER?!?!?!!?!?!?
@@ -1477,19 +1477,15 @@ NFmiArea *NFmiArea::CreateFromReverseCorners(const SpatialReferenceProxy &theSR,
 
     double x1 = theTopLeftLatLon.X();
     double y1 = theTopLeftLatLon.Y();
-    double z1 = theTopLeftLatLon.Z();
     double x2 = theBottomRightLatLon.X();
     double y2 = theBottomRightLatLon.Y();
-    double z2 = theBottomRightLatLon.Z();
 
-    if (transformation->Transform(1, &x1, &y1, &z1) == 0 ||
-        transformation->Transform(1, &x2, &y2, &z2) == 0)
+    if (transformation->Transform(1, &x1, &y1) == 0 || transformation->Transform(1, &x2, &y2) == 0)
       throw std::runtime_error(
           "Failed to initialize projection from BBOX reverse corner coordinates");
 
-    // Note: WorldXY always at Z=0
-    NFmiPoint tl(x1, y1, 0);
-    NFmiPoint br(x2, y2, 0);
+    NFmiPoint tl(x1, y1);
+    NFmiPoint br(x2, y2);
     area->impl->itsWorldRect = NFmiRect(tl, br);
     // area->impl->itsWorldRect = NFmiRect(x1, y1, x2, y2); TODOO:: ORDER?!?!?!?!?
     area->impl->itsFlopped = (x1 > x2);
@@ -1516,18 +1512,15 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(const SpatialReferenceProxy &theSR,
 
     double x1 = theBottomLeftLatLon.X();
     double y1 = theBottomLeftLatLon.Y();
-    double z1 = theBottomLeftLatLon.Z();
     double x2 = theTopRightLatLon.X();
     double y2 = theTopRightLatLon.Y();
-    double z2 = theTopRightLatLon.Z();
 
-    if (area->impl->itsToWorldXYConverter->Transform(1, &x1, &y1, &z1) == 0 ||
-        area->impl->itsToWorldXYConverter->Transform(1, &x2, &y2, &z2) == 0)
+    if (area->impl->itsToWorldXYConverter->Transform(1, &x1, &y1) == 0 ||
+        area->impl->itsToWorldXYConverter->Transform(1, &x2, &y2) == 0)
       throw std::runtime_error("Failed to initialize projection from WGS84 corner coordinates");
 
-    // Note: WorldXY always at Z=0
-    NFmiPoint tl(x1, y1, 0);
-    NFmiPoint br(x2, y2, 0);
+    NFmiPoint tl(x1, y1);
+    NFmiPoint br(x2, y2);
     area->impl->itsWorldRect = NFmiRect(tl, br);
     // area->impl->itsWorldRect = NFmiRect(x1, y2, x2, y1); ORDER!?!?!?!?!?!?
     area->impl->itsFlopped = (x1 > x2);
@@ -1563,9 +1556,8 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(const SpatialReferenceProxy &theSR,
 
     double x = theBottomLeftLatLon.X();
     double y = theBottomLeftLatLon.Y();
-    double z = theBottomLeftLatLon.Z();
 
-    if (transformation->Transform(1, &x, &y, &z) == 0)
+    if (transformation->Transform(1, &x, &y) == 0)
       throw std::runtime_error(
           "Failed to initialize projection from bottom left corner coordinates");
 
@@ -1604,9 +1596,8 @@ NFmiArea *NFmiArea::CreateFromCenter(const SpatialReferenceProxy &theSR,
 
     double x = theCenterLatLon.X();
     double y = theCenterLatLon.Y();
-    double z = theCenterLatLon.Z();
 
-    if (transformation->Transform(1, &x, &y, &z) == 0)
+    if (transformation->Transform(1, &x, &y) == 0)
       throw std::runtime_error("Failed to initialize projection from center coordinates");
 
     // TODO: ORDER?!?!?!?!?!?
@@ -1761,12 +1752,11 @@ NFmiPoint NFmiArea::SphereToWGS84(const NFmiPoint &theWorldXY)
 
   double x = theWorldXY.X();
   double y = theWorldXY.Y();
-  double z = theWorldXY.Z();
 
-  if (transformation->Transform(1, &x, &y, &z) == 0)
+  if (transformation->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to project spherical coordinate to WGS84");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
@@ -1782,12 +1772,11 @@ NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
 
   double x = theLatLon.X();
   double y = theLatLon.Y();
-  double z = theLatLon.Z();
 
-  if (transformation->Transform(1, &x, &y, &z) == 0)
+  if (transformation->Transform(1, &x, &y) == 0)
     throw std::runtime_error("Failed to project WGS84 coordinate to sphere");
 
-  return NFmiPoint(x, y, z);
+  return NFmiPoint(x, y);
 }
 
 #endif
