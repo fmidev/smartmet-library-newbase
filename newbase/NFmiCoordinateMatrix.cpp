@@ -22,5 +22,8 @@ void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 
 bool NFmiCoordinateMatrix::Transform(OGRCoordinateTransformation& transformation)
 {
+  // TODO: Check axis orientation. Make sure output is lonlat or xy instead of latlon or yx.
+  // Always assume input is lonlat or xy.
+
   return transformation.Transform(itsNX * itsNY, &itsX[0], &itsY[0]);
 }
