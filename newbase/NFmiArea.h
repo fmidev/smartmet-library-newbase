@@ -74,10 +74,6 @@ class _FMI_DLL NFmiArea
 
   NFmiArea *Clone() const;
 
-#ifndef WGS84
-  void Init(bool fKeepWorldRect = false);
-#endif
-
   NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
   NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
   NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
@@ -86,18 +82,13 @@ class _FMI_DLL NFmiArea
   NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
 #ifdef WGS84
-
   NFmiPoint ToNativeLatLon(const NFmiPoint &theXY) const;
   NFmiPoint WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const;
   NFmiPoint NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const;
   NFmiPoint NativeToXY(const NFmiPoint &theLatLon) const;
-
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon, const NFmiPoint &theTopRightLatLon) const;
-#else
-  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                    const NFmiPoint &theTopRightLatLon,
-                    bool allowPacificFix = true) const;
 #endif
+
   NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
   NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                           const NFmiPoint &theTopRightLatLon) const;
@@ -122,12 +113,6 @@ class _FMI_DLL NFmiArea
 
   // Temporary fix until the above method is fixed to be
   std::size_t HashValueKludge() const;
-
-#ifndef WGS84
- protected:
-  int Sign(double theValue) const;
-  double FixLongitude(double theLongitude) const;
-#endif
 
   // A private proxy class to avoid unnecessary *CreateFrom duplicates. This proxy
   // implicitly converts acceptable spatial reference types into an actual spatial reference.
@@ -216,6 +201,17 @@ class _FMI_DLL NFmiArea
   struct Impl;
   std::unique_ptr<Impl> impl;
 
+#ifndef WGS84
+ protected:
+  int Sign(double theValue) const;
+  double FixLongitude(double theLongitude) const;
+
+ public:
+  void Init(bool fKeepWorldRect = false);
+  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
+                    const NFmiPoint &theTopRightLatLon,
+                    bool allowPacificFix = true) const;
+#endif
 };  // class NFmiArea
 
 inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
