@@ -4,7 +4,7 @@
 
 class OGRCoordinateTransformation;
 
-class NFmiCoordinateMatrix
+class _FMI_DLL NFmiCoordinateMatrix
 {
  public:
   // init to missing values
