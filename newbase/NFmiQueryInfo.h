@@ -28,7 +28,6 @@ class NFmiDataModifierExtreme;
 class NFmiDataModifierExtremePlace;
 class NFmiBitMask;
 class NFmiStation;
-class OGRSpatialReference;
 
 //! Undocumented, should be a const int
 #define HEADERMAX 3  // Poistetaan

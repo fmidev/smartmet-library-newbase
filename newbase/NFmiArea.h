@@ -99,6 +99,7 @@ class _FMI_DLL NFmiArea
                           bool fShrinkArea);
 
 #ifdef WGS84
+  NFmiCoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny) const;
   void ToLatLon(NFmiCoordinateMatrix &theMatrix) const;
   void ToXY(NFmiCoordinateMatrix &theMatrix) const;
   void XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const;

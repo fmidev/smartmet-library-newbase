@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
+#include "NFmiCoordinateMatrix.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
@@ -887,4 +888,15 @@ const OGRSpatialReference *NFmiGrid::SpatialReference() const
 {
   if (itsArea) return itsArea->SpatialReference();
   return NFmiWGS84::SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+NFmiCoordinateMatrix NFmiGrid::CoordinateMatrix() const
+{
+  return itsArea->CoordinateMatrix(XNumber(), YNumber());
 }

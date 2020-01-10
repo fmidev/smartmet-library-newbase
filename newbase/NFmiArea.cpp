@@ -1780,6 +1780,16 @@ NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
   return NFmiPoint(x, y);
 }
 
+NFmiCoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny) const
+{
+  return NFmiCoordinateMatrix(nx,
+                              ny,
+                              impl->itsWorldRect.Left(),    // x1
+                              impl->itsWorldRect.Bottom(),  // y1
+                              impl->itsWorldRect.Right(),   // x2
+                              impl->itsWorldRect.Top());    // y2
+}
+
 void NFmiArea::ToLatLon(NFmiCoordinateMatrix &theMatrix) const
 {
   // Transform local xy-coordinates into world xy-coordinates (meters).

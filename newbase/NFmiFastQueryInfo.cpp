@@ -19,6 +19,7 @@
 
 #include "NFmiFastQueryInfo.h"
 #include "NFmiCombinedParam.h"
+#include "NFmiCoordinateMatrix.h"
 #include "NFmiDataModifier.h"
 #include "NFmiGrid.h"
 #include "NFmiInterpolation.h"
@@ -6468,6 +6469,19 @@ void NFmiFastQueryInfo::LandscapeCachedInterpolation(
     for (int j = 0; j < ny; j++)
       theMatrix[i][j] =
           InterpolationHelper(valueMatrix1[i][j], valueMatrix2[i][j], theTimeCache.itsOffset);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return native coordinates in a 2D matrix
+ *
+ * Note: NFmiDataMatrix is deprecated
+ */
+// ----------------------------------------------------------------------
+
+NFmiCoordinateMatrix NFmiFastQueryInfo::CoordinateMatrix() const
+{
+  return itsHPlaceDescriptor->CoordinateMatrix();
 }
 
 // ======================================================================

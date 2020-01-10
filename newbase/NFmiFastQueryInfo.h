@@ -9,11 +9,12 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
 class NFmiRect;
+class OGRSpatialReference;
+class NFmiCoordinateMatrix;
 
 //! Undocumented
 class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
@@ -115,8 +116,10 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiPoint WorldXY() const;  // actual metric coordinate, or WGS84 for point data
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
+
   OGRSpatialReference *SpatialReference();
   const OGRSpatialReference *SpatialReference() const;
+  NFmiCoordinateMatrix CoordinateMatrix() const;
 
   NFmiDataIdent &Param() const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************

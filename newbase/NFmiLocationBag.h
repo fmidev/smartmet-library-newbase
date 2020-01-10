@@ -21,6 +21,7 @@
 
 class NFmiStation;
 class NFmiArea;
+class NFmiCoordinateMatrix;
 
 //! Undocumented
 class _FMI_DLL NFmiLocationBag : public NFmiSize
@@ -66,6 +67,8 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
   bool IsInside(const NFmiPoint &theLatLon, double theRadius) const;
 
   std::size_t HashValue() const;
+
+  NFmiCoordinateMatrix CoordinateMatrix() const;
 
  protected:
   NFmiLocationBag(NFmiLocation **theLocationBag, unsigned long theNumberOfLocations);

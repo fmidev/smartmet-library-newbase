@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
+#include "NFmiCoordinateMatrix.h"
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
@@ -298,6 +299,19 @@ const OGRSpatialReference *NFmiHPlaceDescriptor::SpatialReference() const
 {
   if (itsGrid) return itsGrid->SpatialReference();
   return NFmiWGS84::SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+NFmiCoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix() const
+{
+  if (itsGrid) return itsGrid->CoordinateMatrix();
+  if (itsLocationBag) return itsLocationBag->CoordinateMatrix();
+  return NFmiCoordinateMatrix(0, 0);
 }
 
 // ----------------------------------------------------------------------

@@ -16,11 +16,13 @@
 
 #include "NFmiLocationBag.h"
 #include "NFmiArea.h"
+#include "NFmiCoordinateMatrix.h"
 #include "NFmiRadarStation.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
 #include <boost/functional/hash.hpp>
+#include <cmath>
 #include <functional>
 
 using namespace std;
@@ -643,4 +645,28 @@ std::size_t NFmiLocationBag::HashValue() const
   return hash;
 }
 
-// ======================================================================
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+NFmiCoordinateMatrix NFmiLocationBag::CoordinateMatrix() const
+{
+  // Note: The coordinates are assumed to be WGS84. We return them in
+  // a 1D vector since there is no structure.
+
+  const auto ysize = 1;
+  NFmiCoordinateMatrix matrix(itsLocations.size(), ysize);
+
+  const auto j = 0;
+  std::size_t i = 0;
+  for (const auto *location : itsLocations)
+  {
+    if (location == nullptr)
+      matrix.Set(i, j, HUGE_VAL, HUGE_VAL);  // as done by PROJ.6
+    else
+      matrix.Set(i, j, location->GetLocation());
+  }
+  return matrix;
+}

@@ -20,6 +20,7 @@ class NFmiArea;
 class NFmiGrid;
 class NFmiLocation;
 class OGRSpatialReference;
+class NFmiCoordinateMatrix;
 
 //! Undocumented
 class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
@@ -65,6 +66,7 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
   OGRSpatialReference *SpatialReference();
   const OGRSpatialReference *SpatialReference() const;
+  NFmiCoordinateMatrix CoordinateMatrix() const;
 
   NFmiPoint LatLon() const;
   NFmiPoint LatLon(unsigned long theIndex) const;
