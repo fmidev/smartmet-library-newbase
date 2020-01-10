@@ -12,6 +12,7 @@ NFmiCoordinateMatrix::NFmiCoordinateMatrix(std::size_t nx, std::size_t ny)
 {
 }
 
+// Initialize X coordinates to x1...x2 and Y coordinates to y1..y2 with constant step sizes
 NFmiCoordinateMatrix::NFmiCoordinateMatrix(
     std::size_t nx, std::size_t ny, double x1, double y1, double x2, double y2)
     : itsNX{nx},
@@ -35,6 +36,7 @@ NFmiCoordinateMatrix::NFmiCoordinateMatrix(
   }
 }
 
+// Swap contents
 void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 {
   std::swap(itsNX, other.itsNX);
@@ -42,6 +44,10 @@ void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
   std::swap(itsX, other.itsX);
   std::swap(itsY, other.itsY);
 }
+
+// Project the coordinates. User takes responsibility on making sure the input coordinates
+// are in the correct spatial reference. Input/output order is always lon/lat or x/y,
+// EPSG rules are followed only temporarily to make the projection work.
 
 bool NFmiCoordinateMatrix::Transform(OGRCoordinateTransformation& transformation)
 {

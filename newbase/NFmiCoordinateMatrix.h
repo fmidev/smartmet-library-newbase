@@ -12,9 +12,11 @@ class NFmiCoordinateMatrix
   // init to a rectilinear grid
   NFmiCoordinateMatrix(std::size_t nx, std::size_t ny, double x1, double y1, double x2, double y2);
 
+  // size accessors
   std::size_t Width() const { return itsNX; }
   std::size_t Height() const { return itsNY; }
 
+  // data accessors
   double X(std::size_t i, std::size_t j) const { return itsX[i + j * itsNX]; }
   double Y(std::size_t i, std::size_t j) const { return itsY[i + j * itsNX]; }
 
@@ -24,6 +26,8 @@ class NFmiCoordinateMatrix
     return {itsX[pos], itsY[pos]};
   }
 
+  // data setters are normally not needed, constructing a 1D array of station coordinates
+  // is likely the only exception
   void Set(std::size_t i, std::size_t j, double x, double y)
   {
     const auto pos = i + j * itsNX;
@@ -38,9 +42,10 @@ class NFmiCoordinateMatrix
     itsY[pos] = xy.Y();
   }
 
+  // occasionally needed for speed
   void Swap(NFmiCoordinateMatrix& other);
 
-  // returns false if no coordinates could be projected
+  // returns false if no coordinates could be projected. Always uses lon/lat x/y ordering.
   bool Transform(OGRCoordinateTransformation& transformation);
 
  private:
