@@ -12,6 +12,29 @@ NFmiCoordinateMatrix::NFmiCoordinateMatrix(std::size_t nx, std::size_t ny)
 {
 }
 
+NFmiCoordinateMatrix::NFmiCoordinateMatrix(
+    std::size_t nx, std::size_t ny, double x1, double y1, double x2, double y2)
+    : itsNX{nx},
+      itsNY{ny},
+      itsX{std::vector<double>(nx * ny, HUGE_VAL)},
+      itsY{std::vector<double>(nx * ny, HUGE_VAL)}
+{
+  const auto dx = nx > 1 ? (x2 - x1) / (nx - 1) : 0;
+  const auto dy = ny > 1 ? (y2 - y1) / (ny - 1) : 0;
+
+  std::size_t pos = 0;
+  for (std::size_t j = 0; j < ny; j++)
+  {
+    const auto y = y1 + j * dy;
+    for (std::size_t i = 0; i < nx; i++)
+    {
+      itsX[pos] = x1 + i * dx;
+      itsY[pos] = y;
+      ++pos;
+    }
+  }
+}
+
 void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 {
   std::swap(itsNX, other.itsNX);

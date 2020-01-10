@@ -9,6 +9,8 @@ class NFmiCoordinateMatrix
  public:
   // init to missing values
   NFmiCoordinateMatrix(std::size_t nx, std::size_t ny);
+  // init to a rectilinear grid
+  NFmiCoordinateMatrix(std::size_t nx, std::size_t ny, double x1, double y1, double x2, double y2);
 
   std::size_t Width() const { return itsNX; }
   std::size_t Height() const { return itsNY; }
