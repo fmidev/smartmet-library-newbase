@@ -20,8 +20,8 @@ class NFmiMetTime;
 class _FMI_DLL NFmiLocation : public NFmiIndividual
 {
  public:
-  virtual ~NFmiLocation(void) {}
-  NFmiLocation(void) : NFmiIndividual(0, "undefined"), itsLatlon(NFmiPoint::gMissingLatlon) {}
+  virtual ~NFmiLocation() {}
+  NFmiLocation() : NFmiIndividual(0, "undefined"), itsLatlon(NFmiPoint::gMissingLatlon) {}
   NFmiLocation(double theLongitude, double theLatitude)
       : NFmiIndividual(0, "undefined"), itsLatlon(theLongitude, theLatitude)
   {
@@ -43,9 +43,9 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
 
   void SetLatitude(double theLatitude) { itsLatlon.Y(theLatitude); }
   void SetLongitude(double theLongitude) { itsLatlon.X(theLongitude); }
-  double GetLatitude(void) const { return itsLatlon.Y(); }
-  double GetLongitude(void) const { return itsLatlon.X(); }
-  const NFmiPoint& GetLocation(void) const { return itsLatlon; }
+  double GetLatitude() const { return itsLatlon.Y(); }
+  double GetLongitude() const { return itsLatlon.X(); }
+  const NFmiPoint& GetLocation() const { return itsLatlon; }
   void SetLocation(const NFmiPoint& newLocation) { itsLatlon = newLocation; }
 
 #ifdef WGS84
@@ -87,8 +87,8 @@ class _FMI_DLL NFmiLocation : public NFmiIndividual
   virtual bool IsEqual(const NFmiSortable& aFmiTest) const;
   virtual bool IsLessThan(const NFmiSortable& aFmiTest) const;
 
-  virtual NFmiLocation* Clone(void) const;
-  virtual unsigned long ClassId(void) const { return kNFmiLocation; }
+  virtual NFmiLocation* Clone() const;
+  virtual unsigned long ClassId() const { return kNFmiLocation; }
   virtual std::ostream& Write(std::ostream& file) const;
   virtual std::istream& Read(std::istream& file);
 

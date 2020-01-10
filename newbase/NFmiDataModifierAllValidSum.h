@@ -12,13 +12,13 @@
 class _FMI_DLL NFmiDataModifierAllValidSum : public NFmiDataModifierSum
 {
  public:
-  virtual ~NFmiDataModifierAllValidSum(void);
-  NFmiDataModifierAllValidSum(void);
+  virtual ~NFmiDataModifierAllValidSum();
+  NFmiDataModifierAllValidSum();
 
   virtual void Calculate(float theValue);
   virtual void Calculate(NFmiQueryInfo* theQI);
 
-  void Clear(void);
+  void Clear();
 
  protected:
   long itsCounter;

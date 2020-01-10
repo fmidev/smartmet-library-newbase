@@ -23,17 +23,17 @@ const NFmiString kFmiSourceDirectory("\\\\vespa\\editdata\\");
 class _FMI_DLL NFmiSnapShotInterface
 {
  public:
-  virtual ~NFmiSnapShotInterface(void);
+  virtual ~NFmiSnapShotInterface();
   NFmiSnapShotInterface(NFmiString theDataFileName = "KEPA",
                         NFmiString theWorkingDirectory = kFmiWorkingDirectory,
                         NFmiString theSourceDirectory = kFmiSourceDirectory,
                         time_t theUpdateInterval = /*24*60**/ 60);
 
-  bool IsValid(void);
+  bool IsValid();
   bool Update(NFmiQueryInfo** theInfo);
 
  protected:
-  bool ReadData(void);
+  bool ReadData();
 
  protected:
   bool fIsValid;

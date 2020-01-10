@@ -514,12 +514,12 @@ class _FMI_DLL NFmiQueryInfo
 
   virtual NFmiTimeCache CalcTimeCache(const NFmiMetTime &theTime);
 
-  bool HasNonFiniteValueSet(void) const { return fHasNonFiniteValueSet; }
+  bool HasNonFiniteValueSet() const { return fHasNonFiniteValueSet; }
   void HasNonFiniteValueSet(bool newValue) { fHasNonFiniteValueSet = newValue; }
   bool IsInside(const NFmiPoint &theLatLon, double theRadius) const;
   virtual bool IsInside(const NFmiMetTime &theTime) const;
-  unsigned long GridXNumber(void) const { return itsGridXNumber; }
-  unsigned long GridYNumber(void) const { return itsGridYNumber; }
+  unsigned long GridXNumber() const { return itsGridXNumber; }
+  unsigned long GridYNumber() const { return itsGridYNumber; }
   std::size_t GridHashValue() const;
 
  private:

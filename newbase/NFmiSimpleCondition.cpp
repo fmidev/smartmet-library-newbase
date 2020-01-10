@@ -60,7 +60,7 @@ double CalculateValue(double value1,
 }
 }  // namespace
 
-NFmiSimpleConditionPart::~NFmiSimpleConditionPart(void) = default;
+NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
 
 NFmiSimpleConditionPart::NFmiSimpleConditionPart(
     boost::shared_ptr<NFmiAreaMask> &mask1,
@@ -79,13 +79,13 @@ NFmiSimpleConditionPart::NFmiSimpleConditionPart(const NFmiSimpleConditionPart &
 {
 }
 
-void NFmiSimpleConditionPart::Initialize(void)
+void NFmiSimpleConditionPart::Initialize()
 {
   isMask1StationaryData = ::CheckForStationaryData(itsMask1);
   isMask2StationaryData = ::CheckForStationaryData(itsMask2);
 }
 
-NFmiSimpleConditionPart *NFmiSimpleConditionPart::Clone(void) const
+NFmiSimpleConditionPart *NFmiSimpleConditionPart::Clone() const
 {
   return new NFmiSimpleConditionPart(*this);
 }
@@ -133,7 +133,7 @@ double NFmiSimpleConditionPart::HeightValue(double theHeight,
   }
 }
 
-NFmiSingleCondition::~NFmiSingleCondition(void) = default;
+NFmiSingleCondition::~NFmiSingleCondition() = default;
 
 NFmiSingleCondition::NFmiSingleCondition(const boost::shared_ptr<NFmiSimpleConditionPart> &thePart1,
                                          FmiMaskOperation theConditionOperand1,
@@ -162,14 +162,14 @@ static void InitializePart(boost::shared_ptr<NFmiSimpleConditionPart> &part)
   if (part) part->Initialize();
 }
 
-void NFmiSingleCondition::Initialize(void)
+void NFmiSingleCondition::Initialize()
 {
   InitializePart(part1);
   InitializePart(part2);
   InitializePart(part3);
 }
 
-NFmiSingleCondition *NFmiSingleCondition::Clone(void) const
+NFmiSingleCondition *NFmiSingleCondition::Clone() const
 {
   return new NFmiSingleCondition(*this);
 }
@@ -279,7 +279,7 @@ bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
   }
 }
 
-NFmiSimpleCondition::~NFmiSimpleCondition(void) = default;
+NFmiSimpleCondition::~NFmiSimpleCondition() = default;
 
 NFmiSimpleCondition::NFmiSimpleCondition(
     const boost::shared_ptr<NFmiSingleCondition> &theCondition1,
@@ -303,13 +303,13 @@ static void InitializePart(boost::shared_ptr<NFmiSingleCondition> &condition)
 
 // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
 // stationaaristä dataa
-void NFmiSimpleCondition::Initialize(void)
+void NFmiSimpleCondition::Initialize()
 {
   ::InitializePart(condition1);
   ::InitializePart(condition2);
 }
 
-NFmiSimpleCondition *NFmiSimpleCondition::Clone(void) const
+NFmiSimpleCondition *NFmiSimpleCondition::Clone() const
 {
   return new NFmiSimpleCondition(*this);
 }

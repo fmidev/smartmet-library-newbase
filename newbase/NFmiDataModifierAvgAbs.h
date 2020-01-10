@@ -12,16 +12,16 @@
 class _FMI_DLL NFmiDataModifierAvgAbs : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierAvgAbs(void);
-  NFmiDataModifierAvgAbs(void);
+  virtual ~NFmiDataModifierAvgAbs();
+  NFmiDataModifierAvgAbs();
 
   virtual void Calculate(float theValue);
   virtual void Calculate(NFmiQueryInfo* theQI);
 
-  void Clear(void);
+  void Clear();
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult(void);
-  long Counter(void);
+  virtual float CalculationResult();
+  long Counter();
 
  protected:
   long itsCounter;

@@ -31,8 +31,8 @@ class _FMI_DLL NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValid
     itsCounter++;
   };
 
-  NFmiDataModifierAllValidClipSum(void) : NFmiDataModifierAllValidSum() { itsHalfValue = 0.; };
-  virtual ~NFmiDataModifierAllValidClipSum(void){};
+  NFmiDataModifierAllValidClipSum() : NFmiDataModifierAllValidSum() { itsHalfValue = 0.; };
+  virtual ~NFmiDataModifierAllValidClipSum(){};
 
  private:
   float itsHalfValue;

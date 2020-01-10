@@ -97,7 +97,7 @@ bool NFmiTimeList::Next(NFmiMetTime **theItem) const
   toisaalta nyt }						// return false on harhaan johtava,
   sillä onhan saatu mielekäs theItem.
 
-        return false;			// Suosittelen metodien Next(void) & Current() käyttöä,
+        return false;			// Suosittelen metodien Next() & Current() käyttöä,
   jolloin ei voi joutua ulos listalta
 */  // viljo 12.05.-97
 }

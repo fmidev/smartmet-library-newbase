@@ -13,20 +13,20 @@
 class _FMI_DLL NFmiCmdLine
 {
  public:
-  ~NFmiCmdLine(void);
+  ~NFmiCmdLine();
   NFmiCmdLine(int argc, const char** argv, const char* optionsallowed);
   NFmiCmdLine(const NFmiString& theString, const char* optallow);
 
-  char* Command(void) const;
-  int NumberofOptions(void) const;
-  int NumberofParameters(void) const;
+  char* Command() const;
+  int NumberofOptions() const;
+  int NumberofParameters() const;
   const char* Parameter(int i) const;
   char OptionLetter(int i) const;
   const char* OptionValue(int i) const;
   const char* OptionValue(char c) const;
   int isOption(char c) const;
 
-  const NFmiStatus& Status(void) const;
+  const NFmiStatus& Status() const;
 
  protected:
   NFmiStatus itsStatus;

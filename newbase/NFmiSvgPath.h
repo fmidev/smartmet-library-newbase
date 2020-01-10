@@ -50,9 +50,9 @@ class _FMI_DLL NFmiSvgPath
   typedef storage_type::const_iterator const_iterator;
   typedef storage_type::iterator iterator;
 
-  size_type size(void) const;
-  bool empty(void) const;
-  void clear(void);
+  size_type size() const;
+  bool empty() const;
+  void clear();
 
   void push_back(const Element& theElement);
 
@@ -61,16 +61,16 @@ class _FMI_DLL NFmiSvgPath
   std::istream& Read(std::istream& file);
   //@}
 
-  const_iterator begin(void) const;
-  const_iterator end(void) const;
-  iterator begin(void);
-  iterator end(void);
+  const_iterator begin() const;
+  const_iterator end() const;
+  iterator begin();
+  iterator end();
 
-  const_reference front(void) const;
-  const_reference back(void) const;
+  const_reference front() const;
+  const_reference back() const;
 
   bool IsInside(const NFmiPoint& thePoint) const;
-  storage_type& GetData(void) { return itsData; }
+  storage_type& GetData() { return itsData; }
 
  private:
   storage_type itsData;
@@ -90,14 +90,14 @@ class _FMI_DLL NFmiSvgPath
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_iterator NFmiSvgPath::begin(void) const { return itsData.begin(); }
+inline NFmiSvgPath::const_iterator NFmiSvgPath::begin() const { return itsData.begin(); }
 // ----------------------------------------------------------------------
 /*!
  * \brief begin metodi
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::iterator NFmiSvgPath::begin(void)
+inline NFmiSvgPath::iterator NFmiSvgPath::begin()
 {
   itsBBoxValid = false;
   return itsData.begin();
@@ -109,14 +109,14 @@ inline NFmiSvgPath::iterator NFmiSvgPath::begin(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_iterator NFmiSvgPath::end(void) const { return itsData.end(); }
+inline NFmiSvgPath::const_iterator NFmiSvgPath::end() const { return itsData.end(); }
 // ----------------------------------------------------------------------
 /*!
  * \brief end metodi
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::iterator NFmiSvgPath::end(void)
+inline NFmiSvgPath::iterator NFmiSvgPath::end()
 {
   itsBBoxValid = false;
   return itsData.end();
@@ -128,14 +128,14 @@ inline NFmiSvgPath::iterator NFmiSvgPath::end(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_reference NFmiSvgPath::front(void) const { return itsData.front(); }
+inline NFmiSvgPath::const_reference NFmiSvgPath::front() const { return itsData.front(); }
 // ----------------------------------------------------------------------
 /*!
  * \brief Palauttaa viimeisen elementin
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_reference NFmiSvgPath::back(void) const { return itsData.back(); }
+inline NFmiSvgPath::const_reference NFmiSvgPath::back() const { return itsData.back(); }
 // ----------------------------------------------------------------------
 /*!
  * Global operator>> overload for NFmiSvgPath class

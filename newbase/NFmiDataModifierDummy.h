@@ -16,8 +16,8 @@
 class _FMI_DLL NFmiDataModifierDummy : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierDummy(void);
-  NFmiDataModifierDummy(void);
+  virtual ~NFmiDataModifierDummy();
+  NFmiDataModifierDummy();
   using NFmiDataModifier::Calculate;
   virtual void Calculate(float theValue);
 
@@ -26,8 +26,8 @@ class _FMI_DLL NFmiDataModifierDummy : public NFmiDataModifier
 
   virtual void Calculate(NFmiQueryInfo* theQI);
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult(void);
-  virtual void Clear(void);
+  float CalculationResult();
+  virtual void Clear();
 
  protected:
   float itsValue;

@@ -12,8 +12,8 @@
 class _FMI_DLL NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
 {
  public:
-  virtual ~NFmiDataModifierAllValidClipSum(void);
-  NFmiDataModifierAllValidClipSum(void);
+  virtual ~NFmiDataModifierAllValidClipSum();
+  NFmiDataModifierAllValidClipSum();
 
   virtual void Calculate(float theValue) { NFmiDataModifierAllValidSum::Calculate(theValue); }
   virtual void Calculate(NFmiQueryInfo* theQI);

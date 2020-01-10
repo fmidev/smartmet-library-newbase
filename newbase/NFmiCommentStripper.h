@@ -16,7 +16,7 @@
 class _FMI_DLL NFmiCommentStripper
 {
  public:
-  virtual ~NFmiCommentStripper(void) {}
+  virtual ~NFmiCommentStripper() {}
   NFmiCommentStripper(bool stripPound = true,
                       bool stripDoubleSlash = true,
                       bool stripSlashAst = true,
@@ -37,15 +37,15 @@ class _FMI_DLL NFmiCommentStripper
                                const std::string& theOptionBody,
                                std::set<std::string>& theOptionTexts);
   bool ReadAndStripFile(const std::string& theFileName);
-  const std::string GetMessage(void) const { return itsMessage; };
-  const std::string& GetString(void) const { return itsString; };
+  const std::string GetMessage() const { return itsMessage; };
+  const std::string& GetString() const { return itsString; };
   void SetString(const std::string& theString) { itsString = theString; };
-  virtual bool Strip(void);
+  virtual bool Strip();
   virtual bool Strip(const std::string& theString);
   bool StripBlocks(const std::string& theBeginDirective = "/*",
                    const std::string& theEndDirective = "*/");
-  bool StripDoubleSlashes(void);  // to endline
-  bool StripPounds(void);         // to endline
+  bool StripDoubleSlashes();  // to endline
+  bool StripPounds();         // to endline
   bool StripSubStrings(const std::string& theString);
 
  private:

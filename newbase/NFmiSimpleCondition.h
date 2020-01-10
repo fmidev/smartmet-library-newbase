@@ -16,13 +16,13 @@ class NFmiSimpleConditionPart
   boost::shared_ptr<NFmiAreaMask> itsMask2;
   bool isMask2StationaryData = false;  // Jos stationaarista, ei saa tehdä aikainterpolaatiota
  public:
-  ~NFmiSimpleConditionPart(void);
+  ~NFmiSimpleConditionPart();
   NFmiSimpleConditionPart(boost::shared_ptr<NFmiAreaMask> &mask1,
                           NFmiAreaMask::CalculationOperator calculationOperator,
                           boost::shared_ptr<NFmiAreaMask> &mask2);
   NFmiSimpleConditionPart(const NFmiSimpleConditionPart &theOther);
-  void Initialize(void);
-  NFmiSimpleConditionPart *Clone(void) const;
+  void Initialize();
+  NFmiSimpleConditionPart *Clone() const;
   NFmiSimpleConditionPart &operator=(const NFmiSimpleConditionPart &) = delete;
 
   boost::shared_ptr<NFmiAreaMask> Mask1() const { return itsMask1; }
@@ -43,7 +43,7 @@ class NFmiSimpleConditionPart
 class NFmiSingleCondition
 {
  public:
-  ~NFmiSingleCondition(void);
+  ~NFmiSingleCondition();
   NFmiSingleCondition(const boost::shared_ptr<NFmiSimpleConditionPart> &thePart1,
                       FmiMaskOperation theConditionOperand1,
                       const boost::shared_ptr<NFmiSimpleConditionPart> &thePart2,
@@ -52,8 +52,8 @@ class NFmiSingleCondition
   NFmiSingleCondition(const NFmiSingleCondition &theOther);
   // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
   // stationaaristä dataa
-  void Initialize(void);
-  NFmiSingleCondition *Clone(void) const;
+  void Initialize();
+  NFmiSingleCondition *Clone() const;
   NFmiSingleCondition &operator=(const NFmiSingleCondition &) = delete;
 
   // Eri tapauksia varten omat tarkastelu funktiot
@@ -86,15 +86,15 @@ class NFmiSingleCondition
 class NFmiSimpleCondition
 {
  public:
-  ~NFmiSimpleCondition(void);
+  ~NFmiSimpleCondition();
   NFmiSimpleCondition(const boost::shared_ptr<NFmiSingleCondition> &theCondition1,
                       NFmiAreaMask::BinaryOperator theConditionOperator,
                       const boost::shared_ptr<NFmiSingleCondition> &theCondition2);
   NFmiSimpleCondition(const NFmiSimpleCondition &theOther);
   // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
   // stationaaristä dataa
-  void Initialize(void);
-  NFmiSimpleCondition *Clone(void) const;
+  void Initialize();
+  NFmiSimpleCondition *Clone() const;
   NFmiSimpleCondition &operator=(const NFmiSimpleCondition &) = delete;
 
   // Eri tapauksia varten omat tarkastelu funktiot
