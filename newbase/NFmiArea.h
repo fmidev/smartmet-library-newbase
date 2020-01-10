@@ -20,6 +20,7 @@
 
 class OGRCoordinateTransformation;
 class OGRSpatialReference;
+class NFmiCoordinateMatrix;
 
 //! Undocumented
 class _FMI_DLL NFmiArea
@@ -96,6 +97,23 @@ class _FMI_DLL NFmiArea
   NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                           FmiDirection theFixedPoint,
                           bool fShrinkArea);
+
+#ifdef WGS84
+  // 2D matrices of coordinates
+  // NFmiCoordinateMatrix WorldXYCoordinateMatrix() const;
+
+  void ToLatLon(NFmiCoordinateMatrix &theMatrix) const;
+  void ToXY(NFmiCoordinateMatrix &theMatrix) const;
+  void XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
+  void WorldXYToXY(NFmiCoordinateMatrix &theMatrix) const;
+  void WorldXYToLatLon(NFmiCoordinateMatrix &theMatrix) const;
+  void LatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
+
+  void ToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const;
+  void WorldXYToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const;
+  void NativeLatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
+  void NativeToXY(NFmiCoordinateMatrix &theMatrix) const;
+#endif
 
   unsigned long ClassId() const;
   const std::string &ClassName() const;
