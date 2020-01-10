@@ -17,10 +17,10 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
-#include <ogr_spatialref.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <ogr_spatialref.h>
 
 using namespace std;
 

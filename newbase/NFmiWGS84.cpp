@@ -1,6 +1,6 @@
 #include "NFmiWGS84.h"
-#include <ogr_spatialref.h>
 #include <memory>
+#include <ogr_spatialref.h>
 
 // ----------------------------------------------------------------------
 /*!

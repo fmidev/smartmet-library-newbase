@@ -169,10 +169,7 @@ void NFmiSingleCondition::Initialize()
   InitializePart(part3);
 }
 
-NFmiSingleCondition *NFmiSingleCondition::Clone() const
-{
-  return new NFmiSingleCondition(*this);
-}
+NFmiSingleCondition *NFmiSingleCondition::Clone() const { return new NFmiSingleCondition(*this); }
 
 static bool EvaluateCondition(double value1, FmiMaskOperation operand, double value2)
 {
@@ -309,10 +306,7 @@ void NFmiSimpleCondition::Initialize()
   ::InitializePart(condition2);
 }
 
-NFmiSimpleCondition *NFmiSimpleCondition::Clone() const
-{
-  return new NFmiSimpleCondition(*this);
-}
+NFmiSimpleCondition *NFmiSimpleCondition::Clone() const { return new NFmiSimpleCondition(*this); }
 
 static bool EvaluateBinaryCondition(bool condition1,
                                     NFmiAreaMask::BinaryOperator conditionOperator,

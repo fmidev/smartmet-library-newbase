@@ -44,9 +44,6 @@ class _FMI_DLL NFmiStatusPositionString : public NFmiStatusString
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiStatusPositionString::ClassId() const
-{
-  return kNFmiStatusPositionString;
-}
+inline unsigned long NFmiStatusPositionString::ClassId() const { return kNFmiStatusPositionString; }
 
 // ======================================================================

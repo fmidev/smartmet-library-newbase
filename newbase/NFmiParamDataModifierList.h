@@ -44,9 +44,6 @@ class _FMI_DLL NFmiParamDataModifierList
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiParamDataModifierList::NumberOfItems()
-{
-  return itsList.NumberOfItems();
-}
+inline unsigned long NFmiParamDataModifierList::NumberOfItems() { return itsList.NumberOfItems(); }
 
 // ======================================================================

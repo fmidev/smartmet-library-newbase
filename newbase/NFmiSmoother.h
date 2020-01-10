@@ -48,7 +48,7 @@ class _FMI_DLL NFmiSmoother
                                        const NFmiDataMatrix<float>& theValues) const;
 
   const std::vector<float> Smoothen(const std::vector<float>& theX,
-                                      const std::vector<float>& theY) const;
+                                    const std::vector<float>& theY) const;
 
   float Weight(float distance) const;
 
@@ -60,7 +60,7 @@ class _FMI_DLL NFmiSmoother
                                              const NFmiDataMatrix<float>& theValues) const;
 
   const std::vector<float> SmoothenKernel(const std::vector<float>& theX,
-                                            const std::vector<float>& theY) const;
+                                          const std::vector<float>& theY) const;
 
   // Data members
 

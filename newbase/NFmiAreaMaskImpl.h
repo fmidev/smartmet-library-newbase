@@ -104,10 +104,7 @@ class _FMI_DLL NFmiAreaMaskImpl : public NFmiAreaMask
   {
     itsSecondaryFunctionType = newType;
   }
-  MetFunctionDirection GetMetFunctionDirection() const override
-  {
-    return itsMetFunctionDirection;
-  }
+  MetFunctionDirection GetMetFunctionDirection() const override { return itsMetFunctionDirection; }
   void GetMetFunctionDirection(MetFunctionDirection newValue) override
   {
     itsMetFunctionDirection = newValue;

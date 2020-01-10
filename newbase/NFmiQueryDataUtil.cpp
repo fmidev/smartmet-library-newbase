@@ -43,11 +43,11 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
-#include <ogr_spatialref.h>
 #include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <numeric>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 
 using namespace std;
@@ -4409,7 +4409,8 @@ static NFmiParamDescriptor MakeParamDescriptor(
     boost::shared_ptr<NFmiFastQueryInfo> &theFirstFastInfo,
     bool fFirstInfoDefines)
 {
-    return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor() : ::MakeParamDesc(theFastInfoVector);
+  return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor()
+                           : ::MakeParamDesc(theFastInfoVector);
 }
 
 namespace std
@@ -4606,7 +4607,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     int theMaxTimeStepsInData,
     NFmiStopFunctor *theStopFunctor)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector = MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
+  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
+      MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
 
   std::vector<NFmiMetTime> foundValidTimes =
       MakeValidTimesList(fastInfoVector, theMaxTimeStepsInData);

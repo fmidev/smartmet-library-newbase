@@ -102,7 +102,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   const NFmiLocation *Location() const;
   NFmiPoint LatLon() const;
   const NFmiPoint &LatLonFast() const;  // Lisäsin nopean Latlon-metodin, joka ei ole
-                                            // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
+                                        // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
   // const referenssiä, koska se pyytää NFmiGrid-luokalta
   // latlon-pistettä ja se rakennetaan lennossa.
   const NFmiPoint &LatLon(unsigned long index) const;
@@ -483,8 +483,8 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   void SetIsSubParamUsed(bool newState) { fUseSubParam = newState; }
   bool HasLatlonInfoInData() const;
   NFmiPoint GetLatlonFromData();  // jos datassa on kFmiLongitude ja kFmiLatitude parametrit,
-                                      // lasketaan sijanti asetetun ajan ja paikan suhteen niiden
-                                      // avulla
+                                  // lasketaan sijanti asetetun ajan ja paikan suhteen niiden
+                                  // avulla
   float PeekParamValue(unsigned long theParamIndex);  // jos tiedetään jonkin parametrin indeksi,
                                                       // tämän avulla voidaan kurkata
   // sen parametrin arvoa (aika,paikka ja leveli jo asetettuja)
@@ -1088,10 +1088,7 @@ inline NFmiPoint NFmiFastQueryInfo::WorldXY() const { return WorldXY(itsLocation
 // ----------------------------------------------------------------------
 
 inline NFmiPoint NFmiFastQueryInfo::LatLon() const { return LatLon(itsLocationIndex); }
-inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast() const
-{
-  return LatLon(itsLocationIndex);
-}
+inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast() const { return LatLon(itsLocationIndex); }
 
 // ----------------------------------------------------------------------
 /*!

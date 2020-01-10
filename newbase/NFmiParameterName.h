@@ -1348,7 +1348,7 @@ enum FmiParameterName
   kFmiProbabilityOfConvectiveSeverityIndexLimit1,
   kFmiProbabilityOfConvectiveSeverityIndexLimit2,
   kFmiProbabilityOfConvectiveSeverityIndexLimit3,
-  kFmiPotentialWindSpeed, // wind speed observation reduced to 10m
+  kFmiPotentialWindSpeed,  // wind speed observation reduced to 10m
 
   kFmiLowAndMiddleCloudCoverF100 = 1425,
   kFmiLowAndMiddleCloudCoverF90,

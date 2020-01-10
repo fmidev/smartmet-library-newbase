@@ -65,9 +65,7 @@ class _FMI_DLL NFmiDataMatrix : public std::vector<std::vector<T> >
   //! Constructor
 
   NFmiDataMatrix(size_type nx = 0, size_type ny = 0, const T& theValue = T())
-      : std::vector<std::vector<T> >(nx, std::vector<T>(ny,theValue)),
-        itsNX(nx),
-        itsNY(ny)
+      : std::vector<std::vector<T> >(nx, std::vector<T>(ny, theValue)), itsNX(nx), itsNY(ny)
   {
   }
 
@@ -166,7 +164,7 @@ class _FMI_DLL NFmiDataMatrix : public std::vector<std::vector<T> >
       this->operator[](i).resize(itsNY, theValue);
   }
 
-    //! Remove the given row, e.g, matrix[*][j]
+  //! Remove the given row, e.g, matrix[*][j]
 
   void RemoveRow(size_type theY)
   {

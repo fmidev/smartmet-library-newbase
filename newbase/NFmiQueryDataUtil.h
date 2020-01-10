@@ -136,8 +136,7 @@ class MyGrid
 struct CombinedParamStruct
 {  // tämä structi piti tehdä, että sain vähennettyä boost::in Thread:ille annettujen parametrin
   // määrää (max 9 parametria)
-  CombinedParamStruct()
-      : weather1(false), weather2(false), wind1(false), wind2(false), wind3(false)
+  CombinedParamStruct() : weather1(false), weather2(false), wind1(false), wind2(false), wind3(false)
   {
   }
 
@@ -518,7 +517,7 @@ class _FMI_DLL NFmiQueryDataUtil
   static NFmiQueryData *CombineQueryDatas(
       bool fDoRebuild,
       boost::shared_ptr<NFmiQueryData> &theBaseQData,
-      std::vector<boost::shared_ptr<NFmiQueryData> > &theQDataVector,
+      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
       bool fDoTimeStepCombine,
       int theMaxTimeStepsInData = 0,
       NFmiStopFunctor *theStopFunctor = 0);

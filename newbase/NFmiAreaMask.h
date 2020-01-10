@@ -141,10 +141,10 @@ class _FMI_DLL NFmiAreaMask
     CalculationMask,        //!< A calculatable mask such as sunangle>0, lat>65 etc
     StartParenthesis,       //!< Beginning of expression parenthesis
     EndParenthesis,         //!< End of expression parenthesis
-    CommaOperator,   //!< ','-merkki joka toimii argumenttien erottimena tietyissä funktioissa
+    CommaOperator,  //!< ','-merkki joka toimii argumenttien erottimena tietyissä funktioissa
     SimpleConditionCalculation,  //!< Simple condition type calculation inside string-literal, like
                                  //!< "T_ec > xxx"
-    EndOfOperations  //!< End of operators marker
+    EndOfOperations              //!< End of operators marker
   };
 
   //! Similar to CalculationOperationType, should redesign
@@ -163,16 +163,16 @@ class _FMI_DLL NFmiAreaMask
   enum FunctionType
   {
     NotFunction,
-    Avg,    //!< Average
-    Min,    //!< Minimum
-    MinH,   //!< Height of minimum
-    Max,    //!< Maximum
-    MaxH,   //!< Height of maximum
-    WAvg,   //!< Distance weighted average
-    Sum,    //!< Sum
-    Get,    //!< Get -function just gets value
-    FindH,  //!< FindH -function finds the height where wanted value exists
-    FindC,  //!< FindC -function finds how many wanted values there is
+    Avg,             //!< Average
+    Min,             //!< Minimum
+    MinH,            //!< Height of minimum
+    Max,             //!< Maximum
+    MaxH,            //!< Height of maximum
+    WAvg,            //!< Distance weighted average
+    Sum,             //!< Sum
+    Get,             //!< Get -function just gets value
+    FindH,           //!< FindH -function finds the height where wanted value exists
+    FindC,           //!< FindC -function finds how many wanted values there is
     FindHeightCond,  //!< FindHeightCond -function finds the height where wanted simple-condition
                      //!< turns true
     FindCountCond,   //!< FindCountCond -function calculates how many time simple-condition status
@@ -291,8 +291,8 @@ class _FMI_DLL NFmiAreaMask
   virtual ~NFmiAreaMask();
   NFmiAreaMask() {}
   virtual void Initialize() = 0;  // tämä on konstruktorin jälkeen kutsuttava virtuaalinen
-                                      // initialisointi (koska konstruktorissa ei voi kutsua
-                                      // virtuaali funktioita)
+                                  // initialisointi (koska konstruktorissa ei voi kutsua
+                                  // virtuaali funktioita)
 
   // Default constructor intentionally left for the compiler
   // NFmiAreaMask ();

@@ -17,10 +17,10 @@
 #include "NFmiDataModifierClasses.h"
 #include "NFmiFastInfoUtils.h"
 #include "NFmiFastQueryInfo.h"
+#include "NFmiInterpolation.h"
 #include "NFmiMetMath.h"
 #include "NFmiQueryDataUtil.h"
 #include "NFmiSimpleCondition.h"
-#include "NFmiInterpolation.h"
 
 #include <boost/math/special_functions/round.hpp>
 #include <cassert>
