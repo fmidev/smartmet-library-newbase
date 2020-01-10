@@ -45,8 +45,17 @@ void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 
 bool NFmiCoordinateMatrix::Transform(OGRCoordinateTransformation& transformation)
 {
-  // TODO: Check axis orientation. Make sure output is lonlat or xy instead of latlon or yx.
-  // Always assume input is lonlat or xy.
+  if (transformation.GetSourceCS() == nullptr || transformation.GetTargetCS() == nullptr)
+    throw std::runtime_error("Projecting coordinate matrix without valid spatial references");
 
-  return transformation.Transform(itsNX * itsNY, &itsX[0], &itsY[0]);
+  const auto swap_input = transformation.GetSourceCS()->EPSGTreatsAsLatLong();
+  const auto swap_output = transformation.GetTargetCS()->EPSGTreatsAsLatLong();
+
+  if (swap_input) std::swap(itsX, itsY);
+
+  const auto flag = transformation.Transform(itsNX * itsNY, &itsX[0], &itsY[0]);
+
+  if (swap_output) std::swap(itsX, itsY);
+
+  return flag;
 }
