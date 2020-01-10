@@ -1,3 +1,4 @@
+#include "NFmiCoordinateMatrix.h"
 #include <iomanip>
 #include <iostream>
 #include <ogr_geometry.h>
@@ -1777,6 +1778,118 @@ NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
     throw std::runtime_error("Failed to project WGS84 coordinate to sphere");
 
   return NFmiPoint(x, y);
+}
+
+void NFmiArea::ToLatLon(NFmiCoordinateMatrix &theMatrix) const
+{
+  // Transform local xy-coordinates into world xy-coordinates (meters).
+  XYToWorldXY(theMatrix);
+
+  // Transform world xy-coordinates into WGS84
+  WorldXYToLatLon(theMatrix);
+
+  // Note: No pole fixing as in the code for a single point. Maybe not worth the
+  // trouble? Or another algorithm would be better?
+}
+
+void NFmiArea::ToXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  LatLonToWorldXY(theMatrix);
+  WorldXYToXY(theMatrix);
+}
+
+void NFmiArea::XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  const auto wleft = impl->itsWorldRect.Left();
+  const auto wright = impl->itsWorldRect.Right();
+  const auto wbottom = impl->itsWorldRect.Bottom();
+  const auto left = Left();
+  const auto top = Top();
+  const auto xscale = impl->itsXScaleFactor;
+  const auto yscale = impl->itsYScaleFactor;
+  const auto flopped = impl->itsFlopped;
+
+  // Note: We do not assume x/y are constants for rows/columns even though they most likely are
+  double x;
+  for (std::size_t j = 0; j < theMatrix.Height(); j++)
+    for (std::size_t i = 0; i < theMatrix.Width(); i++)
+    {
+      if (!flopped)
+        x = wleft + (theMatrix.X(i, j) - left) / xscale;
+      else
+        x = wright - (theMatrix.X(i, j) - left) / xscale;
+      auto y = wbottom - (theMatrix.Y(i, j) - top) / yscale;
+      theMatrix.Set(i, j, x, y);
+    }
+}
+
+void NFmiArea::WorldXYToXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  const auto wleft = impl->itsWorldRect.Left();
+  const auto wright = impl->itsWorldRect.Right();
+  const auto wbottom = impl->itsWorldRect.Bottom();
+  const auto left = Left();
+  const auto top = Top();
+  const auto xscale = impl->itsXScaleFactor;
+  const auto yscale = impl->itsYScaleFactor;
+  const auto flopped = impl->itsFlopped;
+
+  // Note: We do not assume x/y are constants for rows/columns even though they most likely are
+  double x;
+  for (std::size_t j = 0; j < theMatrix.Height(); j++)
+    for (std::size_t i = 0; i < theMatrix.Width(); i++)
+    {
+      if (!flopped)
+        x = wleft + (theMatrix.X(i, j) - left) / xscale;
+      else
+        x = wright - (theMatrix.X(i, j) - left) / xscale;
+      auto y = wbottom - (theMatrix.Y(i, j) - top) / yscale;
+      theMatrix.Set(i, j, x, y);
+    }
+}
+
+void NFmiArea::WorldXYToLatLon(NFmiCoordinateMatrix &theMatrix) const
+{
+  if (!impl->itsToLatLonConverter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  theMatrix.Transform(*impl->itsToLatLonConverter);
+}
+
+void NFmiArea::LatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  if (!impl->itsToWorldXYConverter)
+    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+
+  theMatrix.Transform(*impl->itsToWorldXYConverter);
+}
+
+void NFmiArea::ToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const
+{
+  XYToWorldXY(theMatrix);
+  WorldXYToNativeLatLon(theMatrix);
+}
+
+void NFmiArea::WorldXYToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const
+{
+  if (!impl->itsNativeToLatLonConverter)
+    throw std::runtime_error("Spatial reference not set for native latlon conversions");
+
+  theMatrix.Transform(*impl->itsNativeToLatLonConverter);
+}
+
+void NFmiArea::NativeLatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  if (!impl->itsNativeToWorldXYConverter)
+    throw std::runtime_error("Spatial reference not set for native latlon conversions");
+
+  theMatrix.Transform(*impl->itsNativeToWorldXYConverter);
+}
+
+void NFmiArea::NativeToXY(NFmiCoordinateMatrix &theMatrix) const
+{
+  NativeLatLonToWorldXY(theMatrix);
+  WorldXYToXY(theMatrix);
 }
 
 #endif

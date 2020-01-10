@@ -99,9 +99,6 @@ class _FMI_DLL NFmiArea
                           bool fShrinkArea);
 
 #ifdef WGS84
-  // 2D matrices of coordinates
-  // NFmiCoordinateMatrix WorldXYCoordinateMatrix() const;
-
   void ToLatLon(NFmiCoordinateMatrix &theMatrix) const;
   void ToXY(NFmiCoordinateMatrix &theMatrix) const;
   void XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
