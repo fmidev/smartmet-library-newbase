@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.12.4
+Version: 20.1.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -87,6 +87,11 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Jan 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.1.29-1.fmi
+- New parameter: nearby weather number
+- New parameter: snow accumulation 24h fractiles 0,10,25,50,75,90,100
+- New parameter: snow accumulation 120h fractiles 0,10,25,50,75,90,100
+
 * Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
 - Use -fno-omit-frame-pointer for a better profiling and debugging experience
 - Fixed dependency to be on gdal-libs instead of gdal
