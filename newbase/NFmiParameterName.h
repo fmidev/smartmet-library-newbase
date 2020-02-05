@@ -1358,6 +1358,24 @@ enum FmiParameterName
   kFmiLowAndMiddleCloudCoverF10,
   kFmiLowAndMiddleCloudCoverF0,
 
+  kFmiNearbyWeatherNumber = 1432,
+  kFmiSnowAccumulation24hF100,
+  kFmiSnowAccumulation24hF90,
+  kFmiSnowAccumulation24hF75,
+  kFmiSnowAccumulation24hF50,
+  kFmiSnowAccumulation24hF25,
+  kFmiSnowAccumulation24hF10,
+  kFmiSnowAccumulation24hF0,
+
+  kFmiSnowAccumulation120hF100,
+  kFmiSnowAccumulation120hF90,
+  kFmiSnowAccumulation120hF75,
+  kFmiSnowAccumulation120hF50,
+  kFmiSnowAccumulation120hF25,
+  kFmiSnowAccumulation120hF10,
+  kFmiSnowAccumulation120hF0,
+
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
