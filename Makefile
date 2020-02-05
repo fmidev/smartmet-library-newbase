@@ -28,6 +28,7 @@ objdir = obj
 
 -include $(HOME)/.smartmet.mk
 GCC_DIAG_COLOR ?= always
+CXX_STD ?= c++11
 
 DEFINES = -DUNIX -D_REENTRANT -DBOOST
 
@@ -40,7 +41,7 @@ endif
 ifeq ($(CXX), clang++)
 
  FLAGS = \
-	-std=c++11 -fPIC -MD -fno-omit-frame-pointer \
+	-std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer \
 	-Weverything \
 	-Wno-c++98-compat \
 	-Wno-float-equal \
@@ -53,7 +54,7 @@ ifeq ($(CXX), clang++)
 
 else
 
- FLAGS = -std=c++11 -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wnon-virtual-dtor -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
+ FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wnon-virtual-dtor -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
 
  FLAGS_DEBUG = \
 	-Wcast-align \
