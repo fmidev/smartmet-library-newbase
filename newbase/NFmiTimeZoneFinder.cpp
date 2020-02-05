@@ -159,10 +159,6 @@ void NFmiTimeZoneRing::Add(const NFmiPoint& thePoint)
   if (itsStarted)
   {
     itsSignedArea += itsLastPoint.X() * thePoint.Y() - thePoint.X() * itsLastPoint.Y();
-    //	  cout << itsLastPoint.X() << ' ' << itsLastPoint.Y()
-    //		   << "\t--> "
-    //		   << thePoint.X() << ' ' << thePoint.Y()
-    //		   << "\t" << itsSignedArea << endl;
     Add(NFmiTimeZoneEdge(itsLastPoint, thePoint));
   }
   else

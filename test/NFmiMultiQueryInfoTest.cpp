@@ -299,7 +299,7 @@ void interpolatedvalue()
   qi->First();
   qi->Param(kFmiTemperature);
   float value = qi->InterpolatedValue(NFmiPoint(25, 60));
-  if (abs(value - 1.80367) > 1e-5)
+  if (abs(value - 2.26062) > 1e-5)
     TEST_FAILED("Expected t2m 1.80367 for 25,60 at time 1, got " + Convert(value));
 
   qi->NextTime();

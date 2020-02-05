@@ -123,7 +123,6 @@ std::unique_ptr<OGRSpatialReference> make_sr(std::string theDesc)
   }
 
   std::unique_ptr<OGRSpatialReference> sr(new OGRSpatialReference);
-  std::cout << "PROJ : " << theDesc << " --> " << desc << std::endl;
   auto err = sr->SetFromUserInput(desc.c_str());
 
   if (err == OGRERR_NONE) return sr;
@@ -1323,9 +1322,6 @@ void NFmiArea::InitProj()
 
   if (impl->itsToWorldXYConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation from WGS84");
-
-  std::cout << "Source CS: " << exportToProj(*impl->itsToWorldXYConverter->GetSourceCS())
-            << "\nTarget CS: " << exportToProj(*impl->itsToWorldXYConverter->GetTargetCS()) << "\n";
 
   impl->itsToLatLonConverter.reset(
       OGRCreateCoordinateTransformation(&impl->itsSpatialReference, wgs84.get()));
