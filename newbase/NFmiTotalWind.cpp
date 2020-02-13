@@ -630,7 +630,7 @@ NFmiDataIdent *NFmiTotalWind::CreateParam(const NFmiProducer &theProducer,
   param = NFmiParam(kFmiWindDirection, "Wind dir", 0, 360, 1, 0, "%.1f", kLinearly);
   subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
   param = NFmiParam(
-      kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kLinearly);
+      kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kNearestPoint);
   subParamBag.Add(NFmiDataIdent(param, theProducer, kNumberParam));
 
   param =
