@@ -1,4 +1,5 @@
 #include "NFmiCoordinateMatrix.h"
+#include "NFmiSpatialReference.h"
 #include <iomanip>
 #include <iostream>
 #include <ogr_geometry.h>

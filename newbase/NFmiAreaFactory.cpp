@@ -108,9 +108,10 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
-
 #include "NFmiArea.h"
+#include "NFmiSpatialReference.h"
 #include "NFmiStringTools.h"
+
 #ifndef WGS84
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
@@ -120,6 +121,7 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
 #endif
+
 #include <boost/algorithm/string.hpp>
 #include <fmt/printf.h>
 #include <algorithm>

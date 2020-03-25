@@ -11,7 +11,6 @@
 #include "NFmiDef.h"
 #include "NFmiProj.h"
 #include "NFmiRect.h"
-#include "NFmiSpatialReference.h"
 #include <boost/shared_ptr.hpp>
 #include <memory>
 #include <string>
@@ -19,9 +18,9 @@
 // We must forward declare these or many dependent modules will have to handle
 // GDAL includes and linkage, which is annoying with PGDG packages
 
-class OGRCoordinateTransformation;
 class OGRSpatialReference;
 class NFmiCoordinateMatrix;
+class NFmiSpatialReference;
 
 //! Undocumented
 class _FMI_DLL NFmiArea
