@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NFmiGlobals.h"
+#include "NFmiDef.h"
 #include <memory>
 #include <string>
 

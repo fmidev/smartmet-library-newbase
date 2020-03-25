@@ -10,6 +10,7 @@
 #include "NFmiArea.h"
 #include "NFmiDataMatrix.h"
 #include "NFmiGridBase.h"
+#include "NFmiSaveBaseFactory.h"
 #include <algorithm>
 #include <string>
 

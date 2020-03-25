@@ -8,9 +8,9 @@
 #pragma once
 
 #include "NFmiAngle.h"
+#include "NFmiDef.h"
 #include "NFmiProj.h"
 #include "NFmiRect.h"
-#include "NFmiSaveBaseFactory.h"
 #include "NFmiSpatialReference.h"
 #include <boost/shared_ptr.hpp>
 #include <memory>
