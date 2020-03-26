@@ -2,7 +2,7 @@
 #include "NFmiPoint.h"
 #include <vector>
 
-class OGRCoordinateTransformation;
+class NFmiCoordinateTransformation;
 
 class _FMI_DLL NFmiCoordinateMatrix
 {
@@ -45,8 +45,8 @@ class _FMI_DLL NFmiCoordinateMatrix
   // occasionally needed for speed
   void Swap(NFmiCoordinateMatrix& other);
 
-  // returns false if no coordinates could be projected. Always uses lon/lat x/y ordering.
-  bool Transform(OGRCoordinateTransformation& transformation);
+  // Always uses lon/lat x/y ordering.
+  void Transform(NFmiCoordinateTransformation& transformation);
 
  private:
   std::size_t itsNX = 0;

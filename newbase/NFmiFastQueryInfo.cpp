@@ -20,15 +20,16 @@
 #include "NFmiFastQueryInfo.h"
 #include "NFmiCombinedParam.h"
 #include "NFmiCoordinateMatrix.h"
+#include "NFmiCoordinateTransformation.h"
 #include "NFmiDataModifier.h"
 #include "NFmiGrid.h"
 #include "NFmiInterpolation.h"
 #include "NFmiMetMath.h"
+#include "NFmiPoint.h"
 #include "NFmiQueryData.h"
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
-#include <ogr_spatialref.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -1894,12 +1895,10 @@ void NFmiFastQueryInfo::LocationsXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
 
     theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation;
-    transformation.reset(OGRCreateCoordinateTransformation(
-        const_cast<OGRSpatialReference *>(Area()->SpatialReference()),
-        const_cast<OGRSpatialReference *>(theArea.SpatialReference())));
-    if (!transformation)
-      throw std::runtime_error("Failed to set the required coordinate transformation");
+    NFmiCoordinateTransformation transformation(Area()->SpatialReference(),
+                                                theArea.SpatialReference());
+
+    // TODO: Optimize to perform all projections at once
 
     for (int j = 0; j < ny; j++)
       for (int i = 0; i < nx; i++)
@@ -1907,12 +1906,15 @@ void NFmiFastQueryInfo::LocationsXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
         // Old code loses precision in ellipsoid conversions:
         // theMatrix[i][j] = theArea.ToXY(LatLon(j * nx + i));
         auto worldxy = Grid()->GridToWorldXY(i, j);
-        double x = worldxy.X();
-        double y = worldxy.Y();
-        if (transformation->Transform(1, &x, &y) == 0)
+        try
+        {
+          transformation.Transform(worldxy);
+          theMatrix[i][j] = theArea.WorldXYToXY(worldxy);
+        }
+        catch (...)
+        {
           theMatrix[i][j] = NFmiPoint::gMissingLatlon;
-        else
-          theMatrix[i][j] = theArea.WorldXYToXY(NFmiPoint(x, y));
+        }
       }
   }
   else
@@ -1938,12 +1940,9 @@ void NFmiFastQueryInfo::LocationsWorldXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
 
     theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation;
-    transformation.reset(OGRCreateCoordinateTransformation(
-        const_cast<OGRSpatialReference *>(Area()->SpatialReference()),
-        const_cast<OGRSpatialReference *>(theArea.SpatialReference())));
-    if (!transformation)
-      throw std::runtime_error("Failed to set the required coordinate transformation");
+    // TODO: Optimize for speed!
+
+    NFmiCoordinateTransformation transformation(Area()->SpatialReference(), SpatialReference());
 
     for (int j = 0; j < ny; j++)
       for (int i = 0; i < nx; i++)
@@ -1951,12 +1950,15 @@ void NFmiFastQueryInfo::LocationsWorldXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
         // Old code loses precision in ellipsoid conversions:
         // theMatrix[i][j] = theArea.LatLonToWorldXY(LatLon(j * nx + i));
         auto worldxy = Grid()->GridToWorldXY(i, j);
-        double x = worldxy.X();
-        double y = worldxy.Y();
-        if (transformation->Transform(1, &x, &y) == 0)
+        try
+        {
+          transformation.Transform(worldxy);
+          theMatrix[i][j] = NFmiPoint(worldxy);
+        }
+        catch (...)
+        {
           theMatrix[i][j] = NFmiPoint::gMissingLatlon;
-        else
-          theMatrix[i][j] = NFmiPoint(x, y);
+        }
       }
   }
   else

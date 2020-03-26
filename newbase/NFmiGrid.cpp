@@ -872,19 +872,7 @@ std::size_t NFmiGrid::HashValue() const
  */
 // ----------------------------------------------------------------------
 
-OGRSpatialReference *NFmiGrid::SpatialReference()
-{
-  if (itsArea) return itsArea->SpatialReference();
-  return NFmiWGS84::SpatialReference();
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-const OGRSpatialReference *NFmiGrid::SpatialReference() const
+const NFmiSpatialReference &NFmiGrid::SpatialReference() const
 {
   if (itsArea) return itsArea->SpatialReference();
   return NFmiWGS84::SpatialReference();

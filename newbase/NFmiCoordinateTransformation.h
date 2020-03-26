@@ -15,20 +15,18 @@ class _FMI_DLL NFmiCoordinateTransformation
   ~NFmiCoordinateTransformation() = default;
   NFmiCoordinateTransformation() = delete;
 
-  // Directly equivalent construction
-  NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
-                               const OGRSpatialReference theTarget);
-
   // Implicit construction from strings, etc
   NFmiCoordinateTransformation(const NFmiSpatialReference& theSource,
                                const NFmiSpatialReference& theTarget);
+  NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
+                               const OGRSpatialReference& theTarget);
 
-  bool Transform(double& x, double& y) const;
-  bool Transform(std::vector<double>& x, std::vector<double>& y) const;
-  bool Transform(NFmiPoint& xy) const;
+  void Transform(double& x, double& y) const;
+  void Transform(std::vector<double>& x, std::vector<double>& y) const;
+  void Transform(NFmiPoint& xy) const;
 
  private:
-  std::unique_ptr<OGRCoordinateTransformation> itsTransformation;
+  std::shared_ptr<OGRCoordinateTransformation> itsTransformation;
 
   bool itsInputSwapFlag = false;   // swap xy before calling GDAL?
   bool itsOutputSwapFlag = false;  // swap xy after calling GDAL?

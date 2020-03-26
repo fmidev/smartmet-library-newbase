@@ -1,6 +1,6 @@
 #include "NFmiCoordinateMatrix.h"
+#include "NFmiCoordinateTransformation.h"
 #include <cmath>
-#include <ogr_spatialref.h>
 
 // PROJ uses HUGE_VAL as a missing value, hence we do too to avoid unnecessary modifications to data
 
@@ -49,19 +49,7 @@ void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 // are in the correct spatial reference. Input/output order is always lon/lat or x/y,
 // EPSG rules are followed only temporarily to make the projection work.
 
-bool NFmiCoordinateMatrix::Transform(OGRCoordinateTransformation& transformation)
+void NFmiCoordinateMatrix::Transform(NFmiCoordinateTransformation& transformation)
 {
-  if (transformation.GetSourceCS() == nullptr || transformation.GetTargetCS() == nullptr)
-    throw std::runtime_error("Projecting coordinate matrix without valid spatial references");
-
-  const auto swap_input = transformation.GetSourceCS()->EPSGTreatsAsLatLong();
-  const auto swap_output = transformation.GetTargetCS()->EPSGTreatsAsLatLong();
-
-  if (swap_input) std::swap(itsX, itsY);
-
-  const auto flag = transformation.Transform(itsNX * itsNY, &itsX[0], &itsY[0]);
-
-  if (swap_output) std::swap(itsX, itsY);
-
-  return flag;
+  transformation.Transform(itsX, itsY);
 }

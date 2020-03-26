@@ -1,6 +1,6 @@
 #include "NFmiWGS84.h"
+#include "NFmiSpatialReference.h"
 #include <memory>
-#include <ogr_spatialref.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -11,20 +11,15 @@
 class NFmiWGS84Impl
 {
  public:
-  NFmiWGS84Impl() : sr(new OGRSpatialReference)
-  {
-    auto err = sr->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw std::runtime_error("Failed to initialize WGS84 spatial reference");
-  }
+  NFmiWGS84Impl() : sr("WGS84") {}
 
-  OGRSpatialReference* SpatialReference() const { return sr.get(); }
+  const NFmiSpatialReference& SpatialReference() const { return sr; }
 
  private:
-  std::unique_ptr<OGRSpatialReference> sr;
+  NFmiSpatialReference sr;
 };
 
-OGRSpatialReference* NFmiWGS84::SpatialReference()
+const NFmiSpatialReference& NFmiWGS84::SpatialReference()
 {
   static NFmiWGS84Impl impl;  // thread safe init in C++11
   return impl.SpatialReference();

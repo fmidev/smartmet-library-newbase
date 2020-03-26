@@ -15,14 +15,6 @@ bool must_swap_xy(const OGRSpatialReference& theSR)
 #endif
 }
 
-NFmiCoordinateTransformation::NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
-                                                           const OGRSpatialReference theTarget)
-    : itsTransformation(OGRCreateCoordinateTransformation(&theSource, &theTarget)),
-      itsInputSwapFlag(must_swap_xy(theSource)),
-      itsOutputSwapFlag(must_swap_xy(theTarget))
-{
-}
-
 NFmiCoordinateTransformation::NFmiCoordinateTransformation(const NFmiSpatialReference& theSource,
                                                            const NFmiSpatialReference& theTarget)
     : itsTransformation(OGRCreateCoordinateTransformation(theSource.get(), theTarget.get())),
@@ -31,22 +23,31 @@ NFmiCoordinateTransformation::NFmiCoordinateTransformation(const NFmiSpatialRefe
 {
 }
 
-bool NFmiCoordinateTransformation::Transform(double& x, double& y) const
+NFmiCoordinateTransformation::NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
+                                                           const OGRSpatialReference& theTarget)
+    : itsTransformation(OGRCreateCoordinateTransformation(&theSource, &theTarget)),
+      itsInputSwapFlag(must_swap_xy(theSource)),
+      itsOutputSwapFlag(must_swap_xy(theTarget))
+{
+}
+
+void NFmiCoordinateTransformation::Transform(double& x, double& y) const
 {
   if (itsInputSwapFlag) std::swap(x, y);
 
   bool ok = (itsTransformation->Transform(1, &x, &y) == 1);
 
   if (itsOutputSwapFlag) std::swap(x, y);
-  return ok;
+
+  if (!ok) throw std::runtime_error("Failed to do coordinate transformation on x,y coordinate");
 }
 
-bool NFmiCoordinateTransformation::Transform(std::vector<double>& x, std::vector<double>& y) const
+void NFmiCoordinateTransformation::Transform(std::vector<double>& x, std::vector<double>& y) const
 {
   if (x.size() != y.size())
     throw std::runtime_error("X- and Y-coordinate vector sizes do not match");
 
-  if (x.empty()) return true;
+  if (x.empty()) return;
 
   if (itsInputSwapFlag) std::swap(x, y);
 
@@ -55,12 +56,15 @@ bool NFmiCoordinateTransformation::Transform(std::vector<double>& x, std::vector
   bool ok = (itsTransformation->Transform(n, &x[0], &y[0]) == n);
 
   if (itsOutputSwapFlag) std::swap(x, y);
-  return ok;
+
+  if (!ok)
+    throw std::runtime_error("Failed to do coordinate transformation on x,y coordinate vectors");
 }
 
-bool NFmiCoordinateTransformation::Transform(NFmiPoint& xy) const
+void NFmiCoordinateTransformation::Transform(NFmiPoint& xy) const
 {
-  if (xy.X() == kFloatMissing || xy.Y() == kFloatMissing) return false;
+  if (xy.X() == kFloatMissing || xy.Y() == kFloatMissing)
+    throw std::runtime_error("Cannot project a coordinate with kFloatMissing values");
 
   double x = xy.X();
   double y = xy.Y();
@@ -73,5 +77,6 @@ bool NFmiCoordinateTransformation::Transform(NFmiPoint& xy) const
 
   xy.Set(x, y);
 
-  return ok;
+  if (!ok)
+    throw std::runtime_error("Failed to do coordinate transformation on a NFmiPoint coordinate");
 }

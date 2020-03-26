@@ -21,7 +21,6 @@
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
-#include <ogr_spatialref.h>
 
 using namespace std;
 
@@ -283,19 +282,7 @@ NFmiPoint NFmiHPlaceDescriptor::WorldXY(unsigned long index) const
  */
 // ----------------------------------------------------------------------
 
-OGRSpatialReference *NFmiHPlaceDescriptor::SpatialReference()
-{
-  if (itsGrid) return itsGrid->SpatialReference();
-  return NFmiWGS84::SpatialReference();
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Return the spatial reference
- */
-// ----------------------------------------------------------------------
-
-const OGRSpatialReference *NFmiHPlaceDescriptor::SpatialReference() const
+const NFmiSpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
 {
   if (itsGrid) return itsGrid->SpatialReference();
   return NFmiWGS84::SpatialReference();

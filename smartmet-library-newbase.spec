@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.2.13
+Version: 20.3.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Mar 26 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.26-1.fmi
+- Added NFmiSpatialReference and NFmiCoordinateTransformation to encapsulate GDAL use
+
 * Thu Feb 13 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.13-1.fmi
 - Use nearest point interpolation for WindVector parameter
 

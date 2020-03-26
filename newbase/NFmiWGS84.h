@@ -2,12 +2,12 @@
 
 #include "NFmiGlobals.h"
 
-class OGRSpatialReference;
+class NFmiSpatialReference;
 
 class _FMI_DLL NFmiWGS84
 {
  public:
-  static OGRSpatialReference* SpatialReference();
+  static const NFmiSpatialReference& SpatialReference();
 
  private:
   NFmiWGS84() = delete;

@@ -13,7 +13,7 @@
 #include <boost/unordered_map.hpp>
 
 class NFmiRect;
-class OGRSpatialReference;
+class NFmiSpatialReference;
 class NFmiCoordinateMatrix;
 
 //! Undocumented
@@ -117,8 +117,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
 
-  OGRSpatialReference *SpatialReference();
-  const OGRSpatialReference *SpatialReference() const;
+  const NFmiSpatialReference &SpatialReference() const;
   NFmiCoordinateMatrix CoordinateMatrix() const;
 
   NFmiDataIdent &Param() const;
@@ -1238,17 +1237,7 @@ inline void NFmiFastQueryInfo::Locations(NFmiDataMatrix<NFmiPoint> &theMatrix) c
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
-inline OGRSpatialReference *NFmiFastQueryInfo::SpatialReference()
-{
-  return itsHPlaceDescriptor->SpatialReference();
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-inline const OGRSpatialReference *NFmiFastQueryInfo::SpatialReference() const
+inline const NFmiSpatialReference &NFmiFastQueryInfo::SpatialReference() const
 {
   return itsHPlaceDescriptor->SpatialReference();
 }

@@ -37,6 +37,7 @@
 #include "NFmiRelativeDataIterator.h"
 #include "NFmiRelativeTimeIntegrationIterator.h"
 #include "NFmiSmoother.h"
+#include "NFmiSpatialReference.h"
 #include "NFmiStreamQueryData.h"
 #include "NFmiSuperSmartInfo.h"
 #include "NFmiTimeList.h"
@@ -5291,7 +5292,7 @@ bool NFmiQueryDataUtil::AreAreasSameKind(NFmiArea *theArea1, NFmiArea *theArea2)
   if (theArea1 && theArea2)
   {
 #ifdef WGS84
-    return theArea1->SpatialReference()->IsSameGeogCS(theArea2->SpatialReference());
+    return theArea1->SpatialReference().get()->IsSameGeogCS(theArea2->SpatialReference().get());
 #else
     if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea)
     {

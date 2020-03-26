@@ -18,7 +18,6 @@
 // We must forward declare these or many dependent modules will have to handle
 // GDAL includes and linkage, which is annoying with PGDG packages
 
-class OGRSpatialReference;
 class NFmiCoordinateMatrix;
 class NFmiSpatialReference;
 
@@ -131,9 +130,7 @@ class _FMI_DLL NFmiArea
   std::size_t HashValueKludge() const;
 
  public:
-  // Intentional API design choice since the object has internal reference counting
-  OGRSpatialReference *SpatialReference();
-  const OGRSpatialReference *SpatialReference() const;
+  const NFmiSpatialReference &SpatialReference() const;
 
   // Named constructors used to clarify intent of the parameters. Note that the proxy
   // may accept actual spatial references or strings from which to construct them.
