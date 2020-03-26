@@ -11,15 +11,17 @@
 #include "NFmiDef.h"
 #include "NFmiProj.h"
 #include "NFmiRect.h"
+#include "NFmiSpatialReference.h"
 #include <boost/shared_ptr.hpp>
 #include <memory>
 #include <string>
 
-// We must forward declare these or many dependent modules will have to handle
-// GDAL includes and linkage, which is annoying with PGDG packages
+// Note: We could forward declare NFmiSpatialReference too, but then all code using this or
+// NFmiAreaTools would have to include NFmiSpatialReference.h to enable implicit conversion of
+// strings such as "WGS84" into actual spatial references. Having the include here is a minor
+// nuisance.
 
 class NFmiCoordinateMatrix;
-class NFmiSpatialReference;
 
 //! Undocumented
 class _FMI_DLL NFmiArea
