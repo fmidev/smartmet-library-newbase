@@ -18,7 +18,7 @@
 
 // Note: We could forward declare NFmiSpatialReference too, but then all code using this or
 // NFmiAreaTools would have to include NFmiSpatialReference.h to enable implicit conversion of
-// strings such as "WGS84" into actual spatial references. Having the include here is a minor
+// strings such as "WGS84" into actual spatial references. Having the include here is a smaller
 // nuisance.
 
 class NFmiCoordinateMatrix;
