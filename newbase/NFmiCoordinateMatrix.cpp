@@ -49,7 +49,7 @@ void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
 // are in the correct spatial reference. Input/output order is always lon/lat or x/y,
 // EPSG rules are followed only temporarily to make the projection work.
 
-void NFmiCoordinateMatrix::Transform(NFmiCoordinateTransformation& transformation)
+bool NFmiCoordinateMatrix::Transform(NFmiCoordinateTransformation& transformation)
 {
-  transformation.Transform(itsX, itsY);
+  return transformation.Transform(itsX, itsY);
 }

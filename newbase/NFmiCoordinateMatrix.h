@@ -46,7 +46,7 @@ class _FMI_DLL NFmiCoordinateMatrix
   void Swap(NFmiCoordinateMatrix& other);
 
   // Always uses lon/lat x/y ordering.
-  void Transform(NFmiCoordinateTransformation& transformation);
+  bool Transform(NFmiCoordinateTransformation& transformation);
 
  private:
   std::size_t itsNX = 0;
