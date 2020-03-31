@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 19.11.21
+Version: 20.2.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -23,7 +23,7 @@ Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
 Requires: boost-regex
-Requires: gdal
+Requires: gdal-libs
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
@@ -87,6 +87,21 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Feb 13 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.13-1.fmi
+- Use nearest point interpolation for WindVector parameter
+
+* Thu Feb  6 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.6-1.fmi
+- Restored ability to read compressed files
+
+* Wed Jan 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.1.29-1.fmi
+- New parameter: nearby weather number
+- New parameter: snow accumulation 24h fractiles 0,10,25,50,75,90,100
+- New parameter: snow accumulation 120h fractiles 0,10,25,50,75,90,100
+
+* Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
+- Use -fno-omit-frame-pointer for a better profiling and debugging experience
+- Fixed dependency to be on gdal-libs instead of gdal
+
 * Thu Nov 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.21-1.fmi
 - Revert old interpolation behaviour of qdpoint -i options
 - Fixed eternal loop in NFmiDataMatrixUtils
