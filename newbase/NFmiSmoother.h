@@ -12,6 +12,8 @@
 #include "NFmiPoint.h"       // for NFmiPoint
 #include <string>
 
+class NFmiCoordinateMatrix;
+
 //! Undocumented
 class _FMI_DLL NFmiSmoother
 {
@@ -44,7 +46,7 @@ class _FMI_DLL NFmiSmoother
 
   // Smoothen the given data
 
-  const NFmiDataMatrix<float> Smoothen(const NFmiDataMatrix<NFmiPoint>& thePts,
+  const NFmiDataMatrix<float> Smoothen(const NFmiCoordinateMatrix& thePts,
                                        const NFmiDataMatrix<float>& theValues) const;
 
   const std::vector<float> Smoothen(const std::vector<float>& theX,
@@ -56,7 +58,7 @@ class _FMI_DLL NFmiSmoother
   // Disable void constructor
   NFmiSmoother();
 
-  const NFmiDataMatrix<float> SmoothenKernel(const NFmiDataMatrix<NFmiPoint>& thePts,
+  const NFmiDataMatrix<float> SmoothenKernel(const NFmiCoordinateMatrix& thePts,
                                              const NFmiDataMatrix<float>& theValues) const;
 
   const std::vector<float> SmoothenKernel(const std::vector<float>& theX,

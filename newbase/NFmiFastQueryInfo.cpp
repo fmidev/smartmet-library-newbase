@@ -1880,45 +1880,24 @@ bool NFmiFastQueryInfo::Right()  // toimii vain gridi datalle oikein!!!
 /*!
  * Palauttaa kaikki hilan XY-koordinaatit datamatriisiin
  *
- * \param theMatrix The matrix where to store the coordinates
  * \param theArea The projection in which to store the XY coordinates
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LocationsXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
-                                    const NFmiArea &theArea) const
+NFmiCoordinateMatrix NFmiFastQueryInfo::LocationsXY(const NFmiArea &theArea) const
 {
-  if (IsGrid())
-  {
-    int nx = itsGridXNumber;
-    int ny = itsGridYNumber;
+  if (!IsGrid()) return NFmiCoordinateMatrix(0, 0);
 
-    theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
+  auto coords = LocationsWorldXY(theArea);
 
-    NFmiCoordinateTransformation transformation(Area()->SpatialReference(),
-                                                theArea.SpatialReference());
+  int nx = coords.Width();
+  int ny = coords.Height();
 
-    // TODO: Optimize to perform all projections at once
+  for (int j = 0; j < ny; j++)
+    for (int i = 0; i < nx; i++)
+      coords.Set(i, j, theArea.WorldXYToXY(coords(i, j)));
 
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
-      {
-        // Old code loses precision in ellipsoid conversions:
-        // theMatrix[i][j] = theArea.ToXY(LatLon(j * nx + i));
-        auto worldxy = Grid()->GridToWorldXY(i, j);
-        try
-        {
-          transformation.Transform(worldxy);
-          theMatrix[i][j] = theArea.WorldXYToXY(worldxy);
-        }
-        catch (...)
-        {
-          theMatrix[i][j] = NFmiPoint::gMissingLatlon;
-        }
-      }
-  }
-  else
-    theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
+  return coords;
 }
 
 // ----------------------------------------------------------------------
@@ -1930,39 +1909,18 @@ void NFmiFastQueryInfo::LocationsXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LocationsWorldXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
-                                         const NFmiArea &theArea) const
+NFmiCoordinateMatrix NFmiFastQueryInfo::LocationsWorldXY(const NFmiArea &theArea) const
 {
-  if (IsGrid())
-  {
-    int nx = itsGridXNumber;
-    int ny = itsGridYNumber;
+  if (!IsGrid()) return NFmiCoordinateMatrix(0, 0);
 
-    theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
+  NFmiCoordinateTransformation transformation(Area()->SpatialReference(),
+                                              theArea.SpatialReference());
 
-    // TODO: Optimize for speed!
+  auto coords = CoordinateMatrix();
 
-    NFmiCoordinateTransformation transformation(Area()->SpatialReference(), SpatialReference());
+  coords.Transform(transformation);
 
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
-      {
-        // Old code loses precision in ellipsoid conversions:
-        // theMatrix[i][j] = theArea.LatLonToWorldXY(LatLon(j * nx + i));
-        auto worldxy = Grid()->GridToWorldXY(i, j);
-        try
-        {
-          transformation.Transform(worldxy);
-          theMatrix[i][j] = NFmiPoint(worldxy);
-        }
-        catch (...)
-        {
-          theMatrix[i][j] = NFmiPoint::gMissingLatlon;
-        }
-      }
-  }
-  else
-    theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
+  return coords;
 }
 
 // ----------------------------------------------------------------------
@@ -1976,16 +1934,15 @@ void NFmiFastQueryInfo::LocationsWorldXY(NFmiDataMatrix<NFmiPoint> &theMatrix,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::CroppedValues(
-    NFmiDataMatrix<float> &theMatrix, int x1, int y1, int x2, int y2) const
+NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(int x1, int y1, int x2, int y2) const
 {
+  auto nx = static_cast<int>(x2 - x1 + 1);
+  auto ny = static_cast<int>(y2 - y1 + 1);
+
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
+
   if (IsGrid())
   {
-    auto nx = static_cast<int>(x2 - x1 + 1);
-    auto ny = static_cast<int>(y2 - y1 + 1);
-
-    theMatrix.Resize(nx, ny, kFloatMissing);
-
     long long idx = Index(itsParamIndex, 0, itsLevelIndex, itsTimeIndex);
     long long offset = Index(itsParamIndex, 1, itsLevelIndex, itsTimeIndex) - idx;
     long long totalLineOffset = offset * itsGridXNumber;  // tällä hypitään kokonaisia rivejä
@@ -2000,12 +1957,14 @@ void NFmiFastQueryInfo::CroppedValues(
       idx += startLineOffset;       // hypätään cropatun rivin alusta haluttuun kohtaan
       for (int i = 0; i < nx; i++)  // pientä optimointia olisi jos for loopit saisi toisin päin
       {
-        theMatrix[i][j] = NFmiQueryInfo::PeekValue(idx);
+        values[i][j] = NFmiQueryInfo::PeekValue(idx);
         idx += offset;
       }
       idx += endLineOffset;  // lopuksi pitää hypätä vielä cropattu rivin loppu pois
     }
   }
+
+  return values;
 }
 
 static float InterpolationHelper(float theValue1, float theValue2, float theFactor1)
@@ -2137,31 +2096,29 @@ class TimeInterpolationData
  * \param theInterpolatedTime The desired time
  */
 // ----------------------------------------------------------------------
-void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
-                               const NFmiMetTime &theInterpolatedTime)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const NFmiMetTime &theInterpolatedTime)
 {
-  NFmiFastQueryInfo::Values(theMatrix, theInterpolatedTime, kLongMissing);
+  return NFmiFastQueryInfo::Values(theInterpolatedTime, kLongMissing);
 }
 
-void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
-                               const NFmiMetTime &theInterpolatedTime,
-                               long theTimeRangeInMinutes,
-                               bool doNearestTimeIfPossible)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const NFmiMetTime &theInterpolatedTime,
+                                                long theTimeRangeInMinutes,
+                                                bool doNearestTimeIfPossible)
 {
   TimeInterpolationData timeInterpolationData(
       *this, theInterpolatedTime, theTimeRangeInMinutes, doNearestTimeIfPossible);
   if (!timeInterpolationData.CanGetValues())
   {
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return {};
   }
 
   // Handle exact existing time
   if (timeInterpolationData.HasWantedTime())
   {
-    Values(theMatrix);
+    auto values = Values();
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
   if (timeInterpolationData.DoNearestTime())
@@ -2170,25 +2127,18 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
       TimeIndex(timeInterpolationData.previousTimeIndex);
     else
       TimeIndex(timeInterpolationData.nextTimeIndex);
-    Values(theMatrix);
+    auto values = Values();
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
   // Extract leftside and rightside data values
 
-  int nx = itsGridXNumber;
-  int ny = itsGridYNumber;
-  theMatrix.Resize(nx, ny, kFloatMissing);
-
-  NFmiDataMatrix<float> values1;
-  NFmiDataMatrix<float> values2;
-
   TimeIndex(timeInterpolationData.previousTimeIndex);
-  Values(values1);
+  auto values1 = Values();
 
   TimeIndex(timeInterpolationData.nextTimeIndex);
-  Values(values2);
+  auto values2 = Values();
 
   auto diff1 = timeInterpolationData.previousToInterpolatedTimeDifferenceInMinutes;
   auto diff2 = timeInterpolationData.previousToNextTimeDifferenceInMinutes;
@@ -2201,24 +2151,30 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
   FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
   unsigned long param = Param().GetParam()->GetIdent();
 
+  const auto nx = values1.NX();
+  const auto ny = values2.NY();
+
   if (param == kFmiTotalWindMS)
   {
     NFmiTotalWind resultWind(itsInfoVersion);
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
+    for (std::size_t j = 0; j < ny; j++)
+      for (std::size_t i = 0; i < nx; i++)
       {
         NFmiTotalWind tempWind1(values1[i][j], kFmiPackedWind, itsInfoVersion);
         NFmiTotalWind tempWind2(values2[i][j], kFmiPackedWind, itsInfoVersion);
         resultWind.SetToWeightedMean(
             &tempWind1, factor, &tempWind2, 1 - factor, &tempWind1, 0, &tempWind1, 0);
-        theMatrix[i][j] = resultWind.TransformedFloatValue();
+        values1[i][j] = resultWind.TransformedFloatValue();
       }
+    TimeIndex(timeInterpolationData.oldTimeIndex);
+    return values1;
   }
-  else if (param == kFmiWeatherAndCloudiness)
+
+  if (param == kFmiWeatherAndCloudiness)
   {
     NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
+    for (std::size_t j = 0; j < ny; j++)
+      for (std::size_t i = 0; i < nx; i++)
       {
         NFmiWeatherAndCloudiness tempWeather1(
             values1[i][j], kFmiPackedWeather, kFloatMissing, itsInfoVersion);
@@ -2226,24 +2182,26 @@ void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
             values2[i][j], kFmiPackedWeather, kFloatMissing, itsInfoVersion);
         resultWeather.SetToWeightedMean(
             &tempWeather1, factor, &tempWeather2, 1 - factor, &tempWeather1, 0, &tempWeather1, 0);
-        theMatrix[i][j] = resultWeather.TransformedFloatValue();
+        values1[i][j] = resultWeather.TransformedFloatValue();
       }
-  }
-  else if (interp != kLinearly)
-  {
-    if (factor > 0.5)
-      theMatrix = values1;
-    else
-      theMatrix = values2;
-  }
-  else
-  {
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
-        theMatrix[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+    TimeIndex(timeInterpolationData.oldTimeIndex);
+    return values1;
   }
 
+  if (interp != kLinearly)
+  {
+    TimeIndex(timeInterpolationData.oldTimeIndex);
+    if (factor > 0.5) return values1;
+    return values2;
+  }
+
+  for (std::size_t j = 0; j < ny; j++)
+    for (std::size_t i = 0; i < nx; i++)
+      values1[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+
   TimeIndex(timeInterpolationData.oldTimeIndex);
+
+  return values1;
 }
 
 bool NFmiFastQueryInfo::GetLevelToVec(std::vector<float> &values)
@@ -2429,39 +2387,34 @@ bool NFmiFastQueryInfo::GetInterpolatedCube(std::vector<float> &values, const NF
  * \param theInterpolatedTime The desired time
  */
 // ----------------------------------------------------------------------
-void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
-                                      const NFmiMetTime &theInterpolatedTime,
-                                      int x1,
-                                      int y1,
-                                      int x2,
-                                      int y2)
+NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(
+    const NFmiMetTime &theInterpolatedTime, int x1, int y1, int x2, int y2)
 {
-  CroppedValues(theMatrix, theInterpolatedTime, x1, y1, x2, y2, kLongMissing, false);
+  return CroppedValues(theInterpolatedTime, x1, y1, x2, y2, kLongMissing, false);
 }
 
-void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
-                                      const NFmiMetTime &theInterpolatedTime,
-                                      int x1,
-                                      int y1,
-                                      int x2,
-                                      int y2,
-                                      long theTimeRangeInMinutes,
-                                      bool doNearestTimeIfPossible)
+NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(const NFmiMetTime &theInterpolatedTime,
+                                                       int x1,
+                                                       int y1,
+                                                       int x2,
+                                                       int y2,
+                                                       long theTimeRangeInMinutes,
+                                                       bool doNearestTimeIfPossible)
 {
   TimeInterpolationData timeInterpolationData(
       *this, theInterpolatedTime, theTimeRangeInMinutes, doNearestTimeIfPossible);
   if (!timeInterpolationData.CanGetValues())
   {
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return {};
   }
 
   // Handle exact existing time
   if (timeInterpolationData.HasWantedTime())
   {
-    CroppedValues(theMatrix, x1, y1, x2, y2);
+    auto values = CroppedValues(x1, y1, x2, y2);
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
   if (timeInterpolationData.DoNearestTime())
@@ -2470,25 +2423,25 @@ void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
       TimeIndex(timeInterpolationData.previousTimeIndex);
     else
       TimeIndex(timeInterpolationData.nextTimeIndex);
-    CroppedValues(theMatrix, x1, y1, x2, y2);
+    auto values = CroppedValues(x1, y1, x2, y2);
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
   // Extract leftside and rightside data values
 
   auto nx = static_cast<int>(x2 - x1 + 1);
   auto ny = static_cast<int>(y2 - y1 + 1);
-  theMatrix.Resize(nx, ny, kFloatMissing);
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   NFmiDataMatrix<float> values1;
   NFmiDataMatrix<float> values2;
 
   TimeIndex(timeInterpolationData.previousTimeIndex);
-  CroppedValues(values1, x1, y1, x2, y2);
+  values1 = CroppedValues(x1, y1, x2, y2);
 
   TimeIndex(timeInterpolationData.nextTimeIndex);
-  CroppedValues(values2, x1, y1, x2, y2);
+  values2 = CroppedValues(x1, y1, x2, y2);
 
   auto diff1 = timeInterpolationData.previousToInterpolatedTimeDifferenceInMinutes;
   auto diff2 = timeInterpolationData.previousToNextTimeDifferenceInMinutes;
@@ -2511,7 +2464,7 @@ void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
         NFmiTotalWind tempWind2(values2[i][j], kFmiPackedWind, itsInfoVersion);
         resultWind.SetToWeightedMean(
             &tempWind1, factor, &tempWind2, 1 - factor, &tempWind1, 0, &tempWind1, 0);
-        theMatrix[i][j] = resultWind.TransformedFloatValue();
+        values[i][j] = resultWind.TransformedFloatValue();
       }
   }
   else if (param == kFmiWeatherAndCloudiness)
@@ -2526,24 +2479,25 @@ void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
             values2[i][j], kFmiPackedWeather, kFloatMissing, itsInfoVersion);
         resultWeather.SetToWeightedMean(
             &tempWeather1, factor, &tempWeather2, 1 - factor, &tempWeather1, 0, &tempWeather1, 0);
-        theMatrix[i][j] = resultWeather.TransformedFloatValue();
+        values[i][j] = resultWeather.TransformedFloatValue();
       }
   }
   else if (interp != kLinearly)
   {
     if (factor > 0.5)
-      theMatrix = values1;
+      values = values1;
     else
-      theMatrix = values2;
+      values = values2;
   }
   else
   {
     for (int j = 0; j < ny; j++)
       for (int i = 0; i < nx; i++)
-        theMatrix[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+        values[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
   }
 
   TimeIndex(timeInterpolationData.oldTimeIndex);
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -2562,124 +2516,123 @@ void NFmiFastQueryInfo::CroppedValues(NFmiDataMatrix<float> &theMatrix,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix,
-                               NFmiDataModifier *theFunction,
-                               const NFmiMetTime &theTime,
-                               int theBackwardOffsetInMinutes,
-                               int theForwardOffsetInMinutes)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(NFmiDataModifier *theFunction,
+                                                const NFmiMetTime &theTime,
+                                                int theBackwardOffsetInMinutes,
+                                                int theForwardOffsetInMinutes)
 {
-  if (IsGrid() && theFunction)
-  {
-    int nx = itsGridXNumber;
-    int ny = itsGridYNumber;
-    theMatrix.Resize(nx, ny, kFloatMissing);
-    theMatrix = kFloatMissing;  // täytetään vielä varmuuden vuoksi taulukko puuttuvilla arvoilla
+  if (!(IsGrid() && theFunction)) return {};
 
-    // **** Rakennetaan laskuja varten timebagi ****
-    NFmiTimeBag validTimes(ValidTimes());
-    NFmiMetTime tmpTime(
-        theTime);  // aikaa pitää pystyä muuttamaan, joten tehdään siitä väliaikainen muuttuja
-    tmpTime.ChangeByMinutes(-theBackwardOffsetInMinutes);
-    if (!validTimes.IsInside(tmpTime)) return;  // offsetaika meni timebagin ohi, voidaan lopettaa
-    // Mika: Tästä tulee jostain syystä overflow varoitus
-    if (!validTimes.FindNearestTime(tmpTime))
-      return;  // laskettavan aikajakson alkuaikaa ei löytynyt, turha jatkaa
-    else if (validTimes.CurrentTime() <
-             tmpTime)  // löytynyt aika oli pienempi kuin raja, kasvatetaan esaatua aikaa yhdellä
-      if (!validTimes.Next())
-        return;  // jos Next epäonnistui, mentiin timebagin ulkopuolelle ja voidaan lopettaa
-    NFmiMetTime startTime(validTimes.CurrentTime());
+  int nx = itsGridXNumber;
+  int ny = itsGridYNumber;
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
-    tmpTime.ChangeByMinutes(
-        theBackwardOffsetInMinutes +
-        theForwardOffsetInMinutes);  // pitää liikuttaa takaisin nolla pisteeseen ja siitä eteen
-    if (!validTimes.IsInside(tmpTime)) return;  // offsetaika meni timebagin ohi, voidaan lopettaa
-    if (!validTimes.FindNearestTime(tmpTime))
-      return;  // laskettavan aikajakson loppuaikaa ei löytynyt, turha jatkaa
-    else if (validTimes.CurrentTime() > tmpTime)  // löytynyt aika oli suurempi kuin raja,
-                                                  // vähennetään saatua aikaa yhdellä
-                                                  // aika-askeleella
-      if (!validTimes.Previous())
-        return;  // jos Previous epäonnistui, mentiin timebagin ulkopuolelle ja voidaan lopettaa
-    NFmiMetTime endTime(validTimes.CurrentTime());
-    NFmiTimeBag calculatedTimes(startTime, endTime, validTimes.Resolution());
-    // **** Rakennetaan laskuja varten timebagi ****
+  // **** Rakennetaan laskuja varten timebagi ****
+  NFmiTimeBag validTimes(ValidTimes());
+  NFmiMetTime tmpTime(
+      theTime);  // aikaa pitää pystyä muuttamaan, joten tehdään siitä väliaikainen muuttuja
+  tmpTime.ChangeByMinutes(-theBackwardOffsetInMinutes);
+  if (!validTimes.IsInside(tmpTime))
+    return values;  // offsetaika meni timebagin ohi, voidaan lopettaa
+  // Mika: Tästä tulee jostain syystä overflow varoitus
+  if (!validTimes.FindNearestTime(tmpTime))
+    return values;  // laskettavan aikajakson alkuaikaa ei löytynyt, turha jatkaa
+  else if (validTimes.CurrentTime() <
+           tmpTime)  // löytynyt aika oli pienempi kuin raja, kasvatetaan esaatua aikaa yhdellä
+    if (!validTimes.Next())
+      return values;  // jos Next epäonnistui, mentiin timebagin ulkopuolelle ja voidaan lopettaa
+  NFmiMetTime startTime(validTimes.CurrentTime());
 
-    ResetLocation();  // resetoi paikan (= yksi ennen alkua)
-    for (int j = 0; j < ny; j++)
-      for (int i = 0; i < nx; i++)
+  tmpTime.ChangeByMinutes(
+      theBackwardOffsetInMinutes +
+      theForwardOffsetInMinutes);  // pitää liikuttaa takaisin nolla pisteeseen ja siitä eteen
+  if (!validTimes.IsInside(tmpTime))
+    return values;  // offsetaika meni timebagin ohi, voidaan lopettaa
+
+  if (!validTimes.FindNearestTime(tmpTime))
+    return values;  // laskettavan aikajakson loppuaikaa ei löytynyt, turha jatkaa
+  else if (validTimes.CurrentTime() > tmpTime)  // löytynyt aika oli suurempi kuin raja,
+                                                // vähennetään saatua aikaa yhdellä
+                                                // aika-askeleella
+    if (!validTimes.Previous())
+      return values;  // jos Previous epäonnistui, mentiin timebagin ulkopuolelle ja voidaan
+                      // lopettaa
+  NFmiMetTime endTime(validTimes.CurrentTime());
+  NFmiTimeBag calculatedTimes(startTime, endTime, validTimes.Resolution());
+  // **** Rakennetaan laskuja varten timebagi ****
+
+  ResetLocation();  // resetoi paikan (= yksi ennen alkua)
+  for (int j = 0; j < ny; j++)
+    for (int i = 0; i < nx; i++)
+    {
+      if (NextLocation())  // juoksutetaan  paikkaa ensin!
       {
-        if (NextLocation())  // juoksutetaan  paikkaa ensin!
-        {
-          theFunction->Clear();  // nollataan datamodifier laskujen välillä
-          CalcTimeData(theFunction, &calculatedTimes);
-          float tmp =
-              theFunction
-                  ->CalculationResult();  // otetaan arvo talteen tähän vain debuggausta varten
-          theMatrix[i][j] = tmp;
-        }
+        theFunction->Clear();  // nollataan datamodifier laskujen välillä
+        CalcTimeData(theFunction, &calculatedTimes);
+        float tmp =
+            theFunction->CalculationResult();  // otetaan arvo talteen tähän vain debuggausta varten
+        values[i][j] = tmp;
       }
-  }
-  else
-    theMatrix = kFloatMissing;
+    }
+
+  return values;
 }
 
-void NFmiFastQueryInfo::Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                               NFmiDataMatrix<float> &theValues,
-                               float P,
-                               float H)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+                                                float P,
+                                                float H)
 {
-  theValues.Resize(theLatlonMatrix.NX(), theLatlonMatrix.NY(), kFloatMissing);
-  if (HPlaceDescriptor().IsGrid() == false) return;  // ei gridi dataa, interpolaatio ei onnistu
+  NFmiDataMatrix<float> values(theLatlonMatrix.Width(), theLatlonMatrix.Height(), kFloatMissing);
+
+  // Cannot interpolate non-gridded data
+  if (HPlaceDescriptor().IsGrid() == false) return values;
 
   bool doNormalInterpolation = (P == kFloatMissing && H == kFloatMissing);
-  for (NFmiDataMatrix<NFmiPoint>::size_type j = 0; j < theLatlonMatrix.NY(); j++)
-  {
-    for (NFmiDataMatrix<NFmiPoint>::size_type i = 0; i < theLatlonMatrix.NX(); i++)
+
+  for (std::size_t j = 0; j < theLatlonMatrix.Height(); j++)
+    for (std::size_t i = 0; i < theLatlonMatrix.Width(); i++)
     {
-      float &setValue = theValues[i][j];
-      const NFmiPoint &latlon = theLatlonMatrix[i][j];
+      const auto latlon = theLatlonMatrix(i, j);
       if (doNormalInterpolation)
-        setValue = InterpolatedValue(latlon);
+        values[i][j] = InterpolatedValue(latlon);
       else if (H != kFloatMissing)
-        setValue = HeightValue(H, latlon);
+        values[i][j] = HeightValue(H, latlon);
       else
-        setValue = PressureLevelValue(P, latlon);
+        values[i][j] = PressureLevelValue(P, latlon);
     }
-  }
+
+  return values;
 }
 
-void NFmiFastQueryInfo::Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                               NFmiDataMatrix<float> &theValues,
-                               const NFmiMetTime &theTime,
-                               float P,
-                               float H)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+                                                const NFmiMetTime &theTime,
+                                                float P,
+                                                float H)
 {
-  Values(theLatlonMatrix, theValues, theTime, P, H, kLongMissing, false);
+  return Values(theLatlonMatrix, theTime, P, H, kLongMissing, false);
 }
 
-void NFmiFastQueryInfo::Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                               NFmiDataMatrix<float> &theValues,
-                               const NFmiMetTime &theTime,
-                               float P,
-                               float H,
-                               long theTimeRangeInMinutes,
-                               bool doNearestTimeIfPossible)
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+                                                const NFmiMetTime &theTime,
+                                                float P,
+                                                float H,
+                                                long theTimeRangeInMinutes,
+                                                bool doNearestTimeIfPossible)
 {
   TimeInterpolationData timeInterpolationData(
       *this, theTime, theTimeRangeInMinutes, doNearestTimeIfPossible);
   if (!timeInterpolationData.CanGetValues())
   {
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return {};
   }
 
   // Handle exact existing time
   if (timeInterpolationData.HasWantedTime())
   {
-    Values(theLatlonMatrix, theValues, P, H);
+    auto values = Values(theLatlonMatrix, P, H);
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
   if (timeInterpolationData.DoNearestTime())
@@ -2688,29 +2641,30 @@ void NFmiFastQueryInfo::Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
       TimeIndex(timeInterpolationData.previousTimeIndex);
     else
       TimeIndex(timeInterpolationData.nextTimeIndex);
-    Values(theLatlonMatrix, theValues, P, H);
+    auto values = Values(theLatlonMatrix, P, H);
     TimeIndex(timeInterpolationData.oldTimeIndex);
-    return;
+    return values;
   }
 
-  theValues.Resize(theLatlonMatrix.NX(), theLatlonMatrix.NY(), kFloatMissing);
+  NFmiDataMatrix<float> values(theLatlonMatrix.Width(), theLatlonMatrix.Height(), kFloatMissing);
+
   bool doNormalInterpolation = (P == kFloatMissing && H == kFloatMissing);
-  for (NFmiDataMatrix<NFmiPoint>::size_type j = 0; j < theLatlonMatrix.NY(); j++)
+  for (std::size_t j = 0; j < theLatlonMatrix.Height(); j++)
   {
-    for (NFmiDataMatrix<NFmiPoint>::size_type i = 0; i < theLatlonMatrix.NX(); i++)
+    for (std::size_t i = 0; i < theLatlonMatrix.Width(); i++)
     {
-      float &setValue = theValues[i][j];
-      const NFmiPoint &latlon = theLatlonMatrix[i][j];
+      const NFmiPoint &latlon = theLatlonMatrix(i, j);
       if (doNormalInterpolation)
-        setValue = InterpolatedValue(latlon, theTime, static_cast<int>(theTimeRangeInMinutes));
+        values[i][j] = InterpolatedValue(latlon, theTime, static_cast<int>(theTimeRangeInMinutes));
       else if (H != kFloatMissing)
-        setValue =
+        values[i][j] =
             HeightValue(H, latlon, theTime, static_cast<unsigned long>(theTimeRangeInMinutes));
       else
-        setValue = PressureLevelValue(
+        values[i][j] = PressureLevelValue(
             P, latlon, theTime, static_cast<unsigned long>(theTimeRangeInMinutes));
     }
   }
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -5623,9 +5577,8 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValueDewPoint(float theHeight,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
-    NFmiDataMatrix<float> &theLandscapedMatrix,
-    const NFmiDataMatrix<float> &theMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
+    const NFmiDataMatrix<float> &tdewMatrix,
     const NFmiDataMatrix<float> &temperatureMatrix,
     NFmiDataMatrix<float> &humidityMatrix,
     const NFmiDataMatrix<NFmiLocationCache> &theLocationCache)
@@ -5633,8 +5586,11 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
   const float Rw = 641.5;   // gas constant of water vapor
   const float L = 2.501e6;  // specific latent heat of evaporation of water
 
-  bool cropNativeGrid = (theLocationCache.NX() == 0);
-  auto nx = temperatureMatrix.NX(), ny = temperatureMatrix.NY();
+  const bool cropNativeGrid = (theLocationCache.NX() == 0);
+  const auto nx = temperatureMatrix.NX();
+  const auto ny = temperatureMatrix.NY();
+
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   if (!cropNativeGrid)
   {
@@ -5650,7 +5606,7 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
 
     // Get humidity (or dewpoint if humidity is not available) values for given locations
 
-    NFmiDataMatrix<float> &matrix = (hasHumidity ? humidityMatrix : theLandscapedMatrix);
+    NFmiDataMatrix<float> &matrix = (hasHumidity ? humidityMatrix : values);
     matrix.Resize(nx, ny);
 
     for (unsigned long i = 0; (i < nx); i++)
@@ -5660,11 +5616,11 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
         matrix[i][j] = CachedInterpolation(lc);
       }
 
-    if (!hasHumidity) return;
-
     ParamIndex(oldParamIndex);
+
+    if (!hasHumidity) return values;
   }
-  else if ((theMatrix.NX() != nx) || (theMatrix.NY() != ny))
+  else if ((tdewMatrix.NX() != nx) || (tdewMatrix.NY() != ny))
     throw std::runtime_error(
         "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Dewpoint and temperature matrix "
         "dimensions are not equal");
@@ -5673,8 +5629,6 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
     throw std::runtime_error(
         "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Humidity and temperature matrix "
         "dimensions are not equal");
-
-  theLandscapedMatrix.Resize(nx, ny);
 
   for (unsigned long i = 0; i < nx; i++)
     for (unsigned long j = 0; j < ny; j++)
@@ -5685,16 +5639,18 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
       if ((t2m != kFloatMissing) && (rh != kFloatMissing))
       {
         t2m += 273.15;
-        theLandscapedMatrix[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15f;
+        values[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15f;
       }
       else if (cropNativeGrid)
-        theLandscapedMatrix[i][j] = theMatrix[i][j];
+        values[i][j] = tdewMatrix[i][j];
       else
       {
         const NFmiLocationCache &lc = theLocationCache[i][j];
-        theLandscapedMatrix[i][j] = CachedInterpolation(lc);
+        values[i][j] = CachedInterpolation(lc);
       }
     }
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -5703,10 +5659,9 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeInterpolatedValues(
-    NFmiDataMatrix<float> &theLandscapedMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
     const NFmiDataMatrix<float> &theMatrix,
-    const NFmiDataMatrix<NFmiPoint> &gridPointMatrix,
+    const NFmiCoordinateMatrix &gridPointMatrix,
     const NFmiDataMatrix<float> &demMatrix,
     const NFmiDataMatrix<bool> &waterFlagMatrix,
     const NFmiDataMatrix<float> &heightMatrix,
@@ -5715,7 +5670,8 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
 {
   const double eps = 0.000001;
 
-  auto nx = theMatrix.NX(), ny = theMatrix.NY();
+  auto nx = theMatrix.NX();
+  auto ny = theMatrix.NY();
 
   if ((nx == 0) || (ny == 0) ||
       ((heightMatrix.NX() > 0) && ((heightMatrix.NX() != nx) || (heightMatrix.NY() != ny))) ||
@@ -5726,23 +5682,23 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
         "NFmiFastQueryInfo::LandscapeInterpolatedValues: Input parameter matrix dimensions are not "
         "equal");
 
-  int ngx = gridPointMatrix.NX(), ngy = gridPointMatrix.NY();
+  auto ngx = gridPointMatrix.Width();
+  auto ngy = gridPointMatrix.Height();
 
-  if ((ngx == 0) || (ngy == 0) || ((int)demMatrix.NX() != ngx) ||
-      (demMatrix.NX() != waterFlagMatrix.NX()) || ((int)demMatrix.NY() != ngy) ||
-      (demMatrix.NY() != waterFlagMatrix.NY()))
+  if (ngx == 0 || ngy == 0 || demMatrix.NX() != ngx || demMatrix.NY() != ngy ||
+      waterFlagMatrix.NX() != ngx || waterFlagMatrix.NY() != ngy)
     throw std::runtime_error(
         "NFmiFastQueryInfo::LandscapeInterpolatedValues: Gridpoint, dem and waterflag matrix "
         "dimensions are not equal");
 
-  theLandscapedMatrix.Resize(ngx, ngy);
+  NFmiDataMatrix<float> values(ngx, ngy, kFloatMissing);
 
-  for (int i = 0; (i < ngx); i++)
-    for (int j = 0; (j < ngy); j++)
+  for (std::size_t i = 0; i < ngx; i++)
+    for (std::size_t j = 0; j < ngy; j++)
     {
       // Get the values from which to interpolate. Don't correct if any value is unavailable/missing
       //
-      auto const &xy = gridPointMatrix[i][j];
+      const auto xy = gridPointMatrix(i, j);
       int dx = floor(xy.X());
       int dy = floor(xy.Y());
 
@@ -5750,9 +5706,9 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
       {
         if ((dx >= 0) && (dx < (int)nx) && (fabs(xy.X() - dx) <= eps) && (dy >= 0) &&
             (dy < (int)ny) && (fabs(xy.Y() - dy) <= eps))
-          theLandscapedMatrix[i][j] = theMatrix[dx][dy];
+          values[i][j] = theMatrix[dx][dy];
         else
-          theLandscapedMatrix[i][j] = kFloatMissing;
+          values[i][j] = kFloatMissing;
 
         continue;
       }
@@ -5767,7 +5723,7 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
           (bottomright == kFloatMissing) || (topleft == kFloatMissing) ||
           (topright == kFloatMissing))
       {
-        theLandscapedMatrix[i][j] = NFmiInterpolation::BiLinear(
+        values[i][j] = NFmiInterpolation::BiLinear(
             xy.X() - dx, xy.Y() - dy, topleft, topright, bottomleft, bottomright);
         continue;
       }
@@ -5870,10 +5826,11 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
 
       // Perform combined interpolation
 
-      theLandscapedMatrix[i][j] =
-          (wbl * bottomleft + wbr * bottomright + wtl * topleft + wtr * topright) /
-          (wbl + wbr + wtl + wtr);
+      values[i][j] = (wbl * bottomleft + wbr * bottomright + wtl * topleft + wtr * topright) /
+                     (wbl + wbr + wtl + wtr);
     }
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -5882,9 +5839,8 @@ void NFmiFastQueryInfo::LandscapeInterpolatedValues(
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
-                                               const NFmiDataMatrix<float> &theDEMMatrix,
-                                               const NFmiDataMatrix<bool> &theWaterFlagMatrix)
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeValues(
+    const NFmiDataMatrix<float> &theDEMMatrix, const NFmiDataMatrix<bool> &theWaterFlagMatrix)
 {
   if (!IsGrid())
     throw std::runtime_error(
@@ -5905,11 +5861,11 @@ inline void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
         "NFmiFastQueryInfo::LandscapeValues: Dem and waterflag matrix dimensions must equal native "
         "grid size");
 
-  Values(theMatrix);
+  auto values = Values();
 
   NFmiDataMatrix<float> temperatureMatrix;
   NFmiDataMatrix<float> &correctedTemperatureMatrix =
-      ((ident == kFmiDewPoint) ? temperatureMatrix : theMatrix);
+      ((ident == kFmiDewPoint) ? temperatureMatrix : values);
   NFmiDataMatrix<float> humidityMatrix;
   long oldParamIndex = ParamIndex();
 
@@ -5919,17 +5875,16 @@ inline void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
     //
     if (Param(kFmiTemperature) && Param(kFmiHumidity))
     {
-      Values(humidityMatrix);
+      humidityMatrix = Values();
       Param(kFmiTemperature);
-      Values(temperatureMatrix);
+      auto temperatureMatrix = Values();
     }
-
     if (temperatureMatrix.NX() == 0)
     {
       // Both temperature and humidity not available
       //
       ParamIndex(oldParamIndex);
-      return;
+      return values;
     }
   }
 
@@ -5939,37 +5894,33 @@ inline void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
   NFmiDataMatrix<float> lapseRateMatrix;
   NFmiDataMatrix<float> maskMatrix;
 
-  if (Param(kFmiGeopHeight)) Values(heightMatrix);
-  if (Param(kFmiLapseRate)) Values(lapseRateMatrix);
-  if (Param(kFmiLandSeaMask)) Values(maskMatrix);
+  if (Param(kFmiGeopHeight)) heightMatrix = Values();
+  if (Param(kFmiLapseRate)) lapseRateMatrix = Values();
+  if (Param(kFmiLandSeaMask)) maskMatrix = Values();
 
   ParamIndex(oldParamIndex);
 
   // Load gridpoint matrix
 
-  NFmiDataMatrix<NFmiPoint> gridPointMatrix;
-  gridPointMatrix.Resize(nx, ny);
-
-  for (unsigned long i = 0; i < nx; i++)
-    for (unsigned long j = 0; j < ny; j++)
-      gridPointMatrix[i][j] = NFmiPoint(i, j);
+  NFmiCoordinateMatrix gridPointMatrix(nx, ny, 0, 0, nx - 1, ny - 1);
 
   // Landscaping for temperature
 
-  LandscapeInterpolatedValues(correctedTemperatureMatrix,
-                              correctedTemperatureMatrix,
-                              gridPointMatrix,
-                              theDEMMatrix,
-                              theWaterFlagMatrix,
-                              heightMatrix,
-                              lapseRateMatrix,
-                              maskMatrix);
+  correctedTemperatureMatrix = LandscapeInterpolatedValues(correctedTemperatureMatrix,
+                                                           gridPointMatrix,
+                                                           theDEMMatrix,
+                                                           theWaterFlagMatrix,
+                                                           heightMatrix,
+                                                           lapseRateMatrix,
+                                                           maskMatrix);
 
   if (ident == kFmiDewPoint)
     // Landscaping for dewpoint
-    //
-    LandscapeInterpolatedValuesDewPoint(
-        theMatrix, theMatrix, correctedTemperatureMatrix, humidityMatrix);
+
+    values =
+        LandscapeInterpolatedValuesDewPoint(values, correctedTemperatureMatrix, humidityMatrix);
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -5979,10 +5930,10 @@ inline void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
-                                        const NFmiMetTime &theInterpolatedTime,
-                                        const NFmiDataMatrix<float> &theDEMMatrix,
-                                        const NFmiDataMatrix<bool> &theWaterFlagMatrix)
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeValues(
+    const NFmiMetTime &theInterpolatedTime,
+    const NFmiDataMatrix<float> &theDEMMatrix,
+    const NFmiDataMatrix<bool> &theWaterFlagMatrix)
 
 {
   int oldTimeIndex = TimeIndex();
@@ -5990,14 +5941,14 @@ void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
   // Handle exact existing time
   if (Time(theInterpolatedTime))
   {
-    LandscapeValues(theMatrix, theDEMMatrix, theWaterFlagMatrix);
+    auto values = LandscapeValues(theDEMMatrix, theWaterFlagMatrix);
     TimeIndex(oldTimeIndex);
-    return;
+    return values;
   }
 
   int nx = itsGridXNumber;
   int ny = itsGridYNumber;
-  theMatrix.Resize(nx, ny, kFloatMissing);
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   // Cannot interpolate outside data range
   if (!IsInside(theInterpolatedTime))
@@ -6015,12 +5966,12 @@ void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
 
   // pitää löytyä, koska isinside on tarkastettu edellä!!
   if (TimeToNearestStep(theInterpolatedTime, kBackward))
-    LandscapeValues(values1, theDEMMatrix, theWaterFlagMatrix);
+    values1 = LandscapeValues(theDEMMatrix, theWaterFlagMatrix);
   NFmiMetTime time1(Time());
 
   // pitää löytyä, koska isinside on tarkastettu edellä!!
   if (TimeToNearestStep(theInterpolatedTime, kForward))
-    LandscapeValues(values2, theDEMMatrix, theWaterFlagMatrix);
+    values2 = LandscapeValues(theDEMMatrix, theWaterFlagMatrix);
   NFmiMetTime time2(Time());
 
   auto diff1 = static_cast<float>(theInterpolatedTime.DifferenceInMinutes(time1));
@@ -6032,9 +5983,11 @@ void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
 
   for (int i = 0; i < nx; i++)
     for (int j = 0; j < ny; j++)
-      theMatrix[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+      values[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
 
   TimeIndex(oldTimeIndex);
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -6043,8 +5996,7 @@ void NFmiFastQueryInfo::LandscapeValues(NFmiDataMatrix<float> &theMatrix,
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeCroppedValues(
-    NFmiDataMatrix<float> &theMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
     int x1,
     int y1,
     int x2,
@@ -6140,17 +6092,17 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
 
     if (!((x2 > x1) && (y2 > y1)))
     {
-      theMatrix.Resize(nx, ny, kFloatMissing);
-      return;
+      NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
+      return values;
     }
   }
 
-  CroppedValues(theMatrix, x1, y1, x2, y2);
+  auto values = CroppedValues(x1, y1, x2, y2);
 
   NFmiDataMatrix<float> correctedTemperatureMatrix;
   NFmiDataMatrix<float> temperatureMatrix;
   NFmiDataMatrix<float> &inputTemperatureMatrix =
-      ((ident == kFmiTemperature) ? theMatrix : temperatureMatrix);
+      ((ident == kFmiTemperature) ? values : temperatureMatrix);
   NFmiDataMatrix<float> &outputTemperatureMatrix =
       ((ident == kFmiTemperature) ? temperatureMatrix : correctedTemperatureMatrix);
   NFmiDataMatrix<float> humidityMatrix;
@@ -6162,10 +6114,10 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
     //
     if (Param(kFmiTemperature) && Param(kFmiHumidity))
     {
-      if (cropNativeGrid) CroppedValues(humidityMatrix, x1, y1, x2, y2);
+      if (cropNativeGrid) humidityMatrix = CroppedValues(x1, y1, x2, y2);
 
       Param(kFmiTemperature);
-      CroppedValues(temperatureMatrix, x1, y1, x2, y2);
+      temperatureMatrix = CroppedValues(x1, y1, x2, y2);
     }
 
     if (temperatureMatrix.NX() == 0)
@@ -6178,22 +6130,22 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
 
       if (!cropNativeGrid)
       {
-        theMatrix.Resize(nx, ny);
+        values.Resize(nx, ny);
 
         for (int i = 0; (i < nx); i++)
           for (int j = 0; (j < ny); j++)
           {
             const NFmiLocationCache &lc = theLocationCache[i][j];
-            theMatrix[i][j] = CachedInterpolation(lc);
+            values[i][j] = CachedInterpolation(lc);
           }
       }
       else
       {
-        if (xExtended) theMatrix.RemoveColumn(nx - 1);
-        if (yExtended) theMatrix.RemoveRow(ny - 1);
+        if (xExtended) values.RemoveColumn(nx - 1);
+        if (yExtended) values.RemoveRow(ny - 1);
       }
 
-      return;
+      return values;
     }
   }
 
@@ -6210,14 +6162,13 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
 
   // Get geopheight, lapserate and landseamask values if available
 
-  if (Param(kFmiGeopHeight)) CroppedValues(heightMatrix, x1, y1, x2, y2);
-  if (Param(kFmiLapseRate)) CroppedValues(lapseRateMatrix, x1, y1, x2, y2);
-  if (Param(kFmiLandSeaMask)) CroppedValues(maskMatrix, x1, y1, x2, y2);
+  if (Param(kFmiGeopHeight)) heightMatrix = CroppedValues(x1, y1, x2, y2);
+  if (Param(kFmiLapseRate)) lapseRateMatrix = CroppedValues(x1, y1, x2, y2);
+  if (Param(kFmiLandSeaMask)) maskMatrix = CroppedValues(x1, y1, x2, y2);
 
   ParamIndex(oldParamIndex);
 
-  NFmiDataMatrix<NFmiPoint> gridPointMatrix;
-  gridPointMatrix.Resize(nx, ny);
+  NFmiCoordinateMatrix gridPointMatrix(nx, ny, 0, 0, nx - 1, ny - 1);
 
   if (cropNativeGrid)
   {
@@ -6233,8 +6184,6 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
     for (int i = 0, i1 = x1; i < nx; i++, i1++)
       for (int j = 0, j1 = y1; j < ny; j++, j1++)
       {
-        gridPointMatrix[i][j] = NFmiPoint(i, j);
-
         if (!hasCroppedDEM)
         {
           // DEM data is more accurate
@@ -6257,40 +6206,37 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
         //		 cropped data at indexes [0..nx-1][0..ny-1]
         //
         auto const &loc = theLocationCache[i][j];
-        gridPointMatrix[i][j] = NFmiPoint(loc.itsGridPoint.X() - x1, loc.itsGridPoint.Y() - y1);
+        gridPointMatrix.Set(i, j, NFmiPoint(loc.itsGridPoint.X() - x1, loc.itsGridPoint.Y() - y1));
       }
   }
 
   // Landscaping for temperature
 
-  LandscapeInterpolatedValues(outputTemperatureMatrix,
-                              inputTemperatureMatrix,
-                              gridPointMatrix,
-                              demValues,
-                              waterFlags,
-                              heightMatrix,
-                              lapseRateMatrix,
-                              maskMatrix);
+  outputTemperatureMatrix = LandscapeInterpolatedValues(inputTemperatureMatrix,
+                                                        gridPointMatrix,
+                                                        demValues,
+                                                        waterFlags,
+                                                        heightMatrix,
+                                                        lapseRateMatrix,
+                                                        maskMatrix);
 
   if (ident == kFmiDewPoint)
   {
     // Landscaping for dewpoint
     //
-    NFmiDataMatrix<float> outputDewPointMatrix;
-
-    LandscapeInterpolatedValuesDewPoint(
-        outputDewPointMatrix, theMatrix, outputTemperatureMatrix, humidityMatrix, theLocationCache);
-
-    theMatrix = outputDewPointMatrix;
+    values = LandscapeInterpolatedValuesDewPoint(
+        values, outputTemperatureMatrix, humidityMatrix, theLocationCache);
   }
   else
-    theMatrix = outputTemperatureMatrix;
+    values = outputTemperatureMatrix;
 
   if (cropNativeGrid)
   {
-    if (xExtended) theMatrix.RemoveColumn(nx - 1);
-    if (yExtended) theMatrix.RemoveRow(ny - 1);
+    if (xExtended) values.RemoveColumn(nx - 1);
+    if (yExtended) values.RemoveRow(ny - 1);
   }
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -6299,8 +6245,7 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeCroppedValues(
-    NFmiDataMatrix<float> &theMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
     const NFmiMetTime &theInterpolatedTime,
     int x1,
     int y1,
@@ -6311,17 +6256,17 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
     const NFmiDataMatrix<NFmiLocationCache> &theLocationCache)
 {
   // Only grids can be returned as matrices
-  if (!IsGrid()) return;
+  if (!IsGrid()) return {};
 
   int oldTimeIndex = TimeIndex();
 
   // Handle exact existing time
   if (Time(theInterpolatedTime))
   {
-    LandscapeCroppedValues(
-        theMatrix, x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+    auto values =
+        LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
     TimeIndex(oldTimeIndex);
-    return;
+    return values;
   }
 
   // Cannot interpolate outside data range
@@ -6337,21 +6282,22 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
 
   auto nx = static_cast<int>(x2 - x1 + 1);
   auto ny = static_cast<int>(y2 - y1 + 1);
-  theMatrix.Resize(nx, ny, kFloatMissing);
+
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   NFmiDataMatrix<float> values1;
   NFmiDataMatrix<float> values2;
 
   // pitää löytyä, koska isinside on tarkastettu edellä!!
   if (TimeToNearestStep(theInterpolatedTime, kBackward))
-    LandscapeCroppedValues(
-        values1, x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+    values1 =
+        LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
   NFmiMetTime time1(Time());
 
   // pitää löytyä, koska isinside on tarkastettu edellä!!
   if (TimeToNearestStep(theInterpolatedTime, kForward))
-    LandscapeCroppedValues(
-        values2, x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+    values2 =
+        LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
   NFmiMetTime time2(Time());
 
   auto diff1 = static_cast<float>(theInterpolatedTime.DifferenceInMinutes(time1));
@@ -6367,18 +6313,20 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
   if (interp != kLinearly)
   {
     if (factor > 0.5)
-      theMatrix = values1;
+      values = values1;
     else
-      theMatrix = values2;
+      values = values2;
   }
   else
   {
     for (int j = 0; j < ny; j++)
       for (int i = 0; i < nx; i++)
-        theMatrix[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+        values[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
   }
 
   TimeIndex(oldTimeIndex);
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -6387,8 +6335,7 @@ void NFmiFastQueryInfo::LandscapeCroppedValues(
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeCachedInterpolation(
-    NFmiDataMatrix<float> &theMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
     const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
     const NFmiDataMatrix<float> &theDEMMatrix,
     const NFmiDataMatrix<bool> &theWaterFlagMatrix)
@@ -6415,20 +6362,20 @@ void NFmiFastQueryInfo::LandscapeCachedInterpolation(
 
   // Landscaping
 
-  NFmiDataMatrix<float> croppedMatrix;
-
-  LandscapeCroppedValues(
-      croppedMatrix, 0, 0, 0, 0, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+  auto croppedMatrix =
+      LandscapeCroppedValues(0, 0, 0, 0, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
 
   // Load landscaped values for given locations
 
-  theMatrix.Resize(nx, ny);
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   for (int i = 0; i < nx; i++)
     for (int j = 0; j < ny; j++)
-      theMatrix[i][j] = ((theLocationCache[i][j].itsLocationIndex != static_cast<unsigned long>(-1))
-                             ? croppedMatrix[i][j]
-                             : kFloatMissing);
+      values[i][j] = ((theLocationCache[i][j].itsLocationIndex != static_cast<unsigned long>(-1))
+                          ? croppedMatrix[i][j]
+                          : kFloatMissing);
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -6438,39 +6385,38 @@ void NFmiFastQueryInfo::LandscapeCachedInterpolation(
  */
 // ----------------------------------------------------------------------
 
-void NFmiFastQueryInfo::LandscapeCachedInterpolation(
-    NFmiDataMatrix<float> &theMatrix,
+NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
     const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
     const NFmiTimeCache &theTimeCache,
     const NFmiDataMatrix<float> &theDEMMatrix,
     const NFmiDataMatrix<bool> &theWaterFlagMatrix)
 {
   if (theTimeCache.NoValue())
-  {
-    LandscapeCachedInterpolation(theMatrix, theLocationCache, theDEMMatrix, theWaterFlagMatrix);
-    return;
-  }
+    return LandscapeCachedInterpolation(theLocationCache, theDEMMatrix, theWaterFlagMatrix);
 
   auto oldTimeIndex = TimeIndex();
-  NFmiDataMatrix<float> valueMatrix1, valueMatrix2;
 
   TimeIndex(theTimeCache.itsTimeIndex1);
-  LandscapeCachedInterpolation(valueMatrix1, theLocationCache, theDEMMatrix, theWaterFlagMatrix);
+  auto valueMatrix1 =
+      LandscapeCachedInterpolation(theLocationCache, theDEMMatrix, theWaterFlagMatrix);
 
   TimeIndex(theTimeCache.itsTimeIndex2);
-  LandscapeCachedInterpolation(valueMatrix2, theLocationCache, theDEMMatrix, theWaterFlagMatrix);
+  auto valueMatrix2 =
+      LandscapeCachedInterpolation(theLocationCache, theDEMMatrix, theWaterFlagMatrix);
 
   TimeIndex(oldTimeIndex);
 
   int nx = theLocationCache.NX();
   int ny = theLocationCache.NY();
 
-  theMatrix.Resize(nx, ny);
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
   for (int i = 0; i < nx; i++)
     for (int j = 0; j < ny; j++)
-      theMatrix[i][j] =
+      values[i][j] =
           InterpolationHelper(valueMatrix1[i][j], valueMatrix2[i][j], theTimeCache.itsOffset);
+
+  return values;
 }
 
 // ----------------------------------------------------------------------
@@ -6484,6 +6430,42 @@ void NFmiFastQueryInfo::LandscapeCachedInterpolation(
 NFmiCoordinateMatrix NFmiFastQueryInfo::CoordinateMatrix() const
 {
   return itsHPlaceDescriptor->CoordinateMatrix();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * Palauttaa kaikki hilan data-arvot
+ * Muutettu siten että hiladata menee kuten ennenkin, mutta
+ * asemadata ladataankin 'yksiulotteiseen'-matriisiin (eli 1 x N).
+ * Huom! x-dimension pitää olla 1 ja y-dimensioon laitetaan paikkojen
+ * määrä ja sen pitää tapahtua näin jolloin matrix-luokka tekee
+ * vain 1 + 1 vector-luokan instanssia (toisin päin tekisi 1 + N kpl).
+ *
+ * \param theMatrix The matrix in which to store the values
+ */
+// ----------------------------------------------------------------------
+
+NFmiDataMatrix<float> NFmiFastQueryInfo::Values() const
+{
+  bool fIsGrid = IsGrid();
+  unsigned long nx = fIsGrid ? itsGridXNumber : 1;
+  unsigned long ny = fIsGrid ? itsGridYNumber : itsLocationSize;
+
+  NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
+
+  size_t idx = Index(itsParamIndex, 0, itsLevelIndex, itsTimeIndex);
+  size_t offset = Index(itsParamIndex, 1, itsLevelIndex, itsTimeIndex) - idx;
+
+  // Mika: Must have this loop order so that the offset trick works
+
+  for (unsigned long j = 0; j < ny; j++)
+    for (unsigned long i = 0; i < nx; i++)
+    {
+      values[i][j] = NFmiQueryInfo::PeekValue(idx);
+      idx += offset;
+    }
+
+  return values;
 }
 
 // ======================================================================

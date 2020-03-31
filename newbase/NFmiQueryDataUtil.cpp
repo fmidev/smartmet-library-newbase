@@ -2232,8 +2232,7 @@ static void FillWithGribData(GridRecordData &theGridData, NFmiFastQueryInfo &the
 
     theGridData.itsGrid =
         MyGrid(theInfo.Area(), theInfo.Grid()->XNumber(), theInfo.Grid()->YNumber());
-    theGridData.itsGridData.Resize(theInfo.Grid()->XNumber(), theInfo.Grid()->YNumber());
-    theInfo.Values(theGridData.itsGridData);
+    theGridData.itsGridData = theInfo.Values();
   }
 }
 
@@ -4513,8 +4512,7 @@ static void FillDataToCurrentTime(
                                                                   // aina yhden kentän täytön
                                                                   // välein...
               // oletus vielä nyt että hpalceDesc:it samanlaisia
-              NFmiDataMatrix<float> values;
-              sourceInfo->Values(values);
+              auto values = sourceInfo->Values();
               theFilledInfo.SetValues(values);
             }
           }
@@ -4581,8 +4579,7 @@ static void CombineSliceDatas(NFmiQueryData &theData,
                 {
                   NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
                   // oletus vielä nyt että hpalceDesc:it samanlaisia
-                  NFmiDataMatrix<float> values;
-                  fInfo.Values(values);
+                  auto values = fInfo.Values();
                   combFastInfo.SetValues(values);
                 }
               }
@@ -4829,9 +4826,9 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
                 if (doLocationInterpolation == false)
                 {
                   if (doTimeInterpolation)
-                    theSourceInfo.Values(gridValues, targetTime);
+                    gridValues = theSourceInfo.Values(targetTime);
                   else
-                    theSourceInfo.Values(gridValues);
+                    gridValues = theSourceInfo.Values();
 
                   theTargetInfo.SetValues(gridValues);
                 }
@@ -5117,9 +5114,9 @@ static void FillSingleTimeGridDataInThread(
               if (fDoLocationInterpolation == false)
               {
                 if (doTimeInterpolation)
-                  theSourceInfo.Values(gridValues, targetTime);
+                  gridValues = theSourceInfo.Values(targetTime);
                 else
-                  theSourceInfo.Values(gridValues);
+                  gridValues = theSourceInfo.Values();
 
                 theTargetInfo.SetValues(gridValues);
               }
