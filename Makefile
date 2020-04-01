@@ -38,6 +38,9 @@ ifeq ($(DISABLED_GDAL),yes)
   DEFINES += -DDISABLED_GDAL
 endif
 
+# Use this gdal package primarily, and fall back to plain "gdal" if it's not found
+gdal_version = gdal30
+
 ifeq ($(CXX), clang++)
 
  FLAGS = \
@@ -77,6 +80,14 @@ else
 
 endif
 
+ifneq ($(DISABLED_GDAL),yes)
+ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
+  INCLUDES += -I$(PREFIX)/$(gdal_version)/include
+else
+  INCLUDES += -I$(PREFIX)/include/gdal
+endif
+endif
+
 ifeq ($(TSAN), yes)
   FLAGS += -fsanitize=thread
 endif
@@ -99,8 +110,13 @@ LIBS = -L$(libdir) \
 	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread
+
 ifneq ($(DISABLED_GDAL),yes)
-  LIBS += -lgdal
+ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
+LIBS += -L$(PREFIX)/$(gdal_version)/lib `pkg-config --libs $(gdal_version)`
+else
+LIBS += -lgdal
+endif
 endif
 
 # What to install
