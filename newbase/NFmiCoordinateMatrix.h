@@ -7,6 +7,8 @@ class NFmiCoordinateTransformation;
 class _FMI_DLL NFmiCoordinateMatrix
 {
  public:
+  // init to zero size
+  NFmiCoordinateMatrix() = default;
   // init to missing values
   NFmiCoordinateMatrix(std::size_t nx, std::size_t ny);
   // init to a rectilinear grid
