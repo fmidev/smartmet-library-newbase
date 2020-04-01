@@ -43,7 +43,7 @@ class _FMI_DLL NFmiCoordinateMatrix
   }
 
   // occasionally needed for speed
-  void Swap(NFmiCoordinateMatrix& other);
+  void swap(NFmiCoordinateMatrix& other);
 
   // Always uses lon/lat x/y ordering.
   bool Transform(NFmiCoordinateTransformation& transformation);

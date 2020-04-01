@@ -37,7 +37,7 @@ NFmiCoordinateMatrix::NFmiCoordinateMatrix(
 }
 
 // Swap contents
-void NFmiCoordinateMatrix::Swap(NFmiCoordinateMatrix& other)
+void NFmiCoordinateMatrix::swap(NFmiCoordinateMatrix& other)
 {
   std::swap(itsNX, other.itsNX);
   std::swap(itsNX, other.itsNY);
