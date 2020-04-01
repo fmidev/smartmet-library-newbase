@@ -89,6 +89,7 @@ FMI newbase static library
 %changelog
 * Tue Mar 31 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.31-1.fmi
 - Prefer using NFmiCoordinateMatrix over NFmiDataMatrix<NFmiPoint>
+- Clean up NFmiFastQueryInfo API on NFmiDataMatrix use
 
 * Mon Mar 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.30-1.fmi
 - Fixed NFmiCoordinateMatrix to be flipped by default
