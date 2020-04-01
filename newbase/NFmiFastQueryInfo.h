@@ -265,9 +265,6 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                       bool doNearestTimeIfPossible = false);
   bool SetValues(const NFmiDataMatrix<float> &theMatrix);
 
-  template <typename T>
-  void Locations(T &theMatrix) const;
-
   NFmiCoordinateMatrix LocationsWorldXY(const NFmiArea &theArea) const;
   NFmiCoordinateMatrix LocationsXY(const NFmiArea &theArea) const;
 
@@ -1108,56 +1105,6 @@ inline unsigned long NFmiFastQueryInfo::PeekLocationIndex(int theXOffset, int th
     theHPlaceIndex = theHPlaceIndex + theXOffset;
 
   return theHPlaceIndex;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Palauttaa kaikki hilan LatLongit annettuun datamatriisiin
- *
- * \param theMatrix The matrix where to store the coordinates
- */
-// ----------------------------------------------------------------------
-
-// Generic matrix with operator()(i,j) interface
-
-template <typename T>
-inline void NFmiFastQueryInfo::Locations(T &theMatrix) const
-{
-  if (IsGrid())
-  {
-    const long unsigned int nx = itsGridXNumber;
-    const long unsigned int ny = itsGridYNumber;
-
-    for (long unsigned int j = 0; j < ny; j++)
-      for (long unsigned int i = 0; i < nx; i++)
-      {
-        const NFmiPoint latlon = LatLon(j * nx + i);
-        theMatrix(i, j) = typename T::value_type(latlon.X(), latlon.Y());
-      }
-  }
-  else
-    throw std::runtime_error(
-        "NFmiFastQueryInfo::Locations: Cannot extract coordinate matrix from point data");
-}
-
-// Specialization for NFmiDataMatrix
-
-template <>
-inline void NFmiFastQueryInfo::Locations(NFmiDataMatrix<NFmiPoint> &theMatrix) const
-{
-  if (IsGrid())
-  {
-    unsigned long nx = itsGridXNumber;
-    unsigned long ny = itsGridYNumber;
-
-    theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
-
-    for (unsigned long j = 0; j < ny; j++)
-      for (unsigned long i = 0; i < nx; i++)
-        theMatrix[i][j] = LatLon(j * nx + i);
-  }
-  else
-    theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
 }
 
 // ----------------------------------------------------------------------
