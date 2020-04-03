@@ -116,7 +116,7 @@ const OGRCoordinateTransformation& NFmiCoordinateTransformation::operator*() con
   return *itsTransformation;
 }
 
-const OGRCoordinateTransformation* NFmiCoordinateTransformation::get() const
+OGRCoordinateTransformation* NFmiCoordinateTransformation::get() const
 {
   return itsTransformation.get();
 }
