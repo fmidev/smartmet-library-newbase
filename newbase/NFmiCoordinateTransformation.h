@@ -21,6 +21,9 @@ class _FMI_DLL NFmiCoordinateTransformation
   NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
                                const OGRSpatialReference& theTarget);
 
+  const OGRCoordinateTransformation& operator*() const;
+  const OGRCoordinateTransformation* get() const;
+
   bool Transform(double& x, double& y) const;
   bool Transform(std::vector<double>& x, std::vector<double>& y) const;
   bool Transform(NFmiPoint& xy) const;

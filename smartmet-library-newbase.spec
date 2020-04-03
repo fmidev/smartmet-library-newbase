@@ -90,6 +90,7 @@ FMI newbase static library
 * Fri Apr  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.3-1.fmi
 - Added NFmiSpatialReference::IsGeographic and IsAxisSwapped
 - Added NFmiSpatialReference::GetSourceCS and GetTargetCS
+- Added NFmiCoordinateTransformation::operator* and get to get the internal GDAL object
 
 * Tue Mar 31 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.31-1.fmi
 - Prefer using NFmiCoordinateMatrix over NFmiDataMatrix<NFmiPoint>

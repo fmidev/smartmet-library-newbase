@@ -110,3 +110,13 @@ const OGRSpatialReference& NFmiCoordinateTransformation::GetTargetCS() const
 {
   return *itsTransformation->GetTargetCS();
 }
+
+const OGRCoordinateTransformation& NFmiCoordinateTransformation::operator*() const
+{
+  return *itsTransformation;
+}
+
+const OGRCoordinateTransformation* NFmiCoordinateTransformation::get() const
+{
+  return itsTransformation.get();
+}
