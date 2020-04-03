@@ -122,3 +122,5 @@ void NFmiSpatialReference::init(const std::string &theSR)
   itsProjStr = theSR;
   itsSR = make_sr(theSR).release();
 }
+
+bool NFmiSpatialReference::IsGeographic() const { return itsSR->IsGeographic() != 0; }

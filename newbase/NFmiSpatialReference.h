@@ -31,6 +31,9 @@ class _FMI_DLL NFmiSpatialReference
   operator OGRSpatialReference &() const { return *itsSR; }
   operator OGRSpatialReference *() const { return itsSR; }
 
+  // Common accessors
+  bool IsGeographic() const;
+
   // This is mostly for debugging
   const std::string &ProjStr() const { return itsProjStr; }
 
