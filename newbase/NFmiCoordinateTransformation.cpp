@@ -6,10 +6,10 @@
 #include <limits>
 #include <ogr_spatialref.h>
 
-bool must_swap_xy(const OGRSpatialReference& theSR)
+bool is_axis_swapped(const OGRSpatialReference& sr)
 {
 #if GDAL_MAJOR_VERSION > 1
-  return (theSR.EPSGTreatsAsLatLong() || theSR.EPSGTreatsAsNorthingEasting());
+  return (itsSR->EPSGTreatsAsLatLong() || itsSR->EPSGTreatsAsNorthingEasting());
 #else
   // GDAL1 does not seem to obey EPSGA flags at all
   return false;
@@ -19,16 +19,16 @@ bool must_swap_xy(const OGRSpatialReference& theSR)
 NFmiCoordinateTransformation::NFmiCoordinateTransformation(const NFmiSpatialReference& theSource,
                                                            const NFmiSpatialReference& theTarget)
     : itsTransformation(OGRCreateCoordinateTransformation(theSource.get(), theTarget.get())),
-      itsInputSwapFlag(must_swap_xy(theSource)),
-      itsOutputSwapFlag(must_swap_xy(theTarget))
+      itsInputSwapFlag(theSource.IsAxisSwapped()),
+      itsOutputSwapFlag(theTarget.IsAxisSwapped())
 {
 }
 
 NFmiCoordinateTransformation::NFmiCoordinateTransformation(const OGRSpatialReference& theSource,
                                                            const OGRSpatialReference& theTarget)
     : itsTransformation(OGRCreateCoordinateTransformation(&theSource, &theTarget)),
-      itsInputSwapFlag(must_swap_xy(theSource)),
-      itsOutputSwapFlag(must_swap_xy(theTarget))
+      itsInputSwapFlag(is_axis_swapped(theSource)),
+      itsOutputSwapFlag(is_axis_swapped(theTarget))
 {
 }
 
@@ -99,4 +99,14 @@ bool NFmiCoordinateTransformation::Transform(NFmiPoint& xy) const
     std::swap(x, y);
   xy.Set(x, y);
   return ok;
+}
+
+const OGRSpatialReference& NFmiCoordinateTransformation::GetSourceCS() const
+{
+  return *itsTransformation->GetSourceCS();
+}
+
+const OGRSpatialReference& NFmiCoordinateTransformation::GetTargetCS() const
+{
+  return *itsTransformation->GetTargetCS();
 }

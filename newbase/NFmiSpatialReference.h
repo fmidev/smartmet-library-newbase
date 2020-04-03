@@ -32,6 +32,7 @@ class _FMI_DLL NFmiSpatialReference
   operator OGRSpatialReference *() const { return itsSR; }
 
   // Common accessors
+  bool IsAxisSwapped() const;
   bool IsGeographic() const;
 
   // This is mostly for debugging

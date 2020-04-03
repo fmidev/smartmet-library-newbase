@@ -1,4 +1,5 @@
 #include "NFmiSpatialReference.h"
+#include <gdal_version.h>
 #include <ogr_geometry.h>
 
 namespace
@@ -124,3 +125,13 @@ void NFmiSpatialReference::init(const std::string &theSR)
 }
 
 bool NFmiSpatialReference::IsGeographic() const { return itsSR->IsGeographic() != 0; }
+
+bool NFmiSpatialReference::IsAxisSwapped() const
+{
+#if GDAL_MAJOR_VERSION > 1
+  return (itsSR->EPSGTreatsAsLatLong() || itsSR->EPSGTreatsAsNorthingEasting());
+#else
+  // GDAL1 does not seem to obey EPSGA flags at all
+  return false;
+#endif
+}

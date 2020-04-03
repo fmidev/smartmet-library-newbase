@@ -88,7 +88,8 @@ FMI newbase static library
 
 %changelog
 * Fri Apr  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.3-1.fmi
-- Added NFmiSpatialReference::IsGeographic
+- Added NFmiSpatialReference::IsGeographic and IsAxisSwapped
+- Added NFmiSpatialReference::GetSourceCS and GetTargetCS
 
 * Tue Mar 31 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.31-1.fmi
 - Prefer using NFmiCoordinateMatrix over NFmiDataMatrix<NFmiPoint>
