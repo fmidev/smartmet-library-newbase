@@ -1,3 +1,4 @@
+
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
