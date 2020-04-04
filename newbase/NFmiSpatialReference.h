@@ -17,7 +17,8 @@ class _FMI_DLL NFmiSpatialReference
   NFmiSpatialReference() = delete;
 
   NFmiSpatialReference(const NFmiSpatialReference &other);
-  NFmiSpatialReference(OGRSpatialReference &other);  // since GDAL is not const correct
+  NFmiSpatialReference(const OGRSpatialReference &other);  // since GDAL is not const correct
+  NFmiSpatialReference(OGRSpatialReference &other);
   NFmiSpatialReference(const char *theDesc);
   NFmiSpatialReference(const std::string &theDesc);
 

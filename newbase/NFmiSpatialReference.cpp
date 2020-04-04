@@ -109,6 +109,11 @@ NFmiSpatialReference::NFmiSpatialReference(const NFmiSpatialReference &other)
 {
 }
 
+NFmiSpatialReference::NFmiSpatialReference(const OGRSpatialReference &other)
+    : itsProjStr(), itsSR(other.Clone())
+{
+}
+
 NFmiSpatialReference::NFmiSpatialReference(OGRSpatialReference &other)
     : itsProjStr(), itsSR(other.Clone())
 {
