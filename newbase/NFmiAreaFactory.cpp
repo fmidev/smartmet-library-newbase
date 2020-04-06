@@ -109,8 +109,8 @@
 
 #include "NFmiAreaFactory.h"
 #include "NFmiArea.h"
-#include "NFmiSpatialReference.h"
 #include "NFmiStringTools.h"
+#include <gis/SpatialReference.h>
 
 #ifndef WGS84
 #include "NFmiEquidistArea.h"

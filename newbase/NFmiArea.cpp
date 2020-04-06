@@ -1,10 +1,19 @@
+#include "NFmiArea.h"
+#include "NFmiAreaFactory.h"
+#include "NFmiAreaTools.h"
 #include "NFmiCoordinateMatrix.h"
-#include "NFmiCoordinateTransformation.h"
-#include "NFmiSpatialReference.h"
+#include "NFmiString.h"
+#include "NFmiVersion.h"
+#include <boost/functional/hash.hpp>
+#include <fmt/format.h>
+#include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
 #include <iomanip>
 #include <iostream>
 #include <ogr_spatialref.h>
 
+namespace
+{
 std::string exportToProj(const OGRSpatialReference &theSRS)
 {
   char *out;
@@ -14,30 +23,15 @@ std::string exportToProj(const OGRSpatialReference &theSRS)
   return ret;
 }
 
-// ======================================================================
-/*!
- * \file NFmiArea.cpp
- * \brief Implementation of class NFmiArea
- */
-// ======================================================================
-/*!
- * \class NFmiArea
- *
- * Undocumented
- */
-// ======================================================================
-
-#include "NFmiArea.h"
-#include "NFmiAreaFactory.h"
-#include "NFmiAreaTools.h"
-#include "NFmiString.h"
-#include "NFmiVersion.h"
-
-#include <boost/functional/hash.hpp>
-#include <fmt/format.h>
-
-namespace
+NFmiPoint transform(const Fmi::CoordinateTransformation &theTransformation,
+                    const NFmiPoint &thePoint)
 {
+  double x = thePoint.X();
+  double y = thePoint.Y();
+  theTransformation.Transform(x, y);
+  return NFmiPoint(x, y);
+}
+
 std::string class_name_from_id(int id)
 {
   switch (id)
@@ -81,15 +75,15 @@ std::string class_name_from_id(int id)
 
 struct NFmiArea::Impl
 {
-  std::shared_ptr<NFmiSpatialReference> itsSpatialReference;
+  std::shared_ptr<Fmi::SpatialReference> itsSpatialReference;
 
   // WGS84 conversions
-  boost::shared_ptr<NFmiCoordinateTransformation> itsToLatLonConverter;
-  boost::shared_ptr<NFmiCoordinateTransformation> itsToWorldXYConverter;
+  boost::shared_ptr<Fmi::CoordinateTransformation> itsToLatLonConverter;
+  boost::shared_ptr<Fmi::CoordinateTransformation> itsToWorldXYConverter;
 
   // Projection geographic coordinate conversions
-  boost::shared_ptr<NFmiCoordinateTransformation> itsNativeToLatLonConverter;
-  boost::shared_ptr<NFmiCoordinateTransformation> itsNativeToWorldXYConverter;
+  boost::shared_ptr<Fmi::CoordinateTransformation> itsNativeToLatLonConverter;
+  boost::shared_ptr<Fmi::CoordinateTransformation> itsNativeToWorldXYConverter;
 
   NFmiRect itsWorldRect;           // bbox in native WorldXY coordinates
   NFmiRect itsXYRect{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
@@ -142,11 +136,10 @@ NFmiPoint NFmiArea::Impl::TopLeftCorner() const
 
   // Calculate bottom left corner in FMI latlon coordinates
 
-  NFmiCoordinateTransformation trans(*itsSpatialReference, "FMI");
+  Fmi::CoordinateTransformation trans(*itsSpatialReference, "FMI");
 
   auto tl = itsWorldRect.TopLeft();
-  trans.Transform(tl);
-  return tl;
+  return transform(trans, tl);
 }
 
 // ----------------------------------------------------------------------
@@ -161,11 +154,10 @@ NFmiPoint NFmiArea::Impl::BottomRightCorner() const
 
   // Calculate top right corner in FMI latlon coordinates
 
-  NFmiCoordinateTransformation transformation(*itsSpatialReference, "FMI");
+  Fmi::CoordinateTransformation transformation(*itsSpatialReference, "FMI");
 
   auto br = itsWorldRect.BottomRight();
-  transformation.Transform(br);
-  return br;
+  return transform(transformation, br);
 }
 
 NFmiArea::NFmiArea() : impl(new NFmiArea::Impl) {}
@@ -255,9 +247,7 @@ NFmiPoint NFmiArea::BottomRightLatLon() const { return ToLatLon(BottomRight()); 
 
 NFmiPoint NFmiArea::WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const
 {
-  auto coordinate = theWorldXY;
-  impl->itsNativeToLatLonConverter->Transform(coordinate);
-  return coordinate;
+  return transform(*impl->itsNativeToLatLonConverter, theWorldXY);
 }
 
 // ----------------------------------------------------------------------
@@ -268,9 +258,7 @@ NFmiPoint NFmiArea::WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const
 
 NFmiPoint NFmiArea::NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const
 {
-  auto coordinate = theLatLon;
-  impl->itsNativeToWorldXYConverter->Transform(coordinate);
-  return coordinate;
+  return transform(*impl->itsNativeToWorldXYConverter, theLatLon);
 }
 
 NFmiPoint NFmiArea::ToNativeLatLon(const NFmiPoint &theXY) const
@@ -1031,9 +1019,7 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
   if (!impl->itsToWorldXYConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
-  auto coordinate = theWgs84;
-  impl->itsToWorldXYConverter->Transform(coordinate);
-  return coordinate;
+  return transform(*impl->itsToWorldXYConverter, theWgs84);
 }
 
 // ----------------------------------------------------------------------
@@ -1047,9 +1033,7 @@ NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
   if (!impl->itsToLatLonConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
-  auto coordinate = theWorldXY;
-  impl->itsToLatLonConverter->Transform(coordinate);
-  return coordinate;
+  return transform(*impl->itsToLatLonConverter, theWorldXY);
 }
 
 // ----------------------------------------------------------------------
@@ -1157,7 +1141,7 @@ NFmiPoint NFmiArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 void NFmiArea::InitSpatialReference(const std::string &theProjection)
 {
-  impl->itsSpatialReference.reset(new NFmiSpatialReference(theProjection));
+  impl->itsSpatialReference.reset(new Fmi::SpatialReference(theProjection));
   InitRectConversions();
   InitProj();
 }
@@ -1166,13 +1150,13 @@ void NFmiArea::InitProj()
 {
   // WGS84 converters
 
-  NFmiSpatialReference wgs84("WGS84");
+  Fmi::SpatialReference wgs84("WGS84");
 
   impl->itsToWorldXYConverter.reset(
-      new NFmiCoordinateTransformation(wgs84, *impl->itsSpatialReference));
+      new Fmi::CoordinateTransformation(wgs84, *impl->itsSpatialReference));
 
   impl->itsToLatLonConverter.reset(
-      new NFmiCoordinateTransformation(*impl->itsSpatialReference, wgs84));
+      new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
 
   if (impl->itsToLatLonConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");
@@ -1184,13 +1168,13 @@ void NFmiArea::InitProj()
 
   auto proj = impl->itsProj.InverseProjStr();
 
-  NFmiSpatialReference latlon(proj);
+  Fmi::SpatialReference latlon(proj);
 
   impl->itsNativeToLatLonConverter.reset(
-      new NFmiCoordinateTransformation(*impl->itsSpatialReference, latlon));
+      new Fmi::CoordinateTransformation(*impl->itsSpatialReference, latlon));
 
   impl->itsNativeToWorldXYConverter.reset(
-      new NFmiCoordinateTransformation(latlon, *impl->itsSpatialReference));
+      new Fmi::CoordinateTransformation(latlon, *impl->itsSpatialReference));
 
   // Switch writer to ProjArea if we were not reading a legacy projection
   if (impl->itsClassId == kNFmiArea) impl->itsClassId = kNFmiProjArea;
@@ -1220,21 +1204,21 @@ void NFmiArea::CheckRectConversions(double theXScaleFactor, double theYScaleFact
 #endif
 }
 
-const NFmiSpatialReference &NFmiArea::SpatialReference() const
+const Fmi::SpatialReference &NFmiArea::SpatialReference() const
 {
   return *impl->itsSpatialReference;
 }
 
 const NFmiProj &NFmiArea::Proj() const { return impl->itsProj; }
 
-NFmiArea *NFmiArea::CreateFromBBox(const NFmiSpatialReference &theSR,
+NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
                                    const NFmiPoint &theTopRightWorldXY)
 {
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
     area->impl->itsWorldRect = NFmiRect(theBottomLeftWorldXY.X(),
                                         theTopRightWorldXY.Y(),
@@ -1251,24 +1235,21 @@ NFmiArea *NFmiArea::CreateFromBBox(const NFmiSpatialReference &theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCorners(const NFmiSpatialReference &theSR,
-                                      const NFmiSpatialReference &theBBoxSR,
+NFmiArea *NFmiArea::CreateFromCorners(const Fmi::SpatialReference &theSR,
+                                      const Fmi::SpatialReference &theBBoxSR,
                                       const NFmiPoint &theBottomLeftLatLon,
                                       const NFmiPoint &theTopRightLatLon)
 {
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
 
-    NFmiCoordinateTransformation transformation(theBBoxSR, area->SpatialReference());
+    Fmi::CoordinateTransformation transformation(theBBoxSR, area->SpatialReference());
 
-    auto bl = theBottomLeftLatLon;
-    auto tr = theTopRightLatLon;
-
-    transformation.Transform(bl);
-    transformation.Transform(tr);
+    auto bl = transform(transformation, theBottomLeftLatLon);
+    auto tr = transform(transformation, theTopRightLatLon);
 
     area->impl->itsWorldRect = NFmiRect(bl, tr);
     // area->impl->itsWorldRect = NFmiRect(x1, y2, x2, y1); TODO:: ORDER?!?!?!!?!?!?
@@ -1288,24 +1269,21 @@ NFmiArea *NFmiArea::CreateFromCorners(const NFmiSpatialReference &theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromReverseCorners(const NFmiSpatialReference &theSR,
-                                             const NFmiSpatialReference &theBBoxSR,
+NFmiArea *NFmiArea::CreateFromReverseCorners(const Fmi::SpatialReference &theSR,
+                                             const Fmi::SpatialReference &theBBoxSR,
                                              const NFmiPoint &theTopLeftLatLon,
                                              const NFmiPoint &theBottomRightLatLon)
 {
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
 
-    NFmiCoordinateTransformation transformation(theBBoxSR, area->SpatialReference());
+    Fmi::CoordinateTransformation transformation(theBBoxSR, area->SpatialReference());
 
-    auto tl = theTopLeftLatLon;
-    auto br = theBottomRightLatLon;
-
-    transformation.Transform(tl);
-    transformation.Transform(br);
+    auto tl = transform(transformation, theTopLeftLatLon);
+    auto br = transform(transformation, theBottomRightLatLon);
 
     area->impl->itsWorldRect = NFmiRect(tl, br);
     // area->impl->itsWorldRect = NFmiRect(x1, y1, x2, y2); TODOO:: ORDER?!?!?!?!?
@@ -1321,21 +1299,18 @@ NFmiArea *NFmiArea::CreateFromReverseCorners(const NFmiSpatialReference &theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromWGS84Corners(const NFmiSpatialReference &theSR,
+NFmiArea *NFmiArea::CreateFromWGS84Corners(const Fmi::SpatialReference &theSR,
                                            const NFmiPoint &theBottomLeftLatLon,
                                            const NFmiPoint &theTopRightLatLon)
 {
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
 
-    auto bl = theBottomLeftLatLon;
-    auto tr = theTopRightLatLon;
-
-    area->impl->itsToWorldXYConverter->Transform(bl);
-    area->impl->itsToWorldXYConverter->Transform(tr);
+    auto bl = transform(*area->impl->itsToWorldXYConverter, theBottomLeftLatLon);
+    auto tr = transform(*area->impl->itsToWorldXYConverter, theTopRightLatLon);
 
     area->impl->itsWorldRect = NFmiRect(bl, tr);
     // area->impl->itsWorldRect = NFmiRect(x1, y2, x2, y1); ORDER!?!?!?!?!?!?
@@ -1350,8 +1325,8 @@ NFmiArea *NFmiArea::CreateFromWGS84Corners(const NFmiSpatialReference &theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCornerAndSize(const NFmiSpatialReference &theSR,
-                                            const NFmiSpatialReference &theCornerSR,
+NFmiArea *NFmiArea::CreateFromCornerAndSize(const Fmi::SpatialReference &theSR,
+                                            const Fmi::SpatialReference &theCornerSR,
                                             const NFmiPoint &theBottomLeftLatLon,
                                             double theWidth,
                                             double theHeight)
@@ -1359,10 +1334,10 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(const NFmiSpatialReference &theSR,
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
 
-    NFmiCoordinateTransformation transformation(theCornerSR, theSR);
+    Fmi::CoordinateTransformation transformation(theCornerSR, theSR);
 
     double x = theBottomLeftLatLon.X();
     double y = theBottomLeftLatLon.Y();
@@ -1382,8 +1357,8 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(const NFmiSpatialReference &theSR,
   }
 }
 
-NFmiArea *NFmiArea::CreateFromCenter(const NFmiSpatialReference &theSR,
-                                     const NFmiSpatialReference &theCenterSR,
+NFmiArea *NFmiArea::CreateFromCenter(const Fmi::SpatialReference &theSR,
+                                     const Fmi::SpatialReference &theCenterSR,
                                      const NFmiPoint &theCenterLatLon,
                                      double theWidth,
                                      double theHeight)
@@ -1391,10 +1366,10 @@ NFmiArea *NFmiArea::CreateFromCenter(const NFmiSpatialReference &theSR,
   auto area = new NFmiArea;
   try
   {
-    area->impl->itsSpatialReference = std::make_shared<NFmiSpatialReference>(theSR);
+    area->impl->itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theSR);
     area->InitProj();
 
-    NFmiCoordinateTransformation transformation(theCenterSR, theSR);
+    Fmi::CoordinateTransformation transformation(theCenterSR, theSR);
 
     double x = theCenterLatLon.X();
     double y = theCenterLatLon.Y();
@@ -1542,20 +1517,14 @@ double NFmiArea::YScale() const { return 1 / impl->itsYScaleFactor; }
 
 NFmiPoint NFmiArea::SphereToWGS84(const NFmiPoint &theWorldXY)
 {
-  NFmiCoordinateTransformation transformation("FMI", "WGS84");
-
-  auto coordinate = theWorldXY;
-  transformation.Transform(coordinate);
-  return coordinate;
+  Fmi::CoordinateTransformation transformation("FMI", "WGS84");
+  return transform(transformation, theWorldXY);
 }
 
 NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
 {
-  NFmiCoordinateTransformation transformation("WGS84", "FMI");
-
-  auto coordinate = theLatLon;
-  transformation.Transform(coordinate);
-  return coordinate;
+  Fmi::CoordinateTransformation transformation("WGS84", "FMI");
+  return transform(transformation, theLatLon);
 }
 
 NFmiCoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny) const

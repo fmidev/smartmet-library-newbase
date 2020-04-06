@@ -1,10 +1,9 @@
-
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.4.3
+Version: 20.4.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -19,6 +18,8 @@ BuildRequires: bzip2-devel
 BuildRequires: geos38-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
+BuildRequires: smartmet-library-gis
+Requires: smartmet-library-gis
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Apr  6 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.6-1.fmi
+- Moved SpatialReference and CoordinateTransformation to smartmet-library-gis
+
 * Fri Apr  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.3-1.fmi
 - Added NFmiSpatialReference::IsGeographic and IsAxisSwapped
 - Added NFmiSpatialReference::GetSourceCS and GetTargetCS

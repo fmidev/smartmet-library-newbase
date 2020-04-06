@@ -1,5 +1,5 @@
 #include "NFmiWGS84.h"
-#include "NFmiSpatialReference.h"
+#include <gis/SpatialReference.h>
 #include <memory>
 
 // ----------------------------------------------------------------------
@@ -13,13 +13,13 @@ class NFmiWGS84Impl
  public:
   NFmiWGS84Impl() : sr("WGS84") {}
 
-  const NFmiSpatialReference& SpatialReference() const { return sr; }
+  const Fmi::SpatialReference& SpatialReference() const { return sr; }
 
  private:
-  NFmiSpatialReference sr;
+  Fmi::SpatialReference sr;
 };
 
-const NFmiSpatialReference& NFmiWGS84::SpatialReference()
+const Fmi::SpatialReference& NFmiWGS84::SpatialReference()
 {
   static NFmiWGS84Impl impl;  // thread safe init in C++11
   return impl.SpatialReference();

@@ -19,9 +19,9 @@
 #include "NFmiArea.h"
 #include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
-#include "NFmiSpatialReference.h"
 #include "NFmiSvgPath.h"
 #include <fmt/printf.h>
+#include <gis/SpatialReference.h>
 
 namespace NFmiSvgTools
 {

@@ -1375,7 +1375,6 @@ enum FmiParameterName
   kFmiSnowAccumulation120hF10,
   kFmiSnowAccumulation120hF0,
 
-
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,

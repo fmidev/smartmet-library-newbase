@@ -95,6 +95,7 @@ CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
 LIBS = -L$(libdir) \
+	-lsmartmet-gis \
 	-lfmt \
 	-lboost_regex \
 	-lboost_date_time \

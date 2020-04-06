@@ -11,13 +11,13 @@
 #include "NFmiDef.h"
 #include "NFmiProj.h"
 #include "NFmiRect.h"
-#include "NFmiSpatialReference.h"
 #include <boost/shared_ptr.hpp>
+#include <gis/SpatialReference.h>
 #include <memory>
 #include <string>
 
-// Note: We could forward declare NFmiSpatialReference too, but then all code using this or
-// NFmiAreaTools would have to include NFmiSpatialReference.h to enable implicit conversion of
+// Note: We could forward declare Fmi::SpatialReference too, but then all code using this or
+// NFmiAreaTools would have to include Fmi::SpatialReference.h to enable implicit conversion of
 // strings such as "WGS84" into actual spatial references. Having the include here is a smaller
 // nuisance.
 
@@ -132,37 +132,37 @@ class _FMI_DLL NFmiArea
   std::size_t HashValueKludge() const;
 
  public:
-  const NFmiSpatialReference &SpatialReference() const;
+  const Fmi::SpatialReference &SpatialReference() const;
 
   // Named constructors used to clarify intent of the parameters. Note that the proxy
   // may accept actual spatial references or strings from which to construct them.
 
-  static NFmiArea *CreateFromBBox(const NFmiSpatialReference &theSR,
+  static NFmiArea *CreateFromBBox(const Fmi::SpatialReference &theSR,
                                   const NFmiPoint &theBottomLeftWorldXY,
                                   const NFmiPoint &theTopRightWorldXY);
 
-  static NFmiArea *CreateFromCenter(const NFmiSpatialReference &theSR,
-                                    const NFmiSpatialReference &theCenterSR,
+  static NFmiArea *CreateFromCenter(const Fmi::SpatialReference &theSR,
+                                    const Fmi::SpatialReference &theCenterSR,
                                     const NFmiPoint &theCenterLatLon,
                                     double theWidthInMeters,
                                     double theHeightInMeters);
 
-  static NFmiArea *CreateFromCorners(const NFmiSpatialReference &theSR,
-                                     const NFmiSpatialReference &theBBoxSR,
+  static NFmiArea *CreateFromCorners(const Fmi::SpatialReference &theSR,
+                                     const Fmi::SpatialReference &theBBoxSR,
                                      const NFmiPoint &theBottomLeftLatLon,
                                      const NFmiPoint &theTopRightLatLon);
 
-  static NFmiArea *CreateFromReverseCorners(const NFmiSpatialReference &theSR,
-                                            const NFmiSpatialReference &theBBoxSR,
+  static NFmiArea *CreateFromReverseCorners(const Fmi::SpatialReference &theSR,
+                                            const Fmi::SpatialReference &theBBoxSR,
                                             const NFmiPoint &theTopLeftLatLon,
                                             const NFmiPoint &theBottomRightLatLon);
 
-  static NFmiArea *CreateFromWGS84Corners(const NFmiSpatialReference &theSR,
+  static NFmiArea *CreateFromWGS84Corners(const Fmi::SpatialReference &theSR,
                                           const NFmiPoint &theBottomLeftLatLon,
                                           const NFmiPoint &theTopRightLatLon);
 
-  static NFmiArea *CreateFromCornerAndSize(const NFmiSpatialReference &theSR,
-                                           const NFmiSpatialReference &theCornerSR,
+  static NFmiArea *CreateFromCornerAndSize(const Fmi::SpatialReference &theSR,
+                                           const Fmi::SpatialReference &theCornerSR,
                                            const NFmiPoint &theBottomLeftLatLon,
                                            double theWidthInMeters,
                                            double theHeightInMeters);

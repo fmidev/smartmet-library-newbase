@@ -37,13 +37,13 @@
 #include "NFmiRelativeDataIterator.h"
 #include "NFmiRelativeTimeIntegrationIterator.h"
 #include "NFmiSmoother.h"
-#include "NFmiSpatialReference.h"
 #include "NFmiStreamQueryData.h"
 #include "NFmiSuperSmartInfo.h"
 #include "NFmiTimeList.h"
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <gis/SpatialReference.h>
 #include <algorithm>
 #include <cassert>
 #include <fstream>

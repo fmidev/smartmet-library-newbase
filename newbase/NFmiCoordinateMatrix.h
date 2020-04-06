@@ -2,7 +2,10 @@
 #include "NFmiPoint.h"
 #include <vector>
 
-class NFmiCoordinateTransformation;
+namespace Fmi
+{
+class CoordinateTransformation;
+}
 
 class _FMI_DLL NFmiCoordinateMatrix
 {
@@ -48,7 +51,7 @@ class _FMI_DLL NFmiCoordinateMatrix
   void swap(NFmiCoordinateMatrix& other);
 
   // Always uses lon/lat x/y ordering.
-  bool Transform(NFmiCoordinateTransformation& transformation);
+  bool Transform(Fmi::CoordinateTransformation& transformation);
 
  private:
   std::size_t itsNX = 0;

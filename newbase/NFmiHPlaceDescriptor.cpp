@@ -282,7 +282,7 @@ NFmiPoint NFmiHPlaceDescriptor::WorldXY(unsigned long index) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiSpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
+const Fmi::SpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
 {
   if (itsGrid) return itsGrid->SpatialReference();
   return NFmiWGS84::SpatialReference();

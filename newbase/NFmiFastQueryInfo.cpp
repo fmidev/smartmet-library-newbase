@@ -20,7 +20,6 @@
 #include "NFmiFastQueryInfo.h"
 #include "NFmiCombinedParam.h"
 #include "NFmiCoordinateMatrix.h"
-#include "NFmiCoordinateTransformation.h"
 #include "NFmiDataModifier.h"
 #include "NFmiGrid.h"
 #include "NFmiInterpolation.h"
@@ -30,6 +29,7 @@
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <gis/CoordinateTransformation.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -1913,8 +1913,8 @@ NFmiCoordinateMatrix NFmiFastQueryInfo::LocationsWorldXY(const NFmiArea &theArea
 {
   if (!IsGrid()) return NFmiCoordinateMatrix(0, 0);
 
-  NFmiCoordinateTransformation transformation(Area()->SpatialReference(),
-                                              theArea.SpatialReference());
+  Fmi::CoordinateTransformation transformation(Area()->SpatialReference(),
+                                               theArea.SpatialReference());
 
   auto coords = CoordinateMatrix();
 

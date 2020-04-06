@@ -15,8 +15,8 @@
 #include "NFmiAreaTools.h"
 #include "NFmiArea.h"
 #include "NFmiPoint.h"
-#include "NFmiSpatialReference.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <algorithm>
 
 #include <iostream>

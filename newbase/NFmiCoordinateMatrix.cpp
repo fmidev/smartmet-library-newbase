@@ -1,5 +1,5 @@
 #include "NFmiCoordinateMatrix.h"
-#include "NFmiCoordinateTransformation.h"
+#include <gis/CoordinateTransformation.h>
 #include <cmath>
 
 // PROJ uses HUGE_VAL as a missing value, hence we do too to avoid unnecessary modifications to data
@@ -49,7 +49,7 @@ void NFmiCoordinateMatrix::swap(NFmiCoordinateMatrix& other)
 // are in the correct spatial reference. Input/output order is always lon/lat or x/y,
 // EPSG rules are followed only temporarily to make the projection work.
 
-bool NFmiCoordinateMatrix::Transform(NFmiCoordinateTransformation& transformation)
+bool NFmiCoordinateMatrix::Transform(Fmi::CoordinateTransformation& transformation)
 {
   return transformation.Transform(itsX, itsY);
 }

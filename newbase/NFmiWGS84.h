@@ -2,12 +2,15 @@
 
 #include "NFmiGlobals.h"
 
-class NFmiSpatialReference;
+namespace Fmi
+{
+class SpatialReference;
+}
 
 class _FMI_DLL NFmiWGS84
 {
  public:
-  static const NFmiSpatialReference& SpatialReference();
+  static const Fmi::SpatialReference& SpatialReference();
 
  private:
   NFmiWGS84() = delete;
