@@ -27,6 +27,7 @@ Requires: boost-system
 Requires: boost-regex
 Requires: gdal30-libs
 Requires: geos38
+Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
 #TestRequires: gcc-c++
