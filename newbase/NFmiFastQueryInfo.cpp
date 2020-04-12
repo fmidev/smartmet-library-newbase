@@ -4742,6 +4742,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::FlightRouteValuesLogP(
 // ker dataa matriisiin
 // Reittipoikkileikkaus eli on alku ja loppu paikat ja ajat. Jokaista paikkaa vastaa oma aika.
 // aikoja ja paikkoja pit olla yht paljon.
+
 NFmiDataMatrix<float> NFmiFastQueryInfo::RouteCrossSectionValuesHybrid(
     const std::vector<NFmiLevel> &theLevels,
     const std::vector<NFmiPoint> &theLatlonPoints,
