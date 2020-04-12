@@ -4408,7 +4408,8 @@ static NFmiParamDescriptor MakeParamDescriptor(
     boost::shared_ptr<NFmiFastQueryInfo> &theFirstFastInfo,
     bool fFirstInfoDefines)
 {
-    return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor() : ::MakeParamDesc(theFastInfoVector);
+  return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor()
+                           : ::MakeParamDesc(theFastInfoVector);
 }
 
 namespace std
@@ -4605,7 +4606,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     int theMaxTimeStepsInData,
     NFmiStopFunctor *theStopFunctor)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector = MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
+  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
+      MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
 
   std::vector<NFmiMetTime> foundValidTimes =
       MakeValidTimesList(fastInfoVector, theMaxTimeStepsInData);

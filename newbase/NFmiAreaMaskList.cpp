@@ -295,9 +295,9 @@ bool NFmiAreaMaskList::SyncronizeMaskTime(const NFmiMetTime &theTime)
 {
   if (fMaskInUse)
   {
-  for (auto &index : itsMaskVector)
-  {
-    if (index->IsEnabled()) index->Time(theTime);
+    for (auto &index : itsMaskVector)
+    {
+      if (index->IsEnabled()) index->Time(theTime);
     }
   }
   return true;

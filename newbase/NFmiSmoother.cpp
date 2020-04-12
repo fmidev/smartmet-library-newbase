@@ -83,7 +83,7 @@ const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const NFmiDataMatrix<NFmiPoin
 // ----------------------------------------------------------------------
 
 const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
-                                                  const std::vector<float>& theY) const
+                                                const std::vector<float>& theY) const
 {
   assert(theX.size() == theY.size());
 
@@ -230,7 +230,7 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
 // ----------------------------------------------------------------------
 
 const std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& theX,
-                                                        const std::vector<float>& theY) const
+                                                      const std::vector<float>& theY) const
 {
   // We need a dummy
   std::vector<float> result(theY.size(), kFloatMissing);

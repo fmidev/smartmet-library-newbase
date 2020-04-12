@@ -518,7 +518,7 @@ class _FMI_DLL NFmiQueryDataUtil
   static NFmiQueryData *CombineQueryDatas(
       bool fDoRebuild,
       boost::shared_ptr<NFmiQueryData> &theBaseQData,
-      std::vector<boost::shared_ptr<NFmiQueryData> > &theQDataVector,
+      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
       bool fDoTimeStepCombine,
       int theMaxTimeStepsInData = 0,
       NFmiStopFunctor *theStopFunctor = 0);

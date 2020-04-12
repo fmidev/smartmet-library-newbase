@@ -47,8 +47,7 @@ class _FMI_DLL NFmiLagrange
   void SiDenominator(void);
   void TiDenominator(void);
 
-  double L(
-      const std::vector<double>& xi, double x, std::vector<double>& denominator, int i, int n);
+  double L(const std::vector<double>& xi, double x, std::vector<double>& denominator, int i, int n);
   double Ls(double s, int i);
   double Lt(double t, int i);
 
