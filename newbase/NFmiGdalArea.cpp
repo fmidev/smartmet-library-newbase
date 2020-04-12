@@ -12,7 +12,7 @@
 #include "NFmiStringTools.h"
 #include <boost/functional/hash.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <cmath>
 #include <iomanip>
 

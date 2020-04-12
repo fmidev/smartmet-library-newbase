@@ -16,14 +16,21 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
-BuildRequires: gdal-devel
 BuildRequires: fmt-devel
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
 Requires: boost-system
 Requires: boost-regex
+
+%if %{defined el7}
 Requires: gdal-libs
+BuildRequires: gdal-devel
+%else if %{defined el8}
+Requires: gdal30-libs
+BuildRequires: gdal30-devel
+%endif
+
 Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
