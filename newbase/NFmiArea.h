@@ -21,7 +21,10 @@
 // strings such as "WGS84" into actual spatial references. Having the include here is a smaller
 // nuisance.
 
-class NFmiCoordinateMatrix;
+namespace Fmi
+{
+class CoordinateMatrix;
+}
 
 //! Undocumented
 class _FMI_DLL NFmiArea
@@ -100,18 +103,18 @@ class _FMI_DLL NFmiArea
                           bool fShrinkArea);
 
 #ifdef WGS84
-  NFmiCoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny) const;
-  void ToLatLon(NFmiCoordinateMatrix &theMatrix) const;
-  void ToXY(NFmiCoordinateMatrix &theMatrix) const;
-  void XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
-  void WorldXYToXY(NFmiCoordinateMatrix &theMatrix) const;
-  void WorldXYToLatLon(NFmiCoordinateMatrix &theMatrix) const;
-  void LatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
+  Fmi::CoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny) const;
+  void ToLatLon(Fmi::CoordinateMatrix &theMatrix) const;
+  void ToXY(Fmi::CoordinateMatrix &theMatrix) const;
+  void XYToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
+  void WorldXYToXY(Fmi::CoordinateMatrix &theMatrix) const;
+  void WorldXYToLatLon(Fmi::CoordinateMatrix &theMatrix) const;
+  void LatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
 
-  void ToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const;
-  void WorldXYToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const;
-  void NativeLatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const;
-  void NativeToXY(NFmiCoordinateMatrix &theMatrix) const;
+  void ToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const;
+  void WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const;
+  void NativeLatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
+  void NativeToXY(Fmi::CoordinateMatrix &theMatrix) const;
 #endif
 
   unsigned long ClassId() const;

@@ -7,19 +7,19 @@
 
 #pragma once
 
-#include "NFmiCoordinateMatrix.h"
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <gis/CoordinateMatrix.h>
 
 class NFmiRect;
-class NFmiCoordinateMatrix;
 
 namespace Fmi
 {
+class CoordinateMatrix;
 class SpatialReference;
-}
+}  // namespace Fmi
 
 //! Undocumented
 class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
@@ -123,7 +123,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
 
   const Fmi::SpatialReference &SpatialReference() const;
-  NFmiCoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix() const;
 
   NFmiDataIdent &Param() const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
@@ -242,15 +242,15 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                int theBackwardOffsetInMinutes,
                                int theForwardOffsetInMinutes);
 
-  virtual NFmiDataMatrix<float> Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
                                        float P = kFloatMissing,
                                        float H = kFloatMissing);
 
-  virtual NFmiDataMatrix<float> Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
                                        const NFmiMetTime &theTime,
                                        float P = kFloatMissing,
                                        float H = kFloatMissing);
-  virtual NFmiDataMatrix<float> Values(const NFmiCoordinateMatrix &theLatlonMatrix,
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
                                        const NFmiMetTime &theTime,
                                        float P,
                                        float H,
@@ -269,8 +269,8 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
                                       bool doNearestTimeIfPossible = false);
   bool SetValues(const NFmiDataMatrix<float> &theMatrix);
 
-  NFmiCoordinateMatrix LocationsWorldXY(const NFmiArea &theArea) const;
-  NFmiCoordinateMatrix LocationsXY(const NFmiArea &theArea) const;
+  Fmi::CoordinateMatrix LocationsWorldXY(const NFmiArea &theArea) const;
+  Fmi::CoordinateMatrix LocationsXY(const NFmiArea &theArea) const;
 
   // Tähän tulee joukko funktioita, jotka palauttavat aktiivisen parametrin
   // arvon haluttuun korkeuteen [m]. Metodeja on neljä, jotka tekevät erilaisia
@@ -528,7 +528,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
           NFmiDataMatrix<NFmiLocationCache>());
 
   NFmiDataMatrix<float> LandscapeInterpolatedValues(const NFmiDataMatrix<float> &theMatrix,
-                                                    const NFmiCoordinateMatrix &gridPointMatrix,
+                                                    const Fmi::CoordinateMatrix &gridPointMatrix,
                                                     const NFmiDataMatrix<float> &demMatrix,
                                                     const NFmiDataMatrix<bool> &waterFlagMatrix,
                                                     const NFmiDataMatrix<float> &heightMatrix,

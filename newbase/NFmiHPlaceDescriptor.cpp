@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
-#include "NFmiCoordinateMatrix.h"
+#include <gis/CoordinateMatrix.h>
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
@@ -294,11 +294,11 @@ const Fmi::SpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
  */
 // ----------------------------------------------------------------------
 
-NFmiCoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix() const
+Fmi::CoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix() const
 {
   if (itsGrid) return itsGrid->CoordinateMatrix();
   if (itsLocationBag) return itsLocationBag->CoordinateMatrix();
-  return NFmiCoordinateMatrix(0, 0);
+  return Fmi::CoordinateMatrix(0, 0);
 }
 
 // ----------------------------------------------------------------------

@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.4.6
+Version: 20.4.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -27,7 +27,6 @@ Requires: boost-system
 Requires: boost-regex
 Requires: gdal30-libs
 Requires: geos38
-Requires: geos >= 3.5.0
 Requires: fmt >= 5.2.0
 #TestRequires: make
 #TestRequires: gcc-c++
@@ -90,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Sun Apr 12 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.12-1.fmi
+- Moved CoordinateMatrix to smartmet-library-gis
+
 * Mon Apr  6 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.6-1.fmi
 - Moved SpatialReference and CoordinateTransformation to smartmet-library-gis
 

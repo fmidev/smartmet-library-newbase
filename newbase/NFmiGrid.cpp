@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
-#include "NFmiCoordinateMatrix.h"
+#include <gis/CoordinateMatrix.h>
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
@@ -884,7 +884,7 @@ const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
  */
 // ----------------------------------------------------------------------
 
-NFmiCoordinateMatrix NFmiGrid::CoordinateMatrix() const
+Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix() const
 {
   return itsArea->CoordinateMatrix(XNumber(), YNumber());
 }

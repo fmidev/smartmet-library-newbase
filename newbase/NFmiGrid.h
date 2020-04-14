@@ -15,12 +15,12 @@
 #include <string>
 
 class NFmiLocation;
-class NFmiCoordinateMatrix;
 
 namespace Fmi
 {
+class CoordinateMatrix;
 class Spatialreference;
-}
+}  // namespace Fmi
 
 // NFmiLocationCache-luokka käytetään kun halutaan optimoida paikkaan liittyviä interpolaatioita.
 class NFmiLocationCache
@@ -148,7 +148,7 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
 
   NFmiPoint WorldXY() const;  // actual metric coordinate, or WGS84 for point data
   const Fmi::SpatialReference &SpatialReference() const;
-  NFmiCoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix() const;
 
   bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,
                     NFmiPoint &theTopRightLatLon,

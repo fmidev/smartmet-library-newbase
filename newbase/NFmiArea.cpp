@@ -1,11 +1,11 @@
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiAreaTools.h"
-#include "NFmiCoordinateMatrix.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
 #include <iomanip>
@@ -28,7 +28,7 @@ NFmiPoint transform(const Fmi::CoordinateTransformation &theTransformation,
 {
   double x = thePoint.X();
   double y = thePoint.Y();
-  theTransformation.Transform(x, y);
+  theTransformation.transform(x, y);
   return NFmiPoint(x, y);
 }
 
@@ -1342,7 +1342,7 @@ NFmiArea *NFmiArea::CreateFromCornerAndSize(const Fmi::SpatialReference &theSR,
     double x = theBottomLeftLatLon.X();
     double y = theBottomLeftLatLon.Y();
 
-    transformation.Transform(x, y);
+    transformation.transform(x, y);
 
     // TODO: ???????????????
     area->impl->itsWorldRect = NFmiRect(x, y + theHeight, x + theWidth, y);
@@ -1374,7 +1374,7 @@ NFmiArea *NFmiArea::CreateFromCenter(const Fmi::SpatialReference &theSR,
     double x = theCenterLatLon.X();
     double y = theCenterLatLon.Y();
 
-    transformation.Transform(x, y);
+    transformation.transform(x, y);
 
     // TODO: ORDER?!?!?!?!?!?
     area->impl->itsWorldRect =
@@ -1527,26 +1527,26 @@ NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
   return transform(transformation, theLatLon);
 }
 
-NFmiCoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny) const
+Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny) const
 {
   if (!impl->itsFlopped)
-    return NFmiCoordinateMatrix(nx,
-                                ny,
-                                impl->itsWorldRect.Left(),     // x1
-                                impl->itsWorldRect.Top(),      // y1
-                                impl->itsWorldRect.Right(),    // x2
-                                impl->itsWorldRect.Bottom());  // y2
+    return Fmi::CoordinateMatrix(nx,
+                                 ny,
+                                 impl->itsWorldRect.Left(),     // x1
+                                 impl->itsWorldRect.Top(),      // y1
+                                 impl->itsWorldRect.Right(),    // x2
+                                 impl->itsWorldRect.Bottom());  // y2
 
   // TODO: Check correctness!
-  return NFmiCoordinateMatrix(nx,
-                              ny,
-                              impl->itsWorldRect.Right(),    // x1
-                              impl->itsWorldRect.Top(),      // y1
-                              impl->itsWorldRect.Left(),     // x2
-                              impl->itsWorldRect.Bottom());  // y2
+  return Fmi::CoordinateMatrix(nx,
+                               ny,
+                               impl->itsWorldRect.Right(),    // x1
+                               impl->itsWorldRect.Top(),      // y1
+                               impl->itsWorldRect.Left(),     // x2
+                               impl->itsWorldRect.Bottom());  // y2
 }
 
-void NFmiArea::ToLatLon(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::ToLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   // Transform local xy-coordinates into world xy-coordinates (meters).
   XYToWorldXY(theMatrix);
@@ -1558,13 +1558,13 @@ void NFmiArea::ToLatLon(NFmiCoordinateMatrix &theMatrix) const
   // trouble? Or another algorithm would be better?
 }
 
-void NFmiArea::ToXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::ToXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   LatLonToWorldXY(theMatrix);
   WorldXYToXY(theMatrix);
 }
 
-void NFmiArea::XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::XYToWorldXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   const auto wleft = impl->itsWorldRect.Left();
   const auto wright = impl->itsWorldRect.Right();
@@ -1577,19 +1577,19 @@ void NFmiArea::XYToWorldXY(NFmiCoordinateMatrix &theMatrix) const
 
   // Note: We do not assume x/y are constants for rows/columns even though they most likely are
   double x;
-  for (std::size_t j = 0; j < theMatrix.Height(); j++)
-    for (std::size_t i = 0; i < theMatrix.Width(); i++)
+  for (std::size_t j = 0; j < theMatrix.height(); j++)
+    for (std::size_t i = 0; i < theMatrix.width(); i++)
     {
       if (!flopped)
-        x = wleft + (theMatrix.X(i, j) - left) / xscale;
+        x = wleft + (theMatrix.x(i, j) - left) / xscale;
       else
-        x = wright - (theMatrix.X(i, j) - left) / xscale;
-      auto y = wbottom - (theMatrix.Y(i, j) - top) / yscale;
-      theMatrix.Set(i, j, x, y);
+        x = wright - (theMatrix.y(i, j) - left) / xscale;
+      auto y = wbottom - (theMatrix.y(i, j) - top) / yscale;
+      theMatrix.set(i, j, x, y);
     }
 }
 
-void NFmiArea::WorldXYToXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::WorldXYToXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   const auto wleft = impl->itsWorldRect.Left();
   const auto wright = impl->itsWorldRect.Right();
@@ -1602,57 +1602,57 @@ void NFmiArea::WorldXYToXY(NFmiCoordinateMatrix &theMatrix) const
 
   // Note: We do not assume x/y are constants for rows/columns even though they most likely are
   double x;
-  for (std::size_t j = 0; j < theMatrix.Height(); j++)
-    for (std::size_t i = 0; i < theMatrix.Width(); i++)
+  for (std::size_t j = 0; j < theMatrix.height(); j++)
+    for (std::size_t i = 0; i < theMatrix.width(); i++)
     {
       if (!flopped)
-        x = wleft + (theMatrix.X(i, j) - left) / xscale;
+        x = wleft + (theMatrix.x(i, j) - left) / xscale;
       else
-        x = wright - (theMatrix.X(i, j) - left) / xscale;
-      auto y = wbottom - (theMatrix.Y(i, j) - top) / yscale;
-      theMatrix.Set(i, j, x, y);
+        x = wright - (theMatrix.x(i, j) - left) / xscale;
+      auto y = wbottom - (theMatrix.y(i, j) - top) / yscale;
+      theMatrix.set(i, j, x, y);
     }
 }
 
-void NFmiArea::WorldXYToLatLon(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::WorldXYToLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsToLatLonConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
-  theMatrix.Transform(*impl->itsToLatLonConverter);
+  theMatrix.transform(*impl->itsToLatLonConverter);
 }
 
-void NFmiArea::LatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::LatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsToWorldXYConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
-  theMatrix.Transform(*impl->itsToWorldXYConverter);
+  theMatrix.transform(*impl->itsToWorldXYConverter);
 }
 
-void NFmiArea::ToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::ToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   XYToWorldXY(theMatrix);
   WorldXYToNativeLatLon(theMatrix);
 }
 
-void NFmiArea::WorldXYToNativeLatLon(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsNativeToLatLonConverter)
     throw std::runtime_error("Spatial reference not set for native latlon conversions");
 
-  theMatrix.Transform(*impl->itsNativeToLatLonConverter);
+  theMatrix.transform(*impl->itsNativeToLatLonConverter);
 }
 
-void NFmiArea::NativeLatLonToWorldXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::NativeLatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsNativeToWorldXYConverter)
     throw std::runtime_error("Spatial reference not set for native latlon conversions");
 
-  theMatrix.Transform(*impl->itsNativeToWorldXYConverter);
+  theMatrix.transform(*impl->itsNativeToWorldXYConverter);
 }
 
-void NFmiArea::NativeToXY(NFmiCoordinateMatrix &theMatrix) const
+void NFmiArea::NativeToXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   NativeLatLonToWorldXY(theMatrix);
   WorldXYToXY(theMatrix);

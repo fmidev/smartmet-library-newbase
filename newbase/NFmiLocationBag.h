@@ -21,7 +21,11 @@
 
 class NFmiStation;
 class NFmiArea;
-class NFmiCoordinateMatrix;
+
+namespace Fmi
+{
+class CoordinateMatrix;
+}
 
 //! Undocumented
 class _FMI_DLL NFmiLocationBag : public NFmiSize
@@ -68,7 +72,7 @@ class _FMI_DLL NFmiLocationBag : public NFmiSize
 
   std::size_t HashValue() const;
 
-  NFmiCoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix() const;
 
  protected:
   NFmiLocationBag(NFmiLocation **theLocationBag, unsigned long theNumberOfLocations);

@@ -19,6 +19,7 @@ class _FMI_DLL NFmiPoint
 
   NFmiPoint() = default;
   NFmiPoint(double theX, double theY) : itsX(theX), itsY(theY) {}
+  NFmiPoint(const std::pair<double, double> theXY) : itsX(theXY.first), itsY(theXY.second) {}
 
   void Set(double newX, double newY)
   {
