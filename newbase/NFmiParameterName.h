@@ -1375,6 +1375,10 @@ enum FmiParameterName
   kFmiSnowAccumulation120hF10,
   kFmiSnowAccumulation120hF0,
 
+  kFmiProbabilityOfPOTLimit1 = 1447, // Probability of probability of thunder (yes you read it correctly)
+  kFmiProbabilityOfPOTLimit2,
+  kFmiProbabilityOfPOTLimit3,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
