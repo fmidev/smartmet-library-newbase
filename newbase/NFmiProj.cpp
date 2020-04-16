@@ -178,10 +178,10 @@ std::string NFmiProj::InverseProjStr() const
   // And keep only the parameters relevant to it. Note that +init is not here,
   // it is expanded to +datum and other options prior to this stage.
 
-  std::set<std::string> keepers{"proj",    "datum",    "ellps",  "towgs84", "over",
-                                "no_defs", "to_meter", "o_proj", "o_lon_p", "o_lat_p",
-                                "lon_0",   "R",        "a",      "b",       "k",
-                                "k_0",     "pm",       "f",      "axis",    "wktext"};
+  std::set<std::string> keepers{"proj",     "datum",  "ellps",   "towgs84", "over",  "no_defs",
+                                "to_meter", "o_proj", "o_lon_p", "o_lat_p", "lon_0", "lon_wrap",
+                                "R",        "a",      "b",       "k",       "k_0",   "pm",
+                                "f",        "axis",   "wktext"};
 
   std::set<std::string> ints{"R", "a", "b"};  // one meter accuracy is enough for these
 
