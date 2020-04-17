@@ -133,6 +133,15 @@ void LatLonBoundingBox(const NFmiArea& theArea,
 
 NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
+  if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
+  {
+    // Pacific view
+    auto proj = fmt::format("+proj=eqc +R={:.0f} +lon_0=180 +wktext +over +no_defs +towgs84=0,0,0",
+                            kRearth);
+    return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+  }
+
+  // Atlantic  view
   auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
@@ -201,6 +210,7 @@ NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
 
 NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
+  // TODO: Support Pacific view
   auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
