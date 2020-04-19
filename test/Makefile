@@ -24,13 +24,20 @@ DIFFICULTFLAGS = -Weffc++ -Wunreachable-code -Wredundant-decls
 CC = g++
 CFLAGS = -DUNIX -O0 -g $(FLAGS)
 
-INCLUDES = \
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
+INCLUDES += \
 	-I../newbase \
 	-I/usr/include/smartmet \
 	-I/usr/gdal30/include \
 	-I.
 
-LIBS =  ../libsmartmet-newbase.so \
+LIBS +=  ../libsmartmet-newbase.so \
 	-L/usr/gdal30/lib -lgdal \
 	-lboost_date_time \
 	-lboost_filesystem \

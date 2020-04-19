@@ -41,6 +41,13 @@ endif
 # Use this gdal package primarily, and fall back to plain "gdal" if it's not found
 gdal_version = gdal30
 
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
 ifeq ($(CXX), clang++)
 
  FLAGS = \
@@ -51,14 +58,14 @@ ifeq ($(CXX), clang++)
 	-Wno-padded \
 	-Wno-missing-prototypes
 
- INCLUDES = \
+ INCLUDES += \
 	-isystem $(includedir) \
 	-isystem $(includedir)/smartmet \
 	-isystem $(PREFIX)/gdal30/include
 
 else
 
- FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wnon-virtual-dtor -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
+ FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
 
  FLAGS_DEBUG = \
 	-Wcast-align \
@@ -68,14 +75,13 @@ else
 	-Woverloaded-virtual  \
 	-Wpointer-arith \
 	-Wcast-qual \
-	-Wredundant-decls \
 	-Wwrite-strings \
 	-Wsign-promo \
 	-Wno-inline
 
  FLAGS_RELEASE = -Wuninitialized
 
- INCLUDES = \
+ INCLUDES += \
 	-I$(includedir) \
 	-I$(includedir)/smartmet \
 	-I$(PREFIX)/gdal30/include
@@ -105,7 +111,7 @@ CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
-LIBS = -L$(libdir) \
+LIBS += -L$(libdir) \
 	-lsmartmet-gis \
 	-lfmt \
 	-lboost_regex \
