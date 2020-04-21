@@ -601,15 +601,15 @@ void NFmiRawData::Pimple::Backup(char *ptr) const
 {
   if (itsData)
   {
-  ReadLock lock(itsMutex);
+    ReadLock lock(itsMutex);
 
 // we assume data which is backed up is edited, so might as well unmap
 #if NFMIRAWDATA_ENABLE_UNDO_REDO
-  Unmap();
+    Unmap();
 #endif
 
-  auto *src = reinterpret_cast<char *>(itsData);
-  memcpy(ptr, src, itsSize * sizeof(float));
+    auto *src = reinterpret_cast<char *>(itsData);
+    memcpy(ptr, src, itsSize * sizeof(float));
   }
 }
 
@@ -623,16 +623,16 @@ void NFmiRawData::Pimple::Undo(char *ptr)
 {
   if (itsData)
   {
-  WriteLock lock(itsMutex);
+    WriteLock lock(itsMutex);
 
-  // This may be slower than necessary when mmapped, but since Backup
-  // unmaps this really should never actually unmap
+    // This may be slower than necessary when mmapped, but since Backup
+    // unmaps this really should never actually unmap
 
 #if NFMIRAWDATA_ENABLE_UNDO_REDO
-  Unmap();
+    Unmap();
 #endif
-  auto *src = reinterpret_cast<char *>(itsData);
-  memcpy(src, ptr, itsSize * sizeof(float));
+    auto *src = reinterpret_cast<char *>(itsData);
+    memcpy(src, ptr, itsSize * sizeof(float));
   }
 }
 

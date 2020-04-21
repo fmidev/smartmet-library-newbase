@@ -231,8 +231,7 @@ void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& 
   fUseHelperBinaryMasks = theSSInfo.fUseHelperBinaryMasks;
   itsXYMaskBoundingBox = theSSInfo.itsXYMaskBoundingBox;
 
-  const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList =
-      theSSInfo.itsHelperBinaryMaskList;
+  const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList = theSSInfo.itsHelperBinaryMaskList;
   size_t size = helperBinaryMaskList.size();
   itsHelperBinaryMaskList.resize(size);
 

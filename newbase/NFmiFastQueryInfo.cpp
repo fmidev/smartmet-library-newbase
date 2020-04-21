@@ -1256,10 +1256,10 @@ static bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long thePar
     unsigned long oldTimeIndex = theInfo->TimeIndex();
     unsigned long oldLocationIndex = theInfo->LocationIndex();
     std::vector<unsigned long> timeIndexies(FillTimeIndexies(theInfo));  // jos ei heti tärppää
-                                                                           // (on puuttuvaa dataa
-                                                                           // joissain ajoissa),
-                                                                           // pitää käydä ehkä
-                                                                           // useampia aikoja läpi
+                                                                         // (on puuttuvaa dataa
+                                                                         // joissain ajoissa),
+                                                                         // pitää käydä ehkä
+                                                                         // useampia aikoja läpi
     std::vector<unsigned long> locIndexies(
         FillLocationIndexies(theInfo));  // jos ei heti tärppää (on puuttuvaa dataa joissain
     // pisteissä), pitää käydä ehkä useampia paikkoja läpi
@@ -4749,11 +4749,10 @@ void NFmiFastQueryInfo::FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
 // ker dataa matriisiin
 // Reittipoikkileikkaus eli on alku ja loppu paikat ja ajat. Jokaista paikkaa vastaa oma aika.
 // aikoja ja paikkoja pit olla yht paljon.
-void NFmiFastQueryInfo::RouteCrossSectionValuesHybrid(
-    NFmiDataMatrix<float> &theValues,
-    const std::vector<NFmiLevel> &theLevels,
-    const std::vector<NFmiPoint> &theLatlonPoints,
-    const std::vector<NFmiMetTime> &thePointTimes)
+void NFmiFastQueryInfo::RouteCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
+                                                      const std::vector<NFmiLevel> &theLevels,
+                                                      const std::vector<NFmiPoint> &theLatlonPoints,
+                                                      const std::vector<NFmiMetTime> &thePointTimes)
 {
   // Ker data halutulle parametrille (paikka+aika intepolointeineen)
   theValues =
