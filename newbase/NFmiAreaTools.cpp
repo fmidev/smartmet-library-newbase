@@ -210,7 +210,15 @@ NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
 
 NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
-  // TODO: Support Pacific view
+  if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
+  {
+    // Pacific view
+    auto proj = fmt::format(
+        "+proj=merc +R={:.0f} +lon_0=180 +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+    return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
+  }
+
+  // Atlantic view
   auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
