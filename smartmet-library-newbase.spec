@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.4.18
+Version: 20.4.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -15,7 +15,6 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: geos38-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
 BuildRequires: smartmet-library-gis
@@ -26,7 +25,6 @@ Requires: boost169-iostreams
 Requires: boost169-system
 Requires: boost169-regex
 Requires: gdal30-libs
-Requires: geos38
 Requires: fmt >= 5.2.0
 #TestRequires: make
 #TestRequires: gcc-c++
@@ -89,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Apr 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.20-1.fmi
+- GIS-library ABI changed
+
 * Sat Apr 18 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.18-1.fmi
 - Upgrade to Boost 1.69
 

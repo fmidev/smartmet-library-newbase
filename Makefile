@@ -38,14 +38,20 @@ ifeq ($(DISABLED_GDAL),yes)
   DEFINES += -DDISABLED_GDAL
 endif
 
-# Use this gdal package primarily, and fall back to plain "gdal" if it's not found
-gdal_version = gdal30
-
 # Boost 1.69
 
 ifneq "$(wildcard /usr/include/boost169)" ""
   INCLUDES += -I/usr/include/boost169
   LIBS += -L/usr/lib64/boost169
+endif
+
+ifneq ($(DISABLED_GDAL),yes)
+ifneq "$(wildcard /usr/gdal30/include)" ""
+  INCLUDES += -I/usr/gdal30/include
+  LIBS += -L$(PREFIX)/gdal30/lib
+else
+  INCLUDES += -I/usr/include/gdal
+endif
 endif
 
 ifeq ($(CXX), clang++)
@@ -83,17 +89,8 @@ else
 
  INCLUDES += \
 	-I$(includedir) \
-	-I$(includedir)/smartmet \
-	-I$(PREFIX)/gdal30/include
+	-I$(includedir)/smartmet
 
-endif
-
-ifneq ($(DISABLED_GDAL),yes)
-ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
-  INCLUDES += -I$(PREFIX)/$(gdal_version)/include
-else
-  INCLUDES += -I$(PREFIX)/include/gdal
-endif
 endif
 
 ifeq ($(TSAN), yes)
@@ -121,11 +118,7 @@ LIBS += -L$(libdir) \
 	-lboost_thread
 
 ifneq ($(DISABLED_GDAL),yes)
-  ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
-    LIBS += -L$(PREFIX)/$(gdal_version)/lib `pkg-config --libs $(gdal_version)`
-  else
-    LIBS += -lgdal
-  endif
+  LIBS += -lgdal
 endif
 
 # What to install

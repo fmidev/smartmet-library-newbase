@@ -598,7 +598,7 @@ void set_grid(NFmiArea &theArea, const Grid &theGrid, const Bounds &theBounds)
     double w = theArea.WorldXYWidth();
     double h = theArea.WorldXYHeight();
 
-    if (theArea.SpatialReference().get()->IsGeographic())
+    if (theArea.SpatialReference().isGeographic())
     {
       // Haven't figured out how to calculate this. Use "eqc" projection instead.
       throw std::runtime_error("Cropping metric areas from geographic data is not supported");

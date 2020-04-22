@@ -31,14 +31,20 @@ ifneq "$(wildcard /usr/include/boost169)" ""
   LIBS += -L/usr/lib64/boost169
 endif
 
+ifneq "$(wildcard /usr/gdal30/include)" ""
+  INCLUDES += -I/usr/gdal30/include
+  LIBS += -L/usr/gdal30/lib
+else
+  INCLUDES += -I/usr/include/gdal
+endif
+
 INCLUDES += \
 	-I../newbase \
 	-I/usr/include/smartmet \
-	-I/usr/gdal30/include \
 	-I.
 
 LIBS +=  ../libsmartmet-newbase.so \
-	-L/usr/gdal30/lib -lgdal \
+	-lgdal \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
@@ -57,7 +63,7 @@ test: $(PROG)
 	  ( ./$$prog || touch $$prog.err ) ; \
 	done
 	@test `find . -name \*.err | wc -l` = "0" || ( echo ; echo "The following tests have errors:" ; \
-		for i in *.err ; do echo `basename $$i .err`; done ; rm -f *.err ; false ) 
+		for i in *.err ; do echo `basename $$i .err`; done ; rm -f *.err ; false )
 
 $(PROG) : % : %.cpp ../libsmartmet-newbase.so
 	$(CC) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
