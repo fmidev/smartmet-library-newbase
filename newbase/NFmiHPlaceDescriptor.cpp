@@ -13,7 +13,6 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
-#include <gis/CoordinateMatrix.h>
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
@@ -21,6 +20,7 @@
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
+#include <gis/CoordinateMatrix.h>
 
 using namespace std;
 
@@ -294,11 +294,55 @@ const Fmi::SpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
  */
 // ----------------------------------------------------------------------
 
-Fmi::CoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix() const
+Fmi::CoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix(bool wrapped) const
 {
-  if (itsGrid) return itsGrid->CoordinateMatrix();
+  if (itsGrid) return itsGrid->CoordinateMatrix(wrapped && NeedsGlobeWrap());
   if (itsLocationBag) return itsLocationBag->CoordinateMatrix();
   return Fmi::CoordinateMatrix(0, 0);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test whether the data is geographic and global apart from needing a wrap around
+ *
+ * Note: It would be perfectly possible to distribute a metric global forecast say
+ *       with +proj=eqc, but detecting whether such data is global is a more difficult
+ *       problem. Without any such sample data to test with we simply ignore the possibility.
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiHPlaceDescriptor::NeedsGlobeWrap() const
+{
+  if (!IsGrid()) return false;
+
+  if (!SpatialReference().isGeographic()) return false;
+
+  const NFmiArea *area = Area();
+  const NFmiGrid *grid = Grid();
+
+  const auto x1 = area->BottomLeftLatLon().X();
+  const auto x2 = area->TopRightLatLon().X();
+
+  const auto nx = grid->XNumber();
+
+  if (x1 == kFloatMissing || x2 == kFloatMissing) return false;
+
+  /*
+   * GFS example:
+   * bottom left lonlat= 0,-90
+   * top right lonlat= 359.75,90
+   * xnumber= 1440
+   *
+   * ==> (x1-x1)*1441/1440 = 360  ==> we need to generate an extra cell by wrapping around
+   */
+
+  auto dx = x2 - x1;  // PROJ.4 may return -0.25 instead of 359.75
+  if (dx < 0) dx += 360;
+
+  auto test_width = dx * (nx + 1) / nx;
+
+  // In the GFS case the rounding error is about 1e-4
+  return (std::abs(test_width - 360) < 1e-3);
 }
 
 // ----------------------------------------------------------------------

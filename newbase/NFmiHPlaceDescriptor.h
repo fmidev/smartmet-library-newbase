@@ -69,7 +69,8 @@ class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
   const Fmi::SpatialReference &SpatialReference() const;
-  Fmi::CoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped) const;
+  bool NeedsGlobeWrap() const;
 
   NFmiPoint LatLon() const;
   NFmiPoint LatLon(unsigned long theIndex) const;

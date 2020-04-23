@@ -1527,23 +1527,22 @@ NFmiPoint NFmiArea::WGS84ToSphere(const NFmiPoint &theLatLon)
   return transform(transformation, theLatLon);
 }
 
-Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny) const
+Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const
 {
-  if (!impl->itsFlopped)
-    return Fmi::CoordinateMatrix(nx,
-                                 ny,
-                                 impl->itsWorldRect.Left(),     // x1
-                                 impl->itsWorldRect.Top(),      // y1
-                                 impl->itsWorldRect.Right(),    // x2
-                                 impl->itsWorldRect.Bottom());  // y2
+  auto x1 = impl->itsWorldRect.Left();
+  auto x2 = impl->itsWorldRect.Right();
+  const auto y1 = impl->itsWorldRect.Top();
+  const auto y2 = impl->itsWorldRect.Bottom();
 
-  // TODO: Check correctness!
-  return Fmi::CoordinateMatrix(nx,
-                               ny,
-                               impl->itsWorldRect.Right(),    // x1
-                               impl->itsWorldRect.Top(),      // y1
-                               impl->itsWorldRect.Left(),     // x2
-                               impl->itsWorldRect.Bottom());  // y2
+  if (impl->itsFlopped) std::swap(x1, x2);
+
+  if (!wrap) return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
+
+  // Add one more column to the right since wrapping is requested. We assume an earlier phase
+  // has already checked the data is geographic and global apart from one column.
+
+  const auto dx = (x2 - x1) / (nx - 1);
+  return Fmi::CoordinateMatrix(nx + 1, ny, x1, y1, x2 + dx, y2);
 }
 
 void NFmiArea::ToLatLon(Fmi::CoordinateMatrix &theMatrix) const

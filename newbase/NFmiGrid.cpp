@@ -13,11 +13,11 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
-#include <gis/CoordinateMatrix.h>
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
+#include <gis/CoordinateMatrix.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -884,7 +884,7 @@ const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
  */
 // ----------------------------------------------------------------------
 
-Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix() const
+Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
 {
-  return itsArea->CoordinateMatrix(XNumber(), YNumber());
+  return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
 }

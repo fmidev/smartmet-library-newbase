@@ -89,6 +89,7 @@ FMI newbase static library
 %changelog
 * Thu Apr 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.23-1.fmi
 - Added NFmiFastQueryInfo::NeedsGlobeWrap
+- CoordinateMatrix can now be requested with globe wrap included (an extra coordinate column at the right)
 
 * Wed Apr 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.20-1.fmi
 - GIS-library ABI changed

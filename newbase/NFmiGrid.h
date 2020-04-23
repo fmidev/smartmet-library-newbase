@@ -148,7 +148,7 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
 
   NFmiPoint WorldXY() const;  // actual metric coordinate, or WGS84 for point data
   const Fmi::SpatialReference &SpatialReference() const;
-  Fmi::CoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrap) const;
 
   bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,
                     NFmiPoint &theTopRightLatLon,

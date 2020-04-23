@@ -123,7 +123,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
 
   const Fmi::SpatialReference &SpatialReference() const;
-  Fmi::CoordinateMatrix CoordinateMatrix() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped = false) const;
   bool NeedsGlobeWrap() const;
 
   NFmiDataIdent &Param() const;
