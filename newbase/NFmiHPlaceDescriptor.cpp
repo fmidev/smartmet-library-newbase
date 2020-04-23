@@ -303,19 +303,13 @@ Fmi::CoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix(bool wrapped) const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Test whether the data is geographic and global apart from needing a wrap around
- *
- * Note: It would be perfectly possible to distribute a metric global forecast say
- *       with +proj=eqc, but detecting whether such data is global is a more difficult
- *       problem. Without any such sample data to test with we simply ignore the possibility.
+ * \brief Test whether the data is global apart from needing a wrap around
  */
 // ----------------------------------------------------------------------
 
 bool NFmiHPlaceDescriptor::NeedsGlobeWrap() const
 {
   if (!IsGrid()) return false;
-
-  if (!SpatialReference().isGeographic()) return false;
 
   const NFmiArea *area = Area();
   const NFmiGrid *grid = Grid();
@@ -336,8 +330,8 @@ bool NFmiHPlaceDescriptor::NeedsGlobeWrap() const
    * ==> (x1-x1)*1441/1440 = 360  ==> we need to generate an extra cell by wrapping around
    */
 
-  auto dx = x2 - x1;  // PROJ.4 may return -0.25 instead of 359.75
-  if (dx < 0) dx += 360;
+  auto dx = x2 - x1;
+  if (dx < 0) dx += 360;  // PROJ.4 may return -0.25 instead of 359.75 for x2
 
   auto test_width = dx * (nx + 1) / nx;
 
