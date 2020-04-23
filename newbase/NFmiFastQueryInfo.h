@@ -124,6 +124,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 
   const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix() const;
+  bool NeedsGlobeWrap() const;
 
   NFmiDataIdent &Param() const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
