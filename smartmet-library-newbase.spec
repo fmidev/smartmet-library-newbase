@@ -38,6 +38,7 @@ Requires: fmt >= 5.2.0
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
 #TestRequires: gdal-devel
+#TestRequires: gdal-libs
 #TestRequires: bzip2-devel
 #TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
