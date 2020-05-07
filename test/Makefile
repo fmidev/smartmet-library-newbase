@@ -44,7 +44,7 @@ LIBS +=  ../libsmartmet-newbase.so \
 	-lboost_thread \
 	-lboost_system \
 	-lgdal \
-	/usr/pgsql-9.5/lib/libpq.so \
+	/usr/pgsql-9.5/lib/libpq.so.5 \
 	-lpthread -lz -lbz2 -lrt
 
 all: $(PROG)
