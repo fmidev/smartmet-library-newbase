@@ -16,8 +16,9 @@ target_include_directories(
     ${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/newbase
     PUBLIC ${BOOST_INCLUDE_DIR} 
-    PUBLIC ${fmt_SOURCE_DIR}
+    PUBLIC ${FMT_INCLUDE_DIR}
     PUBLIC ${GDAL_INCLUDE_DIR} 
+    PUBLIC ${Gis_INCLUDE_DIRS}
     )
 
 set(
@@ -25,8 +26,9 @@ set(
     ${PROJECT_SOURCE_DIR}/newbase
     ${PROJECT_SOURCE_DIR}
     ${BOOST_INCLUDE_DIR} 
-    ${fmt_SOURCE_DIR}
+    ${FMT_INCLUDE_DIR}
     ${GDAL_INCLUDE_DIR} 
+    ${Gis_INCLUDE_DIRS}
     CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE
     )
 
