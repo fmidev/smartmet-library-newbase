@@ -1183,7 +1183,7 @@ void NFmiTimeDescriptor::SetLocalTimes(const float theLongitude)
  */
 // ----------------------------------------------------------------------
 NFmiTimeDescriptor NFmiTimeDescriptor::GetIntersection(const NFmiMetTime &theStartLimit,
-                                                       const NFmiMetTime &theEndLimit)
+                                                       const NFmiMetTime &theEndLimit) const
 {
   NFmiTimeDescriptor timedesc(*this);
   if (itsTimeBagIdent)
