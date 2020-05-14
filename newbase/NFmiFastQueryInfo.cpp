@@ -1890,11 +1890,11 @@ Fmi::CoordinateMatrix NFmiFastQueryInfo::LocationsXY(const NFmiArea &theArea) co
 
   auto coords = LocationsWorldXY(theArea);
 
-  int nx = coords.width();
-  int ny = coords.height();
+  auto nx = coords.width();
+  auto ny = coords.height();
 
-  for (int j = 0; j < ny; j++)
-    for (int i = 0; i < nx; i++)
+  for (auto j = 0ull; j < ny; j++)
+    for (auto i = 0ull; i < nx; i++)
     {
       coords.set(i, j, theArea.WorldXYToXY(coords(i, j)));
     }
@@ -3361,7 +3361,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
               CalcLogInterpolatedWindWectorValue(pressureValue, lastPressure, P, value1, value2));
         else if (param == kFmiWindDirection || param == kFmiWaveDirection)
         {
-          float factor = 1. - (::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue));
+          float factor = 1.f - (::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue));
           value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
         }
         else
@@ -4799,8 +4799,8 @@ void NFmiFastQueryInfo::DoWindComponentFix(const NFmiGrid &usedGrid,
     double azimuth2 = usedGrid.Area()->TrueNorthAzimuth(usedGrid.LatLon()).ToRad();
     double da = azimuth2 - azimuth1;
 
-    float uu = u * cos(da) + v * sin(da);
-    float vv = v * cos(da) - u * sin(da);
+    float uu = static_cast<float>(u * cos(da) + v * sin(da));
+    float vv = static_cast<float>(v * cos(da) - u * sin(da));
 
     value = (id == kFmiWindUMS ? uu : vv);
   }
@@ -5432,8 +5432,8 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValue(float theHeight,
 
   // Coefficients for bilinear interpolation at the desired height
 
-  float wx = xy.X() - std::floor(xy.X());
-  float wy = xy.Y() - std::floor(xy.Y());
+  float wx = static_cast<float>(xy.X() - std::floor(xy.X()));
+  float wy = static_cast<float>(xy.Y() - std::floor(xy.Y()));
 
   float wbl = (1 - wx) * (1 - wy);
   float wbr = wx * (1 - wy);
@@ -5455,7 +5455,7 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValue(float theHeight,
         landtr != kFloatMissing)
     {
       // Minimum weight for any value selected by Mikko Rauhala
-      const float wlimit = 0.3;
+      const float wlimit = 0.3f;
 
       // Handle land areas
       if (!theWaterFlag)
@@ -5553,11 +5553,11 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValueDewPoint(float theHeight,
   // Note table 1 in the reference shows how big the errors using
   // the linear approximations are, so we do not use it.
 
-  const float Rw = 641.5;   // gas constant of water vapor
-  const float L = 2.501e6;  // specific latent heat of evaporation of water
+  const float Rw = 641.5f;   // gas constant of water vapor
+  const float L = 2.501e6f;  // specific latent heat of evaporation of water
 
-  t2m += 273.15;  // convert to Kelvins
-  return t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15;
+  t2m += 273.15f;  // convert to Kelvins
+  return t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15f;
 }
 
 // ----------------------------------------------------------------------
@@ -5627,7 +5627,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
 
       if ((t2m != kFloatMissing) && (rh != kFloatMissing))
       {
-        t2m += 273.15;
+        t2m += 273.15f;
         values[i][j] = t2m / (1 - t2m * log(rh / 100) * Rw / L) - 273.15f;
       }
       else if (cropNativeGrid)
@@ -5688,8 +5688,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
       // Get the values from which to interpolate. Don't correct if any value is unavailable/missing
       //
       const auto xy = gridPointMatrix(i, j);
-      int dx = floor(xy.first);
-      int dy = floor(xy.second);
+      int dx = static_cast<int>(floor(xy.first));
+      int dy = static_cast<int>(floor(xy.second));
 
       if (!((dx >= 0) && ((dx + 1) < (int)nx) && (dy >= 0) && ((dy + 1) < (int)ny)))
       {
@@ -5712,8 +5712,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
           (bottomright == kFloatMissing) || (topleft == kFloatMissing) ||
           (topright == kFloatMissing))
       {
-        values[i][j] = NFmiInterpolation::BiLinear(
-            xy.first - dx, xy.second - dy, topleft, topright, bottomleft, bottomright);
+        values[i][j] = static_cast<float>(NFmiInterpolation::BiLinear(
+            xy.first - dx, xy.second - dy, topleft, topright, bottomleft, bottomright));
         continue;
       }
 
@@ -5764,8 +5764,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
 
       // Coefficients for bilinear interpolation at the desired height
 
-      float wx = xy.first - floor(xy.first);
-      float wy = xy.second - floor(xy.second);
+      float wx = static_cast<float>(xy.first - floor(xy.first));
+      float wy = static_cast<float>(xy.second - floor(xy.second));
 
       float wbl = (1 - wx) * (1 - wy);
       float wbr = wx * (1 - wy);
@@ -5788,7 +5788,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
         {
           // Minimum weight for any value selected by Mikko Rauhala
 
-          const float wlimit = 0.3;
+          const float wlimit = 0.3f;
 
           // Handle land areas
 
@@ -6045,8 +6045,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
   }
   else
   {
-    nx = theLocationCache.NX();
-    ny = theLocationCache.NY();
+    nx = static_cast<int>(theLocationCache.NX());
+    ny = static_cast<int>(theLocationCache.NY());
 
     if (((int)theDEMMatrix.NX() != nx) || (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
         ((int)theDEMMatrix.NY() != ny) || (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
@@ -6063,12 +6063,12 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
       for (int j = 0; j < ny; j++)
         if (theLocationCache[i][j].itsLocationIndex != static_cast<unsigned long>(-1))
         {
-          int x = floor(theLocationCache[i][j].itsGridPoint.X());
+          int x = static_cast<int>(floor(theLocationCache[i][j].itsGridPoint.X()));
           if (x < x1) x1 = x;
           x++;
           if (x > x2) x2 = x;
 
-          int y = floor(theLocationCache[i][j].itsGridPoint.Y());
+          int y = static_cast<int>(floor(theLocationCache[i][j].itsGridPoint.Y()));
           if (y < y1) y1 = y;
           y++;
           if (y > y2) y2 = y;
@@ -6340,8 +6340,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
         "NFmiFastQueryInfo::LandscapeCachedInterpolation: Can only be used for temperature or "
         "dewpoint");
 
-  int nx = theLocationCache.NX();
-  int ny = theLocationCache.NY();
+  int nx = static_cast<int>(theLocationCache.NX());
+  int ny = static_cast<int>(theLocationCache.NY());
 
   if (((int)theDEMMatrix.NX() != nx) || (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
       ((int)theDEMMatrix.NY() != ny) || (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
@@ -6395,8 +6395,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
 
   TimeIndex(oldTimeIndex);
 
-  int nx = theLocationCache.NX();
-  int ny = theLocationCache.NY();
+  int nx = static_cast<int>(theLocationCache.NX());
+  int ny = static_cast<int>(theLocationCache.NY());
 
   NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 

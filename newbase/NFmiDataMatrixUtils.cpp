@@ -97,7 +97,7 @@ void PrettyPrint(std::ostream& s,
   }
   else
   {  // tulostus käänteisessä rivi-järjestyksessä
-    for (long j = rows - 1; j >= 0; j--)
+    for (auto j = static_cast<long>(rows - 1); j >= 0; j--)
     {
       if (printIndexAxies) s << j << "\t";
       for (sz_type i = 0; i < columns; i++)
