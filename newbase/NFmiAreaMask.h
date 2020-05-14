@@ -21,38 +21,8 @@ class NFmiLevel;
 class NFmiParam;
 class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
-
-class NFmiCalculationParams
-{
- public:
-  NFmiCalculationParams()
-      : itsLatlon(),
-        itsLocationIndex(gMissingIndex),
-        itsTime(),
-        itsTimeIndex(gMissingIndex),
-        fCrossSectionCase(false)
-  {
-  }
-
-  NFmiCalculationParams(const NFmiPoint &theLatlon,
-                        unsigned long theLocationIndex,
-                        const NFmiMetTime &theTime,
-                        unsigned long theTimeIndex,
-                        bool crossSectionCase = false)
-      : itsLatlon(theLatlon),
-        itsLocationIndex(theLocationIndex),
-        itsTime(theTime),
-        itsTimeIndex(theTimeIndex),
-        fCrossSectionCase(crossSectionCase)
-  {
-  }
-
-  NFmiPoint itsLatlon;
-  unsigned long itsLocationIndex;
-  NFmiMetTime itsTime;
-  unsigned long itsTimeIndex;
-  bool fCrossSectionCase;  // Joskus pitää tietää että kyse on poikkileikkaus laskuista
-};
+class NFmiCalculationParams;
+class NFmiMacroParamValue;
 
 //! Undocumented class
 class _FMI_DLL NFmiAreaMask
@@ -244,8 +214,11 @@ class _FMI_DLL NFmiAreaMask
                     //!< ne ovat tarpeeksi 'merkittäviä'
     SymbolTooltipFile,  //!< Tällä määritetään mahdollinen tiedosto, josta haetaan tooltippiä varten
                         //!< aputekstejä eri symboleille
-    MacroParamDescription  //!< Jos tooltippiin halutaan tälle macroParmille yleisselite, se
+    MacroParamDescription,  //!< Jos tooltippiin halutaan tälle macroParmille yleisselite, se
                            //!< annetaan tällä
+    CalculationType,  //!< Tällä voi määritellä että onko joku laskenta esim. indeksi tyyppinen vai
+                      //!< normi reaaliluku
+    PeekZ  //!< 'Kurkistetaan' arvo vertikaali suunnassa halutussa yksikössä (hPa/m/FL/hybrid-level)
   };
 
   //! Function direction, e.g. with 'met'-functions x- and/or y-direction

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
+#include "NFmiAreaMaskHelperStructures.h"
 #include "NFmiCalculationCondition.h"
 #include "NFmiInfoData.h"
 
