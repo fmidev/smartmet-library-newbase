@@ -630,7 +630,15 @@ NFmiDataIdent *NFmiTotalWind::CreateParam(const NFmiProducer &theProducer,
   param = NFmiParam(kFmiWindDirection, "Wind dir", 0, 360, 1, 0, "%.1f", kLinearly);
   subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
   param = NFmiParam(
+// For now Windows and Linux versions work differently:
+// Originally "Wind vector" parameter had nearest interpolation.
+// Windows version wants the wind-vector parameter to be linearly interpolated (better visualizations).
+// Linux version wants it to be nearest because there might be possible problems if changed.
+#ifdef WIN32
+      kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kLinearly);
+#else
       kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kNearestPoint);
+#endif
   subParamBag.Add(NFmiDataIdent(param, theProducer, kNumberParam));
 
   param =
