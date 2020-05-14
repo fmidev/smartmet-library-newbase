@@ -312,6 +312,16 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   float FastPressureLevelValue(double xInd, double yInd, double tInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd);
+  static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+                                                         const std::vector<NFmiPoint> &thePoints,
+                                                         const NFmiMetTime &theTime);
+  static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+                                                             const NFmiPoint &thePoint,
+                                                             NFmiTimeBag &theTimes);
+  static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
+      NFmiFastQueryInfo &theInfo,
+      const std::vector<NFmiPoint> &theLatlonPoints,
+      const std::vector<NFmiMetTime> &thePointTimes);
 
   NFmiDataMatrix<float> CrossSectionValues(const NFmiMetTime &theInterpolatedTime,
                                            const std::vector<float> &theHeights,

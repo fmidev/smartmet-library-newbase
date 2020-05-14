@@ -3884,7 +3884,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
 
 // Täyttää annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data täytetään joka leveliltä.
-static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
                                                        const std::vector<NFmiPoint> &thePoints,
                                                        const NFmiMetTime &theTime)
 {
@@ -4138,7 +4138,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CrossSectionValuesHybrid(
 
 // Täyttää annetun matriisin halutun pisteen ja parametrin aika-poikkileikkaus datalla.
 // Matriisi on poikkileikkaus timebagin kokoinen ja data täytetään joka leveliltä.
-static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+NFmiDataMatrix<float> NFmiFastQueryInfo::CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
                                                            const NFmiPoint &thePoint,
                                                            NFmiTimeBag &theTimes)
 {
@@ -4340,7 +4340,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValuesHybrid(
 
 // Täyttää annetun matriisin reitti poikkileikkaus datalla.
 // data täytetään joka leveliltä.
-static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
+NFmiDataMatrix<float> NFmiFastQueryInfo::CalcRouteCrossSectionLeveldata(
     NFmiFastQueryInfo &theInfo,
     const std::vector<NFmiPoint> &theLatlonPoints,
     const std::vector<NFmiMetTime> &thePointTimes)
