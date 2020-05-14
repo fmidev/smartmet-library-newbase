@@ -10,7 +10,6 @@
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiDataIdent.h"
 #include "NFmiFastInfoUtils.h"
-#include "NFmiFastQueryInfo.h"
 #include "NFmiGrid.h"  // täältä tulee NFmiTimeCache-luokka (tiedän, pitäisi jakaa newbase:a osiin)
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
@@ -81,6 +80,8 @@ class _FMI_DLL NFmiInfoAreaMask : public NFmiAreaMaskImpl
   // tätä kaytetaan smarttool-modifierin yhteydessä
   double Value(const NFmiCalculationParams &theCalculationParams,
                bool fUseTimeInterpolationAlways) override;
+  double ValueFinal(const NFmiCalculationParams &theCalculationParams,
+                    bool fUseTimeInterpolationAlways);
   double HeightValue(double theHeight, const NFmiCalculationParams &theCalculationParams) override;
   double PressureValue(double thePressure,
                        const NFmiCalculationParams &theCalculationParams) override;
@@ -175,6 +176,7 @@ class _FMI_DLL NFmiInfoAreaMask : public NFmiAreaMaskImpl
   // jos fUsePressureLevelInterpolation on true, käytetään laskuissa tätä painepintaa
   double itsUsedPressureLevelValue;
   MetaParamDataHolder metaParamDataHolder;
+  bool fIsModelClimatologyData = false;
 
   template <typename GetFunction>
   float CalcMetaParamValueWithFunction(GetFunction getFunction)
@@ -620,6 +622,7 @@ class _FMI_DLL NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
   float DoGetFunction(const NFmiLocationCache &theLocationCache,
                       const NFmiCalculationParams &theCalculationParams,
                       float theLevelValue);
+  float DoPeekZFunction(const NFmiCalculationParams &theCalculationParams, float theDeltaZ);
   float DoVerticalGrad(const NFmiLocationCache &theLocationCache,
                        const NFmiCalculationParams &theCalculationParams);
   float DoFindFunction(const NFmiLocationCache &theLocationCache,
@@ -632,6 +635,7 @@ class _FMI_DLL NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
   float GetLevelHeightValue(const NFmiLocationCache &theLocationCache);
   float DoNormalFunction(const NFmiLocationCache &theLocationCache,
                          const NFmiCalculationParams &theCalculationParams);
+  float CalculateUsedPeekZPressureLevel(float currentPressureLevel, float usedDeltaZ);
 
   // Vertikaali levelien läpikäynti oikeassa järjestyksessä. Tehty template funktioksi
   // jotta sitä voidaan käyttää erilaisten lambda funktioiden avulla eri paikoissa.
