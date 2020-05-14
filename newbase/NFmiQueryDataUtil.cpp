@@ -4303,19 +4303,19 @@ static void ReadQueryDataFiles(boost::shared_ptr<NFmiQueryData> theBaseQData,
   }
 }
 
-static void MakeFastInfos(std::vector<boost::shared_ptr<NFmiQueryData> > &theQDataVectorIn,
-                          std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorOut)
+static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
+    std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector)
 {
-  for (auto &i : theQDataVectorIn)
+  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfos;
+  for (auto &i : theQDataVector)
   {
     auto *fInfo = new NFmiFastQueryInfo(i.get());
-    if (fInfo) theFInfoVectorOut.emplace_back(fInfo);
+    if (fInfo) fastInfos.emplace_back(fInfo);
   }
-  if (fDoRebuild == false && theBaseQData)
-        boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theBaseQData.get())));
+  return fastInfos;
 }
 
-std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
+static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
     std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
     boost::shared_ptr<NFmiQueryData> &theBaseQData,
     bool fDoRebuild)
@@ -4334,7 +4334,7 @@ std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
 // järjestykseen (uusimmat ensin) ja leikkaa tarvittaessa listan koon haluttuun määrään
 // theMaxTimeStepsInData-parametrin mukaan. Jos se on <= 0, tällöin otetaan kaiiki ajat mukaan.
 static std::vector<NFmiMetTime> MakeValidTimesList(
-    std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theFInfoVectorIn, int theMaxTimeStepsInData)
+    std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector, int theMaxTimeStepsInData)
 {
   std::set<NFmiMetTime> uniqueValidTimes;
   for (auto &infoPtr : theFastInfoVector)
