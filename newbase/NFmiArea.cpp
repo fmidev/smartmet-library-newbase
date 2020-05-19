@@ -384,7 +384,8 @@ const std::string &NFmiArea::ClassName() const { return impl->itsClassName; }
 
 bool NFmiArea::operator==(const NFmiArea &theArea) const
 {
-  return impl->itsWorldRect == theArea.impl->itsWorldRect;
+  return SpatialReference().get()->IsSame(theArea.SpatialReference().get())
+             && impl->itsWorldRect == theArea.impl->itsWorldRect;
 }
 
 // ----------------------------------------------------------------------
@@ -398,7 +399,7 @@ bool NFmiArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiArea::operator!=(const NFmiArea &theArea) const
 {
-  return impl->itsWorldRect != theArea.impl->itsWorldRect;
+  return !(*this == theArea);
 }
 
 // ----------------------------------------------------------------------
@@ -557,7 +558,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
       if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
 
-      int oldPrec = file.precision();
+      auto oldPrec = file.precision();
       file.precision(15);
       file << impl->itsWorldRect << ' ';
       file.precision(oldPrec);
@@ -578,7 +579,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
       if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
 
-      int oldPrec = file.precision();
+      auto oldPrec = file.precision();
       file.precision(15);
       file << impl->itsWorldRect << ' ';
       file.precision(oldPrec);
@@ -598,7 +599,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << ' '
            << *clat << ' ' << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
 
-      int oldPrec = file.precision();
+      auto oldPrec = file.precision();
       file.precision(15);
       file << impl->itsWorldRect << ' ';
       file.precision(oldPrec);
@@ -1416,6 +1417,25 @@ std::string NFmiArea::ProjStr() const
   std::string ret = out;
   CPLFree(out);
   return ret;
+}
+
+std::string NFmiArea::AreaFactoryStr() const
+{
+  // Newbase with wgs84 support doesn't support old style area strings anymore,
+  // we build here substitute string with PROJ library's Proj-string and area's corner points.
+  auto areaFactoryStr = ProjStr();
+  areaFactoryStr += "|";
+  auto bottomLeftLatlon = BottomLeftLatLon();
+  areaFactoryStr += std::to_string(bottomLeftLatlon.X());
+  areaFactoryStr += ",";
+  areaFactoryStr += std::to_string(bottomLeftLatlon.Y());
+  auto topRightLatlon = TopRightLatLon();
+  areaFactoryStr += ",";
+  areaFactoryStr += std::to_string(topRightLatlon.X());
+  areaFactoryStr += ",";
+  areaFactoryStr += std::to_string(topRightLatlon.Y());
+
+  return areaFactoryStr;
 }
 
 NFmiRect NFmiArea::WorldRect() const { return impl->itsWorldRect; }
