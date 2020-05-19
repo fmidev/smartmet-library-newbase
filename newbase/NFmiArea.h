@@ -122,12 +122,21 @@ class _FMI_DLL NFmiArea
   std::string WKT() const;
   std::string PrettyWKT() const;
   std::string ProjStr() const;
+  std::string AreaFactoryStr() const;
 
   std::ostream &Write(std::ostream &file) const;
   std::istream &Read(std::istream &file);
 
   bool operator==(const NFmiArea &theArea) const;
   bool operator!=(const NFmiArea &theArea) const;
+
+  // Some legacy pacific functions, that just return false or do nothing.
+  // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
+  bool PacificView_legacy(void) const { return false; }
+  void PacificView_legacy(bool){}
+  static bool IsPacificView_legacy(const NFmiPoint & /* bottomleftLatlon */,
+                                   const NFmiPoint & /* toprightLatlon */) { return false; }
+  static bool IsPacificLongitude_legacy(double theLongitude) { return false; }
 
   std::size_t HashValue() const;
 
