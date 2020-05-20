@@ -10,7 +10,8 @@
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiDataIdent.h"
 #include "NFmiFastInfoUtils.h"
-#include "NFmiGrid.h"  // täältä tulee NFmiTimeCache-luokka (tiedän, pitäisi jakaa newbase:a osiin)
+#include "NFmiFastQueryInfo.h"
+#include "NFmiGrid.h"
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
 
