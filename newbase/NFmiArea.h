@@ -9,7 +9,6 @@
 
 #include "NFmiAngle.h"
 #include "NFmiDef.h"
-#include "NFmiProj.h"
 #include "NFmiRect.h"
 #include <boost/shared_ptr.hpp>
 #include <gis/SpatialReference.h>
@@ -24,7 +23,8 @@
 namespace Fmi
 {
 class CoordinateMatrix;
-}
+class ProjInfo;
+}  // namespace Fmi
 
 //! Undocumented
 class _FMI_DLL NFmiArea
@@ -133,9 +133,12 @@ class _FMI_DLL NFmiArea
   // Some legacy pacific functions, that just return false or do nothing.
   // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
   bool PacificView_legacy(void) const { return false; }
-  void PacificView_legacy(bool){}
+  void PacificView_legacy(bool) {}
   static bool IsPacificView_legacy(const NFmiPoint & /* bottomleftLatlon */,
-                                   const NFmiPoint & /* toprightLatlon */) { return false; }
+                                   const NFmiPoint & /* toprightLatlon */)
+  {
+    return false;
+  }
   static bool IsPacificLongitude_legacy(double theLongitude) { return false; }
 
   std::size_t HashValue() const;
@@ -179,7 +182,7 @@ class _FMI_DLL NFmiArea
                                            double theWidthInMeters,
                                            double theHeightInMeters);
 
-  const NFmiProj &Proj() const;
+  const Fmi::ProjInfo &ProjInfo() const;
 
   // from spherical coordinates to WGS84
   static NFmiPoint SphereToWGS84(const NFmiPoint &theWorldXY);

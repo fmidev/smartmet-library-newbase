@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.4.23
+Version: 20.5.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,8 +17,8 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis
-Requires: smartmet-library-gis
+BuildRequires: smartmet-library-gis >= 20.5.22
+Requires: smartmet-library-gis >= 20.5.22
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -87,6 +87,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri May 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.22-1.fmi
+- Moved NFmiProj to GIS-library as Fmi::ProjInfo
+
 * Thu Apr 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.23-1.fmi
 - Added NFmiFastQueryInfo::NeedsGlobeWrap
 - CoordinateMatrix can now be requested with globe wrap included (an extra coordinate column at the right)

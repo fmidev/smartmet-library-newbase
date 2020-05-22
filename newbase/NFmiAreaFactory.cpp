@@ -110,20 +110,10 @@
 #include "NFmiAreaFactory.h"
 #include "NFmiArea.h"
 #include "NFmiStringTools.h"
-#include <gis/SpatialReference.h>
-
-#ifndef WGS84
-#include "NFmiEquidistArea.h"
-#include "NFmiGdalArea.h"
-#include "NFmiLambertConformalConicArea.h"
-#include "NFmiLatLonArea.h"
-#include "NFmiRotatedLatLonArea.h"
-#include "NFmiStereographicArea.h"
-#include "NFmiYKJArea.h"
-#endif
-
 #include <boost/algorithm/string.hpp>
+#include <boost/optional.hpp>
 #include <fmt/printf.h>
+#include <gis/SpatialReference.h>
 #include <algorithm>
 #include <deque>
 #include <list>
@@ -139,115 +129,8 @@ using namespace std;
 
 using boost::algorithm::starts_with;
 
-namespace
-{
-#ifndef WGS84
-double check_longitude(double theLongitude, bool usePacificView)
-{
-  std::string rangeStr;
-  if (usePacificView)
-  {
-    if (theLongitude >= 0 && theLongitude <= 360) return theLongitude;
-    rangeStr = "[0,360]";
-  }
-  else
-  {
-    if (theLongitude >= -180 && theLongitude <= 180) return theLongitude;
-    rangeStr = "[-180,180]";
-  }
-  string msg = "Longitude value";
-  msg += NFmiStringTools::Convert(theLongitude);
-  msg += " is not in the required range " + rangeStr;
-  throw runtime_error(msg);
-}
-#endif
-
-#ifndef WGS84
-double check_latitude(double theLatitude)
-{
-  if (theLatitude >= -90 && theLatitude <= 90) return theLatitude;
-  string msg = "Latitude value";
-  msg += NFmiStringTools::Convert(theLatitude);
-  msg += " is not in the required range [-90,90]";
-  throw runtime_error(msg);
-}
-#endif
-
-#ifndef WGS84
-double degrees_from_projparam(const string &inParam)
-{
-  // Trims the parameter containing proj degrees and returns double.
-  size_t length = inParam.size();
-  try
-  {
-    // North
-    if (boost::iends_with(inParam, "n"))
-    {
-      return std::stod(inParam.substr(0, length - 1));
-    }
-    // South
-    else if (boost::iends_with(inParam, "s"))
-    {
-      return -std::stod(inParam.substr(0, length - 1));
-    }
-    // East
-    else if (boost::iends_with(inParam, "e"))
-    {
-      return std::stod(inParam.substr(0, length - 1));
-    }
-    // West
-    else if (boost::iends_with(inParam, "w"))
-    {
-      return -std::stod(inParam.substr(0, length - 1));
-    }
-    else
-    {
-      return std::stod(inParam);
-    }
-  }
-  catch (std::exception &e)
-  {
-    string errStr;
-    errStr += "Bad cast to double in parameter: ";
-    errStr += e.what();
-    throw runtime_error(errStr);
-  }
-}
-#endif
-
-}  // namespace
-
 namespace NFmiAreaFactory
 {
-#ifndef WGS84
-bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon, NFmiPoint &topRightLatlon, bool &pacificView)
-{
-  if (pacificView)
-  {
-    // Fix top right longitude to Pacific view if it seems possible
-    if (topRightLatlon.X() >= -180 && topRightLatlon.X() < 0)
-    {
-      topRightLatlon.X(topRightLatlon.X() + 360);
-      return true;
-    }
-    else if (bottomLeftLatlon.X() < topRightLatlon.X() && bottomLeftLatlon.X() >= 180 &&
-             topRightLatlon.X() > 180)
-    {  // molemmat nurkkapisteet ovat pacific-alueella (180 - 360), tehdään niistä molemmista
-       // atlantisia koordinaatteja
-      // koska SmartMet toimii paremmin tälläisissa tilanteissa, jos kyseinen muutos tehdään. En
-      // tiedä tarkemmin miksi, koska
-      // debug-versio SmartMetista näytti toimivan täysin oikein joka tapauksessa oli data miten
-      // hyvänsä.
-      bottomLeftLatlon.X(bottomLeftLatlon.X() - 360);
-      topRightLatlon.X(topRightLatlon.X() - 360);
-      pacificView = false;
-      return true;
-    }
-  }
-  return false;
-}
-#endif
-
 struct ProjStrings
 {
   std::string proj4{};
