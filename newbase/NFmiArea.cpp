@@ -73,29 +73,29 @@ std::string class_name_from_id(int id)
 
 int detect_class_id(const Fmi::ProjInfo &proj)
 {
-  auto name = proj.GetString("proj");
+  auto name = proj.getString("proj");
   if (!name) throw std::runtime_error("Projection name not set, should be impossible");
 
-  if (proj.GetDouble("R") == kRearth ||
-      (proj.GetDouble("a") == kRearth && proj.GetDouble("b") == kRearth))
+  if (proj.getDouble("R") == kRearth ||
+      (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
   {
     if (*name == "eqc") return kNFmiLatLonArea;
     if (*name == "merc") return kNFmiMercatorArea;
     if (*name == "stere") return kNFmiStereographicArea;
     if (*name == "aeqd") return kNFmiEquiDistArea;
     if (*name == "lcc") return kNFmiLambertConformalConicArea;
-    if (*name == "ob_tran" && proj.GetString("o_proj") == std::string("eqc") &&
-        proj.GetDouble("o_lon_p") == 0.0)
+    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
+        proj.getDouble("o_lon_p") == 0.0)
     {
-      if (proj.GetString("towgs84") == std::string("0,0,0") ||
-          proj.GetString("towgs84") == std::string("0,0,0,0,0,0,0"))
+      if (proj.getString("towgs84") == std::string("0,0,0") ||
+          proj.getString("towgs84") == std::string("0,0,0,0,0,0,0"))
         return kNFmiRotatedLatLonArea;
     }
   }
-  else if (*name == "tmerc" && proj.GetString("ellps") == std::string("intl") &&
-           proj.GetDouble("x_0") == 3500000.0 && proj.GetDouble("lat_0") == 0.0 &&
-           proj.GetDouble("lon_0") == 27.0 &&
-           proj.GetString("towgs84") ==
+  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
+           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
+           proj.getDouble("lon_0") == 27.0 &&
+           proj.getString("towgs84") ==
                std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
     return kNFmiYKJArea;
 
@@ -136,10 +136,6 @@ struct NFmiArea::Impl
   // For speeding up coordinate conversions and to aid legacy parts of Write()
   double itsXScaleFactor = 0;
   double itsYScaleFactor = 0;
-
-  // For providing PROJ.4 parameter information
-
-  Fmi::ProjInfo itsProjInfo;
 
   // Should we flop the data?
   bool itsFlopped = false;
@@ -544,9 +540,9 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiRotatedLatLonArea:
     {
-      auto plat = ProjInfo().GetDouble("o_lat_p");
-      auto plon = ProjInfo().GetDouble("o_lon_p");
-      auto lon0 = ProjInfo().GetDouble("lon_0");
+      auto plat = ProjInfo().getDouble("o_lat_p");
+      auto plon = ProjInfo().getDouble("o_lon_p");
+      auto lon0 = ProjInfo().getDouble("lon_0");
       if (!plon || !plat || !lon0)
         throw std::runtime_error("Internal error in writing rotated latlon area");
       if (*plon != 0)
@@ -575,9 +571,9 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiStereographicArea:
     {
-      auto clon = ProjInfo().GetDouble("lon_0");
-      auto clat = ProjInfo().GetDouble("lat_0");
-      auto tlat = ProjInfo().GetDouble("lat_ts");
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
+      auto tlat = ProjInfo().getDouble("lat_ts");
 
       if (!clon || !clat || !tlat)
         throw std::runtime_error("Internal error in writing stereographic area");
@@ -598,8 +594,8 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiEquiDistArea:
     {
-      auto clon = ProjInfo().GetDouble("lon_0");
-      auto clat = ProjInfo().GetDouble("lat_0");
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
 
       if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
 
@@ -619,10 +615,10 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
     }
     case kNFmiLambertConformalConicArea:
     {
-      auto clon = ProjInfo().GetDouble("lon_0");
-      auto clat = ProjInfo().GetDouble("lat_0");
-      auto lat1 = ProjInfo().GetDouble("lat_1");
-      auto lat2 = ProjInfo().GetDouble("lat_2");
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
+      auto lat1 = ProjInfo().getDouble("lat_1");
+      auto lat2 = ProjInfo().getDouble("lat_2");
       if (!clon || !clat || !lat1 || !lat2)
         throw std::runtime_error("Internal error writing lcc area");
 
@@ -778,7 +774,6 @@ std::istream &NFmiArea::Read(std::istream &file)
                                " is no longer supported");
   }
 
-  impl->itsProjInfo = Fmi::ProjInfo(ProjStr());
   return file;
 }
 
@@ -1193,12 +1188,9 @@ void NFmiArea::InitProj()
   if (impl->itsToLatLonConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");
 
-  // Init PROJ.4 settings
-  impl->itsProjInfo = Fmi::ProjInfo(ProjStr());
-
   // Init geographic coordinate conversions in native datum
 
-  auto proj = impl->itsProjInfo.InverseProjStr();
+  auto proj = impl->itsSpatialReference->projInfo().inverseProjStr();
 
   Fmi::SpatialReference latlon(proj);
 
@@ -1241,7 +1233,7 @@ const Fmi::SpatialReference &NFmiArea::SpatialReference() const
   return *impl->itsSpatialReference;
 }
 
-const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsProjInfo; }
+const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsSpatialReference->projInfo(); }
 
 NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
