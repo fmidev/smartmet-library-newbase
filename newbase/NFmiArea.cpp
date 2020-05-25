@@ -1426,21 +1426,83 @@ std::string NFmiArea::ProjStr() const { return Fmi::OGR::exportToProj(*impl->its
 
 std::string NFmiArea::AreaFactoryStr() const
 {
+  if (impl->itsClassId == kNFmiProjArea) return AreaFactoryProjStr();
+
+  auto tl = impl->TopLeftCorner();
+  auto br = impl->BottomRightCorner();
+
+  auto corners = fmt::format("{},{},{},{}", tl.X(), tl.Y(), br.X(), br.Y());
+
+  switch (impl->itsClassId)
+  {
+    case kNFmiArea:
+    case kNFmiLatLonArea:
+      return "latlon|" + corners;
+    case kNFmiRotatedLatLonArea:
+    {
+      auto plat = ProjInfo().getDouble("o_lat_p");
+      auto plon = ProjInfo().getDouble("o_lon_p");
+      auto lon0 = ProjInfo().getDouble("lon_0");
+      if (!plon || !plat || !lon0)
+        throw std::runtime_error("Internal error in writing rotated latlon area");
+      if (*plon != 0)
+        throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
+      return fmt::format("invrotlatlon,{},{}|{}", -(*plat), *lon0, corners);
+    }
+    case kNFmiMercatorArea:
+    {
+      return "mercator|" + corners;
+    }
+    case kNFmiStereographicArea:
+    {
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
+      auto tlat = ProjInfo().getDouble("lat_ts");
+
+      if (!clon || !clat || !tlat)
+        throw std::runtime_error("Internal error in writing stereographic area");
+
+      return fmt::format("stereographic,{},{},{}|{}", *clon, *clat, *tlat, corners);
+    }
+    case kNFmiEquiDistArea:
+    {
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
+
+      if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
+
+      return fmt::format("equidist,{},{}|{}", *clon, *clat, corners);
+    }
+    case kNFmiLambertConformalConicArea:
+    {
+      auto clon = ProjInfo().getDouble("lon_0");
+      auto clat = ProjInfo().getDouble("lat_0");
+      auto lat1 = ProjInfo().getDouble("lat_1");
+      auto lat2 = ProjInfo().getDouble("lat_2");
+      if (!clon || !clat || !lat1 || !lat2)
+        throw std::runtime_error("Internal error writing lcc area");
+
+      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}|{}", *clon, *clat, *lat1, corners);
+      return fmt::format("lcc,{},{},{},{}|{}", *clon, *clat, *lat1, *lat2, corners);
+    }
+    case kNFmiYKJArea:
+    {
+      return "ykj|" + corners;
+    }
+    default:
+      return AreaFactoryProjStr();
+  }
+}
+
+std::string NFmiArea::AreaFactoryProjStr() const
+{
   // Newbase with wgs84 support doesn't support old style area strings anymore,
   // we build here substitute string with PROJ library's Proj-string and area's corner points.
-  auto areaFactoryStr = ProjStr();
-  areaFactoryStr += "|";
-  auto bottomLeftLatlon = BottomLeftLatLon();
-  areaFactoryStr += std::to_string(bottomLeftLatlon.X());
-  areaFactoryStr += ",";
-  areaFactoryStr += std::to_string(bottomLeftLatlon.Y());
-  auto topRightLatlon = TopRightLatLon();
-  areaFactoryStr += ",";
-  areaFactoryStr += std::to_string(topRightLatlon.X());
-  areaFactoryStr += ",";
-  areaFactoryStr += std::to_string(topRightLatlon.Y());
 
-  return areaFactoryStr;
+  auto tl = impl->TopLeftCorner();
+  auto br = impl->BottomRightCorner();
+
+  return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }
 
 NFmiRect NFmiArea::WorldRect() const { return impl->itsWorldRect; }

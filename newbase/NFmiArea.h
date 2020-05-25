@@ -123,6 +123,7 @@ class _FMI_DLL NFmiArea
   std::string PrettyWKT() const;
   std::string ProjStr() const;
   std::string AreaFactoryStr() const;
+  std::string AreaFactoryProjStr() const;
 
   std::ostream &Write(std::ostream &file) const;
   std::istream &Read(std::istream &file);

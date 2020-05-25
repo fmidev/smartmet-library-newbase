@@ -230,7 +230,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     if (params.size() > 0) throw runtime_error("mercator area requires no parameters");
 
-    result.proj4 = fmt::format("+proj=merc +wktext +over +towgs84=0,0,0 +no_defs");
+    result.proj4 =
+        fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
   }
   else if (name == "stereographic")
   {
