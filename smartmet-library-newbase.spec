@@ -28,12 +28,14 @@ Requires: gdal30-libs
 Requires: fmt >= 5.2.0
 #TestRequires: make
 #TestRequires: gcc-c++
-#TestRequires: boost-devel
+#TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
 #TestRequires: gdal-devel
+#TestRequires: gdal-libs
 #TestRequires: bzip2-devel
 #TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
+#TestRequires: postgresql95-libs
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
