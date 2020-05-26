@@ -14,6 +14,7 @@
 // ======================================================================
 
 #include "NFmiCombinedParam.h"
+
 #include "NFmiDataModifierCombi.h"
 #include "NFmiParamBag.h"
 #include "NFmiParamDataModifierList.h"

@@ -13,11 +13,14 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
+
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
+
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>

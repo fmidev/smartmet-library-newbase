@@ -13,8 +13,10 @@
 // ======================================================================
 
 #include "NFmiTimeList.h"
+
 #include "NFmiMetTime.h"
 #include "NFmiTimeBag.h"
+
 #include <algorithm>
 #include <cmath>
 #include <functional>

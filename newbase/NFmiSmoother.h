@@ -10,6 +10,7 @@
 #include "NFmiDataMatrix.h"  // for NFmiDataMatrix
 #include "NFmiGlobals.h"     // for kFloatMissing
 #include "NFmiPoint.h"       // for NFmiPoint
+
 #include <string>
 
 namespace Fmi

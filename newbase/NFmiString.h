@@ -9,6 +9,7 @@
 
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiSortable.h"
+
 #include <string>
 
 class _FMI_DLL NFmiString : public NFmiSortable

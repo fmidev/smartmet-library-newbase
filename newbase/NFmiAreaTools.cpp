@@ -13,12 +13,14 @@
 // ======================================================================
 
 #include "NFmiAreaTools.h"
+
 #include "NFmiArea.h"
 #include "NFmiPoint.h"
+
 #include <fmt/format.h>
 #include <gis/SpatialReference.h>
-#include <algorithm>
 
+#include <algorithm>
 #include <iostream>
 
 // Local utility functions

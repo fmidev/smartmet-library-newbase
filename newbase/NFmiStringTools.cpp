@@ -12,10 +12,10 @@
 #endif
 
 #include "NFmiStringTools.h"
-#include <iostream>
 
 #include <cctype>
 #include <cstdlib>
+#include <iostream>
 #include <locale>
 
 using namespace std;

@@ -21,6 +21,7 @@
 // ======================================================================
 
 #include "NFmiLocation.h"
+
 #include "NFmiAngle.h"
 #include "NFmiGeoTools.h"
 #include "NFmiMetTime.h"

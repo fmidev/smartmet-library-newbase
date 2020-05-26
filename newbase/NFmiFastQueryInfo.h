@@ -9,6 +9,7 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <gis/CoordinateMatrix.h>

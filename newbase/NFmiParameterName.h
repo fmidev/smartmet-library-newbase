@@ -1375,7 +1375,8 @@ enum FmiParameterName
   kFmiSnowAccumulation120hF10,
   kFmiSnowAccumulation120hF0,
 
-  kFmiProbabilityOfPOTLimit1 = 1447, // Probability of probability of thunder (yes you read it correctly)
+  kFmiProbabilityOfPOTLimit1 =
+      1447,  // Probability of probability of thunder (yes you read it correctly)
   kFmiProbabilityOfPOTLimit2,
   kFmiProbabilityOfPOTLimit3,
 

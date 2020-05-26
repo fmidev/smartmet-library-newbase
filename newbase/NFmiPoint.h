@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiGlobals.h"
+
 #include <cmath>
 #include <iosfwd>
 #include <tuple>

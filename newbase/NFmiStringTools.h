@@ -15,6 +15,7 @@
 
 #include "NFmiDef.h"
 #include "NFmiTypeNameTraits.h"
+
 #include <cstring>
 #include <iostream>
 #include <iterator>

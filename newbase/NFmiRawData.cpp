@@ -16,6 +16,7 @@
 #endif
 
 #include "NFmiRawData.h"
+
 #include "NFmiVersion.h"
 
 #include <boost/filesystem/operations.hpp>
@@ -23,6 +24,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
+
 #include <cstring>
 #include <iostream>
 #include <stdexcept>

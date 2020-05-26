@@ -9,6 +9,7 @@
 #pragma once
 
 #include "NFmiGlobals.h"
+
 #include <cmath>
 
 //! Tyyppimääritelmä kulmayksiköille.

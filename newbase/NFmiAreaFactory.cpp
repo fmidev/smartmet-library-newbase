@@ -108,12 +108,15 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
+
 #include "NFmiArea.h"
 #include "NFmiStringTools.h"
+
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
+
 #include <algorithm>
 #include <deque>
 #include <list>

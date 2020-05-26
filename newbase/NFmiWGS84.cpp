@@ -1,5 +1,7 @@
 #include "NFmiWGS84.h"
+
 #include <gis/SpatialReference.h>
+
 #include <memory>
 
 // ----------------------------------------------------------------------

@@ -5,6 +5,7 @@
  */
 
 #include "NFmiMilliSecondTimer.h"
+
 #include "NFmiValueString.h"
 
 // ----------------------------------------------------------------------

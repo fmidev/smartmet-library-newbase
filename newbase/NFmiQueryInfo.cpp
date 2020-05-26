@@ -20,6 +20,7 @@
 #endif
 
 #include "NFmiQueryInfo.h"
+
 #include "NFmiBitMask.h"
 //#include "NFmiDataModifier.h"
 #include "NFmiDataModifierExtreme.h"
@@ -35,6 +36,7 @@
 #include "NFmiTimeList.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -2934,13 +2936,14 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
   unsigned long oldTimeIndex = TimeIndex();
 
   // Return value stored for the time if it is not missing
-  if (Time(theTime)) 
+  if (Time(theTime))
   {
     tmpValue = FloatValue();
   }
 // For now Windows and Linux versions work differently:
-// Windows version returns missing value straight, if wanted time exists in the data, but value from that time is missing.
-// Linux version wants to try timeinterpolation in that case to get non-missing value if possible.
+// Windows version returns missing value straight, if wanted time exists in the data, but value from
+// that time is missing. Linux version wants to try timeinterpolation in that case to get
+// non-missing value if possible.
 #ifdef WIN32
   else
 #else

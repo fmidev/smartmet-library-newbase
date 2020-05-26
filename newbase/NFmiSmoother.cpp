@@ -6,7 +6,9 @@
 // ======================================================================
 
 #include "NFmiSmoother.h"
+
 #include <gis/CoordinateMatrix.h>
+
 #include <cassert>
 #include <cstdlib>
 // abs(int)

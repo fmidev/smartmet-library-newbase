@@ -6,10 +6,12 @@
 // ======================================================================
 
 #include "NFmiSaveBaseFactory.h"
+
 #include "NFmiGrid.h"
 #include "NFmiQueryData.h"
 #include "NFmiStationBag.h"
 #include "NFmiVersion.h"
+
 #include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
 

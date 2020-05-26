@@ -19,6 +19,7 @@
 #endif
 
 #include "NFmiString.h"
+
 #include "NFmiStringTools.h"
 
 #include <boost/functional/hash.hpp>

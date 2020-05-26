@@ -10,8 +10,10 @@
 #include "NFmiAngle.h"
 #include "NFmiDef.h"
 #include "NFmiRect.h"
+
 #include <boost/shared_ptr.hpp>
 #include <gis/SpatialReference.h>
+
 #include <memory>
 #include <string>
 

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiMetTime.h"
+
 #include <string>
 
 //! Undocumented

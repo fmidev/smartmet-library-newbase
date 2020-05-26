@@ -16,10 +16,12 @@
 // ======================================================================
 
 #include "NFmiSvgTools.h"
+
 #include "NFmiArea.h"
 #include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
+
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
 
