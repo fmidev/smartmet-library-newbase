@@ -1,8 +1,10 @@
 #include "NFmiArea.h"
+
 #include "NFmiAreaFactory.h"
 #include "NFmiAreaTools.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
+
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 #include <gis/CoordinateMatrix.h>
@@ -10,6 +12,7 @@
 #include <gis/OGR.h>
 #include <gis/ProjInfo.h>
 #include <gis/SpatialReference.h>
+
 #include <iomanip>
 #include <iostream>
 #include <ogr_spatialref.h>
@@ -1525,10 +1528,10 @@ NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 {
-  // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly
-  // to use other spatial references.
-  return CreateFromCorners(
-      *impl->itsSpatialReference, "FMI", theRect.BottomLeft(), theRect.TopRight());
+  // theRect is in relative xy coordinates (not in world xy coordinates).
+  auto bottomLeftXy = XYToWorldXY(theRect.BottomLeft());
+  auto topRightXy = XYToWorldXY(theRect.TopRight());
+  return CreateFromBBox(*impl->itsSpatialReference, bottomLeftXy, topRightXy);
 }
 
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
