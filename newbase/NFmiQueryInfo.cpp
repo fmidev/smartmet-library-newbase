@@ -1186,7 +1186,6 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 
   Destroy();
 
-  char dirty[30];
   unsigned char buffer[6];
   file.read(reinterpret_cast<char *>(buffer), 5);  // tämä on luettava "@$°£Q"
   file.read(reinterpret_cast<char *>(buffer), 4);  // tässä tulee INFO binäärisenä integerinä
@@ -1240,7 +1239,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
   // VERSIOHALLINTAA
 
   unsigned long classIdent;
-  file >> classIdent >> dirty;
+  std::string dummyStr;
+  file >> classIdent >> dummyStr;
 
   if (classIdent != ClassId())
   {

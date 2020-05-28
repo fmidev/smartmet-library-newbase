@@ -384,7 +384,7 @@ std::ostream &NFmiGrid::Write(std::ostream &file) const
 std::istream &NFmiGrid::Read(std::istream &file)
 {
   unsigned long classId;
-  unsigned char className[24];
+  std::string className;
 
   file >> classId;
   file >> className;

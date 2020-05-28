@@ -911,7 +911,7 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
 std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 {
   unsigned long classId;
-  unsigned char className[30];
+  std::string className;
   long theDummy2, theDummy3;
   long theSelectedTypeValue;
 

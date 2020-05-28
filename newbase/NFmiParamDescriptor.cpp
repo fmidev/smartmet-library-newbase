@@ -329,8 +329,8 @@ std::istream &NFmiParamDescriptor::Read(std::istream &file)
   Destroy();
 
   unsigned long classIdent;
-  char dirty[30];
-  file >> classIdent >> dirty;
+  std::string dummyStr;
+  file >> classIdent >> dummyStr;
 
   unsigned long theReserve;
   unsigned long theInterpolate;

@@ -151,10 +151,10 @@ std::istream &NFmiQueryInfoSatel::Read(std::istream &file)
 
   NFmiQueryInfo::Read(file);
 
-  char theSatelName[256];
-  file >> theSatelName;
+  std::string satelName;
+  file >> satelName;
 
-  itsSatelName = new NFmiString(theSatelName);
+  itsSatelName = new NFmiString(satelName);
 
   return file;
 }
