@@ -1688,17 +1688,16 @@ void NFmiArea::WorldXYToXY(Fmi::CoordinateMatrix &theMatrix) const
   const auto xscale = impl->itsXScaleFactor;
   const auto yscale = impl->itsYScaleFactor;
   const auto flopped = impl->itsFlopped;
-
   // Note: We do not assume x/y are constants for rows/columns even though they most likely are
   double x;
   for (std::size_t j = 0; j < theMatrix.height(); j++)
     for (std::size_t i = 0; i < theMatrix.width(); i++)
     {
       if (!flopped)
-        x = wleft + (theMatrix.x(i, j) - left) / xscale;
+        x = left + xscale * (theMatrix.x(i, j) - wleft);
       else
-        x = wright - (theMatrix.x(i, j) - left) / xscale;
-      auto y = wbottom - (theMatrix.y(i, j) - top) / yscale;
+        x = left - xscale * (theMatrix.x(i, j) - wright);
+      auto y = top + yscale * (wbottom - theMatrix.y(i, j));
       theMatrix.set(i, j, x, y);
     }
 }
