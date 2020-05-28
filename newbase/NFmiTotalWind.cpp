@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiTotalWind.h"
+
 #include "NFmiAngle.h"
 #include "NFmiDataIdent.h"
 #include "NFmiInterpolation.h"
@@ -632,8 +633,9 @@ NFmiDataIdent *NFmiTotalWind::CreateParam(const NFmiProducer &theProducer,
   param = NFmiParam(
 // For now Windows and Linux versions work differently:
 // Originally "Wind vector" parameter had nearest interpolation.
-// Windows version wants the wind-vector parameter to be linearly interpolated (better visualizations).
-// Linux version wants it to be nearest because there might be possible problems if changed.
+// Windows version wants the wind-vector parameter to be linearly interpolated (better
+// visualizations). Linux version wants it to be nearest because there might be possible problems if
+// changed.
 #ifdef WIN32
       kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kLinearly);
 #else

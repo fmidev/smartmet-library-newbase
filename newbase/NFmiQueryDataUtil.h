@@ -15,6 +15,7 @@
 #include "NFmiGrid.h"
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
+
 #include <boost/shared_ptr.hpp>
 
 #ifndef BOOST_DISABLE_THREADS

@@ -8,7 +8,6 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
-
 #include "NFmiDataModifierAdd.h"
 #include "NFmiDataModifierAllValidAvg.h"
 #include "NFmiDataModifierAllValidClipSum.h"

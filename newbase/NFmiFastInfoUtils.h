@@ -3,6 +3,7 @@
 #include "NFmiDataIdent.h"
 #include "NFmiDataMatrix.h"
 #include "NFmiMetTime.h"
+
 #include <boost/shared_ptr.hpp>
 
 class NFmiFastQueryInfo;

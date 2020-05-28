@@ -15,13 +15,16 @@
 // ======================================================================
 
 #include "NFmiLocationBag.h"
+
 #include "NFmiArea.h"
 #include "NFmiRadarStation.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
+
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+
 #include <cmath>
 #include <functional>
 

@@ -6,10 +6,12 @@
 // ======================================================================
 
 #include "NFmiFileSystem.h"
+
 #include "NFmiFileString.h"
 #include "NFmiStringTools.h"
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>  // uusi FileSize toteutus tarvitsee tätä
 
 #include <cctype>  // for isalpha
 #include <cstdio>
@@ -18,8 +20,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <vector>  // for time()
-
-#include <boost/filesystem/operations.hpp>  // uusi FileSize toteutus tarvitsee tätä
 
 #ifndef _MSC_VER
 #include <dirent.h>
@@ -63,6 +63,7 @@ extern "C"
 #else
 #include <sys/dir.h>  // opendir() etc
 #include <sys/types.h>
+
 #include <cerrno>
 #include <unistd.h>
 #endif

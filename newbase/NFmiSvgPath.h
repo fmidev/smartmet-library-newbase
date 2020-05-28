@@ -9,6 +9,7 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiDef.h"
+
 #include <iosfwd>
 
 class NFmiPoint;

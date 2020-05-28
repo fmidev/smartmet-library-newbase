@@ -18,6 +18,7 @@
 // ======================================================================
 
 #include "NFmiSvgPath.h"
+
 #include "NFmiPoint.h"
 
 #include <algorithm>

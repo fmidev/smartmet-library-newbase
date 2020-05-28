@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDef.h"
+
 #include <ctime>   // time_t
 #include <list>    // for ListDirectory
 #include <string>  // filenames are strings

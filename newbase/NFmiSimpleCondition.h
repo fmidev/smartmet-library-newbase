@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
+
 #include <boost/shared_ptr.hpp>
 
 class NFmiAreaMask;

@@ -17,8 +17,10 @@
 // ======================================================================
 
 #include "NFmiInterpolation.h"
+
 #include "NFmiModMeanCalculator.h"
 #include "NFmiPoint.h"
+
 #include <set>
 
 namespace NFmiInterpolation

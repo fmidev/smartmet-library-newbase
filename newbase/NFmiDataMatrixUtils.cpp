@@ -1,4 +1,5 @@
 #include "NFmiDataMatrixUtils.h"
+
 #include "NFmiInterpolation.h"
 #include "NFmiQueryDataUtil.h"
 

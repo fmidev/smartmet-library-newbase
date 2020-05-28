@@ -9,6 +9,7 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <gis/CoordinateMatrix.h>
@@ -548,6 +549,10 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   float GetCurrentLevelPressure();
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon);
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon, const NFmiMetTime &theTime);
+  const std::vector<float> &PressureLevelDataPressures() const
+  {
+    return itsPressureLevelDataPressures;
+  }
 
   size_t Index() const;
 

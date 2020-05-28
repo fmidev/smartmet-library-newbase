@@ -8,9 +8,10 @@
 #pragma once
 
 #include "NFmiPoint.h"
-#include <string>
 
 #include <boost/shared_ptr.hpp>
+
+#include <string>
 
 class NFmiArea;
 

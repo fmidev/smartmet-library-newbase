@@ -18,6 +18,7 @@
 #endif
 
 #include "NFmiFastQueryInfo.h"
+
 #include "NFmiCombinedParam.h"
 #include "NFmiDataModifier.h"
 #include "NFmiGrid.h"
@@ -28,8 +29,10 @@
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
+
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -3884,9 +3887,8 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
 
 // Täyttää annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data täytetään joka leveliltä.
-NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
-                                                       const std::vector<NFmiPoint> &thePoints,
-                                                       const NFmiMetTime &theTime)
+NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
+    NFmiFastQueryInfo &theInfo, const std::vector<NFmiPoint> &thePoints, const NFmiMetTime &theTime)
 {
   // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
   NFmiDataMatrix<float> values(thePoints.size(), theInfo.SizeLevels(), kFloatMissing);
@@ -4139,8 +4141,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CrossSectionValuesHybrid(
 // Täyttää annetun matriisin halutun pisteen ja parametrin aika-poikkileikkaus datalla.
 // Matriisi on poikkileikkaus timebagin kokoinen ja data täytetään joka leveliltä.
 NFmiDataMatrix<float> NFmiFastQueryInfo::CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
-                                                           const NFmiPoint &thePoint,
-                                                           NFmiTimeBag &theTimes)
+                                                                       const NFmiPoint &thePoint,
+                                                                       NFmiTimeBag &theTimes)
 {
   // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
   NFmiDataMatrix<float> values(theTimes.GetSize(), theInfo.SizeLevels(), kFloatMissing);

@@ -12,7 +12,9 @@
 #include "NFmiMetTime.h"
 #include "NFmiPoint.h"
 #include "NFmiString.h"
+
 #include <boost/shared_ptr.hpp>
+
 #include <vector>
 
 class NFmiCalculationCondition;
@@ -215,7 +217,7 @@ class _FMI_DLL NFmiAreaMask
     SymbolTooltipFile,  //!< Tällä määritetään mahdollinen tiedosto, josta haetaan tooltippiä varten
                         //!< aputekstejä eri symboleille
     MacroParamDescription,  //!< Jos tooltippiin halutaan tälle macroParmille yleisselite, se
-                           //!< annetaan tällä
+                            //!< annetaan tällä
     CalculationType,  //!< Tällä voi määritellä että onko joku laskenta esim. indeksi tyyppinen vai
                       //!< normi reaaliluku
     PeekZ  //!< 'Kurkistetaan' arvo vertikaali suunnassa halutussa yksikössä (hPa/m/FL/hybrid-level)

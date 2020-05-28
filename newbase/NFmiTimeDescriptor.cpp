@@ -13,10 +13,10 @@
 // ======================================================================
 
 #include "NFmiTimeDescriptor.h"
+
 #include "NFmiMetTime.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeList.h"
-
 #include "NFmiVersion.h"
 
 // ----------------------------------------------------------------------
@@ -1043,13 +1043,13 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 {
   unsigned short theTimeListIdent;
-  char dirty[30];
+  std::string dummyStr;
 
   Destroy();
 
   itsOriginTimeBag = new NFmiTimeBag;
 
-  file >> theTimeListIdent >> dirty;  // 0->TimeBag,	1->TimeList
+  file >> theTimeListIdent >> dummyStr;  // 0->TimeBag,	1->TimeList
 
   if (theTimeListIdent)  // 1
   {

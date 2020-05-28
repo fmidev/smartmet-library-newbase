@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiInfoAreaMask.h"
+
 #include "NFmiArea.h"
 #include "NFmiDataModifierClasses.h"
 #include "NFmiFastInfoUtils.h"
@@ -23,6 +24,7 @@
 #include "NFmiSimpleCondition.h"
 
 #include <boost/math/special_functions/round.hpp>
+
 #include <cassert>
 
 // HUOM!!! Jostain syystä kun käytin täällä boost::math::iround -funktiota, se ei mennyt parissa

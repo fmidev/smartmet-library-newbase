@@ -1,4 +1,5 @@
 #include "NFmiFastInfoUtils.h"
+
 #include "NFmiFastQueryInfo.h"
 #include "NFmiFileString.h"
 #include "NFmiProducerName.h"

@@ -13,12 +13,14 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
+
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
+
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
 
@@ -909,7 +911,7 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
 std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 {
   unsigned long classId;
-  unsigned char className[30];
+  std::string className;
   long theDummy2, theDummy3;
   long theSelectedTypeValue;
 

@@ -178,6 +178,7 @@
 // ======================================================================
 
 #include "NFmiSettingsImpl.h"
+
 #include "NFmiFileSystem.h"
 #include "NFmiPreProcessor.h"
 #include "NFmiStringTools.h"

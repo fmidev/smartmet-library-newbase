@@ -49,9 +49,11 @@
 // ======================================================================
 
 #include "NFmiEnumConverter.h"
+
 #include "NFmiDef.h"
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
+
 #include <map>
 #include <vector>
 

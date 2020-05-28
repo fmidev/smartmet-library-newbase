@@ -13,11 +13,14 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
+
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
+
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -381,7 +384,7 @@ std::ostream &NFmiGrid::Write(std::ostream &file) const
 std::istream &NFmiGrid::Read(std::istream &file)
 {
   unsigned long classId;
-  unsigned char className[24];
+  std::string className;
 
   file >> classId;
   file >> className;

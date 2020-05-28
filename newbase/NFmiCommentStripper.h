@@ -9,6 +9,7 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiDef.h"
+
 #include <set>
 #include <string>
 

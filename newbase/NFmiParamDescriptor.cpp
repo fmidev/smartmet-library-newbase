@@ -13,11 +13,12 @@
 // ======================================================================
 
 #include "NFmiParamDescriptor.h"
+
 #include "NFmiDataDescriptor.h"
 #include "NFmiParamBag.h"
-#include <cassert>
-
 #include "NFmiVersion.h"
+
+#include <cassert>
 
 // ----------------------------------------------------------------------
 /*!
@@ -328,8 +329,8 @@ std::istream &NFmiParamDescriptor::Read(std::istream &file)
   Destroy();
 
   unsigned long classIdent;
-  char dirty[30];
-  file >> classIdent >> dirty;
+  std::string dummyStr;
+  file >> classIdent >> dummyStr;
 
   unsigned long theReserve;
   unsigned long theInterpolate;

@@ -43,7 +43,9 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
+
 #include <gis/SpatialReference.h>
+
 #include <algorithm>
 #include <cassert>
 #include <fstream>
@@ -4261,11 +4263,11 @@ void NFmiQueryDataUtil::AddRange(NFmiThreadCallBacks *theThreadCallBacks, int va
 // Jos theBaseQData:ssa on data, haetaan vain sen viimeistä dataa uudemmat queryDatat,
 // eli loopin voi lopettaa 1. missä ajat vanhempia (tiedostojen aika järjestys)
 static void ReadQueryDataFiles(boost::shared_ptr<NFmiQueryData> theBaseQData,
-    const std::string &theDirName,
-    std::vector<std::string> &theFilesIn,
-                               std::vector<boost::shared_ptr<NFmiQueryData> > &theQDataVectorOut,
-    NFmiStopFunctor *theStopFunctor,
-    bool fDoRebuildCheck)
+                               const std::string &theDirName,
+                               std::vector<std::string> &theFilesIn,
+                               std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVectorOut,
+                               NFmiStopFunctor *theStopFunctor,
+                               bool fDoRebuildCheck)
 {
   bool doTimeCheck = false;
   NFmiMetTime lastBaseTime;
@@ -4673,10 +4675,10 @@ static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &th
 {
   boost::shared_ptr<NFmiQueryData> qDataPtr;
   std::string fileName = NFmiFileSystem::NewestPatternFileName(theBaseDataFileFilter);
-    if (fileName.empty() == false)
+  if (fileName.empty() == false)
+  {
+    if (NFmiFileSystem::FileReadable(fileName))
     {
-      if (NFmiFileSystem::FileReadable(fileName))
-      {
       auto *qData = new NFmiQueryData(fileName, true);
       if (qData) qDataPtr = boost::shared_ptr<NFmiQueryData>(qData);
     }
@@ -4735,7 +4737,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
       GetFileFilterDirectory(theFileFilter);  // fileFilteristä pitää ottaa hakemisto irti, koska
                                               // PatternFiles-funktio palautta vain tiedostojen
   // nimet, ei polkua mukana
-  std::vector<boost::shared_ptr<NFmiQueryData> > qDataVector;
+  std::vector<boost::shared_ptr<NFmiQueryData>> qDataVector;
   ::ReadQueryDataFiles(baseQData, dirName, files, qDataVector, theStopFunctor, fDoRebuildCheck);
   return CombineQueryDatas(fDoRebuildCheck,
                            baseQData,

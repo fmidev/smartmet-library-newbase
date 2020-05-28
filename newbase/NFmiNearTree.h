@@ -101,6 +101,7 @@
 
 #include "NFmiDef.h"
 #include "NFmiNearTreeImpl.h"
+
 #include <algorithm>
 #include <cmath>
 #include <vector>

@@ -20,6 +20,7 @@
 #endif
 
 #include "NFmiQueryInfo.h"
+
 #include "NFmiBitMask.h"
 //#include "NFmiDataModifier.h"
 #include "NFmiDataModifierExtreme.h"
@@ -35,6 +36,7 @@
 #include "NFmiTimeList.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -1184,7 +1186,6 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 
   Destroy();
 
-  char dirty[30];
   unsigned char buffer[6];
   file.read(reinterpret_cast<char *>(buffer), 5);  // tämä on luettava "@$°£Q"
   file.read(reinterpret_cast<char *>(buffer), 4);  // tässä tulee INFO binäärisenä integerinä
@@ -1238,7 +1239,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
   // VERSIOHALLINTAA
 
   unsigned long classIdent;
-  file >> classIdent >> dirty;
+  std::string dummyStr;
+  file >> classIdent >> dummyStr;
 
   if (classIdent != ClassId())
   {
@@ -2934,13 +2936,14 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
   unsigned long oldTimeIndex = TimeIndex();
 
   // Return value stored for the time if it is not missing
-  if (Time(theTime)) 
+  if (Time(theTime))
   {
     tmpValue = FloatValue();
   }
 // For now Windows and Linux versions work differently:
-// Windows version returns missing value straight, if wanted time exists in the data, but value from that time is missing.
-// Linux version wants to try timeinterpolation in that case to get non-missing value if possible.
+// Windows version returns missing value straight, if wanted time exists in the data, but value from
+// that time is missing. Linux version wants to try timeinterpolation in that case to get
+// non-missing value if possible.
 #ifdef WIN32
   else
 #else

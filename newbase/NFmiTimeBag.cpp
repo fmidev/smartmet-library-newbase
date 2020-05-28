@@ -6,6 +6,7 @@
 // ======================================================================
 
 #include "NFmiTimeBag.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
