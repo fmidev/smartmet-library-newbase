@@ -74,38 +74,6 @@ std::string class_name_from_id(int id)
   }
 }
 
-int detect_class_id(const Fmi::ProjInfo &proj)
-{
-  auto name = proj.getString("proj");
-  if (!name) throw std::runtime_error("Projection name not set, should be impossible");
-
-  if (proj.getDouble("R") == kRearth ||
-      (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
-  {
-    if (*name == "eqc") return kNFmiLatLonArea;
-    if (*name == "merc") return kNFmiMercatorArea;
-    if (*name == "stere") return kNFmiStereographicArea;
-    if (*name == "aeqd") return kNFmiEquiDistArea;
-    if (*name == "lcc") return kNFmiLambertConformalConicArea;
-    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
-        proj.getDouble("o_lon_p") == 0.0)
-    {
-      if (proj.getString("towgs84") == std::string("0,0,0") ||
-          proj.getString("towgs84") == std::string("0,0,0,0,0,0,0"))
-        return kNFmiRotatedLatLonArea;
-    }
-  }
-  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
-           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
-           proj.getDouble("lon_0") == 27.0 &&
-           proj.getString("towgs84") ==
-               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
-    return kNFmiYKJArea;
-
-  // Not a legacy projection, use PROJ.4
-  return kNFmiProjArea;
-}
-
 }  // namespace
 
 // Implementation details
@@ -1208,7 +1176,7 @@ void NFmiArea::InitProj()
 
   // Switch classId to legacy mode if legacy mode can be detected
 
-  if (impl->itsClassId == kNFmiProjArea) impl->itsClassId = detect_class_id(ProjInfo());
+  if (impl->itsClassId == kNFmiProjArea) impl->itsClassId = DetectClassId();
 
   impl->itsClassName = class_name_from_id(impl->itsClassId);
 }
@@ -1237,6 +1205,40 @@ const Fmi::SpatialReference &NFmiArea::SpatialReference() const
 }
 
 const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsSpatialReference->projInfo(); }
+
+int NFmiArea::DetectClassId() const
+{
+  const auto proj = ProjInfo();
+
+  auto name = proj.getString("proj");
+  if (!name) throw std::runtime_error("Projection name not set, should be impossible");
+
+  if (proj.getDouble("R") == kRearth ||
+      (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
+  {
+    if (*name == "eqc") return kNFmiLatLonArea;
+    if (*name == "merc") return kNFmiMercatorArea;
+    if (*name == "stere") return kNFmiStereographicArea;
+    if (*name == "aeqd") return kNFmiEquiDistArea;
+    if (*name == "lcc") return kNFmiLambertConformalConicArea;
+    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
+        proj.getDouble("o_lon_p") == 0.0)
+    {
+      if (proj.getString("towgs84") == std::string("0,0,0") ||
+          proj.getString("towgs84") == std::string("0,0,0,0,0,0,0"))
+        return kNFmiRotatedLatLonArea;
+    }
+  }
+  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
+           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
+           proj.getDouble("lon_0") == 27.0 &&
+           proj.getString("towgs84") ==
+               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+    return kNFmiYKJArea;
+
+  // Not a legacy projection, use PROJ.4
+  return kNFmiProjArea;
+}
 
 NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,

@@ -90,7 +90,7 @@ FMI newbase static library
 
 %changelog
 * Thu May 28 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.28-1.fmi
-- Merged Windows side changes
+- Added NFmiArea::DetectClassId needed by smartmet-plugin-download
 
 * Fri May 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.22-1.fmi
 - Moved NFmiProj to GIS-library as Fmi::ProjInfo

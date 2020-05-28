@@ -186,6 +186,7 @@ class _FMI_DLL NFmiArea
                                            double theHeightInMeters);
 
   const Fmi::ProjInfo &ProjInfo() const;
+  int DetectClassId() const;
 
   // from spherical coordinates to WGS84
   static NFmiPoint SphereToWGS84(const NFmiPoint &theWorldXY);
