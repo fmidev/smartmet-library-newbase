@@ -108,15 +108,12 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
-
 #include "NFmiArea.h"
 #include "NFmiStringTools.h"
-
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
-
 #include <algorithm>
 #include <deque>
 #include <list>
@@ -179,8 +176,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
     if (params.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-    result.proj4 =
-        fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
+    result.proj4 = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs", kRearth);
   }
   else if (name == "rotlatlon")
   {
@@ -194,7 +190,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +over +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -212,7 +208,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +over +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -223,7 +219,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     result.sphere = fmt::format(
         "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
         "+lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +over +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -233,8 +229,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     if (params.size() > 0) throw runtime_error("mercator area requires no parameters");
 
-    result.proj4 =
-        fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
+    result.proj4 = fmt::format("+proj=merc +R={:.0f} +wktext +over +no_defs", kRearth);
   }
   else if (name == "stereographic")
   {
@@ -245,7 +240,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} "
-        "+units=m +wktext +towgs84=0,0,0 +no_defs",
+        "+units=m +wktext +no_defs",
         clat,
         tlat,
         clon,
@@ -280,13 +275,13 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} "
-        "+units=m +wktext +towgs84=0,0,0 +no_defs",
+        "+units=m +wktext +no_defs",
         tlat1,
         tlat2,
         clat,
         clon,
         rad);
-    result.sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs +towgs84=0,0,0", rad);
+    result.sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs", rad);
   }
   else if (name == "equidist")
   {
@@ -295,8 +290,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double clat = (params.size() >= 2 ? params[1] : 90);
 
     result.proj4 = fmt::format(
-        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
-        "+towgs84=0,0,0 +no_defs",
+        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext +no_defs",
         clat,
         clon,
         kRearth);

@@ -138,13 +138,12 @@ NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint
   if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
   {
     // Pacific view
-    auto proj = fmt::format("+proj=eqc +R={:.0f} +lon_0=180 +wktext +over +no_defs +towgs84=0,0,0",
-                            kRearth);
+    auto proj = fmt::format("+proj=eqc +R={:.0f} +lon_0=180 +wktext +over", kRearth);
     return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
   }
 
   // Atlantic  view
-  auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
+  auto proj = fmt::format("+proj=eqc +R={:.0f} +wktext +over", kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
@@ -161,7 +160,7 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
 
   auto proj = fmt::format(
       "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      "+R={:.0f} +wktext +over +no_defs",
       npole_lon,
       npole_lat,
       lon_0,
@@ -171,7 +170,7 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
   // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
       "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      "+R={:.0f} +wktext +over +no_defs",
       npole_lon,
       npole_lat,
       lon_0,
@@ -186,13 +185,12 @@ NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
                                         double theCentralLatitude,
                                         double theTrueLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs",
-      theCentralLatitude,
-      theTrueLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj =
+      fmt::format("+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext +no_defs",
+                  theCentralLatitude,
+                  theTrueLatitude,
+                  theCentralLongitude,
+                  kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
@@ -201,11 +199,10 @@ NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
                                    double theCentralLongitude,
                                    double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +no_defs",
+                          theCentralLatitude,
+                          theCentralLongitude,
+                          kRearth);
 
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
@@ -215,13 +212,12 @@ NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoi
   if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
   {
     // Pacific view
-    auto proj = fmt::format(
-        "+proj=merc +R={:.0f} +lon_0=180 +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+    auto proj = fmt::format("+proj=merc +R={:.0f} +lon_0=180 +units=m +wktext +no_defs", kRearth);
     return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
   }
 
   // Atlantic view
-  auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+  auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +no_defs", kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
@@ -230,12 +226,10 @@ NFmiArea* CreateLegacyLambertEqualArea(const NFmiPoint& theBottomLeft,
                                        double theCentralLongitude,
                                        double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +no_defs",
+                          theCentralLatitude,
+                          theCentralLongitude,
+                          kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
@@ -249,13 +243,13 @@ NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
 {
   auto proj = fmt::format(
       "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +R={:.0f} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs",
+      "+no_defs",
       theCentralLatitude,
       theCentralLongitude,
       theTrueLatitude1,
       theTrueLatitude2,
       theRadius);
-  auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", theRadius);
+  auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs", theRadius);
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
 
@@ -264,12 +258,10 @@ NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
                                    double theCentralLongitude,
                                    double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +no_defs",
+                          theCentralLatitude,
+                          theCentralLongitude,
+                          kRearth);
   return NFmiArea::CreateFromCorners(proj, "FMI", theBottomLeft, theTopRight);
 }
 
