@@ -1447,11 +1447,13 @@ std::string NFmiArea::AreaFactoryStr() const
 
   auto corners = fmt::format("{},{},{},{}", tl.X(), tl.Y(), br.X(), br.Y());
 
+  // Note: We use : instead of | for legacy projections for backward compatibility
+
   switch (impl->itsClassId)
   {
     case kNFmiArea:
     case kNFmiLatLonArea:
-      return "latlon|" + corners;
+      return "latlon:" + corners;
     case kNFmiRotatedLatLonArea:
     {
       auto plat = ProjInfo().getDouble("o_lat_p");
@@ -1461,11 +1463,11 @@ std::string NFmiArea::AreaFactoryStr() const
         throw std::runtime_error("Internal error in writing rotated latlon area");
       if (*plon != 0)
         throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
-      return fmt::format("invrotlatlon,{},{}|{}", -(*plat), *lon0, corners);
+      return fmt::format("invrotlatlon,{},{}:{}", -(*plat), *lon0, corners);
     }
     case kNFmiMercatorArea:
     {
-      return "mercator|" + corners;
+      return "mercator:" + corners;
     }
     case kNFmiStereographicArea:
     {
@@ -1476,7 +1478,7 @@ std::string NFmiArea::AreaFactoryStr() const
       if (!clon || !clat || !tlat)
         throw std::runtime_error("Internal error in writing stereographic area");
 
-      return fmt::format("stereographic,{},{},{}|{}", *clon, *clat, *tlat, corners);
+      return fmt::format("stereographic,{},{},{}:{}", *clon, *clat, *tlat, corners);
     }
     case kNFmiEquiDistArea:
     {
@@ -1485,7 +1487,7 @@ std::string NFmiArea::AreaFactoryStr() const
 
       if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
 
-      return fmt::format("equidist,{},{}|{}", *clon, *clat, corners);
+      return fmt::format("equidist,{},{}:{}", *clon, *clat, corners);
     }
     case kNFmiLambertConformalConicArea:
     {
@@ -1496,12 +1498,12 @@ std::string NFmiArea::AreaFactoryStr() const
       if (!clon || !clat || !lat1 || !lat2)
         throw std::runtime_error("Internal error writing lcc area");
 
-      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}|{}", *clon, *clat, *lat1, corners);
-      return fmt::format("lcc,{},{},{},{}|{}", *clon, *clat, *lat1, *lat2, corners);
+      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}:{}", *clon, *clat, *lat1, corners);
+      return fmt::format("lcc,{},{},{},{}:{}", *clon, *clat, *lat1, *lat2, corners);
     }
     case kNFmiYKJArea:
     {
-      return "ykj|" + corners;
+      return "ykj:" + corners;
     }
     default:
       return AreaFactoryProjStr();
@@ -1515,6 +1517,8 @@ std::string NFmiArea::AreaFactoryProjStr() const
 
   auto tl = impl->TopLeftCorner();
   auto br = impl->BottomRightCorner();
+
+  // Note: Must use | instead of : for new projections due to strings like epsg:4326
 
   return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }
