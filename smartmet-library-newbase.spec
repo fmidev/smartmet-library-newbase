@@ -4,7 +4,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 20.6.1
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-2.fmi
+- Added possibility to disable writing legacy projection classes and to use PROJ definitions instead
+
 * Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-1.fmi
 - Bug fix release: revert incorrect +towgs84=0,0,0 changes
 

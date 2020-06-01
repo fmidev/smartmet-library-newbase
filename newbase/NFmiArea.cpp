@@ -110,6 +110,9 @@ struct NFmiArea::Impl
 
   // Should we flop the data?
   bool itsFlopped = false;
+
+  // Should we write legacy definitions if possible?
+  bool itsLegacyWriteFlag = true;
 };
 
 // Must be after Impl definition above
@@ -482,7 +485,11 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  switch (impl->itsClassId)
+  // Use generic PROJ area if writing legacy definitions is disabled
+
+  const auto id = (impl->itsLegacyWriteFlag ? impl->itsClassId : kNFmiProjArea);
+
+  switch (id)
   {
     case kNFmiArea:
     {
@@ -1239,6 +1246,8 @@ int NFmiArea::DetectClassId() const
   // Not a legacy projection, use PROJ.4
   return kNFmiProjArea;
 }
+
+void NFmiArea::DisableLegacyWrite() { impl->itsLegacyWriteFlag = false; }
 
 NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
