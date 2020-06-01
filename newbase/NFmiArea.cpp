@@ -1,4 +1,3 @@
-
 #include "NFmiArea.h"
 
 #include "NFmiAreaFactory.h"
@@ -1151,24 +1150,11 @@ void NFmiArea::InitProj()
 
   Fmi::SpatialReference wgs84("WGS84");
 
-  // Add +towgs84=0,0,0 to the spatial reference if there isn't one
-  const auto opt_towgs84 = impl->itsSpatialReference->projInfo().getString("towgs84");
+  impl->itsToWorldXYConverter.reset(
+      new Fmi::CoordinateTransformation(wgs84, *impl->itsSpatialReference));
 
-  if (opt_towgs84)
-  {
-    impl->itsToWorldXYConverter.reset(
-        new Fmi::CoordinateTransformation(wgs84, *impl->itsSpatialReference));
-
-    impl->itsToLatLonConverter.reset(
-        new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
-  }
-  else
-  {
-    const auto newproj = impl->itsSpatialReference->projInfo().projStr() + " +towgs84=0,0,0";
-    Fmi::SpatialReference tmp(newproj);
-    impl->itsToWorldXYConverter.reset(new Fmi::CoordinateTransformation(wgs84, tmp));
-    impl->itsToLatLonConverter.reset(new Fmi::CoordinateTransformation(tmp, wgs84));
-  }
+  impl->itsToLatLonConverter.reset(
+      new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
 
   if (impl->itsToLatLonConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");

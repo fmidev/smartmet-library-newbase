@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.5.29
+Version: 20.5.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -89,9 +89,6 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
-* Fri May 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.29-1.fmi
-- Fixed +towgs84=0,0,0 handling
-
 * Thu May 28 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.28-1.fmi
 - Added NFmiArea::DetectClassId needed by smartmet-plugin-download
 
