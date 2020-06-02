@@ -42,6 +42,7 @@ class _FMI_DLL NFmiArea
 
   bool IsInside(const NFmiPoint &theLatLonPoint) const;
   bool IsInside(const NFmiArea &theArea) const;
+  bool IsInsideWorldXY(const NFmiPoint &theWorldXYPoint) const;
 
   NFmiPoint TopLeftLatLon() const;
   NFmiPoint TopRightLatLon() const;
@@ -99,7 +100,7 @@ class _FMI_DLL NFmiArea
   NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
   NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                           const NFmiPoint &theTopRightLatLon) const;
-  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const;
   NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                           FmiDirection theFixedPoint,
                           bool fShrinkArea);
