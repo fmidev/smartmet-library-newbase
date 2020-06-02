@@ -730,27 +730,6 @@ double NFmiGridSizeAreaMask::CalcValueFromLocation(const NFmiPoint& /* theLatLon
       return itsInfo->Area()->WorldXYHeight() / (itsInfo->Grid()->YNumber() - 1);
   }
   return kFloatMissing;
-
-  /*
-          // Tämä saattaisi olla maantieteellisesti oikea lasku tapa, mutta teen simppelin
-     jakolaskun
-          if(itsInfo->IsGrid() && itsInfo->Location(theLatLon))
-          {
-                  NFmiPoint gridPoint1(itsInfo->Grid()->GridPoint());
-                  NFmiPoint gridPoint2(gridPoint1);
-                  if(fCalcXValue)
-                          gridPoint2.X((itsInfo->Grid()->XNumber() < gridPoint2.X()) ?
-     gridPoint2.X()+1 : gridPoint2.X()-1);
-                  else
-                          gridPoint2.Y((itsInfo->Grid()->YNumber() < gridPoint2.Y()) ?
-     gridPoint2.Y()+1 : gridPoint2.Y()-1);
-                  NFmiPoint latlon1(itsInfo->Grid()->GridToLatLon(gridPoint1));
-                  NFmiPoint latlon2(itsInfo->Grid()->GridToLatLon(gridPoint2));
-                  NFmiLocation loc1(latlon1);
-                  return loc1.Distance(latlon2);
-          }
-          return kFloatMissing;
-  */
 }
 
 const NFmiString NFmiGridSizeAreaMask::MakeSubMaskString() const
