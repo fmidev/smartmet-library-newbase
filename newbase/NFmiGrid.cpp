@@ -306,7 +306,7 @@ double NFmiGrid::Coverage(const NFmiGrid &theGrid, unsigned long theStep)
   {
     for (unsigned long x = 0; x < itsXNumber; x += theStep)
     {
-      if (theGrid.itsArea->IsInside(GridToLatLon(x, y)))
+      if (theGrid.itsArea->IsInsideWorldXY(GridToWorldXY(x, y)))
       {
         counter += 1;
       }
