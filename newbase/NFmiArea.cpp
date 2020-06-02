@@ -212,6 +212,16 @@ bool NFmiArea::IsInside(const NFmiPoint &theLatLonPoint) const
   return impl->itsXYRect.IsInside(xyPoint);
 }
 
+bool NFmiArea::IsInsideWorldXY(const NFmiPoint &theWorldXYPoint) const
+{
+  NFmiPoint xyPoint = WorldXYToXY(theWorldXYPoint);
+  if (xyPoint == NFmiPoint::gMissingLatlon)
+  {
+    return false;
+  }
+  return impl->itsXYRect.IsInside(xyPoint);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1559,7 +1569,7 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
       *impl->itsSpatialReference, "FMI", theBottomLeftLatLon, theTopRightLatLon);
 }
 
-NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
+NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const
 {
   NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
   NFmiPoint newTopRightXY = theWorldRect.TopRight();
