@@ -119,6 +119,7 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
   const NFmiPoint GridToLatLon(const NFmiPoint &theGridPoint) const;
   const NFmiPoint GridToWorldXY(double x_, double y_) const;
   const NFmiPoint GridToWorldXY(const NFmiPoint &theGridPoint) const;
+  const NFmiPoint WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const;
 
   bool InterpolateToLatLonPoint(double theLon, double theLat, double &theValue);
   bool InterpolateToLatLonPoint(const NFmiPoint &theLatLon, double &theValue);
@@ -352,6 +353,11 @@ inline const NFmiPoint NFmiGrid::GridToWorldXY(double x_, double y_) const
 inline const NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) const
 {
   return GridToWorldXY(theGridPoint.X(), theGridPoint.Y());
+}
+
+inline const NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const 
+{
+  return XYToGrid(itsArea->WorldXYToXY(theWorldXYPoint));
 }
 
 // ----------------------------------------------------------------------
