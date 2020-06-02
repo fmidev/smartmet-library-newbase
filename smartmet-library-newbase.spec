@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.5.29
-Release: 1%{?dist}.fmi
+Version: 20.6.1
+Release: 3%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -89,8 +89,14 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
-* Fri May 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.29-1.fmi
-- Fixed +towgs84=0,0,0 handling
+* Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-3.fmi
+- NFmiArea::AreaFactoryStr now uses ":" as the separator for legacy projections for backward compatibility
+
+* Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-2.fmi
+- Added possibility to disable writing legacy projection classes and to use PROJ definitions instead
+
+* Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-1.fmi
+- Bug fix release: revert incorrect +towgs84=0,0,0 changes
 
 * Thu May 28 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.28-1.fmi
 - Added NFmiArea::DetectClassId needed by smartmet-plugin-download

@@ -1,4 +1,3 @@
-
 #include "NFmiArea.h"
 
 #include "NFmiAreaFactory.h"
@@ -111,6 +110,9 @@ struct NFmiArea::Impl
 
   // Should we flop the data?
   bool itsFlopped = false;
+
+  // Should we write legacy definitions if possible?
+  bool itsLegacyWriteFlag = true;
 };
 
 // Must be after Impl definition above
@@ -493,7 +495,11 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  switch (impl->itsClassId)
+  // Use generic PROJ area if writing legacy definitions is disabled
+
+  const auto id = (impl->itsLegacyWriteFlag ? impl->itsClassId : kNFmiProjArea);
+
+  switch (id)
   {
     case kNFmiArea:
     {
@@ -1161,24 +1167,11 @@ void NFmiArea::InitProj()
 
   Fmi::SpatialReference wgs84("WGS84");
 
-  // Add +towgs84=0,0,0 to the spatial reference if there isn't one
-  const auto opt_towgs84 = impl->itsSpatialReference->projInfo().getString("towgs84");
+  impl->itsToWorldXYConverter.reset(
+      new Fmi::CoordinateTransformation(wgs84, *impl->itsSpatialReference));
 
-  if (opt_towgs84)
-  {
-    impl->itsToWorldXYConverter.reset(
-        new Fmi::CoordinateTransformation(wgs84, *impl->itsSpatialReference));
-
-    impl->itsToLatLonConverter.reset(
-        new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
-  }
-  else
-  {
-    const auto newproj = impl->itsSpatialReference->projInfo().projStr() + " +towgs84=0,0,0";
-    Fmi::SpatialReference tmp(newproj);
-    impl->itsToWorldXYConverter.reset(new Fmi::CoordinateTransformation(wgs84, tmp));
-    impl->itsToLatLonConverter.reset(new Fmi::CoordinateTransformation(tmp, wgs84));
-  }
+  impl->itsToLatLonConverter.reset(
+      new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
 
   if (impl->itsToLatLonConverter == nullptr)
     throw std::runtime_error("Failed to create coordinate transformation to WGS84");
@@ -1263,6 +1256,8 @@ int NFmiArea::DetectClassId() const
   // Not a legacy projection, use PROJ.4
   return kNFmiProjArea;
 }
+
+void NFmiArea::DisableLegacyWrite() { impl->itsLegacyWriteFlag = false; }
 
 NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
@@ -1462,11 +1457,13 @@ std::string NFmiArea::AreaFactoryStr() const
 
   auto corners = fmt::format("{},{},{},{}", tl.X(), tl.Y(), br.X(), br.Y());
 
+  // Note: We use : instead of | for legacy projections for backward compatibility
+
   switch (impl->itsClassId)
   {
     case kNFmiArea:
     case kNFmiLatLonArea:
-      return "latlon|" + corners;
+      return "latlon:" + corners;
     case kNFmiRotatedLatLonArea:
     {
       auto plat = ProjInfo().getDouble("o_lat_p");
@@ -1476,11 +1473,11 @@ std::string NFmiArea::AreaFactoryStr() const
         throw std::runtime_error("Internal error in writing rotated latlon area");
       if (*plon != 0)
         throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
-      return fmt::format("invrotlatlon,{},{}|{}", -(*plat), *lon0, corners);
+      return fmt::format("invrotlatlon,{},{}:{}", -(*plat), *lon0, corners);
     }
     case kNFmiMercatorArea:
     {
-      return "mercator|" + corners;
+      return "mercator:" + corners;
     }
     case kNFmiStereographicArea:
     {
@@ -1491,7 +1488,7 @@ std::string NFmiArea::AreaFactoryStr() const
       if (!clon || !clat || !tlat)
         throw std::runtime_error("Internal error in writing stereographic area");
 
-      return fmt::format("stereographic,{},{},{}|{}", *clon, *clat, *tlat, corners);
+      return fmt::format("stereographic,{},{},{}:{}", *clon, *clat, *tlat, corners);
     }
     case kNFmiEquiDistArea:
     {
@@ -1500,7 +1497,7 @@ std::string NFmiArea::AreaFactoryStr() const
 
       if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
 
-      return fmt::format("equidist,{},{}|{}", *clon, *clat, corners);
+      return fmt::format("equidist,{},{}:{}", *clon, *clat, corners);
     }
     case kNFmiLambertConformalConicArea:
     {
@@ -1511,12 +1508,12 @@ std::string NFmiArea::AreaFactoryStr() const
       if (!clon || !clat || !lat1 || !lat2)
         throw std::runtime_error("Internal error writing lcc area");
 
-      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}|{}", *clon, *clat, *lat1, corners);
-      return fmt::format("lcc,{},{},{},{}|{}", *clon, *clat, *lat1, *lat2, corners);
+      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}:{}", *clon, *clat, *lat1, corners);
+      return fmt::format("lcc,{},{},{},{}:{}", *clon, *clat, *lat1, *lat2, corners);
     }
     case kNFmiYKJArea:
     {
-      return "ykj|" + corners;
+      return "ykj:" + corners;
     }
     default:
       return AreaFactoryProjStr();
@@ -1530,6 +1527,8 @@ std::string NFmiArea::AreaFactoryProjStr() const
 
   auto tl = impl->TopLeftCorner();
   auto br = impl->BottomRightCorner();
+
+  // Note: Must use | instead of : for new projections due to strings like epsg:4326
 
   return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }

@@ -189,6 +189,8 @@ class _FMI_DLL NFmiArea
   const Fmi::ProjInfo &ProjInfo() const;
   int DetectClassId() const;
 
+  void DisableLegacyWrite();
+
   // from spherical coordinates to WGS84
   static NFmiPoint SphereToWGS84(const NFmiPoint &theWorldXY);
   static NFmiPoint WGS84ToSphere(const NFmiPoint &theLatLon);
