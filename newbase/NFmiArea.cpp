@@ -1562,10 +1562,8 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon) const
 {
-  // Note: We use spherical latlon coordinates for legacy reasons. Use CreateFromCorners directly
-  // to use other spatial references.
-  return CreateFromCorners(
-      *impl->itsSpatialReference, "FMI", theBottomLeftLatLon, theTopRightLatLon);
+  return CreateFromWGS84Corners(
+      *impl->itsSpatialReference, theBottomLeftLatLon, theTopRightLatLon);
 }
 
 NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const
