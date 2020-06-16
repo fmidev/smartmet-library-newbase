@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.6.1
-Release: 3%{?dist}.fmi
+Version: 20.6.16
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Jun 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.16-1.fmi
+- Added parameter SeaLevelN2000 where N2000 is the vertical reference system
+
 * Mon Jun  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.1-3.fmi
 - NFmiArea::AreaFactoryStr now uses ":" as the separator for legacy projections for backward compatibility
 
