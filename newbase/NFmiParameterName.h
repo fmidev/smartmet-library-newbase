@@ -165,6 +165,7 @@ enum FmiParameterName
   kFmiRadiationInSW2 = 154,
   kFmiBatteryVoltage = 155,
 
+  kFmiSeaLevelN2000 = 159,
   kFmiSeaLevelAnomaly = 160,
   kFmiTemperatureSea2, /* kFmiCLDTop ??*/
   kFmiTemperatureSeaSurface = 162,
@@ -1375,7 +1376,8 @@ enum FmiParameterName
   kFmiSnowAccumulation120hF10,
   kFmiSnowAccumulation120hF0,
 
-  kFmiProbabilityOfPOTLimit1 = 1447, // Probability of probability of thunder (yes you read it correctly)
+  kFmiProbabilityOfPOTLimit1 =
+      1447,  // Probability of probability of thunder (yes you read it correctly)
   kFmiProbabilityOfPOTLimit2,
   kFmiProbabilityOfPOTLimit3,
 
