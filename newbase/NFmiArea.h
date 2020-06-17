@@ -26,6 +26,7 @@ namespace Fmi
 {
 class CoordinateMatrix;
 class ProjInfo;
+class CoordinateTransformation;
 }  // namespace Fmi
 
 //! Undocumented
@@ -69,7 +70,7 @@ class _FMI_DLL NFmiArea
   void SetXYArea(const NFmiRect &newArea);
   NFmiRect XYArea(const NFmiArea *theArea) const;
 
-  NFmiRect WorldRect() const;
+  const NFmiRect& WorldRect() const;
 
   NFmiPoint WorldXYPlace() const;
   NFmiPoint WorldXYSize() const;
@@ -194,6 +195,8 @@ class _FMI_DLL NFmiArea
   // from spherical coordinates to WGS84
   static NFmiPoint SphereToWGS84(const NFmiPoint &theWorldXY);
   static NFmiPoint WGS84ToSphere(const NFmiPoint &theLatLon);
+  static NFmiPoint TransformCoordinate(const Fmi::CoordinateTransformation &transformation,
+                                       const NFmiPoint &coordinate);
 
   double XScale() const;
   double YScale() const;
