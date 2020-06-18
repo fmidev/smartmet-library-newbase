@@ -139,12 +139,24 @@ class _FMI_DLL NFmiArea
   // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
   bool PacificView_legacy(void) const { return false; }
   void PacificView_legacy(bool) {}
-  static bool IsPacificView_legacy(const NFmiPoint & /* bottomleftLatlon */,
-                                   const NFmiPoint & /* toprightLatlon */)
+  static bool IsPacificView(const NFmiPoint &bottomleftLatlon,
+                                   const NFmiPoint &toprightLatlon)
   {
+    // Obvious case
+    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;
+    // 0...360 coordinate system is used
+    if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
+      return true;
     return false;
   }
-  static bool IsPacificLongitude_legacy(double theLongitude) { return false; }
+
+  static bool IsPacificLongitude(double theLongitude)
+  {
+    if (theLongitude > 180 && theLongitude <= 360)
+      return true;
+    else
+      return false;
+  }
 
   std::size_t HashValue() const;
 
