@@ -1252,7 +1252,6 @@ const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsSpatialReferen
 
 int NFmiArea::DetectClassId() const
 {
-#if 0  
   const auto proj = ProjInfo();
 
   auto name = proj.getString("proj");
@@ -1283,33 +1282,6 @@ int NFmiArea::DetectClassId() const
 
   // Not a legacy projection, use PROJ.4
   return kNFmiProjArea;
-#else
-  const auto proj = ProjInfo();
-
-  auto name = proj.getString("proj");
-  if (!name) throw std::runtime_error("Projection name not set, should be impossible");
-
-  if (proj.getString("datum") == std::string("WGS84"))
-  {
-    if (*name == "eqc") return kNFmiLatLonArea;
-    if (*name == "merc") return kNFmiMercatorArea;
-    if (*name == "stere") return kNFmiStereographicArea;
-    if (*name == "aeqd") return kNFmiEquiDistArea;
-    if (*name == "lcc") return kNFmiLambertConformalConicArea;
-    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
-        proj.getDouble("o_lon_p") == 0.0)
-      return kNFmiRotatedLatLonArea;
-  }
-  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
-           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
-           proj.getDouble("lon_0") == 27.0 &&
-           proj.getString("towgs84") ==
-               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
-    return kNFmiYKJArea;
-
-  // Not a legacy projection, use PROJ.4
-  return kNFmiProjArea;
-#endif
 }
 
 void NFmiArea::DisableLegacyWrite() { impl->itsLegacyWriteFlag = false; }

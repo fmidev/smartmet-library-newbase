@@ -149,12 +149,10 @@ ProjStrings parse_projection(const std::string &theProjection)
 
   auto projection = theProjection;
 
-  // Initial guess for the spatial reference of the bbox coordinates. Note: FMI
-  // was apparently really used as WGS84 in legacy code.
-
+  // Initial guess for the spatial reference of the bbox coordinates
   if (starts_with(projection, "FMI:"))
   {
-    result.sphere = "WGS84";
+    result.sphere = "FMI";
     projection = projection.substr(4);
   }
   else if (starts_with(projection, "WGS84:"))
@@ -163,7 +161,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     projection = projection.substr(6);
   }
   else
-    result.sphere = "WGS84";  // default
+    result.sphere = "FMI";  // default
 
   std::vector<std::string> words;
   boost::algorithm::split(words, projection, boost::is_any_of(","));
@@ -178,10 +176,11 @@ ProjStrings parse_projection(const std::string &theProjection)
 
   if (name == "latlon")
   {
-    // for legacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
+    // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
     if (params.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-    result.proj4 = fmt::format("+proj=eqc +datum=WGS84 +wktext +over +no_defs");
+    result.proj4 =
+        fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
   }
   else if (name == "rotlatlon")
   {
@@ -194,11 +193,12 @@ ProjStrings parse_projection(const std::string &theProjection)
     auto lon_0 = spole_lon;
 
     result.proj4 = fmt::format(
-        "+proj=ob_tran +o_proj=eqc +datum=WGS84 +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+wktext +over +no_defs",
+        "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
+        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
-        lon_0);
+        lon_0,
+        kRearth);
   }
   else if (name == "invrotlatlon")
   {
@@ -211,27 +211,30 @@ ProjStrings parse_projection(const std::string &theProjection)
     auto lon_0 = spole_lon;
 
     result.proj4 = fmt::format(
-        "+proj=ob_tran +o_proj=eqc +datum=WGS84 +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+wktext +over +no_defs",
+        "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
+        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
-        lon_0);
+        lon_0,
+        kRearth);
 
     // the legacy corners are in rotated spherical latlon coordinates
     // the +to_meter setting is necessary to avoid radians
     result.sphere = fmt::format(
-        "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +datum=WGS84 +o_lon_p={} "
-        "+o_lat_p={} "
-        "+lon_0={} +wktext +over +no_defs",
+        "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
+        "+lon_0={} "
+        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
-        lon_0);
+        lon_0,
+        kRearth);
   }
   else if (name == "mercator")
   {
     if (params.size() > 0) throw runtime_error("mercator area requires no parameters");
 
-    result.proj4 = fmt::format("+proj=merc +datum=WGS84 +wktext +over +no_defs");
+    result.proj4 =
+        fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
   }
   else if (name == "stereographic")
   {
@@ -241,10 +244,12 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double tlat = (params.size() >= 3 ? params[2] : 60);
 
     result.proj4 = fmt::format(
-        "+proj=stere +datum=WGS84 +lat_0={} +lat_ts={} +lon_0={} +units=m +wktext +no_defs",
+        "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} "
+        "+units=m +wktext +towgs84=0,0,0 +no_defs",
         clat,
         tlat,
-        clon);
+        clon,
+        kRearth);
   }
   else if (name == "gnomonic")
   {
@@ -273,14 +278,15 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double tlat2 = (params.size() >= 4 ? params[3] : tlat1);
     const double rad = (params.size() >= 5 ? params[4] : kRearth);
 
-    // We ignore radius on purpose. MEPS data was really close to WGS84 despite GRIB metadata
     result.proj4 = fmt::format(
-        "+proj=lcc +datum=WGS84 +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +units=m "
-        "+wktext +no_defs",
+        "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} "
+        "+units=m +wktext +towgs84=0,0,0 +no_defs",
         tlat1,
         tlat2,
         clat,
-        clon);
+        clon,
+        rad);
+    result.sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs +towgs84=0,0,0", rad);
   }
   else if (name == "equidist")
   {
@@ -289,13 +295,17 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double clat = (params.size() >= 2 ? params[1] : 90);
 
     result.proj4 = fmt::format(
-        "+proj=aeqd +datum=WGS84 +lat_0={} +lon_0={} +units=m +wktext +no_defs", clat, clon);
+        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
+        "+towgs84=0,0,0 +no_defs",
+        clat,
+        clon,
+        kRearth);
   }
   else
   {
     // Assume WKT, PROJ.4 or other string
     result.proj4 = projection;
-    if (result.sphere.empty()) result.sphere = "WGS84";
+    if (result.sphere.empty()) result.sphere = "FMI";
   }
 
   return result;
