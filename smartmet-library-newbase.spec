@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.6.16
+Version: 20.6.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.29-1.fmi
+- Interpret legacy querydata as +datum=WGS84 unless Finnish YKJ (EPSG:2393) is specified
+
 * Tue Jun 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.16-1.fmi
 - Added parameter SeaLevelN2000 where N2000 is the vertical reference system
 
