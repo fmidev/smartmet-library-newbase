@@ -161,7 +161,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     projection = projection.substr(6);
   }
   else
-    result.sphere = "FMI";  // default
+    result.sphere = "WGS84";  // default
 
   std::vector<std::string> words;
   boost::algorithm::split(words, projection, boost::is_any_of(","));
@@ -179,8 +179,9 @@ ProjStrings parse_projection(const std::string &theProjection)
     // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
     if (params.size() != 0) throw runtime_error("latlon area does not require any parameters");
 
-    result.proj4 =
-        fmt::format("+proj=eqc +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
+    result.sphere = "WGS84";
+
+    result.proj4 = fmt::format("+proj=eqc +datum=WGS84 +wktext +over +no_defs");
   }
   else if (name == "rotlatlon")
   {
@@ -305,7 +306,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     // Assume WKT, PROJ.4 or other string
     result.proj4 = projection;
-    if (result.sphere.empty()) result.sphere = "FMI";
+    if (result.sphere.empty()) result.sphere = "WGS84";
   }
 
   return result;

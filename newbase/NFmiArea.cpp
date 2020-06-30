@@ -443,25 +443,27 @@ void NFmiArea::SetXYArea(const NFmiRect &newArea)
 // ----------------------------------------------------------------------
 /*!
  * \param transformation is made with spatial references from source and destination data.
- * \param coordinate is usually worldXY coordinate, but can be in any coordinate system that spatial references support.
+ * \param coordinate is usually worldXY coordinate, but can be in any coordinate system that spatial
+ * references support.
  */
 // ----------------------------------------------------------------------
 
 NFmiPoint NFmiArea::TransformCoordinate(const Fmi::CoordinateTransformation &transformation,
-                                     const NFmiPoint &coordinate)
+                                        const NFmiPoint &coordinate)
 {
   double x = coordinate.X();
   double y = coordinate.Y();
-  auto status = transformation.transform(x, y);
+  transformation.transform(x, y);
   return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
 /*!
- * If theArea object is put over this area object, what xy-rect would that cover in this object's xy-space.
- * \param theArea is map-area that is put over this map object for calculations.
- * This method is intended to be used only if this object and theArea object are both in similar projection and datum.
- * E.g. both are in latlon projection type and both are on sphere or wgs84 datum.
+ * If theArea object is put over this area object, what xy-rect would that cover in this object's
+ * xy-space. \param theArea is map-area that is put over this map object for calculations. This
+ * method is intended to be used only if this object and theArea object are both in similar
+ * projection and datum. E.g. both are in latlon projection type and both are on sphere or wgs84
+ * datum.
  */
 // ----------------------------------------------------------------------
 
@@ -471,7 +473,8 @@ NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
   const auto &worldXyRect = theArea->WorldRect();
   // This transformation object is needed because there is at least one special case where different
   // areas have the same worldXY bounding-boxes and had to be addressed with this transformation
-  // object: Case of Atlantic centric and Pacific centric world areas, where pacific centric has worldXY origo moved by 180 degrees.
+  // object: Case of Atlantic centric and Pacific centric world areas, where pacific centric has
+  // worldXY origo moved by 180 degrees.
   Fmi::CoordinateTransformation transformation(theArea->SpatialReference(), SpatialReference());
   NFmiPoint topLeft(WorldXYToXY(TransformCoordinate(transformation, worldXyRect.TopLeft())));
   NFmiPoint bottomRight(
@@ -1254,10 +1257,11 @@ int NFmiArea::DetectClassId() const
   auto name = proj.getString("proj");
   if (!name) throw std::runtime_error("Projection name not set, should be impossible");
 
+  if (*name == "eqc" && proj.getString("datum") == std::string("WGS84")) return kNFmiLatLonArea;
+
   if (proj.getDouble("R") == kRearth ||
       (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
   {
-    if (*name == "eqc") return kNFmiLatLonArea;
     if (*name == "merc") return kNFmiMercatorArea;
     if (*name == "stere") return kNFmiStereographicArea;
     if (*name == "aeqd") return kNFmiEquiDistArea;
@@ -1557,7 +1561,7 @@ std::string NFmiArea::AreaFactoryProjStr() const
   return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }
 
-const NFmiRect& NFmiArea::WorldRect() const { return impl->itsWorldRect; }
+const NFmiRect &NFmiArea::WorldRect() const { return impl->itsWorldRect; }
 
 #ifdef WGS84
 NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
@@ -1586,8 +1590,7 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon) const
 {
-  return CreateFromWGS84Corners(
-      *impl->itsSpatialReference, theBottomLeftLatLon, theTopRightLatLon);
+  return CreateFromWGS84Corners(*impl->itsSpatialReference, theBottomLeftLatLon, theTopRightLatLon);
 }
 
 NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const

@@ -14,7 +14,7 @@ namespace NFmiAreaFactoryTest
 {
 void latlon()
 {
-  std::string proj = "latlon|10,20,30,40";
+  std::string proj = "latlon:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -25,7 +25,7 @@ void latlon()
 
 void invrotlatlon()
 {
-  std::string proj = "invrotlatlon,-90,30|10,20,30,40";
+  std::string proj = "invrotlatlon,-90,30:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -36,7 +36,7 @@ void invrotlatlon()
 
 void mercator()
 {
-  std::string proj = "mercator|10,20,30,40";
+  std::string proj = "mercator:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -47,7 +47,7 @@ void mercator()
 
 void ykj()
 {
-  std::string proj = "ykj|10,20,30,40";
+  std::string proj = "ykj:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -58,7 +58,7 @@ void ykj()
 
 void stereographic()
 {
-  std::string proj = "stereographic,25,90,60|10,20,30,40";
+  std::string proj = "stereographic,25,90,60:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -69,7 +69,7 @@ void stereographic()
 
 void lcc()
 {
-  std::string proj = "lcc,25,60,50,70|10,20,30,40";
+  std::string proj = "lcc,25,60,50,70:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
@@ -80,7 +80,7 @@ void lcc()
 
 void equidist()
 {
-  std::string proj = "equidist,25,60|10,20,30,40";
+  std::string proj = "equidist,25,60:10,20,30,40";
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
