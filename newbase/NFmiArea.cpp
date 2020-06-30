@@ -1257,10 +1257,11 @@ int NFmiArea::DetectClassId() const
   auto name = proj.getString("proj");
   if (!name) throw std::runtime_error("Projection name not set, should be impossible");
 
+  if (*name == "eqc" && proj.getString("datum") == std::string("WGS84")) return kNFmiLatLonArea;
+
   if (proj.getDouble("R") == kRearth ||
       (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
   {
-    if (*name == "eqc") return kNFmiLatLonArea;
     if (*name == "merc") return kNFmiMercatorArea;
     if (*name == "stere") return kNFmiStereographicArea;
     if (*name == "aeqd") return kNFmiEquiDistArea;
