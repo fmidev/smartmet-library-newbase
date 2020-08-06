@@ -80,15 +80,38 @@ std::string class_name_from_id(int id)
 
 struct NFmiArea::Impl
 {
+  ~Impl() = default;
+  Impl() = default;
+  Impl(const Impl &other) 
+  : itsSpatialReference(other.itsSpatialReference),
+        itsToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsToLatLonConverter)),
+        itsToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsToWorldXYConverter)),
+        itsNativeToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsNativeToLatLonConverter)),
+        itsNativeToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsNativeToWorldXYConverter)),
+        itsWorldRect(other.itsWorldRect),
+        itsXYRect(other.itsXYRect),
+        itsClassId(other.itsClassId),
+        itsClassName(other.itsClassName),
+        itsTopLeftCorner(other.itsTopLeftCorner),
+        itsBottomRightCorner(other.itsBottomRightCorner),
+        itsXScaleFactor(other.itsXScaleFactor),
+        itsYScaleFactor(other.itsYScaleFactor),
+        itsFlopped(other.itsFlopped),
+        itsLegacyWriteFlag(other.itsLegacyWriteFlag)
+  {
+  }
+
+  Impl &operator=(const Impl &) = delete;
+
   std::shared_ptr<Fmi::SpatialReference> itsSpatialReference;
 
   // WGS84 conversions
-  boost::shared_ptr<Fmi::CoordinateTransformation> itsToLatLonConverter;
-  boost::shared_ptr<Fmi::CoordinateTransformation> itsToWorldXYConverter;
+  std::unique_ptr<Fmi::CoordinateTransformation> itsToLatLonConverter;
+  std::unique_ptr<Fmi::CoordinateTransformation> itsToWorldXYConverter;
 
   // Projection geographic coordinate conversions
-  boost::shared_ptr<Fmi::CoordinateTransformation> itsNativeToLatLonConverter;
-  boost::shared_ptr<Fmi::CoordinateTransformation> itsNativeToWorldXYConverter;
+  std::unique_ptr<Fmi::CoordinateTransformation> itsNativeToLatLonConverter;
+  std::unique_ptr<Fmi::CoordinateTransformation> itsNativeToWorldXYConverter;
 
   NFmiRect itsWorldRect;           // bbox in native WorldXY coordinates
   NFmiRect itsXYRect{0, 0, 1, 1};  // mapping from bbox to XY image coordinates
