@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.6.30
+Version: 20.7.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,8 +17,8 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis >= 20.5.28
-Requires: smartmet-library-gis >= 20.5.28
+BuildRequires: smartmet-library-gis >= 20.7.2
+Requires: smartmet-library-gis >= 20.7.2
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-1.fmi
+- SpatialReference API changed
+
 * Tue Jun 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.30-1.fmi
 - Handle NFmiLatLonArea as WGS84 data to make global models work
 
