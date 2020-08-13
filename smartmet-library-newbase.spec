@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.7.2
+Version: 20.8.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,8 +17,8 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis >= 20.7.2
-Requires: smartmet-library-gis >= 20.7.2
+BuildRequires: smartmet-library-gis >= 20.8.13
+Requires: smartmet-library-gis >= 20.8.13
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Aug 13 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.13-1.fmi
+- GIS-library ABI changed
+
 * Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-1.fmi
 - SpatialReference API changed
 
