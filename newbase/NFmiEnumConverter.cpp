@@ -1256,6 +1256,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "SeaLevelMaximum", kFmiSeaLevelMaximum},
       { "SeaLevelMean", kFmiSeaLevelMean},
       { "SeaLevelMinimum", kFmiSeaLevelMinimum},
+      { "SeaLevelN2000", kFmiSeaLevelN2000},
       { "SeaPercentage", kFmiSeaPercentage},
       { "SeaSprayIcing", kFmiSeaSprayIcing},
       { "SeaSurfaceElevation", kFmiSeaSurfaceElevation},
