@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.8.13
+Version: 20.8.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,8 +17,8 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis >= 20.8.13
-Requires: smartmet-library-gis >= 20.8.13
+BuildRequires: smartmet-library-gis >= 20.8.17
+Requires: smartmet-library-gis >= 20.8.17
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -89,6 +89,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Aug 17 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.17-1.fmi
+- Repackaged since OGRCoordinateTransformationFactory API changed
+
 * Thu Aug 13 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.13-1.fmi
 - GIS-library ABI changed
 
