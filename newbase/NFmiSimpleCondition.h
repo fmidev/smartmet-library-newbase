@@ -12,10 +12,15 @@ class NFmiCalculationParams;
 class NFmiSimpleConditionPart
 {
   boost::shared_ptr<NFmiAreaMask> itsMask1;
-  bool isMask1StationaryData = false;  // Jos stationaarista, ei saa tehdä aikainterpolaatiota
+  // Jos stationaarista, ei saa tehdä aikainterpolaatiota
+    bool isMask1StationaryData = false; 
   NFmiAreaMask::CalculationOperator itsCalculationOperator = NFmiAreaMask::NotOperation;
   boost::shared_ptr<NFmiAreaMask> itsMask2;
-  bool isMask2StationaryData = false;  // Jos stationaarista, ei saa tehdä aikainterpolaatiota
+    // Jos stationaarista, ei saa tehdä aikainterpolaatiota
+    bool isMask2StationaryData = false; 
+    // Tätä käytetään hyväksi -> vertailuoperaattorin kanssa eli ns. continuous-equal laskuissa
+    double itsPreviousValue = kFloatMissing; 
+
  public:
   ~NFmiSimpleConditionPart();
   NFmiSimpleConditionPart(boost::shared_ptr<NFmiAreaMask> &mask1,
@@ -34,6 +39,8 @@ class NFmiSimpleConditionPart
   double Value(const NFmiCalculationParams &theCalculationParams, bool fUseTimeInterpolationAlways);
   double PressureValue(double thePressure, const NFmiCalculationParams &theCalculationParams);
   double HeightValue(double theHeight, const NFmiCalculationParams &theCalculationParams);
+
+    double PreviousValue(double newPreviousValue);
 };
 
 // Class is used by smarttool language. Some smarttool functions may have this
