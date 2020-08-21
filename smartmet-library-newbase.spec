@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.6.16
+Version: 20.8.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -32,7 +32,7 @@ BuildRequires: gdal30-devel
 %endif
 
 Requires: geos >= 3.5.0
-Requires: fmt >= 5.2.0
+Requires: fmt >= 6.2.1
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
@@ -96,6 +96,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
+- Upgrade to fmt 6.2
+
 * Tue Jun 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.16-1.fmi
 - Added parameter SeaLevelN2000 where N2000 is the vertical reference system
 
