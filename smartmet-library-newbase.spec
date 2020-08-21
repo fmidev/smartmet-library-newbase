@@ -27,11 +27,7 @@ Requires: boost169-regex
 Requires: gdal30-libs
 Requires: fmt >= 6.2.1
 BuildRequires: gdal30-devel
-%endif
-
-Requires: geos >= package geos is not installed
-Requires: fmt >= 6.2.1
->>>>>>> master
+Requires: geos38
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
