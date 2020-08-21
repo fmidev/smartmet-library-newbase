@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.8.17
+Version: 20.8.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,15 +17,21 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis >= 20.8.17
-Requires: smartmet-library-gis >= 20.8.17
+BuildRequires: smartmet-library-gis >= 20.8.21
+Requires: smartmet-library-gis >= 20.8.21
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
 Requires: boost169-system
 Requires: boost169-regex
 Requires: gdal30-libs
-Requires: fmt >= 5.2.0
+Requires: fmt >= 6.2.1
+BuildRequires: gdal30-devel
+%endif
+
+Requires: geos >= package geos is not installed
+Requires: fmt >= 6.2.1
+>>>>>>> master
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
@@ -89,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
+- Upgrade to fmt 6.2
+
 * Mon Aug 17 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.17-1.fmi
 - Repackaged since OGRCoordinateTransformationFactory API changed
 
@@ -100,7 +109,6 @@ FMI newbase static library
 
 * Tue Jun 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.30-1.fmi
 - Handle NFmiLatLonArea as WGS84 data to make global models work
-
 * Tue Jun 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.16-1.fmi
 - Added parameter SeaLevelN2000 where N2000 is the vertical reference system
 
