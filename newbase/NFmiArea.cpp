@@ -4,15 +4,14 @@
 #include "NFmiAreaTools.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
-
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <gis/BilinearCoordinateTransformation.h>
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/ProjInfo.h>
 #include <gis/SpatialReference.h>
-
 #include <iomanip>
 #include <iostream>
 #include <ogr_spatialref.h>
@@ -82,12 +81,16 @@ struct NFmiArea::Impl
 {
   ~Impl() = default;
   Impl() = default;
-  Impl(const Impl &other) 
-  : itsSpatialReference(other.itsSpatialReference),
+  Impl(const Impl &other)
+      : itsSpatialReference(other.itsSpatialReference),
         itsToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsToLatLonConverter)),
         itsToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsToWorldXYConverter)),
-        itsNativeToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsNativeToLatLonConverter)),
-        itsNativeToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsNativeToWorldXYConverter)),
+        itsToLatLonBilinearConverter(other.itsToLatLonBilinearConverter),
+        itsToWorldXYBilinearConverter(other.itsToWorldXYBilinearConverter),
+        itsNativeToLatLonConverter(
+            new Fmi::CoordinateTransformation(*other.itsNativeToLatLonConverter)),
+        itsNativeToWorldXYConverter(
+            new Fmi::CoordinateTransformation(*other.itsNativeToWorldXYConverter)),
         itsWorldRect(other.itsWorldRect),
         itsXYRect(other.itsXYRect),
         itsClassId(other.itsClassId),
@@ -108,6 +111,10 @@ struct NFmiArea::Impl
   // WGS84 conversions
   std::unique_ptr<Fmi::CoordinateTransformation> itsToLatLonConverter;
   std::unique_ptr<Fmi::CoordinateTransformation> itsToWorldXYConverter;
+
+  // Fast bilinear interpolation coordinate conversions
+  std::shared_ptr<Fmi::BilinearCoordinateTransformation> itsToLatLonBilinearConverter;
+  std::shared_ptr<Fmi::BilinearCoordinateTransformation> itsToWorldXYBilinearConverter;
 
   // Projection geographic coordinate conversions
   std::unique_ptr<Fmi::CoordinateTransformation> itsNativeToLatLonConverter;
@@ -1081,6 +1088,13 @@ std::size_t NFmiArea::HashValueKludge() const
 
 NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 {
+  if (impl->itsToWorldXYBilinearConverter)
+  {
+    double x = theWgs84.X();
+    double y = theWgs84.Y();
+    if (impl->itsToWorldXYBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+  }
+
   if (!impl->itsToWorldXYConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
@@ -1095,6 +1109,13 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 
 NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 {
+  if (impl->itsToWorldXYBilinearConverter)
+  {
+    double x = theWorldXY.X();
+    double y = theWorldXY.Y();
+    if (impl->itsToWorldXYBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+  }
+
   if (!impl->itsToLatLonConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
