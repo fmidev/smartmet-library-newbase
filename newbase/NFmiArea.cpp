@@ -1857,6 +1857,8 @@ void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
 
   // Establish LatLon to WorldXY bilinear conversion by looking for the grid bbox
 
+  // TODO: Create a LatLonBBox cache to optimize this step
+
   const auto big_value = 1e6;
 
   double lon1 = +big_value;
