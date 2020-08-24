@@ -405,6 +405,9 @@ std::istream &NFmiGrid::Read(std::istream &file)
 
   NFmiGridBase::Read(file);
 
+  // Setup bilinear coordinate interpolation
+  if (itsArea) itsArea->SetGridSize(XNumber(), YNumber());
+
   return file;
 }
 
