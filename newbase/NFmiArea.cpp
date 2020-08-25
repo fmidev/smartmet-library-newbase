@@ -1110,11 +1110,11 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 
 NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 {
-  if (impl->itsToWorldXYBilinearConverter)
+  if (impl->itsToLatLonBilinearConverter)
   {
     double x = theWorldXY.X();
     double y = theWorldXY.Y();
-    if (impl->itsToWorldXYBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+    if (impl->itsToLatLonBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
   }
 
   if (!impl->itsToLatLonConverter)
