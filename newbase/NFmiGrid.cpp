@@ -908,11 +908,11 @@ Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
-                          unsigned long theXNumber,
-                          unsigned long theYNumber,
-                          FmiDirection theStartingCorner,
-                          FmiInterpolationMethod theInterpolationMethod)
+NFmiGrid::NFmiGrid(const NFmiArea *theArea,
+                   unsigned long theXNumber,
+                   unsigned long theYNumber,
+                   FmiDirection theStartingCorner,
+                   FmiInterpolationMethod theInterpolationMethod)
     : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod),
       itsArea(theArea ? theArea->Clone() : 0)
 {
