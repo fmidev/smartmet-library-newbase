@@ -894,3 +894,27 @@ Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
 {
   return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * Constructor
+ *
+ * \param theArea Undocumented
+ * \param theXNumber Undocumented
+ * \param theYNumber Undocumented
+ * \param theStartingCorner Undocumented
+ * \param theInterpolationMethod Undocumented
+ * \param theBase Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
+                          unsigned long theXNumber,
+                          unsigned long theYNumber,
+                          FmiDirection theStartingCorner,
+                          FmiInterpolationMethod theInterpolationMethod)
+    : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod),
+      itsArea(theArea ? theArea->Clone() : 0)
+{
+  if (itsArea && theXNumber > 1 && theYNumber > 1) itsArea->SetGridSize(theXNumber, theYNumber);
+}

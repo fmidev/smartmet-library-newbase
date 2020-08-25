@@ -200,31 +200,6 @@ typedef NFmiGrid *PNFmiGrid;
 // ----------------------------------------------------------------------
 
 inline NFmiGrid::~NFmiGrid() { delete itsArea; }
-// ----------------------------------------------------------------------
-/*!
- * Constructor
- *
- * \param theArea Undocumented
- * \param theXNumber Undocumented
- * \param theYNumber Undocumented
- * \param theStartingCorner Undocumented
- * \param theInterpolationMethod Undocumented
- * \param theBase Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
-                          unsigned long theXNumber,
-                          unsigned long theYNumber,
-                          FmiDirection theStartingCorner,
-                          FmiInterpolationMethod theInterpolationMethod)
-    //				   bool theBase)
-    : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod)
-      //				 theBase)
-      ,
-      itsArea(theArea ? theArea->Clone() : 0)
-{
-}
 
 // ----------------------------------------------------------------------
 /*!
@@ -355,7 +330,7 @@ inline const NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) co
   return GridToWorldXY(theGridPoint.X(), theGridPoint.Y());
 }
 
-inline const NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const 
+inline const NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const
 {
   return XYToGrid(itsArea->WorldXYToXY(theWorldXYPoint));
 }
