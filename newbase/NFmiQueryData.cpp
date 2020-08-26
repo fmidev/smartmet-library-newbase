@@ -13,16 +13,13 @@
 // ======================================================================
 
 #include "NFmiQueryData.h"
-
 #include "NFmiFileSystem.h"
 #include "NFmiGrid.h"
 #include "NFmiQueryInfo.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStationBag.h"
 #include "NFmiVersion.h"
-
 #include <boost/make_shared.hpp>
-
 #include <fcntl.h>
 #include <fstream>
 #include <ios>
@@ -146,14 +143,7 @@ NFmiQueryData::~NFmiQueryData() { Destroy(); }
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData::NFmiQueryData()
-    : itsRawData(nullptr),
-      itsFirst(false),
-      itsQueryInfo(nullptr),
-      itsLatLonCache(),
-      itsLatLonCacheFlag(BOOST_ONCE_INIT)
-{
-}
+NFmiQueryData::NFmiQueryData() : itsRawData(nullptr), itsFirst(false), itsQueryInfo(nullptr) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -165,11 +155,7 @@ NFmiQueryData::NFmiQueryData()
 // ----------------------------------------------------------------------
 
 NFmiQueryData::NFmiQueryData(const NFmiQueryInfo &theInfo)
-    : itsRawData(new NFmiRawData()),
-      itsFirst(false),
-      itsQueryInfo(new NFmiQueryInfo(theInfo)),
-      itsLatLonCache(),
-      itsLatLonCacheFlag(BOOST_ONCE_INIT)
+    : itsRawData(new NFmiRawData()), itsFirst(false), itsQueryInfo(new NFmiQueryInfo(theInfo))
 {
 }
 
@@ -184,9 +170,7 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryInfo &theInfo)
 NFmiQueryData::NFmiQueryData(const NFmiQueryData &theData)
     : itsRawData(new NFmiRawData(*theData.itsRawData)),
       itsFirst(theData.itsFirst),
-      itsQueryInfo(new NFmiQueryInfo(*theData.itsQueryInfo)),
-      itsLatLonCache(theData.itsLatLonCache),
-      itsLatLonCacheFlag(theData.itsLatLonCacheFlag)
+      itsQueryInfo(new NFmiQueryInfo(*theData.itsQueryInfo))
 {
 }
 
@@ -197,10 +181,7 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryData &theData)
 // ----------------------------------------------------------------------
 
 NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
-    : itsRawData(nullptr),
-      itsFirst(false),
-      itsQueryInfo(nullptr),
-      itsLatLonCacheFlag(BOOST_ONCE_INIT)
+    : itsRawData(nullptr), itsFirst(false), itsQueryInfo(nullptr)
 {
   // Filename "-" implies standard input
 
@@ -288,8 +269,6 @@ void NFmiQueryData::swap(NFmiQueryData &theOther)
   std::swap(itsRawData, theOther.itsRawData);
   std::swap(itsFirst, theOther.itsFirst);
   std::swap(itsQueryInfo, theOther.itsQueryInfo);
-  std::swap(itsLatLonCache, theOther.itsLatLonCache);
-  std::swap(itsLatLonCacheFlag, theOther.itsLatLonCacheFlag);
 }
 
 // ----------------------------------------------------------------------
@@ -418,7 +397,7 @@ bool NFmiQueryData::Next()
  */
 // ----------------------------------------------------------------------
 
-const NFmiMetTime NFmiQueryData::Time() const
+NFmiMetTime NFmiQueryData::Time() const
 {
   if (itsQueryInfo->itsTimeDescriptor->IsValidTime())
     return itsQueryInfo->itsTimeDescriptor->ValidTime();
@@ -493,7 +472,7 @@ float NFmiQueryData::Quality() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header1() const
+NFmiString NFmiQueryData::Header1() const
 {
   itsQueryInfo->ResetText();
 
@@ -508,7 +487,7 @@ const NFmiString NFmiQueryData::Header1() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header2() const
+NFmiString NFmiQueryData::Header2() const
 {
   itsQueryInfo->ResetText();
 
@@ -528,7 +507,7 @@ const NFmiString NFmiQueryData::Header2() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header3() const
+NFmiString NFmiQueryData::Header3() const
 {
   itsQueryInfo->ResetText();
 
@@ -602,7 +581,6 @@ void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
   if ((Info()->HPlaceDescriptor() == newDesc) == false)
   {
     itsQueryInfo->SetHPlaceDescriptor(newDesc);
-    MakeLatLonCache();  // tämä alustaa latlon cachen uudestaan
   }
 }
 
@@ -619,57 +597,6 @@ bool NFmiQueryData::Advise(FmiAdvice theAdvice)
   if (!itsRawData) return false;
 
   return itsRawData->Advise(theAdvice);
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Return the latlon cache
- *
- * Note: This must not be done in constructors, since smartmet-server
- * reads thousands of radar files and holding the coordinates
- * for all of them would take > 10 GB.
- */
-// ----------------------------------------------------------------------
-
-boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
-{
-  // If not already set by SetLatLonCache, initialize once
-  if (!itsLatLonCache)
-    boost::call_once(boost::bind(&NFmiQueryData::MakeLatLonCache, this), itsLatLonCacheFlag);
-  return itsLatLonCache;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Set the latlon cache
- *
- * Note: smartmet-server caches the created LatLonCaches and uses this
- *       method to set the same value for all equivalent grids.
- *
- * Note: We assume there is no race condition between LatLonCache()
- *       SetLatLonCache(), code should always call the latter before
- *       allowing anything else to request access to the cache.
- */
-// ----------------------------------------------------------------------
-
-void NFmiQueryData::SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache)
-{
-  itsLatLonCache = newCache;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Initialize coordinate cache
- *
- * \return Coordinate cache
- */
-// ----------------------------------------------------------------------
-
-void NFmiQueryData::MakeLatLonCache() const
-{
-  boost::shared_ptr<std::vector<NFmiPoint> > tmp = boost::make_shared<std::vector<NFmiPoint> >();
-  HPlaceDesc()->CreateLatLonCache(*tmp);
-  boost::atomic_store(&itsLatLonCache, tmp);
 }
 
 // ----------------------------------------------------------------------

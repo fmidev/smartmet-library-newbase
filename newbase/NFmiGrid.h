@@ -109,17 +109,17 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
       int theMaxWantedLocations,
       double theMaxDistance = kFloatMissing) const;
 
-  const NFmiPoint XYToGrid(double x, double y) const;
-  const NFmiPoint XYToGrid(const NFmiPoint &theXYPoint) const;
-  const NFmiPoint GridToXY(double x_, double y_) const;
-  const NFmiPoint GridToXY(const NFmiPoint &theGridPoint) const;
-  const NFmiPoint LatLonToGrid(double theLon, double theLat) const;
-  const NFmiPoint LatLonToGrid(const NFmiPoint &theLatLon) const;
-  const NFmiPoint GridToLatLon(double x_, double y_) const;
-  const NFmiPoint GridToLatLon(const NFmiPoint &theGridPoint) const;
-  const NFmiPoint GridToWorldXY(double x_, double y_) const;
-  const NFmiPoint GridToWorldXY(const NFmiPoint &theGridPoint) const;
-  const NFmiPoint WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const;
+  NFmiPoint XYToGrid(double x, double y) const;
+  NFmiPoint XYToGrid(const NFmiPoint &theXYPoint) const;
+  NFmiPoint GridToXY(double x_, double y_) const;
+  NFmiPoint GridToXY(const NFmiPoint &theGridPoint) const;
+  NFmiPoint LatLonToGrid(double theLon, double theLat) const;
+  NFmiPoint LatLonToGrid(const NFmiPoint &theLatLon) const;
+  NFmiPoint GridToLatLon(double x_, double y_) const;
+  NFmiPoint GridToLatLon(const NFmiPoint &theGridPoint) const;
+  NFmiPoint GridToWorldXY(double x_, double y_) const;
+  NFmiPoint GridToWorldXY(const NFmiPoint &theGridPoint) const;
+  NFmiPoint WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const;
 
   bool InterpolateToLatLonPoint(double theLon, double theLat, double &theValue);
   bool InterpolateToLatLonPoint(const NFmiPoint &theLatLon, double &theValue);
@@ -139,12 +139,12 @@ class _FMI_DLL NFmiGrid : public NFmiGridBase
 
   bool InterpolateToXYPoint(const NFmiPoint &xy, double &theValue, FmiInterpolationMethod method);
 
-  const NFmiPoint LatLon() const;
-  const NFmiPoint LatLon(unsigned long theIndex) const;
-  const NFmiPoint WorldXY(unsigned long theIndex) const;
-  const NFmiPoint RelativePoint() const;
-  const NFmiPoint RelativePoint(unsigned long theIndex) const;
-  const NFmiPoint XY() const;
+  NFmiPoint LatLon() const;
+  NFmiPoint LatLon(unsigned long theIndex) const;
+  NFmiPoint WorldXY(unsigned long theIndex) const;
+  NFmiPoint RelativePoint() const;
+  NFmiPoint RelativePoint(unsigned long theIndex) const;
+  NFmiPoint XY() const;
   NFmiArea *Area() const;
   bool AreGridsIdentical(const NFmiGrid &theOtherGrid) const;
 
@@ -224,7 +224,7 @@ inline bool NFmiGrid::Init(NFmiDataPool *theData) { return NFmiGridBase::Init(th
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
+inline NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
 {
   return GridToXY(theGridPoint.X(), theGridPoint.Y());
 }
@@ -235,7 +235,7 @@ inline const NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::XY() const { return GridToXY(GridPoint()); }
+inline NFmiPoint NFmiGrid::XY() const { return GridToXY(GridPoint()); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -250,10 +250,7 @@ inline NFmiArea *NFmiGrid::Area() const { return itsArea; }
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::XYToGrid(const NFmiPoint &xy) const
-{
-  return XYToGrid(xy.X(), xy.Y());
-}
+inline NFmiPoint NFmiGrid::XYToGrid(const NFmiPoint &xy) const { return XYToGrid(xy.X(), xy.Y()); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -263,7 +260,7 @@ inline const NFmiPoint NFmiGrid::XYToGrid(const NFmiPoint &xy) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLonToGrid(double theLon, double theLat) const
+inline NFmiPoint NFmiGrid::LatLonToGrid(double theLon, double theLat) const
 {
   return XYToGrid(itsArea->ToXY(NFmiPoint(theLon, theLat)));
 }
@@ -275,7 +272,7 @@ inline const NFmiPoint NFmiGrid::LatLonToGrid(double theLon, double theLat) cons
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLonToGrid(const NFmiPoint &theLatLonPoint) const
+inline NFmiPoint NFmiGrid::LatLonToGrid(const NFmiPoint &theLatLonPoint) const
 {
   return XYToGrid(itsArea->ToXY(theLatLonPoint));
 }
@@ -288,7 +285,7 @@ inline const NFmiPoint NFmiGrid::LatLonToGrid(const NFmiPoint &theLatLonPoint) c
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::GridToLatLon(double x_, double y_) const
+inline NFmiPoint NFmiGrid::GridToLatLon(double x_, double y_) const
 {
   return itsArea->ToLatLon(GridToXY(x_, y_));
 }
@@ -300,7 +297,7 @@ inline const NFmiPoint NFmiGrid::GridToLatLon(double x_, double y_) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::GridToLatLon(const NFmiPoint &theGridPoint) const
+inline NFmiPoint NFmiGrid::GridToLatLon(const NFmiPoint &theGridPoint) const
 {
   return GridToLatLon(theGridPoint.X(), theGridPoint.Y());
 }
@@ -313,7 +310,7 @@ inline const NFmiPoint NFmiGrid::GridToLatLon(const NFmiPoint &theGridPoint) con
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::GridToWorldXY(double x_, double y_) const
+inline NFmiPoint NFmiGrid::GridToWorldXY(double x_, double y_) const
 {
   return itsArea->XYToWorldXY(GridToXY(x_, y_));
 }
@@ -325,12 +322,12 @@ inline const NFmiPoint NFmiGrid::GridToWorldXY(double x_, double y_) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) const
+inline NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) const
 {
   return GridToWorldXY(theGridPoint.X(), theGridPoint.Y());
 }
 
-inline const NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const
+inline NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const
 {
   return XYToGrid(itsArea->WorldXYToXY(theWorldXYPoint));
 }
@@ -349,7 +346,8 @@ inline NFmiPoint NFmiGrid::WorldXY() const { return GridToWorldXY(GridPoint()); 
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLon() const { return GridToLatLon(GridPoint()); }
+inline NFmiPoint NFmiGrid::LatLon() const { return itsArea->LatLon(itsCurrentX, itsCurrentY); }
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -357,9 +355,9 @@ inline const NFmiPoint NFmiGrid::LatLon() const { return GridToLatLon(GridPoint(
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLon(unsigned long theIndex) const
+inline NFmiPoint NFmiGrid::LatLon(unsigned long theIndex) const
 {
-  return GridToLatLon(GridPoint(theIndex));
+  return itsArea->LatLon(theIndex & XNumber(), theIndex / YNumber());
 }
 
 // ----------------------------------------------------------------------
@@ -371,7 +369,7 @@ inline const NFmiPoint NFmiGrid::LatLon(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::WorldXY(unsigned long theIndex) const
+inline NFmiPoint NFmiGrid::WorldXY(unsigned long theIndex) const
 {
   return GridToWorldXY(GridPoint(theIndex));
 }

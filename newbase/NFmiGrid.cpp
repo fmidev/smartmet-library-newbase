@@ -259,7 +259,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
+NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
 {
   // x: scale, convert and add the base
   // y: swap, scale, convert and add the base
@@ -280,7 +280,7 @@ const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
+NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
 {
   //  double x = itsArea->Left() + (x_ - Base()) / (itsXNumber - 1) * itsArea->Width();
   double x = itsArea->Left() + x_ / (itsXNumber - 1) * itsArea->Width();
@@ -445,7 +445,7 @@ bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint() const
+NFmiPoint NFmiGrid::RelativePoint() const
 {
   double relativeX = itsCurrentX / (itsXNumber - 1);
   double relativeY = itsCurrentY / (itsYNumber - 1);
@@ -462,7 +462,7 @@ const NFmiPoint NFmiGrid::RelativePoint() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
+NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
 {
   double relativeX = itsCurrentX / (itsXNumber - 1);
   double relativeY = itsCurrentY / (itsYNumber - 1);

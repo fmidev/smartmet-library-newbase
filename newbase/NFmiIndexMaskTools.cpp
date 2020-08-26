@@ -716,7 +716,7 @@ namespace NFmiIndexMaskTools
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
+NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 {
   NFmiIndexMask mask;
 
@@ -801,7 +801,7 @@ const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePa
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
+NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 {
   NFmiIndexMask mask;
 
@@ -897,9 +897,7 @@ const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &theP
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskExpand(const NFmiGrid &theGrid,
-                               const NFmiSvgPath &thePath,
-                               double theDistance)
+NFmiIndexMask MaskExpand(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
   if (theDistance == 0) return MaskInside(theGrid, thePath);
   if (theDistance < 0) return MaskShrink(theGrid, thePath, -theDistance);
@@ -989,9 +987,7 @@ const NFmiIndexMask MaskExpand(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
-                               const NFmiSvgPath &thePath,
-                               double theDistance)
+NFmiIndexMask MaskShrink(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
   if (theDistance == 0) return MaskInside(theGrid, thePath);
   if (theDistance < 0) return MaskExpand(theGrid, thePath, -theDistance);
@@ -1045,9 +1041,7 @@ const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
-                                 const NFmiSvgPath &thePath,
-                                 double theDistance)
+NFmiIndexMask MaskDistance(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
   NFmiIndexMask mask;
 
@@ -1095,9 +1089,7 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
-                                 const NFmiPoint &thePoint,
-                                 double theDistance)
+NFmiIndexMask MaskDistance(const NFmiGrid &theGrid, const NFmiPoint &thePoint, double theDistance)
 {
   NFmiIndexMask mask;
 
@@ -1134,9 +1126,9 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
-                                            const NFmiSvgPath &thePath,
-                                            std::vector<double> theDistances)
+std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
+                                      const NFmiSvgPath &thePath,
+                                      std::vector<double> theDistances)
 {
   std::vector<NFmiIndexMask> masks;
   masks.resize(theDistances.size());
@@ -1201,9 +1193,9 @@ const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const std::string MaskString(const NFmiIndexMask &theMask,
-                             unsigned long theWidth,
-                             unsigned long theHeight)
+std::string MaskString(const NFmiIndexMask &theMask,
+                       unsigned long theWidth,
+                       unsigned long theHeight)
 {
   std::string out;
   for (long j = theHeight - 1; j >= 0; j--)
@@ -1236,9 +1228,9 @@ const std::string MaskString(const NFmiIndexMask &theMask,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
-                                  NFmiFastQueryInfo &theInfo,
-                                  const NFmiCalculationCondition &theCondition)
+NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
+                            NFmiFastQueryInfo &theInfo,
+                            const NFmiCalculationCondition &theCondition)
 {
   NFmiIndexMask mask;
 

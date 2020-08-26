@@ -101,7 +101,7 @@ void NFmiRect::Inflate(const NFmiPoint &theValue)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
+NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
 {
   double dLeftTop = TopLeft().Distance(thePoint);
   double dRightTop = TopRight().Distance(thePoint);
@@ -194,7 +194,7 @@ bool NFmiRect::AdjustAspectRatio(double theRatioXperY, bool fKeepX, FmiDirection
  * \return The given point in rect's world coordinates.
  */
 // ----------------------------------------------------------------------
-const NFmiPoint NFmiRect::Project(const NFmiPoint &thePlace) const
+NFmiPoint NFmiRect::Project(const NFmiPoint &thePlace) const
 {
   NFmiPoint newPoint = thePlace - TopLeft();
   return NFmiPoint(newPoint.X() / Width(), newPoint.Y() / Height());
@@ -289,7 +289,7 @@ void NFmiRect::Center(const NFmiPoint &newCenter)
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
+NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
 {
   double left = Left() < theRect.Left() ? Left() : theRect.Left();
   double top = Top() < theRect.Top() ? Top() : theRect.Top();
@@ -307,7 +307,7 @@ const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect NFmiRect::Intersection(const NFmiRect &theRect) const
+NFmiRect NFmiRect::Intersection(const NFmiRect &theRect) const
 {
   double left = Left() > theRect.Left() ? Left() : theRect.Left();
   double top = Top() > theRect.Top() ? Top() : theRect.Top();

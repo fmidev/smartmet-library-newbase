@@ -20,8 +20,8 @@ class _FMI_DLL NFmiTransformList
   bool AddDataMapping(const NFmiPoint& firstPair, const NFmiPoint& lastPair);
   double Transform(const double value, int theRangeIndex = -1);
 
-  const NFmiPoint FirstPair();
-  const NFmiPoint LastPair();
+  NFmiPoint FirstPair();
+  NFmiPoint LastPair();
 
   double FirstInputValue();
   double LastInputValue();
@@ -87,14 +87,14 @@ class _FMI_DLL NFmiTransformList
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiTransformList::FirstPair() { return itsVeryFirstPair; }
+inline NFmiPoint NFmiTransformList::FirstPair() { return itsVeryFirstPair; }
 // ----------------------------------------------------------------------
 /*!
  * \return The last of all of the pairs in the list
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiTransformList::LastPair() { return itsVeryLastPair; }
+inline NFmiPoint NFmiTransformList::LastPair() { return itsVeryLastPair; }
 // ----------------------------------------------------------------------
 /*!
  * \return The first input value of all of the pairs in the list

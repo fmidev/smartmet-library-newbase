@@ -38,7 +38,7 @@ class _FMI_DLL NFmiGridBase
   virtual NFmiDataPool* DataPool() const;
 
   virtual bool GridPoint(double x, double y);
-  virtual const NFmiPoint GridPoint() const;
+  virtual NFmiPoint GridPoint() const;
   unsigned long CurrentX() const { return itsCurrentX; }
   unsigned long CurrentY() const { return itsCurrentY; }
   bool First();
@@ -47,8 +47,8 @@ class _FMI_DLL NFmiGridBase
   bool ResetLast();
   void Center();
 
-  const NFmiPoint FirstGridPoint() const;
-  const NFmiPoint LastGridPoint() const;
+  NFmiPoint FirstGridPoint() const;
+  NFmiPoint LastGridPoint() const;
 
   void FirstX();
   void FirstY();
@@ -147,7 +147,7 @@ class _FMI_DLL NFmiGridBase
   unsigned long DataIndex(unsigned long x, unsigned long y) const;
   unsigned long Index(unsigned long x, unsigned long y) const;
   bool Index(unsigned long theIndex);
-  const NFmiPoint GridPoint(unsigned long theLocationIndex) const;
+  NFmiPoint GridPoint(unsigned long theLocationIndex) const;
   bool operator==(const NFmiGridBase& theGrid) const;
 
   std::size_t HashValue() const;
@@ -669,7 +669,7 @@ inline void NFmiGridBase::Setf(bool boo)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGridBase::FirstGridPoint() const
+inline NFmiPoint NFmiGridBase::FirstGridPoint() const
 {
   return NFmiPoint(static_cast<double>(itsFirstX), static_cast<double>(itsFirstY));
 }
@@ -680,7 +680,7 @@ inline const NFmiPoint NFmiGridBase::FirstGridPoint() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGridBase::LastGridPoint() const
+inline NFmiPoint NFmiGridBase::LastGridPoint() const
 {
   return NFmiPoint(static_cast<double>(itsLastX), static_cast<double>(itsLastY));
 }
@@ -737,7 +737,7 @@ inline unsigned long NFmiGridBase::Size() const { return XNumber() * YNumber(); 
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGridBase::GridPoint() const
+inline NFmiPoint NFmiGridBase::GridPoint() const
 {
   return NFmiPoint(double(itsCurrentX), double(itsCurrentY));
 }

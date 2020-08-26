@@ -48,6 +48,8 @@ class _FMI_DLL NFmiArea
   bool IsInside(const NFmiArea &theArea) const;
   bool IsInsideWorldXY(const NFmiPoint &theWorldXYPoint) const;
 
+  NFmiPoint LatLon(unsigned long i, unsigned long j) const;
+
   NFmiPoint TopLeftLatLon() const;
   NFmiPoint TopRightLatLon() const;
   NFmiPoint BottomLeftLatLon() const;

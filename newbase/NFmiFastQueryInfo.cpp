@@ -927,13 +927,10 @@ NFmiPoint NFmiFastQueryInfo::WorldXY(unsigned long index) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint &NFmiFastQueryInfo::LatLon(unsigned long index) const
+NFmiPoint NFmiFastQueryInfo::LatLon(unsigned long index) const
 {
-  static const NFmiPoint dummy(kFloatMissing, kFloatMissing);
-
-  if (index >= itsLocationSize) return dummy;
-
-  return (*itsRefQueryData->LatLonCache())[index];
+  if (index >= itsLocationSize) NFmiPoint(kFloatMissing, kFloatMissing);
+  return itsHPlaceDescriptor->LatLon(index);
 }
 
 // ----------------------------------------------------------------------
@@ -949,12 +946,12 @@ const NFmiLevel *NFmiFastQueryInfo::Level() const
 
 FmiLevelType NFmiFastQueryInfo::LevelType() const
 {
-  if (itsLevelIndex < SizeLevels())
-    return itsVPlaceDescriptor->Level(itsLevelIndex)->LevelType();
-  else
-    return itsVPlaceDescriptor->Level(0)
-        ->LevelType();  // Jos levelIndex ei ollut minkään levelin kohdalla,
-  // 1. level type pitäisi aina löytyä ja sen pitäisi olla sama kuin kaikki muutkin
+  if (itsLevelIndex < SizeLevels()) return itsVPlaceDescriptor->Level(itsLevelIndex)->LevelType();
+
+  // Jos levelIndex ei ollut minkään levelin kohdalla, 1. level type pitäisi aina löytyä ja sen
+  // pitäisi olla sama kuin kaikki muutkin
+
+  return itsVPlaceDescriptor->Level(0)->LevelType();
 }
 
 // ----------------------------------------------------------------------
@@ -1534,7 +1531,7 @@ NFmiQueryInfo *NFmiFastQueryInfo::CreateCombinedInfo(NFmiQueryInfo *theOtherInfo
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiFastQueryInfo::PeekLocationLatLon(int theXOffset, int theYOffset)
+NFmiPoint NFmiFastQueryInfo::PeekLocationLatLon(int theXOffset, int theYOffset)
 {
   if (IsGrid())
   {
@@ -1615,7 +1612,7 @@ bool NFmiFastQueryInfo::ActivateParam(bool newState) { return ActivateParam(newS
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiFastQueryInfo::RelativePoint() const
+NFmiPoint NFmiFastQueryInfo::RelativePoint() const
 {
   if (IsGrid())
   {

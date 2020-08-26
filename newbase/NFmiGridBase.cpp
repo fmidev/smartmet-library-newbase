@@ -403,7 +403,7 @@ void NFmiGridBase::CalcY(unsigned long theIndex)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGridBase::GridPoint(unsigned long theLocationIndex) const
+NFmiPoint NFmiGridBase::GridPoint(unsigned long theLocationIndex) const
 {
   // HUOM!!! En tiedä varmana, miten croppaus pitäisi ottaa huomioon tässä laskussa!!! Marko
   //  long theX = CalcFirstX() + ((theLocationIndex-itsBase) % XNumber() + itsBase);

@@ -1894,4 +1894,12 @@ void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
   }
 }
 
+NFmiPoint NFmiArea::LatLon(unsigned long i, unsigned long j) const
+{
+  if (!impl->itsToLatLonBilinearConverter) return NFmiPoint(kFloatMissing, kFloatMissing);
+  const auto &latlons = impl->itsToLatLonBilinearConverter->coordinateMatrix();
+
+  return NFmiPoint(latlons.x(i, j), latlons.y(i, j));
+}
+
 #endif
