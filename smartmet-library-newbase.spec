@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.8.26
+Version: 20.8.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -91,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Aug 27 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.27-1.fmi
+- Fixed NFmiHPlaceDescriptor::LatLon index calculations
+
 * Wed Aug 26 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.26-1.fmi
 - Removed LatLonCache as obsolete, NFmiArea stores the grid point WGS84 coordinates internally
 

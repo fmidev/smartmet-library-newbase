@@ -357,7 +357,7 @@ inline NFmiPoint NFmiGrid::LatLon() const { return itsArea->LatLon(itsCurrentX, 
 
 inline NFmiPoint NFmiGrid::LatLon(unsigned long theIndex) const
 {
-  return itsArea->LatLon(theIndex & XNumber(), theIndex / YNumber());
+  return itsArea->LatLon(theIndex % XNumber(), theIndex / XNumber());
 }
 
 // ----------------------------------------------------------------------
