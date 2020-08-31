@@ -2099,12 +2099,22 @@ float NFmiInfoAreaMaskVertFunc::GetLevelHeightValue(const NFmiLocationCache &the
     return itsInfo->GetLevelHeightValue(itsUsedHeightParId, theLocationCache, itsTimeCache);
 }
 
+class SimpleConditionPreviousValueResetter
+{
+  boost::shared_ptr<NFmiSimpleCondition> &simpleCondition_;
+
+ public:
+  SimpleConditionPreviousValueResetter(boost::shared_ptr<NFmiSimpleCondition> &simpleCondition):simpleCondition_(simpleCondition) {}
+  ~SimpleConditionPreviousValueResetter() { simpleCondition_->ResetPreviousValue(); }
+};
+
 // Etsitään ne kohdat missä simple-condition menee päälle.
 // Eli ne kohdat missä edellisen kerroksen simple-condition arvo oli false ja nykyisen levelin arvo
 // on true. Jos 1. kerroksen simple-condition on heti päällä, lasketaan se 1. kohdaksi.
 float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
     const NFmiLocationCache &theLocationCache, const NFmiCalculationParams &theCalculationParams)
 {
+  SimpleConditionPreviousValueResetter simpleConditionPreviousValueResetter(itsSimpleCondition);
   bool findHeight = itsPrimaryFunc == NFmiAreaMask::FindHeightCond;
   // kuinka mones osuma haetaan, 1 on 1. 2 on 2. jne. 0 (tai <0) on viimeinen
   int search_nth_value = findHeight ? static_cast<int>(::round(itsArgumentVector[2])) : 0;
@@ -2254,7 +2264,8 @@ double NFmiInfoAreaMaskVertFunc::Value(const NFmiCalculationParams &theCalculati
   SetLevelValues();
   if (itsStartLevelValue == kFloatMissing)
     return kFloatMissing;  // jos jo alku level arvo on puuttuvaa, ei voi tehdä mitään järkevää
-  if (itsEndLevelValue == kFloatMissing && itsPrimaryFunc != NFmiAreaMask::Get)
+  if (itsEndLevelValue == kFloatMissing &&
+      (itsPrimaryFunc != NFmiAreaMask::Get && itsPrimaryFunc != NFmiAreaMask::PeekZ))
     return kFloatMissing;  // jos jo loppu level arvo on puuttuvaa, eikä kyse ollut get-funktiosta,
                            // ei voi tehdä mitään järkevää
 

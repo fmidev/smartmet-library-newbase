@@ -60,6 +60,10 @@ double CalculateValue(double value1,
 }
 }  // namespace
 
+// *****************************************************************
+// **************   NFmiSimpleConditionPart   **********************
+// *****************************************************************
+
 NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
 
 NFmiSimpleConditionPart::NFmiSimpleConditionPart(
@@ -141,6 +145,12 @@ double NFmiSimpleConditionPart::PreviousValue(double newPreviousValue)
   return returnValue;
 }
 
+void NFmiSimpleConditionPart::ResetPreviousValue() { itsPreviousValue = kFloatMissing; }
+
+
+// *****************************************************************
+// ****************   NFmiSingleCondition   ************************
+// *****************************************************************
 
 NFmiSingleCondition::~NFmiSingleCondition() = default;
 
@@ -310,6 +320,17 @@ bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
   }
 }
 
+void NFmiSingleCondition::ResetPreviousValue() 
+{
+  if (part1) part1->ResetPreviousValue();
+  if (part2) part2->ResetPreviousValue();
+  if (part3) part3->ResetPreviousValue();
+}
+
+// *****************************************************************
+// ****************   NFmiSimpleCondition   ************************
+// *****************************************************************
+
 NFmiSimpleCondition::~NFmiSimpleCondition() = default;
 
 NFmiSimpleCondition::NFmiSimpleCondition(
@@ -400,4 +421,10 @@ bool NFmiSimpleCondition::CheckHeightCondition(double theHeight,
     bool conditionValue2 = condition2->CheckHeightCondition(theHeight, theCalculationParams);
     return ::EvaluateBinaryCondition(conditionValue1, conditionOperator, conditionValue2);
   }
+}
+
+void NFmiSimpleCondition::ResetPreviousValue()
+{
+  if (condition1) condition1->ResetPreviousValue();
+  if (condition2) condition2->ResetPreviousValue();
 }

@@ -41,6 +41,7 @@ class NFmiSimpleConditionPart
   double HeightValue(double theHeight, const NFmiCalculationParams &theCalculationParams);
 
     double PreviousValue(double newPreviousValue);
+    void ResetPreviousValue();
 };
 
 // Class is used by smarttool language. Some smarttool functions may have this
@@ -70,6 +71,8 @@ class NFmiSingleCondition
   bool CheckPressureCondition(double thePressure,
                               const NFmiCalculationParams &theCalculationParams);
   bool CheckHeightCondition(double theHeight, const NFmiCalculationParams &theCalculationParams);
+
+  void ResetPreviousValue();
 
  protected:
   // part1 and part2 are always present, because they form basic simple condition:
@@ -111,6 +114,8 @@ class NFmiSimpleCondition
   bool CheckPressureCondition(double thePressure,
                               const NFmiCalculationParams &theCalculationParams);
   bool CheckHeightCondition(double theHeight, const NFmiCalculationParams &theCalculationParams);
+
+    void ResetPreviousValue();
 
  protected:
   // condition1 on aina mukana (esim. T_ec > 0)
