@@ -108,12 +108,9 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
 
   const NFmiLocation *Location() const;
   NFmiPoint LatLon() const;
-  const NFmiPoint &LatLonFast() const;  // Lisäsin nopean Latlon-metodin, joka ei ole
-                                        // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
-  // const referenssiä, koska se pyytää NFmiGrid-luokalta
-  // latlon-pistettä ja se rakennetaan lennossa.
-  const NFmiPoint &LatLon(unsigned long index) const;
-  const NFmiPoint RelativePoint() const;
+  NFmiPoint LatLon(unsigned long index) const;
+
+  NFmiPoint RelativePoint() const;
   const NFmiLevel *Level() const;
   FmiLevelType LevelType() const;
   NFmiProducer *Producer();
@@ -170,7 +167,7 @@ class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
   unsigned long PeekLocationIndex(int theXOffset, int theYOffset) const;
   float PeekLocationValue(int theXOffset, int theYOffset) const;  // lähinnä gridi-datan tutkimiseen
   float PeekLocationValue(int theXOffset, int theYOffset, const NFmiMetTime &theTime);
-  const NFmiPoint PeekLocationLatLon(int theXOffset, int theYOffset);
+  NFmiPoint PeekLocationLatLon(int theXOffset, int theYOffset);
   float PeekTimeValue(int theTimeIndexOffset);
 
   using NFmiQueryInfo::PeekValue;
@@ -1072,7 +1069,6 @@ inline NFmiPoint NFmiFastQueryInfo::WorldXY() const { return WorldXY(itsLocation
 // ----------------------------------------------------------------------
 
 inline NFmiPoint NFmiFastQueryInfo::LatLon() const { return LatLon(itsLocationIndex); }
-inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast() const { return LatLon(itsLocationIndex); }
 
 // ----------------------------------------------------------------------
 /*!

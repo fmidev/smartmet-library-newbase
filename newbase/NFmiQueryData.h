@@ -12,11 +12,8 @@
 #include "NFmiRawData.h"
 #include "NFmiStation.h"
 #include "NFmiStringList.h"
-
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
-#include <boost/thread/once.hpp>
-
 #include <string>
 #include <vector>
 
@@ -47,9 +44,9 @@ class _FMI_DLL NFmiQueryData
   NFmiQueryInfo *Info() const;
 
   // Poistetaan heti kun mahdollista
-  const NFmiString Header1() const;
-  const NFmiString Header2() const;
-  const NFmiString Header3() const;
+  NFmiString Header1() const;
+  NFmiString Header2() const;
+  NFmiString Header3() const;
   // Poistetaan heti kun mahdollista
 
   void Reset();
@@ -78,15 +75,15 @@ class _FMI_DLL NFmiQueryData
   bool NextLevel();
   bool PreviousLevel();
 
-  const NFmiDataIdent Param() const;
-  const NFmiLocation Location() const;
+  NFmiDataIdent Param() const;
+  NFmiLocation Location() const;
   bool Location(const NFmiPoint &theLonLatPoint);
-  const NFmiStation Station() const;
-  const NFmiMetTime Time() const;
-  const NFmiMetTime ValidTime() const;
-  const NFmiMetTime OriginTime() const;
+  NFmiStation Station() const;
+  NFmiMetTime Time() const;
+  NFmiMetTime ValidTime() const;
+  NFmiMetTime OriginTime() const;
   unsigned long ForecastPeriod() const;
-  const NFmiLevel Level() const;
+  NFmiLevel Level() const;
 
   unsigned long ParamSize() const;
   float Quality() const;
@@ -122,22 +119,19 @@ class _FMI_DLL NFmiQueryData
               const NFmiString &theValue,
               bool fClearDuplicatesFirst = false);
   bool SetCurrentKeyValue(const NFmiString &newValue);
-  const NFmiString GetCurrentKeyValue();
+  NFmiString GetCurrentKeyValue();
   bool RemoveCurrentKey();
   bool RemoveAllKeys();
   bool RemoveAllKeys(const NFmiString &theKey);
 
-  const NFmiStringList GetAllKeys(bool fRemoveDuplicates = false);
-  const NFmiString GetCurrentKey();
+  NFmiStringList GetAllKeys(bool fRemoveDuplicates = false);
+  NFmiString GetCurrentKey();
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
   double InfoVersion() const;
   void InfoVersion(double newValue) const;
-
-  boost::shared_ptr<std::vector<NFmiPoint> > LatLonCache() const;
-  void SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache);
 
   // Unique value for unique grids
   std::size_t GridHashValue() const;
@@ -153,6 +147,7 @@ class _FMI_DLL NFmiQueryData
   // Itse (Marko) käytän tätä systeemiä Metkun editorissa
   // 'huijaamaan' qinfoa, että voin laskea makroparametreja
   // karttanäytölle (smarttool-skriptejä, joita visualisoidaan).
+  // Note 26.8.2020: itsLatLonCache has been removed as obsolete
 
   // THIS IS NOT THREAD SAFE!!
   void SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc);
@@ -175,10 +170,6 @@ class _FMI_DLL NFmiQueryData
  private:
   bool itsFirst;
   NFmiQueryInfo *itsQueryInfo;
-
-  void MakeLatLonCache() const;
-  mutable boost::shared_ptr<std::vector<NFmiPoint> > itsLatLonCache;
-  mutable boost::once_flag itsLatLonCacheFlag;
 
   friend class NFmiQueryInfo;
   friend class NFmiTimeSeriesModelDB;
@@ -325,21 +316,21 @@ inline bool NFmiQueryData::NextActiveTime() { return (itsQueryInfo->NextActiveTi
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiDataIdent NFmiQueryData::Param() const { return (itsQueryInfo->Param()); }
+inline NFmiDataIdent NFmiQueryData::Param() const { return (itsQueryInfo->Param()); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLocation NFmiQueryData::Location() const { return (*(itsQueryInfo->Location())); }
+inline NFmiLocation NFmiQueryData::Location() const { return (*(itsQueryInfo->Location())); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiStation NFmiQueryData::Station() const
+inline NFmiStation NFmiQueryData::Station() const
 {
   return (*(const_cast<NFmiStation *>(static_cast<const NFmiStation *>(itsQueryInfo->Location()))));
 }
@@ -350,14 +341,14 @@ inline const NFmiStation NFmiQueryData::Station() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime NFmiQueryData::ValidTime() const { return (itsQueryInfo->ValidTime()); }
+inline NFmiMetTime NFmiQueryData::ValidTime() const { return (itsQueryInfo->ValidTime()); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime NFmiQueryData::OriginTime() const { return (itsQueryInfo->OriginTime()); }
+inline NFmiMetTime NFmiQueryData::OriginTime() const { return (itsQueryInfo->OriginTime()); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -375,7 +366,7 @@ inline unsigned long NFmiQueryData::ForecastPeriod() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLevel NFmiQueryData::Level() const { return (*(itsQueryInfo->Level())); }
+inline NFmiLevel NFmiQueryData::Level() const { return (*(itsQueryInfo->Level())); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -538,10 +529,7 @@ inline bool NFmiQueryData::SetCurrentKeyValue(const NFmiString &newValue)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiQueryData::GetCurrentKeyValue()
-{
-  return itsQueryInfo->GetCurrentKeyValue();
-}
+inline NFmiString NFmiQueryData::GetCurrentKeyValue() { return itsQueryInfo->GetCurrentKeyValue(); }
 
 // ----------------------------------------------------------------------
 /*!
@@ -576,7 +564,7 @@ inline bool NFmiQueryData::RemoveAllKeys(const NFmiString &theKey)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiStringList NFmiQueryData::GetAllKeys(bool fRemoveDuplicates)
+inline NFmiStringList NFmiQueryData::GetAllKeys(bool fRemoveDuplicates)
 {
   return itsQueryInfo->GetAllKeys(fRemoveDuplicates);
 }
@@ -587,7 +575,7 @@ inline const NFmiStringList NFmiQueryData::GetAllKeys(bool fRemoveDuplicates)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiQueryData::GetCurrentKey() { return itsQueryInfo->GetCurrentKey(); }
+inline NFmiString NFmiQueryData::GetCurrentKey() { return itsQueryInfo->GetCurrentKey(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

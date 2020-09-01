@@ -41,9 +41,14 @@ class _FMI_DLL NFmiArea
   // Needed for reading legacy classes from a file. An immediate Read() call is expected.
   NFmiArea(int theClassId);
 
+  // Set the grid size used for calculating the bilinear interpolation matrices
+  void SetGridSize(std::size_t theWidth, std::size_t theHeight);
+
   bool IsInside(const NFmiPoint &theLatLonPoint) const;
   bool IsInside(const NFmiArea &theArea) const;
   bool IsInsideWorldXY(const NFmiPoint &theWorldXYPoint) const;
+
+  NFmiPoint LatLon(unsigned long i, unsigned long j) const;
 
   NFmiPoint TopLeftLatLon() const;
   NFmiPoint TopRightLatLon() const;
@@ -70,7 +75,7 @@ class _FMI_DLL NFmiArea
   void SetXYArea(const NFmiRect &newArea);
   NFmiRect XYArea(const NFmiArea *theArea) const;
 
-  const NFmiRect& WorldRect() const;
+  const NFmiRect &WorldRect() const;
 
   NFmiPoint WorldXYPlace() const;
   NFmiPoint WorldXYSize() const;
@@ -139,8 +144,7 @@ class _FMI_DLL NFmiArea
   // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
   bool PacificView_legacy(void) const { return false; }
   void PacificView_legacy(bool) {}
-  static bool IsPacificView(const NFmiPoint &bottomleftLatlon,
-                                   const NFmiPoint &toprightLatlon)
+  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
   {
     // Obvious case
     if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;

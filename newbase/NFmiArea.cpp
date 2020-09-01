@@ -4,15 +4,15 @@
 #include "NFmiAreaTools.h"
 #include "NFmiString.h"
 #include "NFmiVersion.h"
-
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <gis/BilinearCoordinateTransformation.h>
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/ProjInfo.h>
 #include <gis/SpatialReference.h>
-
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <ogr_spatialref.h>
@@ -82,12 +82,16 @@ struct NFmiArea::Impl
 {
   ~Impl() = default;
   Impl() = default;
-  Impl(const Impl &other) 
-  : itsSpatialReference(other.itsSpatialReference),
+  Impl(const Impl &other)
+      : itsSpatialReference(other.itsSpatialReference),
         itsToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsToLatLonConverter)),
         itsToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsToWorldXYConverter)),
-        itsNativeToLatLonConverter(new Fmi::CoordinateTransformation(*other.itsNativeToLatLonConverter)),
-        itsNativeToWorldXYConverter(new Fmi::CoordinateTransformation(*other.itsNativeToWorldXYConverter)),
+        itsToLatLonBilinearConverter(other.itsToLatLonBilinearConverter),
+        itsToWorldXYBilinearConverter(other.itsToWorldXYBilinearConverter),
+        itsNativeToLatLonConverter(
+            new Fmi::CoordinateTransformation(*other.itsNativeToLatLonConverter)),
+        itsNativeToWorldXYConverter(
+            new Fmi::CoordinateTransformation(*other.itsNativeToWorldXYConverter)),
         itsWorldRect(other.itsWorldRect),
         itsXYRect(other.itsXYRect),
         itsClassId(other.itsClassId),
@@ -108,6 +112,10 @@ struct NFmiArea::Impl
   // WGS84 conversions
   std::unique_ptr<Fmi::CoordinateTransformation> itsToLatLonConverter;
   std::unique_ptr<Fmi::CoordinateTransformation> itsToWorldXYConverter;
+
+  // Fast bilinear interpolation coordinate conversions
+  std::shared_ptr<Fmi::BilinearCoordinateTransformation> itsToLatLonBilinearConverter;
+  std::shared_ptr<Fmi::BilinearCoordinateTransformation> itsToWorldXYBilinearConverter;
 
   // Projection geographic coordinate conversions
   std::unique_ptr<Fmi::CoordinateTransformation> itsNativeToLatLonConverter;
@@ -1081,6 +1089,13 @@ std::size_t NFmiArea::HashValueKludge() const
 
 NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 {
+  if (impl->itsToWorldXYBilinearConverter)
+  {
+    double x = theWgs84.X();
+    double y = theWgs84.Y();
+    if (impl->itsToWorldXYBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+  }
+
   if (!impl->itsToWorldXYConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
@@ -1095,6 +1110,13 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 
 NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 {
+  if (impl->itsToLatLonBilinearConverter)
+  {
+    double x = theWorldXY.X();
+    double y = theWorldXY.Y();
+    if (impl->itsToLatLonBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+  }
+
   if (!impl->itsToLatLonConverter)
     throw std::runtime_error("Spatial reference not set for WGS84 conversions");
 
@@ -1817,6 +1839,67 @@ void NFmiArea::NativeToXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   NativeLatLonToWorldXY(theMatrix);
   WorldXYToXY(theMatrix);
+}
+
+void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
+{
+  if (theWidth < 2 || theHeight < 2)
+    throw std::runtime_error("NFmiArea SetGridSize arguments must be at least 2");
+
+  // Establish WorldXY to LatLon bilinear conversion
+  double x1 = impl->itsWorldRect.Left();
+  double y1 = impl->itsWorldRect.Top();  // upside down
+  double x2 = impl->itsWorldRect.Right();
+  double y2 = impl->itsWorldRect.Bottom();
+
+  impl->itsToLatLonBilinearConverter.reset(new Fmi::BilinearCoordinateTransformation(
+      *impl->itsToLatLonConverter, theWidth, theHeight, x1, y1, x2, y2));
+
+  // Establish LatLon to WorldXY bilinear conversion by looking for the grid bbox
+
+  // TODO: Create a LatLonBBox cache to optimize this step
+
+  const auto big_value = 1e6;
+
+  double lon1 = +big_value;
+  double lat1 = +big_value;
+  double lon2 = -big_value;
+  double lat2 = -big_value;
+
+  const auto &matrix = impl->itsToLatLonBilinearConverter->coordinateMatrix();
+
+  for (std::size_t j = 0; j < theHeight; ++j)
+    for (std::size_t i = 0; i < theWidth; ++i)
+    {
+      double lon = matrix.x(i, j);
+      double lat = matrix.y(i, j);
+      if (std::isfinite(lon) && std::isfinite(lat))
+      {
+        if (lon < lon1)
+          lon1 = lon;
+        else if (lon > lon2)
+          lon2 = lon;
+        if (lat < lat1)
+          lat1 = lat;
+        else if (lat > lat2)
+          lat2 = lat;
+      }
+    }
+
+  if (lon1 != +big_value && lat1 != +big_value)
+  {
+    // lon2,lat2 must be valid too
+    impl->itsToWorldXYBilinearConverter.reset(new Fmi::BilinearCoordinateTransformation(
+        *impl->itsToWorldXYConverter, theWidth, theHeight, lon1, lat1, lon2, lat2));
+  }
+}
+
+NFmiPoint NFmiArea::LatLon(unsigned long i, unsigned long j) const
+{
+  if (!impl->itsToLatLonBilinearConverter) return NFmiPoint(kFloatMissing, kFloatMissing);
+  const auto &latlons = impl->itsToLatLonBilinearConverter->coordinateMatrix();
+
+  return NFmiPoint(latlons.x(i, j), latlons.y(i, j));
 }
 
 #endif

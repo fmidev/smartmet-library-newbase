@@ -143,7 +143,7 @@ class _FMI_DLL NFmiQueryInfo
 
   virtual const NFmiLocation *Location() const;
   virtual NFmiPoint LatLon() const;
-  virtual const NFmiPoint RelativePoint() const;  // relative point in grid
+  virtual NFmiPoint RelativePoint() const;  // relative point in grid
   virtual const NFmiLevel *Level() const;
   virtual NFmiProducer *Producer();
 
@@ -285,7 +285,7 @@ class _FMI_DLL NFmiQueryInfo
   virtual float PeekLocationValue(int theXOffset, int theYOffset) const;
   // en toteuta tätä ainakaan vielä qinfoon, vaan vain fastinfoon
   virtual float PeekLocationValue(int theXOffset, int theYOffset, const NFmiMetTime &theTime);
-  virtual const NFmiPoint PeekLocationLatLon(int theXOffset, int theYOffset);
+  virtual NFmiPoint PeekLocationLatLon(int theXOffset, int theYOffset);
   virtual float PeekTimeValue(int theTimeOffset);
   virtual float PeekValue(int theTimeOffset, int theXOffset, int theYOffset);
   virtual bool SetDescriptors(NFmiQueryInfo *theQueryInfo, bool fIgnoreLevel = true);
@@ -1215,7 +1215,7 @@ inline NFmiPoint NFmiQueryInfo::LatLon() const { return itsHPlaceDescriptor->Lat
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiQueryInfo::RelativePoint() const
+inline NFmiPoint NFmiQueryInfo::RelativePoint() const
 {
   return itsHPlaceDescriptor->RelativePoint();
 }

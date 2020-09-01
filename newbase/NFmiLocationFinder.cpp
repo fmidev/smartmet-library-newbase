@@ -316,7 +316,7 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
  */
 // ======================================================================
 
-const NFmiPoint NFmiLocationFinder::Find(const NFmiString& theName)
+NFmiPoint NFmiLocationFinder::Find(const NFmiString& theName)
 {
   string name(theName.CharPtr());
   name = NFmiStringTools::LowerCase(name);

@@ -3613,7 +3613,7 @@ NFmiQueryInfo *NFmiQueryInfo::CreateCombinedInfo(NFmiQueryInfo *theOtherInfo)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiQueryInfo::PeekLocationLatLon(int /* theXOffset */, int /* theYOffset */)
+NFmiPoint NFmiQueryInfo::PeekLocationLatLon(int /* theXOffset */, int /* theYOffset */)
 {
   if (IsGrid())
   {

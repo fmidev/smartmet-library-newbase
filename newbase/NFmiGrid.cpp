@@ -259,7 +259,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
+NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
 {
   // x: scale, convert and add the base
   // y: swap, scale, convert and add the base
@@ -280,7 +280,7 @@ const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
+NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
 {
   //  double x = itsArea->Left() + (x_ - Base()) / (itsXNumber - 1) * itsArea->Width();
   double x = itsArea->Left() + x_ / (itsXNumber - 1) * itsArea->Width();
@@ -405,6 +405,9 @@ std::istream &NFmiGrid::Read(std::istream &file)
 
   NFmiGridBase::Read(file);
 
+  // Setup bilinear coordinate interpolation
+  if (itsArea) itsArea->SetGridSize(XNumber(), YNumber());
+
   return file;
 }
 
@@ -442,7 +445,7 @@ bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint() const
+NFmiPoint NFmiGrid::RelativePoint() const
 {
   double relativeX = itsCurrentX / (itsXNumber - 1);
   double relativeY = itsCurrentY / (itsYNumber - 1);
@@ -459,7 +462,7 @@ const NFmiPoint NFmiGrid::RelativePoint() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
+NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
 {
   double relativeX = itsCurrentX / (itsXNumber - 1);
   double relativeY = itsCurrentY / (itsYNumber - 1);
@@ -890,4 +893,28 @@ const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
 Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
 {
   return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * Constructor
+ *
+ * \param theArea Undocumented
+ * \param theXNumber Undocumented
+ * \param theYNumber Undocumented
+ * \param theStartingCorner Undocumented
+ * \param theInterpolationMethod Undocumented
+ * \param theBase Undocumented
+ */
+// ----------------------------------------------------------------------
+
+NFmiGrid::NFmiGrid(const NFmiArea *theArea,
+                   unsigned long theXNumber,
+                   unsigned long theYNumber,
+                   FmiDirection theStartingCorner,
+                   FmiInterpolationMethod theInterpolationMethod)
+    : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod),
+      itsArea(theArea ? theArea->Clone() : 0)
+{
+  if (itsArea && theXNumber > 1 && theYNumber > 1) itsArea->SetGridSize(theXNumber, theYNumber);
 }
