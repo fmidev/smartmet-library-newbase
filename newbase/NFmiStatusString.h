@@ -10,7 +10,7 @@
 #include "NFmiString.h"
 
 //! Undocumented
-class _FMI_DLL NFmiStatusString : public NFmiString
+class NFmiStatusString : public NFmiString
 {
  public:
   ~NFmiStatusString(void);

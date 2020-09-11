@@ -289,7 +289,7 @@ class NFmiLocationIndexRangeCalculator
 };
 
 //! Undocumented
-class _FMI_DLL NFmiQueryDataUtil
+class NFmiQueryDataUtil
 {
  public:
   typedef std::vector<GridRecordData *> GridDataVector;
@@ -310,7 +310,7 @@ class _FMI_DLL NFmiQueryDataUtil
    *  370, osaa laittaa arvoksi 10 eikä leikkaa 360:een. Jos taas kyseessä vaikka
    *  kosteusprosentti, pitää yli sadan mene arvo leikata 100:n.
    */
-  class _FMI_DLL LimitChecker
+  class LimitChecker
   {
    public:
     LimitChecker(float theLowerLimit, float theUpperLimit, bool theCircularValue = false);

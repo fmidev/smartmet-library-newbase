@@ -13,7 +13,7 @@
 #include "NFmiSize.h"
 
 //! Undocumented
-class _FMI_DLL NFmiParamBag : public NFmiSize
+class NFmiParamBag : public NFmiSize
 {
  public:
   virtual ~NFmiParamBag(void);

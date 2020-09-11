@@ -119,7 +119,7 @@
 // The actual class
 
 template <typename T, typename F>
-class _FMI_DLL NFmiNearTreeImpl
+class NFmiNearTreeImpl
 {
  public:
   typedef T value_type;

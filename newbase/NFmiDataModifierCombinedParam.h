@@ -13,7 +13,7 @@ class NFmiCombinedParam;
 
 //! Undocumented
 
-class _FMI_DLL NFmiDataModifierCombinedParam : public NFmiDataModifier
+class NFmiDataModifierCombinedParam : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierCombinedParam();

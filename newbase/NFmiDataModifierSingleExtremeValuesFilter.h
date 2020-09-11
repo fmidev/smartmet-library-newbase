@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifierAvg.h"
 
-class _FMI_DLL NFmiDataModifierSingleExtremeValuesFilter : public NFmiDataModifier
+class NFmiDataModifierSingleExtremeValuesFilter : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierSingleExtremeValuesFilter(void);

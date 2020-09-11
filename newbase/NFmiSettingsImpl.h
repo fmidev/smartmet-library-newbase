@@ -15,7 +15,7 @@
 #include <vector>
 
 //! A generic settings holder
-class _FMI_DLL NFmiSettingsImpl
+class NFmiSettingsImpl
 {
  public:
   static NFmiSettingsImpl& Instance(void);

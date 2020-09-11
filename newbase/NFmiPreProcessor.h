@@ -12,7 +12,7 @@
 #include <string>
 
 //! Undocumented
-class _FMI_DLL NFmiPreProcessor : public NFmiCommentStripper
+class NFmiPreProcessor : public NFmiCommentStripper
 {
  public:
   NFmiPreProcessor(const NFmiPreProcessor& theStripper);

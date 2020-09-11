@@ -11,7 +11,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiRotatedLatLonArea : public NFmiLatLonArea
+class NFmiRotatedLatLonArea : public NFmiLatLonArea
 {
  public:
   virtual ~NFmiRotatedLatLonArea(void);

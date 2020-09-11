@@ -20,7 +20,7 @@
 #include <limits>
 #endif
 
-class _FMI_DLL NFmiDataModifierMinMax : public NFmiDataModifier
+class NFmiDataModifierMinMax : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierMinMax(void);

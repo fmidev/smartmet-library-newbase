@@ -17,7 +17,7 @@
 #include "NFmiDataModifierExtremePlace.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
+class NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
 {
  public:
   virtual ~NFmiDataModifierMinPlace(void);

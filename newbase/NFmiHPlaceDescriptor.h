@@ -21,7 +21,7 @@ class NFmiGrid;
 class NFmiLocation;
 
 //! Undocumented
-class _FMI_DLL NFmiHPlaceDescriptor : public NFmiDataDescriptor
+class NFmiHPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
   virtual ~NFmiHPlaceDescriptor(void);

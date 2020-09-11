@@ -17,7 +17,7 @@ class NFmiMetTime;
 
 //! Undocumented
 
-class _FMI_DLL NFmiLocation : public NFmiIndividual
+class NFmiLocation : public NFmiIndividual
 {
  public:
   virtual ~NFmiLocation(void) {}

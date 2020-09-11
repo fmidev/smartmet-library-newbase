@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiEquidistArea : public NFmiAzimuthalArea
+class NFmiEquidistArea : public NFmiAzimuthalArea
 {
  public:
   virtual ~NFmiEquidistArea(void);

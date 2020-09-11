@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-class _FMI_DLL NFmiEnumConverter
+class NFmiEnumConverter
 {
  public:
   ~NFmiEnumConverter();

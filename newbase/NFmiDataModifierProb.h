@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiDataModifierProb : public NFmiDataModifier
+class NFmiDataModifierProb : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierProb(void);

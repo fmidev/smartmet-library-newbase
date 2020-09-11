@@ -15,7 +15,7 @@ class NFmiArea;
 class NFmiGrid;
 
 //! Undocumented
-class _FMI_DLL NFmiBitmapAreaMask : public NFmiAreaMaskImpl
+class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
 {
  public:
   virtual ~NFmiBitmapAreaMask(void);

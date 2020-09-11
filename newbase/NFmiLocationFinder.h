@@ -13,7 +13,7 @@
 #include <string>
 
 //! Undocumented
-class _FMI_DLL NFmiLocationFinder
+class NFmiLocationFinder
 {
  public:
   ~NFmiLocationFinder(void);

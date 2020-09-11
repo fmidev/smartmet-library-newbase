@@ -17,7 +17,7 @@
 #include "NFmiDataMatrix.h"
 #include "NFmiDataModifier.h"
 
-class _FMI_DLL NFmiDataModifierMedian : public NFmiDataModifier
+class NFmiDataModifierMedian : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierMedian(void);

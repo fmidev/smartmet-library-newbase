@@ -12,7 +12,7 @@
 class NFmiQueryInfo;
 
 //! Undocumented
-class _FMI_DLL NFmiInfoModifier : public NFmiParamDataModifier
+class NFmiInfoModifier : public NFmiParamDataModifier
 {
  public:
   virtual ~NFmiInfoModifier();

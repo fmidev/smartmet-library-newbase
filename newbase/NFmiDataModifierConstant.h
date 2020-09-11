@@ -10,7 +10,7 @@
 #include "NFmiDataModifier.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierConstant : public NFmiDataModifier
+class NFmiDataModifierConstant : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierConstant();

@@ -45,7 +45,7 @@ enum FmiParamType
 class NFmiParamBag;
 
 //! Undocumented
-class _FMI_DLL NFmiDataIdent
+class NFmiDataIdent
 {
  public:
   virtual ~NFmiDataIdent(void);

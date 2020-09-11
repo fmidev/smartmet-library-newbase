@@ -13,7 +13,7 @@
 class NFmiIntegrationSelector;
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierCombi : public NFmiDataModifier
+class NFmiDataModifierCombi : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierCombi(void);

@@ -12,7 +12,7 @@
 #include "NFmiVoidPtrList.h"
 
 //! Undocumented
-class _FMI_DLL NFmiStringList
+class NFmiStringList
 {
  public:
   virtual ~NFmiStringList(void);

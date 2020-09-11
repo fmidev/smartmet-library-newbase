@@ -12,7 +12,7 @@
 #include "NFmiMetTime.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierExtreme : public NFmiDataModifier
+class NFmiDataModifierExtreme : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierExtreme(void);
