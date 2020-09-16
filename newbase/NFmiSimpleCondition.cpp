@@ -1,4 +1,5 @@
 #include "NFmiSimpleCondition.h"
+#include "NFmiFastQueryInfo.h"
 
 namespace
 {
@@ -11,7 +12,7 @@ bool CheckForStationaryData(const boost::shared_ptr<NFmiAreaMask> &mask)
   return false;
 }
 
-static bool UseTimeInterpolation(bool maskIsStationaryData, bool normalInterpolationCondition)
+bool UseTimeInterpolation(bool maskIsStationaryData, bool normalInterpolationCondition)
 {
   if (maskIsStationaryData)
     return false;
@@ -58,6 +59,32 @@ double CalculateValue(double value1,
     }
   }
 }
+
+double GetPressureValue(boost::shared_ptr<NFmiAreaMask> &mask, double pressure, const NFmiCalculationParams &calculationParams, bool useTimeInterpolation)
+{
+  if (mask && mask->Info() && mask->Info()->SizeLevels() <= 1)
+  {
+    // jos käytössä on 1 levelinen pintadata, pyydetään vain pinta-arvoa
+    return mask->Value(calculationParams, useTimeInterpolation);
+  }
+  else
+      return mask->PressureValue(pressure, calculationParams);
+}
+
+double GetHeightValue(boost::shared_ptr<NFmiAreaMask> &mask,
+                      double height,
+                      const NFmiCalculationParams &calculationParams,
+                      bool useTimeInterpolation)
+{
+  if (mask && mask->Info() && mask->Info()->SizeLevels() <= 1)
+  {
+    // jos käytössä on 1 levelinen pintadata, pyydetään vain pinta-arvoa
+    return mask->Value(calculationParams, useTimeInterpolation);
+  }
+  else
+    return mask->HeightValue(height, calculationParams);
+}
+
 }  // namespace
 
 // *****************************************************************
@@ -115,12 +142,13 @@ double NFmiSimpleConditionPart::Value(const NFmiCalculationParams &theCalculatio
 double NFmiSimpleConditionPart::PressureValue(double thePressure,
                                               const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = itsMask1->PressureValue(thePressure, theCalculationParams);
+  auto doTimeInterp = ::UseTimeInterpolation(isMask1StationaryData, true);
+  double value1 = ::GetPressureValue(itsMask1, thePressure, theCalculationParams, doTimeInterp);
   if (!itsMask2)
     return value1;
   else
   {
-    double value2 = itsMask2->PressureValue(thePressure, theCalculationParams);
+    double value2 = ::GetPressureValue(itsMask2, thePressure, theCalculationParams, doTimeInterp);
     return ::CalculateValue(value1, value2, itsCalculationOperator);
   }
 }
@@ -128,12 +156,13 @@ double NFmiSimpleConditionPart::PressureValue(double thePressure,
 double NFmiSimpleConditionPart::HeightValue(double theHeight,
                                             const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = itsMask1->HeightValue(theHeight, theCalculationParams);
+  auto doTimeInterp = ::UseTimeInterpolation(isMask1StationaryData, true);
+  double value1 = ::GetHeightValue(itsMask1, theHeight, theCalculationParams, doTimeInterp);
   if (!itsMask2)
     return value1;
   else
   {
-    double value2 = itsMask2->HeightValue(theHeight, theCalculationParams);
+    double value2 = ::GetHeightValue(itsMask2, theHeight, theCalculationParams, doTimeInterp);
     return ::CalculateValue(value1, value2, itsCalculationOperator);
   }
 }
