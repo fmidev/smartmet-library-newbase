@@ -17,14 +17,25 @@ namespace NFmiFastInfoUtils
 // juttu). Tila otetaan konstruktorissa ja palautetaan destruktorissa.
 class QueryInfoParamStateRestorer
 {
-  NFmiQueryInfo &info_;
-  unsigned long paramIndex_;
-  unsigned long paramId_;
+     protected:
+        NFmiQueryInfo &info_;
+        FmiParameterName paramId_;
+
 
  public:
   QueryInfoParamStateRestorer(NFmiQueryInfo &info);
-  ~QueryInfoParamStateRestorer();
+  virtual ~QueryInfoParamStateRestorer();
 };
+    class QueryInfoTotalStateRestorer : public QueryInfoParamStateRestorer
+    {
+      unsigned long locationIndex_;
+      unsigned long timeIndex_;
+      unsigned long levelIndex_;
+
+     public:
+      QueryInfoTotalStateRestorer(NFmiQueryInfo &info);
+      ~QueryInfoTotalStateRestorer();
+    };
 
 class MetaWindParamUsage
 {
