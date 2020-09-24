@@ -13,7 +13,7 @@ class NFmiQueryData;
 
 //! Undocumented
 
-class _FMI_DLL NFmiQueryInfoSatel : public NFmiQueryInfo
+class NFmiQueryInfoSatel : public NFmiQueryInfo
 {
  public:
   ~NFmiQueryInfoSatel(void);

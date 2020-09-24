@@ -12,7 +12,7 @@
 
 #include "NFmiAzimuthalArea.h"
 
-class _FMI_DLL NFmiOrthographicArea : public NFmiAzimuthalArea
+class NFmiOrthographicArea : public NFmiAzimuthalArea
 {
  public:
   virtual ~NFmiOrthographicArea(void);

@@ -13,7 +13,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiBox
+class NFmiBox
 {
  public:
   virtual ~NFmiBox(void);

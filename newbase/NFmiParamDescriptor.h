@@ -12,7 +12,7 @@
 #include "NFmiSaveBaseFactory.h"
 
 //! Undocumented
-class _FMI_DLL NFmiParamDescriptor : public NFmiDataDescriptor
+class NFmiParamDescriptor : public NFmiDataDescriptor
 {
  public:
   virtual ~NFmiParamDescriptor(void);

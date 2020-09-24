@@ -11,7 +11,7 @@
 #include "NFmiAzimuthalArea.h"
 
 //! Undocumened
-class _FMI_DLL NFmiLambertEqualArea : public NFmiAzimuthalArea
+class NFmiLambertEqualArea : public NFmiAzimuthalArea
 {
  public:
   virtual ~NFmiLambertEqualArea(void);

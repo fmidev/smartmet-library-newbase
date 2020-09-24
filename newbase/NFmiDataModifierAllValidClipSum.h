@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifierAllValidSum.h"
 
-class _FMI_DLL NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
+class NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
 {
  public:
   virtual ~NFmiDataModifierAllValidClipSum(void);

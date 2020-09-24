@@ -11,7 +11,7 @@
 #include "NFmiArea.h"
 
 //! Undocumented
-class _FMI_DLL NFmiLatLonArea : public NFmiArea
+class NFmiLatLonArea : public NFmiArea
 {
  public:
   virtual ~NFmiLatLonArea(void);

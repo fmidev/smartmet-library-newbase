@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiStatus
+class NFmiStatus
 {
  public:
   virtual ~NFmiStatus(void) {}

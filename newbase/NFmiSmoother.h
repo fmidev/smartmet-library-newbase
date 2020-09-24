@@ -13,7 +13,7 @@
 #include <string>
 
 //! Undocumented
-class _FMI_DLL NFmiSmoother
+class NFmiSmoother
 {
  public:
   //! Different smoothening methods

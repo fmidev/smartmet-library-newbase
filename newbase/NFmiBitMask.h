@@ -15,7 +15,7 @@ class NFmiQueryInfo;
 class NFmiDataModifier;
 
 //! Undocumented
-class _FMI_DLL NFmiBitMask
+class NFmiBitMask
 {
  public:
   virtual ~NFmiBitMask(void);

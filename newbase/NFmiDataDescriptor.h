@@ -11,7 +11,7 @@
 #include <iostream>
 
 //! Undocumented
-class _FMI_DLL NFmiDataDescriptor
+class NFmiDataDescriptor
 {
  public:
   virtual ~NFmiDataDescriptor(void) {}

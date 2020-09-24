@@ -13,7 +13,7 @@ class NFmiMetTime;
 class NFmiTimeBag;
 
 //! Undocumented
-class _FMI_DLL NFmiTimeList
+class NFmiTimeList
 {
  public:
   virtual ~NFmiTimeList(void);

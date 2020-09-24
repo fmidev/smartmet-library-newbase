@@ -17,7 +17,7 @@
 #include "NFmiDataModifierExtreme.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierMax : public NFmiDataModifierExtreme
+class NFmiDataModifierMax : public NFmiDataModifierExtreme
 {
  public:
   virtual ~NFmiDataModifierMax(void);

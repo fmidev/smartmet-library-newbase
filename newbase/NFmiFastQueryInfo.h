@@ -16,7 +16,7 @@
 class NFmiRect;
 
 //! Undocumented
-class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
+class NFmiFastQueryInfo : public NFmiQueryInfo
 {
  public:
   ~NFmiFastQueryInfo(void);

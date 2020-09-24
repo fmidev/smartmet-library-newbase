@@ -14,7 +14,7 @@
 class NFmAreaMaskList;
 
 //! A basic area mask implementation
-class _FMI_DLL NFmiAreaMaskImpl : public NFmiAreaMask
+class NFmiAreaMaskImpl : public NFmiAreaMask
 {
  public:
   virtual ~NFmiAreaMaskImpl(void);

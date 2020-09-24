@@ -10,7 +10,7 @@
 #include "NFmiStatus.h"
 
 //! Undocumented
-class _FMI_DLL NFmiCmdLine
+class NFmiCmdLine
 {
  public:
   ~NFmiCmdLine(void);

@@ -11,7 +11,7 @@
 #include "NFmiArea.h"
 
 //! Undocumented
-class _FMI_DLL NFmiWebMercatorArea : public NFmiArea
+class NFmiWebMercatorArea : public NFmiArea
 {
  public:
   virtual ~NFmiWebMercatorArea(void);

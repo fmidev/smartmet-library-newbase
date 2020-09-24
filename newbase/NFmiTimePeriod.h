@@ -13,7 +13,7 @@
 #include <iostream>
 
 //! Undocumented
-class _FMI_DLL NFmiTimePerioid
+class NFmiTimePerioid
 {
  public:
   virtual ~NFmiTimePerioid() {}

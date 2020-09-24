@@ -19,7 +19,7 @@ enum FmiSortOrder
 class NFmiSortable;
 
 //! Undocumented
-class _FMI_DLL NFmiSortedList : public NFmiVoidPtrList
+class NFmiSortedList : public NFmiVoidPtrList
 {
  public:
   virtual ~NFmiSortedList(void);

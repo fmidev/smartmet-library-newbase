@@ -11,7 +11,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiDataModifierLogical : public NFmiDataModifier
+class NFmiDataModifierLogical : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierLogical(void);

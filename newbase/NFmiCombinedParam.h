@@ -101,7 +101,7 @@ class NFmiDataModifierCombi;
 class NFmiIntegrationSelector;
 
 //! Undocumented
-class _FMI_DLL NFmiCombinedParam
+class NFmiCombinedParam
 {
  public:
   virtual ~NFmiCombinedParam(void);

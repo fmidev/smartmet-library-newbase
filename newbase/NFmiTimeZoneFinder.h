@@ -15,7 +15,7 @@ class NFmiPoint;
 class NFmiTimeZoneFinderPimple;
 
 //! Undocumented
-class _FMI_DLL NFmiTimeZoneFinder
+class NFmiTimeZoneFinder
 {
  public:
   ~NFmiTimeZoneFinder(void);

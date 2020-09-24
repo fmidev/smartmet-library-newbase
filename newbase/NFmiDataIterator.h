@@ -14,7 +14,7 @@ class NFmiAreaMask;
 class NFmiQueryInfo;
 
 //! Undocumented
-class _FMI_DLL NFmiDataIterator
+class NFmiDataIterator
 {
  public:
   virtual ~NFmiDataIterator(void);

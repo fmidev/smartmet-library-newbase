@@ -30,7 +30,7 @@ struct PacificPointFixerData
 };
 
 //! Undocumented
-class _FMI_DLL NFmiArea
+class NFmiArea
 {
  public:
   virtual ~NFmiArea();

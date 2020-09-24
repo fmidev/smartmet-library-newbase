@@ -10,7 +10,7 @@
 #include "NFmiStation.h"
 
 //! Undocumented
-class _FMI_DLL NFmiRadarStation : public NFmiStation
+class NFmiRadarStation : public NFmiStation
 {
  public:
   virtual ~NFmiRadarStation(void);

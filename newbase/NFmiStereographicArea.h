@@ -11,7 +11,7 @@
 #include "NFmiAzimuthalArea.h"
 
 //! Undocumened
-class _FMI_DLL NFmiStereographicArea : public NFmiAzimuthalArea
+class NFmiStereographicArea : public NFmiAzimuthalArea
 {
  public:
   virtual ~NFmiStereographicArea(void);

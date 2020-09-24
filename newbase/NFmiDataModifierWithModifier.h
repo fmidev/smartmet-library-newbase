@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifier.h"
 
-class _FMI_DLL NFmiDataModifierWithModifier : public NFmiDataModifier
+class NFmiDataModifierWithModifier : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierWithModifier(void);

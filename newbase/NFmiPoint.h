@@ -13,7 +13,7 @@
 #include <iosfwd>  // esittelee ostream ja istream (mutta niitä ei voi vielä käyttää!)
 //_________________________________________________________ NFmiPoint
 //! NFmiPoint-luokka pitää sisällään tiedon kaksiulotteisesta pisteestä.
-class _FMI_DLL NFmiPoint
+class NFmiPoint
 {
  public:
   static const NFmiPoint gMissingLatlon;  // Tätä missing latlon-pistettä voi käyttää, jos haluaa

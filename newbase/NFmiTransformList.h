@@ -11,7 +11,7 @@
 #include "NFmiPoint.h"
 
 //! Undocumented
-class _FMI_DLL NFmiTransformList
+class NFmiTransformList
 {
  public:
   virtual ~NFmiTransformList(void);

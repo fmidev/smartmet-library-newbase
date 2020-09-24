@@ -12,7 +12,7 @@
 
 class NFmiQueryInfo;
 
-class _FMI_DLL NFmiDataModifierWindChill : public NFmiDataModifier
+class NFmiDataModifierWindChill : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierWindChill(void);

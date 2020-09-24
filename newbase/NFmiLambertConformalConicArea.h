@@ -3,7 +3,7 @@
 #include "NFmiArea.h"
 
 //! Undocumened
-class _FMI_DLL NFmiLambertConformalConicArea : public NFmiArea
+class NFmiLambertConformalConicArea : public NFmiArea
 {
  public:
   virtual ~NFmiLambertConformalConicArea() = default;

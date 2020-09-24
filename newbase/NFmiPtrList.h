@@ -49,10 +49,10 @@
 #include "NFmiGlobals.h"
 
 template <class Type>
-class _FMI_DLL NFmiPtrList
+class NFmiPtrList
 {
  private:
-  class _FMI_DLL Node
+  class Node
   {
    public:
     Node(Type *theData = 0, Node *thePrevious = 0, Node *theNext = 0)
@@ -76,7 +76,7 @@ class _FMI_DLL NFmiPtrList
   unsigned long itsCounter;  // Lisäsin nämä 8.9.99 /Mikael
 
  public:
-  class _FMI_DLL Iterator
+  class Iterator
   {
    private:
     NFmiPtrList<Type> *itsList;  // Lisäsin tämän 8.9.99 /Mikael

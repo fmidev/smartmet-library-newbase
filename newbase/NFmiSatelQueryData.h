@@ -18,7 +18,7 @@
 #include "NFmiSatel.h"
 
 //! Undocumented
-class _FMI_DLL NFmiSatelQueryData : public NFmiQueryData
+class NFmiSatelQueryData : public NFmiQueryData
 {
  public:
   ~NFmiSatelQueryData(void);

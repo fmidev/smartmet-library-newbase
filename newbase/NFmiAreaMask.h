@@ -55,7 +55,7 @@ class NFmiCalculationParams
 };
 
 //! Undocumented class
-class _FMI_DLL NFmiAreaMask
+class NFmiAreaMask
 {
  public:
   /*!

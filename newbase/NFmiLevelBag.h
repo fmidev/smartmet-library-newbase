@@ -15,7 +15,7 @@
 class NFmiLevel;
 
 //! Undocumented
-class _FMI_DLL NFmiLevelBag : public NFmiSize
+class NFmiLevelBag : public NFmiSize
 {
  public:
   virtual ~NFmiLevelBag(void);

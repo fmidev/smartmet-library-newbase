@@ -13,7 +13,7 @@
 // mitään varsinaista modifieria/Lasse
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierDummy : public NFmiDataModifier
+class NFmiDataModifierDummy : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierDummy(void);

@@ -11,7 +11,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiParam : public NFmiIndividual
+class NFmiParam : public NFmiIndividual
 {
  public:
   NFmiParam(void);

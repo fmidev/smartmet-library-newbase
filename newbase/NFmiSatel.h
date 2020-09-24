@@ -19,7 +19,7 @@
 #include <iostream>
 
 //! Undocumented
-class _FMI_DLL NFmiSatel
+class NFmiSatel
 {
  public:
   virtual ~NFmiSatel(void);
