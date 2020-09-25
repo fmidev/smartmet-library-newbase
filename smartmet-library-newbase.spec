@@ -94,6 +94,7 @@ FMI newbase static library
 * Fri Sep 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.25-1.fmi
 - Use Fmi::stod for speed
 - Optimized NFmiArea::DetectClassId for speed
+- Optimized NFmiAreaFactory for speed
 
 * Mon Sep  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.7-1.fmi
 - Fixed stack smashing issue when reading Lambert Conformal Conic querydata

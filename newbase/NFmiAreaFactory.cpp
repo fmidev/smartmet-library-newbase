@@ -115,6 +115,7 @@
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
 #include <algorithm>
+#include <bitset>
 #include <deque>
 #include <list>
 #include <map>
@@ -125,6 +126,8 @@
 #include <utility>
 #include <vector>
 
+#include <iostream>
+
 using namespace std;
 
 using boost::algorithm::starts_with;
@@ -132,6 +135,41 @@ using boost::algorithm::trim_copy;
 
 namespace NFmiAreaFactory
 {
+
+template <typename T>
+void split_string(T & output, const std::string & input, const char * separators)
+{
+  bitset<255> delims;
+  while(*separators)
+    delims[*separators++] = true;
+  
+  using iter = string::const_iterator;
+  iter start = input.begin();
+  bool in_token = false;
+
+  for(iter it = input.begin(), end = input.end(); it != end; ++it)
+  {
+    if(delims[*it])
+    {
+      if(in_token)
+      {
+        output.push_back(typename T::value_type(start, it));
+        in_token = false;
+      }
+    }
+    else if(!in_token)
+    {
+      start = it;
+      in_token = true;
+    }
+  }
+  if(in_token)
+  {
+    output.push_back(typename T::value_type(start, input.end()));
+  }
+}
+
+
 struct ProjStrings
 {
   std::string proj4{};
@@ -162,7 +200,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     result.sphere = "WGS84";  // default
 
   std::vector<std::string> words;
-  boost::algorithm::split(words, projection, boost::is_any_of(","));
+  split_string(words, projection, ",");
 
   // Extract projection name
   auto name = words[0];
@@ -339,7 +377,7 @@ std::vector<std::string> split_components(const std::string &theProjection)
   auto separator = (theProjection.find('|') != std::string::npos ? "|" : ":");
 
   std::vector<std::string> words;
-  boost::algorithm::split(words, theProjection, boost::is_any_of(separator));
+  split_string(words, theProjection, separator);
 
   if (words.size() < 1 || words.size() > 3)
     throw runtime_error("must have 1-3 projection components separated by ':' or '|'");
@@ -364,7 +402,7 @@ Bounds parse_bounds(const std::string &theBounds)
   Bounds bounds;
 
   std::vector<std::string> words;
-  boost::algorithm::split(words, theBounds, boost::is_any_of("/"));
+  split_string(words, theBounds, "/");
 
   if (words.size() < 1 || words.size() > 2)
     throw std::runtime_error("Invalid projection bbox/center setting: " + theBounds);
@@ -372,10 +410,11 @@ Bounds parse_bounds(const std::string &theBounds)
   if (words.size() == 2) bounds.aspect = Fmi::stod(words[1]);
 
   // extract x1,y1,x2,y2 or center,width,height
-  boost::algorithm::split(words, words[0], boost::is_any_of(","));
+  std::vector<std::string> parts;
+  split_string(parts, words[0], ",");
   std::vector<double> numbers;
-  for (const auto &word : words)
-    numbers.push_back(Fmi::stod(word));
+  for (const auto &part : parts)
+    numbers.push_back(Fmi::stod(part));
 
   if (numbers.size() == 4)
   {
@@ -421,7 +460,7 @@ Grid parse_grid(std::string str)
   }
 
   std::vector<std::string> words;
-  boost::algorithm::split(words, str, boost::is_any_of(",x"));
+  split_string(words, str, ",x");
 
   // intermediate validity checks
   if (words.size() != 2 && words.size() != 4)
