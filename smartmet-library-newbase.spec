@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.9.11
+Version: 20.9.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -96,6 +96,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Sep 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.25-1.fmi
+- Added N200 sea level min, max, mean, dev, probability and fractile parameters
+
 * Fri Sep 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.11-1.fmi
 - Removed obsolete FMI_DLL export declarations
 
