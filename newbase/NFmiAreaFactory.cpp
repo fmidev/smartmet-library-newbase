@@ -108,15 +108,12 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
-
 #include "NFmiArea.h"
-#include "NFmiStringTools.h"
-
+#include <macgyver/StringConversion.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
-
 #include <algorithm>
 #include <deque>
 #include <list>
@@ -131,6 +128,7 @@
 using namespace std;
 
 using boost::algorithm::starts_with;
+using boost::algorithm::trim_copy;
 
 namespace NFmiAreaFactory
 {
@@ -172,7 +170,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   // Extract projection parameters
   std::vector<double> params;
   for (std::size_t i = 1; i < words.size(); i++)
-    params.push_back(std::stod(words[i]));
+    params.push_back(Fmi::stod(words[i]));
 
   if (name == "latlon")
   {
@@ -314,7 +312,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
 std::string preprocess_projection(const std::string &theProjection)
 {
-  auto projection = boost::algorithm::trim_copy(theProjection);
+  auto projection = trim_copy(theProjection);
 
   // NFmiGdalArea's projection string starts with FMI{:|} or WGS84{:|}, and area definition at the
   // end is delimited with pipe, thus resulting pipe to be used as the separator below. Replace
@@ -371,13 +369,13 @@ Bounds parse_bounds(const std::string &theBounds)
   if (words.size() < 1 || words.size() > 2)
     throw std::runtime_error("Invalid projection bbox/center setting: " + theBounds);
 
-  if (words.size() == 2) bounds.aspect = std::stod(words[1]);
+  if (words.size() == 2) bounds.aspect = Fmi::stod(words[1]));
 
   // extract x1,y1,x2,y2 or center,width,height
   boost::algorithm::split(words, words[0], boost::is_any_of(","));
   std::vector<double> numbers;
   for (const auto &word : words)
-    numbers.push_back(std::stod(word));
+    numbers.push_back(Fmi::stod(word));
 
   if (numbers.size() == 4)
   {
@@ -433,7 +431,7 @@ Grid parse_grid(std::string str)
 
   std::vector<double> numbers;
   for (const auto &word : words)
-    numbers.push_back(std::stod(word));
+    numbers.push_back(Fmi::stod(word));
 
   if (numbers.size() == 2)
   {
