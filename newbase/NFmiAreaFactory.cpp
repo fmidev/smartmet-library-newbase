@@ -369,7 +369,7 @@ Bounds parse_bounds(const std::string &theBounds)
   if (words.size() < 1 || words.size() > 2)
     throw std::runtime_error("Invalid projection bbox/center setting: " + theBounds);
 
-  if (words.size() == 2) bounds.aspect = Fmi::stod(words[1]));
+  if (words.size() == 2) bounds.aspect = Fmi::stod(words[1]);
 
   // extract x1,y1,x2,y2 or center,width,height
   boost::algorithm::split(words, words[0], boost::is_any_of(","));

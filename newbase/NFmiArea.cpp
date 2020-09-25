@@ -1297,7 +1297,7 @@ const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsSpatialReferen
 
 int NFmiArea::DetectClassId() const
 {
-  const auto proj = ProjInfo();
+  const auto & proj = ProjInfo();
 
   auto name = proj.getString("proj");
   if (!name) throw std::runtime_error("Projection name not set, should be impossible");
