@@ -3,80 +3,18 @@ LIB = smartmet-$(SUBNAME)
 SPEC = smartmet-library-$(SUBNAME)
 INCDIR = smartmet/$(SUBNAME)
 
-# Installation directories
 
-include common.mk
+# Say 'yes' to disable Gdal
+DISABLED_GDAL ?=
+REQUIRES :=
+ifneq ($(DISABLED_GDAL),yes)
+REQUIRES += gdal
+endif
+
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
-# Say 'yes' to disable Gdal
-DISABLED_GDAL=
-ifeq ($(DISABLED_GDAL),yes)
-  DEFINES += -DDISABLED_GDAL
-endif
-
-# Use this gdal package primarily, and fall back to plain "gdal" if it's not found
-gdal_version = gdal30
-
-# Boost 1.69
-
-ifeq ($(USE_CLANG), yes)
-
- FLAGS = \
-	-std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer \
-	-Wall \
-        -Wextra \
-	-Wno-c++98-compat \
-	-Wno-float-equal \
-	-Wno-padded \
-	-Wno-missing-prototypes
-
- INCLUDE += -isystem $(includedir)/smartmet $(SYSTEM_INCLUDES)
-
-else
-
- FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
-
- FLAGS_DEBUG = \
-	-Wcast-align \
-	-Winline \
-	-Wno-multichar \
-	-Wno-pmf-conversions \
-	-Woverloaded-virtual  \
-	-Wpointer-arith \
-	-Wcast-qual \
-	-Wwrite-strings \
-	-Wsign-promo \
-	-Wno-inline
-
- FLAGS_RELEASE = -Wuninitialized
-
- INCLUDES += \
-	-I$(includedir) \
-	-I$(includedir)/smartmet
-
-endif
-
-ifneq ($(DISABLED_GDAL),yes)
-ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
-  INCLUDES += -I$(PREFIX)/$(gdal_version)/include
-else
-  INCLUDES += -I$(PREFIX)/include/gdal
-endif
-endif
-
-ifeq ($(TSAN), yes)
-  FLAGS += -fsanitize=thread
-endif
-ifeq ($(ASAN), yes)
-  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
-endif
-
-# Compile options in detault, debug and profile modes
-
-CFLAGS         = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
-CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror  -Og -g
-CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
@@ -102,10 +40,6 @@ LIBFILE = libsmartmet-$(SUBNAME).so
 ALIBFILE = libsmartmet-$(SUBNAME).a
 
 # How to install
-
-INSTALL_PROG = install -p -m 775
-INSTALL_DATA = install -p -m 664
-
 ARFLAGS = -r
 
 # Compile option overrides
