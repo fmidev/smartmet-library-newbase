@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.9.29
+Version: 20.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,6 +17,7 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
 BuildRequires: fmt-devel
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -37,6 +38,7 @@ Requires: fmt >= 6.2.1
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
+#TestRequires: smartmet-library-macgyver-devel >= 20.10.5
 #TestRequires: gdal-devel
 #TestRequires: gdal-libs
 #TestRequires: bzip2-devel
@@ -96,6 +98,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Oct  5 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.5-1.fmi
+- Build update (use makefile.inc from smartmet-library-macgyver)
+
 * Tue Sep 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.29-1.fmi
 - Added NFmiWindFix for recalculating wind components from wind speed and direction
 
