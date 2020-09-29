@@ -42,6 +42,8 @@ class MetaWindParamUsage
   bool MakeMetaWindVectorParam() const;
   bool MakeMetaWsAndWdParams() const;
   bool MakeMetaWindComponents() const;
+  bool HasTotalWind() const { return fHasTotalWind; }
+  bool HasWindVectorParam() const { return fHasWindVectorParam; }
   bool HasWsAndWd() const { return fHasWsAndWd; }
   bool HasWindComponents() const { return fHasWindComponents; }
   bool IsStreamlinePossible() const;
