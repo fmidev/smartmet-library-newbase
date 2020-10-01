@@ -12,6 +12,11 @@ add_library(
     ${SOURCE_FILES} 
     )
 
+target_link_libraries(
+    ${PROJECT_NAME}
+    Gis
+    )
+
 target_include_directories( 
     ${PROJECT_NAME}
     PUBLIC ${PROJECT_SOURCE_DIR}/newbase
