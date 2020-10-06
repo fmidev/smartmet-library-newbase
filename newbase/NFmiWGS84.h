@@ -7,7 +7,7 @@ namespace Fmi
 class SpatialReference;
 }
 
-class _FMI_DLL NFmiWGS84
+class NFmiWGS84
 {
  public:
   static const Fmi::SpatialReference& SpatialReference();
