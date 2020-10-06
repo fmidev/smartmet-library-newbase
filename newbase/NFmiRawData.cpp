@@ -88,7 +88,7 @@ class NFmiRawData::Pimple
   bool Advise(FmiAdvice advice);
 
  private:
-#if NFMIRAWDATA_ENABLE_UNDO_REDO
+#ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
   void Unmap() const;
 #endif
 
@@ -400,7 +400,7 @@ bool NFmiRawData::Pimple::IsBinaryStorageUsed() const
  */
 // ----------------------------------------------------------------------
 
-#if NFMIRAWDATA_ENABLE_UNDO_REDO
+#ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
 void NFmiRawData::Pimple::Unmap() const
 {
   if (itsData) return;  // oli jo alustettu
@@ -606,7 +606,7 @@ void NFmiRawData::Pimple::Backup(char *ptr) const
     ReadLock lock(itsMutex);
 
 // we assume data which is backed up is edited, so might as well unmap
-#if NFMIRAWDATA_ENABLE_UNDO_REDO
+#ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
     Unmap();
 #endif
 
@@ -630,7 +630,7 @@ void NFmiRawData::Pimple::Undo(char *ptr)
     // This may be slower than necessary when mmapped, but since Backup
     // unmaps this really should never actually unmap
 
-#if NFMIRAWDATA_ENABLE_UNDO_REDO
+#ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
     Unmap();
 #endif
     auto *src = reinterpret_cast<char *>(itsData);
