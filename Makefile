@@ -6,14 +6,14 @@ INCDIR = smartmet/$(SUBNAME)
 
 # Say 'yes' to disable Gdal
 DISABLED_GDAL ?=
-REQUIRES :=
+REQUIRES := gdal
 ifneq ($(DISABLED_GDAL),yes)
 REQUIRES += gdal
 endif
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
+DEFINES = -DUNIX -DWGS84 -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
@@ -38,18 +38,6 @@ ALIBFILE = libsmartmet-$(SUBNAME).a
 
 # How to install
 ARFLAGS = -r
-
-# Compile option overrides
-
-ifneq (,$(findstring debug,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_DEBUG)
-  CFLAGS0 = $(CFLAGS_DEBUG)
-endif
-
-ifneq (,$(findstring profile,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_PROFILE)
-  CFLAGS0 = $(CFLAGS_PROFILE)
-endif
 
 # Compilation directories
 
