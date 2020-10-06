@@ -13,7 +13,7 @@
 
 #include <vector>
 
-class _FMI_DLL NFmiAreaMaskList
+class NFmiAreaMaskList
 {
  public:
   NFmiAreaMaskList();

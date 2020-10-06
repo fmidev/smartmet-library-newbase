@@ -64,7 +64,7 @@ class NFmiTimeCache
 };
 
 //! Undocumented
-class _FMI_DLL NFmiGrid : public NFmiGridBase
+class NFmiGrid : public NFmiGridBase
 {
  public:
   virtual ~NFmiGrid();

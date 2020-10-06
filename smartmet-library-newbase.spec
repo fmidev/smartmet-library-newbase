@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.9.25
+Version: 20.10.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,6 +18,7 @@ BuildRequires: bzip2-devel
 BuildRequires: gdal30-devel
 BuildRequires: fmt-devel
 BuildRequires: smartmet-library-gis >= 20.8.21
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
 Requires: smartmet-library-gis >= 20.8.21
 Requires: boost169-date-time
 Requires: boost169-filesystem
@@ -32,6 +33,7 @@ Requires: geos38
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
+#TestRequires: smartmet-library-macgyver-devel >= 20.10.5
 #TestRequires: gdal-devel
 #TestRequires: gdal-libs
 #TestRequires: bzip2-devel
@@ -91,10 +93,23 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Oct  5 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.5-1.fmi
+- Build update (use makefile.inc from smartmet-library-macgyver)
+
+* Fri Oct  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.2-1.fmi
+- New aviation parameters
+
+* Tue Sep 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.29-1.fmi
+- Added NFmiWindFix for recalculating wind components from wind speed and direction
+
 * Fri Sep 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.25-1.fmi
 - Use Fmi::stod for speed
 - Optimized NFmiArea::DetectClassId for speed
 - Optimized NFmiAreaFactory for speed
+- Added N200 sea level min, max, mean, dev, probability and fractile parameters
+
+* Fri Sep 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.11-1.fmi
+- Removed obsolete FMI_DLL export declarations
 
 * Mon Sep  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.7-1.fmi
 - Fixed stack smashing issue when reading Lambert Conformal Conic querydata

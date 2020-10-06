@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifier.h"
 
-class _FMI_DLL NFmiDataModifierAvgAbs : public NFmiDataModifier
+class NFmiDataModifierAvgAbs : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierAvgAbs();

@@ -16,7 +16,7 @@ class NFmiFastQueryInfo;
 
 //! Tarkoitus on tehdä tästä mm. auringonnousukulman ja lat/lon arvojen maskien esiluokka.
 
-class _FMI_DLL NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
+class NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
 {
  public:
   ~NFmiCalculatedAreaMask();
@@ -37,7 +37,7 @@ class _FMI_DLL NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
 };  // class NFmiCalculatedAreaMask
 
 //! Undocumented
-class _FMI_DLL NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
+class NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
 {
  public:
   ~NFmiLatLonAreaMask();
@@ -54,7 +54,7 @@ class _FMI_DLL NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
 };  // class NFmiLatLonAreaMask
 
 //! Undocumented
-class _FMI_DLL NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
+class NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
 {
  public:
   ~NFmiElevationAngleAreaMask();
@@ -75,7 +75,7 @@ class _FMI_DLL NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
 };  // class NFmiElevationAngleAreaMask
 
 //! Undocumented
-class _FMI_DLL NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
+class NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiJulianDayAreaMask();
@@ -94,7 +94,7 @@ class _FMI_DLL NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
 };  // class NFmiJulianDayAreaMask
 
 //! Undocumented
-class _FMI_DLL NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
+class NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiLocalHourAreaMask();
@@ -111,7 +111,7 @@ class _FMI_DLL NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
 };  // class NFmiLocalHourAreaMask
 
 //! Undocumented
-class _FMI_DLL NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
+class NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiUtcHourAreaMask();
@@ -127,7 +127,7 @@ class _FMI_DLL NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
 };  // class NFmiUtcHourAreaMask
 
 // class NFmiMinuteAreaMask
-class _FMI_DLL NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
+class NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiMinuteAreaMask();
@@ -142,7 +142,7 @@ class _FMI_DLL NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
 };
 
 //! Undocumented
-class _FMI_DLL NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
+class NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiForecastHourAreaMask();
@@ -164,7 +164,7 @@ class _FMI_DLL NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 };  // class NFmiForecastHourAreaMask
 
 //! Luokka palauttaa (CalcValueFromLocation) datan timestepin tunneissa.
-class _FMI_DLL NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
+class NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiTimeStepAreaMask();
@@ -189,7 +189,7 @@ class _FMI_DLL NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 };  // class NFmiForecastHourAreaMask
 
 //! Luokka palauttaa (CalcValueFromLocation) datan hilan x tai y suuntaisen koon metreissä.
-class _FMI_DLL NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
+class NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiGridSizeAreaMask();

@@ -11,7 +11,7 @@
 #include "NFmiString.h"
 
 //! Undocumented
-class _FMI_DLL NFmiCalculationCondition
+class NFmiCalculationCondition
 {
  public:
   NFmiCalculationCondition();

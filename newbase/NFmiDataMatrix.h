@@ -52,7 +52,7 @@
 
 //! A 2D data container
 template <class T>  // miten annetaan containeri template parametrina??????
-class _FMI_DLL NFmiDataMatrix : public std::vector<std::vector<T> >
+class NFmiDataMatrix : public std::vector<std::vector<T> >
 {
  public:
   typedef typename std::vector<T>::size_type size_type;

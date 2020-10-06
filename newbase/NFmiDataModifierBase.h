@@ -37,7 +37,7 @@ enum FmiJoinOperator
 };
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierBase
+class NFmiDataModifierBase
 {
  public:
   virtual ~NFmiDataModifierBase();

@@ -22,7 +22,7 @@ enum FmiValues
 };
 
 //! Undocumented
-class _FMI_DLL NFmiValueString : public NFmiString
+class NFmiValueString : public NFmiString
 {
  public:
   ~NFmiValueString();

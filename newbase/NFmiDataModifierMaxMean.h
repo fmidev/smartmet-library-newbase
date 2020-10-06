@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifier.h"
 
-class _FMI_DLL NFmiDataModifierMaxMean : public NFmiDataModifier
+class NFmiDataModifierMaxMean : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierMaxMean();

@@ -20,7 +20,7 @@ enum FmiModifierBoolOperations
 };
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierBoolean : public NFmiDataModifier
+class NFmiDataModifierBoolean : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierBoolean();

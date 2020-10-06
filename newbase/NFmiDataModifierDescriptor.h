@@ -15,7 +15,7 @@ class NFmiDataIdent;
 class NFmiLevel;
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierDescriptor : public NFmiDataDescriptor
+class NFmiDataModifierDescriptor : public NFmiDataDescriptor
 {
  public:
   virtual ~NFmiDataModifierDescriptor();

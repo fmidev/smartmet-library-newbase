@@ -23,7 +23,7 @@ class SpatialReference;
 }  // namespace Fmi
 
 //! Undocumented
-class _FMI_DLL NFmiFastQueryInfo : public NFmiQueryInfo
+class NFmiFastQueryInfo : public NFmiQueryInfo
 {
  public:
   ~NFmiFastQueryInfo();

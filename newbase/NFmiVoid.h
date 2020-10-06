@@ -18,7 +18,7 @@
 #include "NFmiGlobals.h"
 
 //! Undocumented
-class _FMI_DLL NFmiVoid
+class NFmiVoid
 {
  public:
   ~NFmiVoid();

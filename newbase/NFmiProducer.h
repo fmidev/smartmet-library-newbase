@@ -17,7 +17,7 @@
 #include "NFmiIndividual.h"
 
 //! Undocumented
-class _FMI_DLL NFmiProducer : public NFmiIndividual
+class NFmiProducer : public NFmiIndividual
 {
  public:
   NFmiProducer();

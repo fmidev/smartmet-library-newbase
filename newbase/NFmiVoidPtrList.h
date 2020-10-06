@@ -21,7 +21,7 @@ const long kNotInList = -1;
  */
 // ----------------------------------------------------------------------
 
-class _FMI_DLL NFmiVoidPtrData
+class NFmiVoidPtrData
 {
   friend class NFmiVoidPtrList;
   friend class NFmiVoidPtrItem;
@@ -49,7 +49,7 @@ class _FMI_DLL NFmiVoidPtrData
  */
 // ----------------------------------------------------------------------
 
-class _FMI_DLL NFmiVoidPtrItem
+class NFmiVoidPtrItem
 {
   friend class NFmiVoidPtrList;
   friend class NFmiVoidPtrIterator;
@@ -88,7 +88,7 @@ class _FMI_DLL NFmiVoidPtrItem
  */
 // ----------------------------------------------------------------------
 
-class _FMI_DLL NFmiVoidPtrList
+class NFmiVoidPtrList
 {
   friend class NFmiVoidPtrIterator;
 
@@ -139,7 +139,7 @@ class _FMI_DLL NFmiVoidPtrList
  */
 // ----------------------------------------------------------------------
 
-class _FMI_DLL NFmiVoidPtrIterator
+class NFmiVoidPtrIterator
 {
  public:
   virtual ~NFmiVoidPtrIterator() {}

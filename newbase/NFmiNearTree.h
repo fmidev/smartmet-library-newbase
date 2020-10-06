@@ -110,7 +110,7 @@
 // This can be specialized externally to extend functionality!
 
 template <typename T>
-class _FMI_DLL NFmiNearTreeDistance
+class NFmiNearTreeDistance
 {
  public:
   double operator()(const T& theLhs, const T& theRhs) const
@@ -124,7 +124,7 @@ class _FMI_DLL NFmiNearTreeDistance
 // The actual class
 
 template <typename T, typename F = NFmiNearTreeDistance<T> >
-class _FMI_DLL NFmiNearTree
+class NFmiNearTree
 {
  public:
   typedef T value_type;

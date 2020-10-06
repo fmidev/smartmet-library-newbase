@@ -9,7 +9,7 @@
 
 #include "NFmiDataModifierExtreme.h"
 
-class _FMI_DLL NFmiDataModifierMin : public NFmiDataModifierExtreme
+class NFmiDataModifierMin : public NFmiDataModifierExtreme
 {
  public:
   virtual ~NFmiDataModifierMin();

@@ -30,7 +30,7 @@ class CoordinateTransformation;
 }  // namespace Fmi
 
 //! Undocumented
-class _FMI_DLL NFmiArea
+class NFmiArea
 {
  public:
   // These are defined since implementation is hidden

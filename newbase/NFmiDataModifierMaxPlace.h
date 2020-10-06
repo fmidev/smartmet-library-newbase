@@ -17,7 +17,7 @@
 #include "NFmiDataModifierExtremePlace.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
+class NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
 {
  public:
   virtual ~NFmiDataModifierMaxPlace();

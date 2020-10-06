@@ -11,7 +11,7 @@
 #include "NFmiQueryData.h"
 
 //! Undocumented
-class _FMI_DLL NFmiStreamQueryData
+class NFmiStreamQueryData
 {
  public:
   ~NFmiStreamQueryData();

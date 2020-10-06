@@ -1381,6 +1381,15 @@ enum FmiParameterName
   kFmiProbabilityOfPOTLimit2,
   kFmiProbabilityOfPOTLimit3,
 
+  kFmiTurbulentKineticEnergyDissipation,
+
+  // Aviation de-icing probability parameters
+  kFmiProbabilityOfDIW0,
+  kFmiProbabilityOfDIW1,
+  kFmiProbabilityOfDIW2,
+  kFmiProbabilityOfDIW3,
+  kFmiProbabilityOfDIW4,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
@@ -1737,6 +1746,25 @@ enum FmiParameterName
   kFmiTotalPrecipitationF97_5,
   kFmiTotalPrecipitationF2_5,
 
+  // Sea level parameters
+  
+  kFmiProbabilityOfSeaLevelLimit1N2000,
+  kFmiProbabilityOfSeaLevelLimit2N2000,
+  kFmiProbabilityOfSeaLevelLimit3N2000,
+  kFmiProbabilityOfSeaLevelLimit4N2000,
+  kFmiSeaLevelMeanN2000,
+  kFmiSeaLevelMinimumN2000,
+  kFmiSeaLevelMaximumN2000,
+  kFmiSeaLevelDeviationN2000,
+  kFmiSeaLevelF5N2000,
+  kFmiSeaLevelF10N2000,
+  kFmiSeaLevelF25N2000,
+  kFmiSeaLevelF50N2000,
+  kFmiSeaLevelF75N2000,
+  kFmiSeaLevelF90N2000,
+  kFmiSeaLevelF95N2000,
+
+  
   cf_acoustic_signal_roundtrip_travel_time_in_sea_water = 10000,
   cf_aerodynamic_particle_diameter = 10001,
   cf_aerodynamic_resistance = 10002,

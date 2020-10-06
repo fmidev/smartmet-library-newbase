@@ -21,7 +21,7 @@ const NFmiString kFmiSourceDirectory("\\\\vespa\\editdata\\");
 #endif
 
 //! Undocumented
-class _FMI_DLL NFmiSnapShotInterface
+class NFmiSnapShotInterface
 {
  public:
   virtual ~NFmiSnapShotInterface();

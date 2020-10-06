@@ -11,7 +11,7 @@
 #include "NFmiPtrList.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierList : public NFmiDataModifier
+class NFmiDataModifierList : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierList();

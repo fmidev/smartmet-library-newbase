@@ -3,108 +3,18 @@ LIB = smartmet-$(SUBNAME)
 SPEC = smartmet-library-$(SUBNAME)
 INCDIR = smartmet/$(SUBNAME)
 
-# Installation directories
-
-processor := $(shell uname -p)
-
-ifeq ($(origin PREFIX), undefined)
-  PREFIX = /usr
-else
-  PREFIX = $(PREFIX)
-endif
-
-ifeq ($(processor), x86_64)
-  libdir = $(PREFIX)/lib64
-else
-  libdir = $(PREFIX)/lib
-endif
-
-bindir = $(PREFIX)/bin
-includedir = $(PREFIX)/include
-datadir = $(PREFIX)/share
-objdir = obj
-
-# Compiler options
-
-DEFINES = -DUNIX -D_REENTRANT -DWGS84 -DBOOST -DFMI_COMPRESSION
-
--include $(HOME)/.smartmet.mk
-GCC_DIAG_COLOR ?= always
-CXX_STD ?= c++11
 
 # Say 'yes' to disable Gdal
-DISABLED_GDAL=
-ifeq ($(DISABLED_GDAL),yes)
-  DEFINES += -DDISABLED_GDAL
-endif
-
-# Boost 1.69
-
-ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
-  LIBS += -L/usr/lib64/boost169
-endif
-
+DISABLED_GDAL ?=
+REQUIRES :=
 ifneq ($(DISABLED_GDAL),yes)
-ifneq "$(wildcard /usr/gdal30/include)" ""
-  INCLUDES += -I/usr/gdal30/include
-  LIBS += -L$(PREFIX)/gdal30/lib
-else
-  INCLUDES += -I/usr/include/gdal
-endif
+REQUIRES += gdal
 endif
 
-ifeq ($(CXX), clang++)
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
- FLAGS = \
-	-std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer \
-	-Weverything \
-	-Wno-c++98-compat \
-	-Wno-float-equal \
-	-Wno-padded \
-	-Wno-missing-prototypes
+DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
- INCLUDES += \
-	-isystem $(includedir) \
-	-isystem $(includedir)/smartmet \
-	-isystem $(PREFIX)/gdal30/include
-
-else
-
- FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
-
- FLAGS_DEBUG = \
-	-Wcast-align \
-	-Winline \
-	-Wno-multichar \
-	-Wno-pmf-conversions \
-	-Woverloaded-virtual  \
-	-Wpointer-arith \
-	-Wcast-qual \
-	-Wwrite-strings \
-	-Wsign-promo \
-	-Wno-inline
-
- FLAGS_RELEASE = -Wuninitialized
-
- INCLUDES += \
-	-I$(includedir) \
-	-I$(includedir)/smartmet
-
-endif
-
-ifeq ($(TSAN), yes)
-  FLAGS += -fsanitize=thread
-endif
-ifeq ($(ASAN), yes)
-  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
-endif
-
-# Compile options in detault, debug and profile modes
-
-CFLAGS         = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
-CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror  -Og -g
-CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
@@ -127,10 +37,6 @@ LIBFILE = libsmartmet-$(SUBNAME).so
 ALIBFILE = libsmartmet-$(SUBNAME).a
 
 # How to install
-
-INSTALL_PROG = install -p -m 775
-INSTALL_DATA = install -p -m 664
-
 ARFLAGS = -r
 
 # Compile option overrides

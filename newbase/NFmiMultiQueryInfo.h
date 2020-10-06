@@ -83,7 +83,7 @@
 #include <boost/utility.hpp>
 
 //! Undocumented
-class _FMI_DLL NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::noncopyable
+class NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::noncopyable
 {
  public:
   using NFmiFastQueryInfo::InterpolatedValue;

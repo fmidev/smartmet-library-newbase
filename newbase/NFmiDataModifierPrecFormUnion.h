@@ -10,7 +10,7 @@
 #include "NFmiDataModifier.h"
 #include "NFmiWeatherAndCloudiness.h"
 
-class _FMI_DLL NFmiDataModifierPrecFormUnion : public NFmiDataModifier
+class NFmiDataModifierPrecFormUnion : public NFmiDataModifier
 {
   // HUOM missingValuesAlloved = true koska pouta tuo puuttuvan !!!
 

@@ -33,7 +33,7 @@ class NFmiStation;
 #define HEADERMAX 3  // Poistetaan
 
 //! Undocumented
-class _FMI_DLL NFmiQueryInfo
+class NFmiQueryInfo
 {
  public:
   virtual ~NFmiQueryInfo();

@@ -13,7 +13,7 @@
 #include <iosfwd>
 #include <tuple>
 
-class _FMI_DLL NFmiPoint
+class NFmiPoint
 {
  public:
   static const NFmiPoint gMissingLatlon;

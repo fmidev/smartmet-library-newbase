@@ -13,7 +13,7 @@ class NFmiSuperSmartInfo;
 class NFmiDataIdent;
 
 //! Undocumented
-class _FMI_DLL NFmiRegressionItem : public NFmiInfoModifier
+class NFmiRegressionItem : public NFmiInfoModifier
 {
  public:
   virtual ~NFmiRegressionItem();

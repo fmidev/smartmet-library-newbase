@@ -12,7 +12,7 @@
 
 // ÄLÄ KÄYTÄ TÄTÄ LUOKKAA UUSIIN JUTTUIHIN, VAAN KÄYTÄ NFmiLocationBag:ia
 
-class _FMI_DLL NFmiStationBag : public NFmiLocationBag
+class NFmiStationBag : public NFmiLocationBag
 {
  public:
   NFmiStationBag();

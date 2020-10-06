@@ -11,7 +11,7 @@
 #include "NFmiLevelBag.h"
 
 //! Undocumented
-class _FMI_DLL NFmiVPlaceDescriptor : public NFmiDataDescriptor
+class NFmiVPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
   virtual ~NFmiVPlaceDescriptor();

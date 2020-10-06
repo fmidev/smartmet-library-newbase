@@ -25,7 +25,7 @@ extern "C"
 
 //! Luokka koodin nopeusmittauksia varten
 
-class _FMI_DLL NFmiMilliSecondTimer
+class NFmiMilliSecondTimer
 {
  public:
   NFmiMilliSecondTimer();

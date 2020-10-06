@@ -10,7 +10,7 @@
 #include "NFmiRect.h"
 
 //! Undocumented
-class _FMI_DLL NFmiMap
+class NFmiMap
 {
  public:
   virtual ~NFmiMap();

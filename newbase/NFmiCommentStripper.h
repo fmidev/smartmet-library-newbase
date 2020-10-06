@@ -14,7 +14,7 @@
 #include <string>
 
 //! Undocumented
-class _FMI_DLL NFmiCommentStripper
+class NFmiCommentStripper
 {
  public:
   virtual ~NFmiCommentStripper() {}

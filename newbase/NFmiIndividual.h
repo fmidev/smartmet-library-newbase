@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiIndividual : public NFmiSortable
+class NFmiIndividual : public NFmiSortable
 {
  public:
   virtual ~NFmiIndividual() {}
