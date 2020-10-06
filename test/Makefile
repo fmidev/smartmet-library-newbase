@@ -1,6 +1,6 @@
 PROG = $(patsubst %.cpp,%,$(wildcard *Test.cpp))
 
-include ../common.mk
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 FLAGS = -std=$(CXX_STD) -Wall -W -Wno-unused-parameter
 
@@ -39,8 +39,12 @@ test: $(PROG)
 	  ( ./$$prog || touch $$prog.err ) ; \
 	done
 	@test `find . -name \*.err | wc -l` = "0" || ( echo ; echo "The following tests have errors:" ; \
-		for i in *.err ; do echo `basename $$i .err`; done ; rm -f *.err ; false ) 
+		for i in *.err ; do echo `basename $$i .err`; done ; rm -f *.err ; false )
 
 $(PROG) : % : %.cpp ../libsmartmet-newbase.so
 	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
 
+
+ifeq ($(USE_CLANG), yes)
+NFmiStringToolsTest: CFLAGS += -Wno-invalid-source-encoding
+endif
