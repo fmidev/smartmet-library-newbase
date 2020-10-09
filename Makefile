@@ -25,11 +25,8 @@ LIBS += -L$(libdir) \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
-	-lboost_thread
-
-ifneq ($(DISABLED_GDAL),yes)
-  LIBS += -lgdal
-endif
+	-lboost_thread \
+	$(GDAL_LIBS)
 
 # What to install
 
@@ -114,8 +111,9 @@ modernize:
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-obj/NFmiEnumConverter.o: NFmiEnumConverter.cpp
-	$(CXX) $(CFLAGS0) $(INCLUDES) -c -o $@ $<
+ifneq ($(USE_CLANG), yes)
+obj/NFmiEnumConverterInit.o: CFLAGS += -O0
+endif
 
 ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)

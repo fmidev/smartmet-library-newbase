@@ -12,6 +12,7 @@
 #include "NFmiParameterName.h"
 
 #include <list>
+#include <map>
 #include <memory>
 #include <string>
 
@@ -29,7 +30,30 @@ class NFmiEnumConverter
   std::list<std::string> Names();
 
  private:
-  class Impl;
+  struct Comparator
+  {
+      bool operator()(const char *a, const char *b) const;
+  };
+
+  class Impl
+  {
+   public:
+    Impl(FmiEnumSpace theEnumspace);
+
+    using ParameterMap = std::map<const char *, int, Comparator>;
+
+    FmiEnumSpace itsEnumspace;
+    ParameterMap itsParamMap;
+    std::vector<const char *> itsEnumMap;
+    int itsBadEnum;
+
+   private:
+    void initParamNames();
+    void initRoadRegions();
+    void initPressRegions();
+    void initEnumMap();
+  };
+
   std::unique_ptr<Impl> impl;
 
 };  // class NFmiEnumConverter
