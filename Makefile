@@ -24,15 +24,8 @@ LIBS += -L$(libdir) \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
-	-lboost_thread
-
-ifneq ($(DISABLED_GDAL),yes)
-ifeq ($(shell pkg-config --exists $(gdal_version) && echo 0),0)
-LIBS += -L$(PREFIX)/$(gdal_version)/lib `pkg-config --libs $(gdal_version)`
-else
-LIBS += -lgdal
-endif
-endif
+	-lboost_thread \
+	$(GDAL_LIBS)
 
 # What to install
 
@@ -117,8 +110,9 @@ modernize:
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-obj/NFmiEnumConverter.o: NFmiEnumConverter.cpp
-	$(CXX) $(CFLAGS0) $(INCLUDES) -c -o $@ $<
+ifneq ($(USE_CLANG), yes)
+obj/NFmiEnumConverterInit.o: CFLAGS += -O0
+endif
 
 ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)
