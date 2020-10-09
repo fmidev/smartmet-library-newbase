@@ -42,18 +42,6 @@ ALIBFILE = libsmartmet-$(SUBNAME).a
 # How to install
 ARFLAGS = -r
 
-# Compile option overrides
-
-ifneq (,$(findstring debug,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_DEBUG)
-  CFLAGS0 = $(CFLAGS_DEBUG)
-endif
-
-ifneq (,$(findstring profile,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_PROFILE)
-  CFLAGS0 = $(CFLAGS_PROFILE)
-endif
-
 # Compilation directories
 
 vpath %.cpp $(SUBNAME)
