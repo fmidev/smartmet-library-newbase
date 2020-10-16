@@ -100,6 +100,7 @@ FMI newbase static library
 %changelog
 * Fri Oct 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.16-1.fmi
 - Prevent crash in NFmiTransformList
+- Fixed memory leak in NFmiQueryInfo::TimePeriodValue
 
 * Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
 - Use std::array instead of std::vector in interpolation for speed

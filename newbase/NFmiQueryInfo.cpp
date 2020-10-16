@@ -2162,7 +2162,7 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
 {
   bool locationMissing = theLonLat.X() == 0. && theLonLat.Y() == 0.;
 
-  NFmiQueryInfo *newInfo = this->Clone();
+  std::unique_ptr<NFmiQueryInfo> newInfo(this->Clone());
   NFmiMetTime middleTime(theStartTime);
   double halfPeriod = theEndTime.DifferenceInHours(theStartTime) / 2.;
   middleTime.ChangeByHours(long(halfPeriod));
@@ -2172,7 +2172,8 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
   double factor;
   float value;
 
-  if (!newInfo->TimeToNearestStep(theStartTime)) return kFloatMissing;
+  if (!newInfo->TimeToNearestStep(theStartTime))
+    return kFloatMissing;
 
   while (newInfo->Time() <= theEndTime)
   {
@@ -2205,7 +2206,6 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
     if (!newInfo->NextTime()) break;
   }
 
-  delete newInfo;
   if (factorSum > 0.)
     return static_cast<float>(sum / factorSum);
   else
