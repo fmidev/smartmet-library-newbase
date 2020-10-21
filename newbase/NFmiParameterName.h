@@ -1381,6 +1381,15 @@ enum FmiParameterName
   kFmiProbabilityOfPOTLimit2,
   kFmiProbabilityOfPOTLimit3,
 
+  kFmiTurbulentKineticEnergyDissipation,
+
+  // Aviation de-icing probability parameters
+  kFmiProbabilityOfDIW0,
+  kFmiProbabilityOfDIW1,
+  kFmiProbabilityOfDIW2,
+  kFmiProbabilityOfDIW3,
+  kFmiProbabilityOfDIW4,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
