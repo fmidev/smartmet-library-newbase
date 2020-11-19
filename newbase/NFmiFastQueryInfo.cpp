@@ -929,7 +929,7 @@ NFmiPoint NFmiFastQueryInfo::WorldXY(unsigned long index) const
 
 NFmiPoint NFmiFastQueryInfo::LatLon(unsigned long index) const
 {
-  if (index >= itsLocationSize) NFmiPoint(kFloatMissing, kFloatMissing);
+  if (index >= itsLocationSize) return NFmiPoint::gMissingLatlon;
   return itsHPlaceDescriptor->LatLon(index);
 }
 
