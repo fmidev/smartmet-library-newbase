@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.10.16
+Version: 20.10.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -16,8 +16,8 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
-BuildRequires: fmt-devel
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
+BuildRequires: fmt-devel >= 7.1.0
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -33,7 +33,7 @@ BuildRequires: gdal30-devel
 %endif
 
 Requires: geos >= 3.5.0
-Requires: fmt >= 6.2.1
+Requires: fmt >= 7.1.0
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
@@ -98,6 +98,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
 * Fri Oct 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.16-1.fmi
 - Prevent crash in NFmiTransformList
 - Fixed memory leak in NFmiQueryInfo::TimePeriodValue
