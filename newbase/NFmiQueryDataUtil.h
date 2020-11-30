@@ -359,17 +359,6 @@ class NFmiQueryDataUtil
   }
 
   static NFmiQueryData *ReadNewestData(const std::string &theFileFilter);
-  static void FillGridData(NFmiQueryData *theSource,
-                           NFmiQueryData *theTarget,
-                           unsigned long theStartTimeIndex = gMissingIndex,
-                           unsigned long theEndTimeIndex = gMissingIndex,
-                           NFmiLogger *theLogger = 0,
-                           bool fUseOnlyOneThread = true);
-  static void FillGridDataFullMT(NFmiQueryData *theSource,
-                                 NFmiQueryData *theTarget,
-                                 unsigned long theStartTimeIndex = gMissingIndex,
-                                 unsigned long theEndTimeIndex = gMissingIndex,
-                                 NFmiLogger *theDebugLogger = 0);
   static bool AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2);
   static bool AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *theGrid2);
   static bool AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2);
@@ -393,6 +382,25 @@ class NFmiQueryDataUtil
   static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
                                               const NFmiGrid *theWantedGrid,
                                               NFmiLogger *theLogger = 0);
+
+  static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
+                                              const NFmiGrid *theWantedGrid,
+                                              NFmiLogger *theLogger,
+                                              int theMaxThreadCount);
+  
+  static void FillGridData(NFmiQueryData *theSource,
+                           NFmiQueryData *theTarget,
+                           unsigned long theStartTimeIndex = gMissingIndex,
+                           unsigned long theEndTimeIndex = gMissingIndex,
+                           NFmiLogger *theLogger = 0,
+                           bool fUseOnlyOneThread = true);
+
+  static void FillGridDataFullMT(NFmiQueryData *theSource,
+                                 NFmiQueryData *theTarget,
+                                 unsigned long theStartTimeIndex = gMissingIndex,
+                                 unsigned long theEndTimeIndex = gMissingIndex,
+                                 unsigned int usedThreadCount = 0,
+                                 NFmiLogger *theDebugLogger = 0);
 
   static NFmiQueryData *ExtractTimes(const NFmiQueryData *theSourceData,
                                      const NFmiTimeDescriptor &theWantedTimeDesc);
@@ -550,6 +558,8 @@ class NFmiQueryDataUtil
       std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
       boost::shared_ptr<NFmiQueryData> &theBaseQData,
       bool fDoRebuild);
+
+  
 };  // class NFmiQueryDataUtil
 
 // ======================================================================

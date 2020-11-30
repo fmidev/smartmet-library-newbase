@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.10.28
+Version: 20.11.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -98,6 +98,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
+- Added maximum thread count option for grid projections
+
 * Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
 - Rebuild due to fmt upgrade
 
