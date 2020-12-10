@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.12.4
+Version: 20.12.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
