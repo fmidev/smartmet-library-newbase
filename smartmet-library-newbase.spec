@@ -27,9 +27,11 @@ Requires: boost169-regex
 %if %{defined el7}
 Requires: gdal-libs
 BuildRequires: gdal-devel
+#TestRequires: postgresql95-libs
 %else if %{defined el8}
 Requires: gdal32-libs
 BuildRequires: gdal32-devel
+#TestRequires: postgresql12-libs
 %endif
 
 Requires: geos >= 3.5.0
@@ -44,7 +46,6 @@ Requires: fmt >= 7.1.0
 #TestRequires: bzip2-devel
 #TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
-#TestRequires: postgresql95-libs
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
