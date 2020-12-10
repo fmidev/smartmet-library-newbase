@@ -28,8 +28,8 @@ Requires: boost169-regex
 Requires: gdal-libs
 BuildRequires: gdal-devel
 %else if %{defined el8}
-Requires: gdal30-libs
-BuildRequires: gdal30-devel
+Requires: gdal32-libs
+BuildRequires: gdal32-devel
 %endif
 
 Requires: geos >= 3.5.0
