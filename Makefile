@@ -25,7 +25,7 @@ LIBS += -L$(libdir) \
 	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread \
-	$(GDAL_LIBS)
+	$(REQUIRED_LIBS)
 
 # What to install
 

@@ -17,7 +17,7 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: geos-devel >= 3.5.0
 BuildRequires: fmt-devel >= 7.1.0
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
+BuildRequires: smartmet-library-macgyver-devel >= 20.12.10
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -38,7 +38,7 @@ Requires: fmt >= 7.1.0
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
-#TestRequires: smartmet-library-macgyver-devel >= 20.10.5
+#TestRequires: smartmet-library-macgyver-devel >= 20.12.10
 #TestRequires: gdal-devel
 #TestRequires: gdal-libs
 #TestRequires: bzip2-devel
