@@ -13,6 +13,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <cmath>
+#include <gdal_version.h>
 #include <iomanip>
 #include <ogr_spatialref.h>
 
@@ -118,14 +119,19 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   {
     itsDescription = std::string(auth);
     const char *code = theCRS.GetAuthorityCode(nullptr);
-    if (code != nullptr) itsDescription += ":" + std::string(code);
+    if (code != nullptr)
+      itsDescription += ":" + std::string(code);
   }
   else
   {
     char *out;
     theCRS.exportToWkt(&out);
     itsDescription = out;
+#if GDAL_VERSION_MAJOR > 2
     CPLFree(out);
+#else
+    OGRFree(out);
+#endif
   }
 
   init();
@@ -161,14 +167,19 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   {
     itsDescription = std::string(auth);
     const char *code = theCRS.GetAuthorityCode(nullptr);
-    if (code != nullptr) itsDescription += ":" + std::string(code);
+    if (code != nullptr)
+      itsDescription += ":" + std::string(code);
   }
   else
   {
     char *out;
     theCRS.exportToWkt(&out);
     itsDescription = out;
+#if GDAL_VERSION_MAJOR > 2
     CPLFree(out);
+#else
+    OGRFree(out);
+#endif
   }
 
   // The needed spatial references
@@ -189,7 +200,8 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   else
     err = datum->SetFromUserInput(itsDatum.c_str());
 
-  if (err != OGRERR_NONE) throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
+  if (err != OGRERR_NONE)
+    throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
 
   // The needed coordinate transformations
 
@@ -223,7 +235,11 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   char *out;
   itsSpatialReference->exportToWkt(&out);
   itsWKT = out;
+#if GDAL_VERSION_MAJOR > 2
   CPLFree(out);
+#else
+  OGRFree(out);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -232,21 +248,30 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiGdalArea::ClassId() const { return kNFmiGdalArea; }
+unsigned long NFmiGdalArea::ClassId() const
+{
+  return kNFmiGdalArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return class name
  */
 // ----------------------------------------------------------------------
 
-const char *NFmiGdalArea::ClassName() const { return "kNFmiGdalArea"; }
+const char *NFmiGdalArea::ClassName() const
+{
+  return "kNFmiGdalArea";
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return a clone
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiGdalArea::Clone() const { return new NFmiGdalArea(*this); }
+NFmiArea *NFmiGdalArea::Clone() const
+{
+  return new NFmiGdalArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Area descriptor
@@ -266,14 +291,20 @@ const std::string NFmiGdalArea::AreaStr() const
  */
 // ----------------------------------------------------------------------
 
-const std::string &NFmiGdalArea::Datum() const { return itsDatum; }
+const std::string &NFmiGdalArea::Datum() const
+{
+  return itsDatum;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return the WKT description
  */
 // ----------------------------------------------------------------------
 
-const std::string NFmiGdalArea::WKT() const { return itsWKT; }
+const std::string NFmiGdalArea::WKT() const
+{
+  return itsWKT;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Equality comparison
@@ -293,7 +324,10 @@ bool NFmiGdalArea::operator==(const NFmiGdalArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiGdalArea::operator!=(const NFmiGdalArea &theArea) const { return !(*this == theArea); }
+bool NFmiGdalArea::operator!=(const NFmiGdalArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Equality comparison
@@ -311,7 +345,10 @@ bool NFmiGdalArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiGdalArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiGdalArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Write the projection definition to a file
@@ -445,7 +482,10 @@ const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) c
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect NFmiGdalArea::WorldRect() const { return itsWorldRect; }
+const NFmiRect NFmiGdalArea::WorldRect() const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief
@@ -503,7 +543,8 @@ void NFmiGdalArea::init()
   else
     err = datum->SetFromUserInput(itsDatum.c_str());
 
-  if (err != OGRERR_NONE) throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
+  if (err != OGRERR_NONE)
+    throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
 
   // The needed coordinate transformations
 
@@ -527,7 +568,11 @@ void NFmiGdalArea::init()
   char *out;
   itsSpatialReference->exportToWkt(&out);
   itsWKT = out;
+#if GDAL_VERSION_MAJOR > 2
   CPLFree(out);
+#else
+  OGRFree(out);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -545,7 +590,8 @@ double NFmiGdalArea::WorldXYWidth() const
     double pi = boost::math::constants::pi<double>();
     double circumference = 2 * pi * 6371220;
     double dlon = itsTopRightLatLon.X() - itsBottomLeftLatLon.X();
-    if (dlon < 0) dlon += 360;
+    if (dlon < 0)
+      dlon += 360;
     double clat = 0.5 * (itsBottomLeftLatLon.Y() + itsTopRightLatLon.Y());
     return dlon / 360 * circumference * cos(clat * pi / 180);
   }
