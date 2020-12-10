@@ -125,7 +125,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
     char *out;
     theCRS.exportToWkt(&out);
     itsDescription = out;
-    OGRFree(out);
+    CPLFree(out);
   }
 
   init();
@@ -168,7 +168,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
     char *out;
     theCRS.exportToWkt(&out);
     itsDescription = out;
-    OGRFree(out);
+    CPLFree(out);
   }
 
   // The needed spatial references
@@ -223,7 +223,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   char *out;
   itsSpatialReference->exportToWkt(&out);
   itsWKT = out;
-  OGRFree(out);
+  CPLFree(out);
 }
 
 // ----------------------------------------------------------------------
@@ -527,7 +527,7 @@ void NFmiGdalArea::init()
   char *out;
   itsSpatialReference->exportToWkt(&out);
   itsWKT = out;
-  OGRFree(out);
+  CPLFree(out);
 }
 
 // ----------------------------------------------------------------------
