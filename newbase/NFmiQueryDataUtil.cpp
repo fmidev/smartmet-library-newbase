@@ -1888,6 +1888,15 @@ NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSource
                                                         const NFmiGrid *theWantedGrid,
                                                         NFmiLogger *theLogger)
 {
+  // Automatic thread count selection
+  return Interpolate2OtherGrid(theSourceData, theWantedGrid, theLogger, 0);
+}
+
+NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSourceData,
+                                                        const NFmiGrid *theWantedGrid,
+                                                        NFmiLogger *theLogger,
+                                                        int theMaxThreadCount)
+{
   NFmiQueryData *newData = nullptr;
   if (theSourceData && theSourceData->IsGrid() && theWantedGrid)
   {
@@ -1899,7 +1908,7 @@ NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSource
                             theSourceData->Info()->VPlaceDescriptor(),
                             theSourceData->InfoVersion());
     newData = CreateEmptyData(innerInfo);
-    FillGridDataFullMT(theSourceData, newData, gMissingIndex, gMissingIndex, theLogger);
+    FillGridDataFullMT(theSourceData, newData, gMissingIndex, gMissingIndex, theMaxThreadCount, theLogger);
   }
   CopyProducerIds(theSourceData, newData);
   return newData;
@@ -4933,8 +4942,8 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
 // ajan ja paikan suhteen.
 // Yritetty optimoida joka suhteessa.
 // Kokeiltu (1) latlon interpolaation kanssa että jos täyttää matriisiin datan ja lopuksi
-// SetValues
-// target:ille, niin se onkin hitaampaa!
+// SetValues target:ille, niin se onkin hitaampaa!
+
 void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                                      NFmiQueryData *theTarget,
                                      unsigned long theStartTimeIndex,
@@ -5154,6 +5163,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
                                            NFmiQueryData *theTarget,
                                            unsigned long theStartTimeIndex,
                                            unsigned long theEndTimeIndex,
+                                           unsigned int usedThreadCount,
                                            NFmiLogger *theDebugLogger)
 {
   if (theSource && theTarget && theSource->IsGrid() && theTarget->IsGrid())
@@ -5171,14 +5181,17 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
     unsigned long usedEndTimeIndex = theEndTimeIndex;
     if (usedStartTimeIndex == gMissingIndex) usedStartTimeIndex = 0;
     if (usedEndTimeIndex == gMissingIndex) usedEndTimeIndex = target1.SizeTimes() - 1;
-
-    unsigned int usedThreadCount = boost::thread::hardware_concurrency();
+    
+    if(usedThreadCount == 0)
+    {
+      unsigned int usedThreadCount = boost::thread::hardware_concurrency();
 #ifdef UNIX
-    // Using all CPUs with the algorithm below leads to severe cache
-    // trashing and poor performance for all programs running simultaneously,
-    // since time is the innermost data element in the 4D data cube.
-    usedThreadCount /= 2;
+      // Using all CPUs with the algorithm below leads to severe cache
+      // trashing and poor performance for all programs running simultaneously,
+      // since time is the innermost data element in the 4D data cube.
+      usedThreadCount /= 2;
 #endif
+    }
 
     if (usedThreadCount > target1.SizeTimes()) usedThreadCount = target1.SizeTimes();
 
