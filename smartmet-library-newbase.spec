@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.12.10
+Version: 20.12.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -104,6 +104,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Dec 11 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.11-1.fmi
+- Build and test updates
+- Uses gdal-3.2 for RHEL8
+
 * Thu Dec 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.10-1.fmi
 - Rebuild due to makefile.inc changes
 
