@@ -11,6 +11,7 @@
 #include <regression/tframe.h>
 #include <stdexcept>
 #include <string>
+#include <gdal_version.h>
 
 std::string tostr(const NFmiPoint& p)
 {
@@ -220,13 +221,15 @@ class tests : public tframe::tests
   {
     TEST(create);
     TEST(areastr);
-    TEST(wkt);
     TEST(tolatlon);
     TEST(toxy);
+#if GDAL_VERSION_MAJOR < 3
+    TEST(wkt);
     TEST(latlontoworldxy);
     TEST(worldxytolatlon);
     TEST(worldxyheight);
     TEST(worldxywidth);
+#endif
   }
 };
 
