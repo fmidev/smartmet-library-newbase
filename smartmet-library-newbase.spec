@@ -41,8 +41,13 @@ Requires: fmt >= 7.1.0
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-library-macgyver-devel >= 20.12.10
+%if %{defined el7}
 #TestRequires: gdal-devel
 #TestRequires: gdal-libs
+%else if %{defined el8}
+#TestRequires: gdal32-libs
+#TestRequires: gdal32-devel
+%endif
 #TestRequires: bzip2-devel
 #TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
