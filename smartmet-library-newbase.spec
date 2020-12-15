@@ -15,7 +15,6 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: geos-devel >= 3.5.0
 BuildRequires: fmt-devel >= 7.1.0
 BuildRequires: smartmet-library-macgyver-devel >= 20.12.10
 Requires: boost169-date-time
@@ -26,23 +25,28 @@ Requires: boost169-regex
 
 %if %{defined el7}
 Requires: gdal-libs
+Requires: geos >= 3.5.0
 BuildRequires: gdal-devel
+BuildRequires: geos-devel >= 3.5.0
 #TestRequires: postgresql95-libs
+#TestRequires: gdal-devel
+#TestRequires: gdal-libs
 %else if %{defined el8}
 Requires: gdal32-libs
+Requires: geos38
 BuildRequires: gdal32-devel
+BuildRequires: geos38-devel
 #TestRequires: postgresql12-libs
+#TestRequires: gdal32-devel
+#TestRequires: gdal32-libs
 %endif
 
-Requires: geos >= 3.5.0
 Requires: fmt >= 7.1.0
 #TestRequires: make
 #TestRequires: gcc-c++
 #TestRequires: boost169-devel
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-library-macgyver-devel >= 20.12.10
-#TestRequires: gdal-devel
-#TestRequires: gdal-libs
 #TestRequires: bzip2-devel
 #TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
