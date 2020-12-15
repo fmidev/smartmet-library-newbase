@@ -3,53 +3,41 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.12.11
+Version: 20.12.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: rpm-build
-BuildRequires: gcc-c++
-BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: fmt-devel >= 7.1.0
-BuildRequires: smartmet-library-macgyver-devel >= 20.12.10
+BuildRequires: gcc-c++
+BuildRequires: gdal32-devel
+BuildRequires: geos38-devel
+BuildRequires: make
+BuildRequires: rpm-build
+BuildRequires: smartmet-library-macgyver-devel >= 20.12.15
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
-Requires: boost169-system
 Requires: boost169-regex
-
-%if %{defined el7}
-Requires: gdal-libs
-Requires: geos >= 3.5.0
-BuildRequires: gdal-devel
-BuildRequires: geos-devel >= 3.5.0
-#TestRequires: postgresql95-libs
-#TestRequires: gdal-devel
-#TestRequires: gdal-libs
-%else if %{defined el8}
+Requires: boost169-system
+Requires: fmt >= 7.1.0
 Requires: gdal32-libs
 Requires: geos38
-BuildRequires: gdal32-devel
-BuildRequires: geos38-devel
-#TestRequires: postgresql12-libs
+#TestRequires: boost169-devel
+#TestRequires: bzip2-devel
+#TestRequires: gcc-c++
 #TestRequires: gdal32-devel
 #TestRequires: gdal32-libs
-%endif
-
-Requires: fmt >= 7.1.0
 #TestRequires: make
-#TestRequires: gcc-c++
-#TestRequires: boost169-devel
+#TestRequires: postgresql12-libs
+#TestRequires: smartmet-library-macgyver-devel >= 20.12.15
 #TestRequires: smartmet-library-regression
-#TestRequires: smartmet-library-macgyver-devel >= 20.12.10
-#TestRequires: bzip2-devel
-#TestRequires: zlib-devel
 #TestRequires: smartmet-timezones
+#TestRequires: zlib-devel
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
@@ -103,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
+
 * Fri Dec 11 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.11-1.fmi
 - Build and test updates
 - Uses gdal-3.2 for RHEL8
