@@ -11,6 +11,8 @@ ifneq ($(DISABLED_GDAL),yes)
 REQUIRES += gdal
 endif
 
+REQUIRES += fmt
+
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
@@ -18,9 +20,7 @@ DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
-LIBS += -L$(libdir) \
-	-lfmt \
-	-lboost_regex \
+LIBS += -lboost_regex \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
