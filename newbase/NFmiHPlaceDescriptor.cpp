@@ -373,17 +373,18 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
 {
   if (itsLocationBag)
   {
-    const NFmiLocation *location = LocationWithIndex(theIndex);
-    return NFmiPoint(location->GetLongitude(), location->GetLatitude());
+    auto location = LocationWithIndex(theIndex);
+    if (location)
+    {
+        return location->GetLocation();
+    }
   }
   else if (itsGrid)
   {
     return itsGrid->LatLon(theIndex);
   }
-  else
-  {
-    return NFmiPoint(kFloatMissing, kFloatMissing);
-  }
+
+  return NFmiPoint::gMissingLatlon;
 }
 
 // ----------------------------------------------------------------------
