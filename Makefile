@@ -11,6 +11,8 @@ ifneq ($(DISABLED_GDAL),yes)
 REQUIRES += gdal
 endif
 
+REQUIRES += fmt
+
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
@@ -18,14 +20,12 @@ DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
-LIBS += -L$(libdir) \
-	-lfmt \
-	-lboost_regex \
+LIBS += -lboost_regex \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread \
-	$(GDAL_LIBS)
+	$(REQUIRED_LIBS)
 
 # What to install
 
@@ -99,7 +99,7 @@ objdir:
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
-	rpmbuild -ta $(SPEC).tar.gz
+	rpmbuild -tb $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 
 .SUFFIXES: $(SUFFIXES) .cpp

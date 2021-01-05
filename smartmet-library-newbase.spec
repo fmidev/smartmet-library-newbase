@@ -3,48 +3,41 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.11.30
+Version: 21.1.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: rpm-build
-BuildRequires: gcc-c++
-BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: geos-devel >= 3.5.0
-BuildRequires: fmt-devel >= 7.1.0
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
+BuildRequires: fmt-devel >= 7.1.3
+BuildRequires: gcc-c++
+BuildRequires: gdal32-devel
+BuildRequires: geos39-devel
+BuildRequires: make
+BuildRequires: rpm-build
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
-Requires: boost169-system
 Requires: boost169-regex
-
-%if %{defined el7}
-Requires: gdal-libs
-BuildRequires: gdal-devel
-%else if %{defined el8}
-Requires: gdal30-libs
-BuildRequires: gdal30-devel
-%endif
-
-Requires: geos >= 3.5.0
-Requires: fmt >= 7.1.0
-#TestRequires: make
-#TestRequires: gcc-c++
+Requires: boost169-system
+Requires: fmt >= 7.1.3
+Requires: gdal32-libs
+Requires: geos39
 #TestRequires: boost169-devel
-#TestRequires: smartmet-library-regression
-#TestRequires: smartmet-library-macgyver-devel >= 20.10.5
-#TestRequires: gdal-devel
-#TestRequires: gdal-libs
 #TestRequires: bzip2-devel
-#TestRequires: zlib-devel
+#TestRequires: gcc-c++
+#TestRequires: gdal32-devel
+#TestRequires: gdal32-libs
+#TestRequires: make
+#TestRequires: postgresql12-libs
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.5
+#TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
-#TestRequires: postgresql95-libs
+#TestRequires: zlib-devel
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
@@ -98,6 +91,22 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- Upgrade to fmt 7.1.3
+
+* Mon Jan  4 2021 Andris Pavenis <andris.pavenis@fmi.fi> - 21.1.4-1.fmi
+- Rebuild due to PGDG repository change: gdal-3.2 uses geos-3.9 instead of geos-3.8
+
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
+
+* Fri Dec 11 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.11-1.fmi
+- Build and test updates
+- Uses gdal-3.2 for RHEL8
+
+* Thu Dec 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.10-1.fmi
+- Rebuild due to makefile.inc changes
+
 * Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
 - Added maximum thread count option for grid projections
 
