@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.4
+Version: 21.1.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -12,19 +12,19 @@ Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: fmt-devel >= 7.1.0
+BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: gcc-c++
 BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.4
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
 Requires: boost169-regex
 Requires: boost169-system
-Requires: fmt >= 7.1.0
+Requires: fmt >= 7.1.3
 Requires: gdal32-libs
 Requires: geos39
 #TestRequires: boost169-devel
@@ -34,7 +34,7 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.4
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.5
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -91,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- Upgrade to fmt 7.1.3
+
 * Mon Jan  4 2021 Andris Pavenis <andris.pavenis@fmi.fi> - 21.1.4-1.fmi
 - Rebuild due to PGDG repository change: gdal-3.2 uses geos-3.9 instead of geos-3.8
 
