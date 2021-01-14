@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.5
+Version: 21.1.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,7 +18,7 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.5
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -34,7 +34,7 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.5
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -91,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
+- Repackaged smartmet to resolve debuginfo issues
+
 * Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
 - Upgrade to fmt 7.1.3
 
