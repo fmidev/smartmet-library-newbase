@@ -1226,6 +1226,10 @@ enum FmiParameterName
   kFmiProbabilityOfPrecipitation3h03mm,  // > 0.3 mm
   kFmiProbabilityOfColdLimit5,           // T < -35
 
+  kFmiProbabilityOfForestFireIndexLevel1,
+  kFmiProbabilityOfForestFireIndexLevel2,
+  kFmiProbabilityOfForestFireIndexLevel3,
+
   kFmiDifferentialReflectivity = 1300,   // Opera ODIM ZDR = Logged Differential Reflectivity
   kFmiSpecificDifferentialPhase = 1301,  // Opera ODIM KDP = Specific Differential Phase
   kFmiDifferentialPhase = 1302,          // Opera ODIM PHIDP = Differential Phase
@@ -1747,7 +1751,7 @@ enum FmiParameterName
   kFmiTotalPrecipitationF2_5,
 
   // Sea level parameters
-  
+
   kFmiProbabilityOfSeaLevelLimit1N2000,
   kFmiProbabilityOfSeaLevelLimit2N2000,
   kFmiProbabilityOfSeaLevelLimit3N2000,
@@ -1764,7 +1768,6 @@ enum FmiParameterName
   kFmiSeaLevelF90N2000,
   kFmiSeaLevelF95N2000,
 
-  
   cf_acoustic_signal_roundtrip_travel_time_in_sea_water = 10000,
   cf_aerodynamic_particle_diameter = 10001,
   cf_aerodynamic_resistance = 10002,
