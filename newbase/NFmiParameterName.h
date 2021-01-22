@@ -951,6 +951,18 @@ enum FmiParameterName
   kFmiProbabilityOfPrecipitation3h200mm = 977,
   kFmiProbabilityOfPrecipitation3h500mm = 978,
 
+  kFmiProbabilityPartlyIcyRoad = 979,
+  kFmiProbabilityTRoadLimit1 = 980,
+  kFmiProbabilityTRoadLimit2 = 981,
+  kFmiProbabilityWetSnowyRoad = 982,
+  kFmiRoadTemperatureF0 = 983,
+  kFmiRoadTemperatureF10 = 984,
+  kFmiRoadTemperatureF25 = 985,
+  kFmiRoadTemperatureF50 = 986,
+  kFmiRoadTemperatureF75 = 987,
+  kFmiRoadTemperatureF90 = 988,
+  kFmiRoadTemperatureF100 = 989,
+  
   kFmiFlagDate = 999,
 
   kFmiProbabilityOfWindLimit3 = 1023,  // EPS: tod.n. keskituuli yli 17

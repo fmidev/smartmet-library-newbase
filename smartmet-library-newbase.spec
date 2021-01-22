@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.19
+Version: 21.1.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -91,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Jan 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.22-1.fmi
+- Added probability and fractile parameters for road forecasts
+
 * Tue Jan 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.19-1.fmi
 - Added ProbabilityOfForestFireIndexLevel[1-3]
 
