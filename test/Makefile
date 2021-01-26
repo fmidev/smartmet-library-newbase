@@ -1,5 +1,7 @@
 PROG = $(patsubst %.cpp,%,$(wildcard *Test.cpp))
 
+REQUIRES = gdal
+
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 FLAGS = -std=$(CXX_STD) -Wall -W -Wno-unused-parameter
@@ -25,6 +27,7 @@ LIBS +=  ../libsmartmet-newbase.so \
 	-lboost_iostreams \
 	-lboost_thread \
 	-lboost_system \
+	$(REQUIRED_LIBS) \
 	-lpthread -lz -lbz2 -lrt
 
 all: $(PROG)

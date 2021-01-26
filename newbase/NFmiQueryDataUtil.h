@@ -114,7 +114,8 @@ class MyGrid
         else if (itsArea && theGrid.itsArea)
         {
           if (itsArea->ClassId() == theGrid.itsArea->ClassId())
-            if (*itsArea == *(theGrid.itsArea)) return true;
+            if (*itsArea == *(theGrid.itsArea))
+              return true;
         }
       }
     return false;
@@ -354,22 +355,12 @@ class NFmiQueryDataUtil
   template <typename T>
   static bool IsEqualEnough(T value1, T value2, T usedEpsilon)
   {
-    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon) return true;
+    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon)
+      return true;
     return false;
   }
 
   static NFmiQueryData *ReadNewestData(const std::string &theFileFilter);
-  static void FillGridData(NFmiQueryData *theSource,
-                           NFmiQueryData *theTarget,
-                           unsigned long theStartTimeIndex = gMissingIndex,
-                           unsigned long theEndTimeIndex = gMissingIndex,
-                           NFmiLogger *theLogger = 0,
-                           bool fUseOnlyOneThread = true);
-  static void FillGridDataFullMT(NFmiQueryData *theSource,
-                                 NFmiQueryData *theTarget,
-                                 unsigned long theStartTimeIndex = gMissingIndex,
-                                 unsigned long theEndTimeIndex = gMissingIndex,
-                                 NFmiLogger *theDebugLogger = 0);
   static bool AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2);
   static bool AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *theGrid2);
   static bool AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2);
@@ -393,6 +384,25 @@ class NFmiQueryDataUtil
   static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
                                               const NFmiGrid *theWantedGrid,
                                               NFmiLogger *theLogger = 0);
+
+  static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
+                                              const NFmiGrid *theWantedGrid,
+                                              NFmiLogger *theLogger,
+                                              int theMaxThreadCount);
+
+  static void FillGridData(NFmiQueryData *theSource,
+                           NFmiQueryData *theTarget,
+                           unsigned long theStartTimeIndex = gMissingIndex,
+                           unsigned long theEndTimeIndex = gMissingIndex,
+                           NFmiLogger *theLogger = 0,
+                           bool fUseOnlyOneThread = true);
+
+  static void FillGridDataFullMT(NFmiQueryData *theSource,
+                                 NFmiQueryData *theTarget,
+                                 unsigned long theStartTimeIndex = gMissingIndex,
+                                 unsigned long theEndTimeIndex = gMissingIndex,
+                                 unsigned int usedThreadCount = 0,
+                                 NFmiLogger *theDebugLogger = 0);
 
   static NFmiQueryData *ExtractTimes(const NFmiQueryData *theSourceData,
                                      const NFmiTimeDescriptor &theWantedTimeDesc);
@@ -533,6 +543,28 @@ class NFmiQueryDataUtil
                                           NFmiStopFunctor *theStopFunctor = nullptr,
                                           LoggingFunction *loggingFunction = nullptr);
   static int CalcOptimalThreadCount(int maxAvailableThreads, int separateTaskCount);
+
+  static std::vector<std::string> GetFileNamesForCombinationWork(const std::string &theFileFilter);
+  static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
+  static std::vector<boost::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
+      boost::shared_ptr<NFmiQueryData> theBaseQData,
+      const std::string &theDirName,
+      std::vector<std::string> &theFilesIn,
+      NFmiStopFunctor *theStopFunctor,
+      bool fDoRebuildCheck);
+  static NFmiQueryData *CombineAcceptedTimeStepQueryData(
+      bool fDoRebuild,
+      boost::shared_ptr<NFmiQueryData> &theBaseQData,
+      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
+      const std::vector<NFmiMetTime> &theAcceptedTimes,
+      NFmiStopFunctor *theStopFunctor = 0);
+  static std::vector<NFmiMetTime> MakeValidTimesList(
+      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector,
+      int theMaxTimeStepsInData);
+  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
+      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
+      boost::shared_ptr<NFmiQueryData> &theBaseQData,
+      bool fDoRebuild);
 
 };  // class NFmiQueryDataUtil
 
