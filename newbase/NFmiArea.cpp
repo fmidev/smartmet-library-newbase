@@ -1352,11 +1352,6 @@ void NFmiArea::InitProj()
 
   Fmi::SpatialReference latlon(proj);
 
-  // XXXXXXXXXXXXXXXX
-  std::cout << "INVPROJ = " << proj << std::endl;
-
-  std::cout << "PROJ = " << impl->itsSpatialReference->projStr() << std::endl;
-
   impl->itsNativeToLatLonConverter.reset(
       new Fmi::CoordinateTransformation(*impl->itsSpatialReference, latlon));
 
