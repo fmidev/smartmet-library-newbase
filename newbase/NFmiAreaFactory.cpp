@@ -109,11 +109,11 @@
 
 #include "NFmiAreaFactory.h"
 #include "NFmiArea.h"
-#include <macgyver/StringConversion.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <bitset>
 #include <deque>
@@ -135,40 +135,38 @@ using boost::algorithm::trim_copy;
 
 namespace NFmiAreaFactory
 {
-
 template <typename T>
-void split_string(T & output, const std::string & input, const char * separators)
+void split_string(T &output, const std::string &input, const char *separators)
 {
   bitset<255> delims;
-  while(*separators)
+  while (*separators)
     delims[*separators++] = true;
-  
+
   using iter = string::const_iterator;
   iter start = input.begin();
   bool in_token = false;
 
-  for(iter it = input.begin(), end = input.end(); it != end; ++it)
+  for (iter it = input.begin(), end = input.end(); it != end; ++it)
   {
-    if(delims[*it])
+    if (delims[*it])
     {
-      if(in_token)
+      if (in_token)
       {
         output.push_back(typename T::value_type(start, it));
         in_token = false;
       }
     }
-    else if(!in_token)
+    else if (!in_token)
     {
       start = it;
       in_token = true;
     }
   }
-  if(in_token)
+  if (in_token)
   {
     output.push_back(typename T::value_type(start, input.end()));
   }
 }
-
 
 struct ProjStrings
 {
@@ -213,7 +211,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   if (name == "latlon")
   {
     // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
-    if (params.size() != 0) throw runtime_error("latlon area does not require any parameters");
+    if (params.size() != 0)
+      throw runtime_error("latlon area does not require any parameters");
 
     result.sphere = "WGS84";
 
@@ -221,7 +220,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "rotlatlon")
   {
-    if (params.size() > 2) throw runtime_error("rotlatlon area requires max 2 parameters");
+    if (params.size() > 2)
+      throw runtime_error("rotlatlon area requires max 2 parameters");
     auto spole_lon = (params.size() >= 2 ? params[1] : 0);
     auto spole_lat = (params.size() >= 1 ? params[0] : -90);
 
@@ -231,7 +231,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -239,7 +239,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "invrotlatlon")
   {
-    if (params.size() > 2) throw runtime_error("invrotlatlon area requires max 2 parameters");
+    if (params.size() > 2)
+      throw runtime_error("invrotlatlon area requires max 2 parameters");
     auto spole_lon = (params.size() >= 2 ? params[1] : 0);
     auto spole_lat = (params.size() >= 1 ? params[0] : -90);
 
@@ -249,7 +250,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.proj4 = fmt::format(
         "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -260,7 +261,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     result.sphere = fmt::format(
         "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
         "+lon_0={} "
-        "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+        "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
         lon_0,
@@ -268,14 +269,16 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "mercator")
   {
-    if (params.size() > 0) throw runtime_error("mercator area requires no parameters");
+    if (params.size() > 0)
+      throw runtime_error("mercator area requires no parameters");
 
     result.proj4 =
         fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
   }
   else if (name == "stereographic")
   {
-    if (params.size() > 3) throw runtime_error("stereographic area requires max 3 parameters");
+    if (params.size() > 3)
+      throw runtime_error("stereographic area requires max 3 parameters");
     const double clon = (params.size() >= 1 ? params[0] : 0);
     const double clat = (params.size() >= 2 ? params[1] : 90);
     const double tlat = (params.size() >= 3 ? params[2] : 60);
@@ -298,7 +301,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "ykj")
   {
-    if (params.size() != 0) throw runtime_error("ykj area does not require any parameters");
+    if (params.size() != 0)
+      throw runtime_error("ykj area does not require any parameters");
     result.proj4 =
         "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
         "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
@@ -327,7 +331,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "equidist")
   {
-    if (params.size() > 2) throw runtime_error("equidist area requires max 2 parameters");
+    if (params.size() > 2)
+      throw runtime_error("equidist area requires max 2 parameters");
     const double clon = (params.size() >= 1 ? params[0] : 0);
     const double clat = (params.size() >= 2 ? params[1] : 90);
 
@@ -342,7 +347,8 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     // Assume WKT, PROJ.4 or other string
     result.proj4 = projection;
-    if (result.sphere.empty()) result.sphere = "WGS84";
+    if (result.sphere.empty())
+      result.sphere = "WGS84";
   }
 
   return result;
@@ -397,7 +403,8 @@ struct Bounds
 
 Bounds parse_bounds(const std::string &theBounds)
 {
-  if (theBounds.empty()) throw std::runtime_error("Projection bbox/center settings missing");
+  if (theBounds.empty())
+    throw std::runtime_error("Projection bbox/center settings missing");
 
   Bounds bounds;
 
@@ -407,7 +414,8 @@ Bounds parse_bounds(const std::string &theBounds)
   if (words.size() < 1 || words.size() > 2)
     throw std::runtime_error("Invalid projection bbox/center setting: " + theBounds);
 
-  if (words.size() == 2) bounds.aspect = Fmi::stod(words[1]);
+  if (words.size() == 2)
+    bounds.aspect = Fmi::stod(words[1]);
 
   // extract x1,y1,x2,y2 or center,width,height
   std::vector<std::string> parts;

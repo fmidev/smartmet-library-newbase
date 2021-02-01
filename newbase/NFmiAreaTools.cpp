@@ -154,13 +154,17 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
   // north pole is on the opposite side
   auto npole_lat = -theSouthPole.Y();
 
-  // always rotate to the new meridian
-  double npole_lon = 0;
-  double lon_0 = theSouthPole.X();
+  // And we always rotate to the new pole meridian
+
+  auto npole_lon = 0;  // OR "-angle_of_rotation" if such a parameter would be present
+
+  auto lon_0 = theSouthPole.X();
+  if (lon_0 > 180)
+    lon_0 -= 360;
 
   auto proj = fmt::format(
       "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
       npole_lon,
       npole_lat,
       lon_0,
@@ -170,7 +174,7 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
   // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
       "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs",
+      "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
       npole_lon,
       npole_lat,
       lon_0,

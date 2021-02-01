@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.22
+Version: 21.2.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -91,6 +91,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Feb  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.1-1.fmi
+- Removed broken +over option from ob_trans (rotated) projections
+
 * Fri Jan 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.22-1.fmi
 - Added probability and fractile parameters for road forecasts
 
