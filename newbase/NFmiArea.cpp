@@ -27,9 +27,12 @@
 #include "NFmiMercatorArea.h"
 #include "NFmiOrthographicArea.h"
 #include "NFmiPKJArea.h"
+#include "NFmiRect.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
+
+#include <gis/CoordinateMatrix.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -37,7 +40,10 @@
  */
 // ----------------------------------------------------------------------
 
-void NFmiArea::Init(bool /* fKeepWorldRect */) { CheckForPacificView(); }
+void NFmiArea::Init(bool /* fKeepWorldRect */)
+{
+  CheckForPacificView();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newArea Undocumented
@@ -141,35 +147,50 @@ std::istream &NFmiArea::Read(std::istream &file)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::WorldXYSize() const { return WorldRect().Size(); }
+const NFmiPoint NFmiArea::WorldXYSize() const
+{
+  return WorldRect().Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::WorldXYPlace() const { return WorldRect().Place(); }
+const NFmiPoint NFmiArea::WorldXYPlace() const
+{
+  return WorldRect().Place();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYWidth() const { return WorldRect().Width(); }
+double NFmiArea::WorldXYWidth() const
+{
+  return WorldRect().Width();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYHeight() const { return WorldRect().Height(); }
+double NFmiArea::WorldXYHeight() const
+{
+  return WorldRect().Height();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYAspectRatio() const { return WorldXYWidth() / WorldXYHeight(); }
+double NFmiArea::WorldXYAspectRatio() const
+{
+  return WorldXYWidth() / WorldXYHeight();
+}
 // ----------------------------------------------------------------------
 /*!
  * Creates a new area from the current one by altering the corner points only.
@@ -303,13 +324,42 @@ NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
   NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
   NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
 
-  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon)) return nullptr;
+  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
+    return nullptr;
 
   auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
 
-  if (!IsInside(*newArea)) return nullptr;
+  if (!IsInside(*newArea))
+    return nullptr;
 
   return newArea;
+}
+
+Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const
+{
+#ifdef NEW_NFMIAREA
+  auto x1 = impl->itsWorldRect.Left();
+  auto x2 = impl->itsWorldRect.Right();
+  const auto y1 = impl->itsWorldRect.Top();
+  const auto y2 = impl->itsWorldRect.Bottom();
+
+  if (impl->itsFlopped)
+    std::swap(x1, x2);
+#else
+  auto x1 = WorldRect().Left();
+  auto x2 = WorldRect().Right();
+  const auto y1 = WorldRect().Top();
+  const auto y2 = WorldRect().Bottom();
+#endif
+
+  if (!wrap)
+    return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
+
+  // Add one more column to the right since wrapping is requested. We assume an earlier phase
+  // has already checked the data is geographic and global apart from one column.
+
+  const auto dx = (x2 - x1) / (nx - 1);
+  return Fmi::CoordinateMatrix(nx + 1, ny, x1, y1, x2 + dx, y2);
 }
 
 // ----------------------------------------------------------------------
@@ -397,7 +447,8 @@ PacificPointFixerData NFmiArea::PacificPointFixer(const NFmiPoint &theBottomLeft
 bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
 {
   // Obvious case
-  if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;
+  if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
+    return true;
   // 0...360 coordinate system is used
   if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
     return true;
@@ -491,29 +542,42 @@ std::size_t NFmiArea::HashValueKludge() const
 {
 #ifdef UNIX
 #ifndef DISABLED_GDAL
-  if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this))
+    return a->HashValue();
 #endif
 #endif
-  if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this))
+    return a->HashValue();
 
-  if (const auto *a = dynamic_cast<const NFmiLambertEqualArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiLambertEqualArea *>(this))
+    return a->HashValue();
 
-  if (const auto *a = dynamic_cast<const NFmiMercatorArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiMercatorArea *>(this))
+    return a->HashValue();
 
   // azimuthal is the base class
-  if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiOrthographicArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiOrthographicArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this))
+    return a->HashValue();
 
   // kkj is the base class
-  if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiPKJArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiPKJArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this))
+    return a->HashValue();
 
   // latlon is the base class
-  if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this))
+    return a->HashValue();
 
   return HashValue();
 }

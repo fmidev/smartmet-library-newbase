@@ -9,9 +9,9 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <gis/CoordinateMatrix.h>
 
 class NFmiRect;
 
@@ -111,6 +111,13 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   FmiLevelType LevelType(void) const;
   NFmiProducer *Producer(void);
   const NFmiProducer &FirstParamProducer(void);
+
+  NFmiPoint WorldXY() const;  // actual metric coordinate, or latlon for point data
+  NFmiPoint WorldXY(
+      unsigned long index) const;  // actual metric coordinate, or latlon for point data
+
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped = false) const;
+  bool NeedsGlobeWrap() const;
 
   NFmiDataIdent &Param(void) const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
@@ -725,7 +732,10 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsSubParamUsed(void) const { return fUseSubParam; }
+inline bool NFmiFastQueryInfo::IsSubParamUsed(void) const
+{
+  return fUseSubParam;
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -755,14 +765,20 @@ inline void NFmiFastQueryInfo::ResetLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetLevel(void) { itsLevelIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetLevel(void)
+{
+  itsLevelIndex = static_cast<unsigned long>(-1);
+}
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetTime(void) { itsTimeIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetTime(void)
+{
+  itsTimeIndex = static_cast<unsigned long>(-1);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -968,63 +984,90 @@ inline bool NFmiFastQueryInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::ParamIndex(void) const { return itsParamIndex; }
+inline unsigned long NFmiFastQueryInfo::ParamIndex(void) const
+{
+  return itsParamIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LocationIndex(void) const { return itsLocationIndex; }
+inline unsigned long NFmiFastQueryInfo::LocationIndex(void) const
+{
+  return itsLocationIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LevelIndex(void) const { return itsLevelIndex; }
+inline unsigned long NFmiFastQueryInfo::LevelIndex(void) const
+{
+  return itsLevelIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::TimeIndex(void) const { return itsTimeIndex; }
+inline unsigned long NFmiFastQueryInfo::TimeIndex(void) const
+{
+  return itsTimeIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeParams(void) const { return itsParamSize; }
+inline unsigned long NFmiFastQueryInfo::SizeParams(void) const
+{
+  return itsParamSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLocations(void) const { return itsLocationSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLocations(void) const
+{
+  return itsLocationSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLevels(void) const { return itsLevelSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLevels(void) const
+{
+  return itsLevelSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeTimes(void) const { return itsTimeSize; }
+inline unsigned long NFmiFastQueryInfo::SizeTimes(void) const
+{
+  return itsTimeSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsParamUsable(void) const { return itsParamIndex < itsParamSize; }
+inline bool NFmiFastQueryInfo::IsParamUsable(void) const
+{
+  return itsParamIndex < itsParamSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1042,14 +1085,20 @@ inline bool NFmiFastQueryInfo::IsLocationUsable(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsLevelUsable(void) const { return itsLevelIndex < itsLevelSize; }
+inline bool NFmiFastQueryInfo::IsLevelUsable(void) const
+{
+  return itsLevelIndex < itsLevelSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsTimeUsable(void) const { return itsTimeIndex < itsTimeSize; }
+inline bool NFmiFastQueryInfo::IsTimeUsable(void) const
+{
+  return itsTimeIndex < itsTimeSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1063,6 +1112,18 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
   itsTimeDescriptor->Time(itsTimeIndex);
   return itsTimeDescriptor->Resolution();
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return current WorldXY coordinate
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiPoint NFmiFastQueryInfo::WorldXY() const
+{
+  return WorldXY(itsLocationIndex);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Palauttaa nykyisen indeksin koordinaatit. Koordinaatticache sijaitsee
@@ -1072,7 +1133,10 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiFastQueryInfo::LatLon(void) const { return LatLon(itsLocationIndex); }
+inline NFmiPoint NFmiFastQueryInfo::LatLon(void) const
+{
+  return LatLon(itsLocationIndex);
+}
 inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast(void) const
 {
   return LatLon(itsLocationIndex);
@@ -1217,5 +1281,3 @@ inline void NFmiFastQueryInfo::Locations(NFmiDataMatrix<NFmiPoint> &theMatrix) c
   else
     theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
 }
-
-// ======================================================================

@@ -12,6 +12,11 @@
 #include "NFmiSaveBaseFactory.h"
 #include <string>
 
+namespace Fmi
+{
+class CoordinateMatrix;
+}
+
 struct PacificPointFixerData
 {
   PacificPointFixerData(void) : itsBottomLeftLatlon(), itsTopRightLatlon(), fIsPacific(false) {}
@@ -106,6 +111,8 @@ class NFmiArea
   virtual const NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
                                            double theLatitudeEpsilon = 0.001) const;
 
+  Fmi::CoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const;
+
   virtual unsigned long ClassId() const;
   virtual const char *ClassName() const;
   virtual const std::string AreaStr() const = 0;
@@ -199,28 +206,40 @@ inline NFmiArea::NFmiArea(
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::TopLeft() const { return itsXYRectArea.TopLeft(); }
+inline const NFmiPoint NFmiArea::TopLeft() const
+{
+  return itsXYRectArea.TopLeft();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::BottomRight() const { return itsXYRectArea.BottomRight(); }
+inline const NFmiPoint NFmiArea::BottomRight() const
+{
+  return itsXYRectArea.BottomRight();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::TopRight() const { return itsXYRectArea.TopRight(); }
+inline const NFmiPoint NFmiArea::TopRight() const
+{
+  return itsXYRectArea.TopRight();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::BottomLeft() const { return itsXYRectArea.BottomLeft(); }
+inline const NFmiPoint NFmiArea::BottomLeft() const
+{
+  return itsXYRectArea.BottomLeft();
+}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -276,28 +295,40 @@ inline bool NFmiArea::IsInside(const NFmiPoint &theLatLonPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::TopLeftLatLon() const { return ToLatLon(TopLeft()); }
+inline const NFmiPoint NFmiArea::TopLeftLatLon() const
+{
+  return ToLatLon(TopLeft());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::TopRightLatLon() const { return ToLatLon(TopRight()); }
+inline const NFmiPoint NFmiArea::TopRightLatLon() const
+{
+  return ToLatLon(TopRight());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::BottomLeftLatLon() const { return ToLatLon(BottomLeft()); }
+inline const NFmiPoint NFmiArea::BottomLeftLatLon() const
+{
+  return ToLatLon(BottomLeft());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiArea::BottomRightLatLon() const { return ToLatLon(BottomRight()); }
+inline const NFmiPoint NFmiArea::BottomRightLatLon() const
+{
+  return ToLatLon(BottomRight());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theArea Undocumented
@@ -317,84 +348,120 @@ inline bool NFmiArea::IsInside(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiArea::Place(const NFmiPoint &newPlace) { itsXYRectArea.Place(newPlace); }
+inline void NFmiArea::Place(const NFmiPoint &newPlace)
+{
+  itsXYRectArea.Place(newPlace);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiArea::Size(const NFmiPoint &newSize) { itsXYRectArea.Size(newSize); }
+inline void NFmiArea::Size(const NFmiPoint &newSize)
+{
+  itsXYRectArea.Size(newSize);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Top() const { return itsXYRectArea.Top(); }
+inline double NFmiArea::Top() const
+{
+  return itsXYRectArea.Top();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Bottom() const { return itsXYRectArea.Bottom(); }
+inline double NFmiArea::Bottom() const
+{
+  return itsXYRectArea.Bottom();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Left() const { return itsXYRectArea.Left(); }
+inline double NFmiArea::Left() const
+{
+  return itsXYRectArea.Left();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Right() const { return itsXYRectArea.Right(); }
+inline double NFmiArea::Right() const
+{
+  return itsXYRectArea.Right();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Height() const { return itsXYRectArea.Height(); }
+inline double NFmiArea::Height() const
+{
+  return itsXYRectArea.Height();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiArea::Width() const { return itsXYRectArea.Width(); }
+inline double NFmiArea::Width() const
+{
+  return itsXYRectArea.Width();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect &NFmiArea::XYArea() const { return itsXYRectArea; }
+inline const NFmiRect &NFmiArea::XYArea() const
+{
+  return itsXYRectArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiArea *NFmiArea::Clone() const { return 0; }
+inline NFmiArea *NFmiArea::Clone() const
+{
+  return 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiArea::ClassId() const { return kNFmiArea; }
+inline unsigned long NFmiArea::ClassId() const
+{
+  return kNFmiArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiArea::ClassName() const { return "NFmiArea"; }
+inline const char *NFmiArea::ClassName() const
+{
+  return "NFmiArea";
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -430,7 +497,10 @@ inline bool NFmiArea::operator!=(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiArea::Sign(double theValue) const { return theValue < 0 ? -1 : 1; }
+inline int NFmiArea::Sign(double theValue) const
+{
+  return theValue < 0 ? -1 : 1;
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiArea
@@ -441,7 +511,10 @@ inline int NFmiArea::Sign(double theValue) const { return theValue < 0 ? -1 : 1;
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiArea
@@ -452,6 +525,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiArea &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

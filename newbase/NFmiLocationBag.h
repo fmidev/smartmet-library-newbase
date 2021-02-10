@@ -22,6 +22,11 @@
 class NFmiStation;
 class NFmiArea;
 
+namespace Fmi
+{
+class CoordinateMatrix;
+}
+
 //! Undocumented
 class NFmiLocationBag : public NFmiSize
 {
@@ -66,6 +71,8 @@ class NFmiLocationBag : public NFmiSize
   bool IsInside(const NFmiPoint &theLatLon, double theRadius) const;
 
   std::size_t HashValue() const;
+
+  Fmi::CoordinateMatrix CoordinateMatrix() const;
 
  protected:
   NFmiLocationBag(NFmiLocation **theLocationBag, unsigned long theNumberOfLocations);
@@ -112,7 +119,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiLocationBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiLocationBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiLocationBag &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns the location with the given index. Note that the
@@ -141,7 +151,10 @@ inline const NFmiLocation *NFmiLocationBag::Location(unsigned long theIndex) con
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocationBag *NFmiLocationBag::Clone(void) const { return new NFmiLocationBag(*this); }
+inline NFmiLocationBag *NFmiLocationBag::Clone(void) const
+{
+  return new NFmiLocationBag(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Test if the bag contains any locations
@@ -150,6 +163,9 @@ inline NFmiLocationBag *NFmiLocationBag::Clone(void) const { return new NFmiLoca
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLocationBag::IsLocations(void) const { return (!itsLocations.empty()); }
+inline bool NFmiLocationBag::IsLocations(void) const
+{
+  return (!itsLocations.empty());
+}
 
 // ======================================================================

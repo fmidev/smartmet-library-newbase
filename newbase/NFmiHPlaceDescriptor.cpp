@@ -18,8 +18,8 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
-
 #include <boost/functional/hash.hpp>
+#include <gis/CoordinateMatrix.h>
 
 using namespace std;
 
@@ -221,7 +221,8 @@ void NFmiHPlaceDescriptor::Destroy()
 
 void NFmiHPlaceDescriptor::LocationList(const NFmiLocationBag &theLocationBag)
 {
-  if (IsLocation()) itsLocationBag->Destroy();
+  if (IsLocation())
+    itsLocationBag->Destroy();
   itsLocationBag = theLocationBag.Clone();
 
   itsActivity = new bool[Size()];
@@ -237,7 +238,8 @@ void NFmiHPlaceDescriptor::LocationList(const NFmiLocationBag &theLocationBag)
 
 const NFmiLocation *NFmiHPlaceDescriptor::Location() const
 {
-  if (itsLocationBag) return itsLocationBag->Location();
+  if (itsLocationBag)
+    return itsLocationBag->Location();
   return nullptr;
 }
 
@@ -250,8 +252,87 @@ const NFmiLocation *NFmiHPlaceDescriptor::Location() const
 
 const NFmiLocation *NFmiHPlaceDescriptor::LocationWithIndex(unsigned long theIndex) const
 {
-  if (itsLocationBag) return itsLocationBag->Location(theIndex);
+  if (itsLocationBag)
+    return itsLocationBag->Location(theIndex);
   return nullptr;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the current WorldXY coordinate
+ */
+// ----------------------------------------------------------------------
+
+NFmiPoint NFmiHPlaceDescriptor::WorldXY(unsigned long index) const
+{
+  if (itsLocationBag)
+  {
+    const NFmiLocation *loc = itsLocationBag->Location(index);
+    if (loc)
+      return loc->GetLocation();
+  }
+  else if (itsGrid)
+  {
+    return itsGrid->WorldXY(index);
+  }
+
+  return NFmiPoint::gMissingLatlon;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+Fmi::CoordinateMatrix NFmiHPlaceDescriptor::CoordinateMatrix(bool wrapped) const
+{
+  if (itsGrid)
+    return itsGrid->CoordinateMatrix(wrapped && NeedsGlobeWrap());
+  if (itsLocationBag)
+    return itsLocationBag->CoordinateMatrix();
+  return Fmi::CoordinateMatrix(0, 0);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test whether the data is global apart from needing a wrap around
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiHPlaceDescriptor::NeedsGlobeWrap() const
+{
+  if (!IsGrid())
+    return false;
+
+  const NFmiArea *area = Area();
+  const NFmiGrid *grid = Grid();
+
+  const auto x1 = area->BottomLeftLatLon().X();
+  const auto x2 = area->TopRightLatLon().X();
+
+  const auto nx = grid->XNumber();
+
+  if (x1 == kFloatMissing || x2 == kFloatMissing)
+    return false;
+
+  /*
+   * GFS example:
+   * bottom left lonlat= 0,-90
+   * top right lonlat= 359.75,90
+   * xnumber= 1440
+   *
+   * ==> (x1-x1)*1441/1440 = 360  ==> we need to generate an extra cell by wrapping around
+   */
+
+  auto dx = x2 - x1;
+  if (dx < 0)
+    dx += 360;  // PROJ.4 may return -0.25 instead of 359.75 for x2
+
+  auto test_width = dx * (nx + 1) / nx;
+
+  // In the GFS case the rounding error is about 1e-4
+  return (std::abs(test_width - 360) < 1e-3);
 }
 
 // ----------------------------------------------------------------------
@@ -265,7 +346,8 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon() const
   if (itsLocationBag)
   {
     const NFmiLocation *loc = Location();
-    if (loc) return loc->GetLocation();
+    if (loc)
+      return loc->GetLocation();
   }
   else if (itsGrid)
   {
@@ -370,9 +452,12 @@ bool NFmiHPlaceDescriptor::Previous()
 
 unsigned long NFmiHPlaceDescriptor::Size() const
 {
-  if (IsLocation()) return (itsLocationBag->GetSize());
-  if (IsArea()) return 1ul;
-  if (itsGrid) return itsGrid->OriginalSize();  // Marko/23.11.1998, myös time, param, level jutut
+  if (IsLocation())
+    return (itsLocationBag->GetSize());
+  if (IsArea())
+    return 1ul;
+  if (itsGrid)
+    return itsGrid->OriginalSize();  // Marko/23.11.1998, myös time, param, level jutut
   return 0;
 }
 
@@ -384,8 +469,10 @@ unsigned long NFmiHPlaceDescriptor::Size() const
 
 unsigned long NFmiHPlaceDescriptor::Index() const
 {
-  if (IsLocation()) return itsLocationBag->CurrentIndex();
-  if (IsArea()) return static_cast<unsigned long>(0);
+  if (IsLocation())
+    return itsLocationBag->CurrentIndex();
+  if (IsArea())
+    return static_cast<unsigned long>(0);
   if (IsGrid())
     //	return static_cast<unsigned long>(itsGrid->DataIndex()) - itsGrid->Base();
     return static_cast<unsigned long>(itsGrid->DataIndex());
@@ -401,9 +488,12 @@ unsigned long NFmiHPlaceDescriptor::Index() const
 
 bool NFmiHPlaceDescriptor::Index(unsigned long theIndex)
 {
-  if (IsLocation()) return itsLocationBag->SetCurrentIndex(theIndex);
-  if (IsArea()) return static_cast<unsigned long>(0);
-  if (IsGrid()) return itsGrid->Index(theIndex);
+  if (IsLocation())
+    return itsLocationBag->SetCurrentIndex(theIndex);
+  if (IsArea())
+    return static_cast<unsigned long>(0);
+  if (IsGrid())
+    return itsGrid->Index(theIndex);
   return false;
 }
 
@@ -426,7 +516,8 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
     do
     {
       tempBoolean = itsLocationBag->Next();
-      if (!tempBoolean) break;
+      if (!tempBoolean)
+        break;
     } while (!(itsLocationBag->Location()->GetIdent() == theIdent));
     if (tempBoolean)
       return true;
@@ -461,7 +552,8 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
       do
       {
         tempBoolean = itsLocationBag->Next();
-        if (!tempBoolean) return false;
+        if (!tempBoolean)
+          return false;
       } while (theName.GetLen() != itsLocationBag->Location()->GetName().GetLen());
 
       theLocationUpperCase = itsLocationBag->Location()->GetName();
@@ -517,7 +609,8 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
     do
     {
       tempBoolean = itsLocationBag->Next();
-      if (!tempBoolean) break;
+      if (!tempBoolean)
+        break;
     } while (!(theLocation == *itsLocationBag->Location()));  // Marko: kun käännetään järjestys,
                                                               // voidaan etsiä myös locationilla
                                                               // stationeita
@@ -575,7 +668,8 @@ bool NFmiHPlaceDescriptor::SetActivity(bool theActivityState)
 bool NFmiHPlaceDescriptor::NextActive()
 {
   while (Next())
-    if (IsActive()) return true;
+    if (IsActive())
+      return true;
 
   return false;
 }
@@ -630,7 +724,8 @@ bool NFmiHPlaceDescriptor::operator==(const NFmiHPlaceDescriptor &theHPlaceDescr
   {
     if (this->IsGrid() && theHPlaceDescriptor.IsGrid())
     {
-      if (*(this->Grid()) == *(theHPlaceDescriptor.Grid())) return true;
+      if (*(this->Grid()) == *(theHPlaceDescriptor.Grid()))
+        return true;
     }
     else if (this->IsLocation() && theHPlaceDescriptor.IsLocation())
     {
@@ -664,8 +759,10 @@ const NFmiHPlaceDescriptor NFmiHPlaceDescriptor::Combine(const NFmiHPlaceDescrip
 
 void NFmiHPlaceDescriptor::Reset()
 {
-  if (IsLocation()) itsLocationBag->Reset();
-  if (IsGrid()) itsGrid->Reset();
+  if (IsLocation())
+    itsLocationBag->Reset();
+  if (IsGrid())
+    itsGrid->Reset();
 }
 
 // ----------------------------------------------------------------------
@@ -678,7 +775,8 @@ void NFmiHPlaceDescriptor::Reset()
 
 bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation, double theMaxDistance)
 {
-  if (itsLocationBag) return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
+  if (itsLocationBag)
+    return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
   if (itsGrid)
     return itsGrid->NearestLatLon(
         theLocation.GetLongitude(), theLocation.GetLatitude(), theMaxDistance);
@@ -713,7 +811,8 @@ bool NFmiHPlaceDescriptor::NearestPoint(const NFmiPoint &theLatLonPoint)
 {
   if (itsLocationBag)
     return itsLocationBag->NearestLocation(NFmiLocation(theLatLonPoint.X(), theLatLonPoint.Y()));
-  if (itsGrid) return itsGrid->NearestLatLon(theLatLonPoint.X(), theLatLonPoint.Y());
+  if (itsGrid)
+    return itsGrid->NearestLatLon(theLatLonPoint.X(), theLatLonPoint.Y());
   return false;
 }
 
@@ -737,13 +836,17 @@ bool NFmiHPlaceDescriptor::MoveInGrid(long xSteps, long ySteps)
     int check = 0;
 
     if (xSteps > 0)
-      if (!(itsGrid->Right(xSteps))) check++;
+      if (!(itsGrid->Right(xSteps)))
+        check++;
     if (xSteps < 0)
-      if (!(itsGrid->Left(abs(xSteps)))) check++;
+      if (!(itsGrid->Left(abs(xSteps))))
+        check++;
     if (ySteps > 0)
-      if (!(itsGrid->Up(ySteps))) check++;
+      if (!(itsGrid->Up(ySteps)))
+        check++;
     if (ySteps < 0)
-      if (!(itsGrid->Down(abs(ySteps)))) check++;
+      if (!(itsGrid->Down(abs(ySteps))))
+        check++;
     if (check != 0)
     {
       double help = 0;
@@ -1004,11 +1107,14 @@ bool NFmiHPlaceDescriptor::IsInside(const NFmiPoint &theLatLon, double theRadius
 std::size_t NFmiHPlaceDescriptor::HashValue() const
 {
   std::size_t hash = 0;
-  if (Area() != nullptr) hash = Area()->HashValueKludge();
+  if (Area() != nullptr)
+    hash = Area()->HashValueKludge();
 
-  if (itsLocationBag != nullptr) boost::hash_combine(hash, itsLocationBag->HashValue());
+  if (itsLocationBag != nullptr)
+    boost::hash_combine(hash, itsLocationBag->HashValue());
 
-  if (itsGrid != nullptr) boost::hash_combine(hash, itsGrid->HashValue());
+  if (itsGrid != nullptr)
+    boost::hash_combine(hash, itsGrid->HashValue());
 
   return hash;
 }

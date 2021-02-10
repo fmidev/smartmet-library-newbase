@@ -20,7 +20,8 @@ DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
-LIBS += -lboost_regex \
+LIBS += -lsmartmet-gis \
+	-lboost_regex \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \

@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.22
+Version: 21.2.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,7 +18,9 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
+BuildRequires: smartmet-library-gis >= 21.2.10
+Requires: smartmet-library-gis >= 21.2.10
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -34,7 +36,8 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.25
+#TestRequires: smartmet-library-gis >= 21.2.10
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -91,6 +94,16 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-1.fmi
+- Fixed NFmiLatLonArea WKT to be equirectangular instead of longlat
+- Added NFmiArea::CoordinateMatrix
+- Added NFmiFastQueryInfo::WorldXY
+- Added NFmiFastQueryInfo::NeedsGlobeWrap
+- Added linkage to gis-library
+
+* Mon Feb  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.8-1.fmi
+- Added CoordinateMatrix access
+
 * Fri Jan 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.22-1.fmi
 - Added probability and fractile parameters for road forecasts
 

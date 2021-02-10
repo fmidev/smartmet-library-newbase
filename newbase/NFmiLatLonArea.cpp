@@ -84,7 +84,10 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiLatLonArea &theLatLonArea)
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiLatLonArea::Clone() const { return new NFmiLatLonArea(*this); }
+NFmiArea *NFmiLatLonArea::Clone() const
+{
+  return new NFmiLatLonArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param fKeepWorldRect Undocumented
@@ -153,14 +156,20 @@ const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
  */
 // ----------------------------------------------------------------------
 
-double NFmiLatLonArea::XScale() const { return 1. / itsXScaleFactor; }
+double NFmiLatLonArea::XScale() const
+{
+  return 1. / itsXScaleFactor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiLatLonArea::YScale() const { return 1. / itsYScaleFactor; }
+double NFmiLatLonArea::YScale() const
+{
+  return 1. / itsYScaleFactor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theBottomLeftLatLon Undocumented
@@ -265,10 +274,9 @@ const std::string NFmiLatLonArea::AreaStr() const
 
 const std::string NFmiLatLonArea::WKT() const
 {
-  const char *fmt = R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]])";
+  const char *fmt =
+      R"(PROJCS["unknown",GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",{},0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Equirectangular"],PARAMETER["standard_parallel_1",0],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1, AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]])";
+
   return fmt::format(fmt, kRearth);
 }
 
