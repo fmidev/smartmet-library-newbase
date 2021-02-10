@@ -36,6 +36,7 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
+#TestRequires: smartmet-library-gis-devel >= 21.2.10
 #TestRequires: smartmet-library-macgyver-devel >= 21.1.25
 #TestRequires: smartmet-library-gis >= 21.2.10
 #TestRequires: smartmet-library-regression
