@@ -4,7 +4,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 21.2.10
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -94,6 +94,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-2.fmi
+- Fixed GIS-library dependencies
+
 * Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-1.fmi
 - Fixed NFmiLatLonArea WKT to be equirectangular instead of longlat
 - Added NFmiArea::CoordinateMatrix
