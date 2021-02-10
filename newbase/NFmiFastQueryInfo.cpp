@@ -27,6 +27,7 @@
 #include "NFmiRawData.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <gis/CoordinateMatrix.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------

@@ -11,9 +11,13 @@
 #include "NFmiQueryInfo.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-#include <gis/CoordinateMatrix.h>
 
 class NFmiRect;
+
+namespace Fmi
+{
+class CoordinateMatrix;
+}
 
 //! Undocumented
 class NFmiFastQueryInfo : public NFmiQueryInfo
