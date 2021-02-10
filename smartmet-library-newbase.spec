@@ -19,7 +19,7 @@ BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
-BuildRequires: smartmet-library-gis >= 21.2.10
+BuildRequires: smartmet-library-gis-devel >= 21.2.10
 Requires: smartmet-library-gis >= 21.2.10
 Requires: boost169-date-time
 Requires: boost169-filesystem
