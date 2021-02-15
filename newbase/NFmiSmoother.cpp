@@ -56,10 +56,10 @@ NFmiSmoother::NFmiSmoother(const std::string& theSmootherName, int theFactor, fl
  */
 // ----------------------------------------------------------------------
 
-const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const NFmiDataMatrix<NFmiPoint>& thePts,
+const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& thePts,
                                                    const NFmiDataMatrix<float>& theValues) const
 {
-  assert(thePts.NX() == theValues.NX() && thePts.NY() == theValues.NY());
+  assert(thePts.width() == theValues.NX() && thePts.height() == theValues.NY());
 
   switch (Smoother())
   {
@@ -114,7 +114,7 @@ const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
 // ----------------------------------------------------------------------
 
 const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
-    const NFmiDataMatrix<NFmiPoint>& thePts, const NFmiDataMatrix<float>& theValues) const
+    const Fmi::CoordinateMatrix& thePts, const NFmiDataMatrix<float>& theValues) const
 {
   // Temporary holder for the interpolated values
 
@@ -131,13 +131,13 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
 
   const int allsectors = (1 << nsectors) - 1;
 
-  for (unsigned int j = 0; j < thePts.NY(); j++)
-    for (unsigned int i = 0; i < thePts.NX(); i++)
+  for (unsigned int j = 0; j < thePts.height(); j++)
+    for (unsigned int i = 0; i < thePts.width(); i++)
     {
       // The coordinates to which we're interpolating
 
-      auto x = static_cast<float>(thePts[i][j].X());
-      auto y = static_cast<float>(thePts[i][j].Y());
+      auto x = static_cast<float>(thePts.x(i, j));
+      auto y = static_cast<float>(thePts.y(i, j));
 
       float zsum = 0.0;  // weighted sum of function values
       float wsum = 0.0;  // sum of the weights
@@ -148,12 +148,14 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
       int ymisses = 0;
       for (int dj = 0; static_cast<unsigned int>(abs(dj)) < theValues.NY(); dj = NEXTDIR(dj))
       {
-        if (ymisses >= 2) break;
+        if (ymisses >= 2)
+          break;
         int xmisses = 0;
         int xgoods = 0;
         for (int di = 0; static_cast<unsigned int>(abs(di)) < theValues.NX(); di = NEXTDIR(di))
         {
-          if (xmisses >= 2) break;
+          if (xmisses >= 2)
+            break;
 
           // Test against grid bounds
 
@@ -166,15 +168,15 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
 
           // Test the coordinate and the value are valid
 
-          if (thePts[i + di][j + dj].X() == kFloatMissing ||
-              thePts[i + di][j + dj].Y() == kFloatMissing ||
+          if (thePts.x(i + di, j + dj) == kFloatMissing ||
+              thePts.y(i + di, j + dj) == kFloatMissing ||
               theValues[i + di][j + dj] == kFloatMissing)
             continue;
 
           // See if within search radius
 
-          auto dx = static_cast<float>(thePts[i + di][j + dj].X() - x);
-          auto dy = static_cast<float>(thePts[i + di][j + dj].Y() - y);
+          auto dx = static_cast<float>(thePts.x(i + di, j + dj) - x);
+          auto dy = static_cast<float>(thePts.y(i + di, j + dj) - y);
 
           float dist = sqrt(dx * dx + dy * dy);
 
@@ -252,7 +254,8 @@ const std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& 
         }
       }
     }
-    if (wsum > 0) result[i] = sum / wsum;
+    if (wsum > 0)
+      result[i] = sum / wsum;
   }
 
   return result;

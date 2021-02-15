@@ -4,7 +4,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 21.2.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -19,8 +19,8 @@ BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
-BuildRequires: smartmet-library-gis-devel >= 21.2.10
-Requires: smartmet-library-gis >= 21.2.10
+BuildRequires: smartmet-library-gis-devel >= 21.2.11
+Requires: smartmet-library-gis >= 21.2.11
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -36,9 +36,9 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-gis-devel >= 21.2.10
+#TestRequires: smartmet-library-gis-devel >= 21.2.11
 #TestRequires: smartmet-library-macgyver-devel >= 21.1.25
-#TestRequires: smartmet-library-gis >= 21.2.10
+#TestRequires: smartmet-library-gis >= 21.2.11
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-2.fmi
+- Updated NFmiSmoother to use Fmi::CoordinateMatrix
+
 * Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-1.fmi
 - Merged more API changes from WGS84 branch: interpolation methods return a datamatrix
 
