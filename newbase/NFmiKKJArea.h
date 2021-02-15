@@ -42,6 +42,7 @@ class NFmiKKJArea : public NFmiArea
   virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiPoint ToWorldXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
 
@@ -103,21 +104,30 @@ inline NFmiKKJArea::~NFmiKKJArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiKKJArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiKKJArea::WorldRect(void) const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiKKJArea::ClassId(void) const { return kNFmiKKJArea; }
+inline unsigned long NFmiKKJArea::ClassId(void) const
+{
+  return kNFmiKKJArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiKKJArea::ClassName(void) const { return "NFmiKKJArea"; }
+inline const char* NFmiKKJArea::ClassName(void) const
+{
+  return "NFmiKKJArea";
+}
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented
@@ -125,7 +135,10 @@ inline const char* NFmiKKJArea::ClassName(void) const { return "NFmiKKJArea"; }
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiKKJArea::Rad(double x) const { return x * kPii / 180.0; }
+inline double NFmiKKJArea::Rad(double x) const
+{
+  return x * kPii / 180.0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented
@@ -133,7 +146,10 @@ inline double NFmiKKJArea::Rad(double x) const { return x * kPii / 180.0; }
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiKKJArea::Deg(double x) const { return x * 180.0 / kPii; }
+inline double NFmiKKJArea::Deg(double x) const
+{
+  return x * 180.0 / kPii;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented

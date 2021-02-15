@@ -335,14 +335,19 @@ const NFmiPoint NFmiLambertConformalConicArea::XYToWorldXY(const NFmiPoint &theX
   return NFmiPoint(xWorld, yWorld);
 }
 
+const NFmiPoint NFmiLambertConformalConicArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x, y);
+}
+
 const NFmiPoint NFmiLambertConformalConicArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double xWorld, yWorld;
-
   // Transform local xy-coordinates into world xy-coordinates (meters).
 
-  xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
   // Transform world xy-coordinates into geodetic coordinates.
 

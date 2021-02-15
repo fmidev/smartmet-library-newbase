@@ -33,6 +33,7 @@ class NFmiMercatorArea : public NFmiArea
   virtual const NFmiRect WorldRect(void) const;
 
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXYPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
   virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
@@ -73,20 +74,29 @@ inline NFmiMercatorArea::~NFmiMercatorArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiMercatorArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiMercatorArea::WorldRect(void) const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiMercatorArea::ClassId(void) const { return kNFmiMercatorArea; }
+inline unsigned long NFmiMercatorArea::ClassId(void) const
+{
+  return kNFmiMercatorArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiMercatorArea::ClassName(void) const { return "NFmiMercatorArea"; }
+inline const char *NFmiMercatorArea::ClassName(void) const
+{
+  return "NFmiMercatorArea";
+}
 
 // ======================================================================

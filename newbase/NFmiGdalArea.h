@@ -72,6 +72,7 @@ class NFmiGdalArea : public NFmiArea
   virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiRect WorldRect() const;

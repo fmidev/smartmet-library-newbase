@@ -430,12 +430,24 @@ const NFmiPoint NFmiKKJArea::ToWorldXY(const NFmiPoint &theLatLonPoint) const
 
 const NFmiPoint NFmiKKJArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 {
-  double xeast, ynorth;
-
-  xeast = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  ynorth = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  double xeast = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  double ynorth = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
   return NFmiPoint(xeast, ynorth);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param theWorldXYPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiKKJArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -559,7 +571,10 @@ bool NFmiKKJArea::operator==(const NFmiKKJArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiKKJArea::operator!=(const NFmiKKJArea &theArea) const { return (!(*this == theArea)); }
+bool NFmiKKJArea::operator!=(const NFmiKKJArea &theArea) const
+{
+  return (!(*this == theArea));
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -583,7 +598,10 @@ bool NFmiKKJArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiKKJArea::operator!=(const NFmiArea &theArea) const { return (!(*this == theArea)); }
+bool NFmiKKJArea::operator!=(const NFmiArea &theArea) const
+{
+  return (!(*this == theArea));
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream

@@ -444,6 +444,23 @@ const NFmiPoint NFmiGdalArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \param theWorldXYPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiGdalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  double xscale = Width() / itsWorldRect.Width();
+  double yscale = Height() / itsWorldRect.Height();
+
+  double x = xscale * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - yscale * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x, y);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief World coordinates to LatLon
  */
 // ----------------------------------------------------------------------

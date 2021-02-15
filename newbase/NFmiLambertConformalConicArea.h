@@ -27,6 +27,7 @@ class NFmiLambertConformalConicArea : public NFmiArea
   virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
 
   virtual void Init(bool fKeepWorldRect = false);
   virtual NFmiArea* Clone() const;

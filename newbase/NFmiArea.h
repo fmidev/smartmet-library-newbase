@@ -86,6 +86,7 @@ class NFmiArea
   virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const = 0;
   virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const = 0;
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const = 0;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXYPoint) const = 0;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const = 0;
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const = 0;
 

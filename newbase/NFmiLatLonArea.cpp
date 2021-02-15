@@ -152,6 +152,19 @@ const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \param theXYPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiLatLonArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  // TODO: Fix slow implementation
+  return ToXY(WorldXYToLatLon(theWorldXYPoint));
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------

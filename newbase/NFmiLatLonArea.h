@@ -33,6 +33,7 @@ class NFmiLatLonArea : public NFmiArea
   virtual const NFmiRect WorldRect(void) const;
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
+  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
   virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
   virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
                             const NFmiPoint& theTopRightLatLon,
@@ -68,7 +69,10 @@ typedef NFmiLatLonArea* PNFmiLatLonArea;
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiLatLonArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiLatLonArea::WorldRect(void) const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theXYPoint Undocumented
@@ -100,13 +104,19 @@ inline const NFmiPoint NFmiLatLonArea::LatLonToWorldXY(const NFmiPoint& theLatLo
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiLatLonArea::ClassId(void) const { return kNFmiLatLonArea; }
+inline unsigned long NFmiLatLonArea::ClassId(void) const
+{
+  return kNFmiLatLonArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiLatLonArea::ClassName(void) const { return "NFmiLatLonArea"; }
+inline const char* NFmiLatLonArea::ClassName(void) const
+{
+  return "NFmiLatLonArea";
+}
 
 // ======================================================================
