@@ -29,6 +29,7 @@
 #include "NFmiWeatherAndCloudiness.h"
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
+#include <gis/SpatialReference.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -1943,19 +1944,10 @@ Fmi::CoordinateMatrix NFmiFastQueryInfo::LocationsWorldXY(const NFmiArea &theAre
 #ifdef NEW_NFMIAREA
   Fmi::CoordinateTransformation transformation(Area()->SpatialReference(),
                                                theArea.SpatialReference());
-  coords.transform(transformation);
 #else
-
-  for (std::size_t j = 0; j < coords.height(); j++)
-    for (std::size_t i = 0; i < coords.width(); i++)
-    {
-      auto pt = NFmiPoint(coords.x(i, j), coords.y(i, j));
-      auto ll = Area()->ToLatLon(pt);
-      auto xc = theArea.LatLonToWorldXY(ll);
-      coords.set(i, j, xc.X(), xc.Y());
-    }
+  Fmi::CoordinateTransformation transformation(Area()->WKT(), theArea.WKT());
 #endif
-
+  coords.transform(transformation);
   return coords;
 }
 
