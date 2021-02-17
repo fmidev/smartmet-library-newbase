@@ -38,7 +38,8 @@ const NFmiPoint torotlatlon(const NFmiPoint &theLatLonPoint,
                             const NFmiPoint &thePole,
                             bool usePacificView = false)
 {
-  if (thePole.Y() == -90.) return theLatLonPoint;
+  if (thePole.Y() == -90.)
+    return theLatLonPoint;
 
 #ifdef UNIX
   // Speed optimized version of the generic algorithm in the ELSE section
@@ -64,7 +65,8 @@ const NFmiPoint torotlatlon(const NFmiPoint &theLatLonPoint,
   cosxrot = std::min(std::max(cosxrot, -1.0), 1.0);
   double sinxrot = cosyreg * sinxreg / cosyrot;
   double xrot = acos(cosxrot);
-  if (sinxrot < 0) xrot = -xrot;
+  if (sinxrot < 0)
+    xrot = -xrot;
 
   double lon = xrot * kOneRad;
   double lat = yrot * kOneRad;
@@ -121,7 +123,8 @@ const NFmiPoint toreglatlon(const NFmiPoint &theRotLatLonPoint,
   // This method is copied from the Hirlam-subroutine GEOROT
   // Also functions, if only longitude of the pole is rotated, but is prevented
 
-  if (thePole.Y() == -90.) return theRotLatLonPoint;
+  if (thePole.Y() == -90.)
+    return theRotLatLonPoint;
 
   NFmiLatitude YPole = NFmiLatitude(thePole.Y());
   NFmiLongitude XPole = NFmiLongitude(thePole.X(), usePacificView);
@@ -143,7 +146,8 @@ const NFmiPoint toreglatlon(const NFmiPoint &theRotLatLonPoint,
   double SinXReg = CosYRot * SinXRot / CosYReg;
 
   double XRegVal = acos(CosXReg) * kOneRad;
-  if (SinXReg < 0.) XRegVal = -XRegVal;
+  if (SinXReg < 0.)
+    XRegVal = -XRegVal;
   XRegVal = XRegVal + XPole.Value();
   NFmiLongitude XReg = NFmiLongitude(XRegVal, usePacificView);
 
@@ -198,7 +202,10 @@ NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLo
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiRotatedLatLonArea::Clone() const { return new NFmiRotatedLatLonArea(*this); }
+NFmiArea *NFmiRotatedLatLonArea::Clone() const
+{
+  return new NFmiRotatedLatLonArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theXYPoint Undocumented
@@ -336,34 +343,28 @@ const std::string NFmiRotatedLatLonArea::AreaStr() const
 // ----------------------------------------------------------------------
 /*!
  * \brief Return Well Known Text representation of the GCS
- *  PROJCS["Plate_Carree",
- *    GEOGCS["FMI_Sphere",
- *           DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],
- *           PRIMEM["Greenwich",0],
- *           UNIT["Degree",0.017453292519943295]],
- *    PROJECTION["Plate_Carree"],
- *    EXTENSION["PROJ4","+proj=ob_tran +o_proj=longlat +o_lon_p=XXX +o_lat_p=YYY +a=R +k=1
- * +wktext"],
- *    UNIT["Meter",1]]
  */
 // ----------------------------------------------------------------------
 
 const std::string NFmiRotatedLatLonArea::WKT() const
 {
-  // Location of north pole is at the opposite longitude unless the poles have not been moved
-  auto plat = -itsSouthernPole.Y();
-  auto plon = (plat == 90 ? 90 : fmod(itsSouthernPole.X() - 180, 360.0));
+  auto slon = itsSouthernPole.X();
+  auto slat = itsSouthernPole.Y();
 
-  const char *fmt = R"(PROJCS["Plate_Carree",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.017453292519943295]],)"
-                    R"(PROJECTION["Plate_Carree"],)"
-                    R"(EXTENSION["PROJ4","+proj=ob_tran +o_proj=longlat +o_lon_p={})"
-                    R"( +o_lat_p={} +a={:.0f} +k=1 +wktext"],)"
-                    R"(UNIT["Meter",1]])";
-  return fmt::format(fmt, kRearth, plon, plat, kRearth);
+  auto nlat = -slat;
+  auto nlon = 0;
+  auto lon0 = slon;
+
+  double degree = 0.0174532925199433;
+
+  // clang-format off
+
+  const char *fmt =
+   R"foo(PROJCRS["unknown",BASEGEOGCRS["unknown",DATUM["unknown",ELLIPSOID["unknown",{},0,LENGTHUNIT["metre",1,ID["EPSG",9001]]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",{}],ID["EPSG",8901]]],CONVERSION["unknown",METHOD["PROJ ob_tran o_proj=eqc"],PARAMETER["o_lon_p",{},ANGLEUNIT["degree",{},ID["EPSG",9122]]],PARAMETER["o_lat_p",{},ANGLEUNIT["degree",{},ID["EPSG",9122]]],PARAMETER["lon_0",{},ANGLEUNIT["degree",{},ID["EPSG",9122]]]],CS[Cartesian,2],AXIS["(E)",east,ORDER[1],LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["(N)",north,ORDER[2],LENGTHUNIT["metre",1,ID["EPSG",9001]]]])foo";
+
+  // clang-format on
+
+  return fmt::format(fmt, kRearth, degree, nlon, degree, nlat, degree, lon0, degree);
 }
 
 // ----------------------------------------------------------------------
