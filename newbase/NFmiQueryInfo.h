@@ -19,6 +19,7 @@
 #include "NFmiTimeDescriptor.h"
 #include "NFmiVPlaceDescriptor.h"
 #include "NFmiVersion.h"
+#include <memory>
 
 class NFmiQueryData;
 class NFmiCombinedParam;
@@ -630,13 +631,13 @@ class NFmiQueryInfo
     NFmiBitMask * itsStaticDataMask;
   */
   // data
-  NFmiParamDescriptor *itsParamDescriptor;
-  NFmiHPlaceDescriptor *itsHPlaceDescriptor;
-  NFmiVPlaceDescriptor *itsVPlaceDescriptor;
-  NFmiTimeDescriptor *itsTimeDescriptor;
+  std::unique_ptr<NFmiParamDescriptor> itsParamDescriptor;
+  std::unique_ptr<NFmiHPlaceDescriptor> itsHPlaceDescriptor;
+  std::unique_ptr<NFmiVPlaceDescriptor> itsVPlaceDescriptor;
+  std::unique_ptr<NFmiTimeDescriptor> itsTimeDescriptor;
 
-  NFmiStringList *itsHeaderText;
-  NFmiStringList *itsPostProc;
+  std::unique_ptr<NFmiStringList> itsHeaderText;
+  std::unique_ptr<NFmiStringList> itsPostProc;
 
   unsigned long itsNewClassIdent;
 

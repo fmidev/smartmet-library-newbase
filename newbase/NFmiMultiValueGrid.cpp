@@ -24,12 +24,6 @@
 
 NFmiMultiValuedGrid::~NFmiMultiValuedGrid()
 {
-  if (itsParamDescriptor) delete itsParamDescriptor;
-  itsParamDescriptor = nullptr;
-  if (itsTimeDescriptor) delete itsTimeDescriptor;
-  itsTimeDescriptor = nullptr;
-  if (itsVPlaceDescriptor) delete itsVPlaceDescriptor;
-  itsVPlaceDescriptor = nullptr;
   if (itsMultiData) delete itsMultiData;
 }
 
@@ -50,10 +44,10 @@ NFmiMultiValuedGrid::NFmiMultiValuedGrid(const NFmiGrid &theGrid,
                                          const NFmiVPlaceDescriptor &theVPlaceDescriptor)
     : NFmiGrid(theGrid), itsMultiData(nullptr), itsCurrentDataStatus(0)
 {
-  itsParamDescriptor = new NFmiParamDescriptor(theParamDescriptor);
-  itsTimeDescriptor = new NFmiTimeDescriptor(theTimeDescriptor);
-  itsHPlaceDescriptor = nullptr;
-  itsVPlaceDescriptor = new NFmiVPlaceDescriptor(theVPlaceDescriptor);
+  itsParamDescriptor.reset(new NFmiParamDescriptor(theParamDescriptor));
+  itsTimeDescriptor.reset(new NFmiTimeDescriptor(theTimeDescriptor));
+  itsHPlaceDescriptor.reset();
+  itsVPlaceDescriptor.reset(new NFmiVPlaceDescriptor(theVPlaceDescriptor));
   itsRefRawData = nullptr;
   Init();
 }

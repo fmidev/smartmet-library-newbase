@@ -257,12 +257,12 @@ NFmiQueryInfo::NFmiQueryInfo(double theInfoVersion)
       itsRefQueryData(nullptr)
       //  , itsStaticDataMask(0)
       ,
-      itsParamDescriptor(nullptr),
-      itsHPlaceDescriptor(nullptr),
-      itsVPlaceDescriptor(nullptr),
-      itsTimeDescriptor(nullptr),
-      itsHeaderText(nullptr),
-      itsPostProc(nullptr),
+      itsParamDescriptor(),
+      itsHPlaceDescriptor(),
+      itsVPlaceDescriptor(),
+      itsTimeDescriptor(),
+      itsHeaderText(new NFmiStringList),
+      itsPostProc(),
       itsNewClassIdent(kNFmiQueryInfo),
       itsCombinedParamParser(nullptr),
       itsInfoVersion(theInfoVersion),
@@ -278,7 +278,6 @@ NFmiQueryInfo::NFmiQueryInfo(double theInfoVersion)
       fDoEndianByteSwap(false),
       fHasNonFiniteValueSet(false)
 {
-  itsHeaderText = new NFmiStringList;
 }
 
 // ----------------------------------------------------------------------
@@ -304,11 +303,11 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
       //  , itsStaticDataMask(0)
       ,
       itsParamDescriptor(new NFmiParamDescriptor(theParamDescriptor)),
-      itsHPlaceDescriptor(nullptr),
-      itsVPlaceDescriptor(nullptr),
+      itsHPlaceDescriptor(),
+      itsVPlaceDescriptor(),
       itsTimeDescriptor(new NFmiTimeDescriptor(theTimeDescriptor)),
-      itsHeaderText(nullptr),
-      itsPostProc(nullptr),
+      itsHeaderText(new NFmiStringList),
+      itsPostProc(),
       itsNewClassIdent(kNFmiQueryInfo),
       itsCombinedParamParser(nullptr),
       itsInfoVersion(theInfoVersion),
@@ -326,24 +325,23 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
 {
   if (theVPlaceDescriptor.Size())
   {
-    itsVPlaceDescriptor = new NFmiVPlaceDescriptor(theVPlaceDescriptor);
+    itsVPlaceDescriptor.reset(new NFmiVPlaceDescriptor(theVPlaceDescriptor));
   }
   else
   {
     NFmiLevelBag theLevelBag(kFmiAnyLevelType, 0, 0, 1);
-    itsVPlaceDescriptor = new NFmiVPlaceDescriptor(theLevelBag);
+    itsVPlaceDescriptor.reset(new NFmiVPlaceDescriptor(theLevelBag));
   }
 
   if (theHPlaceDescriptor.Size())
   {
-    itsHPlaceDescriptor = new NFmiHPlaceDescriptor(theHPlaceDescriptor);
+    itsHPlaceDescriptor.reset(new NFmiHPlaceDescriptor(theHPlaceDescriptor));
   }
   else
   {
     NFmiLocationBag theLocationBag(new NFmiStation(), 1);
-    itsHPlaceDescriptor = new NFmiHPlaceDescriptor(theLocationBag);
+    itsHPlaceDescriptor.reset(new NFmiHPlaceDescriptor(theLocationBag));
   }
-  itsHeaderText = new NFmiStringList;
 }
 
 // ----------------------------------------------------------------------
@@ -377,8 +375,8 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
       itsTimeDescriptor(theInfo->Info()->itsTimeDescriptor
                             ? new NFmiTimeDescriptor(*(theInfo->Info()->itsTimeDescriptor))
                             : nullptr),
-      itsHeaderText(nullptr),
-      itsPostProc(nullptr),
+      itsHeaderText(),
+      itsPostProc(),
       itsNewClassIdent(theInfo->Info()->itsNewClassIdent),
       itsCombinedParamParser(nullptr),
       itsInfoVersion(theInfo->InfoVersion()),
@@ -458,10 +456,11 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData *theInfo,
     }
   }
 
-  if (theInfo->Info()->Header()) itsHeaderText = new NFmiStringList(*(theInfo->Info()->Header()));
+  if (theInfo->Info()->Header())
+    itsHeaderText.reset(new NFmiStringList(*(theInfo->Info()->Header())));
 
   if (theInfo->Info()->PostProcText())
-    itsPostProc = new NFmiStringList(*(theInfo->Info()->PostProcText()));
+    itsPostProc.reset(new NFmiStringList(*(theInfo->Info()->PostProcText())));
 
   // tehdään First, niin Info-iteraattori on heti käytettävissä
   // (ja mm. levelit osoittaa 1. leveliin, mikä unohtuu helposti käyttäjiltä)
@@ -494,8 +493,8 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiQueryInfo &theInfo)
       itsTimeDescriptor(theInfo.itsTimeDescriptor
                             ? new NFmiTimeDescriptor(*(theInfo.itsTimeDescriptor))
                             : nullptr),
-      itsHeaderText(nullptr),
-      itsPostProc(nullptr),
+      itsHeaderText(),
+      itsPostProc(),
       itsNewClassIdent(theInfo.itsNewClassIdent),
       itsCombinedParamParser(
           theInfo.itsCombinedParamParser ? theInfo.itsCombinedParamParser->Clone() : nullptr),
@@ -514,13 +513,13 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiQueryInfo &theInfo)
 {
   if (theInfo.itsHeaderText)
   {
-    itsHeaderText = new NFmiStringList;
+    itsHeaderText.reset(new NFmiStringList);
     *itsHeaderText = *theInfo.itsHeaderText;
   }
 
   if (theInfo.itsPostProc)
   {
-    itsPostProc = new NFmiStringList;
+    itsPostProc.reset(new NFmiStringList);
     *itsPostProc = *theInfo.itsPostProc;
   }
 }
@@ -601,23 +600,17 @@ NFmiQueryInfo::~NFmiQueryInfo() { Destroy(); }
 
 void NFmiQueryInfo::Destroy()
 {
-  delete itsHeaderText;
-  itsHeaderText = nullptr;
+  itsHeaderText.reset();
 
-  delete itsPostProc;
-  itsPostProc = nullptr;
+  itsPostProc.reset();
 
-  delete itsTimeDescriptor;
-  itsTimeDescriptor = nullptr;
+  itsTimeDescriptor.reset();
 
-  delete itsHPlaceDescriptor;
-  itsHPlaceDescriptor = nullptr;
+  itsHPlaceDescriptor.reset();
 
-  delete itsVPlaceDescriptor;
-  itsVPlaceDescriptor = nullptr;
+  itsVPlaceDescriptor.reset();
 
-  delete itsParamDescriptor;
-  itsParamDescriptor = nullptr;
+  itsParamDescriptor.reset();
 
   delete itsCombinedParamParser;
   itsCombinedParamParser = nullptr;
@@ -865,11 +858,11 @@ void NFmiQueryInfo::Header(NFmiStringList *theHeader)
 {
   if (theHeader)
   {
-    itsHeaderText = new NFmiStringList(*theHeader);
+    itsHeaderText.reset(new NFmiStringList(*theHeader));
   }
   else
   {
-    itsHeaderText = new NFmiStringList();
+    itsHeaderText.reset(new NFmiStringList());
   }
 }
 
@@ -879,7 +872,7 @@ void NFmiQueryInfo::Header(NFmiStringList *theHeader)
  */
 // ----------------------------------------------------------------------
 
-NFmiStringList *NFmiQueryInfo::Header() const { return itsHeaderText; }
+NFmiStringList *NFmiQueryInfo::Header() const { return itsHeaderText.get(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -937,11 +930,11 @@ void NFmiQueryInfo::PostProcText(NFmiStringList *theHeader)
 {
   if (theHeader)
   {
-    itsPostProc = new NFmiStringList(*theHeader);
+    itsPostProc.reset(new NFmiStringList(*theHeader));
   }
   else
   {
-    itsPostProc = new NFmiStringList();
+    itsPostProc.reset(new NFmiStringList());
   }
 }
 
@@ -951,7 +944,7 @@ void NFmiQueryInfo::PostProcText(NFmiStringList *theHeader)
  */
 // ----------------------------------------------------------------------
 
-NFmiStringList *NFmiQueryInfo::PostProcText() const { return itsPostProc; }
+NFmiStringList *NFmiQueryInfo::PostProcText() const { return itsPostProc.get(); }
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1052,17 +1045,17 @@ NFmiQueryInfo &NFmiQueryInfo::operator=(const NFmiQueryInfo &theInfo)
   // HUOM!!!! Eikö tämä vuoda kun mitään ei deletoida??????
   // Pitäisi kutsua Destroy():ta !!!!!!!!! /Marko
 
-  itsParamDescriptor = new NFmiParamDescriptor(*theInfo.itsParamDescriptor);
-  itsTimeDescriptor = new NFmiTimeDescriptor(*theInfo.itsTimeDescriptor);
-  itsHPlaceDescriptor = new NFmiHPlaceDescriptor(*theInfo.itsHPlaceDescriptor);
-  itsVPlaceDescriptor = new NFmiVPlaceDescriptor(*theInfo.itsVPlaceDescriptor);
+  itsParamDescriptor.reset(new NFmiParamDescriptor(*theInfo.itsParamDescriptor));
+  itsTimeDescriptor.reset(new NFmiTimeDescriptor(*theInfo.itsTimeDescriptor));
+  itsHPlaceDescriptor.reset(new NFmiHPlaceDescriptor(*theInfo.itsHPlaceDescriptor));
+  itsVPlaceDescriptor.reset(new NFmiVPlaceDescriptor(*theInfo.itsVPlaceDescriptor));
 
   itsRefRawData = theInfo.itsRefRawData;
   itsRefQueryData = theInfo.itsRefQueryData;
 
-  if (theInfo.Header()) itsHeaderText = new NFmiStringList(*(theInfo.Header()));
+  if (theInfo.Header()) itsHeaderText.reset(new NFmiStringList(*(theInfo.Header())));
 
-  if (theInfo.PostProcText()) itsPostProc = new NFmiStringList(*(theInfo.PostProcText()));
+  if (theInfo.PostProcText()) itsPostProc.reset(new NFmiStringList(*(theInfo.PostProcText())));
 
   itsCombinedParamParser = nullptr;  // ei tarvita, jos kutsutaan Destroy():ta
   if (theInfo.itsCombinedParamParser)
@@ -1258,28 +1251,27 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 
   try
   {
-    itsHeaderText = new NFmiStringList;
+    itsHeaderText.reset(new NFmiStringList);
     file >> *itsHeaderText;
 
-    itsPostProc = new NFmiStringList;
+    itsPostProc.reset(new NFmiStringList);
     file >> *itsPostProc;
 
-    itsParamDescriptor = new NFmiParamDescriptor;
+    itsParamDescriptor.reset(new NFmiParamDescriptor);
     file >> *itsParamDescriptor;
 
-    itsHPlaceDescriptor = new NFmiHPlaceDescriptor;
+    itsHPlaceDescriptor.reset(new NFmiHPlaceDescriptor);
     file >> *itsHPlaceDescriptor;
 
-    itsVPlaceDescriptor = new NFmiVPlaceDescriptor;
+    itsVPlaceDescriptor.reset(new NFmiVPlaceDescriptor);
     file >> *itsVPlaceDescriptor;
 
     if (!itsVPlaceDescriptor->Size())
     {
-      delete itsVPlaceDescriptor;
-      itsVPlaceDescriptor = nullptr;
+      itsVPlaceDescriptor.reset();
     }
 
-    itsTimeDescriptor = new NFmiTimeDescriptor;
+    itsTimeDescriptor.reset(new NFmiTimeDescriptor);
     file >> *itsTimeDescriptor;
   }
   catch (...)

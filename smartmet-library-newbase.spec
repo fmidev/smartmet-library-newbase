@@ -98,6 +98,9 @@ FMI newbase static library
 * Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
 - Fixed NFmiRotatedLatLon WKT
 
+* Tue Feb 16 2021 Andris Pavēnis <andris.pavenis@fmi.fi> - 21.2.16-1.fmi
+- Fmi::NFmiQueryInfo: use std::unique_ptr instead of raw pointers
+
 * Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-2.fmi
 - Updated NFmiSmoother to use Fmi::CoordinateMatrix
 
