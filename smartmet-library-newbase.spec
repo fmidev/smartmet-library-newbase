@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.2.17
+Version: 21.2.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
+- Added NFmiArea::SpatialReference accessor
+
 * Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
 - Fixed NFmiRotatedLatLon WKT
 

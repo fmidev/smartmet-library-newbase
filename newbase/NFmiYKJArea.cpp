@@ -247,6 +247,8 @@ void NFmiYKJArea::Init(bool fKeepWorldRect)
   itsBottomLeftLatLon = BottomLeftLatLon();
 
   NFmiKKJArea::Init(fKeepWorldRect);
+
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(2393);
 }
 
 // ----------------------------------------------------------------------
@@ -332,7 +334,10 @@ NFmiArea *NFmiYKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiYKJArea::Clone() const { return new NFmiYKJArea(*this); }
+NFmiArea *NFmiYKJArea::Clone() const
+{
+  return new NFmiYKJArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -368,7 +373,10 @@ bool NFmiYKJArea::operator==(const NFmiYKJArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiYKJArea::operator!=(const NFmiYKJArea &theArea) const { return !(*this == theArea); }
+bool NFmiYKJArea::operator!=(const NFmiYKJArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison

@@ -10,7 +10,13 @@
 #include "NFmiAngle.h"
 #include "NFmiRect.h"
 #include "NFmiSaveBaseFactory.h"
+#include <gis/SpatialReference.h>
 #include <string>
+
+// Note: We could forward declare Fmi::SpatialReference too, but then all code using this or
+// NFmiAreaTools would have to include Fmi::SpatialReference.h to enable implicit conversion of
+// strings such as "WGS84" into actual spatial references. Having the include here is a smaller
+// nuisance.
 
 namespace Fmi
 {
@@ -140,9 +146,13 @@ class NFmiArea
   // Temporary fix until the above method is fixed to be virtual
   std::size_t HashValueKludge() const;
 
+  const Fmi::SpatialReference &SpatialReference() const;
+
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;
+
+  std::shared_ptr<Fmi::SpatialReference> itsSpatialReference;
 
  private:
   NFmiRect itsXYRectArea;

@@ -13,7 +13,11 @@
 #include <boost/shared_ptr.hpp>
 
 class OGRSpatialReference;
-class OGRCoordinateTransformation;
+
+namespace Fmi
+{
+class CoordinateTransformation;
+}
 
 class NFmiGdalArea : public NFmiArea
 {
@@ -96,9 +100,8 @@ class NFmiGdalArea : public NFmiArea
   NFmiPoint itsTopRightLatLon;
   NFmiRect itsWorldRect;
 
-  boost::shared_ptr<OGRSpatialReference> itsSpatialReference;
-  boost::shared_ptr<OGRCoordinateTransformation> itsLatLonToWorldXYTransformation;
-  boost::shared_ptr<OGRCoordinateTransformation> itsWorldXYToLatLonTransformation;
+  std::shared_ptr<Fmi::CoordinateTransformation> itsLatLonToWorldXYTransformation;
+  std::shared_ptr<Fmi::CoordinateTransformation> itsWorldXYToLatLonTransformation;
 
 };  // class NFmiGdalArea
 

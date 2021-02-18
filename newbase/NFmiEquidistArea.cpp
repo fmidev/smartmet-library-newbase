@@ -118,6 +118,12 @@ NFmiEquidistArea::NFmiEquidistArea(double theRadialRangeInMeters,
       itsBottomLeftWorldXY,
       itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
+  const char *fmt =
+      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +towgs84=0,0,0 "
+      "+no_defs +type=crs";
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(
+      fmt::format(fmt, theCenterLatLon.Y(), theCenterLatLon.X(), kRearth));
+
   Init(true);
 }
 
@@ -245,7 +251,8 @@ double NFmiEquidistArea::K(const double delta) const
   double d = std::max(-1.0, std::min(delta, 1.0));
 
   // See ref [3] p. 228
-  if (sin(d) == 0.0 || d == 1) return kRearth;
+  if (sin(d) == 0.0 || d == 1)
+    return kRearth;
 
   // return kRearth*d/sin(delta); // 27.7.98/EL Replaced this one ...
   // ... with these ones
@@ -324,7 +331,10 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiEquidistArea::Clone() const { return new NFmiEquidistArea(*this); }
+NFmiArea *NFmiEquidistArea::Clone() const
+{
+  return new NFmiEquidistArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -389,7 +399,10 @@ bool NFmiEquidistArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiEquidistArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiEquidistArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param fKeepWorldRect Undocumented

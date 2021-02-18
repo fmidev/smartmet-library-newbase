@@ -581,3 +581,11 @@ std::size_t NFmiArea::HashValueKludge() const
 
   return HashValue();
 }
+
+const Fmi::SpatialReference &NFmiArea::SpatialReference() const
+{
+  if (itsSpatialReference)
+    return *itsSpatialReference;
+
+  throw std::runtime_error(std::string("Spatial reference for ") + ClassName() + " not available");
+}

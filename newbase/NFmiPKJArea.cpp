@@ -214,6 +214,8 @@ void NFmiPKJArea::Init(bool fKeepWorldRect)
   itsTopRightLatLon = TopRightLatLon();
   itsBottomLeftLatLon = BottomLeftLatLon();
   NFmiKKJArea::Init(fKeepWorldRect);
+
+  // SpatialReference not supported for this one, deprecated code
 }
 
 // ----------------------------------------------------------------------
@@ -306,7 +308,10 @@ NFmiArea *NFmiPKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiPKJArea::Clone() const { return new NFmiPKJArea(*this); }
+NFmiArea *NFmiPKJArea::Clone() const
+{
+  return new NFmiPKJArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -342,7 +347,10 @@ bool NFmiPKJArea::operator==(const NFmiPKJArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiPKJArea::operator!=(const NFmiPKJArea &theArea) const { return !(*this == theArea); }
+bool NFmiPKJArea::operator!=(const NFmiPKJArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison with a generic area

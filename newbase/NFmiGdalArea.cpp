@@ -12,8 +12,10 @@
 #include "NFmiStringTools.h"
 #include <boost/functional/hash.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <gis/CoordinateTransformation.h>
+#include <gis/OGR.h>
+#include <gis/SpatialReference.h>
 #include <cmath>
-#include <gdal_version.h>
 #include <iomanip>
 #include <ogr_spatialref.h>
 
@@ -36,19 +38,7 @@ NFmiGdalArea::~NFmiGdalArea() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea()
-    : NFmiArea(),
-      itsDatum("WGS84"),
-      itsDescription(),
-      itsWKT(),
-      itsBottomLeftLatLon(),
-      itsTopRightLatLon(),
-      itsWorldRect(),
-      itsSpatialReference(),
-      itsLatLonToWorldXYTransformation(),
-      itsWorldXYToLatLonTransformation()
-{
-}
+NFmiGdalArea::NFmiGdalArea() : NFmiArea(), itsDatum("WGS84") {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -109,9 +99,10 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsDescription(),
       itsBottomLeftLatLon(theBottomLeftLatLon),
       itsTopRightLatLon(theTopRightLatLon),
-      itsWorldRect(),
-      itsSpatialReference(new OGRSpatialReference(theCRS))
+      itsWorldRect()
 {
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theCRS);
+
   // Guess a good value for itsDescription
 
   const char *auth = theCRS.GetAuthorityName(nullptr);
@@ -124,14 +115,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   }
   else
   {
-    char *out;
-    theCRS.exportToWkt(&out);
-    itsDescription = out;
-#if GDAL_VERSION_MAJOR > 2
-    CPLFree(out);
-#else
-    OGRFree(out);
-#endif
+    itsDescription = Fmi::OGR::exportToWkt(theCRS);
   }
 
   init();
@@ -157,9 +141,10 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsDescription(),
       itsBottomLeftLatLon(),
       itsTopRightLatLon(),
-      itsWorldRect(NFmiPoint(theXmin, theYmin), NFmiPoint(theXmax, theYmax)),
-      itsSpatialReference(new OGRSpatialReference(theCRS))
+      itsWorldRect(NFmiPoint(theXmin, theYmin), NFmiPoint(theXmax, theYmax))
 {
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theCRS);
+
   // Guess a good value for itsDescription
 
   const char *auth = theCRS.GetAuthorityName(nullptr);
@@ -172,29 +157,13 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   }
   else
   {
-    char *out;
-    theCRS.exportToWkt(&out);
-    itsDescription = out;
-#if GDAL_VERSION_MAJOR > 2
-    CPLFree(out);
-#else
-    OGRFree(out);
-#endif
+    itsDescription = Fmi::OGR::exportToWkt(theCRS);
   }
 
   // The needed spatial references
 
-  if (!itsSpatialReference)
-  {
-    itsSpatialReference.reset(new OGRSpatialReference);
-    OGRErr err = itsSpatialReference->SetFromUserInput(itsDescription.c_str());
-    if (err != OGRERR_NONE)
-      throw std::runtime_error("GDAL does not understand projection spec: '" + itsDescription +
-                               "'");
-  }
-
   OGRErr err;
-  boost::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+  std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
   if (itsDatum == "FMI")
     err = datum->SetFromUserInput(fmiwkt.c_str());
   else
@@ -205,17 +174,10 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
 
   // The needed coordinate transformations
 
-  itsWorldXYToLatLonTransformation.reset(
-      OGRCreateCoordinateTransformation(itsSpatialReference.get(), datum.get()));
-  if (!itsWorldXYToLatLonTransformation)
-    throw std::runtime_error("Projection spec unsable with the chosen datum (" + itsDatum + "): '" +
-                             itsDescription + "'");
-
-  itsLatLonToWorldXYTransformation.reset(
-      OGRCreateCoordinateTransformation(datum.get(), itsSpatialReference.get()));
-  if (!itsLatLonToWorldXYTransformation)
-    throw std::runtime_error("Projection spec unsable with the chosen datum (" + itsDatum + "): '" +
-                             itsDescription + "'");
+  itsWorldXYToLatLonTransformation =
+      std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
+  itsLatLonToWorldXYTransformation =
+      std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
 
   // Bottom left and top right coordinates - needed only for geographic projections (Width()
   // calculations)
@@ -226,20 +188,13 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
   double y1 = theYmin;
   double x2 = theXmax;
   double y2 = theYmax;
-  itsWorldXYToLatLonTransformation->Transform(1, &x1, &y1);
-  itsWorldXYToLatLonTransformation->Transform(1, &x2, &y2);
+  itsWorldXYToLatLonTransformation->transform(x1, y1);
+  itsWorldXYToLatLonTransformation->transform(x2, y2);
   itsBottomLeftLatLon = NFmiPoint(x1, y1);
   itsTopRightLatLon = NFmiPoint(x2, y2);
 
   // Initialize itsWKT
-  char *out;
-  itsSpatialReference->exportToWkt(&out);
-  itsWKT = out;
-#if GDAL_VERSION_MAJOR > 2
-  CPLFree(out);
-#else
-  OGRFree(out);
-#endif
+  itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
 }
 
 // ----------------------------------------------------------------------
@@ -471,7 +426,7 @@ const NFmiPoint NFmiGdalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
     throw std::runtime_error("Trying to use an uninitialized GDAL area");
   double x = theXYPoint.X();
   double y = theXYPoint.Y();
-  if (!itsWorldXYToLatLonTransformation->Transform(1, &x, &y))
+  if (!itsWorldXYToLatLonTransformation->transform(x, y))
     return NFmiPoint(kFloatMissing, kFloatMissing);
   return NFmiPoint(x, y);
 }
@@ -488,7 +443,7 @@ const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) c
     throw std::runtime_error("Trying to use an uninitialized GDAL area");
   double x = theLatLonPoint.X();
   double y = theLatLonPoint.Y();
-  if (!itsLatLonToWorldXYTransformation->Transform(1, &x, &y))
+  if (!itsLatLonToWorldXYTransformation->transform(x, y))
     return NFmiPoint(kFloatMissing, kFloatMissing);
   return NFmiPoint(x, y);
 }
@@ -545,16 +500,10 @@ void NFmiGdalArea::init()
   // The needed spatial references
 
   if (!itsSpatialReference)
-  {
-    itsSpatialReference.reset(new OGRSpatialReference);
-    OGRErr err = itsSpatialReference->SetFromUserInput(itsDescription.c_str());
-    if (err != OGRERR_NONE)
-      throw std::runtime_error("GDAL does not understand projection spec: '" + itsDescription +
-                               "'");
-  }
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsDescription);
 
   OGRErr err;
-  boost::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+  std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
   if (itsDatum == "FMI")
     err = datum->SetFromUserInput(fmiwkt.c_str());
   else
@@ -565,31 +514,17 @@ void NFmiGdalArea::init()
 
   // The needed coordinate transformations
 
-  itsWorldXYToLatLonTransformation.reset(
-      OGRCreateCoordinateTransformation(itsSpatialReference.get(), datum.get()));
-  if (!itsWorldXYToLatLonTransformation)
-    throw std::runtime_error("Projection spec unsable with the chosen datum (" + itsDatum + "): '" +
-                             itsDescription + "'");
-
-  itsLatLonToWorldXYTransformation.reset(
-      OGRCreateCoordinateTransformation(datum.get(), itsSpatialReference.get()));
-  if (!itsLatLonToWorldXYTransformation)
-    throw std::runtime_error("Projection spec unsable with the chosen datum (" + itsDatum + "): '" +
-                             itsDescription + "'");
+  itsWorldXYToLatLonTransformation =
+      std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
+  itsLatLonToWorldXYTransformation =
+      std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
 
   // The needed world XY rectangle
 
   itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
   // Initialize itsWKT
-  char *out;
-  itsSpatialReference->exportToWkt(&out);
-  itsWKT = out;
-#if GDAL_VERSION_MAJOR > 2
-  CPLFree(out);
-#else
-  OGRFree(out);
-#endif
+  itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
 }
 
 // ----------------------------------------------------------------------
@@ -600,7 +535,7 @@ void NFmiGdalArea::init()
 
 double NFmiGdalArea::WorldXYWidth() const
 {
-  if (!itsSpatialReference->IsGeographic())
+  if (!itsSpatialReference->isGeographic())
     return WorldRect().Width();
   else
   {
@@ -622,7 +557,7 @@ double NFmiGdalArea::WorldXYWidth() const
 
 double NFmiGdalArea::WorldXYHeight() const
 {
-  if (!itsSpatialReference->IsGeographic())
+  if (!itsSpatialReference->isGeographic())
     return WorldRect().Height();
   else
   {

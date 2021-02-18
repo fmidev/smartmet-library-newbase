@@ -1941,12 +1941,8 @@ Fmi::CoordinateMatrix NFmiFastQueryInfo::LocationsWorldXY(const NFmiArea &theAre
 
   auto coords = CoordinateMatrix();
 
-#ifdef NEW_NFMIAREA
   Fmi::CoordinateTransformation transformation(Area()->SpatialReference(),
                                                theArea.SpatialReference());
-#else
-  Fmi::CoordinateTransformation transformation(Area()->WKT(), theArea.WKT());
-#endif
   coords.transform(transformation);
   return coords;
 }
