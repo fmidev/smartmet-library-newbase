@@ -261,8 +261,8 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
   const char *fmt =
       "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
       "+no_defs";
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(
-      fmt::format(fmt, itsCentralLatitude, itsTrueLatitude, itsCentralLongitude, kRearth));
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
+      fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
 }
 
 // ----------------------------------------------------------------------
