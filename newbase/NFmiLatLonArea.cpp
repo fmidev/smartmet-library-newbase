@@ -63,9 +63,6 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiPoint &theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect()
 {
-  const char *fmt = "proj=eqc +R={} +wktext +no_defs +type=crs";
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(fmt, kRearth));
-
   Init();
 }
 
@@ -108,6 +105,9 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
   itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
 
   NFmiArea::Init(fKeepWorldRect);
+
+  const char *fmt = "proj=eqc +R={} +wktext +no_defs +type=crs";
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(fmt, kRearth));
 }
 
 // ----------------------------------------------------------------------
