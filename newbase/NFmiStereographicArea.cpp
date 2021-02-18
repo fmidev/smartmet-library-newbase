@@ -257,6 +257,12 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
   }
   NFmiAzimuthalArea::Init();
+
+  const char *fmt =
+      "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
+      "+no_defs";
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(
+      fmt::format(fmt, itsCentralLatitude, itsTrueLatitude, itsCentralLongitude, kRearth));
 }
 
 // ----------------------------------------------------------------------
@@ -351,7 +357,10 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiStereographicArea::Clone() const { return new NFmiStereographicArea(*this); }
+NFmiArea *NFmiStereographicArea::Clone() const
+{
+  return new NFmiStereographicArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
