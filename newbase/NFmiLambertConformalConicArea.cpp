@@ -71,7 +71,7 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
 
   const char *fmt =
       "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs +type=crs";
+      "+no_defs +type=crs";
   itsProjStr = fmt::format(
       fmt, itsTrueLatitude1, itsTrueLatitude2, itsCentralLatitude, itsCentralLongitude, itsRadius);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);

@@ -206,9 +206,7 @@ void NFmiLambertEqualArea::Init(bool fKeepWorldRect)
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
   }
   NFmiAzimuthalArea::Init();
-  const char *fmt =
-      "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
-      "+type=crs";
+  const char *fmt = "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +units=m +no_defs +type=crs";
   itsProjStr = fmt::format(
       fmt, itsCentralLatitude.Value(), itsCentralLongitude, itsTrueLatitude.Value(), kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);

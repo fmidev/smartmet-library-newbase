@@ -186,7 +186,7 @@ void NFmiMercatorArea::Init(bool fKeepWorldRect)
 
   NFmiArea::Init(fKeepWorldRect);
 
-  const char* fmt = "+proj=merc +R={} +wktext +over +towgs84=0,0,0 +no_defs +type=crs";
+  const char* fmt = "+proj=merc +R={} +wktext +over +no_defs +type=crs";
   itsProjStr = fmt::format(fmt, kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }

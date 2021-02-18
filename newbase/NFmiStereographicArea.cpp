@@ -74,8 +74,7 @@ using namespace std;
 namespace
 {
 const char *proj_fmt =
-    "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
-    "+no_defs";
+    "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +no_defs +type=crs";
 }
 
 // ----------------------------------------------------------------------

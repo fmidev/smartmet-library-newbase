@@ -119,8 +119,7 @@ NFmiEquidistArea::NFmiEquidistArea(double theRadialRangeInMeters,
       itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
   const char *fmt =
-      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs +type=crs";
+      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +no_defs +type=crs";
 
   itsProjStr = fmt::format(fmt, theCenterLatLon.Y(), theCenterLatLon.X(), kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
