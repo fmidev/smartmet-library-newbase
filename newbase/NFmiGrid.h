@@ -146,6 +146,7 @@ class NFmiGrid : public NFmiGridBase
   bool AreGridsIdentical(const NFmiGrid &theOtherGrid) const;
 
   NFmiPoint WorldXY() const;  // actual metric coordinate, or latlon for point data
+  const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix(bool wrap) const;
 
   bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,

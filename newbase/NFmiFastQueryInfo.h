@@ -17,7 +17,8 @@ class NFmiRect;
 namespace Fmi
 {
 class CoordinateMatrix;
-}
+class SpatialReference;
+}  // namespace Fmi
 
 //! Undocumented
 class NFmiFastQueryInfo : public NFmiQueryInfo
@@ -120,6 +121,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or latlon for point data
 
+  const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped = false) const;
   bool NeedsGlobeWrap() const;
 
@@ -1149,4 +1151,14 @@ inline unsigned long NFmiFastQueryInfo::PeekLocationIndex(int theXOffset, int th
     theHPlaceIndex = theHPlaceIndex + theXOffset;
 
   return theHPlaceIndex;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+inline const Fmi::SpatialReference &NFmiFastQueryInfo::SpatialReference() const
+{
+  return itsHPlaceDescriptor->SpatialReference();
 }

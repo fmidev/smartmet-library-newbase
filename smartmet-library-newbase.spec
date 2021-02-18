@@ -96,7 +96,8 @@ FMI newbase static library
 
 %changelog
 * Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
-- Added NFmiArea::SpatialReference accessor
+- Added NFmiArea::SpatialReference()
+- Added NFmiFastQueryInfo::SpatialReference()
 
 * Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
 - Fixed NFmiRotatedLatLon WKT

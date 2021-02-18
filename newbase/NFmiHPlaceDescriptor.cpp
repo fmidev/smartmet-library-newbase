@@ -18,6 +18,7 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
+#include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
 
@@ -277,6 +278,19 @@ NFmiPoint NFmiHPlaceDescriptor::WorldXY(unsigned long index) const
   }
 
   return NFmiPoint::gMissingLatlon;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the spatial reference
+ */
+// ----------------------------------------------------------------------
+
+const Fmi::SpatialReference &NFmiHPlaceDescriptor::SpatialReference() const
+{
+  if (itsGrid)
+    return itsGrid->SpatialReference();
+  return NFmiWGS84::SpatialReference();
 }
 
 // ----------------------------------------------------------------------

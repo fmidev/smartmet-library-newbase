@@ -23,7 +23,8 @@ class NFmiLocation;
 namespace Fmi
 {
 class CoordinateMatrix;
-}
+class SpatialReference;
+}  // namespace Fmi
 
 //! Undocumented
 class NFmiHPlaceDescriptor : public NFmiDataDescriptor
@@ -68,6 +69,7 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or latlon for point data
 
+  const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped) const;
   bool NeedsGlobeWrap() const;
 
