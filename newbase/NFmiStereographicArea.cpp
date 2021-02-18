@@ -71,6 +71,13 @@
 
 using namespace std;
 
+namespace
+{
+const char *crs_fmt =
+    "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
+    "+no_defs";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -235,6 +242,9 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
                           NFmiPoint(itsRadialRange, itsRadialRange));
   NFmiAzimuthalArea::Init(true);
 
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
+      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
+
   // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
   // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
 }
@@ -258,11 +268,8 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
   }
   NFmiAzimuthalArea::Init();
 
-  const char *fmt =
-      "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs";
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
-      fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
+      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
 }
 
 // ----------------------------------------------------------------------
@@ -458,6 +465,8 @@ std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 std::istream &NFmiStereographicArea::Read(std::istream &file)
 {
   NFmiAzimuthalArea::Read(file);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
+      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
   return file;
 }
 
