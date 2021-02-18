@@ -248,6 +248,7 @@ void NFmiYKJArea::Init(bool fKeepWorldRect)
 
   NFmiKKJArea::Init(fKeepWorldRect);
 
+  itsProjStr = "EPSG:2393";
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(2393);
 }
 

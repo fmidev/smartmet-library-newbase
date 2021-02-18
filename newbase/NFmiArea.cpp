@@ -587,5 +587,11 @@ const Fmi::SpatialReference &NFmiArea::SpatialReference() const
   if (itsSpatialReference)
     return *itsSpatialReference;
 
-  throw std::runtime_error(std::string("Spatial reference for ") + ClassName() + " not available");
+  throw std::runtime_error(std::string("Spatial reference for ") + ClassName() +
+                           " not available, PROJ.4 = '" + itsProjStr + "'");
+}
+
+std::string NFmiArea::ProjStr() const
+{
+  return itsProjStr;
 }

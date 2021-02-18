@@ -147,12 +147,14 @@ class NFmiArea
   std::size_t HashValueKludge() const;
 
   const Fmi::SpatialReference &SpatialReference() const;
+  std::string ProjStr() const;
 
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;
 
   std::shared_ptr<Fmi::SpatialReference> itsSpatialReference;
+  std::string itsProjStr;
 
  private:
   NFmiRect itsXYRectArea;
@@ -260,7 +262,10 @@ inline const NFmiPoint NFmiArea::BottomLeft() const
 // ----------------------------------------------------------------------
 
 inline NFmiArea::NFmiArea(const NFmiArea &theArea)
-    : itsXYRectArea(theArea.TopLeft(), theArea.BottomRight()), fPacificView(theArea.fPacificView)
+    : itsSpatialReference(theArea.itsSpatialReference),
+      itsProjStr(theArea.itsProjStr),
+      itsXYRectArea(theArea.TopLeft(), theArea.BottomRight()),
+      fPacificView(theArea.fPacificView)
 {
 }
 
@@ -277,6 +282,8 @@ inline NFmiArea &NFmiArea::operator=(const NFmiArea &theArea)
 {
   if (this != &theArea)
   {
+    itsSpatialReference = theArea.itsSpatialReference;
+    itsProjStr = theArea.itsProjStr;
     itsXYRectArea = theArea.itsXYRectArea;
     fPacificView = theArea.fPacificView;
   }

@@ -63,9 +63,6 @@ NFmiWebMercatorArea::NFmiWebMercatorArea(const NFmiPoint& theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect()
 {
-  const char* fmt = "+proj=webmerc +R={}";
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(fmt, kRearth));
-
   Init();
 }
 
@@ -111,6 +108,10 @@ void NFmiWebMercatorArea::Init(bool fKeepWorldRect)
   itsYScaleFactor = Height() / itsWorldRect.Height();
 
   NFmiArea::Init(fKeepWorldRect);
+
+  const char* fmt = "+proj=webmerc +R={}";
+  itsProjStr = fmt::format(fmt, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------

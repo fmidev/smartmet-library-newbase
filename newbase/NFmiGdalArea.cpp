@@ -101,7 +101,8 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsTopRightLatLon(theTopRightLatLon),
       itsWorldRect()
 {
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theCRS);
+  itsProjStr = Fmi::OGR::exportToProj(theCRS);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
   // Guess a good value for itsDescription
 
@@ -143,7 +144,8 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsTopRightLatLon(),
       itsWorldRect(NFmiPoint(theXmin, theYmin), NFmiPoint(theXmax, theYmax))
 {
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(theCRS);
+  itsProjStr = Fmi::OGR::exportToProj(theCRS);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
   // Guess a good value for itsDescription
 
@@ -500,7 +502,10 @@ void NFmiGdalArea::init()
   // The needed spatial references
 
   if (!itsSpatialReference)
-    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsDescription);
+  {
+    itsProjStr = itsDescription;
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  }
 
   OGRErr err;
   std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);

@@ -73,7 +73,7 @@ using namespace std;
 
 namespace
 {
-const char *crs_fmt =
+const char *proj_fmt =
     "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={} +units=m +wktext +towgs84=0,0,0 "
     "+no_defs";
 }
@@ -242,8 +242,9 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
                           NFmiPoint(itsRadialRange, itsRadialRange));
   NFmiAzimuthalArea::Init(true);
 
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
-      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
+  itsProjStr = fmt::format(
+      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
   // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
   // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -268,8 +269,9 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
   }
   NFmiAzimuthalArea::Init();
 
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
-      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
+  itsProjStr = fmt::format(
+      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
@@ -465,8 +467,9 @@ std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 std::istream &NFmiStereographicArea::Read(std::istream &file)
 {
   NFmiAzimuthalArea::Read(file);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(
-      crs_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth));
+  itsProjStr = fmt::format(
+      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   return file;
 }
 

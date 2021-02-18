@@ -71,11 +71,6 @@ NFmiLambertEqualArea::NFmiLambertEqualArea(const NFmiPoint &theBottomLeftLatLon,
   // Note: This projection was never used at FMI. Also, PROJ manual does not mention true latitude
   // for this projection, but I added +lat_ts nevertheless - Mika
 
-  const char *fmt =
-      "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
-      "+type=crs";
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(
-      fmt::format(fmt, theCenterLatitude, theCentralLongitude, theTrueLatitude, kRearth));
   Init();
 }
 
@@ -211,6 +206,12 @@ void NFmiLambertEqualArea::Init(bool fKeepWorldRect)
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
   }
   NFmiAzimuthalArea::Init();
+  const char *fmt =
+      "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +towgs84=0,0,0,0,0,0,0 +units=m +no_defs "
+      "+type=crs";
+  itsProjStr = fmt::format(
+      fmt, itsCentralLatitude.Value(), itsCentralLongitude, itsTrueLatitude.Value(), kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------

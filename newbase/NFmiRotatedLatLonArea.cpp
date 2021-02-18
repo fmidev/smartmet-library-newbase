@@ -198,8 +198,8 @@ NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLo
       "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} +R={} +wktext +towgs84=0,0,0 "
       "+no_defs +type=crs";
 
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(
-      fmt::format(fmt, 0, -theSouthernPole.Y(), theSouthernPole.X(), kRearth));
+  itsProjStr = fmt::format(fmt, 0, -theSouthernPole.Y(), theSouthernPole.X(), kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
