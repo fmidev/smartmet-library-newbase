@@ -106,7 +106,7 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
 
   NFmiArea::Init(fKeepWorldRect);
 
-  const char *fmt = "proj=eqc +R={} +wktext +no_defs +type=crs";
+  const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(fmt::format(fmt, kRearth));
 }
 
