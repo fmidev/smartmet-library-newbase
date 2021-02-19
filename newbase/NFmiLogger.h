@@ -12,7 +12,7 @@
 #include <string>
 
 //! Undocumented
-class _FMI_DLL NFmiLogger
+class NFmiLogger
 {
  public:
   //! loggerissa käytettyjä viestien tasoja

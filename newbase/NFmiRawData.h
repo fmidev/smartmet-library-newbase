@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-class _FMI_DLL NFmiRawData
+class NFmiRawData
 {
  private:
   class Pimple;

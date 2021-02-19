@@ -34,7 +34,7 @@ const unsigned long kMMDDHH = kMonth + kDay + kHour;
 const unsigned long kDDHHMM = kDay + kHour + kMinute;
 
 //! Undocumented
-class _FMI_DLL NFmiStaticTime : public NFmiSortable
+class NFmiStaticTime : public NFmiSortable
 {
  public:
   virtual ~NFmiStaticTime() {}

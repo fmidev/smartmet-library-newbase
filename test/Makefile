@@ -1,8 +1,8 @@
 PROG = $(patsubst %.cpp,%,$(wildcard *Test.cpp))
 
--include $(HOME)/.smartmet.mk
-GCC_DIAG_COLOR ?= always
-CXX_STD ?= c++11
+REQUIRES = gdal
+
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 FLAGS = -std=$(CXX_STD) -Wall -W -Wno-unused-parameter
 
@@ -13,30 +13,7 @@ ifeq ($(ASAN), yes)
   FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
 endif
 
-EXTRAFLAGS = -Werror -pedantic -Wpointer-arith -Wcast-qual \
-	-Wcast-align -Wwrite-strings -Wconversion -Winline \
-	-Wctor-dtor-privacy -Wnon-virtual-dtor -Wno-pmf-conversions \
-	-Wsign-promo -Wchar-subscripts -Wold-style-cast \
-	-Wshadow -Woverloaded-virtual
-
-DIFFICULTFLAGS = -Weffc++ -Wunreachable-code -Wredundant-decls
-
-CC = g++
 CFLAGS = -DUNIX -O0 -g $(FLAGS)
-
-# Boost 1.69
-
-ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
-  LIBS += -L/usr/lib64/boost169
-endif
-
-ifneq "$(wildcard /usr/gdal30/include)" ""
-  INCLUDES += -I/usr/gdal30/include
-  LIBS += -L/usr/gdal30/lib
-else
-  INCLUDES += -I/usr/include/gdal
-endif
 
 INCLUDES += \
 	-I../newbase \
@@ -50,6 +27,7 @@ LIBS +=  ../libsmartmet-newbase.so \
 	-lboost_iostreams \
 	-lboost_thread \
 	-lboost_system \
+	$(REQUIRED_LIBS) \
 	-lpthread -lz -lbz2 -lrt
 
 all: $(PROG)
@@ -66,5 +44,9 @@ test: $(PROG)
 		for i in *.err ; do echo `basename $$i .err`; done ; rm -f *.err ; false )
 
 $(PROG) : % : %.cpp ../libsmartmet-newbase.so
-	$(CC) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
+	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
 
+
+ifeq ($(USE_CLANG), yes)
+NFmiStringToolsTest: CFLAGS += -Wno-invalid-source-encoding
+endif

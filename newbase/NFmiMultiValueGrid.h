@@ -14,7 +14,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
+class NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
 {
  public:
   virtual ~NFmiMultiValuedGrid();

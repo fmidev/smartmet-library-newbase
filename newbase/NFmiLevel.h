@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiLevel : public NFmiIndividual
+class NFmiLevel : public NFmiIndividual
 {
  public:
   ~NFmiLevel();

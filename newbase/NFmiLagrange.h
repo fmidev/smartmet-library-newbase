@@ -15,7 +15,7 @@
 #pragma once
 
 //! Undocumented
-class _FMI_DLL NFmiLagrange
+class NFmiLagrange
 {
  public:
   ~NFmiLagrange();

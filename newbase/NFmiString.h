@@ -12,7 +12,7 @@
 
 #include <string>
 
-class _FMI_DLL NFmiString : public NFmiSortable
+class NFmiString : public NFmiSortable
 {
  public:
   virtual ~NFmiString();

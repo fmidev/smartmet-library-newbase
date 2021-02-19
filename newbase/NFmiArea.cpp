@@ -155,7 +155,8 @@ NFmiArea::NFmiArea(const NFmiArea &other) : impl(new Impl(*other.impl)) {}
 // Needed due to Impl
 NFmiArea &NFmiArea::operator=(const NFmiArea &other)
 {
-  if (this != &other) impl.reset(new Impl(*other.impl));
+  if (this != &other)
+    impl.reset(new Impl(*other.impl));
   return *this;
 }
 
@@ -167,7 +168,8 @@ NFmiArea &NFmiArea::operator=(const NFmiArea &other)
 
 NFmiPoint NFmiArea::Impl::TopLeftCorner() const
 {
-  if (itsTopLeftCorner) return *itsTopLeftCorner;
+  if (itsTopLeftCorner)
+    return *itsTopLeftCorner;
 
   // Calculate bottom left corner in FMI latlon coordinates
 
@@ -185,7 +187,8 @@ NFmiPoint NFmiArea::Impl::TopLeftCorner() const
 
 NFmiPoint NFmiArea::Impl::BottomRightCorner() const
 {
-  if (itsBottomRightCorner) return *itsBottomRightCorner;
+  if (itsBottomRightCorner)
+    return *itsBottomRightCorner;
 
   // Calculate top right corner in FMI latlon coordinates
 
@@ -197,7 +200,10 @@ NFmiPoint NFmiArea::Impl::BottomRightCorner() const
 
 NFmiArea::NFmiArea() : impl(new NFmiArea::Impl) {}
 
-NFmiArea::NFmiArea(int theClassId) : impl(new NFmiArea::Impl) { impl->itsClassId = theClassId; }
+NFmiArea::NFmiArea(int theClassId) : impl(new NFmiArea::Impl)
+{
+  impl->itsClassId = theClassId;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -205,28 +211,40 @@ NFmiArea::NFmiArea(int theClassId) : impl(new NFmiArea::Impl) { impl->itsClassId
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopLeft() const { return impl->itsXYRect.TopLeft(); }
+NFmiPoint NFmiArea::TopLeft() const
+{
+  return impl->itsXYRect.TopLeft();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomRight() const { return impl->itsXYRect.BottomRight(); }
+NFmiPoint NFmiArea::BottomRight() const
+{
+  return impl->itsXYRect.BottomRight();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopRight() const { return impl->itsXYRect.TopRight(); }
+NFmiPoint NFmiArea::TopRight() const
+{
+  return impl->itsXYRect.TopRight();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomLeft() const { return impl->itsXYRect.BottomLeft(); }
+NFmiPoint NFmiArea::BottomLeft() const
+{
+  return impl->itsXYRect.BottomLeft();
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -261,28 +279,40 @@ bool NFmiArea::IsInsideWorldXY(const NFmiPoint &theWorldXYPoint) const
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopLeftLatLon() const { return ToLatLon(TopLeft()); }
+NFmiPoint NFmiArea::TopLeftLatLon() const
+{
+  return ToLatLon(TopLeft());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::TopRightLatLon() const { return ToLatLon(TopRight()); }
+NFmiPoint NFmiArea::TopRightLatLon() const
+{
+  return ToLatLon(TopRight());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomLeftLatLon() const { return ToLatLon(BottomLeft()); }
+NFmiPoint NFmiArea::BottomLeftLatLon() const
+{
+  return ToLatLon(BottomLeft());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::BottomRightLatLon() const { return ToLatLon(BottomRight()); }
+NFmiPoint NFmiArea::BottomRightLatLon() const
+{
+  return ToLatLon(BottomRight());
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -352,63 +382,90 @@ void NFmiArea::Size(const NFmiPoint &newSize)
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Top() const { return impl->itsXYRect.Top(); }
+double NFmiArea::Top() const
+{
+  return impl->itsXYRect.Top();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Bottom() const { return impl->itsXYRect.Bottom(); }
+double NFmiArea::Bottom() const
+{
+  return impl->itsXYRect.Bottom();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Left() const { return impl->itsXYRect.Left(); }
+double NFmiArea::Left() const
+{
+  return impl->itsXYRect.Left();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Right() const { return impl->itsXYRect.Right(); }
+double NFmiArea::Right() const
+{
+  return impl->itsXYRect.Right();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Height() const { return impl->itsXYRect.Height(); }
+double NFmiArea::Height() const
+{
+  return impl->itsXYRect.Height();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::Width() const { return impl->itsXYRect.Width(); }
+double NFmiArea::Width() const
+{
+  return impl->itsXYRect.Width();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect &NFmiArea::XYArea() const { return impl->itsXYRect; }
+const NFmiRect &NFmiArea::XYArea() const
+{
+  return impl->itsXYRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiArea::Clone() const { return new NFmiArea(*this); }
+NFmiArea *NFmiArea::Clone() const
+{
+  return new NFmiArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiArea::ClassId() const { return impl->itsClassId; }
+unsigned long NFmiArea::ClassId() const
+{
+  return impl->itsClassId;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -416,7 +473,10 @@ unsigned long NFmiArea::ClassId() const { return impl->itsClassId; }
  */
 // ----------------------------------------------------------------------
 
-const std::string &NFmiArea::ClassName() const { return impl->itsClassName; }
+const std::string &NFmiArea::ClassName() const
+{
+  return impl->itsClassName;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -442,7 +502,10 @@ bool NFmiArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -452,7 +515,10 @@ bool NFmiArea::operator!=(const NFmiArea &theArea) const { return !(*this == the
 // ----------------------------------------------------------------------
 
 #ifndef WGS84
-int NFmiArea::Sign(double theValue) const { return theValue < 0 ? -1 : 1; }
+int NFmiArea::Sign(double theValue) const
+{
+  return theValue < 0 ? -1 : 1;
+}
 #endif
 
 // ----------------------------------------------------------------------
@@ -629,7 +695,8 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
            << *clat << '\n'
            << *tlat << '\n';
 
-      if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
+      if (DefaultFmiInfoVersion >= 5)
+        file << "0 0 0\n";
 
       auto oldPrec = file.precision();
       file.precision(15);
@@ -643,14 +710,16 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       auto clon = ProjInfo().getDouble("lon_0");
       auto clat = ProjInfo().getDouble("lat_0");
 
-      if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
+      if (!clon || !clat)
+        throw std::runtime_error("Internal error writing aeqd area");
 
       // legacy tlat = 90
       file << kNFmiEquiDistArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << '\n'
            << *clat << "\n90\n";
 
-      if (DefaultFmiInfoVersion >= 5) file << "0 0 0\n";
+      if (DefaultFmiInfoVersion >= 5)
+        file << "0 0 0\n";
 
       auto oldPrec = file.precision();
       file.precision(15);
@@ -829,35 +898,50 @@ std::istream &NFmiArea::Read(std::istream &file)
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::WorldXYSize() const { return WorldRect().Size(); }
+NFmiPoint NFmiArea::WorldXYSize() const
+{
+  return WorldRect().Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiPoint NFmiArea::WorldXYPlace() const { return WorldRect().Place(); }
+NFmiPoint NFmiArea::WorldXYPlace() const
+{
+  return WorldRect().Place();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYWidth() const { return WorldRect().Width(); }
+double NFmiArea::WorldXYWidth() const
+{
+  return WorldRect().Width();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYHeight() const { return WorldRect().Height(); }
+double NFmiArea::WorldXYHeight() const
+{
+  return WorldRect().Height();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiArea::WorldXYAspectRatio() const { return WorldXYWidth() / WorldXYHeight(); }
+double NFmiArea::WorldXYAspectRatio() const
+{
+  return WorldXYWidth() / WorldXYHeight();
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -952,7 +1036,8 @@ PacificPointFixerData NFmiArea::PacificPointFixer(const NFmiPoint &theBottomLeft
 bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
 {
   // Obvious case
-  if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;
+  if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
+    return true;
   // 0...360 coordinate system is used
   if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
     return true;
@@ -1058,22 +1143,30 @@ std::size_t NFmiArea::HashValueKludge() const
 
 #ifdef UNIX
 #ifndef DISABLED_GDAL
-  if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this))
+    return a->HashValue();
 #endif
 #endif
 
   // azimuthal is the base class
-  if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this))
+    return a->HashValue();
 
   // kkj is the base class
-  if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this))
+    return a->HashValue();
 
   // latlon is the base class
-  if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this)) return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this)) return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this))
+    return a->HashValue();
+  if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this))
+    return a->HashValue();
 
   return HashValue();
 #endif
@@ -1093,7 +1186,8 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
   {
     double x = theWgs84.X();
     double y = theWgs84.Y();
-    if (impl->itsToWorldXYBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+    if (impl->itsToWorldXYBilinearConverter->transform(x, y))
+      return NFmiPoint(x, y);
   }
 
   if (!impl->itsToWorldXYConverter)
@@ -1114,7 +1208,8 @@ NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
   {
     double x = theWorldXY.X();
     double y = theWorldXY.Y();
-    if (impl->itsToLatLonBilinearConverter->transform(x, y)) return NFmiPoint(x, y);
+    if (impl->itsToLatLonBilinearConverter->transform(x, y))
+      return NFmiPoint(x, y);
   }
 
   if (!impl->itsToLatLonConverter)
@@ -1141,7 +1236,8 @@ NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
 
   // Return result if not a pole
   const double eps = 0.0001;
-  if (res.X() != 0 || (res.Y() < (90 - eps) && res.Y() > (-90 + eps))) return res;
+  if (res.X() != 0 || (res.Y() < (90 - eps) && res.Y() > (-90 + eps)))
+    return res;
 
   // GDAL/PROJ.4 may set longitude to zero for poles. We attempt to fix this based on the
   // X-coordinate at the equator.
@@ -1168,7 +1264,8 @@ NFmiPoint NFmiArea::ToLatLon(const NFmiPoint &theXYPoint) const
 NFmiPoint NFmiArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   auto worldxy = LatLonToWorldXY(theLatLonPoint);
-  if (worldxy == NFmiPoint::gMissingLatlon) return worldxy;
+  if (worldxy == NFmiPoint::gMissingLatlon)
+    return worldxy;
   return WorldXYToXY(worldxy);
 }
 
@@ -1181,7 +1278,8 @@ NFmiPoint NFmiArea::ToXY(const NFmiPoint &theLatLonPoint) const
 NFmiPoint NFmiArea::NativeToXY(const NFmiPoint &theLatLonPoint) const
 {
   auto worldxy = NativeLatLonToWorldXY(theLatLonPoint);
-  if (worldxy == NFmiPoint::gMissingLatlon) return worldxy;
+  if (worldxy == NFmiPoint::gMissingLatlon)
+    return worldxy;
   return WorldXYToXY(worldxy);
 }
 
@@ -1261,11 +1359,13 @@ void NFmiArea::InitProj()
       new Fmi::CoordinateTransformation(latlon, *impl->itsSpatialReference));
 
   // Switch writer to ProjArea if we were not reading a legacy projection
-  if (impl->itsClassId == kNFmiArea) impl->itsClassId = kNFmiProjArea;
+  if (impl->itsClassId == kNFmiArea)
+    impl->itsClassId = kNFmiProjArea;
 
   // Switch classId to legacy mode if legacy mode can be detected
 
-  if (impl->itsClassId == kNFmiProjArea) impl->itsClassId = DetectClassId();
+  if (impl->itsClassId == kNFmiProjArea)
+    impl->itsClassId = DetectClassId();
 
   impl->itsClassName = class_name_from_id(impl->itsClassId);
 }
@@ -1293,24 +1393,33 @@ const Fmi::SpatialReference &NFmiArea::SpatialReference() const
   return *impl->itsSpatialReference;
 }
 
-const Fmi::ProjInfo &NFmiArea::ProjInfo() const { return impl->itsSpatialReference->projInfo(); }
+const Fmi::ProjInfo &NFmiArea::ProjInfo() const
+{
+  return impl->itsSpatialReference->projInfo();
+}
 
 int NFmiArea::DetectClassId() const
 {
-  const auto & proj = ProjInfo();
+  const auto &proj = ProjInfo();
 
   auto name = proj.getString("proj");
-  if (!name) throw std::runtime_error("Projection name not set, should be impossible");
+  if (!name)
+    throw std::runtime_error("Projection name not set, should be impossible");
 
-  if (*name == "eqc" && proj.getString("datum") == std::string("WGS84")) return kNFmiLatLonArea;
+  if (*name == "eqc" && proj.getString("datum") == std::string("WGS84"))
+    return kNFmiLatLonArea;
 
   if (proj.getDouble("R") == kRearth ||
       (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
   {
-    if (*name == "merc") return kNFmiMercatorArea;
-    if (*name == "stere") return kNFmiStereographicArea;
-    if (*name == "aeqd") return kNFmiEquiDistArea;
-    if (*name == "lcc") return kNFmiLambertConformalConicArea;
+    if (*name == "merc")
+      return kNFmiMercatorArea;
+    if (*name == "stere")
+      return kNFmiStereographicArea;
+    if (*name == "aeqd")
+      return kNFmiEquiDistArea;
+    if (*name == "lcc")
+      return kNFmiLambertConformalConicArea;
     if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
         proj.getDouble("o_lon_p") == 0.0)
     {
@@ -1330,7 +1439,10 @@ int NFmiArea::DetectClassId() const
   return kNFmiProjArea;
 }
 
-void NFmiArea::DisableLegacyWrite() { impl->itsLegacyWriteFlag = false; }
+void NFmiArea::DisableLegacyWrite()
+{
+  impl->itsLegacyWriteFlag = false;
+}
 
 NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
@@ -1512,18 +1624,25 @@ NFmiArea *NFmiArea::CreateFromCenter(const Fmi::SpatialReference &theSR,
   }
 }
 
-std::string NFmiArea::WKT() const { return Fmi::OGR::exportToWkt(*impl->itsSpatialReference); }
+std::string NFmiArea::WKT() const
+{
+  return Fmi::OGR::exportToWkt(*impl->itsSpatialReference);
+}
 
 std::string NFmiArea::PrettyWKT() const
 {
   return Fmi::OGR::exportToPrettyWkt(*impl->itsSpatialReference);
 }
 
-std::string NFmiArea::ProjStr() const { return Fmi::OGR::exportToProj(*impl->itsSpatialReference); }
+std::string NFmiArea::ProjStr() const
+{
+  return Fmi::OGR::exportToProj(*impl->itsSpatialReference);
+}
 
 std::string NFmiArea::AreaFactoryStr() const
 {
-  if (impl->itsClassId == kNFmiProjArea) return AreaFactoryProjStr();
+  if (impl->itsClassId == kNFmiProjArea)
+    return AreaFactoryProjStr();
 
   auto tl = impl->TopLeftCorner();
   auto br = impl->BottomRightCorner();
@@ -1568,7 +1687,8 @@ std::string NFmiArea::AreaFactoryStr() const
       auto clon = ProjInfo().getDouble("lon_0");
       auto clat = ProjInfo().getDouble("lat_0");
 
-      if (!clon || !clat) throw std::runtime_error("Internal error writing aeqd area");
+      if (!clon || !clat)
+        throw std::runtime_error("Internal error writing aeqd area");
 
       return fmt::format("equidist,{},{}:{}", *clon, *clat, corners);
     }
@@ -1581,7 +1701,8 @@ std::string NFmiArea::AreaFactoryStr() const
       if (!clon || !clat || !lat1 || !lat2)
         throw std::runtime_error("Internal error writing lcc area");
 
-      if (*lat1 == *lat2) return fmt::format("lcc,{},{},{}:{}", *clon, *clat, *lat1, corners);
+      if (*lat1 == *lat2)
+        return fmt::format("lcc,{},{},{}:{}", *clon, *clat, *lat1, corners);
       return fmt::format("lcc,{},{},{},{}:{}", *clon, *clat, *lat1, *lat2, corners);
     }
     case kNFmiYKJArea:
@@ -1606,7 +1727,10 @@ std::string NFmiArea::AreaFactoryProjStr() const
   return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }
 
-const NFmiRect &NFmiArea::WorldRect() const { return impl->itsWorldRect; }
+const NFmiRect &NFmiArea::WorldRect() const
+{
+  return impl->itsWorldRect;
+}
 
 #ifdef WGS84
 NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
@@ -1646,11 +1770,13 @@ NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const
   NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
   NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
 
-  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon)) return nullptr;
+  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
+    return nullptr;
 
   auto *newArea = CreateFromBBox(*impl->itsSpatialReference, newBottomLeftXY, newTopRightXY);
 
-  if (!IsInside(*newArea)) return nullptr;
+  if (!IsInside(*newArea))
+    return nullptr;
 
   return newArea;
 }
@@ -1697,8 +1823,14 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
   return newArea;
 }
 
-double NFmiArea::XScale() const { return 1 / impl->itsXScaleFactor; }
-double NFmiArea::YScale() const { return 1 / impl->itsYScaleFactor; }
+double NFmiArea::XScale() const
+{
+  return 1 / impl->itsXScaleFactor;
+}
+double NFmiArea::YScale() const
+{
+  return 1 / impl->itsYScaleFactor;
+}
 
 NFmiPoint NFmiArea::SphereToWGS84(const NFmiPoint &theWorldXY)
 {
@@ -1719,9 +1851,11 @@ Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny,
   const auto y1 = impl->itsWorldRect.Top();
   const auto y2 = impl->itsWorldRect.Bottom();
 
-  if (impl->itsFlopped) std::swap(x1, x2);
+  if (impl->itsFlopped)
+    std::swap(x1, x2);
 
-  if (!wrap) return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
+  if (!wrap)
+    return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
 
   // Add one more column to the right since wrapping is requested. We assume an earlier phase
   // has already checked the data is geographic and global apart from one column.
@@ -1896,7 +2030,8 @@ void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
 
 NFmiPoint NFmiArea::LatLon(unsigned long i, unsigned long j) const
 {
-  if (!impl->itsToLatLonBilinearConverter) return NFmiPoint(kFloatMissing, kFloatMissing);
+  if (!impl->itsToLatLonBilinearConverter)
+    return NFmiPoint(kFloatMissing, kFloatMissing);
   const auto &latlons = impl->itsToLatLonBilinearConverter->coordinateMatrix();
 
   return NFmiPoint(latlons.x(i, j), latlons.y(i, j));

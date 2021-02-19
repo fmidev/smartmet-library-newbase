@@ -13,7 +13,7 @@
 class NFmiLocation;
 
 //! Undocumented
-class _FMI_DLL NFmiMetTime : public NFmiTime
+class NFmiMetTime : public NFmiTime
 {
  public:
   static const NFmiMetTime gMissingTime;  // Tätä missing aikaa voi käyttää, jos haluaa ilmaista

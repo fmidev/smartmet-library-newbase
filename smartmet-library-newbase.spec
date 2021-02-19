@@ -3,41 +3,41 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 20.9.25
+Version: 21.2.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: rpm-build
-BuildRequires: gcc-c++
-BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: gdal30-devel
-BuildRequires: fmt-devel
-BuildRequires: smartmet-library-gis >= 20.8.21
-Requires: smartmet-library-gis >= 20.8.21
+BuildRequires: fmt-devel >= 7.1.3
+BuildRequires: gcc-c++
+BuildRequires: gdal32-devel
+BuildRequires: geos39-devel
+BuildRequires: make
+BuildRequires: rpm-build
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
-Requires: boost169-system
 Requires: boost169-regex
-Requires: gdal30-libs
-Requires: fmt >= 6.2.1
-BuildRequires: gdal30-devel
-Requires: geos38
-#TestRequires: make
-#TestRequires: gcc-c++
+Requires: boost169-system
+Requires: fmt >= 7.1.3
+Requires: gdal32-libs
+Requires: geos39
 #TestRequires: boost169-devel
-#TestRequires: smartmet-library-regression
-#TestRequires: gdal-devel
-#TestRequires: gdal-libs
 #TestRequires: bzip2-devel
-#TestRequires: zlib-devel
+#TestRequires: gcc-c++
+#TestRequires: gdal32-devel
+#TestRequires: gdal32-libs
+#TestRequires: make
+#TestRequires: postgresql12-libs
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
+#TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
-#TestRequires: postgresql95-libs
+#TestRequires: zlib-devel
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
@@ -91,10 +91,67 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Feb  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.1-1.fmi
+- Removed broken +over option from ob_trans (rotated) projections
+
+* Fri Jan 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.22-1.fmi
+- Added probability and fractile parameters for road forecasts
+
+* Tue Jan 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.19-1.fmi
+- Added ProbabilityOfForestFireIndexLevel[1-3]
+
+* Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
+- Repackaged smartmet to resolve debuginfo issues
+
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- Upgrade to fmt 7.1.3
+
+* Mon Jan  4 2021 Andris Pavenis <andris.pavenis@fmi.fi> - 21.1.4-1.fmi
+- Rebuild due to PGDG repository change: gdal-3.2 uses geos-3.9 instead of geos-3.8
+
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
+
+* Fri Dec 11 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.11-1.fmi
+- Build and test updates
+- Uses gdal-3.2 for RHEL8
+
+* Thu Dec 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.10-1.fmi
+- Rebuild due to makefile.inc changes
+
+* Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
+- Added maximum thread count option for grid projections
+
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
+* Fri Oct 16 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.16-1.fmi
+- Prevent crash in NFmiTransformList
+- Fixed memory leak in NFmiQueryInfo::TimePeriodValue
+
+* Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
+- Use std::array instead of std::vector in interpolation for speed
+
+* Wed Oct  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.7-1.fmi
+- Fixed version numbering
+
+* Mon Oct  5 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.5-1.fmi
+- Build update (use makefile.inc from smartmet-library-macgyver)
+
+* Fri Oct  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.2-1.fmi
+- New aviation parameters
+
+* Tue Sep 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.29-1.fmi
+- Added NFmiWindFix for recalculating wind components from wind speed and direction
+
 * Fri Sep 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.25-1.fmi
 - Use Fmi::stod for speed
 - Optimized NFmiArea::DetectClassId for speed
 - Optimized NFmiAreaFactory for speed
+- Added N200 sea level min, max, mean, dev, probability and fractile parameters
+
+* Fri Sep 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.11-1.fmi
+- Removed obsolete FMI_DLL export declarations
 
 * Mon Sep  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.7-1.fmi
 - Fixed stack smashing issue when reading Lambert Conformal Conic querydata

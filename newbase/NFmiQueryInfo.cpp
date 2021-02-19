@@ -2164,7 +2164,7 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
 {
   bool locationMissing = theLonLat.X() == 0. && theLonLat.Y() == 0.;
 
-  NFmiQueryInfo *newInfo = this->Clone();
+  std::unique_ptr<NFmiQueryInfo> newInfo(this->Clone());
   NFmiMetTime middleTime(theStartTime);
   double halfPeriod = theEndTime.DifferenceInHours(theStartTime) / 2.;
   middleTime.ChangeByHours(long(halfPeriod));
@@ -2174,7 +2174,8 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
   double factor;
   float value;
 
-  if (!newInfo->TimeToNearestStep(theStartTime)) return kFloatMissing;
+  if (!newInfo->TimeToNearestStep(theStartTime))
+    return kFloatMissing;
 
   while (newInfo->Time() <= theEndTime)
   {
@@ -2207,7 +2208,6 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
     if (!newInfo->NextTime()) break;
   }
 
-  delete newInfo;
   if (factorSum > 0.)
     return static_cast<float>(sum / factorSum);
   else
@@ -3670,10 +3670,10 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
       }
       else
       {
-        std::vector<float> values(4, kFloatMissing);  // indexies 0..3 => bl,br,tr,tl
+        std::array<float,4> values;
         GetCachedValues(theLocationCache, values);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+        value = CachedLocationInterpolatedValue(values, theLocationCache, interp, parId);
       }
     }
     // palautetaan indeksi lopuksi
@@ -3690,7 +3690,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiTimeCache &theTimeCache)
   {
     // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
     unsigned long oldTimeIndex = TimeIndex();
-    std::vector<float> values(2, kFloatMissing);
+    std::array<float,2> values;
     GetCachedValues(theTimeCache, values);
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
@@ -3702,19 +3702,18 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiTimeCache &theTimeCache)
   }
 }
 
-static float InterpolateWandC(std::vector<float> &theValues,
-                              size_t theStartIndex,
+static float InterpolateWandC(std::array<float,4> &theValues,
                               const NFmiPoint &theGridPoint,
                               double theInfoVersion)
 {
   NFmiWeatherAndCloudiness bl(
-      theValues[theStartIndex + 0], kFmiPackedWeather, kFloatMissing, theInfoVersion);
+      theValues[0], kFmiPackedWeather, kFloatMissing, theInfoVersion);
   NFmiWeatherAndCloudiness br(
-      theValues[theStartIndex + 1], kFmiPackedWeather, kFloatMissing, theInfoVersion);
+      theValues[1], kFmiPackedWeather, kFloatMissing, theInfoVersion);
   NFmiWeatherAndCloudiness tr(
-      theValues[theStartIndex + 2], kFmiPackedWeather, kFloatMissing, theInfoVersion);
+      theValues[2], kFmiPackedWeather, kFloatMissing, theInfoVersion);
   NFmiWeatherAndCloudiness tl(
-      theValues[theStartIndex + 3], kFmiPackedWeather, kFloatMissing, theInfoVersion);
+      theValues[3], kFmiPackedWeather, kFloatMissing, theInfoVersion);
   double dx = theGridPoint.X() - int(theGridPoint.X());
   double dy = theGridPoint.Y() - int(theGridPoint.Y());
 
@@ -3731,15 +3730,14 @@ static float InterpolateWandC(std::vector<float> &theValues,
   return weather.TransformedFloatValue();
 }
 
-static float InterpolateTotalWind(std::vector<float> &theValues,
-                                  size_t theStartIndex,
+static float InterpolateTotalWind(std::array<float,4> &theValues,
                                   const NFmiPoint &theGridPoint,
                                   double theInfoVersion)
 {
-  NFmiTotalWind bl(theValues[theStartIndex + 0], kFmiPackedWind, theInfoVersion);
-  NFmiTotalWind br(theValues[theStartIndex + 1], kFmiPackedWind, theInfoVersion);
-  NFmiTotalWind tr(theValues[theStartIndex + 2], kFmiPackedWind, theInfoVersion);
-  NFmiTotalWind tl(theValues[theStartIndex + 3], kFmiPackedWind, theInfoVersion);
+  NFmiTotalWind bl(theValues[0], kFmiPackedWind, theInfoVersion);
+  NFmiTotalWind br(theValues[1], kFmiPackedWind, theInfoVersion);
+  NFmiTotalWind tr(theValues[2], kFmiPackedWind, theInfoVersion);
+  NFmiTotalWind tl(theValues[3], kFmiPackedWind, theInfoVersion);
   double dx = theGridPoint.X() - int(theGridPoint.X());
   double dy = theGridPoint.Y() - int(theGridPoint.Y());
 
@@ -3756,26 +3754,24 @@ static float InterpolateTotalWind(std::vector<float> &theValues,
   return wind.TransformedFloatValue();
 }
 
-static float InterpolateWindDir(std::vector<float> &theWSvalues,
-                                std::vector<float> &theWDvalues,
-                                size_t theWDStartIndex,
+static float InterpolateWindDir(std::array<float,4> &theWSvalues,
+                                std::array<float,4> &theWDvalues,
                                 const NFmiPoint &theGridPoint)
 {
   double dx = theGridPoint.X() - floor(theGridPoint.X());
   double dy = theGridPoint.Y() - floor(theGridPoint.Y());
   NFmiInterpolation::WindInterpolator windInterpolator;
   windInterpolator.operator()(
-      theWSvalues[0], theWDvalues[theWDStartIndex + 0], (1 - dx) * (1 - dy));
-  windInterpolator.operator()(theWSvalues[1], theWDvalues[theWDStartIndex + 1], dx *(1 - dy));
-  windInterpolator.operator()(theWSvalues[2], theWDvalues[theWDStartIndex + 2], dx *dy);
-  windInterpolator.operator()(theWSvalues[3], theWDvalues[theWDStartIndex + 3], (1 - dx) * dy);
+      theWSvalues[0], theWDvalues[0], (1 - dx) * (1 - dy));
+  windInterpolator.operator()(theWSvalues[1], theWDvalues[1], dx *(1 - dy));
+  windInterpolator.operator()(theWSvalues[2], theWDvalues[2], dx *dy);
+  windInterpolator.operator()(theWSvalues[3], theWDvalues[3], (1 - dx) * dy);
 
   return static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain tuulen suunta
   // (tämä pitää tehdä jotenkin fiksummin)
 }
 
-static float InterpolateWindVector(std::vector<float> &theWindVectorvalues,
-                                   size_t theWDStartIndex,
+static float InterpolateWindVector(std::array<float,4> &theWindVectorvalues,
                                    const NFmiPoint &theGridPoint)
 {
   double dx = theGridPoint.X() - floor(theGridPoint.X());
@@ -3783,14 +3779,13 @@ static float InterpolateWindVector(std::vector<float> &theWindVectorvalues,
   return static_cast<float>(
       NFmiInterpolation::WindVector(dx,
                                     dy,
-                                    theWindVectorvalues[theWDStartIndex + 3],
-                                    theWindVectorvalues[theWDStartIndex + 2],
-                                    theWindVectorvalues[theWDStartIndex + 0],
-                                    theWindVectorvalues[theWDStartIndex + 1]));
+                                    theWindVectorvalues[3],
+                                    theWindVectorvalues[2],
+                                    theWindVectorvalues[0],
+                                    theWindVectorvalues[1]));
 }
 
-float NFmiQueryInfo::CachedLocationInterpolatedValue(std::vector<float> &theValues,
-                                                     size_t theStartIndex,
+float NFmiQueryInfo::CachedLocationInterpolatedValue(std::array<float,4> &theValues,
                                                      const NFmiLocationCache &theLocationCache,
                                                      FmiInterpolationMethod theInterpolationMethod,
                                                      FmiParameterName theParId)
@@ -3802,28 +3797,28 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::vector<float> &theValu
   {
     if (theParId == kFmiWeatherAndCloudiness)
       value = ::InterpolateWandC(
-          theValues, theStartIndex, theLocationCache.itsGridPoint, InfoVersion());
+          theValues, theLocationCache.itsGridPoint, InfoVersion());
     else if (theParId == kFmiTotalWindMS)
       value = ::InterpolateTotalWind(
-          theValues, theStartIndex, theLocationCache.itsGridPoint, InfoVersion());
+          theValues, theLocationCache.itsGridPoint, InfoVersion());
   }
   else if (theInterpolationMethod == kNearestPoint)
   {
     value = static_cast<float>(NFmiInterpolation::NearestPoint(gpoint.X() - floor(gpoint.X()),
                                                                gpoint.Y() - floor(gpoint.Y()),
-                                                               theValues[theStartIndex + 3],
-                                                               theValues[theStartIndex + 2],
-                                                               theValues[theStartIndex + 0],
-                                                               theValues[theStartIndex + 1]));
+                                                               theValues[3],
+                                                               theValues[2],
+                                                               theValues[0],
+                                                               theValues[1]));
   }
   else if (theInterpolationMethod == kNearestNonMissing)
   {
     value = static_cast<float>(NFmiInterpolation::NearestNonMissing(gpoint.X() - floor(gpoint.X()),
                                                                     gpoint.Y() - floor(gpoint.Y()),
-                                                                    theValues[theStartIndex + 3],
-                                                                    theValues[theStartIndex + 2],
-                                                                    theValues[theStartIndex + 0],
-                                                                    theValues[theStartIndex + 1]));
+                                                                    theValues[3],
+                                                                    theValues[2],
+                                                                    theValues[0],
+                                                                    theValues[1]));
   }
   else
   {
@@ -3833,33 +3828,33 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::vector<float> &theValu
     if (theParId == kFmiWindDirection)
     {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
       Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-      std::vector<float> WSvalues(4, kFloatMissing);
+      std::array<float,4> WSvalues;
       GetCachedValues(theLocationCache, WSvalues);
       Param(theParId);  // palautetaan tuulensuunta takaisin parametriksi
-      value = ::InterpolateWindDir(WSvalues, theValues, theStartIndex, gpoint);
+      value = ::InterpolateWindDir(WSvalues, theValues, gpoint);
     }
     else if (theParId == kFmiWindVectorMS)
     {
-      value = ::InterpolateWindVector(theValues, theStartIndex, gpoint);
+      value = ::InterpolateWindVector(theValues, gpoint);
     }
     else if (theParId == kFmiWaveDirection)
     {
       // modulo 360 interpolation
       value = static_cast<float>(NFmiInterpolation::ModBiLinear(gpoint.X() - floor(gpoint.X()),
                                                                 gpoint.Y() - floor(gpoint.Y()),
-                                                                theValues[theStartIndex + 3],
-                                                                theValues[theStartIndex + 2],
-                                                                theValues[theStartIndex + 0],
-                                                                theValues[theStartIndex + 1]));
+                                                                theValues[3],
+                                                                theValues[2],
+                                                                theValues[0],
+                                                                theValues[1]));
     }
     else
     {
       value = static_cast<float>(NFmiInterpolation::BiLinear(gpoint.X() - floor(gpoint.X()),
                                                              gpoint.Y() - floor(gpoint.Y()),
-                                                             theValues[theStartIndex + 3],
-                                                             theValues[theStartIndex + 2],
-                                                             theValues[theStartIndex + 0],
-                                                             theValues[theStartIndex + 1]));
+                                                             theValues[3],
+                                                             theValues[2],
+                                                             theValues[0],
+                                                             theValues[1]));
     }
   }
   return value;
@@ -4008,13 +4003,14 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         }
         else
         {
-          std::vector<float> values(8, kFloatMissing);
-          GetCachedValues(theLocationCache, theTimeCache, values);
+          std::array<float,4> values1;
+          std::array<float,4> values2;
+          GetCachedValues(theLocationCache, theTimeCache, values1, values2);
           auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
           float value1 =
-              CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+              CachedLocationInterpolatedValue(values1, theLocationCache, interp, parId);
           float value2 =
-              CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
+              CachedLocationInterpolatedValue(values2, theLocationCache, interp, parId);
           value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
         }
       }
@@ -4031,7 +4027,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
 // 0 -> time1
 // 1 -> time2
 void NFmiQueryInfo::GetCachedValues(const NFmiTimeCache &theTimeCache,
-                                    std::vector<float> &theValues)
+                                    std::array<float,2> &theValues)
 {
   TimeIndex(theTimeCache.itsTimeIndex1);
   theValues[0] = FloatValue();
@@ -4042,26 +4038,27 @@ void NFmiQueryInfo::GetCachedValues(const NFmiTimeCache &theTimeCache,
 // oletus, vektori on jo alustettu sopivan kokoiseksi ja puuttuvilla arvoilla
 // arvojen sijoitus annetun vektorin indekseissä:
 // 0-3 -> time1 bl,br,tr,tl
-// 4-7 -> time2 bl,br,tr,tl
 void NFmiQueryInfo::GetCachedValues(const NFmiLocationCache &theLocationCache,
                                     const NFmiTimeCache &theTimeCache,
-                                    std::vector<float> &theValues)
+                                    std::array<float,4> &theValues1,
+                                    std::array<float,4> &theValues2)
 {
   TimeIndex(theTimeCache.itsTimeIndex1);
-  GetCachedValues(theLocationCache, theValues, 0);
+  GetCachedValues(theLocationCache, theValues1);
   TimeIndex(theTimeCache.itsTimeIndex2);
-  GetCachedValues(theLocationCache, theValues, 4);
+  GetCachedValues(theLocationCache, theValues2);
 }
 
 void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
                                                  const NFmiLocationCache &theLocationCache,
                                                  const NFmiTimeCache &theTimeCache,
-                                                 std::vector<float> &theValues)
+                                                 std::array<float,4> &theValues1,
+                                                 std::array<float,4> &theValues2)
 {
   TimeIndex(theTimeCache.itsTimeIndex1);
-  GetCachedPressureLevelValues(P, theLocationCache, theValues, 0);
+  GetCachedPressureLevelValues(P, theLocationCache, theValues1);
   TimeIndex(theTimeCache.itsTimeIndex2);
-  GetCachedPressureLevelValues(P, theLocationCache, theValues, 4);
+  GetCachedPressureLevelValues(P, theLocationCache, theValues2);
 }
 
 bool NFmiQueryInfo::DoGlobalWrapFix(const NFmiPoint &theGridPoint) const
@@ -4076,10 +4073,9 @@ bool NFmiQueryInfo::DoGlobalWrapFix(const NFmiPoint &theGridPoint) const
 
 // oletus, vektori on jo alustettu sopivan kokoiseksi ja puuttuvilla arvoilla
 // arvojen sijoitus annetun vektorin indekseissä:
-// theStartIndex + 0..3 -> time1 bl,br,tr,tl
+
 void NFmiQueryInfo::GetCachedValues(const NFmiLocationCache &theLocationCache,
-                                    std::vector<float> &theValues,
-                                    size_t theStartIndex)
+                                    std::array<float,4> &theValues)
 {
   const NFmiPoint &gpoint = theLocationCache.itsGridPoint;
   if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
@@ -4088,13 +4084,13 @@ void NFmiQueryInfo::GetCachedValues(const NFmiLocationCache &theLocationCache,
     // Lasketaan ensin hilan oikean reunan alempi hilapiste
     unsigned long newLocationIndex = static_cast<unsigned long>(gpoint.Y()) * xsize + (xsize - 1);
     LocationIndex(newLocationIndex);
-    theValues[theStartIndex + 0] = PeekLocationValue(0, 0);
-    theValues[theStartIndex + 3] = PeekLocationValue(0, 1);
+    theValues[0] = PeekLocationValue(0, 0);
+    theValues[3] = PeekLocationValue(0, 1);
     // Lasketaan sitten hilan vasemman reunan alempi hilapiste
     newLocationIndex = static_cast<unsigned long>(gpoint.Y()) * xsize + 0;
     LocationIndex(newLocationIndex);
-    theValues[theStartIndex + 1] = PeekLocationValue(0, 0);
-    theValues[theStartIndex + 2] = PeekLocationValue(0, 1);
+    theValues[1] = PeekLocationValue(0, 0);
+    theValues[2] = PeekLocationValue(0, 1);
   }
   else
   {
@@ -4103,17 +4099,16 @@ void NFmiQueryInfo::GetCachedValues(const NFmiLocationCache &theLocationCache,
     int xShift = static_cast<int>(::round(gpoint.X())) - static_cast<int>(gpoint.X());
     int yShift = static_cast<int>(::round(gpoint.Y())) - static_cast<int>(gpoint.Y());
 
-    theValues[theStartIndex + 0] = PeekLocationValue(0 - xShift, 0 - yShift);
-    theValues[theStartIndex + 3] = PeekLocationValue(0 - xShift, 1 - yShift);
-    theValues[theStartIndex + 1] = PeekLocationValue(1 - xShift, 0 - yShift);
-    theValues[theStartIndex + 2] = PeekLocationValue(1 - xShift, 1 - yShift);
+    theValues[0] = PeekLocationValue(0 - xShift, 0 - yShift);
+    theValues[3] = PeekLocationValue(0 - xShift, 1 - yShift);
+    theValues[1] = PeekLocationValue(1 - xShift, 0 - yShift);
+    theValues[2] = PeekLocationValue(1 - xShift, 1 - yShift);
   }
 }
 
 void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
                                                  const NFmiLocationCache &theLocationCache,
-                                                 std::vector<float> &theValues,
-                                                 size_t theStartIndex)
+                                                 std::array<float,4> &theValues)
 {
   LocationIndex(theLocationCache.itsLocationIndex);
   const NFmiPoint &gpoint = theLocationCache.itsGridPoint;
@@ -4124,14 +4119,14 @@ void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
   if (xShift == 1) MoveLeft();
   if (yShift == 1) MoveDown();
 
-  theValues[theStartIndex + 0] = PressureLevelValue(P);
+  theValues[0] = PressureLevelValue(P);
   MoveRight();
-  theValues[theStartIndex + 1] = PressureLevelValue(P);
+  theValues[1] = PressureLevelValue(P);
   MoveLeft();
   MoveUp();
-  theValues[theStartIndex + 3] = PressureLevelValue(P);
+  theValues[3] = PressureLevelValue(P);
   MoveRight();
-  theValues[theStartIndex + 2] = PressureLevelValue(P);
+  theValues[2] = PressureLevelValue(P);
 }
 
 float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiLocationCache &theLocationCache)
@@ -4161,10 +4156,10 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiLocationCache &
         value = PressureLevelValue(P);
       else
       {
-        std::vector<float> values(4, kFloatMissing);
+        std::array<float,4> values;
         GetCachedPressureLevelValues(P, theLocationCache, values);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        value = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
+        value = CachedLocationInterpolatedValue(values, theLocationCache, interp, parId);
       }
     }
     // palautetaan indeksi lopuksi
@@ -4181,7 +4176,7 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiTimeCache &theT
   {
     // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
     unsigned long oldTimeIndex = TimeIndex();
-    std::vector<float> values(2, kFloatMissing);
+    std::array<float,2> values;
     GetCachedPressureLevelValues(P, theTimeCache, values);
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
@@ -4195,7 +4190,7 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiTimeCache &theT
 
 void NFmiQueryInfo::GetCachedPressureLevelValues(float P,
                                                  const NFmiTimeCache &theTimeCache,
-                                                 std::vector<float> &theValues)
+                                                 std::array<float,2> &theValues)
 {
   TimeIndex(theTimeCache.itsTimeIndex1);
   theValues[0] = PressureLevelValue(P);
@@ -4236,11 +4231,12 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P,
         value = CachedPressureLevelValue(P, theTimeCache);
       else
       {  // tehdään sitten sekä aika että paikka cached interpolaatio
-        std::vector<float> values(8, kFloatMissing);
-        GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values);
+        std::array<float,4> values1;
+        std::array<float,4> values2;
+        GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values1, values2);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
-        float value1 = CachedLocationInterpolatedValue(values, 0, theLocationCache, interp, parId);
-        float value2 = CachedLocationInterpolatedValue(values, 4, theLocationCache, interp, parId);
+        float value1 = CachedLocationInterpolatedValue(values1, theLocationCache, interp, parId);
+        float value2 = CachedLocationInterpolatedValue(values2, theLocationCache, interp, parId);
         value = CachedTimeInterpolatedValue(value1, value2, theTimeCache, interp, parId);
       }
     }

@@ -30,7 +30,7 @@ class CoordinateMatrix;
 }
 
 //! Undocumented
-class _FMI_DLL NFmiLocationBag : public NFmiSize
+class NFmiLocationBag : public NFmiSize
 {
  public:
   virtual ~NFmiLocationBag();

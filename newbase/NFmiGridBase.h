@@ -11,7 +11,7 @@
 #include "NFmiPoint.h"
 
 //! Undocumented
-class _FMI_DLL NFmiGridBase
+class NFmiGridBase
 {
  public:
   virtual ~NFmiGridBase();

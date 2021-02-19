@@ -16,7 +16,7 @@ class NFmiDataModifierList;
 //! Tämä modifier on tehty parametri ja level kohtaiseksi. Match-metodilla kysytään onko haluttu
 //! modifier.
 
-class _FMI_DLL NFmiParamDataModifier : public NFmiDataModifier
+class NFmiParamDataModifier : public NFmiDataModifier
 {
  public:
   virtual ~NFmiParamDataModifier();

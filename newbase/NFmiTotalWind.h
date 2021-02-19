@@ -27,7 +27,7 @@ class NFmiVoidPtrList;
 class NFmiIntegrationSelector;
 
 //! Undocumented
-class _FMI_DLL NFmiTotalWind : public NFmiCombinedParam
+class NFmiTotalWind : public NFmiCombinedParam
 {
  public:
   virtual ~NFmiTotalWind();

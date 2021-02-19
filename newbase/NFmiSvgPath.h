@@ -14,7 +14,7 @@
 
 class NFmiPoint;
 
-class _FMI_DLL NFmiSvgPath
+class NFmiSvgPath
 {
  public:
   NFmiSvgPath();

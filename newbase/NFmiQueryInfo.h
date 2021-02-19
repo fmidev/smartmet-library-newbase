@@ -33,7 +33,7 @@ class NFmiStation;
 #define HEADERMAX 3  // Poistetaan
 
 //! Undocumented
-class _FMI_DLL NFmiQueryInfo
+class NFmiQueryInfo
 {
  public:
   virtual ~NFmiQueryInfo();
@@ -195,18 +195,17 @@ class _FMI_DLL NFmiQueryInfo
   float CachedInterpolation(const NFmiTimeCache &theTimeCache);
   void GetCachedValues(const NFmiLocationCache &theLocationCache,
                        const NFmiTimeCache &theTimeCache,
-                       std::vector<float> &theValues);
+                       std::array<float,4> &theValues1,
+                       std::array<float,4> &theValues2);
   void GetCachedValues(const NFmiLocationCache &theLocationCache,
-                       std::vector<float> &theValues,
-                       size_t theStartIndex = 0);
-  void GetCachedValues(const NFmiTimeCache &theTimeCache, std::vector<float> &theValues);
+                       std::array<float,4> &theValues);
+  void GetCachedValues(const NFmiTimeCache &theTimeCache, std::array<float,2> &theValues);
   float CachedTimeInterpolatedValue(float theValue1,
                                     float theValue2,
                                     const NFmiTimeCache &theTimeCache,
                                     FmiInterpolationMethod theInterpolatioMethod,
                                     FmiParameterName theParId);
-  float CachedLocationInterpolatedValue(std::vector<float> &theValues,
-                                        size_t theStartIndex,
+  float CachedLocationInterpolatedValue(std::array<float,4> &theValues,
                                         const NFmiLocationCache &theLocationCache,
                                         FmiInterpolationMethod theInterpolatioMethod,
                                         FmiParameterName theParId);
@@ -217,15 +216,15 @@ class _FMI_DLL NFmiQueryInfo
   float CachedPressureLevelValue(float P, const NFmiTimeCache &theTimeCache);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiLocationCache &theLocationCache,
-                                    std::vector<float> &theValues,
-                                    size_t theStartIndex = 0);
+                                    std::array<float,4> &theValues);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiTimeCache &theTimeCache,
-                                    std::vector<float> &theValues);
+                                    std::array<float,2> &theValues);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiLocationCache &theLocationCache,
                                     const NFmiTimeCache &theTimeCache,
-                                    std::vector<float> &theValues);
+                                    std::array<float,4> &theValues1,
+                                    std::array<float,4> &theValues2);
   // ****** Cached interpolation methods ***********************
 
   void SetLocalTimes(const float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi

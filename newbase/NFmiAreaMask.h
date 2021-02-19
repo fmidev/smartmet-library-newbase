@@ -27,7 +27,7 @@ class NFmiCalculationParams;
 class NFmiMacroParamValue;
 
 //! Undocumented class
-class _FMI_DLL NFmiAreaMask
+class NFmiAreaMask
 {
  public:
   /*!

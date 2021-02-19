@@ -14,7 +14,7 @@ class NFmiCombinedParam;
 class NFmiQueryInfo;
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifier : public NFmiDataModifierBase
+class NFmiDataModifier : public NFmiDataModifierBase
 {
  public:
   virtual ~NFmiDataModifier();

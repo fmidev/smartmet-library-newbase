@@ -12,7 +12,7 @@
 #include <iostream>
 
 //! Undocumenetd
-class _FMI_DLL NFmiSize
+class NFmiSize
 {
  public:
   virtual ~NFmiSize() {}

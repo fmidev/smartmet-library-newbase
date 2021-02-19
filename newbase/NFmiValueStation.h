@@ -17,7 +17,7 @@
 #include "NFmiStation.h"
 
 //! Undocumented
-class _FMI_DLL NFmiValueStation : public NFmiStation
+class NFmiValueStation : public NFmiStation
 {
  public:
   virtual ~NFmiValueStation();

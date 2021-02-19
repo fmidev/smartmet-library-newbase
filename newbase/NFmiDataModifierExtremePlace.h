@@ -13,7 +13,7 @@
 #include "NFmiLocation.h"
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierExtremePlace : public NFmiDataModifier
+class NFmiDataModifierExtremePlace : public NFmiDataModifier
 {
  public:
   virtual ~NFmiDataModifierExtremePlace();

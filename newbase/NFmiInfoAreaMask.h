@@ -59,7 +59,7 @@ class MetaParamDataHolderDoCheckStateRestorer
   }
 };
 
-class _FMI_DLL NFmiInfoAreaMask : public NFmiAreaMaskImpl
+class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 {
  public:
   virtual ~NFmiInfoAreaMask();
@@ -230,7 +230,7 @@ class _FMI_DLL NFmiInfoAreaMask : public NFmiAreaMaskImpl
 };  // class NFmiInfoAreaMask
 
 //! Tämä luokka toimii kuten NFmiInfoAreaMask mutta kurkkaa halutun x-y hila pisteen yli arvoa
-class _FMI_DLL NFmiInfoAreaMaskPeekXY : public NFmiInfoAreaMask
+class NFmiInfoAreaMaskPeekXY : public NFmiInfoAreaMask
 {
  public:
   virtual ~NFmiInfoAreaMaskPeekXY();
@@ -276,7 +276,7 @@ class _FMI_DLL NFmiInfoAreaMaskPeekXY : public NFmiInfoAreaMask
 //! Tämä luokka toimii kuten NFmiInfoAreaMaskPeekXY mutta käyttää kurkkaukseen editoritavan-datan
 //! tai macroParam-datan karttaprojektiota ja X/Y kurkkaukset tehdään siinä kilometreissa. Tämä
 //! kurkkaus ei välttämättä mene lat-lon suuntaisesti kuin ehkä jos pohjana on latlon area.
-class _FMI_DLL NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
+class NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
 {
  public:
   virtual ~NFmiInfoAreaMaskPeekXY2();
@@ -315,7 +315,7 @@ class _FMI_DLL NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
 
 //! Tämä luokka toimii kuten NFmiInfoAreaMaskPeekXY ja  käyttää kurkkaukseen haluttuja kilometri
 //! etäisyyksiä
-class _FMI_DLL NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
+class NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
 {
  public:
   virtual ~NFmiInfoAreaMaskPeekXY3();
@@ -358,7 +358,7 @@ class _FMI_DLL NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
 
 };  // class NFmiInfoAreaMaskPeekXY3
 
-class _FMI_DLL NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
+class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
 {
  public:
   ~NFmiInfoAreaMaskMetFuncBase();
@@ -424,7 +424,7 @@ class _FMI_DLL NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
 };
 
 //! Tämä luokka laskee gradientin tai divergenssin.
-class _FMI_DLL NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
+class NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
   ~NFmiInfoAreaMaskGrad();
@@ -467,7 +467,7 @@ class _FMI_DLL NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
 
 };  // class NFmiInfoAreaMaskGrad
 
-class _FMI_DLL NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
+class NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
 {
  public:
   ~NFmiInfoAreaMaskAdvection();
@@ -496,7 +496,7 @@ class _FMI_DLL NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
 };
 
 //! Tämä luokka laskee laplacen (eli nablan?).
-class _FMI_DLL NFmiInfoAreaMaskLaplace : public NFmiInfoAreaMaskMetFuncBase
+class NFmiInfoAreaMaskLaplace : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
   ~NFmiInfoAreaMaskLaplace();
@@ -534,7 +534,7 @@ class _FMI_DLL NFmiInfoAreaMaskLaplace : public NFmiInfoAreaMaskMetFuncBase
 
 };  // class NFmiInfoAreaMaskLaplace
 
-class _FMI_DLL NFmiInfoAreaMaskRotor : public NFmiInfoAreaMaskGrad
+class NFmiInfoAreaMaskRotor : public NFmiInfoAreaMaskGrad
 {
  public:
   ~NFmiInfoAreaMaskRotor();
@@ -575,7 +575,7 @@ class VerticalIterationBreakingData
   unsigned long index;  // indeksi joka halutaan loppituksen lopuksi palauttaa
 };
 
-class _FMI_DLL NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
+class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
   ~NFmiInfoAreaMaskVertFunc();
@@ -691,7 +691,7 @@ class _FMI_DLL NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
                         // käänteisessä järjestyksessä
 };
 
-class _FMI_DLL NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
+class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
 {
  public:
   ~NFmiInfoAreaMaskVertConditionalFunc();
@@ -752,7 +752,7 @@ class NFmiInfoAreaMaskTimeVertFunc : public NFmiInfoAreaMaskVertFunc
                                      // current-timesta
 };
 
-class _FMI_DLL NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
+class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
 {
  public:
   ~NFmiInfoAreaMaskProbFunc();
@@ -841,7 +841,7 @@ class _FMI_DLL NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
   int itsTotalCalculatedGridPoints;
 };
 
-class _FMI_DLL NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
+class NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
   ~NFmiInfoTimeIntegrator();
@@ -891,7 +891,7 @@ class _FMI_DLL NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
 // Luokka tekee yksinkertaisen laatikko integraation halutulla funktiolla.
 // Tarkoittaen esim. MIN(T -1 -1 1 1) tyyppisiä funktioita, joissa käydään läpi
 // originaali dataa vakio hilalaatikon puitteissa.
-class _FMI_DLL NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
+class NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
   ~NFmiInfoRectAreaIntegrator();
@@ -945,7 +945,7 @@ class _FMI_DLL NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
 // Luokka tekee alueellisia integraatio laskuja halutulla funktiolla.
 // Laskenta-alue on halutun säteinen [km] ympyrä kulloisen laskenta pisteen
 // ympärillä datan originaali hilassa.
-class _FMI_DLL NFmiInfoAreaIntegrationFunc : public NFmiInfoAreaMaskProbFunc
+class NFmiInfoAreaIntegrationFunc : public NFmiInfoAreaMaskProbFunc
 {
  public:
   ~NFmiInfoAreaIntegrationFunc();
@@ -977,7 +977,7 @@ class _FMI_DLL NFmiInfoAreaIntegrationFunc : public NFmiInfoAreaMaskProbFunc
 
 // Luokka joka laskee todennäköisyyksiä datan omassa hilassa ynmpyrä alueen sisällä olevien
 // pisteiden kanssa, MUTTA niin että laskuissa käytetään simple-condition laskuja.
-class _FMI_DLL NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
+class NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
 {
  public:
   ~NFmiInfoAreaMaskAreaProbFunc();
@@ -1002,7 +1002,7 @@ class _FMI_DLL NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
 };
 
 // Datalle tehdään laskuissa aina haluttu aikasiirto.
-class _FMI_DLL NFmiTimeShiftedInfoAreaMask : public NFmiInfoAreaMask
+class NFmiTimeShiftedInfoAreaMask : public NFmiInfoAreaMask
 {
  public:
   virtual ~NFmiTimeShiftedInfoAreaMask();

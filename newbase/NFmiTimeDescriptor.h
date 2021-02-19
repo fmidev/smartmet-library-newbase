@@ -23,7 +23,7 @@ enum
 };
 
 //! Undocumented
-class _FMI_DLL NFmiTimeDescriptor : public NFmiDataDescriptor
+class NFmiTimeDescriptor : public NFmiDataDescriptor
 {
  public:
   virtual ~NFmiTimeDescriptor();

@@ -13,7 +13,7 @@
 typedef boost::shared_mutex MutexType;
 
 //! Undocumented
-class _FMI_DLL NFmiDataModifierVariance : public NFmiRegressionModifier
+class NFmiDataModifierVariance : public NFmiRegressionModifier
 {
  public:
   virtual ~NFmiDataModifierVariance();

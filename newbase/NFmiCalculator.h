@@ -12,7 +12,7 @@
 
 //! Undocumented
 
-class _FMI_DLL NFmiCalculator
+class NFmiCalculator
 {
  public:
   virtual ~NFmiCalculator();

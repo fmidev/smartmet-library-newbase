@@ -3,123 +3,30 @@ LIB = smartmet-$(SUBNAME)
 SPEC = smartmet-library-$(SUBNAME)
 INCDIR = smartmet/$(SUBNAME)
 
-# Installation directories
-
-processor := $(shell uname -p)
-
-ifeq ($(origin PREFIX), undefined)
-  PREFIX = /usr
-else
-  PREFIX = $(PREFIX)
-endif
-
-ifeq ($(processor), x86_64)
-  libdir = $(PREFIX)/lib64
-else
-  libdir = $(PREFIX)/lib
-endif
-
-bindir = $(PREFIX)/bin
-includedir = $(PREFIX)/include
-datadir = $(PREFIX)/share
-objdir = obj
-
-# Compiler options
-
-DEFINES = -DUNIX -D_REENTRANT -DWGS84 -DBOOST -DFMI_COMPRESSION
-
--include $(HOME)/.smartmet.mk
-GCC_DIAG_COLOR ?= always
-CXX_STD ?= c++11
 
 # Say 'yes' to disable Gdal
-DISABLED_GDAL=
-ifeq ($(DISABLED_GDAL),yes)
-  DEFINES += -DDISABLED_GDAL
-endif
-
-# Boost 1.69
-
-ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
-  LIBS += -L/usr/lib64/boost169
-endif
-
+DISABLED_GDAL ?=
+REQUIRES := gdal
 ifneq ($(DISABLED_GDAL),yes)
-ifneq "$(wildcard /usr/gdal30/include)" ""
-  INCLUDES += -I/usr/gdal30/include
-  LIBS += -L$(PREFIX)/gdal30/lib
-else
-  INCLUDES += -I/usr/include/gdal
-endif
+REQUIRES += gdal
 endif
 
-ifeq ($(CXX), clang++)
+REQUIRES += fmt
 
- FLAGS = \
-	-std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer \
-	-Weverything \
-	-Wno-c++98-compat \
-	-Wno-float-equal \
-	-Wno-padded \
-	-Wno-missing-prototypes
+include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
- INCLUDES += \
-	-isystem $(includedir) \
-	-isystem $(includedir)/smartmet \
-	-isystem $(PREFIX)/gdal30/include
+DEFINES = -DUNIX -DWGS84 -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
-else
-
- FLAGS = -std=$(CXX_STD) -fPIC -MD -fno-omit-frame-pointer -Wall -W -Wno-unused-parameter -fdiagnostics-color=$(GCC_DIAG_COLOR)
-
- FLAGS_DEBUG = \
-	-Wcast-align \
-	-Winline \
-	-Wno-multichar \
-	-Wno-pmf-conversions \
-	-Woverloaded-virtual  \
-	-Wpointer-arith \
-	-Wcast-qual \
-	-Wwrite-strings \
-	-Wsign-promo \
-	-Wno-inline
-
- FLAGS_RELEASE = -Wuninitialized
-
- INCLUDES += \
-	-I$(includedir) \
-	-I$(includedir)/smartmet
-
-endif
-
-ifeq ($(TSAN), yes)
-  FLAGS += -fsanitize=thread
-endif
-ifeq ($(ASAN), yes)
-  FLAGS += -fsanitize=address -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize-address-use-after-scope
-endif
-
-# Compile options in detault, debug and profile modes
-
-CFLAGS         = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
-CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror  -Og -g
-CFLAGS_PROFILE = $(DEFINES) $(FLAGS) $(FLAGS_PROFILE) -DNDEBUG -O2 -g -pg
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
-LIBS += -L$(libdir) \
-	-lsmartmet-gis \
-	-lfmt \
+LIBS += -lsmartmet-gis \
 	-lboost_regex \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \
-	-lboost_thread
-
-ifneq ($(DISABLED_GDAL),yes)
-  LIBS += -lgdal
-endif
+	-lboost_thread \
+	$(REQUIRED_LIBS)
 
 # What to install
 
@@ -127,23 +34,7 @@ LIBFILE = libsmartmet-$(SUBNAME).so
 ALIBFILE = libsmartmet-$(SUBNAME).a
 
 # How to install
-
-INSTALL_PROG = install -p -m 775
-INSTALL_DATA = install -p -m 664
-
 ARFLAGS = -r
-
-# Compile option overrides
-
-ifneq (,$(findstring debug,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_DEBUG)
-  CFLAGS0 = $(CFLAGS_DEBUG)
-endif
-
-ifneq (,$(findstring profile,$(MAKECMDGOALS)))
-  CFLAGS = $(CFLAGS_PROFILE)
-  CFLAGS0 = $(CFLAGS_PROFILE)
-endif
 
 # Compilation directories
 
@@ -169,6 +60,11 @@ profile: all
 
 $(LIBFILE): $(OBJS)
 	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
+	@echo Checking $(LIBFILE) for unresolved references
+	@if ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol; \
+		then rm -v $(LIBFILE); \
+		exit 1; \
+	fi
 
 $(ALIBFILE): $(OBJS)
 	$(AR) $(ARFLAGS) $(ALIBFILE) $(OBJS)
@@ -204,7 +100,7 @@ objdir:
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
-	rpmbuild -ta $(SPEC).tar.gz
+	rpmbuild -tb $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 
 .SUFFIXES: $(SUFFIXES) .cpp
@@ -215,8 +111,9 @@ modernize:
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
-obj/NFmiEnumConverter.o: NFmiEnumConverter.cpp
-	$(CXX) $(CFLAGS0) $(INCLUDES) -c -o $@ $<
+ifneq ($(USE_CLANG), yes)
+obj/NFmiEnumConverterInit.o: CFLAGS += -O0
+endif
 
 ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)

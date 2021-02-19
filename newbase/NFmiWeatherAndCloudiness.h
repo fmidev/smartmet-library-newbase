@@ -29,7 +29,7 @@ class NFmiQueryInfo;
 class NFmiIntegrationSelector;
 
 //! Undocumented
-class _FMI_DLL NFmiWeatherAndCloudiness : public NFmiCombinedParam
+class NFmiWeatherAndCloudiness : public NFmiCombinedParam
 {
  public:
   virtual ~NFmiWeatherAndCloudiness();

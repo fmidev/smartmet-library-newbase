@@ -11,7 +11,7 @@
 #include "NFmiSize.h"
 
 //! Undocumented
-class _FMI_DLL NFmiTimeBag : public NFmiSize
+class NFmiTimeBag : public NFmiSize
 {
  public:
   NFmiTimeBag();

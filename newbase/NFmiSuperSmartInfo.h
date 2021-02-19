@@ -20,7 +20,7 @@ class NFmiDataModifierDescriptor;
 class NFmiBitmapAreaMask;
 
 //! Undocumented
-class _FMI_DLL NFmiSuperSmartInfo : public NFmiFastQueryInfo
+class NFmiSuperSmartInfo : public NFmiFastQueryInfo
 {
  public:
   // Accesslevel määrää millä tasolla dataa haetaan kulloisellakin hetkellä SSInfosta.

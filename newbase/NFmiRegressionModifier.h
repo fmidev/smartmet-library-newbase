@@ -10,7 +10,7 @@
 #include "NFmiInfoModifier.h"
 
 //! Undocumented
-class _FMI_DLL NFmiRegressionModifier : public NFmiInfoModifier
+class NFmiRegressionModifier : public NFmiInfoModifier
 {
  public:
   virtual ~NFmiRegressionModifier();

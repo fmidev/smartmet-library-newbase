@@ -684,10 +684,10 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
       if (metaParamDataHolder.metaWindParamUsage().HasWsAndWd())
       {
         theInfo->Param(kFmiWindSpeedMS);
-        std::vector<float> wsValues(4, kFloatMissing);
+        std::array<float,4> wsValues;
         theInfo->GetCachedValues(theLocationCache, wsValues);
         theInfo->Param(kFmiWindDirection);
-        std::vector<float> wdValues(4, kFloatMissing);
+        std::array<float,4> wdValues;
         theInfo->GetCachedValues(theLocationCache, wdValues);
         for (std::size_t index = 0; index < wsValues.size(); index++)
         {
@@ -711,10 +711,10 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
       else if (metaParamDataHolder.metaWindParamUsage().HasWindComponents())
       {
         theInfo->Param(kFmiWindUMS);
-        std::vector<float> uValues(4, kFloatMissing);
+        std::array<float,4> uValues;
         theInfo->GetCachedValues(theLocationCache, uValues);
         theInfo->Param(kFmiWindVMS);
-        std::vector<float> vValues(4, kFloatMissing);
+        std::array<float,4> vValues;
         theInfo->GetCachedValues(theLocationCache, vValues);
         for (std::size_t index = 0; index < uValues.size(); index++)
         {
@@ -738,7 +738,7 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
     }
     else
     {
-      std::vector<float> values(4, kFloatMissing);
+      std::array<float,4> values;
       theInfo->GetCachedValues(theLocationCache, values);
       for (float value : values)
         theFunctionModifier->Calculate(value);

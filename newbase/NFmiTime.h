@@ -36,7 +36,7 @@
 class NFmiLocation;
 
 //! Undocumented
-class _FMI_DLL NFmiTime : public NFmiStaticTime
+class NFmiTime : public NFmiStaticTime
 {
  public:
   NFmiTime();

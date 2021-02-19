@@ -18,7 +18,7 @@
 #define ONLY_PATH "*."
 
 //! Undocumented
-class _FMI_DLL NFmiFindFile
+class NFmiFindFile
 {
  public:
   ~NFmiFindFile();

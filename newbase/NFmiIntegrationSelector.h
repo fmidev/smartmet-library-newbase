@@ -20,7 +20,7 @@ enum FmiIntegrationSelector
 };
 
 //! Undocumented
-class _FMI_DLL NFmiIntegrationSelector
+class NFmiIntegrationSelector
 {
  public:
   virtual ~NFmiIntegrationSelector();
