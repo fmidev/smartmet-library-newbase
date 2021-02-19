@@ -197,13 +197,19 @@ NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLo
   Init();
 }
 
-void NFmiRotatedLatLonArea::Init()
+void NFmiRotatedLatLonArea::Init(bool fKeepWorldRect)
 {
-  const char *fmt =
-      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} +R={} +wktext +no_defs "
-      "+type=crs";
+  if (!fKeepWorldRect)
+    itsWorldRect = NFmiRect(NFmiLatLonArea::LatLonToWorldXY(itsBottomLeftLatLon),
+                            NFmiLatLonArea::LatLonToWorldXY(itsTopRightLatLon));
 
-  itsProjStr = fmt::format(fmt, 0, -itsSouthernPole.Y(), itsSouthernPole.X(), kRearth);
+  itsXScaleFactor = (Right() - Left()) / (itsTopRightLatLon.X() - itsBottomLeftLatLon.X());
+  itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
+
+  NFmiArea::Init(fKeepWorldRect);
+
+  const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
+  itsProjStr = fmt::format(fmt, kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 

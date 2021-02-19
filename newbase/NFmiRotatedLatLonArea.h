@@ -57,9 +57,9 @@ class NFmiRotatedLatLonArea : public NFmiLatLonArea
 
   std::size_t HashValue() const;
 
- private:
-  void Init();
+  virtual void Init(bool fKeepWorldRect = false);
 
+ private:
   NFmiPoint itsSouthernPole;
 
 };  // class NFmiRotatedLatLonArea
