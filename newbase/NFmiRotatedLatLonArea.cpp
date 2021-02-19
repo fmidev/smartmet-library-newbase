@@ -194,11 +194,16 @@ NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLo
           usePacificView),
       itsSouthernPole(theSouthernPole)
 {
+  Init();
+}
+
+void NFmiRotatedLatLonArea::Init()
+{
   const char *fmt =
       "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} +R={} +wktext +no_defs "
       "+type=crs";
 
-  itsProjStr = fmt::format(fmt, 0, -theSouthernPole.Y(), theSouthernPole.X(), kRearth);
+  itsProjStr = fmt::format(fmt, 0, -itsSouthernPole.Y(), itsSouthernPole.X(), kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
@@ -334,6 +339,7 @@ std::istream &NFmiRotatedLatLonArea::Read(std::istream &file)
 {
   NFmiLatLonArea::Read(file);
   file >> itsSouthernPole;
+  Init();
   return file;
 }
 
@@ -452,6 +458,33 @@ std::size_t NFmiRotatedLatLonArea::HashValue() const
   std::size_t hash = NFmiLatLonArea::HashValue();
   boost::hash_combine(hash, itsSouthernPole.HashValue());
   return hash;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param theXYPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiRotatedLatLonArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
+{
+  auto rotated_ll = NFmiPoint(180. * theXYPoint.X() / (kPii * kRearth),
+                              180.0 * theXYPoint.Y() / (kPii * kRearth));
+  return ToRegLatLon(rotated_ll);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param theLatLonPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiRotatedLatLonArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const
+{
+  auto rotated_ll = ToRotLatLon(theLatLonPoint);
+  return NFmiPoint(kRearth * FmiRad(rotated_ll.X()), kRearth * FmiRad(rotated_ll.Y()));
 }
 
 // ======================================================================

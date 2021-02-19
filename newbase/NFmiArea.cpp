@@ -34,6 +34,8 @@
 
 #include <gis/CoordinateMatrix.h>
 
+#include <iostream>
+
 // ----------------------------------------------------------------------
 /*!
  * \bug Turha argumentti konstruktorille
@@ -345,6 +347,7 @@ Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny,
 
   if (impl->itsFlopped)
     std::swap(x1, x2);
+
 #else
   auto x1 = WorldRect().Left();
   auto x2 = WorldRect().Right();

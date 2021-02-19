@@ -17,6 +17,8 @@
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 
+#include <iostream>
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -120,8 +122,8 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
 
 const NFmiPoint NFmiLatLonArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  NFmiLongitude lon(itsBottomLeftLatLon.X() + (theXYPoint.X() - Left()) / itsXScaleFactor,
-                    PacificView());
+  double dlon = (theXYPoint.X() - Left()) / itsXScaleFactor;
+  NFmiLongitude lon(itsBottomLeftLatLon.X() + dlon, PacificView());
   NFmiLatitude lat(itsBottomLeftLatLon.Y() + (theXYPoint.Y() - Bottom()) / itsYScaleFactor);
   return NFmiPoint(lon.Value(), lat.Value());
 }
@@ -163,7 +165,6 @@ const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiLatLonArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
 {
-  // TODO: Fix slow implementation
   return ToXY(WorldXYToLatLon(theWorldXYPoint));
 }
 
