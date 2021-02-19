@@ -4586,6 +4586,7 @@ static void FillDataToCurrentTime(
     if (theFilledInfo.Grid() && sourceInfo->Grid() &&
         *(theFilledInfo.Grid()) == *(sourceInfo->Grid()))
     {
+      std::vector<float> values;
       for (theFilledInfo.ResetLevel(); theFilledInfo.NextLevel();)
       {
         if (sourceInfo->Level(*theFilledInfo.Level()))
@@ -4598,8 +4599,8 @@ static void FillDataToCurrentTime(
                                                                   // aina yhden kentän täytön
                                                                   // välein...
               // oletus vielä nyt että hpalceDesc:it samanlaisia
-              auto values = sourceInfo->Values();
-              theFilledInfo.SetValues(values);
+              sourceInfo->GetLevelToVec(values);
+              theFilledInfo.SetLevelFromVec(values);
             }
           }
         }
