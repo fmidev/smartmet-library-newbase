@@ -655,6 +655,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "Precipitation5d", kFmiPrecipitation5d},
       { "Precipitation6h", kFmiPrecipitation6h},
       { "Precipitation7Days", kFmiPrecipitation7Days},
+      { "PrecipitationAccumulation", kFmiPrecipitationAccumulation},
       { "PrecipitationAmount", kFmiPrecipitationAmount},
       { "PrecipitationAmount2", kFmiPrecipitationAmount2},
       { "PrecipitationAnomaly10", kFmiPrecipitationAnomaly10},

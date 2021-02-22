@@ -249,6 +249,7 @@ enum FmiParameterName
   kFmiWaterEquivalentOfSnow = 266,
   kFmiWaterAccumulation,  // kFmiWaterEquivalentOfGraupel = 267,
   kFmiSnowWaterRatio,
+  kFmiPrecipitationAccumulation,
 
   kFmiFreezingLevel = 270,
   kFmiMiddleAndLowCloudCover = 271,
