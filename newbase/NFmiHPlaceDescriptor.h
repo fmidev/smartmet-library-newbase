@@ -20,6 +20,12 @@ class NFmiArea;
 class NFmiGrid;
 class NFmiLocation;
 
+namespace Fmi
+{
+class CoordinateMatrix;
+class SpatialReference;
+}  // namespace Fmi
+
 //! Undocumented
 class NFmiHPlaceDescriptor : public NFmiDataDescriptor
 {
@@ -59,6 +65,13 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
   NFmiGrid *NonConstGrid(void) const;
   const NFmiLocation *Location(void) const;
   const NFmiLocation *LocationWithIndex(unsigned long theIndex) const;
+
+  NFmiPoint WorldXY(
+      unsigned long index) const;  // actual metric coordinate, or latlon for point data
+
+  const Fmi::SpatialReference &SpatialReference() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped) const;
+  bool NeedsGlobeWrap() const;
 
   NFmiPoint LatLon(void) const;
   NFmiPoint LatLon(unsigned long theIndex) const;
@@ -149,49 +162,70 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline NFmiHPlaceDescriptor::~NFmiHPlaceDescriptor(void) { Destroy(); }
+inline NFmiHPlaceDescriptor::~NFmiHPlaceDescriptor(void)
+{
+  Destroy();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsLocation(void) const { return (itsLocationBag != 0); }
+inline bool NFmiHPlaceDescriptor::IsLocation(void) const
+{
+  return (itsLocationBag != 0);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsArea(void) const { return (itsArea != 0); }
+inline bool NFmiHPlaceDescriptor::IsArea(void) const
+{
+  return (itsArea != 0);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsGrid(void) const { return (itsGrid != 0); }
+inline bool NFmiHPlaceDescriptor::IsGrid(void) const
+{
+  return (itsGrid != 0);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiGrid *NFmiHPlaceDescriptor::Grid(void) const { return itsGrid; }
+inline const NFmiGrid *NFmiHPlaceDescriptor::Grid(void) const
+{
+  return itsGrid;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid *NFmiHPlaceDescriptor::NonConstGrid(void) const { return itsGrid; }
+inline NFmiGrid *NFmiHPlaceDescriptor::NonConstGrid(void) const
+{
+  return itsGrid;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline FmiStationType NFmiHPlaceDescriptor::SelectedType(void) const { return itsSelectedType; }
+inline FmiStationType NFmiHPlaceDescriptor::SelectedType(void) const
+{
+  return itsSelectedType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theStationType Undocumented
@@ -272,13 +306,19 @@ inline std::istream &operator>>(std::istream &file, NFmiHPlaceDescriptor &ob)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiHPlaceDescriptor::ClassId(void) const { return kNFmiHPlaceDescriptor; }
+inline unsigned long NFmiHPlaceDescriptor::ClassId(void) const
+{
+  return kNFmiHPlaceDescriptor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiHPlaceDescriptor::ClassName(void) const { return "NFmiHPlaceDescriptor"; }
+inline const char *NFmiHPlaceDescriptor::ClassName(void) const
+{
+  return "NFmiHPlaceDescriptor";
+}
 
 // ======================================================================

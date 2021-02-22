@@ -15,7 +15,9 @@
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
+#include "NFmiWGS84.h"
 #include <boost/functional/hash.hpp>
+#include <gis/CoordinateMatrix.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -44,8 +46,10 @@ void NFmiLocationCache::CalcIsInterpolationNeeded(int theGridSizeX, int theGridS
   // Lisäksi tarpeeksi lähellä olevat x/y arvot pitää pyöristää lähimpään tasalukuun.
   // Tämä siksi että mm. reunoilla tulee ongelmia, kun cache laskee hilapisteen hivenen yli reunan
   // (tarkkuus virhe)
-  if (xDiff < gGridPointEpsilon) itsGridPoint.X(::round(itsGridPoint.X()));
-  if (yDiff < gGridPointEpsilon) itsGridPoint.Y(::round(itsGridPoint.Y()));
+  if (xDiff < gGridPointEpsilon)
+    itsGridPoint.X(::round(itsGridPoint.X()));
+  if (yDiff < gGridPointEpsilon)
+    itsGridPoint.Y(::round(itsGridPoint.Y()));
 
   // Jos indeksit menevät laskenta tarkkuuden takia halutun hila koon alle/yli vähäsen, pyöristetään
   // rajalle
@@ -105,9 +109,12 @@ void NFmiLocationCache::SetToNearestGridPoint(bool fDoX,
                                               int theGridSizeX,
                                               int theGridSizeY)
 {
-  if (fDoX) itsGridPoint.X(::round(itsGridPoint.X()));
-  if (fDoY) itsGridPoint.Y(::round(itsGridPoint.Y()));
-  if (fDoX || fDoY) CalcIsInterpolationNeeded(theGridSizeX, theGridSizeY);
+  if (fDoX)
+    itsGridPoint.X(::round(itsGridPoint.X()));
+  if (fDoY)
+    itsGridPoint.Y(::round(itsGridPoint.Y()));
+  if (fDoX || fDoY)
+    CalcIsInterpolationNeeded(theGridSizeX, theGridSizeY);
 }
 
 NFmiTimeCache::NFmiTimeCache()
@@ -186,7 +193,8 @@ bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
     counter++;
   }
 
-  if (itsData) delete itsData;
+  if (itsData)
+    delete itsData;
   itsData = new NFmiDataPool();
   itsData->Init(Size(), values);
 
@@ -233,7 +241,8 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
     counter++;
   }
 
-  if (itsData) delete itsData;
+  if (itsData)
+    delete itsData;
   itsData = new NFmiDataPool();
   itsData->Init(Size(), values);
 
@@ -416,7 +425,8 @@ bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
     if (const_cast<NFmiGrid *>(this)->ClassId() == const_cast<NFmiGrid &>(theOtherGrid).ClassId())
     {
       // ei oteta huomioon polster:in ja stereogriphicin mahdollista samanlaisuutta
-      if (*itsArea == *theOtherGrid.Area()) return true;
+      if (*itsArea == *theOtherGrid.Area())
+        return true;
     }
   }
   return false;
@@ -469,15 +479,18 @@ bool NFmiGrid::NearestLatLon(double newLon,
                              NFmiPoint *theGridPoint)
 {
   NFmiPoint gridPoint = LatLonToGrid(newLon, newLat);
-  if (theGridPoint) *theGridPoint = gridPoint;
-  if (!GridPoint(gridPoint.X(), gridPoint.Y())) return false;
+  if (theGridPoint)
+    *theGridPoint = gridPoint;
+  if (!GridPoint(gridPoint.X(), gridPoint.Y()))
+    return false;
   if (theMaxDistance == kFloatMissing * 1000.)  // optimization..
     return true;
 
   NFmiPoint currentPoint = LatLon();
   NFmiLocation location1(currentPoint.X(), currentPoint.Y());
   NFmiLocation location2(newLon, newLat);
-  if (location1.Distance(location2) <= theMaxDistance) return true;
+  if (location1.Distance(location2) <= theMaxDistance)
+    return true;
   return false;  // doesn't set iterator into the original GridPoint
 }
 
@@ -635,7 +648,8 @@ bool NFmiGrid::Init(const std::string &theFileName,
             if (isSigned && (b + 1 == theElementSizeInBytes))
             {
               dvalue += (ch & 0x7F) * scale;
-              if ((ch & 0x80) != 0) dvalue = -dvalue;  // safe, since loop ends now
+              if ((ch & 0x80) != 0)
+                dvalue = -dvalue;  // safe, since loop ends now
             }
             else
               dvalue += ch * scale;
@@ -659,7 +673,8 @@ bool NFmiGrid::Init(const std::string &theFileName,
       }
     }
     in.close();
-    if (status) status = SwapData(theStartingCorner, walkXDimFirst);
+    if (status)
+      status = SwapData(theStartingCorner, walkXDimFirst);
   }
   return status;
 }
@@ -739,7 +754,8 @@ std::vector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation & 
     if (theMaxWantedLocations != -1)
     {
       std::vector<IndDistPari>::iterator maxWantedPos = tempValues.begin() + theMaxWantedLocations;
-      if (pos > maxWantedPos) pos = maxWantedPos;
+      if (pos > maxWantedPos)
+        pos = maxWantedPos;
     }
 
     if (pos == tempValues.end())
@@ -763,7 +779,8 @@ bool NFmiGrid::operator==(const NFmiGrid &theGrid) const
     {
       if (itsArea && theGrid.itsArea)
       {
-        if (*itsArea == *(theGrid.itsArea)) return true;
+        if (*itsArea == *(theGrid.itsArea))
+          return true;
       }
     }
     return false;
@@ -834,7 +851,8 @@ bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
         float totalLongitudeDiff =
             static_cast<float>(area.TopRightLatLon().X() - area.BottomLeftLatLon().X());
         float gridPointLongitudeDiff = totalLongitudeDiff / (theGrid.XNumber() - 1);
-        if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01f) return true;
+        if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01f)
+          return true;
       }
     }
   }
@@ -850,6 +868,31 @@ bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
 std::size_t NFmiGrid::HashValue() const
 {
   std::size_t hash = NFmiGridBase::HashValue();
-  if (itsArea != nullptr) boost::hash_combine(hash, itsArea->HashValue());
+  if (itsArea != nullptr)
+    boost::hash_combine(hash, itsArea->HashValue());
   return hash;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
+{
+  if (itsArea)
+    return itsArea->SpatialReference();
+  return NFmiWGS84::SpatialReference();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
+{
+  return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
 }

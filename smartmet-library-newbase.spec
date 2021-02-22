@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.1.22
+Version: 21.2.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,7 +18,9 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
+BuildRequires: smartmet-library-gis-devel >= 21.2.11
+Requires: smartmet-library-gis >= 21.2.11
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -34,7 +36,9 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
+#TestRequires: smartmet-library-gis-devel >= 21.2.11
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.25
+#TestRequires: smartmet-library-gis >= 21.2.11
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -91,6 +95,38 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Sat Feb 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.20-1.fmi
+- Fixed NFmiRotatedLatLon PROJ.4 string after a copy paste error
+
+* Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
+- Added NFmiArea::SpatialReference()
+- Added NFmiFastQueryInfo::SpatialReference()
+
+* Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
+- Fixed NFmiRotatedLatLon WKT
+
+* Tue Feb 16 2021 Andris Pavēnis <andris.pavenis@fmi.fi> - 21.2.16-1.fmi
+- Fmi::NFmiQueryInfo: use std::unique_ptr instead of raw pointers
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-2.fmi
+- Updated NFmiSmoother to use Fmi::CoordinateMatrix
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-1.fmi
+- Merged more API changes from WGS84 branch: interpolation methods return a datamatrix
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-2.fmi
+- Fixed GIS-library dependencies
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-1.fmi
+- Fixed NFmiLatLonArea WKT to be equirectangular instead of longlat
+- Added NFmiArea::CoordinateMatrix
+- Added NFmiFastQueryInfo::WorldXY
+- Added NFmiFastQueryInfo::NeedsGlobeWrap
+- Added linkage to gis-library
+
+* Mon Feb  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.8-1.fmi
+- Added CoordinateMatrix access
+
 * Fri Jan 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.22-1.fmi
 - Added probability and fractile parameters for road forecasts
 

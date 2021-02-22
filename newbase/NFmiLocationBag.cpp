@@ -21,6 +21,7 @@
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
 #include <boost/functional/hash.hpp>
+#include <gis/CoordinateMatrix.h>
 #include <functional>
 
 using namespace std;
@@ -31,7 +32,10 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::~NFmiLocationBag() { Destroy(); }
+NFmiLocationBag::~NFmiLocationBag()
+{
+  Destroy();
+}
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -197,7 +201,8 @@ const NFmiLocationBag NFmiLocationBag::Combine(const NFmiLocationBag &theBag)
 
 const NFmiLocation *NFmiLocationBag::Location() const
 {
-  if (CurrentIndex() == -1) return nullptr;
+  if (CurrentIndex() == -1)
+    return nullptr;
   return itsLocations[CurrentIndex()];
 }
 
@@ -302,7 +307,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
   }
 
   // Set current to best location, if one was found
-  if (found) itsIndex = best_index;
+  if (found)
+    itsIndex = best_index;
 
   return found;
 }
@@ -324,7 +330,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
 bool NFmiLocationBag::AddLocation(const NFmiLocation &theLocation, bool theChecking)
 {
   if (theChecking)
-    if (itsSortedLocations.find(theLocation) != itsSortedLocations.end()) return false;
+    if (itsSortedLocations.find(theLocation) != itsSortedLocations.end())
+      return false;
 
   Add(theLocation);
   return true;
@@ -478,11 +485,13 @@ NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBa
 
 bool NFmiLocationBag::operator==(const NFmiLocationBag &theLocationBag) const
 {
-  if (itsLocations.size() != theLocationBag.itsLocations.size()) return false;
+  if (itsLocations.size() != theLocationBag.itsLocations.size())
+    return false;
 
   for (int i = 0; i < static_cast<int>(this->GetSize()); i++)
   {
-    if (!(this->itsLocations[i]->IsEqual(*(theLocationBag.itsLocations[i])))) return false;
+    if (!(this->itsLocations[i]->IsEqual(*(theLocationBag.itsLocations[i]))))
+      return false;
   }
   return true;
 }
@@ -592,7 +601,8 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
   if (theMaxWantedLocations != -1)
   {
     auto maxWantedPos = tempValues.begin() + theMaxWantedLocations;
-    if (pos > maxWantedPos) pos = maxWantedPos;
+    if (pos > maxWantedPos)
+      pos = maxWantedPos;
   }
 
   if (pos == tempValues.end())
@@ -637,10 +647,35 @@ std::size_t NFmiLocationBag::HashValue() const
 
   for (NFmiLocation *location : itsLocations)
   {
-    if (location != nullptr) boost::hash_combine(hash, location->HashValue());
+    if (location != nullptr)
+      boost::hash_combine(hash, location->HashValue());
   }
 
   return hash;
 }
 
-// ======================================================================
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return the native coordinates in a 2D matrix
+ */
+// ----------------------------------------------------------------------
+
+Fmi::CoordinateMatrix NFmiLocationBag::CoordinateMatrix() const
+{
+  // Note: The coordinates are assumed to be WGS84. We return them in
+  // a 1D vector since there is no structure.
+
+  const auto ysize = 1;
+  Fmi::CoordinateMatrix matrix(itsLocations.size(), ysize);
+
+  const auto j = 0;
+  std::size_t i = 0;
+  for (const auto *location : itsLocations)
+  {
+    if (location == nullptr)
+      matrix.set(i, j, HUGE_VAL, HUGE_VAL);  // as done by PROJ.6
+    else
+      matrix.set(i, j, location->GetLocation());
+  }
+  return matrix;
+}

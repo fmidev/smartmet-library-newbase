@@ -155,7 +155,10 @@ NFmiMercatorArea::NFmiMercatorArea(const NFmiMercatorArea& theLatLonArea)
  */
 // ----------------------------------------------------------------------
 
-NFmiArea* NFmiMercatorArea::Clone() const { return new NFmiMercatorArea(*this); }
+NFmiArea* NFmiMercatorArea::Clone() const
+{
+  return new NFmiMercatorArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param fKeepWorldRect Undocumented
@@ -182,6 +185,10 @@ void NFmiMercatorArea::Init(bool fKeepWorldRect)
   itsYScaleFactor = Height() / itsWorldRect.Height();
 
   NFmiArea::Init(fKeepWorldRect);
+
+  const char* fmt = "+proj=merc +R={} +wktext +over +no_defs +type=crs";
+  itsProjStr = fmt::format(fmt, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
@@ -253,7 +260,25 @@ const NFmiPoint NFmiMercatorArea::WorldXYToLatLon(const NFmiPoint& theXYPoint) c
 
 const NFmiPoint NFmiMercatorArea::XYToWorldXY(const NFmiPoint& theXYPoint) const
 {
-  return LatLonToWorldXY(ToLatLon(theXYPoint));
+  // Transform local xy-coordinates into world xy-coordinates (meters).
+  double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+
+  return NFmiPoint(xWorld, yWorld);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param theWorldXYPoint Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiMercatorArea::WorldXYToXY(const NFmiPoint& theWorldXYPoint) const
+{
+  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
@@ -267,15 +292,7 @@ const NFmiPoint NFmiMercatorArea::ToLatLon(const NFmiPoint& theXYPoint) const
 {
   // Transforms input local xy-coordinates into geodetic coordinates
   // (longitude,latitude) on globe.
-
-  double xWorld, yWorld;
-
-  // Transform local xy-coordinates into world xy-coordinates (meters).
-  xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
-
-  // Transform world xy-coordinates into geodetic coordinates.
-  return WorldXYToLatLon(NFmiPoint(xWorld, yWorld));
+  return WorldXYToLatLon(XYToWorldXY(theXYPoint));
 }
 
 // ----------------------------------------------------------------------
@@ -284,14 +301,20 @@ const NFmiPoint NFmiMercatorArea::ToLatLon(const NFmiPoint& theXYPoint) const
  */
 // ----------------------------------------------------------------------
 
-double NFmiMercatorArea::XScale() const { return 1. / itsXScaleFactor; }
+double NFmiMercatorArea::XScale() const
+{
+  return 1. / itsXScaleFactor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiMercatorArea::YScale() const { return 1. / itsYScaleFactor; }
+double NFmiMercatorArea::YScale() const
+{
+  return 1. / itsYScaleFactor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theBottomLeftLatLon Undocumented

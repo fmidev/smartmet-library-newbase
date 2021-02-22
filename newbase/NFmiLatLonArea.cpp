@@ -17,6 +17,8 @@
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 
+#include <iostream>
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -84,7 +86,10 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiLatLonArea &theLatLonArea)
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiLatLonArea::Clone() const { return new NFmiLatLonArea(*this); }
+NFmiArea *NFmiLatLonArea::Clone() const
+{
+  return new NFmiLatLonArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param fKeepWorldRect Undocumented
@@ -102,6 +107,10 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
   itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
 
   NFmiArea::Init(fKeepWorldRect);
+
+  const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
+  itsProjStr = fmt::format(fmt, kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
@@ -113,8 +122,8 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
 
 const NFmiPoint NFmiLatLonArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  NFmiLongitude lon(itsBottomLeftLatLon.X() + (theXYPoint.X() - Left()) / itsXScaleFactor,
-                    PacificView());
+  double dlon = (theXYPoint.X() - Left()) / itsXScaleFactor;
+  NFmiLongitude lon(itsBottomLeftLatLon.X() + dlon, PacificView());
   NFmiLatitude lat(itsBottomLeftLatLon.Y() + (theXYPoint.Y() - Bottom()) / itsYScaleFactor);
   return NFmiPoint(lon.Value(), lat.Value());
 }
@@ -149,18 +158,36 @@ const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \param theXYPoint Undocumented
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiLatLonArea::XScale() const { return 1. / itsXScaleFactor; }
+const NFmiPoint NFmiLatLonArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  return ToXY(WorldXYToLatLon(theWorldXYPoint));
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiLatLonArea::YScale() const { return 1. / itsYScaleFactor; }
+double NFmiLatLonArea::XScale() const
+{
+  return 1. / itsXScaleFactor;
+}
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+double NFmiLatLonArea::YScale() const
+{
+  return 1. / itsYScaleFactor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theBottomLeftLatLon Undocumented
@@ -265,10 +292,9 @@ const std::string NFmiLatLonArea::AreaStr() const
 
 const std::string NFmiLatLonArea::WKT() const
 {
-  const char *fmt = R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]])";
+  const char *fmt =
+      R"(PROJCS["unknown",GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",{},0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Equirectangular"],PARAMETER["standard_parallel_1",0],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1, AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]])";
+
   return fmt::format(fmt, kRearth);
 }
 

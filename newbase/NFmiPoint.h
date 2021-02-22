@@ -8,11 +8,10 @@
 #pragma once
 
 #include "NFmiGlobals.h"
-
 #include <cmath>
-#include <iosfwd>  // esittelee ostream ja istream (mutta niitä ei voi vielä käyttää!)
-//_________________________________________________________ NFmiPoint
-//! NFmiPoint-luokka pitää sisällään tiedon kaksiulotteisesta pisteestä.
+#include <iosfwd>
+#include <tuple>
+
 class NFmiPoint
 {
  public:
@@ -22,6 +21,7 @@ class NFmiPoint
 
   NFmiPoint(void);
   NFmiPoint(double theX, double theY);
+  NFmiPoint(const std::pair<double, double> &theXY) : itsX(theXY.first), itsY(theXY.second) {}
 
   // Methods left for optimized compiler generation:
   // ~NFmiPoint(void);
@@ -143,28 +143,40 @@ inline bool NFmiPoint::operator<(const NFmiPoint &thePoint) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiPoint::X(void) const { return itsX; }
+inline double NFmiPoint::X(void) const
+{
+  return itsX;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiPoint::Y(void) const { return itsY; }
+inline double NFmiPoint::Y(void) const
+{
+  return itsY;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiPoint::X(double newValue) { itsX = newValue; }
+inline void NFmiPoint::X(double newValue)
+{
+  itsX = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiPoint::Y(double newValue) { itsY = newValue; }
+inline void NFmiPoint::Y(double newValue)
+{
+  itsY = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns the Euclidian distance between \c this and the given point.
@@ -245,7 +257,10 @@ inline NFmiPoint operator*(double leftScale, const NFmiPoint &rightPoint)
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiPoint::ClassName(void) const { return "NFmiPoint"; }
+inline const char *NFmiPoint::ClassName(void) const
+{
+  return "NFmiPoint";
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiPoint.
@@ -271,6 +286,9 @@ inline std::ostream &operator<<(std::ostream &os, const NFmiPoint &item)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &is, NFmiPoint &item) { return item.Read(is); }
+inline std::istream &operator>>(std::istream &is, NFmiPoint &item)
+{
+  return item.Read(is);
+}
 
 // ======================================================================

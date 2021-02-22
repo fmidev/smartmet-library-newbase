@@ -68,6 +68,9 @@ NFmiLambertEqualArea::NFmiLambertEqualArea(const NFmiPoint &theBottomLeftLatLon,
                         usePacificView)
 
 {
+  // Note: This projection was never used at FMI. Also, PROJ manual does not mention true latitude
+  // for this projection, but I added +lat_ts nevertheless - Mika
+
   Init();
 }
 
@@ -203,6 +206,10 @@ void NFmiLambertEqualArea::Init(bool fKeepWorldRect)
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
   }
   NFmiAzimuthalArea::Init();
+  const char *fmt = "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +units=m +no_defs +type=crs";
+  itsProjStr = fmt::format(
+      fmt, itsCentralLatitude.Value(), itsCentralLongitude, itsTrueLatitude.Value(), kRearth);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
@@ -230,7 +237,8 @@ else
 
   //	return sqrt(2./(1. + sin(lat0)*sin(lat) + cos(lat0)*cos(lat)*cos(lon-lon0));
 
-  if (delta <= -1.0) return kFloatMissing;
+  if (delta <= -1.0)
+    return kFloatMissing;
 
   return kRearth * sqrt(2. / (1. + delta));
 }
@@ -309,7 +317,10 @@ NFmiArea *NFmiLambertEqualArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiLambertEqualArea::Clone() const { return new NFmiLambertEqualArea(*this); }
+NFmiArea *NFmiLambertEqualArea::Clone() const
+{
+  return new NFmiLambertEqualArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -375,7 +386,10 @@ bool NFmiLambertEqualArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiLambertEqualArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiLambertEqualArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream

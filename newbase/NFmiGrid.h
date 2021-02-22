@@ -16,6 +16,11 @@
 
 class NFmiLocation;
 
+namespace Fmi
+{
+class CoordinateMatrix;
+}  // namespace Fmi
+
 // NFmiLocationCache-luokka käytetään kun halutaan optimoida paikkaan liittyviä interpolaatioita.
 class NFmiLocationCache
 {
@@ -140,6 +145,10 @@ class NFmiGrid : public NFmiGridBase
   NFmiArea *Area(void) const;
   bool AreGridsIdentical(const NFmiGrid &theOtherGrid) const;
 
+  NFmiPoint WorldXY() const;  // actual metric coordinate, or latlon for point data
+  const Fmi::SpatialReference &SpatialReference() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrap) const;
+
   bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,
                     NFmiPoint &theTopRightLatLon,
                     bool theMinimizedCrop = true);
@@ -187,7 +196,10 @@ typedef NFmiGrid *PNFmiGrid;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid::~NFmiGrid(void) { delete itsArea; }
+inline NFmiGrid::~NFmiGrid(void)
+{
+  delete itsArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -221,7 +233,10 @@ inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGrid::Init(NFmiGrid *theGrid) { return NFmiGridBase::Init(theGrid); }
+inline bool NFmiGrid::Init(NFmiGrid *theGrid)
+{
+  return NFmiGridBase::Init(theGrid);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theData Undocumented
@@ -229,7 +244,10 @@ inline bool NFmiGrid::Init(NFmiGrid *theGrid) { return NFmiGridBase::Init(theGri
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGrid::Init(NFmiDataPool *theData) { return NFmiGridBase::Init(theData); }
+inline bool NFmiGrid::Init(NFmiDataPool *theData)
+{
+  return NFmiGridBase::Init(theData);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theGridPoint Undocumented
@@ -248,14 +266,20 @@ inline const NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::XY(void) const { return GridToXY(GridPoint()); }
+inline const NFmiPoint NFmiGrid::XY(void) const
+{
+  return GridToXY(GridPoint());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiArea *NFmiGrid::Area(void) const { return itsArea; }
+inline NFmiArea *NFmiGrid::Area(void) const
+{
+  return itsArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param xy Undocumented
@@ -349,7 +373,21 @@ inline const NFmiPoint NFmiGrid::GridToWorldXY(const NFmiPoint &theGridPoint) co
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLon(void) const { return GridToLatLon(GridPoint()); }
+inline NFmiPoint NFmiGrid::WorldXY() const
+{
+  return GridToWorldXY(GridPoint());
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline const NFmiPoint NFmiGrid::LatLon(void) const
+{
+  return GridToLatLon(GridPoint());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -383,7 +421,10 @@ inline const NFmiPoint NFmiGrid::WorldXY(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiGrid::Transform(NFmiTransformList &theList) { NFmiGridBase::Transform(theList); }
+inline void NFmiGrid::Transform(NFmiTransformList &theList)
+{
+  NFmiGridBase::Transform(theList);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theBottomLeftLatLon Undocumented
@@ -528,14 +569,20 @@ inline bool NFmiGrid::InterpolateToXYPoint(double x,
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGrid::ClassId(void) const { return kNFmiGrid; }
+inline unsigned long NFmiGrid::ClassId(void) const
+{
+  return kNFmiGrid;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiGrid::ClassName(void) const { return "NFmiGrid"; }
+inline const char *NFmiGrid::ClassName(void) const
+{
+  return "NFmiGrid";
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiGrid
@@ -546,7 +593,10 @@ inline const char *NFmiGrid::ClassName(void) const { return "NFmiGrid"; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiGrid
@@ -557,6 +607,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob) { return
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiGrid &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiGrid &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

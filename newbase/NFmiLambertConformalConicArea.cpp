@@ -68,6 +68,13 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
 
   itsXScaleFactor = Width() / itsWorldRect.Width();
   itsYScaleFactor = Height() / itsWorldRect.Height();
+
+  const char *fmt =
+      "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext "
+      "+no_defs +type=crs";
+  itsProjStr = fmt::format(
+      fmt, itsTrueLatitude1, itsTrueLatitude2, itsCentralLatitude, itsCentralLongitude, itsRadius);
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 // ----------------------------------------------------------------------
@@ -335,14 +342,19 @@ const NFmiPoint NFmiLambertConformalConicArea::XYToWorldXY(const NFmiPoint &theX
   return NFmiPoint(xWorld, yWorld);
 }
 
+const NFmiPoint NFmiLambertConformalConicArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x, y);
+}
+
 const NFmiPoint NFmiLambertConformalConicArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double xWorld, yWorld;
-
   // Transform local xy-coordinates into world xy-coordinates (meters).
 
-  xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+  double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
   // Transform world xy-coordinates into geodetic coordinates.
 

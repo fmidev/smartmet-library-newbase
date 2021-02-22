@@ -333,6 +333,23 @@ const NFmiPoint NFmiAzimuthalArea::XYToWorldXY(const NFmiPoint &theXYPoint) cons
 
 // ----------------------------------------------------------------------
 /*!
+ * Returns the XY coordinates corresponding the
+ * rectangular LOCAL point theWorldXYPoint.
+ *
+ * \param theWorldXYPoint The local world xy-coordinates to be converted
+ * \return The respective XY coordinates
+ */
+// ----------------------------------------------------------------------
+
+const NFmiPoint NFmiAzimuthalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
+{
+  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+  return NFmiPoint(x,y);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * Transforms input world xy-coordinates into geodetic coordinates
  * (longitude,latitude) on globe. This proceeds in two steps:
  *

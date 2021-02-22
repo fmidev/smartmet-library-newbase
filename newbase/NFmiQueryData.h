@@ -612,7 +612,7 @@ inline void NFmiQueryData::InfoVersion(double newValue) const
 
 inline NFmiHPlaceDescriptor *NFmiQueryData::HPlaceDesc() const
 {
-  return itsQueryInfo->itsHPlaceDescriptor;
+  return itsQueryInfo->itsHPlaceDescriptor.get();
 }
 
 // ----------------------------------------------------------------------
@@ -623,7 +623,7 @@ inline NFmiHPlaceDescriptor *NFmiQueryData::HPlaceDesc() const
 
 inline NFmiVPlaceDescriptor *NFmiQueryData::VPlaceDesc() const
 {
-  return itsQueryInfo->itsVPlaceDescriptor;
+  return itsQueryInfo->itsVPlaceDescriptor.get();
 }
 
 // ----------------------------------------------------------------------
@@ -634,7 +634,7 @@ inline NFmiVPlaceDescriptor *NFmiQueryData::VPlaceDesc() const
 
 inline NFmiParamDescriptor *NFmiQueryData::ParamDesc() const
 {
-  return itsQueryInfo->itsParamDescriptor;
+  return itsQueryInfo->itsParamDescriptor.get();
 }
 
 // ----------------------------------------------------------------------
@@ -645,7 +645,7 @@ inline NFmiParamDescriptor *NFmiQueryData::ParamDesc() const
 
 inline NFmiTimeDescriptor *NFmiQueryData::TimeDesc() const
 {
-  return itsQueryInfo->itsTimeDescriptor;
+  return itsQueryInfo->itsTimeDescriptor.get();
 }
 
 // ----------------------------------------------------------------------

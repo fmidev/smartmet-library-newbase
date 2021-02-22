@@ -295,7 +295,10 @@ NFmiArea *NFmiGnomonicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiGnomonicArea::Clone() const { return new NFmiGnomonicArea(*this); }
+NFmiArea *NFmiGnomonicArea::Clone() const
+{
+  return new NFmiGnomonicArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -360,7 +363,10 @@ bool NFmiGnomonicArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiGnomonicArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiGnomonicArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -412,6 +418,11 @@ void NFmiGnomonicArea::Init(bool fKeepWorldRect)
   }
 
   NFmiAzimuthalArea::Init(fKeepWorldRect);
+
+  const char *fmt = "+proj=gnom +lon_0={} +lat_0={} +R={} +lat_ts={}";
+  itsProjStr =
+      fmt::format(fmt, CentralLongitude(), CentralLatitude(), kRearth, itsTrueLatitude.Value());
+  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
 const std::string NFmiGnomonicArea::AreaStr() const

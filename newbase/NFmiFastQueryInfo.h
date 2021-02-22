@@ -9,11 +9,16 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
 class NFmiRect;
+
+namespace Fmi
+{
+class CoordinateMatrix;
+class SpatialReference;
+}  // namespace Fmi
 
 //! Undocumented
 class NFmiFastQueryInfo : public NFmiQueryInfo
@@ -112,6 +117,14 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiProducer *Producer(void);
   const NFmiProducer &FirstParamProducer(void);
 
+  NFmiPoint WorldXY() const;  // actual metric coordinate, or latlon for point data
+  NFmiPoint WorldXY(
+      unsigned long index) const;  // actual metric coordinate, or latlon for point data
+
+  const Fmi::SpatialReference &SpatialReference() const;
+  Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped = false) const;
+  bool NeedsGlobeWrap() const;
+
   NFmiDataIdent &Param(void) const;
   // *** vastaavan nopeuksiset loppuvat tähän *********************
 
@@ -161,20 +174,16 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   using NFmiQueryInfo::PeekValue;
   float PeekValue(int theTimeOffset, int theXOffset, int theYOffset);
 
-  // 16.08.2001 Mika&Marko, datan & koordinaattien haku matriisiin:
-
-  template <typename T>
-  void Values(T &theMatrix) const;
+  NFmiDataMatrix<float> Values() const;
 
   // 12.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
-  virtual void Values(NFmiDataMatrix<float> &theMatrix, const NFmiMetTime &theInterpolatedTime);
+  NFmiDataMatrix<float> Values(const NFmiMetTime &theInterpolatedTime);
   // Hakee annetun time-rangen sisällä olevan kentän interpoloituna. Jos time-range menee toiselta
   // aikasuunnalta yli, mutta toiselta ei, palautetaan nearesr, jos niin on määrätty
   // (doNearestTimeIfPossible = true).
-  virtual void Values(NFmiDataMatrix<float> &theMatrix,
-                      const NFmiMetTime &theInterpolatedTime,
-                      long theTimeRangeInMinutes,
-                      bool doNearestTimeIfPossible = false);
+  virtual NFmiDataMatrix<float> Values(const NFmiMetTime &theInterpolatedTime,
+                                       long theTimeRangeInMinutes,
+                                       bool doNearestTimeIfPossible = false);
 
   // 31.5.2017 Tavi high performance bulk query
   bool GetValues(size_t startIndex, size_t step, size_t count, std::vector<float> &values) const;
@@ -191,89 +200,77 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   bool GetInterpolatedLevel(std::vector<float> &values, const NFmiMetTime &time);
   bool GetInterpolatedCube(std::vector<float> &values, const NFmiMetTime &t);
 
-  void LandscapeValues(NFmiDataMatrix<float> &theMatrix,
-                       const NFmiDataMatrix<float> &theDEMMatrix,
-                       const NFmiDataMatrix<bool> &theWaterFlagMatrix);
-  void LandscapeValues(NFmiDataMatrix<float> &theMatrix,
-                       const NFmiMetTime &theInterpolatedTime,
-                       const NFmiDataMatrix<float> &theDEMMatrix,
-                       const NFmiDataMatrix<bool> &theWaterFlagMatrix);
-  void LandscapeCroppedValues(NFmiDataMatrix<float> &theMatrix,
-                              int x1,
-                              int y1,
-                              int x2,
-                              int y2,
-                              const NFmiDataMatrix<float> &theDEMMatrix,
-                              const NFmiDataMatrix<bool> &theWaterFlagMatrix,
-                              const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
-                                  NFmiDataMatrix<NFmiLocationCache>());
-  void LandscapeCroppedValues(NFmiDataMatrix<float> &theMatrix,
-                              const NFmiMetTime &theInterpolatedTime,
-                              int x1,
-                              int y1,
-                              int x2,
-                              int y2,
-                              const NFmiDataMatrix<float> &theDEMMatrix,
-                              const NFmiDataMatrix<bool> &theWaterFlagMatrix,
-                              const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
-                                  NFmiDataMatrix<NFmiLocationCache>());
-  void LandscapeCachedInterpolation(NFmiDataMatrix<float> &theMatrix,
-                                    const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
-                                    const NFmiDataMatrix<float> &theDEMMatrix,
-                                    const NFmiDataMatrix<bool> &theWaterFlagMatrix);
+  NFmiDataMatrix<float> LandscapeValues(const NFmiDataMatrix<float> &theDEMMatrix,
+                                        const NFmiDataMatrix<bool> &theWaterFlagMatrix);
+  NFmiDataMatrix<float> LandscapeValues(const NFmiMetTime &theInterpolatedTime,
+                                        const NFmiDataMatrix<float> &theDEMMatrix,
+                                        const NFmiDataMatrix<bool> &theWaterFlagMatrix);
+  NFmiDataMatrix<float> LandscapeCroppedValues(
+      int x1,
+      int y1,
+      int x2,
+      int y2,
+      const NFmiDataMatrix<float> &theDEMMatrix,
+      const NFmiDataMatrix<bool> &theWaterFlagMatrix,
+      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
+          NFmiDataMatrix<NFmiLocationCache>());
 
-  void LandscapeCachedInterpolation(NFmiDataMatrix<float> &theMatrix,
-                                    const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
-                                    const NFmiTimeCache &theTimeCache,
-                                    const NFmiDataMatrix<float> &theDEMMatrix,
-                                    const NFmiDataMatrix<bool> &theWaterFlagMatrix);
+  NFmiDataMatrix<float> LandscapeCroppedValues(
+      const NFmiMetTime &theInterpolatedTime,
+      int x1,
+      int y1,
+      int x2,
+      int y2,
+      const NFmiDataMatrix<float> &theDEMMatrix,
+      const NFmiDataMatrix<bool> &theWaterFlagMatrix,
+      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
+          NFmiDataMatrix<NFmiLocationCache>());
 
-  void Values(NFmiDataMatrix<float> &theMatrix,
-              NFmiDataModifier *theFunction,
-              const NFmiMetTime &theTime,
-              int theBackwardOffsetInMinutes,
-              int theForwardOffsetInMinutes);
+  NFmiDataMatrix<float> LandscapeCachedInterpolation(
+      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
+      const NFmiDataMatrix<float> &theDEMMatrix,
+      const NFmiDataMatrix<bool> &theWaterFlagMatrix);
 
-  virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                      NFmiDataMatrix<float> &theValues,
-                      float P = kFloatMissing,
-                      float H = kFloatMissing);
-  // 12.09.2013 Anssi.R changed method to virtual to be able to override in NFmiMultiQueryInfo
-  virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                      NFmiDataMatrix<float> &theValues,
-                      const NFmiMetTime &theTime,
-                      float P = kFloatMissing,
-                      float H = kFloatMissing);
-  virtual void Values(const NFmiDataMatrix<NFmiPoint> &theLatlonMatrix,
-                      NFmiDataMatrix<float> &theValues,
-                      const NFmiMetTime &theTime,
-                      float P,
-                      float H,
-                      long theTimeRangeInMinutes,
-                      bool doNearestTimeIfPossible = false);
+  NFmiDataMatrix<float> LandscapeCachedInterpolation(
+      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
+      const NFmiTimeCache &theTimeCache,
+      const NFmiDataMatrix<float> &theDEMMatrix,
+      const NFmiDataMatrix<bool> &theWaterFlagMatrix);
 
-  void CroppedValues(NFmiDataMatrix<float> &theMatrix, int x1, int y1, int x2, int y2) const;
-  void CroppedValues(NFmiDataMatrix<float> &theMatrix,
-                     const NFmiMetTime &theInterpolatedTime,
-                     int x1,
-                     int y1,
-                     int x2,
-                     int y2);
-  void CroppedValues(NFmiDataMatrix<float> &theMatrix,
-                     const NFmiMetTime &theInterpolatedTime,
-                     int x1,
-                     int y1,
-                     int x2,
-                     int y2,
-                     long theTimeRangeInMinutes,
-                     bool doNearestTimeIfPossible = false);
+  NFmiDataMatrix<float> Values(NFmiDataModifier *theFunction,
+                               const NFmiMetTime &theTime,
+                               int theBackwardOffsetInMinutes,
+                               int theForwardOffsetInMinutes);
+
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
+                                       float P = kFloatMissing,
+                                       float H = kFloatMissing);
+
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
+                                       const NFmiMetTime &theTime,
+                                       float P = kFloatMissing,
+                                       float H = kFloatMissing);
+  virtual NFmiDataMatrix<float> Values(const Fmi::CoordinateMatrix &theLatlonMatrix,
+                                       const NFmiMetTime &theTime,
+                                       float P,
+                                       float H,
+                                       long theTimeRangeInMinutes,
+                                       bool doNearestTimeIfPossible = false);
+
+  NFmiDataMatrix<float> CroppedValues(int x1, int y1, int x2, int y2) const;
+  NFmiDataMatrix<float> CroppedValues(
+      const NFmiMetTime &theInterpolatedTime, int x1, int y1, int x2, int y2);
+  NFmiDataMatrix<float> CroppedValues(const NFmiMetTime &theInterpolatedTime,
+                                      int x1,
+                                      int y1,
+                                      int x2,
+                                      int y2,
+                                      long theTimeRangeInMinutes,
+                                      bool doNearestTimeIfPossible = false);
   bool SetValues(const NFmiDataMatrix<float> &theMatrix);
 
-  template <typename T>
-  void Locations(T &theMatrix) const;
-
-  void LocationsWorldXY(NFmiDataMatrix<NFmiPoint> &theMatrix, const NFmiArea &theArea) const;
-  void LocationsXY(NFmiDataMatrix<NFmiPoint> &theMatrix, const NFmiArea &theArea) const;
+  Fmi::CoordinateMatrix LocationsWorldXY(const NFmiArea &theArea) const;
+  Fmi::CoordinateMatrix LocationsXY(const NFmiArea &theArea) const;
 
   // Tähän tulee joukko funktioita, jotka palauttavat aktiivisen parametrin
   // arvon haluttuun korkeuteen [m]. Metodeja on neljä, jotka tekevät erilaisia
@@ -315,102 +312,92 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   float FastPressureLevelValue(double xInd, double yInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd);
 
-  void CrossSectionValues(NFmiDataMatrix<float> &theValues,
-                          const NFmiMetTime &theInterpolatedTime,
-                          const std::vector<float> &theHeights,
-                          const std::vector<NFmiPoint> &theLatlonPoints);
-  void TimeCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                              std::vector<float> &theHeights,
-                              const NFmiPoint &thePoint,
-                              NFmiTimeBag &theWantedTimes);
-  void RouteCrossSectionValues(NFmiDataMatrix<float> &theValues,
-                               const std::vector<float> &theHeights,
-                               const std::vector<NFmiPoint> &theLatlonPoints,
-                               const std::vector<NFmiMetTime> &thePointTimes);
+  static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+                                                         const std::vector<NFmiPoint> &thePoints,
+                                                         const NFmiMetTime &theTime);
+  static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
+                                                             const NFmiPoint &thePoint,
+                                                             NFmiTimeBag &theTimes);
+  static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldata(
+      NFmiFastQueryInfo &theInfo,
+      const std::vector<NFmiPoint> &theLatlonPoints,
+      const std::vector<NFmiMetTime> &thePointTimes);
+
+  NFmiDataMatrix<float> CrossSectionValues(const NFmiMetTime &theInterpolatedTime,
+                                           const std::vector<float> &theHeights,
+                                           const std::vector<NFmiPoint> &theLatlonPoints);
+  NFmiDataMatrix<float> TimeCrossSectionValues(std::vector<float> &theHeights,
+                                               const NFmiPoint &thePoint,
+                                               NFmiTimeBag &theWantedTimes);
+  NFmiDataMatrix<float> RouteCrossSectionValues(const std::vector<float> &theHeights,
+                                                const std::vector<NFmiPoint> &theLatlonPoints,
+                                                const std::vector<NFmiMetTime> &thePointTimes);
   std::vector<float> ConvertPressuresToHeights(const std::vector<float> &thePressures);
 
-  void CrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                              const NFmiMetTime &theInterpolatedTime,
-                              const std::vector<float> &thePressures,
-                              const std::vector<NFmiPoint> &theLatlonPoints);
-  void TimeCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                  std::vector<float> &thePressures,
-                                  const NFmiPoint &thePoint,
-                                  NFmiTimeBag &theWantedTimes,
-                                  unsigned int theStartTimeIndex = 0);
-  void RouteCrossSectionValuesLogP(NFmiDataMatrix<float> &theValues,
-                                   const std::vector<float> &thePressures,
-                                   const std::vector<NFmiPoint> &theLatlonPoints,
-                                   const std::vector<NFmiMetTime> &thePointTimes);
+  NFmiDataMatrix<float> CrossSectionValuesLogP(const NFmiMetTime &theInterpolatedTime,
+                                               const std::vector<float> &thePressures,
+                                               const std::vector<NFmiPoint> &theLatlonPoints);
+  NFmiDataMatrix<float> TimeCrossSectionValuesLogP(std::vector<float> &thePressures,
+                                                   const NFmiPoint &thePoint,
+                                                   NFmiTimeBag &theWantedTimes,
+                                                   unsigned int theStartTimeIndex = 0);
+  NFmiDataMatrix<float> RouteCrossSectionValuesLogP(const std::vector<float> &thePressures,
+                                                    const std::vector<NFmiPoint> &theLatlonPoints,
+                                                    const std::vector<NFmiMetTime> &thePointTimes);
 
-  // 05-Oct-2011 PKi: Cross mallipinnoille ja ground levelille
-  void CrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                const NFmiMetTime &theInterpolatedTime,
-                                const std::vector<NFmiLevel> &theLevels,
-                                const std::vector<NFmiPoint> &theLatlonPoints);
-  void TimeCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                    const std::vector<NFmiLevel> &theLevels,
-                                    const NFmiPoint &thePoint,
-                                    NFmiTimeBag &theWantedTimes);
-  void RouteCrossSectionValuesHybrid(NFmiDataMatrix<float> &theValues,
-                                     const std::vector<NFmiLevel> &theLevels,
-                                     const std::vector<NFmiPoint> &theLatlonPoints,
-                                     const std::vector<NFmiMetTime> &thePointTimes);
+  NFmiDataMatrix<float> CrossSectionValuesHybrid(const NFmiMetTime &theInterpolatedTime,
+                                                 const std::vector<NFmiLevel> &theLevels,
+                                                 const std::vector<NFmiPoint> &theLatlonPoints);
+  NFmiDataMatrix<float> TimeCrossSectionValuesHybrid(const std::vector<NFmiLevel> &theLevels,
+                                                     const NFmiPoint &thePoint,
+                                                     NFmiTimeBag &theWantedTimes);
+  NFmiDataMatrix<float> RouteCrossSectionValuesHybrid(
+      const std::vector<NFmiLevel> &theLevels,
+      const std::vector<NFmiPoint> &theLatlonPoints,
+      const std::vector<NFmiMetTime> &thePointTimes);
 
-  // 09-Mar-2015 PKi: FlightRoute
-  void FlightRouteValues(NFmiDataMatrix<float> &theValues,
-                         const std::vector<float> &theHeights,
-                         const std::vector<NFmiPoint> &theLatlonPoints,
-                         const std::vector<NFmiMetTime> &thePointTimes);
-  void FlightRouteValuesHybrid(NFmiDataMatrix<float> &theValues,
-                               const std::vector<NFmiLevel> &theLevels,
-                               const std::vector<NFmiPoint> &theLatlonPoints,
-                               const std::vector<NFmiMetTime> &thePointTimes);
-  void FlightRouteValuesLogP(NFmiDataMatrix<float> &theValues,
-                             const std::vector<float> &thePressures,
-                             const std::vector<NFmiPoint> &theLatlonPoints,
-                             const std::vector<NFmiMetTime> &thePointTimes);
+  NFmiDataMatrix<float> FlightRouteValues(const std::vector<float> &theHeights,
+                                          const std::vector<NFmiPoint> &theLatlonPoints,
+                                          const std::vector<NFmiMetTime> &thePointTimes);
+  NFmiDataMatrix<float> FlightRouteValuesHybrid(const std::vector<NFmiLevel> &theLevels,
+                                                const std::vector<NFmiPoint> &theLatlonPoints,
+                                                const std::vector<NFmiMetTime> &thePointTimes);
+  NFmiDataMatrix<float> FlightRouteValuesLogP(const std::vector<float> &thePressures,
+                                              const std::vector<NFmiPoint> &theLatlonPoints,
+                                              const std::vector<NFmiMetTime> &thePointTimes);
 
   // Hakee haluttuun hilaan interpoloitua dataa halutulta ajalta
-  void GridValues(NFmiDataMatrix<float> &theValues,
-                  const NFmiGrid &theWantedGrid,
-                  const NFmiMetTime &theInterpolatedTime);
-  void GridValues(NFmiDataMatrix<float> &theValues,
-                  const NFmiGrid &theWantedGrid,
-                  const NFmiMetTime &theInterpolatedTime,
-                  bool relative_uv);
+  NFmiDataMatrix<float> GridValues(const NFmiGrid &theWantedGrid,
+                                   const NFmiMetTime &theInterpolatedTime);
+  NFmiDataMatrix<float> GridValues(const NFmiGrid &theWantedGrid,
+                                   const NFmiMetTime &theInterpolatedTime,
+                                   bool relative_uv);
 
   // 12.09.2013 Anssi.R changed methods to virtual to be able to override in NFmiMultiQueryInfo
   // Tämä hakee hilan sellaisenaan (datan originaali hila ja alue) halutulle painepinnalle.
-  virtual void PressureValues(NFmiDataMatrix<float> &theValues,
-                              const NFmiMetTime &theInterpolatedTime,
-                              float wantedPressureLevel);
+  virtual NFmiDataMatrix<float> PressureValues(const NFmiMetTime &theInterpolatedTime,
+                                               float wantedPressureLevel);
   // Tämä hakee haluttuun hilaan ja alueeseen dataa.
-  virtual void PressureValues(NFmiDataMatrix<float> &theValues,
-                              const NFmiGrid &theWantedGrid,
-                              const NFmiMetTime &theInterpolatedTime,
-                              float wantedPressureLevel);
-  void PressureValues(NFmiDataMatrix<float> &theValues,
-                      const NFmiGrid &theWantedGrid,
-                      const NFmiMetTime &theInterpolatedTime,
-                      float wantedPressureLevel,
-                      bool relative_uv);
+  virtual NFmiDataMatrix<float> PressureValues(const NFmiGrid &theWantedGrid,
+                                               const NFmiMetTime &theInterpolatedTime,
+                                               float wantedPressureLevel);
+  NFmiDataMatrix<float> PressureValues(const NFmiGrid &theWantedGrid,
+                                       const NFmiMetTime &theInterpolatedTime,
+                                       float wantedPressureLevel,
+                                       bool relative_uv);
   // Tämä hakee hilan sellaisenaan (datan originaali hila ja alue) halutulle korkeudelle [m].
   // Jos haluat lentopinnoille dataa (Flight Level) on lentopinta -> metri kerroin = 30.5
   // eli esim. lentopinta 50 saadaan laskulla 50 * 30.5 eli 1525 [m].
-  void HeightValues(NFmiDataMatrix<float> &theValues,
-                    const NFmiMetTime &theInterpolatedTime,
-                    float wantedHeightLevel);
+  NFmiDataMatrix<float> HeightValues(const NFmiMetTime &theInterpolatedTime,
+                                     float wantedHeightLevel);
   // Sama korkeus haku, mutta haluttuun hilaan ja projektioon.
-  void HeightValues(NFmiDataMatrix<float> &theValues,
-                    const NFmiGrid &theWantedGrid,
-                    const NFmiMetTime &theInterpolatedTime,
-                    float wantedHeightLevel);
-  void HeightValues(NFmiDataMatrix<float> &theValues,
-                    const NFmiGrid &theWantedGrid,
-                    const NFmiMetTime &theInterpolatedTime,
-                    float wantedHeightLevel,
-                    bool relative_uv);
+  NFmiDataMatrix<float> HeightValues(const NFmiGrid &theWantedGrid,
+                                     const NFmiMetTime &theInterpolatedTime,
+                                     float wantedHeightLevel);
+  NFmiDataMatrix<float> HeightValues(const NFmiGrid &theWantedGrid,
+                                     const NFmiMetTime &theInterpolatedTime,
+                                     float wantedHeightLevel,
+                                     bool relative_uv);
 
   bool HeightDataAvailable(void) const
   {
@@ -544,22 +531,21 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                                            const NFmiMetTime &theTime,
                                            int theMaxMinuteRange = 0);
 
-  void LandscapeInterpolatedValuesDewPoint(
-      NFmiDataMatrix<float> &theLandscapedMatrix,
-      const NFmiDataMatrix<float> &theMatrix,
+  NFmiDataMatrix<float> LandscapeInterpolatedValuesDewPoint(
+      const NFmiDataMatrix<float> &tdewMatrix,
       const NFmiDataMatrix<float> &temperatureMatrix,
       NFmiDataMatrix<float> &humidityMatrix,
       const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
           NFmiDataMatrix<NFmiLocationCache>());
 
-  void LandscapeInterpolatedValues(NFmiDataMatrix<float> &theLandscapedMatrix,
-                                   const NFmiDataMatrix<float> &theMatrix,
-                                   const NFmiDataMatrix<NFmiPoint> &gridPointMatrix,
-                                   const NFmiDataMatrix<float> &demMatrix,
-                                   const NFmiDataMatrix<bool> &waterFlagMatrix,
-                                   const NFmiDataMatrix<float> &heightMatrix,
-                                   const NFmiDataMatrix<float> &lapseRateMatrix,
-                                   const NFmiDataMatrix<float> &maskMatrix);
+  NFmiDataMatrix<float> LandscapeInterpolatedValues(const NFmiDataMatrix<float> &theMatrix,
+                                                    const Fmi::CoordinateMatrix &gridPointMatrix,
+                                                    const NFmiDataMatrix<float> &demMatrix,
+                                                    const NFmiDataMatrix<bool> &waterFlagMatrix,
+                                                    const NFmiDataMatrix<float> &heightMatrix,
+                                                    const NFmiDataMatrix<float> &lapseRateMatrix,
+                                                    const NFmiDataMatrix<float> &maskMatrix);
+
   float GetCurrentLevelPressure(void);
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon);
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon, const NFmiMetTime &theTime);
@@ -725,7 +711,10 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsSubParamUsed(void) const { return fUseSubParam; }
+inline bool NFmiFastQueryInfo::IsSubParamUsed(void) const
+{
+  return fUseSubParam;
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -755,14 +744,20 @@ inline void NFmiFastQueryInfo::ResetLocation(void)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetLevel(void) { itsLevelIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetLevel(void)
+{
+  itsLevelIndex = static_cast<unsigned long>(-1);
+}
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetTime(void) { itsTimeIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetTime(void)
+{
+  itsTimeIndex = static_cast<unsigned long>(-1);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -968,63 +963,90 @@ inline bool NFmiFastQueryInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::ParamIndex(void) const { return itsParamIndex; }
+inline unsigned long NFmiFastQueryInfo::ParamIndex(void) const
+{
+  return itsParamIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LocationIndex(void) const { return itsLocationIndex; }
+inline unsigned long NFmiFastQueryInfo::LocationIndex(void) const
+{
+  return itsLocationIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LevelIndex(void) const { return itsLevelIndex; }
+inline unsigned long NFmiFastQueryInfo::LevelIndex(void) const
+{
+  return itsLevelIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::TimeIndex(void) const { return itsTimeIndex; }
+inline unsigned long NFmiFastQueryInfo::TimeIndex(void) const
+{
+  return itsTimeIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeParams(void) const { return itsParamSize; }
+inline unsigned long NFmiFastQueryInfo::SizeParams(void) const
+{
+  return itsParamSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLocations(void) const { return itsLocationSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLocations(void) const
+{
+  return itsLocationSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLevels(void) const { return itsLevelSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLevels(void) const
+{
+  return itsLevelSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeTimes(void) const { return itsTimeSize; }
+inline unsigned long NFmiFastQueryInfo::SizeTimes(void) const
+{
+  return itsTimeSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsParamUsable(void) const { return itsParamIndex < itsParamSize; }
+inline bool NFmiFastQueryInfo::IsParamUsable(void) const
+{
+  return itsParamIndex < itsParamSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1042,14 +1064,20 @@ inline bool NFmiFastQueryInfo::IsLocationUsable(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsLevelUsable(void) const { return itsLevelIndex < itsLevelSize; }
+inline bool NFmiFastQueryInfo::IsLevelUsable(void) const
+{
+  return itsLevelIndex < itsLevelSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsTimeUsable(void) const { return itsTimeIndex < itsTimeSize; }
+inline bool NFmiFastQueryInfo::IsTimeUsable(void) const
+{
+  return itsTimeIndex < itsTimeSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1063,6 +1091,18 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
   itsTimeDescriptor->Time(itsTimeIndex);
   return itsTimeDescriptor->Resolution();
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return current WorldXY coordinate
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiPoint NFmiFastQueryInfo::WorldXY() const
+{
+  return WorldXY(itsLocationIndex);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Palauttaa nykyisen indeksin koordinaatit. Koordinaatticache sijaitsee
@@ -1072,7 +1112,10 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiFastQueryInfo::LatLon(void) const { return LatLon(itsLocationIndex); }
+inline NFmiPoint NFmiFastQueryInfo::LatLon(void) const
+{
+  return LatLon(itsLocationIndex);
+}
 inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast(void) const
 {
   return LatLon(itsLocationIndex);
@@ -1112,110 +1155,10 @@ inline unsigned long NFmiFastQueryInfo::PeekLocationIndex(int theXOffset, int th
 
 // ----------------------------------------------------------------------
 /*!
- * Palauttaa kaikki hilan data-arvot annettuun datamatriisiin.
- * Muutettu siten että hiladata menee kuten ennenkin, mutta
- * asemadata ladataankin 'yksiulotteiseen'-matriisiin (eli 1 x N).
- * Huom! x-dimension pitää olla 1 ja y-dimensioon laitetaan paikkojen
- * määrä ja sen pitää tapahtua näin jolloin matrix-luokka tekee
- * vain 1 + 1 vector-luokan instanssia (toisin päin tekisi 1 + N kpl).
- *
- * \param theMatrix The matrix in which to store the values
+ * \return Undocumented
  */
 // ----------------------------------------------------------------------
-
-// Generic matrix with operator()(i,j) interface
-
-template <typename T>
-inline void NFmiFastQueryInfo::Values(T &theMatrix) const
+inline const Fmi::SpatialReference &NFmiFastQueryInfo::SpatialReference() const
 {
-  bool fIsGrid = IsGrid();
-  int nx = fIsGrid ? itsGridXNumber : 1;
-  int ny = fIsGrid ? itsGridYNumber : itsLocationSize;
-
-  int idx = Index(itsParamIndex, 0, itsLevelIndex, itsTimeIndex);
-  int offset = Index(itsParamIndex, 1, itsLevelIndex, itsTimeIndex) - idx;
-
-  for (int j = 0; j < ny; j++)
-    for (int i = 0; i < nx; i++)
-    {
-      theMatrix(i, j) = NFmiQueryInfo::PeekValue(idx);
-      idx += offset;
-    }
+  return itsHPlaceDescriptor->SpatialReference();
 }
-
-// Specialization for NFmiDataMatrix
-
-template <>
-inline void NFmiFastQueryInfo::Values(NFmiDataMatrix<float> &theMatrix) const
-{
-  bool fIsGrid = IsGrid();
-  unsigned long nx = fIsGrid ? itsGridXNumber : 1;
-  unsigned long ny = fIsGrid ? itsGridYNumber : itsLocationSize;
-
-  theMatrix.Resize(nx, ny, kFloatMissing);
-
-  size_t idx = Index(itsParamIndex, 0, itsLevelIndex, itsTimeIndex);
-  size_t offset = Index(itsParamIndex, 1, itsLevelIndex, itsTimeIndex) - idx;
-
-  // Mika: Must have this loop order so that the offset trick works
-
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx;
-         i++)  // pientä optimointia olisi jos for loopit saisi toisin päin
-    {
-      theMatrix[i][j] = NFmiQueryInfo::PeekValue(idx);
-      idx += offset;
-    }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Palauttaa kaikki hilan LatLongit annettuun datamatriisiin
- *
- * \param theMatrix The matrix where to store the coordinates
- */
-// ----------------------------------------------------------------------
-
-// Generic matrix with operator()(i,j) interface
-
-template <typename T>
-inline void NFmiFastQueryInfo::Locations(T &theMatrix) const
-{
-  if (IsGrid())
-  {
-    const long unsigned int nx = itsGridXNumber;
-    const long unsigned int ny = itsGridYNumber;
-
-    for (long unsigned int j = 0; j < ny; j++)
-      for (long unsigned int i = 0; i < nx; i++)
-      {
-        const NFmiPoint latlon = LatLon(j * nx + i);
-        theMatrix(i, j) = typename T::value_type(latlon.X(), latlon.Y());
-      }
-  }
-  else
-    throw std::runtime_error(
-        "NFmiFastQueryInfo::Locations: Cannot extract coordinate matrix from point data");
-}
-
-// Specialization for NFmiDataMatrix
-
-template <>
-inline void NFmiFastQueryInfo::Locations(NFmiDataMatrix<NFmiPoint> &theMatrix) const
-{
-  if (IsGrid())
-  {
-    unsigned long nx = itsGridXNumber;
-    unsigned long ny = itsGridYNumber;
-
-    theMatrix.Resize(nx, ny, NFmiPoint(kFloatMissing, kFloatMissing));
-
-    for (unsigned long j = 0; j < ny; j++)
-      for (unsigned long i = 0; i < nx; i++)
-        theMatrix[i][j] = LatLon(j * nx + i);
-  }
-  else
-    theMatrix = NFmiPoint(kFloatMissing, kFloatMissing);
-}
-
-// ======================================================================
