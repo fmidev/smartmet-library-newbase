@@ -326,14 +326,15 @@ NFmiTime::NFmiTime(time_t theTime) : NFmiStaticTime(theTime, true), itsZoneDiffe
 // ----------------------------------------------------------------------
 
 NFmiTime::NFmiTime(const boost::posix_time::ptime &thePosixTime)
-    : NFmiStaticTime(static_cast<short>(thePosixTime.date().year()),
-                     static_cast<short>(thePosixTime.date().month()),
-                     static_cast<short>(thePosixTime.date().day()),
-                     static_cast<short>(thePosixTime.time_of_day().hours()),
-                     static_cast<short>(thePosixTime.time_of_day().minutes()),
-                     static_cast<short>(thePosixTime.time_of_day().seconds())),
-      itsZoneDifferenceHour()
+    : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
+  // Use these accessors only once for speed. Hence the fixed dummy time above.
+  auto d = thePosixTime.date();
+  auto t = thePosixTime.time_of_day();
+
+  SetDate(d.year(), d.month(), d.day());
+  SetTime(t.hours(), t.minutes(), t.seconds());
+
   SetZoneDifferenceHour();
 }
 
@@ -354,16 +355,18 @@ NFmiTime &NFmiTime::operator=(const NFmiTime &theTime)
 // ----------------------------------------------------------------------
 
 NFmiTime::NFmiTime(const boost::local_time::local_date_time &theLocalTime)
-    : NFmiStaticTime(static_cast<short>(theLocalTime.date().year()),
-                     static_cast<short>(theLocalTime.date().month()),
-                     static_cast<short>(theLocalTime.date().day()),
-                     static_cast<short>(theLocalTime.time_of_day().hours()),
-                     static_cast<short>(theLocalTime.time_of_day().minutes()),
-                     static_cast<short>(theLocalTime.time_of_day().seconds())),
-      itsZoneDifferenceHour()
+    : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
+  // Use these accessors only once for speed. Hence the fixed dummy time above.
+  auto d = theLocalTime.date();
+  auto t = theLocalTime.time_of_day();
+
+  SetDate(d.year(), d.month(), d.day());
+  SetTime(t.hours(), t.minutes(), t.seconds());
+
   boost::posix_time::time_duration offset = theLocalTime.zone()->base_utc_offset();
-  if (theLocalTime.is_dst()) offset += theLocalTime.zone()->dst_offset();
+  if (theLocalTime.is_dst())
+    offset += theLocalTime.zone()->dst_offset();
   itsZoneDifferenceHour = offset.hours();
 }
 
@@ -540,7 +543,10 @@ const NFmiString NFmiTime::Weekday(const FmiLanguage theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiTime::PrintWeekday() const { std::cout << weekdays[GetWeekday() - 1]; }
+void NFmiTime::PrintWeekday() const
+{
+  std::cout << weekdays[GetWeekday() - 1];
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns time in minutes since 01.01.2001 00:00
@@ -709,7 +715,8 @@ const NFmiTime NFmiTime::UTCTime(const NFmiLocation &theLocation) const
 
 const NFmiTime NFmiTime::LocalTime(const float theLongitude) const
 {
-  if (theLongitude != kFloatMissing) return *this;
+  if (theLongitude != kFloatMissing)
+    return *this;
 
   return *this;
 }
@@ -723,7 +730,8 @@ const NFmiTime NFmiTime::LocalTime(const float theLongitude) const
 
 const NFmiTime NFmiTime::LocalTime(const NFmiLocation &theLocation) const
 {
-  if (theLocation.GetLongitude() != kFloatMissing) return *this;
+  if (theLocation.GetLongitude() != kFloatMissing)
+    return *this;
 
   return *this;
 }
@@ -1100,7 +1108,8 @@ const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
   int diff = GetJulianDay() - currentTime.GetJulianDay();
   if (diff < -100)  // vuodenvaihde ja karkausvuosi hoidettu, voisi viedÃ¤ NFmiTime:een; ei tastattu
     diff += DaysInYear(currentTime.GetYear());
-  if (diff > 100) diff -= DaysInYear(GetYear());
+  if (diff > 100)
+    diff -= DaysInYear(GetYear());
 
   if (theFormat.GetChars(5, 1) == NFmiString("+") || theFormat.GetChars(5, 1) == NFmiString("-"))
   {
@@ -1112,8 +1121,10 @@ const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
   }
   diff = std::min(std::max(diff, -3), 3);  // pysÃ¤ytetÃ¤Ã¤n ali/ylivuotoon
   retString = NFmiString(reldays[(theLanguage - 1) * 7 + diff + 3]);
-  if (theFormat.GetChars(1, 4) == NFmiString("tttt")) retString.LowerCase();
-  if (theFormat.GetChars(1, 4) == NFmiString("TTTT")) retString.UpperCase();
+  if (theFormat.GetChars(1, 4) == NFmiString("tttt"))
+    retString.LowerCase();
+  if (theFormat.GetChars(1, 4) == NFmiString("TTTT"))
+    retString.UpperCase();
   return retString;
 }
 
