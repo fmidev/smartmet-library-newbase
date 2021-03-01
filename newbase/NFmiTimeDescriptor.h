@@ -15,13 +15,6 @@
 
 class NFmiTimeList;
 
-//! Undocumented unnamed enum
-enum
-{
-  kFmiLocalTime,
-  kFmiUTCTime
-};
-
 //! Undocumented
 class NFmiTimeDescriptor : public NFmiDataDescriptor
 {
@@ -186,43 +179,64 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation(void) const { return itsIsLocalTime; }
+inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation(void) const
+{
+  return itsIsLocalTime;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsInterpolation(void) const { return itsIsInterpolation; }
+inline bool NFmiTimeDescriptor::IsInterpolation(void) const
+{
+  return itsIsInterpolation;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsOriginLastest(void) const { return itsIsOriginLastest; }
+inline bool NFmiTimeDescriptor::IsOriginLastest(void) const
+{
+  return itsIsOriginLastest;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theLastest Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimeDescriptor::OriginLastest(bool theLastest) { itsIsOriginLastest = theLastest; }
+inline void NFmiTimeDescriptor::OriginLastest(bool theLastest)
+{
+  itsIsOriginLastest = theLastest;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimeBag *NFmiTimeDescriptor::ValidTimeBag(void) const { return itsValidTimeBag; }
+inline NFmiTimeBag *NFmiTimeDescriptor::ValidTimeBag(void) const
+{
+  return itsValidTimeBag;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimeBag *NFmiTimeDescriptor::OriginTimeBag(void) const { return itsOriginTimeBag; }
-inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList(void) const { return itsTimeList; }
+inline NFmiTimeBag *NFmiTimeDescriptor::OriginTimeBag(void) const
+{
+  return itsOriginTimeBag;
+}
+inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList(void) const
+{
+  return itsTimeList;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -240,49 +254,70 @@ inline unsigned long NFmiTimeDescriptor::ForecastPeriod(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsOriginTime(void) const { return !itsTimeBagIdent; }
+inline bool NFmiTimeDescriptor::IsOriginTime(void) const
+{
+  return !itsTimeBagIdent;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsValidTime(void) const { return itsTimeBagIdent; }
+inline bool NFmiTimeDescriptor::IsValidTime(void) const
+{
+  return itsTimeBagIdent;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsActive(void) const { return (itsActivity[Index()]); }
+inline bool NFmiTimeDescriptor::IsActive(void) const
+{
+  return (itsActivity[Index()]);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::UseTimeList(void) const { return itsTimeList != 0; }
+inline bool NFmiTimeDescriptor::UseTimeList(void) const
+{
+  return itsTimeList != 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::ClassId(void) const { return kNFmiTimeDescriptor; }
+inline unsigned long NFmiTimeDescriptor::ClassId(void) const
+{
+  return kNFmiTimeDescriptor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimeDescriptor::ClassName(void) const { return "NFmiTimeDescriptor"; }
+inline const char *NFmiTimeDescriptor::ClassName(void) const
+{
+  return "NFmiTimeDescriptor";
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::LocalTimeStep(void) { return itsLocalTimeStep; }
+inline unsigned long NFmiTimeDescriptor::LocalTimeStep(void)
+{
+  return itsLocalTimeStep;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
