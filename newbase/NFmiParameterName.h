@@ -963,7 +963,7 @@ enum FmiParameterName
   kFmiRoadTemperatureF75 = 987,
   kFmiRoadTemperatureF90 = 988,
   kFmiRoadTemperatureF100 = 989,
-  
+
   kFmiFlagDate = 999,
 
   kFmiProbabilityOfWindLimit3 = 1023,  // EPS: tod.n. keskituuli yli 17
@@ -1780,6 +1780,99 @@ enum FmiParameterName
   kFmiSeaLevelF75N2000,
   kFmiSeaLevelF90N2000,
   kFmiSeaLevelF95N2000,
+
+  // Meta parameters calculated on the fly. This list is not exhaustive, some parameters
+  // already had numbers assigned to them.
+  // This list starts intentionally at 9000 before the start of NetCDF parameters.
+
+  // If you wish to add new parameters, please do them above this list unless your
+  // new parameter is also to be calculated on the fly, in which case you might
+  // want to modify spine/Parameters.cpp
+
+  // Note that new parameters must be appended to the end of this list, it just happens
+  // to be sorted in the first version.
+
+  kFmiApparentTemperature = 9000,
+  kFmiCloudiness8th,
+  kFmiCountry,
+  kFmiCoverType,
+  kFmiDEM,
+  kFmiDark,
+  kFmiDataSource,
+  kFmiDayLength,
+  kFmiDirection,
+  kFmiDistance,
+  kFmiElevation,
+  kFmiEpochTime,
+  kFmiFMISID,
+  kFmiFeature,
+  kFmiGEOID,
+  kFmiGridNorth,
+  kFmiISO2,
+  kFmiISOTime,
+  kFmiLPNN,
+  kFmiLatLon,
+  kFmiLevel,
+  kFmiLocalTZ,
+  kFmiLocalTime,
+  kFmiLonLat,
+  kFmiModTime,
+  kFmiModel,
+  kFmiMon,
+  kFmiMoonDown24h,
+  kFmiMoonPhase,
+  kFmiMoonUp24h,
+  kFmiMoonrise,
+  kFmiMoonrise2,
+  kFmiMoonrise2Today,
+  kFmiMoonriseToday,
+  kFmiMoonset,
+  kFmiMoonset2,
+  kFmiMoonset2Today,
+  kFmiMoonsetToday,
+  kFmiName,
+  kFmiNearLatLon,
+  kFmiNearLatitude,
+  kFmiNearLonLat,
+  kFmiNearLongitude,
+  kFmiNoon,
+  kFmiOriginTime,
+  kFmiPlace,
+  kFmiPopulation,
+  kFmiProducer,
+  kFmiRWSID,
+  kFmiRegion,
+  kFmiSensorNo,
+  kFmiSmartSymbolText,
+  kFmiSnow1hLower,
+  kFmiSnow1hUpper,
+  kFmiStationElevation,
+  kFmiStationLatitude,
+  kFmiStationLongitude,
+  kFmiStationName,
+  kFmiStationary,
+  kFmiSummerSimmerIndex,
+  kFmiSunAzimuth,
+  kFmiSunDeclination,
+  kFmiSunElevation,
+  kFmiSunrise,
+  kFmiSunriseToday,
+  kFmiSunset,
+  kFmiSunsetToday,
+  kFmiTZ,
+  kFmiTime,
+  kFmiTimeString,
+  kFmiUTCTime,
+  kFmiWDay,
+  kFmiWeather,
+  kFmiWeekday,
+  kFmiWindChill,
+  kFmiWindCompass16,
+  kFmiWindCompass32,
+  kFmiWindCompass8,
+  kFmiXMLTime,
+
+  // NetCDF parameters, last generated on 201X.MM.DD ????
 
   cf_acoustic_signal_roundtrip_travel_time_in_sea_water = 10000,
   cf_aerodynamic_particle_diameter = 10001,

@@ -1504,6 +1504,100 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "Year", kFmiYear},
       { "ZResolution", kFmiZResolution},
 
+      // Metaparameters starting at index 9000 are listed here. Note that some have a short and a long name marked by "alias".
+      // The aliases exist simply because legacy queries allowed for both strings.
+ 
+      { "ApparentTemperature", kFmiApparentTemperature},
+      { "Cloudiness8th", kFmiCloudiness8th},
+      { "Country", kFmiCountry},
+      { "CoverType", kFmiCoverType},
+      { "DEM", kFmiDEM},
+      { "Dark", kFmiDark},
+      { "DataSource", kFmiDataSource},
+      { "Data_Source", kFmiDataSource}, // alias
+      { "DayLength", kFmiDayLength},
+      { "Direction", kFmiDirection},
+      { "Distance", kFmiDistance},
+      { "Elevation", kFmiElevation},
+      { "EpochTime", kFmiEpochTime},
+      { "FMISID", kFmiFMISID},
+      { "Feature", kFmiFeature},
+      { "GEOID", kFmiGEOID},
+      { "GridNorth", kFmiGridNorth},
+      { "ISO2", kFmiISO2},
+      { "ISOTime", kFmiISOTime},
+      { "LPNN", kFmiLPNN},
+      { "Lat", kFmiLatitude}, // alias
+      { "LatLon", kFmiLatLon},
+      { "Level", kFmiLevel},
+      { "LocalTZ", kFmiLocalTZ},
+      { "LocalTime", kFmiLocalTime},
+      { "Lon", kFmiLongitude}, // alias
+      { "LonLat", kFmiLonLat},
+      { "MTime", kFmiModTime}, // alias
+      { "ModTime", kFmiModTime},
+      { "Model", kFmiModel},
+      { "Mon", kFmiMon},
+      { "MoonDown24h", kFmiMoonDown24h},
+      { "MoonPhase", kFmiMoonPhase},
+      { "MoonUp24h", kFmiMoonUp24h},
+      { "Moonrise", kFmiMoonrise},
+      { "Moonrise2", kFmiMoonrise2},
+      { "Moonrise2Today", kFmiMoonrise2Today},
+      { "MoonriseToday", kFmiMoonriseToday},
+      { "Moonset", kFmiMoonset},
+      { "Moonset2", kFmiMoonset2},
+      { "Moonset2Today", kFmiMoonset2Today},
+      { "MoonsetToday", kFmiMoonsetToday},
+      { "Name", kFmiName},
+      { "NearLatLon", kFmiNearLatLon},
+      { "NearLatitude", kFmiNearLatitude},
+      { "NearLonLat", kFmiNearLonLat},
+      { "NearLongitude", kFmiNearLongitude},
+      { "Noon", kFmiNoon},
+      { "OriginTime", kFmiOriginTime},
+      { "Place", kFmiPlace},
+      { "Population", kFmiPopulation},
+      { "Producer", kFmiProducer},
+      { "RWSID", kFmiRWSID},
+      { "Region", kFmiRegion},
+      { "SSI", kFmiSummerSimmerIndex}, // alias
+      { "SmartSymbolText", kFmiSmartSymbolText},
+      { "Snow1hLower", kFmiSnow1hLower},
+      { "Snow1hUpper", kFmiSnow1hUpper},
+      { "StationElevation", kFmiStationElevation},
+      { "Station_Elevation", kFmiStationElevation}, // alias
+      { "StationLat", kFmiStationLatitude}, // alias
+      { "StationLatitude", kFmiStationLatitude},
+      { "StationLon", kFmiStationLongitude}, // alias
+      { "StationLongitude", kFmiStationLongitude},
+      { "StationName", kFmiStationName},
+      { "Station_Name", kFmiStationName}, // alias
+      { "StationType", kFmiStationType},
+      { "Station_Name", kFmiStationName}, // alias
+      { "Stationary", kFmiStationary},
+      { "SummerSimmerIndex", kFmiSummerSimmerIndex},
+      { "SunAzimuth", kFmiSunAzimuth},
+      { "SunDeclination", kFmiSunDeclination},
+      { "SunElevation", kFmiSunElevation},
+      { "Sunrise", kFmiSunrise},
+      { "SunriseToday", kFmiSunriseToday},
+      { "Sunset", kFmiSunset},
+      { "SunsetToday", kFmiSunsetToday},
+      { "TZ", kFmiTZ},
+      { "Time", kFmiTime},
+      { "TimeString", kFmiTimeString},
+      { "UTCTime", kFmiUTCTime},
+      { "WDay", kFmiWDay},
+      { "Weather", kFmiWeather},
+      { "Weekday", kFmiWeekday},
+      { "WindChill", kFmiWindChill},
+      { "WindCompass16", kFmiWindCompass16},
+      { "WindCompass32", kFmiWindCompass32},
+      { "WindCompass8", kFmiWindCompass8},
+      { "Wmo", kFmiWmoStationNumber}, // alias
+      { "XMLTime", kFmiXMLTime},
+      
       // Generated from
       // http://cfconventions.org/Data/cf-standard-names/45/build/cf-standard-name-table.html
 
