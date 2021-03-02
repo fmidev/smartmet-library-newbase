@@ -328,6 +328,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "GrowthPeriodStarted", kFmiGrowthPeriodStarted},
       { "HaKeTaskCode", kFmiHaKeTaskCode},
       { "HakeMessageType", kFmiHakeMessageType},
+      { "HardPackedSnowIndex", kFmiHardPackedSnowIndex},
       { "HeightMinus20C", kFmiHeightMinus20C},
       { "Helicity", kFmiHelicity},
       { "HighCloudCover", kFmiHighCloudCover},

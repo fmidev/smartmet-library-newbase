@@ -219,6 +219,8 @@ enum FmiParameterName
 
   kFmiSnowWarning = 220,  // arvot: 0 = ei varoitusta, 1 = lumivaroitus, 2 = lumihälytys
 
+  kFmiHardPackedSnowIndex = 221,  // used by the road model (polanne in Finnish, values 0,1,2,3)
+
   kFmiPressureAnomaly = 226,
   kFmiGeopotentialHeightAnomaly,
 
