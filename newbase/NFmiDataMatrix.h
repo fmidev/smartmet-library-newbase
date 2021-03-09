@@ -64,10 +64,21 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
  public:
   //! Constructor
 
+  using Base = std::vector<std::vector<T>>;
+
   NFmiDataMatrix(size_type nx = 0, size_type ny = 0, const T& theValue = T())
-      : std::vector<std::vector<T> >(nx, std::vector<T>(ny, theValue)), itsNX(nx), itsNY(ny)
+      : Base(nx, std::vector<T>(ny, theValue)), itsNX(nx), itsNY(ny)
   {
   }
+
+  //! Copy constructor
+
+  NFmiDataMatrix<T>(const NFmiDataMatrix<T>& other)
+      : Base(other), itsNX(other.NX()), itsNY(other.NY())
+  {
+  }
+
+  ~NFmiDataMatrix() = default;
 
   //! Return matrix width.
 
@@ -201,6 +212,17 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     for (size_type j = 0; j < itsNY; j++)
       for (size_type i = 0; i < itsNX; i++)
         this->operator[](i)[j] = theValue;
+    return *this;
+  }
+
+  //! Move assignment operator: matrix = matrix
+
+  NFmiDataMatrix<T>& operator=(NFmiDataMatrix<T>&& other)
+  {
+    Base::operator=(std::move(other));
+    itsNX = other.itsNX;
+    itsNY = other.itsNY;
+    other.itsNX = other.itsNY = 0;
     return *this;
   }
 
