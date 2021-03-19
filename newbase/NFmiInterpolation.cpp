@@ -41,9 +41,12 @@ double Linear(double theX, double theX1, double theX2, double theY1, double theY
   // Handle special case where X1==X2
   if (theX1 == theX2)
   {
-    if (theX != theX1) return kFloatMissing;
-    if (theY1 == kFloatMissing || theY2 == kFloatMissing) return kFloatMissing;
-    if (theY1 != theY2) return kFloatMissing;
+    if (theX != theX1)
+      return kFloatMissing;
+    if (theY1 == kFloatMissing || theY2 == kFloatMissing)
+      return kFloatMissing;
+    if (theY1 != theY2)
+      return kFloatMissing;
     return theY1;
   }
   else
@@ -134,10 +137,14 @@ double WindVector(double theX,
 
   // Grid cell edges
 
-  if (dy == 0) return WindVector(dx, theBottomLeft, theBottomRight);
-  if (dy == 1) return WindVector(dx, theTopLeft, theTopRight);
-  if (dx == 0) return WindVector(dy, theBottomLeft, theTopLeft);
-  if (dx == 1) return WindVector(dy, theBottomRight, theTopRight);
+  if (dy == 0)
+    return WindVector(dx, theBottomLeft, theBottomRight);
+  if (dy == 1)
+    return WindVector(dx, theTopLeft, theTopRight);
+  if (dx == 0)
+    return WindVector(dy, theBottomLeft, theTopLeft);
+  if (dx == 1)
+    return WindVector(dy, theBottomRight, theTopRight);
 
   return kFloatMissing;
 }
@@ -186,9 +193,12 @@ double ModLinear(
   // Handle special case where X1==X2
   if (theX1 == theX2)
   {
-    if (theX != theX1) return kFloatMissing;
-    if (theY1 == kFloatMissing || theY2 == kFloatMissing) return kFloatMissing;
-    if (theY1 != theY2) return kFloatMissing;
+    if (theX != theX1)
+      return kFloatMissing;
+    if (theY1 == kFloatMissing || theY2 == kFloatMissing)
+      return kFloatMissing;
+    if (theY1 != theY2)
+      return kFloatMissing;
     return theY1;
   }
   else
@@ -265,10 +275,14 @@ double BiLinear(double theX,
 
   // Grid cell edges
 
-  if (dy == 0) return Linear(dx, theBottomLeft, theBottomRight);
-  if (dy == 1) return Linear(dx, theTopLeft, theTopRight);
-  if (dx == 0) return Linear(dy, theBottomLeft, theTopLeft);
-  if (dx == 1) return Linear(dy, theBottomRight, theTopRight);
+  if (dy == 0)
+    return Linear(dx, theBottomLeft, theBottomRight);
+  if (dy == 1)
+    return Linear(dx, theTopLeft, theTopRight);
+  if (dx == 0)
+    return Linear(dy, theBottomLeft, theTopLeft);
+  if (dx == 1)
+    return Linear(dy, theBottomRight, theTopRight);
 
   // If only one corner is missing, interpolate within
   // the triangle formed by the three points, AND now
@@ -324,7 +338,10 @@ class PointData
   double distance_;                    // Etäisyys referenssi pisteeseen
 };
 
-bool operator<(const PointData &p1, const PointData &p2) { return p1.distance_ < p2.distance_; }
+bool operator<(const PointData &p1, const PointData &p2)
+{
+  return p1.distance_ < p2.distance_;
+}
 PointData CalcPointData(const NFmiPoint &referencePoint,
                         const NFmiPoint &cornerPoint,
                         FmiDirection corner,
@@ -370,7 +387,8 @@ double NearestNonMissing(double theX,
       CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
   for (const auto &pointData : sortedPointValues)
   {
-    if (pointData.value_ != kFloatMissing) return pointData.value_;
+    if (pointData.value_ != kFloatMissing)
+      return pointData.value_;
   }
   return kFloatMissing;
 }
@@ -435,14 +453,19 @@ NFmiPoint BiLinear(double theX,
                    const NFmiPoint &theBottomLeft,
                    const NFmiPoint &theBottomRight)
 {
-  double dx = theX;
-  double dy = theY;
+  const auto dx = theX;
+  const auto dy = theY;
+  const auto xd = 1 - dx;
+  const auto yd = 1 - dy;
+  const auto bottomleft = xd * yd;
+  const auto bottomright = dx * yd;
+  const auto topleft = xd * dy;
+  const auto topright = dx * dy;
 
-  double x = ((1 - dx) * (1 - dy) * theBottomLeft.X() + dx * (1 - dy) * theBottomRight.X() +
-              (1 - dx) * dy * theTopLeft.X() + dx * dy * theTopRight.X());
-
-  double y = ((1 - dx) * (1 - dy) * theBottomLeft.Y() + dx * (1 - dy) * theBottomRight.Y() +
-              (1 - dx) * dy * theTopLeft.Y() + dx * dy * theTopRight.Y());
+  const auto x = bottomleft * theBottomLeft.X() + bottomright * theBottomRight.X() +
+                 topleft * theTopLeft.X() + topright * theTopRight.X();
+  const auto y = bottomleft * theBottomLeft.Y() + bottomright * theBottomRight.Y() +
+                 topleft * theTopLeft.Y() + topright * theTopRight.Y();
 
   return NFmiPoint(x, y);
 }
@@ -491,10 +514,14 @@ double ModBiLinear(double theX,
 
   // Grid cell edges
 
-  if (dy == 0) return ModLinear(dx, theBottomLeft, theBottomRight, theModulo);
-  if (dy == 1) return ModLinear(dx, theTopLeft, theTopRight, theModulo);
-  if (dx == 0) return ModLinear(dy, theBottomLeft, theTopLeft, theModulo);
-  if (dx == 1) return ModLinear(dy, theBottomRight, theTopRight, theModulo);
+  if (dy == 0)
+    return ModLinear(dx, theBottomLeft, theBottomRight, theModulo);
+  if (dy == 1)
+    return ModLinear(dx, theTopLeft, theTopRight, theModulo);
+  if (dx == 0)
+    return ModLinear(dy, theBottomLeft, theTopLeft, theModulo);
+  if (dx == 1)
+    return ModLinear(dy, theBottomRight, theTopRight, theModulo);
 
   // If only one corner is missing, interpolate within
   // the triangle formed by the three points, but not
@@ -503,7 +530,8 @@ double ModBiLinear(double theX,
   if (theTopLeft == kFloatMissing && theTopRight != kFloatMissing &&
       theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
   {
-    if (dx < dy) return kFloatMissing;
+    if (dx < dy)
+      return kFloatMissing;
     calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
     calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
     calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
@@ -512,7 +540,8 @@ double ModBiLinear(double theX,
   else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
            theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
   {
-    if (1 - dx < dy) return kFloatMissing;
+    if (1 - dx < dy)
+      return kFloatMissing;
     calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
     calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
     calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
@@ -521,7 +550,8 @@ double ModBiLinear(double theX,
   else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
            theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
   {
-    if (1 - dx > dy) return kFloatMissing;
+    if (1 - dx > dy)
+      return kFloatMissing;
     calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
     calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
     calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
@@ -530,7 +560,8 @@ double ModBiLinear(double theX,
   else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
            theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
   {
-    if (dx > dy) return kFloatMissing;
+    if (dx > dy)
+      return kFloatMissing;
     calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
     calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
     calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
@@ -582,7 +613,8 @@ void WindInterpolator::Reset()
 
 void WindInterpolator::operator()(double theSpeed, double theDirection, double theWeight)
 {
-  if (theSpeed == kFloatMissing || theDirection == kFloatMissing || theWeight <= 0) return;
+  if (theSpeed == kFloatMissing || theDirection == kFloatMissing || theWeight <= 0)
+    return;
 
   if (itsCount == 0 || theWeight > itsBestWeight)
   {
@@ -618,7 +650,8 @@ void WindInterpolator::operator()(double theSpeed, double theDirection, double t
 
 double WindInterpolator::Speed() const
 {
-  if (itsCount == 0 || itsWeightSum == 0) return kFloatMissing;
+  if (itsCount == 0 || itsWeightSum == 0)
+    return kFloatMissing;
 
   return itsSpeedSum / itsWeightSum;
 }
@@ -634,7 +667,8 @@ double WindInterpolator::Speed() const
 
 double WindInterpolator::Direction() const
 {
-  if (itsCount == 0 || itsWeightSum == 0) return kFloatMissing;
+  if (itsCount == 0 || itsWeightSum == 0)
+    return kFloatMissing;
 
   double x = itsSpeedSumX / itsWeightSum;
   double y = itsSpeedSumY / itsWeightSum;
@@ -642,13 +676,15 @@ double WindInterpolator::Direction() const
   // If there is almost exact cancellation, return best
   // weighted direction instead.
 
-  if (sqrt(x * x + y * y) < 0.01) return itsBestDirection;
+  if (sqrt(x * x + y * y) < 0.01)
+    return itsBestDirection;
 
   // Otherwise use the 2D mean
 
   double dir = atan2(y, x);
   dir = FmiDeg(dir);
-  if (dir < 0) dir += 360;
+  if (dir < 0)
+    dir += 360;
   return dir;
 }
 
