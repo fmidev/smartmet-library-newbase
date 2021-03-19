@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.3.9
+Version: 21.3.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Mar 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.19-1.fmi
+- Fixed NFmiEquidistantArea to initialize the spatial reference for all constructor calls
+
 * Tue Mar  9 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.9-1.fmi
 - Added move assignment and constructor for NFmiDataMatrix
 
