@@ -456,8 +456,6 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                unsigned long theLevelIndex,
                unsigned long theTimeIndex) const;
 
-  void Index(unsigned long theIndex);
-
   virtual float GetFloatValue(size_t theIndex) const;
 
   // HUOM! tämä on viritys funktio, joka toimii oikeasti vain NFmiFastQueryInfo:ssa
@@ -680,34 +678,6 @@ inline size_t NFmiFastQueryInfo::Index(void) const
             itsLevelIndex * itsTimeSize + itsTimeIndex);
   else
     return static_cast<size_t>(-1);
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline void NFmiFastQueryInfo::Index(unsigned long theIndex)
-{
-#if 0
-  // Unfortunately ldiv is slow at least in gcc 4.8.5 (RHEL7)
-  // There are attempts to make std::div faster.
-  auto tmp = ldiv(theIndex, itsLocLevTimSize);
-  itsParamIndex = tmp.quot;
-  tmp = ldiv(tmp.rem, itsLevTimSize);
-  itsLocationIndex = tmp.quot;
-  tmp = ldiv(tmp.rem, itsTimeSize);
-  itsLevelIndex = tmp.quot;
-  itsTimeIndex = tmp.rem;
-#else
-  itsParamIndex = theIndex / itsLocLevTimSize;
-  auto idx = theIndex % itsLocLevTimSize;
-  itsLocationIndex = idx / itsLevTimSize;
-  idx = idx % itsLevTimSize;
-  itsLevelIndex = idx / itsTimeSize;
-  itsTimeIndex = idx % itsTimeSize;
-#endif
 }
 
 // ----------------------------------------------------------------------
@@ -1159,28 +1129,19 @@ inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast(void) const
 
 inline unsigned long NFmiFastQueryInfo::PeekLocationIndex(int theXOffset, int theYOffset) const
 {
-  unsigned long theHPlaceIndex = itsLocationIndex;
+  if (!IsGrid())
+    return itsLocationIndex + theXOffset;
 
-  if (IsGrid())
-  {
-    long currentXIndex = (theHPlaceIndex % itsGridXNumber) + theXOffset;
-    long currentYIndex = (theHPlaceIndex / itsGridXNumber) + theYOffset;
+  long currentXIndex = (itsLocationIndex % itsGridXNumber) + theXOffset;
+  long currentYIndex = (itsLocationIndex / itsGridXNumber) + theYOffset;
 
-    // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi tarkistetaan kuitenkin
-    // Index-metodissa??
-    if (currentXIndex >= 0 &&
-        currentXIndex <
-            int(itsGridXNumber) &&  // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
-        currentYIndex >= 0 &&
-        currentYIndex < int(itsGridYNumber))
-      theHPlaceIndex = theHPlaceIndex + theYOffset * itsGridXNumber + theXOffset;
-    else
-      theHPlaceIndex = static_cast<unsigned long>(-1);
-  }
-  else
-    theHPlaceIndex = theHPlaceIndex + theXOffset;
+  // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi tarkistetaan kuitenkin
+  // Index-metodissa?? x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
+  if (currentXIndex >= 0 && currentXIndex < static_cast<long>(itsGridXNumber) &&
+      currentYIndex >= 0 && currentYIndex < static_cast<long>(itsGridYNumber))
+    return itsLocationIndex + theYOffset * itsGridXNumber + theXOffset;
 
-  return theHPlaceIndex;
+  return static_cast<unsigned long>(-1);
 }
 
 // ----------------------------------------------------------------------

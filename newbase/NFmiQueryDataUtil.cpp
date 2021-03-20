@@ -4933,69 +4933,56 @@ static void FillGridDataWithLocationInterpolation(
 
   // Process interpolation in source data order to prevent cache trashing, the file may be huge and
   // memory mapped. Split processing based on parameter, their respecive data is in continous disk
-  // blocks
+  // blocks. Then we sort based on the XY-location, and then process their levels and times.
 
-  // Reused for each parameter
+  // Build the location to location mapping
   std::vector<IndexMapping> index_mappings;
+
+  theSourceInfo.First();
+  theTargetInfo.First();
+  for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+  {
+    const auto target_idx = theTargetInfo.LocationIndex();
+
+    const auto &locCache =
+        theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
+
+    const auto source_idx = locCache.itsLocationIndex;
+    IndexMapping idxmap{source_idx, target_idx};
+    index_mappings.push_back(std::move(idxmap));
+  }
+
+  // Sort based on source data grid ordering
+
+  std::sort(
+      index_mappings.begin(),
+      index_mappings.end(),
+      [](const IndexMapping &lhs, const IndexMapping &rhs) { return lhs.source < rhs.source; });
+
+  // Then process each param, location, level and time
 
   for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
     if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
-    {
-      const auto source_par_idx = theSourceInfo.ParamIndex();
-      const auto target_par_idx = theTargetInfo.ParamIndex();
-
-      for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+      for (const auto &idxmap : index_mappings)
       {
-        const auto target_loc_idx = theTargetInfo.LocationIndex();
+        theSourceInfo.LocationIndex(idxmap.source);
+        theTargetInfo.LocationIndex(idxmap.target);
 
         const auto &locCache =
-            theLocationCacheMatrix[target_loc_idx % targetXSize][target_loc_idx / targetXSize];
-
-        const auto source_loc_idx = locCache.itsLocationIndex;
+            theLocationCacheMatrix[idxmap.target % targetXSize][idxmap.target / targetXSize];
 
         for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           if (theSourceInfo.Level(*theTargetInfo.Level()))
-          {
-            const auto target_lev_idx = theTargetInfo.LevelIndex();
-            const auto source_lev_idx = theSourceInfo.LevelIndex();
-
             for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
             {
               if (!theTargetInfo.TimeIndex(i) || timeindexes[i] < 0)
                 continue;
 
-              const auto source_idx = theSourceInfo.Index(
-                  source_par_idx, source_loc_idx, source_lev_idx, timeindexes[i]);
-              const auto target_idx =
-                  theTargetInfo.Index(target_par_idx, target_loc_idx, target_lev_idx, i);
-
-              IndexMapping idxmap{source_idx, target_idx};
-              index_mappings.push_back(std::move(idxmap));
+              theSourceInfo.TimeIndex(timeindexes[i]);
+              auto value = theSourceInfo.CachedInterpolation(locCache);
+              theTargetInfo.FloatValue(value);
             }
-          }
       }
-
-      // Sort into source index order
-      std::sort(
-          index_mappings.begin(),
-          index_mappings.end(),
-          [](const IndexMapping &lhs, const IndexMapping &rhs) { return lhs.source < rhs.source; });
-
-      // Perform the location interpolations
-      for (const auto &idxmap : index_mappings)
-      {
-        theSourceInfo.Index(idxmap.source);
-        theTargetInfo.Index(idxmap.target);
-        const auto locidx = theTargetInfo.LocationIndex();
-        const auto &locCache = theLocationCacheMatrix[locidx % targetXSize][locidx / targetXSize];
-
-        auto value = theSourceInfo.CachedInterpolation(locCache);
-        theTargetInfo.IndexFloatValue(idxmap.target, value);
-      }
-
-      // Reuse the allocated vector for the next parameter
-      index_mappings.clear();
-    }
 }
 
 static void FillGridDataWithTimeAndLocationInterpolation(
@@ -5023,19 +5010,52 @@ static void FillGridDataWithTimeAndLocationInterpolation(
 
   const auto targetXSize = theTargetInfo.GridXNumber();
 
+  // Process interpolation in source data order to prevent cache trashing, the file may be huge and
+  // memory mapped. Split processing based on parameter, their respecive data is in continous disk
+  // blocks. Then we sort based on the XY-location, and then process their levels and times.
+
+  // Build the location to location mapping
+  std::vector<IndexMapping> index_mappings;
+
+  theSourceInfo.First();
+  theTargetInfo.First();
+  for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+  {
+    const auto target_idx = theTargetInfo.LocationIndex();
+
+    const auto &locCache =
+        theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
+
+    const auto source_idx = locCache.itsLocationIndex;
+    IndexMapping idxmap{source_idx, target_idx};
+    index_mappings.push_back(std::move(idxmap));
+  }
+
+  // Sort based on source data grid ordering
+
+  std::sort(
+      index_mappings.begin(),
+      index_mappings.end(),
+      [](const IndexMapping &lhs, const IndexMapping &rhs) { return lhs.source < rhs.source; });
+
+  // Then process each param, location, level and time
+
   for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
     if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
-      for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+      for (const auto &idxmap : index_mappings)
+      {
+        theSourceInfo.LocationIndex(idxmap.source);
+        theTargetInfo.LocationIndex(idxmap.target);
+
+        const auto &locCache =
+            theLocationCacheMatrix[idxmap.target % targetXSize][idxmap.target / targetXSize];
+
         for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           if (theSourceInfo.Level(*theTargetInfo.Level()))
-          {
             for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
             {
               if (!theTargetInfo.TimeIndex(i))
                 continue;
-
-              const auto idx = theTargetInfo.LocationIndex();
-              const auto &locCache = theLocationCacheMatrix[idx % targetXSize][idx / targetXSize];
 
               if (!timeinterpolation[i])
               {
@@ -5055,7 +5075,7 @@ static void FillGridDataWithTimeAndLocationInterpolation(
                 theTargetInfo.FloatValue(value);
               }
             }
-          }
+      }
 }
 
 // If source does not have target time but spans the range, we need time interpolation
@@ -5074,13 +5094,6 @@ static bool NeedsTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
 
   return false;
 }
-
-// bool NFmiFastQueryInfo::IndexFloatValue(size_t theIndex, float theValue)
-// inline float NFmiFastQueryInfo::IndexFloatValue(size_t theIndex) const
-// inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
-//                                        unsigned long theLocationIndex,
-//                                        unsigned long theLevelIndex,
-//                                        unsigned long theTimeIndex) const
 
 static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
                                  NFmiFastQueryInfo &theTargetInfo,
@@ -5331,91 +5344,9 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
   }
 }
 
-static void FillSingleTimeGridDataInThread(
-    NFmiFastQueryInfo &theSourceInfo,
-    NFmiFastQueryInfo &theTargetInfo,
-    bool fDoLocationInterpolation,
-    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-    const std::vector<NFmiTimeCache> &theTimeCacheVector,
-    NFmiTimeIndexCalculator &theTimeIndexCalculator,
-    int theThreadNumber,
-    NFmiLogger *theDebugLogger)
-{
-  NFmiDataMatrix<float> gridValues;
-  bool doGroundData =
-      (theSourceInfo.SizeLevels() == 1) &&
-      (theTargetInfo.SizeLevels() ==
-       1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
-  unsigned long targetXSize = theTargetInfo.GridXNumber();
-  unsigned long workedTimeIndex = 0;
-  for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
-  {
-    if (theDebugLogger)
-    {
-      std::string logStr("FillSingleTimeGridDataInThread - thread no: ");
-      logStr += NFmiStringTools::Convert(theThreadNumber);
-      logStr += " started timeIndex: ";
-      logStr += NFmiStringTools::Convert(workedTimeIndex);
-      theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
-    }
-
-    if (theTargetInfo.TimeIndex(workedTimeIndex) == false)
-      continue;
-    NFmiMetTime targetTime = theTargetInfo.Time();
-    bool doTimeInterpolation =
-        false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
-    if (theSourceInfo.Time(theTargetInfo.Time()) ||
-        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) ==
-            true)
-    {
-      const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-      for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
-      {
-        if (theSourceInfo.Param(
-                static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
-        {
-          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
-          {
-            if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              if (fDoLocationInterpolation == false)
-              {
-                if (doTimeInterpolation)
-                  gridValues = theSourceInfo.Values(targetTime);
-                else
-                  gridValues = theSourceInfo.Values();
-
-                theTargetInfo.SetValues(gridValues);
-              }
-              else
-              {  // interpoloidaan paikan suhteen
-                for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
-                {
-                  float value = kFloatMissing;
-                  const NFmiLocationCache &locCache =
-                      theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
-                                            [theTargetInfo.LocationIndex() / targetXSize];
-                  if (fDoLocationInterpolation && doTimeInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache, timeCache);
-                  else if (fDoLocationInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache);
-                  theTargetInfo.FloatValue(value);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 // Tämä on FillGridData-funktion viritetty versio, joka tekee työtä koneen kaikilla
 // kone-threadeilla.
-// Luodaan tarvittavat threadit jotka sitten pyytävät aina seuraavan käsiteltävän ajan indeksin.
-// Työstö tapahtuu siis iksi aika kerrallaa omissa threadeissaan.
-// Optimoitu myös niin että lasketaan valmiiksi kaikki tarvittavat location ja time interpolaatio
-// cachet.
+
 void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
                                            NFmiQueryData *theTarget,
                                            unsigned long theStartTimeIndex,
@@ -5427,18 +5358,22 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
   {
     NFmiFastQueryInfo source1(theSource);
     NFmiFastQueryInfo target1(theTarget);
+
     bool doLocationInterpolation =
         (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
     NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
     if (doLocationInterpolation)
       source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
+
     std::vector<NFmiTimeCache> timeCacheVector;
     source1.CalcTimeCache(target1, timeCacheVector);
 
     unsigned long usedStartTimeIndex = theStartTimeIndex;
     unsigned long usedEndTimeIndex = theEndTimeIndex;
+
     if (usedStartTimeIndex == gMissingIndex)
       usedStartTimeIndex = 0;
+
     if (usedEndTimeIndex == gMissingIndex)
       usedEndTimeIndex = target1.SizeTimes() - 1;
 
@@ -5470,18 +5405,15 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
     else
     {
       // HUOM! multi threaddauksessa otettava huomioon!!!!
-      // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla
-      // erillisillä Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan
-      // kerran
+      // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla erillisillä
+      // Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan kerran
       // tarvittaessa. Nyt samoihin datoihin tehdään kolme info-iteraattoria ja tässä kutsumalla
-      // yhdelle niistä
-      // LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen kuin mennään
-      // suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme thtreadia kutsui
-      // Latlon:ia
-      // ja cache-data ei oltu vielä initialisoitu, jolloin sitä initialisoitiin kolme kertaa
-      // päällekkäin.
-      // Ongelma oli varsinkin isommille datoille (esim. mbe), joille kyseisen cachen rakentaminen
-      // kestää kauemmin.
+      // yhdelle niistä LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen
+      // kuin mennään suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme
+      // thtreadia kutsui Latlon:ia ja cache-data ei oltu vielä initialisoitu, jolloin sitä
+      // initialisoitiin kolme kertaa päällekkäin. Ongelma oli varsinkin isommille datoille (esim.
+      // mbe), joille kyseisen cachen rakentaminen kestää kauemmin.
+
       NFmiPoint dummyPoint =
           target1.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
       dummyPoint =
@@ -5496,18 +5428,29 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
         sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(source1));
       }
 
-      NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
       boost::thread_group calcParts;
+
+      // We wish to share times evenly: 3-2-2 instead of 3-3-1 for 3 threads and 7 times
+
+      unsigned long start_index = 0;
+
       for (unsigned int i = 0; i < usedThreadCount; i++)
-        calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
+      {
+        auto remaining_times = target1.SizeTimes() - start_index;
+        auto time_share = remaining_times / (usedThreadCount - i);  // divisor will reach 1
+        auto end_index = start_index + time_share - 1;
+
+        calcParts.add_thread(new boost::thread(::FillGridDataInThread,
                                                *(sourceInfos[i].get()),
                                                *(targetInfos[i].get()),
-                                               doLocationInterpolation,
                                                locationCacheMatrix,
                                                timeCacheVector,
-                                               boost::ref(timeIndexCalculator),
+                                               start_index,
+                                               end_index,
                                                i,
                                                theDebugLogger));
+        start_index = end_index + 1;
+      }
       calcParts.join_all();  // odotetaan että threadit lopettavat
     }
   }

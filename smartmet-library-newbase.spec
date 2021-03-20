@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.3.19
+Version: 21.3.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Sat Mar 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.20-1.fmi
+- Faster and disk friendlier grid interpolations
+
 * Fri Mar 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.19-1.fmi
 - Fixed NFmiEquidistantArea to initialize the spatial reference for all constructor calls
 
