@@ -73,6 +73,7 @@ clean:
 	rm -f $(LIBFILE) $(ALIBFILE) *~ $(SUBNAME)/*~
 	rm -rf $(objdir)
 	rm -f test/*Test
+	$(MAKE) $(CLEAN_TARGETS)
 
 format:
 	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
@@ -118,3 +119,5 @@ endif
 ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)
 endif
+
+-include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile-abicheck.inc
