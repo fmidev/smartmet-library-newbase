@@ -1370,15 +1370,6 @@ enum FmiParameterName
   kFmiProbabilityOfConvectiveSeverityIndexLimit3,
   kFmiPotentialWindSpeed,  // wind speed observation reduced to 10m
 
-  // NWCSAF
-  kFmiCloudMask,
-  kFmiCloudMaskQuality,
-  kFmiCloudType,
-  kFmiCloudTypeQuality,
-  kFmiCloudTopPressure,
-  kFmiCloudTopQuality,
-  kFmiEffectiveCloudiness,
-
   kFmiLowAndMiddleCloudCoverF100 = 1425,
   kFmiLowAndMiddleCloudCoverF90,
   kFmiLowAndMiddleCloudCoverF75,
@@ -1417,6 +1408,15 @@ enum FmiParameterName
   kFmiProbabilityOfDIW2,
   kFmiProbabilityOfDIW3,
   kFmiProbabilityOfDIW4,
+
+  // NWCSAF
+  kFmiCloudMask = 1456,
+  kFmiCloudMaskQuality,
+  kFmiCloudType,
+  kFmiCloudTypeQuality,
+  kFmiCloudTopPressure,
+  kFmiCloudTopQuality,
+  kFmiEffectiveCloudiness,
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
