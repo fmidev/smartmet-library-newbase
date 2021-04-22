@@ -1370,6 +1370,15 @@ enum FmiParameterName
   kFmiProbabilityOfConvectiveSeverityIndexLimit3,
   kFmiPotentialWindSpeed,  // wind speed observation reduced to 10m
 
+  // NWCSAF
+  kFmiCloudMask,
+  kFmiCloudMaskQuality,
+  kFmiCloudType,
+  kFmiCloudTypeQuality,
+  kFmiCloudTopPressure,
+  kFmiCloudTopQuality,
+  kFmiEffectiveCloudiness,
+
   kFmiLowAndMiddleCloudCoverF100 = 1425,
   kFmiLowAndMiddleCloudCoverF90,
   kFmiLowAndMiddleCloudCoverF75,
