@@ -73,7 +73,6 @@ clean:
 	rm -f $(LIBFILE) $(ALIBFILE) *~ $(SUBNAME)/*~
 	rm -rf $(objdir)
 	rm -f test/*Test
-	$(MAKE) $(CLEAN_TARGETS)
 
 format:
 	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
@@ -110,7 +109,10 @@ modernize:
 	for F in newbase/*.cpp; do echo $$F; clang-tidy $$F -fix -checks=-*,modernize-* -- $(CFLAGS) $(DEFINES) $(INCLUDES); done
 
 obj/%.o: %.cpp
-	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+	@mkdir -p obj
+	$(CXX) $(CFLAGS) $(INCLUDES) -c  -MD -MF $(patsubst obj/%.o, obj/%.d.new, $@) -o $@ $<
+	@sed -e "s|^$(notdir $@):|$@:|" $(patsubst obj/%.o, obj/%.d.new, $@) >$(patsubst obj/%.o, obj/%.d, $@)
+	@rm -f $(patsubst obj/%.o, obj/%.d.new, $@)
 
 ifneq ($(USE_CLANG), yes)
 obj/NFmiEnumConverterInit.o: CFLAGS += -O0
