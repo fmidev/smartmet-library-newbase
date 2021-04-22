@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.3.20
+Version: 21.4.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -19,8 +19,8 @@ BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
-BuildRequires: smartmet-library-gis-devel >= 21.2.26
-Requires: smartmet-library-gis >= 21.2.26
+BuildRequires: smartmet-library-gis-devel >= 21.4.13
+Requires: smartmet-library-gis >= 21.4.13
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -36,9 +36,9 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-gis-devel >= 21.2.26
+#TestRequires: smartmet-library-gis-devel >= 21.4.13
 #TestRequires: smartmet-library-macgyver-devel >= 21.2.25
-#TestRequires: smartmet-library-gis >= 21.2.26
+#TestRequires: smartmet-library-gis >= 21.4.13
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Apr 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.4.22-1.fmi
+- Added NWCSAF parameters
+
 * Sat Mar 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.20-1.fmi
 - Faster and disk friendlier grid interpolations
 
