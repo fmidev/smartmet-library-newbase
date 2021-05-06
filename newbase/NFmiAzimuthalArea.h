@@ -107,9 +107,9 @@ class NFmiAzimuthalArea : public NFmiArea
   double itsYScaleFactor;
   NFmiRect itsWorldRect;
   double itsRadialRange;
-  double itsCentralLongitude;
-  NFmiAngle itsCentralLatitude;
-  NFmiAngle itsTrueLatitude;
+  NFmiLongitude itsCentralLongitude;
+  NFmiLatitude itsCentralLatitude;
+  NFmiLatitude itsTrueLatitude;
   double itsTrueLatScaleFactor;
 
  private:
@@ -143,7 +143,7 @@ inline const NFmiRect NFmiAzimuthalArea::WorldRect(void) const
 
 inline double NFmiAzimuthalArea::CentralLongitude(void) const
 {
-  return itsCentralLongitude;
+  return itsCentralLongitude.Value();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -153,7 +153,7 @@ inline double NFmiAzimuthalArea::CentralLongitude(void) const
 
 inline double NFmiAzimuthalArea::Orientation(void) const
 {
-  return itsCentralLongitude;
+  return itsCentralLongitude.Value();
 }
 // ----------------------------------------------------------------------
 /*!

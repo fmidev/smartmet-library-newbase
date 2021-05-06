@@ -150,11 +150,10 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(double theRadialRangeInMeters,
       itsYScaleFactor(),
       itsWorldRect(),
       itsRadialRange(theRadialRangeInMeters),
-      itsCentralLongitude(theCenterLatLon.X()),
+      itsCentralLongitude(theCenterLatLon.X(), usePacificView),
       itsCentralLatitude(theCenterLatLon.Y()),
-      itsTrueLatitude(90.)  // HUOM!
-      ,
-      itsTrueLatScaleFactor(1.0)  // HUOM!
+      itsTrueLatitude(90.),
+      itsTrueLatScaleFactor(1.0)
 {
 }
 
@@ -189,7 +188,7 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect(),
       itsRadialRange(0.),
-      itsCentralLongitude(theCentralLongitude),
+      itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
       itsTrueLatitude(theTrueLatitude),
       itsTrueLatScaleFactor(0.0)
@@ -226,7 +225,7 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect(),
       itsRadialRange(0.),
-      itsCentralLongitude(theCentralLongitude),
+      itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
       itsTrueLatitude(theTrueLatitude),
       itsTrueLatScaleFactor(0.0)
@@ -263,7 +262,7 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const double theRadialRange,
       itsYScaleFactor(),
       itsWorldRect(),
       itsRadialRange(theRadialRange),
-      itsCentralLongitude(theCentralLongitude),
+      itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
       itsTrueLatitude(theTrueLatitude),
       itsTrueLatScaleFactor(0.0)
@@ -383,7 +382,7 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) 
 
   trueLat = itsTrueLatitude.Value();
   centralLat = itsCentralLatitude.Value();
-  centralLon = itsCentralLongitude;
+  centralLon = itsCentralLongitude.Value();
 
   // See the second NOTE above
   if ((trueLat != 90.) && (centralLat != 90.)) return NFmiPoint(kFloatMissing, kFloatMissing);
@@ -532,7 +531,7 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoi
 
   trueLat = itsTrueLatitude.Value();
   centralLat = itsCentralLatitude.Value();
-  centralLon = itsCentralLongitude;
+  centralLon = itsCentralLongitude.Value();
 
   if ((trueLat != 90.) && (centralLat != 90.))
   {
@@ -737,7 +736,7 @@ const NFmiPoint NFmiAzimuthalArea::ToLatLon(double theAzimuth, double theRadius)
 
 const NFmiPoint NFmiAzimuthalArea::CurrentCenter() const
 {
-  return NFmiPoint(itsCentralLongitude, itsCentralLatitude.Value());
+  return NFmiPoint(itsCentralLongitude.Value(), itsCentralLatitude.Value());
 }
 
 // ----------------------------------------------------------------------
@@ -757,7 +756,7 @@ NFmiAzimuthalArea &NFmiAzimuthalArea::operator=(const NFmiAzimuthalArea &theArea
 
   itsBottomLeftLatLon = theArea.itsBottomLeftLatLon;
   itsTopRightLatLon = theArea.itsTopRightLatLon;
-  itsCentralLongitude = theArea.itsCentralLongitude;
+  itsCentralLongitude.SetValue(theArea.itsCentralLongitude.Value());
   itsCentralLatitude.SetValue(theArea.itsCentralLatitude.Value());
   itsTrueLatitude.SetValue(theArea.itsTrueLatitude.Value());
   itsXScaleFactor = theArea.itsXScaleFactor;
@@ -784,7 +783,7 @@ bool NFmiAzimuthalArea::operator==(const NFmiAzimuthalArea &theArea) const
 {
   if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
       (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsCentralLongitude == theArea.itsCentralLongitude) &&
+      (itsCentralLongitude.Value() == theArea.itsCentralLongitude.Value()) &&
       (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
       (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
       (itsXScaleFactor == theArea.itsXScaleFactor) &&
@@ -848,7 +847,7 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
 {
   NFmiArea::Write(file);
 
-  file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude << endl
+  file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude.Value() << endl
        << itsCentralLatitude.Value() << endl
        << itsTrueLatitude.Value() << endl;
   int oldPrec = file.precision();
@@ -879,16 +878,16 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
 
 std::istream &NFmiAzimuthalArea::Read(std::istream &file)
 {
-  double theCentralLatitude, theTrueLatitude;
+  double centralLatitude, trueLatitude, centralLongitude;
 
   NFmiArea::Read(file);
 
   file >> itsBottomLeftLatLon;
   file >> itsTopRightLatLon;
   PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
-  file >> itsCentralLongitude;
-  file >> theCentralLatitude;
-  file >> theTrueLatitude;
+  file >> centralLongitude;
+  file >> centralLatitude;
+  file >> trueLatitude;
   // We trust everything to be at least version 6 by now
   if (DefaultFmiInfoVersion >= 5)
   {
@@ -896,8 +895,9 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
     file >> itsRadialRange >> dummy >> dummy;
   }
 
-  itsCentralLatitude.SetValue(theCentralLatitude);
-  itsTrueLatitude.SetValue(theTrueLatitude);
+  itsCentralLongitude.SetValue(centralLongitude);
+  itsCentralLatitude.SetValue(centralLatitude);
+  itsTrueLatitude.SetValue(trueLatitude);
 
   file >> itsWorldRect;
 
@@ -922,7 +922,7 @@ std::size_t NFmiAzimuthalArea::HashValue() const
   boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
   boost::hash_combine(hash, itsWorldRect.HashValue());
   boost::hash_combine(hash, boost::hash_value(itsRadialRange));
-  boost::hash_combine(hash, boost::hash_value(itsCentralLongitude));
+  boost::hash_combine(hash, itsCentralLongitude.HashValue());
   boost::hash_combine(hash, itsCentralLatitude.HashValue());
   boost::hash_combine(hash, itsTrueLatitude.HashValue());
   boost::hash_combine(hash, boost::hash_value(itsTrueLatScaleFactor));

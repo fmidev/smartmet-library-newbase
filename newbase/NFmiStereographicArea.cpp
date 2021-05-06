@@ -241,8 +241,11 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
                           NFmiPoint(itsRadialRange, itsRadialRange));
   NFmiAzimuthalArea::Init(true);
 
-  itsProjStr = fmt::format(
-      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsProjStr = fmt::format(proj_fmt,
+                           itsCentralLatitude.Value(),
+                           itsTrueLatitude.Value(),
+                           itsCentralLongitude.Value(),
+                           kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
   // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
@@ -268,8 +271,11 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
   }
   NFmiAzimuthalArea::Init();
 
-  itsProjStr = fmt::format(
-      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsProjStr = fmt::format(proj_fmt,
+                           itsCentralLatitude.Value(),
+                           itsTrueLatitude.Value(),
+                           itsCentralLongitude.Value(),
+                           kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
@@ -340,7 +346,7 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
         NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
     return new NFmiStereographicArea(fixedPointData.itsBottomLeftLatlon,
                                      fixedPointData.itsTopRightLatlon,
-                                     itsCentralLongitude,
+                                     itsCentralLongitude.Value(),
                                      TopLeft(),
                                      BottomRight(),
                                      itsCentralLatitude.Value(),
@@ -350,7 +356,7 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
   else
     return new NFmiStereographicArea(theBottomLeftLatLon,
                                      theTopRightLatLon,
-                                     itsCentralLongitude,
+                                     itsCentralLongitude.Value(),
                                      TopLeft(),
                                      BottomRight(),
                                      itsCentralLatitude.Value(),
@@ -466,8 +472,11 @@ std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 std::istream &NFmiStereographicArea::Read(std::istream &file)
 {
   NFmiAzimuthalArea::Read(file);
-  itsProjStr = fmt::format(
-      proj_fmt, itsCentralLatitude.Value(), itsTrueLatitude.Value(), itsCentralLongitude, kRearth);
+  itsProjStr = fmt::format(proj_fmt,
+                           itsCentralLatitude.Value(),
+                           itsTrueLatitude.Value(),
+                           itsCentralLongitude.Value(),
+                           kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   return file;
 }
@@ -477,7 +486,7 @@ NFmiArea *NFmiStereographicArea::CreateNewArea(const NFmiRect &theRect) const
   NFmiPoint bottomLeft(ToLatLon(theRect.BottomLeft()));
   NFmiPoint topRight(ToLatLon(theRect.TopRight()));
   NFmiArea *area = new NFmiStereographicArea(
-      bottomLeft, topRight, itsCentralLongitude, TopLeft(), BottomRight());
+      bottomLeft, topRight, itsCentralLongitude.Value(), TopLeft(), BottomRight());
   return area;
 }
 
@@ -538,7 +547,7 @@ const std::string NFmiStereographicArea::WKT() const
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
 
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
   }
 
   const char *fmt = R"(PROJCS["FMI_Polar_Stereographic",)"
@@ -551,7 +560,7 @@ const std::string NFmiStereographicArea::WKT() const
                     R"(PARAMETER["central_meridian",{}],)"
                     R"(UNIT["Metre",1.0]])";
 
-  return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude);
+  return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
 }
 
 // ----------------------------------------------------------------------

@@ -207,8 +207,11 @@ void NFmiLambertEqualArea::Init(bool fKeepWorldRect)
   }
   NFmiAzimuthalArea::Init();
   const char *fmt = "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +units=m +no_defs +type=crs";
-  itsProjStr = fmt::format(
-      fmt, itsCentralLatitude.Value(), itsCentralLongitude, itsTrueLatitude.Value(), kRearth);
+  itsProjStr = fmt::format(fmt,
+                           itsCentralLatitude.Value(),
+                           itsCentralLongitude.Value(),
+                           itsTrueLatitude.Value(),
+                           kRearth);
   itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 }
 
@@ -292,7 +295,7 @@ NFmiArea *NFmiLambertEqualArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
         NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
     return new NFmiLambertEqualArea(fixedPointData.itsBottomLeftLatlon,
                                     fixedPointData.itsTopRightLatlon,
-                                    itsCentralLongitude,
+                                    itsCentralLongitude.Value(),
                                     TopLeft(),
                                     BottomRight(),
                                     itsCentralLatitude.Value(),
@@ -302,7 +305,7 @@ NFmiArea *NFmiLambertEqualArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
   else
     return new NFmiLambertEqualArea(theBottomLeftLatLon,
                                     theTopRightLatLon,
-                                    itsCentralLongitude,
+                                    itsCentralLongitude.Value(),
                                     TopLeft(),
                                     BottomRight(),
                                     itsCentralLatitude.Value(),
@@ -424,8 +427,8 @@ NFmiArea *NFmiLambertEqualArea::CreateNewArea(const NFmiRect &theRect) const
 {
   NFmiPoint bottomLeft(ToLatLon(theRect.BottomLeft()));
   NFmiPoint topRight(ToLatLon(theRect.TopRight()));
-  NFmiArea *area =
-      new NFmiLambertEqualArea(bottomLeft, topRight, itsCentralLongitude, TopLeft(), BottomRight());
+  NFmiArea *area = new NFmiLambertEqualArea(
+      bottomLeft, topRight, itsCentralLongitude.Value(), TopLeft(), BottomRight());
   return area;
 }
 
@@ -453,7 +456,7 @@ const std::string NFmiLambertEqualArea::WKT() const
                       R"(PARAMETER["latitude_of_origin",{}],)"
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
   }
   else
   {
@@ -466,7 +469,7 @@ const std::string NFmiLambertEqualArea::WKT() const
                       R"(PARAMETER["latitude_of_origin",{}],)"
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude);
+    return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
   }
 }
 

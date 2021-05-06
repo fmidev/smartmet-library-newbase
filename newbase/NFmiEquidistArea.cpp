@@ -302,7 +302,7 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
         NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
     return new NFmiEquidistArea(fixedPointData.itsBottomLeftLatlon,
                                 fixedPointData.itsTopRightLatlon,
-                                itsCentralLongitude,
+                                itsCentralLongitude.Value(),
                                 TopLeft(),
                                 BottomRight(),
                                 itsCentralLatitude.Value(),
@@ -311,7 +311,7 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
   else
     return new NFmiEquidistArea(theBottomLeftLatLon,
                                 theTopRightLatLon,
-                                itsCentralLongitude,
+                                itsCentralLongitude.Value(),
                                 TopLeft(),
                                 BottomRight(),
                                 itsCentralLatitude.Value(),
@@ -462,7 +462,7 @@ const std::string NFmiEquidistArea::WKT() const
                     R"(PARAMETER["latitude_of_center",{}],)"
                     R"(PARAMETER["longitude_of_center",{}],)"
                     R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
 }
 
 // ----------------------------------------------------------------------

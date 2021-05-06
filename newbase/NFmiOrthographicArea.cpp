@@ -263,7 +263,8 @@ const NFmiPoint NFmiOrthographicArea::WorldXYToLatLon(const NFmiPoint &theXY) co
   if (xyDist2 > kRearth * kRearth)
     return NFmiPoint(kFloatMissing, kFloatMissing);  // Not hit but lost in outer space ...
 
-  if (xyDist2 == 0.) return CurrentCenter();
+  if (xyDist2 == 0.)
+    return CurrentCenter();
 
   double x = 0.;
   double y = 0.;
@@ -356,10 +357,16 @@ void NFmiOrthographicArea::ZoomFactor(double theZoomFactor)
 
 // ----------------------------------------------------------------------
 
-double NFmiOrthographicArea::ZoomFactor() const { return itsZoomFactor; }
+double NFmiOrthographicArea::ZoomFactor() const
+{
+  return itsZoomFactor;
+}
 // ----------------------------------------------------------------------
 
-void NFmiOrthographicArea::GlobeRadius(double &theGlobeRadius) { itsGlobeRadius = theGlobeRadius; }
+void NFmiOrthographicArea::GlobeRadius(double &theGlobeRadius)
+{
+  itsGlobeRadius = theGlobeRadius;
+}
 // ----------------------------------------------------------------------
 
 void NFmiOrthographicArea::AzimuthAngle(double &theAzimuthAngle)
@@ -367,7 +374,10 @@ void NFmiOrthographicArea::AzimuthAngle(double &theAzimuthAngle)
   itsAzimuthAngle = theAzimuthAngle;
 }
 
-double NFmiOrthographicArea::AzimuthAngle() const { return itsAzimuthAngle; }
+double NFmiOrthographicArea::AzimuthAngle() const
+{
+  return itsAzimuthAngle;
+}
 // ----------------------------------------------------------------------
 
 NFmiArea *NFmiOrthographicArea::NewArea(const NFmiPoint & /* theBottomLeftLatLon */,
@@ -384,7 +394,10 @@ NFmiArea *NFmiOrthographicArea::NewArea(const NFmiPoint & /* theBottomLeftLatLon
  */
 // ----------------------------------------------------------------------
 
-NFmiArea *NFmiOrthographicArea::Clone() const { return new NFmiOrthographicArea(*this); }
+NFmiArea *NFmiOrthographicArea::Clone() const
+{
+  return new NFmiOrthographicArea(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -451,7 +464,10 @@ bool NFmiOrthographicArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiOrthographicArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiOrthographicArea::operator!=(const NFmiArea &theArea) const
+{
+  return !(*this == theArea);
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -520,7 +536,7 @@ const std::string NFmiOrthographicArea::WKT() const
                     R"(PARAMETER["latitude_of_origin",{}],)"
                     R"(PARAMETER["central_meridian",{}],)"
                     R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude);
+  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
 }
 
 // ----------------------------------------------------------------------
