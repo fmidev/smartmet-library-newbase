@@ -462,10 +462,13 @@ bool NFmiQueryData::operator==(NFmiQueryData &theQueryData) { return IsEqual(the
 
 NFmiQueryData &NFmiQueryData::operator=(const NFmiQueryData &theQueryData)
 {
-  Destroy();
-  itsQueryInfo = new NFmiQueryInfo(*theQueryData.itsQueryInfo);
-  itsRawData = new NFmiRawData(*theQueryData.itsRawData);
-  itsFirst = theQueryData.itsFirst;
+  if(&theQueryData != this)
+  {
+    Destroy();
+    itsQueryInfo = new NFmiQueryInfo(*theQueryData.itsQueryInfo);
+    itsRawData = new NFmiRawData(*theQueryData.itsRawData);
+    itsFirst = theQueryData.itsFirst;
+  }
 
   return *this;
 }

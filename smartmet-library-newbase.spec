@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.5.6
+Version: 21.6.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,9 +18,9 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
-BuildRequires: smartmet-library-gis-devel >= 21.4.13
-Requires: smartmet-library-gis >= 21.4.13
+BuildRequires: smartmet-library-macgyver-devel >= 21.5.31
+BuildRequires: smartmet-library-gis-devel >= 21.5.24
+Requires: smartmet-library-gis >= 21.5.24
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -36,9 +36,9 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-gis-devel >= 21.4.13
-#TestRequires: smartmet-library-macgyver-devel >= 21.2.25
-#TestRequires: smartmet-library-gis >= 21.4.13
+#TestRequires: smartmet-library-gis-devel >= 21.5.24
+#TestRequires: smartmet-library-macgyver-devel >= 21.5.31
+#TestRequires: smartmet-library-gis >= 21.5.24
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -95,6 +95,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun  7 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.7-1.fmi
+- Fixed self assignment issues
+
 * Thu May  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.6-1.fmi
 - Fixed azimuthal projections to handle negative central/true latitudes correctly
 

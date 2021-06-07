@@ -219,10 +219,12 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
 
   NFmiDataMatrix<T>& operator=(NFmiDataMatrix<T>&& other)
   {
-    Base::operator=(std::move(other));
-    itsNX = other.itsNX;
-    itsNY = other.itsNY;
-    other.itsNX = other.itsNY = 0;
+    if(&other != this)
+    {
+      itsNX = other.itsNX;
+      itsNY = other.itsNY;
+      Base::operator=(std::move(other));
+    }
     return *this;
   }
 

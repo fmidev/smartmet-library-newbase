@@ -202,34 +202,37 @@ void NFmiDataIdent::SetProducers(const NFmiProducer &theProducer)
 
 NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
 {
-  Destroy();
-  itsParam = theDataIdent.itsParam->Clone();
-  itsProducer = new NFmiProducer(*(theDataIdent.itsProducer));
-  itsType = theDataIdent.itsType;
-  fIsGroup = theDataIdent.fIsGroup;
-  fIsActive = theDataIdent.fIsActive;
-  fContainsIndividualParams = theDataIdent.fContainsIndividualParams;
-  fIsDataParam = theDataIdent.fIsDataParam;
-  fHasDataParams = theDataIdent.fHasDataParams;
-  itsDataParams =
-      theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
-  if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+  if(&theDataIdent != this)
   {
-    itsSecondaryProducers = new NFmiVoidPtrList;
-    NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
-    void *vPt;
-    while (it.Next(vPt))
-      itsSecondaryProducers->AddEnd(
-          static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
-    itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
-    itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
-  }
-  else  // 24.2.1999/Marko Lisäsin else haaran, koska muuten kaatuu jos on ensin ollut
-        // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
-  {
-    itsSecondaryProducers = nullptr;
-    itsSecondaryProducerIterator = nullptr;
-    itsCurrentSecondaryProducer = nullptr;
+    Destroy();
+    itsParam = theDataIdent.itsParam->Clone();
+    itsProducer = new NFmiProducer(*(theDataIdent.itsProducer));
+    itsType = theDataIdent.itsType;
+    fIsGroup = theDataIdent.fIsGroup;
+    fIsActive = theDataIdent.fIsActive;
+    fContainsIndividualParams = theDataIdent.fContainsIndividualParams;
+    fIsDataParam = theDataIdent.fIsDataParam;
+    fHasDataParams = theDataIdent.fHasDataParams;
+    itsDataParams =
+        theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
+    if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+    {
+      itsSecondaryProducers = new NFmiVoidPtrList;
+      NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
+      void *vPt;
+      while (it.Next(vPt))
+        itsSecondaryProducers->AddEnd(
+            static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
+      itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
+      itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+    }
+    else  // 24.2.1999/Marko Lisäsin else haaran, koska muuten kaatuu jos on ensin ollut
+      // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
+    {
+      itsSecondaryProducers = nullptr;
+      itsSecondaryProducerIterator = nullptr;
+      itsCurrentSecondaryProducer = nullptr;
+    }
   }
   return *this;
 }
