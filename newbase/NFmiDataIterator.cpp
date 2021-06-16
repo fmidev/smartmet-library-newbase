@@ -14,6 +14,7 @@
 
 #include "NFmiDataIterator.h"
 #include "NFmiAreaMask.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -50,10 +51,17 @@ void NFmiDataIterator::DoForEach(NFmiDataModifier* /* theDataModifier */) {}
 
 void NFmiDataIterator::CheckIfMaskIsUsed()
 {
-  if (itsMask && itsMask->IsEnabled())
-    fMaskInUse = true;
-  else
-    fMaskInUse = false;
+  try
+  {
+    if (itsMask && itsMask->IsEnabled())
+      fMaskInUse = true;
+    else
+      fMaskInUse = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -65,9 +73,17 @@ void NFmiDataIterator::CheckIfMaskIsUsed()
 
 bool NFmiDataIterator::IsMasked(const NFmiPoint& theLatLonPoint)
 {
-  if (fMaskInUse && itsMask) return itsMask->IsMasked(theLatLonPoint);
+  try
+  {
+    if (fMaskInUse && itsMask)
+      return itsMask->IsMasked(theLatLonPoint);
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

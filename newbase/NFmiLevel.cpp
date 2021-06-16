@@ -14,6 +14,7 @@
 
 #include "NFmiLevel.h"
 #include "NFmiLevelType.h"
+#include <macgyver/Exception.h>
 #include <iostream>
 #include <string>
 
@@ -30,21 +31,52 @@ NFmiLevel::~NFmiLevel() = default;
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiLevel::LevelTypeId() const { return GetIdent(); }
+unsigned long NFmiLevel::LevelTypeId() const
+{
+  try
+  {
+    return GetIdent();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-float NFmiLevel::LevelValue() const { return itsLevelValue; }
+float NFmiLevel::LevelValue() const
+{
+  try
+  {
+    return itsLevelValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-FmiLevelType NFmiLevel::LevelType() const { return FmiLevelType(GetIdent()); }
+FmiLevelType NFmiLevel::LevelType() const
+{
+  try
+  {
+    return FmiLevelType(GetIdent());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -56,15 +88,32 @@ FmiLevelType NFmiLevel::LevelType() const { return FmiLevelType(GetIdent()); }
 
 bool NFmiLevel::operator==(const NFmiLevel& theLevel) const
 {
-  return (itsLevelValue == theLevel.itsLevelValue && GetIdent() == theLevel.GetIdent());
+  try
+  {
+    return (itsLevelValue == theLevel.itsLevelValue && GetIdent() == theLevel.GetIdent());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiLevel::operator<(const NFmiLevel& theLevel) const
 {
-  if (itsLevelValue != theLevel.itsLevelValue) return itsLevelValue < theLevel.itsLevelValue;
-  if (GetIdent() != theLevel.GetIdent()) return GetIdent() < theLevel.GetIdent();
+  try
+  {
+    if (itsLevelValue != theLevel.itsLevelValue)
+      return itsLevelValue < theLevel.itsLevelValue;
 
-  return false;
+    if (GetIdent() != theLevel.GetIdent())
+      return GetIdent() < theLevel.GetIdent();
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -73,14 +122,21 @@ bool NFmiLevel::operator<(const NFmiLevel& theLevel) const
  */
 // ----------------------------------------------------------------------
 
-const char* NFmiLevel::ClassName() const { return "NFmiLevel"; }
+const char* NFmiLevel::ClassName() const
+{
+  return "NFmiLevel";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
  */
 // ----------------------------------------------------------------------
 
-NFmiLevel::NFmiLevel() : NFmiIndividual(), itsLevelValue(kFloatMissing) {}
+NFmiLevel::NFmiLevel() : NFmiIndividual(), itsLevelValue(kFloatMissing)
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -148,9 +204,16 @@ NFmiLevel& NFmiLevel::operator=(const NFmiLevel& theLevel) = default;
 
 std::ostream& NFmiLevel::Write(std::ostream& file) const
 {
-  NFmiIndividual::Write(file);
-  file << itsLevelValue << std::endl;
-  return file;
+  try
+  {
+    NFmiIndividual::Write(file);
+    file << itsLevelValue << std::endl;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -164,9 +227,16 @@ std::ostream& NFmiLevel::Write(std::ostream& file) const
 
 std::istream& NFmiLevel::Read(std::istream& file)
 {
-  NFmiIndividual::Read(file);
-  file >> itsLevelValue;
-  return file;
+  try
+  {
+    NFmiIndividual::Read(file);
+    file >> itsLevelValue;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -180,7 +250,14 @@ std::istream& NFmiLevel::Read(std::istream& file)
 
 bool NFmiLevel::IsMissing() const
 {
-  return (GetIdent() == 0 && !GetName().IsValue() && itsLevelValue == 0);
+  try
+  {
+    return (GetIdent() == 0 && !GetName().IsValue() && itsLevelValue == 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

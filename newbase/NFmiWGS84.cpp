@@ -1,4 +1,5 @@
 #include "NFmiWGS84.h"
+#include <macgyver/Exception.h>
 #include <fmt/format.h>
 #include <gis/SpatialReference.h>
 #include <memory>
@@ -26,6 +27,13 @@ class NFmiWGS84Impl
 
 const Fmi::SpatialReference& NFmiWGS84::SpatialReference()
 {
-  static NFmiWGS84Impl impl;  // thread safe init in C++11
-  return impl.SpatialReference();
+  try
+  {
+    static NFmiWGS84Impl impl;  // thread safe init in C++11
+    return impl.SpatialReference();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

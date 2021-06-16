@@ -9,6 +9,7 @@
 #include "NFmiArea.h"
 #include "NFmiFastQueryInfo.h"
 #include "NFmiGrid.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -16,7 +17,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiBitmapAreaMask::~NFmiBitmapAreaMask() { Destroy(); }
+NFmiBitmapAreaMask::~NFmiBitmapAreaMask()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -128,12 +141,19 @@ NFmiAreaMask* NFmiBitmapAreaMask::Clone() const { return new NFmiBitmapAreaMask(
 
 void NFmiBitmapAreaMask::Destroy()
 {
-  delete itsArea;
-  itsArea = nullptr;
-  delete itsDataIdent;
-  itsDataIdent = nullptr;
-  delete itsLevel;
-  itsLevel = nullptr;
+  try
+  {
+    delete itsArea;
+    itsArea = nullptr;
+    delete itsDataIdent;
+    itsDataIdent = nullptr;
+    delete itsLevel;
+    itsLevel = nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -156,21 +176,28 @@ void NFmiBitmapAreaMask::Init(boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
                               const NFmiCalculationCondition& theOperation)
 #endif
 {
-  Destroy();
-  itsBitmask.resize(theInfo->HPlaceDescriptor().Size(), false);
-  itsArea = theInfo->Area() ? theInfo->Area()->Clone() : nullptr;
-  itsDataIdent = new NFmiDataIdent(theInfo->Param());
-  itsLevel = theInfo->Level() ? new NFmiLevel(*theInfo->Level()) : nullptr;
-  if (theInfo->IsGrid())
+  try
   {
-    itsGridXSize = theInfo->Grid()->XNumber();
-    itsGridYSize = theInfo->Grid()->YNumber();
+    Destroy();
+    itsBitmask.resize(theInfo->HPlaceDescriptor().Size(), false);
+    itsArea = theInfo->Area() ? theInfo->Area()->Clone() : nullptr;
+    itsDataIdent = new NFmiDataIdent(theInfo->Param());
+    itsLevel = theInfo->Level() ? new NFmiLevel(*theInfo->Level()) : nullptr;
+    if (theInfo->IsGrid())
+    {
+      itsGridXSize = theInfo->Grid()->XNumber();
+      itsGridYSize = theInfo->Grid()->YNumber();
+    }
+    float value = kFloatMissing;
+    for (theInfo->ResetLocation(); theInfo->NextLocation();)
+    {
+      value = theInfo->FloatValue();
+      itsBitmask[theInfo->LocationIndex()] = theOperation.IsMasked(value);
+    }
   }
-  float value = kFloatMissing;
-  for (theInfo->ResetLocation(); theInfo->NextLocation();)
+  catch (...)
   {
-    value = theInfo->FloatValue();
-    itsBitmask[theInfo->LocationIndex()] = theOperation.IsMasked(value);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -185,10 +212,17 @@ void NFmiBitmapAreaMask::Init(boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
 
 bool NFmiBitmapAreaMask::IsMasked(const NFmiPoint& theLatLon) const
 {
-  if (!fEnabled)
-    return true;
-  else
-    return IsMasked(LatLon2Index(theLatLon));
+  try
+  {
+    if (!fEnabled)
+      return true;
+    else
+      return IsMasked(LatLon2Index(theLatLon));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -206,12 +240,19 @@ bool NFmiBitmapAreaMask::IsMasked(const NFmiPoint& theLatLon) const
 
 bool NFmiBitmapAreaMask::IsMasked(int theIndex) const
 {
-  if (!fEnabled)
-    return true;
-  else if (CheckIndex(theIndex))
-    return itsBitmask[theIndex];
+  try
+  {
+    if (!fEnabled)
+      return true;
+    else if (CheckIndex(theIndex))
+      return itsBitmask[theIndex];
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -228,10 +269,17 @@ bool NFmiBitmapAreaMask::IsMasked(int theIndex) const
 
 double NFmiBitmapAreaMask::MaskValue(const NFmiPoint& theLatLon) const
 {
-  if (!fEnabled)
-    return 1;
-  else
-    return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+  try
+  {
+    if (!fEnabled)
+      return 1;
+    else
+      return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -247,7 +295,14 @@ double NFmiBitmapAreaMask::MaskValue(const NFmiPoint& theLatLon) const
 
 double NFmiBitmapAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLon) const
 {
-  return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+  try
+  {
+    return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -259,7 +314,14 @@ double NFmiBitmapAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLon) con
 
 const NFmiString NFmiBitmapAreaMask::MakeSubMaskString() const
 {
-  return NFmiString("NFmiBitmapAreaMask::MakeSubMaskString ei ole toteutettu");
+  try
+  {
+    return NFmiString("NFmiBitmapAreaMask::MakeSubMaskString ei ole toteutettu");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -271,7 +333,15 @@ const NFmiString NFmiBitmapAreaMask::MakeSubMaskString() const
 
 void NFmiBitmapAreaMask::Mask(int theIndex, bool newStatus)
 {
-  if (CheckIndex(theIndex)) itsBitmask[theIndex] = newStatus;
+  try
+  {
+    if (CheckIndex(theIndex))
+      itsBitmask[theIndex] = newStatus;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -283,23 +353,37 @@ void NFmiBitmapAreaMask::Mask(int theIndex, bool newStatus)
 
 int NFmiBitmapAreaMask::LatLon2Index(const NFmiPoint& theLatLon) const
 {
-  if (itsArea)
+  try
   {
-    NFmiPoint xyPoint(itsArea->ToXY(theLatLon));  // tämä on 'suhteellisessa' 0,0 - 1,1 maailmassa
-    auto x = static_cast<int>(round((itsGridXSize - 1) * itsArea->Width() * xyPoint.X()));
-    auto y = static_cast<int>(round((itsGridYSize - 1) * itsArea->Height() * xyPoint.Y()));
-    // pitää vielä kääntää
-    y = static_cast<int>(round((itsGridYSize - 1) * itsArea->Height() - y));
-    int finalIndex = y * itsGridXSize + x;
-    return finalIndex;
+    if (itsArea)
+    {
+      NFmiPoint xyPoint(itsArea->ToXY(theLatLon));  // tämä on 'suhteellisessa' 0,0 - 1,1 maailmassa
+      auto x = static_cast<int>(round((itsGridXSize - 1) * itsArea->Width() * xyPoint.X()));
+      auto y = static_cast<int>(round((itsGridYSize - 1) * itsArea->Height() * xyPoint.Y()));
+      // pitää vielä kääntää
+      y = static_cast<int>(round((itsGridYSize - 1) * itsArea->Height() - y));
+      int finalIndex = y * itsGridXSize + x;
+      return finalIndex;
+    }
+    return -1;
   }
-  return -1;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // HUOM! toimii vain NFmiBinaryMask:in kanssa. Asettaa koko maskin kaikki arvot halutuksi.
 void NFmiBitmapAreaMask::SetAll(bool theNewState)
 {
-  std::vector<bool>(itsBitmask.size(), theNewState).swap(itsBitmask);
+  try
+  {
+    std::vector<bool>(itsBitmask.size(), theNewState).swap(itsBitmask);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

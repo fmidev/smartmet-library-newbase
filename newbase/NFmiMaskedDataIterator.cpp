@@ -19,6 +19,7 @@
 #include "NFmiIntegrationSelector.h"
 #include "NFmiSuperSmartInfo.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -54,29 +55,37 @@ NFmiMaskedDataIterator::NFmiMaskedDataIterator(NFmiSuperSmartInfo *theData,
 
 void NFmiMaskedDataIterator::DoForEach(NFmiDataModifier *theDataModifier)
 {
-  if (!theDataModifier) return;
-
-  auto *superDataInfo = static_cast<NFmiSuperSmartInfo *>(itsData);
-  unsigned long oldLocationIndex = superDataInfo->LocationIndex();
-  theDataModifier->Clear();
-  superDataInfo->ResetLocation();
-  while (superDataInfo->NextLocation())
+  try
   {
-    if (fIsCombinedParam)
+    if (!theDataModifier)
+      return;
+
+    auto *superDataInfo = static_cast<NFmiSuperSmartInfo *>(itsData);
+    unsigned long oldLocationIndex = superDataInfo->LocationIndex();
+    theDataModifier->Clear();
+    superDataInfo->ResetLocation();
+    while (superDataInfo->NextLocation())
     {
-      auto *combParam = static_cast<NFmiWeatherAndCloudiness *>(superDataInfo->CombinedValue());
-      if (combParam)
-        theDataModifier->Calculate(
-            NFmiWeatherAndCloudiness(combParam->IntegratedLongValue(itsIntegrationSelector),
-                                     kFmiPackedWeather,
-                                     kFloatMissing,
-                                     combParam->InfoVersion())
-                .TransformedFloatValue());
+      if (fIsCombinedParam)
+      {
+        auto *combParam = static_cast<NFmiWeatherAndCloudiness *>(superDataInfo->CombinedValue());
+        if (combParam)
+          theDataModifier->Calculate(
+              NFmiWeatherAndCloudiness(combParam->IntegratedLongValue(itsIntegrationSelector),
+                                       kFmiPackedWeather,
+                                       kFloatMissing,
+                                       combParam->InfoVersion())
+                  .TransformedFloatValue());
+      }
+      else
+        theDataModifier->Calculate(superDataInfo->FloatValue());
     }
-    else
-      theDataModifier->Calculate(superDataInfo->FloatValue());
+    superDataInfo->LocationIndex(oldLocationIndex);
   }
-  superDataInfo->LocationIndex(oldLocationIndex);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -12,6 +12,7 @@
 #endif
 
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 #include <iostream>
 
 #include <cctype>
@@ -562,13 +563,21 @@ const unsigned char iso_8859_1_upper[256] = {0,
 
 int todec(unsigned char theHex)
 {
-  if (theHex >= '0' && theHex <= '9')
-    return (theHex - '0');
-  else if (theHex >= 'a' && theHex <= 'f')
-    return (theHex - 'a' + 10);
-  else
-    return (theHex - 'A' + 10);
+  try
+  {
+    if (theHex >= '0' && theHex <= '9')
+      return (theHex - '0');
+    else if (theHex >= 'a' && theHex <= 'f')
+      return (theHex - 'a' + 10);
+    else
+      return (theHex - 'A' + 10);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 }  // namespace
 
 namespace NFmiStringTools
@@ -579,14 +588,34 @@ namespace NFmiStringTools
  */
 // ----------------------------------------------------------------------
 
-char toupperfi(char theChar) { return iso_8859_1_upper[static_cast<unsigned char>(theChar)]; }
+char toupperfi(char theChar)
+{
+  try
+  {
+    return iso_8859_1_upper[static_cast<unsigned char>(theChar)];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Platform independent tolower function in Finnish
  */
 // ----------------------------------------------------------------------
 
-char tolowerfi(char theChar) { return iso_8859_1_lower[static_cast<unsigned char>(theChar)]; }
+char tolowerfi(char theChar)
+{
+  try
+  {
+    return iso_8859_1_lower[static_cast<unsigned char>(theChar)];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -600,8 +629,17 @@ char tolowerfi(char theChar) { return iso_8859_1_lower[static_cast<unsigned char
 
 std::string &FirstCharToUpper(std::string &theString)
 {
-  if (!theString.empty()) theString[0] = toupperfi(theString[0]);
-  return theString;
+  try
+  {
+    if (!theString.empty())
+      theString[0] = toupperfi(theString[0]);
+
+    return theString;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------.
@@ -615,9 +653,17 @@ std::string &FirstCharToUpper(std::string &theString)
 
 std::string &LowerCase(std::string &theString)
 {
-  for (char &i : theString)
-    i = tolowerfi(i);
-  return theString;
+  try
+  {
+    for (char &i : theString)
+      i = tolowerfi(i);
+
+    return theString;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------.
@@ -631,9 +677,17 @@ std::string &LowerCase(std::string &theString)
 
 std::string &UpperCase(std::string &theString)
 {
-  for (char &i : theString)
-    i = toupperfi(i);
-  return theString;
+  try
+  {
+    for (char &i : theString)
+      i = toupperfi(i);
+
+    return theString;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -645,9 +699,19 @@ std::string &UpperCase(std::string &theString)
 
 std::string &ReplaceChars(std::string &theString, char fromChar, char toChar)
 {
-  for (char &i : theString)
-    if (i == fromChar) i = toChar;
-  return theString;
+  try
+  {
+    for (char &i : theString)
+    {
+      if (i == fromChar)
+        i = toChar;
+    }
+    return theString;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Code take from http://www.codeguru.com/cpp/tic/tic0180.shtml
@@ -655,26 +719,33 @@ std::string &ReplaceAll(std::string &theString,
                         const std::string &fromStr,
                         const std::string &toStr)
 {
-  // Jos fromStr on tyhjä ja toStr ei, lisää replace-komento stringin alkuun aina toStr:n.
-  // Sitten found-indeksi kasvaa yhdellä ja indeksin 1 kohdalle lisätään toStr. Ja tämä jatkuu
-  // ikuisesti...
-  // Siksi jos fromStr on tyhjä, ei tehdä mitään.
-  if (fromStr.empty() == false)
+  try
   {
-    string::size_type advanceThis = toStr.length();  // etsinnässä pitää edetä korvaus stringin
-                                                     // verran eteenpäin, muuten voi jäädä
-                                                     // ikilooppiin (esim. '%' -> '%C4%')
-    if (advanceThis == 0)
-      advanceThis++;  // paitsi jos korvaus stringi oli tyhjä, pitää edetä 1:llä, muuten voi jäädä
-                      // ikilooppiin
-    string::size_type found = theString.find(fromStr);
-    while (found != string::npos)
+    // Jos fromStr on tyhjä ja toStr ei, lisää replace-komento stringin alkuun aina toStr:n.
+    // Sitten found-indeksi kasvaa yhdellä ja indeksin 1 kohdalle lisätään toStr. Ja tämä jatkuu
+    // ikuisesti...
+    // Siksi jos fromStr on tyhjä, ei tehdä mitään.
+    if (fromStr.empty() == false)
     {
-      theString.replace(found, fromStr.length(), toStr);
-      found = theString.find(fromStr, found + advanceThis);
+      string::size_type advanceThis = toStr.length();  // etsinnässä pitää edetä korvaus stringin
+                                                       // verran eteenpäin, muuten voi jäädä
+                                                       // ikilooppiin (esim. '%' -> '%C4%')
+      if (advanceThis == 0)
+        advanceThis++;  // paitsi jos korvaus stringi oli tyhjä, pitää edetä 1:llä, muuten voi jäädä
+                        // ikilooppiin
+      string::size_type found = theString.find(fromStr);
+      while (found != string::npos)
+      {
+        theString.replace(found, fromStr.length(), toStr);
+        found = theString.find(fromStr, found + advanceThis);
+      }
     }
+    return theString;
   }
-  return theString;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -684,7 +755,18 @@ std::string &ReplaceAll(std::string &theString,
  */
 // ----------------------------------------------------------------------
 
-bool IsValue(const std::string &theString) { return (!theString.empty()); }
+bool IsValue(const std::string &theString)
+{
+  try
+  {
+    return (!theString.empty());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Trim the string from the left
@@ -693,24 +775,33 @@ bool IsValue(const std::string &theString) { return (!theString.empty()); }
 
 std::string &TrimL(std::string &theString, char theChar)
 {
-  unsigned int pos = 0;
-  if (theChar == ' ')
+  try
   {
-#ifdef PERKELEEN_296
-    while (pos < theString.size() && isspace(theString[pos]))
+    unsigned int pos = 0;
+    if (theChar == ' ')
+    {
+ #ifdef PERKELEEN_296
+      while (pos < theString.size() && isspace(theString[pos]))
 #else
-    while (pos < theString.size() && ::isspace(static_cast<unsigned char>(theString[pos])))
-// while(pos<theString.size() && ::isspace(theString[pos]))
+      while (pos < theString.size() && ::isspace(static_cast<unsigned char>(theString[pos])))
+  // while(pos<theString.size() && ::isspace(theString[pos]))
 #endif
-      pos++;
+        pos++;
+    }
+    else
+    {
+      while (pos < theString.size() && theString[pos] == theChar)
+        pos++;
+    }
+    if (pos > 0)
+      theString = theString.substr(pos);
+
+    return theString;
   }
-  else
+  catch (...)
   {
-    while (pos < theString.size() && theString[pos] == theChar)
-      pos++;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  if (pos > 0) theString = theString.substr(pos);
-  return theString;
 }
 
 // ----------------------------------------------------------------------
@@ -721,24 +812,33 @@ std::string &TrimL(std::string &theString, char theChar)
 
 std::string &TrimR(std::string &theString, char theChar)
 {
-  int pos = theString.size() - 1;
-  if (theChar == ' ')
+  try
   {
+    int pos = theString.size() - 1;
+    if (theChar == ' ')
+    {
 #ifdef PERKELEEN_296
-    while (pos >= 0 && isspace(theString[pos]))
+      while (pos >= 0 && isspace(theString[pos]))
 #else
-    // while(pos>=0 && ::isspace(theString[pos]))
-    while (pos >= 0 && ::isspace(static_cast<unsigned char>(theString[pos])))
+      // while(pos>=0 && ::isspace(theString[pos]))
+      while (pos >= 0 && ::isspace(static_cast<unsigned char>(theString[pos])))
 #endif
-      pos--;
+        pos--;
+    }
+    else
+    {
+      while (pos >= 0 && theString[pos] == theChar)
+        pos--;
+    }
+    if (pos != static_cast<int>(theString.size() - 1))
+      theString.resize(pos + 1);
+
+    return theString;
   }
-  else
+  catch (...)
   {
-    while (pos >= 0 && theString[pos] == theChar)
-      pos--;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  if (pos != static_cast<int>(theString.size() - 1)) theString.resize(pos + 1);
-  return theString;
 }
 
 // ----------------------------------------------------------------------
@@ -749,9 +849,16 @@ std::string &TrimR(std::string &theString, char theChar)
 
 std::string &Trim(std::string &theString, char theChar)
 {
-  TrimL(theString, theChar);
-  TrimR(theString, theChar);
-  return theString;
+  try
+  {
+    TrimL(theString, theChar);
+    TrimR(theString, theChar);
+    return theString;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -765,34 +872,41 @@ std::string &Trim(std::string &theString, char theChar)
 
 std::string TrimAll(std::string &theString, bool replaceInsideNewlinesWithSpace)
 {
-  std::string tmp(theString);
-
-  // trimmataan stringin alusta ja lopusta whitespacet pois
-  NFmiStringTools::Trim(tmp, ' ');
-  NFmiStringTools::Trim(tmp, '\t');
-  NFmiStringTools::Trim(tmp, '\r');
-  NFmiStringTools::Trim(tmp, '\n');
-  std::string result;
-  bool wordBreak = false;
-  for (char i : tmp)
+  try
   {
-    if (replaceInsideNewlinesWithSpace ? (i == ' ' || i == '\t' || i == '\r' || i == '\n')
-                                       : (i == ' ' || i == '\t'))
+    std::string tmp(theString);
+
+    // trimmataan stringin alusta ja lopusta whitespacet pois
+    NFmiStringTools::Trim(tmp, ' ');
+    NFmiStringTools::Trim(tmp, '\t');
+    NFmiStringTools::Trim(tmp, '\r');
+    NFmiStringTools::Trim(tmp, '\n');
+    std::string result;
+    bool wordBreak = false;
+    for (char i : tmp)
     {
-      if (wordBreak == false)
+      if (replaceInsideNewlinesWithSpace ? (i == ' ' || i == '\t' || i == '\r' || i == '\n')
+                                         : (i == ' ' || i == '\t'))
       {
-        wordBreak = true;
-        result.push_back(' ');  // laitetaan aina sanan perään yksi space
+        if (wordBreak == false)
+        {
+          wordBreak = true;
+          result.push_back(' ');  // laitetaan aina sanan perään yksi space
+        }
+      }
+      else
+      {
+        wordBreak = false;
+        result.push_back(i);
       }
     }
-    else
-    {
-      wordBreak = false;
-      result.push_back(i);
-    }
+    theString.swap(result);
+    return theString;
   }
-  theString.swap(result);
-  return theString;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -806,15 +920,22 @@ std::string TrimAll(std::string &theString, bool replaceInsideNewlinesWithSpace)
 
 const std::string ReadFile(std::istream &is)
 {
-  string ret;
-  const int bufsize = 1024;
-  char buffer[bufsize];
-  while (!is.eof() && !is.fail())
+  try
   {
-    is.read(buffer, bufsize);
-    ret.append(buffer, is.gcount());
+    string ret;
+    const int bufsize = 1024;
+    char buffer[bufsize];
+    while (!is.eof() && !is.fail())
+    {
+      is.read(buffer, bufsize);
+      ret.append(buffer, is.gcount());
+    }
+    return ret;
   }
-  return ret;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -833,24 +954,31 @@ const std::string ReadFile(std::istream &is)
 
 const std::string UrlEncode(const std::string &theString)
 {
-  static const char *decimals = "0123456789ABCDEF";
-  string ret;
-  for (char ch : theString)
+  try
   {
-    if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') ||
-        (ch == '_'))
+    static const char *decimals = "0123456789ABCDEF";
+    string ret;
+    for (char ch : theString)
     {
-      ret += ch;
+      if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') ||
+          (ch == '_'))
+      {
+        ret += ch;
+      }
+      else
+      {
+        ret += '%';
+        ret += decimals[(ch >> 4) & 0xF];
+        ret += decimals[ch & 0xF];
+      }
     }
-    else
-    {
-      ret += '%';
-      ret += decimals[(ch >> 4) & 0xF];
-      ret += decimals[ch & 0xF];
-    }
-  }
 
-  return ret;
+    return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -868,29 +996,36 @@ const std::string UrlEncode(const std::string &theString)
 
 const std::string UrlDecode(const std::string &theString)
 {
-  string ret;
-  for (string::size_type i = 0; i < theString.size(); i++)
+  try
   {
-    const unsigned char ch = theString[i];
-    if (ch == '+')
-      ret += ' ';
-    else if (ch != '%')
-      ret += ch;
-    else if (i + 2 < theString.size())
+    string ret;
+    for (string::size_type i = 0; i < theString.size(); i++)
     {
-      const unsigned char ch1 = theString[++i];
-      const unsigned char ch2 = theString[++i];
-      ret += static_cast<char>(((todec(ch1) << 4) | todec(ch2)));
+      const unsigned char ch = theString[i];
+      if (ch == '+')
+        ret += ' ';
+      else if (ch != '%')
+        ret += ch;
+      else if (i + 2 < theString.size())
+      {
+        const unsigned char ch1 = theString[++i];
+        const unsigned char ch2 = theString[++i];
+        ret += static_cast<char>(((todec(ch1) << 4) | todec(ch2)));
+      }
+      else
+      {
+        // The string runs out without enough hexadecimals - we ignore
+        // the encoding and return the string as is
+        ret += ch;
+      }
     }
-    else
-    {
-      // The string runs out without enough hexadecimals - we ignore
-      // the encoding and return the string as is
-      ret += ch;
-    }
-  }
 
-  return ret;
+    return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -905,10 +1040,18 @@ const std::string UrlDecode(const std::string &theString)
 
 const std::map<std::string, std::string> ParseQueryString()
 {
-  const char *env = getenv("QUERY_STRING");
-  if (env == nullptr)
-    throw runtime_error("ParseQueryString:: Environment variable QUERY_STRING is not set");
-  return ParseQueryString(env);
+  try
+  {
+    const char *env = getenv("QUERY_STRING");
+    if (env == nullptr)
+      throw Fmi::Exception(BCP,"ParseQueryString:: Environment variable QUERY_STRING is not set");
+
+    return ParseQueryString(env);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -932,31 +1075,39 @@ const std::map<std::string, std::string> ParseQueryString()
 
 const std::map<std::string, std::string> ParseQueryString(const std::string &theQueryString)
 {
-  // Erase optional leading "QUERYSTRING="
-  string str(theQueryString);
-  if (str.substr(0, 12) == "QUERYSTRING=") str.erase(0, 12);
-
-  // Split at "&"-characters
-
-  const vector<string> vars = Split<vector<string> >(str, "&");
-
-  // Process each assignment
-
-  map<string, string> ret;
-
-  for (const auto &var : vars)
+  try
   {
-    const vector<string> parts = Split<vector<string> >(var, "=");
-    if (parts.size() == 1)
-      ret.insert(make_pair(UrlDecode(parts.front()), string("")));
-    else if (parts.size() == 2)
-      ret.insert(make_pair(UrlDecode(parts.front()), UrlDecode(parts.back())));
-    else
-    {
-    }  // we ignore the invalid setting
-  }
+    // Erase optional leading "QUERYSTRING="
+    string str(theQueryString);
+    if (str.substr(0, 12) == "QUERYSTRING=")
+      str.erase(0, 12);
 
-  return ret;
+    // Split at "&"-characters
+
+    const vector<string> vars = Split<vector<string> >(str, "&");
+
+    // Process each assignment
+
+    map<string, string> ret;
+
+    for (const auto &var : vars)
+    {
+      const vector<string> parts = Split<vector<string> >(var, "=");
+      if (parts.size() == 1)
+        ret.insert(make_pair(UrlDecode(parts.front()), string("")));
+      else if (parts.size() == 2)
+        ret.insert(make_pair(UrlDecode(parts.front()), UrlDecode(parts.back())));
+      else
+      {
+      }  // we ignore the invalid setting
+    }
+
+    return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -967,7 +1118,14 @@ const std::map<std::string, std::string> ParseQueryString(const std::string &the
 
 const std::vector<std::string> Split(const std::string &theString, const std::string &theSeparator)
 {
-  return Split<std::vector<std::string> >(theString, theSeparator);
+  try
+  {
+    return Split<std::vector<std::string> >(theString, theSeparator);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -984,13 +1142,22 @@ const std::vector<std::string> Split(const std::string &theString, const std::st
 
 const std::string Basename(const std::string &theFile)
 {
-  string::size_type pos = theFile.rfind('/');
-  if (pos == string::npos) return theFile;
+  try
+  {
+    string::size_type pos = theFile.rfind('/');
+    if (pos == string::npos)
+      return theFile;
 
-  string base = theFile.substr(pos + 1);
-  if (!base.empty()) return base;
+    string base = theFile.substr(pos + 1);
+    if (!base.empty())
+      return base;
 
-  return theFile.substr(0, pos);
+    return theFile.substr(0, pos);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1001,11 +1168,18 @@ const std::string Basename(const std::string &theFile)
 
 const std::string Suffix(const std::string &theFile)
 {
-  string::size_type pos = theFile.rfind('.');
-  if (pos == string::npos)
-    return "";
-  else
-    return theFile.substr(pos + 1);
+  try
+  {
+    string::size_type pos = theFile.rfind('.');
+    if (pos == string::npos)
+      return "";
+    else
+      return theFile.substr(pos + 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiStringTools

@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiParam.h"
+#include <macgyver/Exception.h>
 #include <fstream>
 
 #include "NFmiVersion.h"
@@ -74,14 +75,21 @@ NFmiParam::NFmiParam(const NFmiParam &theParam)
 
 NFmiParam &NFmiParam::operator=(const NFmiParam &theParam)
 {
-  NFmiIndividual::operator=(*(static_cast<const NFmiIndividual *>(&theParam)));
-  itsMinValue = theParam.itsMinValue;
-  itsMaxValue = theParam.itsMaxValue;
-  itsScale = theParam.itsScale;
-  itsBase = theParam.itsBase;
-  itsPrecision = theParam.itsPrecision;
-  itsInterpolationMethod = theParam.itsInterpolationMethod;
-  return *this;
+  try
+  {
+    NFmiIndividual::operator=(*(static_cast<const NFmiIndividual *>(&theParam)));
+    itsMinValue = theParam.itsMinValue;
+    itsMaxValue = theParam.itsMaxValue;
+    itsScale = theParam.itsScale;
+    itsBase = theParam.itsBase;
+    itsPrecision = theParam.itsPrecision;
+    itsInterpolationMethod = theParam.itsInterpolationMethod;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -92,9 +100,16 @@ NFmiParam &NFmiParam::operator=(const NFmiParam &theParam)
 
 float NFmiParam::Scale() const
 {
-  if (itsScale == kFloatMissing) return 1;
+  try
+  {
+    if (itsScale == kFloatMissing) return 1;
 
-  return itsScale;
+    return itsScale;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -105,9 +120,16 @@ float NFmiParam::Scale() const
 
 float NFmiParam::Base() const
 {
-  if (itsBase == kFloatMissing) return 0;
+  try
+  {
+    if (itsBase == kFloatMissing) return 0;
 
-  return itsBase;
+    return itsBase;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -121,18 +143,25 @@ float NFmiParam::Base() const
 
 std::ostream &NFmiParam::Write(std::ostream &file) const
 {
-  NFmiIndividual::Write(file);
-
-  file << itsMinValue << " " << itsMaxValue << " " << static_cast<int>(itsInterpolationMethod)
-       << " ";
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file << itsScale << " " << itsBase << " " << itsPrecision;
-  }
+    NFmiIndividual::Write(file);
 
-  return file;
+    file << itsMinValue << " " << itsMaxValue << " " << static_cast<int>(itsInterpolationMethod)
+         << " ";
+
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file << itsScale << " " << itsBase << " " << itsPrecision;
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -146,20 +175,27 @@ std::ostream &NFmiParam::Write(std::ostream &file) const
 
 std::istream &NFmiParam::Read(std::istream &file)
 {
-  NFmiIndividual::Read(file);
-  unsigned long theInterpolationMethod;
-
-  file >> itsMinValue >> itsMaxValue >> theInterpolationMethod;
-  itsInterpolationMethod = FmiInterpolationMethod(theInterpolationMethod);
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file >> itsScale >> itsBase;
-    file >> itsPrecision;
-  }
+    NFmiIndividual::Read(file);
+    unsigned long theInterpolationMethod;
 
-  return file;
+    file >> itsMinValue >> itsMaxValue >> theInterpolationMethod;
+    itsInterpolationMethod = FmiInterpolationMethod(theInterpolationMethod);
+
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file >> itsScale >> itsBase;
+      file >> itsPrecision;
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -66,6 +66,7 @@
 // ======================================================================
 
 #include "NFmiStereographicArea.h"
+#include <macgyver/Exception.h>
 #include <fmt/format.h>
 #include <cmath>
 
@@ -128,7 +129,14 @@ NFmiStereographicArea::NFmiStereographicArea(const NFmiPoint &theBottomLeftLatLo
                         usePacificView)
 
 {
-  Init();
+  try
+  {
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 /*!
@@ -145,21 +153,28 @@ NFmiStereographicArea::NFmiStereographicArea(double theRadialRangeInMeters,
                                              const NFmiPoint &theBottomRightXY)
     : NFmiAzimuthalArea(theRadialRangeInMeters, theCenterLatLon, theTopLeftXY, theBottomRightXY)
 {
-  // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
-  // ympyrälle
-  // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
+  try
+  {
+    // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
+    // ympyrälle
+    // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
-  NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
-  itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
-                                   centerWorldXY.Y() - theRadialRangeInMeters);
-  itsWorldRect = NFmiRect(
-      itsBottomLeftWorldXY,
-      itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+    NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
+    itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
+                                     centerWorldXY.Y() - theRadialRangeInMeters);
+    itsWorldRect = NFmiRect(
+        itsBottomLeftWorldXY,
+        itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-  Init(true);
+    Init(true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -192,17 +207,24 @@ NFmiStereographicArea::NFmiStereographicArea(const NFmiPoint &theBottomLeftLatLo
                         theCentralLatitude,
                         theTrueLatitude)
 {
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
+  try
+  {
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
 
-  itsBottomLeftWorldXY = LatLonToWorldXY(theBottomLeftLatLon);
-  itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
-                          itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
+    itsBottomLeftWorldXY = LatLonToWorldXY(theBottomLeftLatLon);
+    itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
+                            itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-  Init(true);
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
-  // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    Init(true);
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
+    // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -231,25 +253,32 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
                         theCentralLatitude,
                         theTrueLatitude)
 {
-  // Purpose: to create a square bounding the circle of radius theRadialRange
+  try
+  {
+    // Purpose: to create a square bounding the circle of radius theRadialRange
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
 
-  itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
-                          NFmiPoint(itsRadialRange, itsRadialRange));
-  NFmiAzimuthalArea::Init(true);
+    itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
+                            NFmiPoint(itsRadialRange, itsRadialRange));
+    NFmiAzimuthalArea::Init(true);
 
-  itsProjStr = fmt::format(proj_fmt,
-                           itsCentralLatitude.Value(),
-                           itsTrueLatitude.Value(),
-                           itsCentralLongitude.Value(),
-                           kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+    itsProjStr = fmt::format(proj_fmt,
+                             itsCentralLatitude.Value(),
+                             itsTrueLatitude.Value(),
+                             itsCentralLongitude.Value(),
+                             kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
-  // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
+    // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -260,23 +289,30 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
 
 void NFmiStereographicArea::Init(bool fKeepWorldRect)
 {
-  if (!fKeepWorldRect)
+  try
   {
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
+    if (!fKeepWorldRect)
+    {
+      itsTrueLatScaleFactor =
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
 
-    itsWorldRect =
-        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+      itsWorldRect =
+          NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    }
+    NFmiAzimuthalArea::Init();
+
+    itsProjStr = fmt::format(proj_fmt,
+                             itsCentralLatitude.Value(),
+                             itsTrueLatitude.Value(),
+                             itsCentralLongitude.Value(),
+                             kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
-  NFmiAzimuthalArea::Init();
-
-  itsProjStr = fmt::format(proj_fmt,
-                           itsCentralLatitude.Value(),
-                           itsTrueLatitude.Value(),
-                           itsCentralLongitude.Value(),
-                           kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -288,13 +324,20 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
 
 double NFmiStereographicArea::K(const double delta) const
 {
-  double D;
+  try
+  {
+    double D;
 
-  D = DistanceFromPerspectivePointToCenterOfEarth();
-  if ((D + (kRearth * delta)) != 0)
-    return kRearth * (D + kRearth) / (D + (kRearth * delta));
-  else
-    return kFloatMissing;
+    D = DistanceFromPerspectivePointToCenterOfEarth();
+    if ((D + (kRearth * delta)) != 0)
+      return kRearth * (D + kRearth) / (D + (kRearth * delta));
+    else
+      return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -306,11 +349,18 @@ double NFmiStereographicArea::K(const double delta) const
 
 double NFmiStereographicArea::CalcDelta(const double xyDistance) const
 {
-  // Calculates the delta angle for stereographic projection.
-  // See details in ref. [2] p. 13.
+  try
+  {
+    // Calculates the delta angle for stereographic projection.
+    // See details in ref. [2] p. 13.
 
-  return 2.0 * atan(xyDistance / (2.0 * kRearth));
-  // 11.5.98/EL: delta is always computed for tangential plane only --> itsTrueLatitude.Sin() == 1
+    return 2.0 * atan(xyDistance / (2.0 * kRearth));
+    // 11.5.98/EL: delta is always computed for tangential plane only --> itsTrueLatitude.Sin() == 1
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -321,10 +371,17 @@ double NFmiStereographicArea::CalcDelta(const double xyDistance) const
 
 double NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() const
 {
-  // Distance (in world-coordinate meters) for stereographic projection.
-  // See details in ref. [2] p. 13.
+  try
+  {
+    // Distance (in world-coordinate meters) for stereographic projection.
+    // See details in ref. [2] p. 13.
 
-  return kRearth;
+    return kRearth;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -340,28 +397,35 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                          const NFmiPoint &theTopRightLatLon,
                                          bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiStereographicArea(fixedPointData.itsBottomLeftLatlon,
-                                     fixedPointData.itsTopRightLatlon,
-                                     itsCentralLongitude.Value(),
-                                     TopLeft(),
-                                     BottomRight(),
-                                     itsCentralLatitude.Value(),
-                                     itsTrueLatitude.Value(),
-                                     fixedPointData.fIsPacific);
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiStereographicArea(fixedPointData.itsBottomLeftLatlon,
+                                       fixedPointData.itsTopRightLatlon,
+                                       itsCentralLongitude.Value(),
+                                       TopLeft(),
+                                       BottomRight(),
+                                       itsCentralLatitude.Value(),
+                                       itsTrueLatitude.Value(),
+                                       fixedPointData.fIsPacific);
+    }
+    else
+      return new NFmiStereographicArea(theBottomLeftLatLon,
+                                       theTopRightLatLon,
+                                       itsCentralLongitude.Value(),
+                                       TopLeft(),
+                                       BottomRight(),
+                                       itsCentralLatitude.Value(),
+                                       itsTrueLatitude.Value(),
+                                       PacificView());
   }
-  else
-    return new NFmiStereographicArea(theBottomLeftLatLon,
-                                     theTopRightLatLon,
-                                     itsCentralLongitude.Value(),
-                                     TopLeft(),
-                                     BottomRight(),
-                                     itsCentralLatitude.Value(),
-                                     itsTrueLatitude.Value(),
-                                     PacificView());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -373,7 +437,14 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiStereographicArea::Clone() const
 {
-  return new NFmiStereographicArea(*this);
+  try
+  {
+    return new NFmiStereographicArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -400,7 +471,14 @@ NFmiStereographicArea &NFmiStereographicArea::operator=(const NFmiStereographicA
 
 bool NFmiStereographicArea::operator==(const NFmiStereographicArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  try
+  {
+    return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -414,7 +492,14 @@ bool NFmiStereographicArea::operator==(const NFmiStereographicArea &theArea) con
 
 bool NFmiStereographicArea::operator!=(const NFmiStereographicArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -428,7 +513,14 @@ bool NFmiStereographicArea::operator!=(const NFmiStereographicArea &theArea) con
 
 bool NFmiStereographicArea::operator==(const NFmiArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(theArea);
+  try
+  {
+    return NFmiAzimuthalArea::operator==(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -442,7 +534,14 @@ bool NFmiStereographicArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiStereographicArea::operator!=(const NFmiArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -456,8 +555,15 @@ bool NFmiStereographicArea::operator!=(const NFmiArea &theArea) const
 
 std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 {
-  NFmiAzimuthalArea::Write(file);
-  return file;
+  try
+  {
+    NFmiAzimuthalArea::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -471,32 +577,53 @@ std::ostream &NFmiStereographicArea::Write(std::ostream &file) const
 
 std::istream &NFmiStereographicArea::Read(std::istream &file)
 {
-  NFmiAzimuthalArea::Read(file);
-  itsProjStr = fmt::format(proj_fmt,
-                           itsCentralLatitude.Value(),
-                           itsTrueLatitude.Value(),
-                           itsCentralLongitude.Value(),
-                           kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
-  return file;
+  try
+  {
+    NFmiAzimuthalArea::Read(file);
+    itsProjStr = fmt::format(proj_fmt,
+                             itsCentralLatitude.Value(),
+                             itsTrueLatitude.Value(),
+                             itsCentralLongitude.Value(),
+                             kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiArea *NFmiStereographicArea::CreateNewArea(const NFmiRect &theRect) const
 {
-  NFmiPoint bottomLeft(ToLatLon(theRect.BottomLeft()));
-  NFmiPoint topRight(ToLatLon(theRect.TopRight()));
-  NFmiArea *area = new NFmiStereographicArea(
-      bottomLeft, topRight, itsCentralLongitude.Value(), TopLeft(), BottomRight());
-  return area;
+  try
+  {
+    NFmiPoint bottomLeft(ToLatLon(theRect.BottomLeft()));
+    NFmiPoint topRight(ToLatLon(theRect.TopRight()));
+    NFmiArea *area = new NFmiStereographicArea(
+        bottomLeft, topRight, itsCentralLongitude.Value(), TopLeft(), BottomRight());
+    return area;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiStereographicArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "stereographic," << CentralLongitude() << ',' << CentralLatitude() << ','
-      << itsTrueLatitude.Value() << ':' << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y()
-      << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "stereographic," << CentralLongitude() << ',' << CentralLatitude() << ','
+        << itsTrueLatitude.Value() << ':' << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y()
+        << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -535,32 +662,39 @@ const std::string NFmiStereographicArea::AreaStr() const
 
 const std::string NFmiStereographicArea::WKT() const
 {
-  if (itsCentralLatitude.Value() != 90)
+  try
   {
-    const char *fmt = R"(PROJCS["FMI_Stereographic",)"
+    if (itsCentralLatitude.Value() != 90)
+    {
+      const char *fmt = R"(PROJCS["FMI_Stereographic",)"
+                        R"(GEOGCS["FMI_Sphere",)"
+                        R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                        R"(PRIMEM["Greenwich",0],)"
+                        R"(UNIT["Degree",0.0174532925199433]],)"
+                        R"(PROJECTION["Stereographic"],)"
+                        R"(PARAMETER["latitude_of_origin",{}],)"
+                        R"(PARAMETER["central_meridian",{}],)"
+                        R"(UNIT["Metre",1.0]])";
+
+      return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+    }
+
+    const char *fmt = R"(PROJCS["FMI_Polar_Stereographic",)"
                       R"(GEOGCS["FMI_Sphere",)"
                       R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
                       R"(PRIMEM["Greenwich",0],)"
                       R"(UNIT["Degree",0.0174532925199433]],)"
-                      R"(PROJECTION["Stereographic"],)"
+                      R"(PROJECTION["Polar_Stereographic"],)"
                       R"(PARAMETER["latitude_of_origin",{}],)"
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
 
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+    return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
   }
-
-  const char *fmt = R"(PROJCS["FMI_Polar_Stereographic",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Polar_Stereographic"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-
-  return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -571,9 +705,16 @@ const std::string NFmiStereographicArea::WKT() const
 
 std::size_t NFmiStereographicArea::HashValue() const
 {
-  std::size_t hash = NFmiAzimuthalArea::HashValue();
-  // no private members
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiAzimuthalArea::HashValue();
+    // no private members
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

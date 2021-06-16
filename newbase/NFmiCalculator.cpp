@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiCalculator.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------.
 /*!
@@ -57,16 +58,23 @@ NFmiCalculator::NFmiCalculator(NFmiQueryInfo* theData, NFmiDataModifier* theData
 
 double NFmiCalculator::FloatValue()
 {
-  if (itsDataIterator && itsDataModifier)
+  try
   {
-    itsDataIterator->DoForEach(itsDataModifier);
-    return itsDataModifier->CalculationResult();
+    if (itsDataIterator && itsDataModifier)
+    {
+      itsDataIterator->DoForEach(itsDataModifier);
+      return itsDataModifier->CalculationResult();
+    }
+    else if (itsData && itsDataModifier)
+    {
+      return itsDataModifier->FloatValue();
+    }
+    return kFloatMissing;
   }
-  else if (itsData && itsDataModifier)
+  catch (...)
   {
-    return itsDataModifier->FloatValue();
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------
@@ -77,12 +85,19 @@ double NFmiCalculator::FloatValue()
 
 NFmiCombinedParam* NFmiCalculator::CombinedValue()
 {
-  if (itsDataIterator && itsDataModifier)
+  try
   {
-    itsDataIterator->DoForEach(itsDataModifier);
-    return itsDataModifier->CombinedCalculationResult();
+    if (itsDataIterator && itsDataModifier)
+    {
+      itsDataIterator->DoForEach(itsDataModifier);
+      return itsDataModifier->CombinedCalculationResult();
+    }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -93,12 +108,19 @@ NFmiCombinedParam* NFmiCalculator::CombinedValue()
 
 NFmiDataModifier* NFmiCalculator::CalculatedModifier()
 {
-  if (itsDataIterator && itsDataModifier)
+  try
   {
-    itsDataIterator->DoForEach(itsDataModifier);
-    return itsDataModifier;
+    if (itsDataIterator && itsDataModifier)
+    {
+      itsDataIterator->DoForEach(itsDataModifier);
+      return itsDataModifier;
+    }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -110,5 +132,8 @@ NFmiDataModifier* NFmiCalculator::CalculatedModifier()
 // Tämä on kuten FloatValue, paitsi että juoksutus tehdään täällä loopissa
 // ja laskut tehdään täällä eikä iteratorin DoForEach-metodissa.
 
-float NFmiCalculator::CalculatedValue() { return kFloatMissing; }
+float NFmiCalculator::CalculatedValue()
+{
+  return kFloatMissing;
+}
 // ======================================================================

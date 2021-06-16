@@ -95,6 +95,7 @@
 // ======================================================================
 
 #include "NFmiYKJArea.h"
+#include <macgyver/Exception.h>
 #include <fmt/format.h>
 #include <cmath>
 #include <cstdlib>
@@ -135,10 +136,17 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftLatLon,
     : NFmiKKJArea(
           theBottomLeftLatLon, theTopRightLatLon, theTopLeftXY, theBottomRightXY, usePacificView)
 {
-  itsWorldRect =
-      NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
-               CornerWorldXY(NFmiPoint(theTopRightLatLon.X(), theTopRightLatLon.Y())));
-  Init();
+  try
+  {
+    itsWorldRect =
+        NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
+                 CornerWorldXY(NFmiPoint(theTopRightLatLon.X(), theTopRightLatLon.Y())));
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -158,18 +166,25 @@ NFmiYKJArea::NFmiYKJArea(double theRadialRangeInMeters,
                          const NFmiPoint &theBottomRightXY)
     : NFmiKKJArea(theRadialRangeInMeters, theCenterLatLon, theTopLeftXY, theBottomRightXY)
 {
-  // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
-  // ympyrälle
-  // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
+  try
+  {
+    // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
+    // ympyrälle
+    // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
 
-  NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
-  NFmiPoint bottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
-                                          centerWorldXY.Y() - theRadialRangeInMeters);
-  itsWorldRect = NFmiRect(
-      bottomLeftWorldXY,
-      bottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
+    NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
+    NFmiPoint bottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
+                                            centerWorldXY.Y() - theRadialRangeInMeters);
+    itsWorldRect = NFmiRect(
+        bottomLeftWorldXY,
+        bottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-  Init();
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -191,15 +206,22 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftLatLon,
                          const NFmiPoint &theBottomRightXY)
     : NFmiKKJArea(theBottomLeftLatLon, theTopLeftXY, theBottomRightXY)
 {
-  itsWorldRect =
-      NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
-               CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())) +
-                   NFmiPoint(theWidthInMeters, theHeightInMeters));
+  try
+  {
+    itsWorldRect =
+        NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
+                 CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())) +
+                     NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-  Init(true);
+    Init(true);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
-  // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
+    // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -221,12 +243,19 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftWorldXY,
                          const NFmiPoint &theBottomRightXY)
     : NFmiKKJArea(theTopLeftXY, theBottomRightXY)
 {
-  itsWorldRect = NFmiRect(theBottomLeftWorldXY, theTopRightWorldXY);
+  try
+  {
+    itsWorldRect = NFmiRect(theBottomLeftWorldXY, theTopRightWorldXY);
 
-  Init(true);
+    Init(true);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
-  // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
+    // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -237,19 +266,26 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftWorldXY,
 
 void NFmiYKJArea::Init(bool fKeepWorldRect)
 {
-  if (!fKeepWorldRect)
-    itsWorldRect = NFmiRect(CornerWorldXY(itsBottomLeftLatLon), CornerWorldXY(itsTopRightLatLon));
+  try
+  {
+    if (!fKeepWorldRect)
+      itsWorldRect = NFmiRect(CornerWorldXY(itsBottomLeftLatLon), CornerWorldXY(itsTopRightLatLon));
 
-  itsXScaleFactor = Width() / itsWorldRect.Width();
-  itsYScaleFactor = Height() / itsWorldRect.Height();
+    itsXScaleFactor = Width() / itsWorldRect.Width();
+    itsYScaleFactor = Height() / itsWorldRect.Height();
 
-  itsTopRightLatLon = TopRightLatLon();
-  itsBottomLeftLatLon = BottomLeftLatLon();
+    itsTopRightLatLon = TopRightLatLon();
+    itsBottomLeftLatLon = BottomLeftLatLon();
 
-  NFmiKKJArea::Init(fKeepWorldRect);
+    NFmiKKJArea::Init(fKeepWorldRect);
 
-  itsProjStr = "EPSG:2393";
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(2393);
+    itsProjStr = "EPSG:2393";
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(2393);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -264,8 +300,15 @@ void NFmiYKJArea::Init(bool fKeepWorldRect)
 
 const NFmiPoint NFmiYKJArea::CornerWorldXY(const NFmiPoint &theLatLonPoint) const
 {
-  // Calculate world coordinates (meters) for YKJ rectangle corner point.
-  return LatLonToWorldXY(theLatLonPoint);
+  try
+  {
+    // Calculate world coordinates (meters) for YKJ rectangle corner point.
+    return LatLonToWorldXY(theLatLonPoint);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -280,8 +323,15 @@ const NFmiPoint NFmiYKJArea::CornerWorldXY(const NFmiPoint &theLatLonPoint) cons
 
 int NFmiYKJArea::ZoneNumberByLongitude(const double /* lon */) const
 {
-  // For YKJ, the zone number is a constant.
-  return 3;
+  try
+  {
+    // For YKJ, the zone number is a constant.
+    return 3;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -296,8 +346,15 @@ int NFmiYKJArea::ZoneNumberByLongitude(const double /* lon */) const
 
 int NFmiYKJArea::ZoneNumberByEasting(const double /* easting */) const
 {
-  // For YKJ, the zone number is a constant.
-  return 3;
+  try
+  {
+    // For YKJ, the zone number is a constant.
+    return 3;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -313,19 +370,26 @@ NFmiArea *NFmiYKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                const NFmiPoint &theTopRightLatLon,
                                bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiYKJArea(fixedPointData.itsBottomLeftLatlon,
-                           fixedPointData.itsTopRightLatlon,
-                           TopLeft(),
-                           BottomRight(),
-                           fixedPointData.fIsPacific);
-  }
-  else
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiYKJArea(fixedPointData.itsBottomLeftLatlon,
+                             fixedPointData.itsTopRightLatlon,
+                             TopLeft(),
+                             BottomRight(),
+                             fixedPointData.fIsPacific);
+    }
+
     return new NFmiYKJArea(
         theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,7 +401,14 @@ NFmiArea *NFmiYKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiYKJArea::Clone() const
 {
-  return new NFmiYKJArea(*this);
+  try
+  {
+    return new NFmiYKJArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -362,7 +433,14 @@ NFmiYKJArea &NFmiYKJArea::operator=(const NFmiYKJArea &theArea) = default;
 
 bool NFmiYKJArea::operator==(const NFmiYKJArea &theArea) const
 {
-  return NFmiKKJArea::operator==(static_cast<const NFmiKKJArea &>(theArea));
+  try
+  {
+    return NFmiKKJArea::operator==(static_cast<const NFmiKKJArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -376,8 +454,16 @@ bool NFmiYKJArea::operator==(const NFmiYKJArea &theArea) const
 
 bool NFmiYKJArea::operator!=(const NFmiYKJArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -389,7 +475,14 @@ bool NFmiYKJArea::operator!=(const NFmiYKJArea &theArea) const
 
 bool NFmiYKJArea::operator==(const NFmiArea &theArea) const
 {
-  return NFmiKKJArea::operator==(static_cast<const NFmiArea &>(theArea));
+  try
+  {
+    return NFmiKKJArea::operator==(static_cast<const NFmiArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -403,7 +496,14 @@ bool NFmiYKJArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiYKJArea::operator!=(const NFmiArea &theArea) const
 {
-  return NFmiKKJArea::operator!=(static_cast<const NFmiArea &>(theArea));
+  try
+  {
+    return NFmiKKJArea::operator!=(static_cast<const NFmiArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -417,8 +517,15 @@ bool NFmiYKJArea::operator!=(const NFmiArea &theArea) const
 
 std::ostream &NFmiYKJArea::Write(std::ostream &file) const
 {
-  NFmiKKJArea::Write(file);
-  return file;
+  try
+  {
+    NFmiKKJArea::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -432,16 +539,30 @@ std::ostream &NFmiYKJArea::Write(std::ostream &file) const
 
 std::istream &NFmiYKJArea::Read(std::istream &file)
 {
-  NFmiKKJArea::Read(file);
-  return file;
+  try
+  {
+    NFmiKKJArea::Read(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiYKJArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "ykj:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
-      << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "ykj:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
+        << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -464,20 +585,27 @@ const std::string NFmiYKJArea::AreaStr() const
 
 const std::string NFmiYKJArea::WKT() const
 {
-  const char *fmt =
-      R"(PROJCS["KKJ / Finland Uniform Coordinate System",)"
-      R"(GEOGCS["KKJ",)"
-      R"(DATUM["Kartastokoordinaattijarjestelma", SPHEROID["International 1924",6378388,297]],)"
-      R"(PRIMEM["Greenwich",0],)"
-      R"(UNIT["degree",0.0174532925199433]],)"
-      R"(PROJECTION["Transverse_Mercator"],)"
-      R"(PARAMETER["latitude_of_origin",0],)"
-      R"(PARAMETER["central_meridian",27],)"
-      R"(PARAMETER["scale_factor",1],)"
-      R"(PARAMETER["false_easting",3500000],)"
-      R"(PARAMETER["false_northing",0],)"
-      R"(UNIT["metre",1]])";
-  return fmt;
+  try
+  {
+    const char *fmt =
+        R"(PROJCS["KKJ / Finland Uniform Coordinate System",)"
+        R"(GEOGCS["KKJ",)"
+        R"(DATUM["Kartastokoordinaattijarjestelma", SPHEROID["International 1924",6378388,297]],)"
+        R"(PRIMEM["Greenwich",0],)"
+        R"(UNIT["degree",0.0174532925199433]],)"
+        R"(PROJECTION["Transverse_Mercator"],)"
+        R"(PARAMETER["latitude_of_origin",0],)"
+        R"(PARAMETER["central_meridian",27],)"
+        R"(PARAMETER["scale_factor",1],)"
+        R"(PARAMETER["false_easting",3500000],)"
+        R"(PARAMETER["false_northing",0],)"
+        R"(UNIT["metre",1]])";
+    return fmt;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -488,9 +616,16 @@ const std::string NFmiYKJArea::WKT() const
 
 std::size_t NFmiYKJArea::HashValue() const
 {
-  std::size_t hash = NFmiKKJArea::HashValue();
-  // no private members
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiKKJArea::HashValue();
+    // no private members
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

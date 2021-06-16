@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiLevelBag.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -22,7 +23,16 @@
 
 NFmiLevelBag::~NFmiLevelBag()
 {
-  if (itsLevels) delete[] static_cast<NFmiLevel *>(itsLevels);
+  try
+  {
+    if (itsLevels)
+      delete[] static_cast<NFmiLevel *>(itsLevels);
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -31,7 +41,10 @@ NFmiLevelBag::~NFmiLevelBag()
  */
 // ----------------------------------------------------------------------
 
-NFmiLevelBag::NFmiLevelBag() : itsLevels(nullptr), itsStep(0) {}
+NFmiLevelBag::NFmiLevelBag() : itsLevels(nullptr), itsStep(0)
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theLevelType Undocumented
@@ -50,9 +63,16 @@ NFmiLevelBag::NFmiLevelBag(FmiLevelType theLevelType,
       itsLevels(nullptr),
       itsStep(theStep)
 {
-  itsLevels = new NFmiLevel[itsSize];
-  for (unsigned long i = 0; i < itsSize; i++)
-    itsLevels[i] = NFmiLevel(theLevelType, theMinValue + i * theStep);
+  try
+  {
+    itsLevels = new NFmiLevel[itsSize];
+    for (unsigned long i = 0; i < itsSize; i++)
+      itsLevels[i] = NFmiLevel(theLevelType, theMinValue + i * theStep);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -69,9 +89,16 @@ NFmiLevelBag::NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels)
       itsLevels(theLevelArray ? new NFmiLevel[GetSize()] : nullptr),
       itsStep(0ul)
 {
-  if (itsLevels != nullptr)
-    for (unsigned int i = 0; i < GetSize(); i++)
-      itsLevels[i] = theLevelArray[i];
+  try
+  {
+    if (itsLevels != nullptr)
+      for (unsigned int i = 0; i < GetSize(); i++)
+        itsLevels[i] = theLevelArray[i];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -87,9 +114,16 @@ NFmiLevelBag::NFmiLevelBag(const NFmiLevelBag &theBag)
       itsLevels(theBag.itsLevels ? new NFmiLevel[itsSize] : nullptr),
       itsStep(theBag.itsStep)
 {
-  if (itsLevels != nullptr)
-    for (unsigned int i = 0; i < itsSize; i++)
-      itsLevels[i] = (theBag.itsLevels)[i];
+  try
+  {
+    if (itsLevels != nullptr)
+      for (unsigned int i = 0; i < itsSize; i++)
+        itsLevels[i] = (theBag.itsLevels)[i];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -101,7 +135,14 @@ NFmiLevelBag::NFmiLevelBag(const NFmiLevelBag &theBag)
 
 const NFmiLevelBag NFmiLevelBag::Combine(const NFmiLevelBag &theBag) const
 {
-  return NFmiLevelBag(theBag);
+  try
+  {
+    return NFmiLevelBag(theBag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -113,13 +154,21 @@ const NFmiLevelBag NFmiLevelBag::Combine(const NFmiLevelBag &theBag) const
 
 bool NFmiLevelBag::Level(const NFmiLevel &theLevel)
 {
-  Reset();
-  while (Next())
+  try
   {
-    if (theLevel == *Level()) return true;
-  }
+    Reset();
+    while (Next())
+    {
+      if (theLevel == *Level())
+        return true;
+    }
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -131,36 +180,44 @@ bool NFmiLevelBag::Level(const NFmiLevel &theLevel)
 
 bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 {
-  int i;
-  for (i = 0; i < static_cast<int>(itsSize); i++)
-    if (itsLevels[i] == theLevel) break;
-
-  if (i == static_cast<int>(itsSize))
+  try
   {
-    int j;
-    NFmiLevel *tempLevels;
-    tempLevels = new NFmiLevel[GetSize() + 1];
+    int i;
+    for (i = 0; i < static_cast<int>(itsSize); i++)
+      if (itsLevels[i] == theLevel) break;
 
-    for (j = 0; j < static_cast<int>(itsSize); j++)
-      tempLevels[j] = itsLevels[j];
+    if (i == static_cast<int>(itsSize))
+    {
+      int j;
+      NFmiLevel *tempLevels;
+      tempLevels = new NFmiLevel[GetSize() + 1];
 
-    tempLevels[j] = theLevel;
+      for (j = 0; j < static_cast<int>(itsSize); j++)
+        tempLevels[j] = itsLevels[j];
 
-    if (itsLevels) delete[] itsLevels;
+      tempLevels[j] = theLevel;
 
-    itsLevels = new NFmiLevel[itsSize + 1];
-    itsSize = GetSize() + 1;
-    for (j = 0; j < static_cast<int>(GetSize()); j++)
-      itsLevels[j] = tempLevels[j];
+      if (itsLevels)
+        delete[] itsLevels;
 
-    itsStep = 0ul;  // askel ei välttämättä enää vakio
+      itsLevels = new NFmiLevel[itsSize + 1];
+      itsSize = GetSize() + 1;
+      for (j = 0; j < static_cast<int>(GetSize()); j++)
+        itsLevels[j] = tempLevels[j];
 
-    delete[] tempLevels;
+      itsStep = 0ul;  // askel ei välttämättä enää vakio
 
-    return true;
+      delete[] tempLevels;
+
+      return true;
+    }
+
+    return false;
   }
-
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -174,16 +231,23 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 
 NFmiLevelBag &NFmiLevelBag::operator=(const NFmiLevelBag &theLevelBag)
 {
-  itsIndex = theLevelBag.CurrentIndex();
-  itsSize = theLevelBag.GetSize();
+  try
+  {
+    itsIndex = theLevelBag.CurrentIndex();
+    itsSize = theLevelBag.GetSize();
 
-  delete[] itsLevels;  // Salla 140998
+    delete[] itsLevels;  // Salla 140998
 
-  itsLevels = new NFmiLevel[theLevelBag.GetSize()];
-  for (int i = 0; i < static_cast<int>(theLevelBag.GetSize()); i++)
-    itsLevels[i] = theLevelBag.itsLevels[i];
+    itsLevels = new NFmiLevel[theLevelBag.GetSize()];
+    for (int i = 0; i < static_cast<int>(theLevelBag.GetSize()); i++)
+      itsLevels[i] = theLevelBag.itsLevels[i];
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -197,20 +261,27 @@ NFmiLevelBag &NFmiLevelBag::operator=(const NFmiLevelBag &theLevelBag)
 
 bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
 {
-  bool retVal = false;
-  if (itsSize == theLevelBag.itsSize)
+  try
   {
-    for (int i = 0;
-         i < static_cast<int>(this->GetSize()) && static_cast<int>(theLevelBag.GetSize());
-         i++)
+    bool retVal = false;
+    if (itsSize == theLevelBag.itsSize)
     {
-      if (!(this->itsLevels[i] == theLevelBag.itsLevels[i]))
-        return false;
-      else
-        retVal = true;
+      for (int i = 0;
+           i < static_cast<int>(this->GetSize()) && static_cast<int>(theLevelBag.GetSize());
+           i++)
+      {
+        if (!(this->itsLevels[i] == theLevelBag.itsLevels[i]))
+          return false;
+        else
+          retVal = true;
+      }
     }
+    return retVal;
   }
-  return retVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -224,15 +295,22 @@ bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
 
 std::ostream &NFmiLevelBag::Write(std::ostream &file) const
 {
-  NFmiSize::Write(file);
-
-  for (unsigned long i = 0; i < GetSize(); i++)
+  try
   {
-    file << itsLevels[i];
-  }
+    NFmiSize::Write(file);
 
-  file << itsStep << std::endl;
-  return file;
+    for (unsigned long i = 0; i < GetSize(); i++)
+    {
+      file << itsLevels[i];
+    }
+
+    file << itsStep << std::endl;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -246,21 +324,29 @@ std::ostream &NFmiLevelBag::Write(std::ostream &file) const
 
 std::istream &NFmiLevelBag::Read(std::istream &file)
 {
-  if (itsLevels) delete[] static_cast<NFmiLevel *>(itsLevels);
-
-  NFmiSize::Read(file);
-  if (GetSize())  // 11.02.97 Vili Add size check
-    itsLevels = new NFmiLevel[GetSize()];
-
-  for (unsigned long i = 0; i < GetSize(); i++)
+  try
   {
-    file >> itsLevels[i];
+    if (itsLevels)
+      delete[] static_cast<NFmiLevel *>(itsLevels);
+
+    NFmiSize::Read(file);
+    if (GetSize())  // 11.02.97 Vili Add size check
+      itsLevels = new NFmiLevel[GetSize()];
+
+    for (unsigned long i = 0; i < GetSize(); i++)
+    {
+      file >> itsLevels[i];
+    }
+
+    file >> itsStep;
+
+    Reset();
+    return file;
   }
-
-  file >> itsStep;
-
-  Reset();
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -15,6 +15,7 @@
 #include "NFmiParamDataModifier.h"
 #include "NFmiDataModifierList.h"
 #include "NFmiQueryInfo.h"
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -25,9 +26,17 @@
 
 NFmiParamDataModifier::~NFmiParamDataModifier()
 {
-  delete itsParam;
-  delete itsLevel;
-  delete itsSubList;
+  try
+  {
+    delete itsParam;
+    delete itsLevel;
+    delete itsSubList;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -48,7 +57,14 @@ NFmiParamDataModifier::NFmiParamDataModifier(NFmiDataIdent* theParam,
       itsLevel(theLevel ? new NFmiLevel(*theLevel) : nullptr),
       itsSubList(nullptr)
 {
-  itsSubList = new NFmiDataModifierList;
+  try
+  {
+    itsSubList = new NFmiDataModifierList;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -61,15 +77,22 @@ NFmiParamDataModifier::NFmiParamDataModifier(NFmiDataIdent* theParam,
 
 bool NFmiParamDataModifier::Match(const NFmiDataIdent& theParam, const NFmiLevel* theLevel)
 {
-  // HUOM!!! Tarkistus tehdään ainakin aluksi parId tasolla ja levelID tasolla!!!!!!
-  if (*itsParam->GetParam() == *theParam.GetParam())
+  try
   {
-    if (itsLevel && theLevel && (*itsLevel == *theLevel))
-      return true;
-    else if (!(itsLevel && theLevel))  // jos molemmat ovat 0-pointtereita myös true
-      return true;
+    // HUOM!!! Tarkistus tehdään ainakin aluksi parId tasolla ja levelID tasolla!!!!!!
+    if (*itsParam->GetParam() == *theParam.GetParam())
+    {
+      if (itsLevel && theLevel && (*itsLevel == *theLevel))
+        return true;
+      else if (!(itsLevel && theLevel))  // jos molemmat ovat 0-pointtereita myös true
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -83,7 +106,14 @@ bool NFmiParamDataModifier::Match(const NFmiDataIdent& theParam, const NFmiLevel
 
 bool NFmiParamDataModifier::AddSubModifier(NFmiDataModifier* /* theModifier */)
 {
-  throw std::runtime_error("NFmiParamDataModifier::AddSubModifier not implemented yet!");
+  try
+  {
+    throw Fmi::Exception(BCP,"NFmiParamDataModifier::AddSubModifier not implemented yet!");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -92,7 +122,18 @@ bool NFmiParamDataModifier::AddSubModifier(NFmiDataModifier* /* theModifier */)
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierList* NFmiParamDataModifier::SubModifiers() { return itsSubList; }
+NFmiDataModifierList* NFmiParamDataModifier::SubModifiers()
+{
+  try
+  {
+    return itsSubList;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented, unused
@@ -100,7 +141,11 @@ NFmiDataModifierList* NFmiParamDataModifier::SubModifiers() { return itsSubList;
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamDataModifier::BoolOperation(float /* theValue */) { return false; }
+bool NFmiParamDataModifier::BoolOperation(float /* theValue */)
+{
+  return false;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented, unused
@@ -108,28 +153,42 @@ bool NFmiParamDataModifier::BoolOperation(float /* theValue */) { return false; 
  */
 // ----------------------------------------------------------------------
 
-float NFmiParamDataModifier::FloatOperation(float theValue) { return theValue; }
+float NFmiParamDataModifier::FloatOperation(float theValue)
+{
+  return theValue;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented, always kFloatMissing
  */
 // ----------------------------------------------------------------------
 
-float NFmiParamDataModifier::CalculationResult() { return kFloatMissing; }
+float NFmiParamDataModifier::CalculationResult()
+{
+  return kFloatMissing;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented, unused
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamDataModifier::Calculate(float /* theValue */) {}
+void NFmiParamDataModifier::Calculate(float /* theValue */)
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamDataModifier::Clear() {}
+void NFmiParamDataModifier::Clear()
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param file The output stream to write to
@@ -139,10 +198,17 @@ void NFmiParamDataModifier::Clear() {}
 
 std::ostream& NFmiParamDataModifier::WriteOperand(std::ostream& file) const
 {
-  file << "<operand type='dataparam'>";
-  file << "<id>" << itsParam->GetParam()->GetIdent() << "</id>";
-  file << "</operand>";
-  return file;
+  try
+  {
+    file << "<operand type='dataparam'>";
+    file << "<id>" << itsParam->GetParam()->GetIdent() << "</id>";
+    file << "</operand>";
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

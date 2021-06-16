@@ -14,6 +14,7 @@
 
 #include "NFmiLatLonArea.h"
 #include "NFmiAreaFactory.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 
@@ -65,7 +66,14 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiPoint &theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect()
 {
-  Init();
+  try
+  {
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -88,7 +96,14 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiLatLonArea &theLatLonArea)
 
 NFmiArea *NFmiLatLonArea::Clone() const
 {
-  return new NFmiLatLonArea(*this);
+  try
+  {
+    return new NFmiLatLonArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -98,19 +113,26 @@ NFmiArea *NFmiLatLonArea::Clone() const
 
 void NFmiLatLonArea::Init(bool fKeepWorldRect)
 {
-  if (!fKeepWorldRect)
-    itsWorldRect =
-        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
-                 LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
+  try
+  {
+    if (!fKeepWorldRect)
+      itsWorldRect =
+          NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
+                   LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
 
-  itsXScaleFactor = (Right() - Left()) / (itsTopRightLatLon.X() - itsBottomLeftLatLon.X());
-  itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
+    itsXScaleFactor = (Right() - Left()) / (itsTopRightLatLon.X() - itsBottomLeftLatLon.X());
+    itsYScaleFactor = (Top() - Bottom()) / (itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y());
 
-  NFmiArea::Init(fKeepWorldRect);
+    NFmiArea::Init(fKeepWorldRect);
 
-  const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
-  itsProjStr = fmt::format(fmt, kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+    const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
+    itsProjStr = fmt::format(fmt, kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -122,10 +144,17 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
 
 const NFmiPoint NFmiLatLonArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double dlon = (theXYPoint.X() - Left()) / itsXScaleFactor;
-  NFmiLongitude lon(itsBottomLeftLatLon.X() + dlon, PacificView());
-  NFmiLatitude lat(itsBottomLeftLatLon.Y() + (theXYPoint.Y() - Bottom()) / itsYScaleFactor);
-  return NFmiPoint(lon.Value(), lat.Value());
+  try
+  {
+    double dlon = (theXYPoint.X() - Left()) / itsXScaleFactor;
+    NFmiLongitude lon(itsBottomLeftLatLon.X() + dlon, PacificView());
+    NFmiLatitude lat(itsBottomLeftLatLon.Y() + (theXYPoint.Y() - Bottom()) / itsYScaleFactor);
+    return NFmiPoint(lon.Value(), lat.Value());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -137,11 +166,18 @@ const NFmiPoint NFmiLatLonArea::ToLatLon(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiLatLonArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
-  double usedLongitude = FixLongitude(theLatLonPoint.X());
-  double X = Left() + (usedLongitude - itsBottomLeftLatLon.X()) * itsXScaleFactor;
-  double Y = Top() + (theLatLonPoint.Y() - itsTopRightLatLon.Y()) *
-                         itsYScaleFactor;  // Tässä on edelleen virhe
-  return NFmiPoint(X, Y);
+  try
+  {
+    double usedLongitude = FixLongitude(theLatLonPoint.X());
+    double X = Left() + (usedLongitude - itsBottomLeftLatLon.X()) * itsXScaleFactor;
+    double Y = Top() + (theLatLonPoint.Y() - itsTopRightLatLon.Y()) *
+                           itsYScaleFactor;  // Tässä on edelleen virhe
+    return NFmiPoint(X, Y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -153,7 +189,14 @@ const NFmiPoint NFmiLatLonArea::ToXY(const NFmiPoint &theLatLonPoint) const
 
 const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 {
-  return LatLonToWorldXY(ToLatLon(theXYPoint));
+  try
+  {
+    return LatLonToWorldXY(ToLatLon(theXYPoint));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -165,7 +208,14 @@ const NFmiPoint NFmiLatLonArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiLatLonArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
 {
-  return ToXY(WorldXYToLatLon(theWorldXYPoint));
+  try
+  {
+    return ToXY(WorldXYToLatLon(theWorldXYPoint));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -176,7 +226,14 @@ const NFmiPoint NFmiLatLonArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) co
 
 double NFmiLatLonArea::XScale() const
 {
-  return 1. / itsXScaleFactor;
+  try
+  {
+    return 1. / itsXScaleFactor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -186,7 +243,14 @@ double NFmiLatLonArea::XScale() const
 
 double NFmiLatLonArea::YScale() const
 {
-  return 1. / itsYScaleFactor;
+  try
+  {
+    return 1. / itsYScaleFactor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -200,19 +264,26 @@ NFmiArea *NFmiLatLonArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon,
                                   bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiLatLonArea(fixedPointData.itsBottomLeftLatlon,
-                              fixedPointData.itsTopRightLatlon,
-                              TopLeft(),
-                              BottomRight(),
-                              fixedPointData.fIsPacific);
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiLatLonArea(fixedPointData.itsBottomLeftLatlon,
+                                fixedPointData.itsTopRightLatlon,
+                                TopLeft(),
+                                BottomRight(),
+                                fixedPointData.fIsPacific);
+    }
+    else
+      return new NFmiLatLonArea(
+          theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
   }
-  else
-    return new NFmiLatLonArea(
-        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -226,16 +297,23 @@ NFmiArea *NFmiLatLonArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 std::ostream &NFmiLatLonArea::Write(std::ostream &file) const
 {
-  NFmiArea::Write(file);
-  file << itsBottomLeftLatLon;
-  file << itsTopRightLatLon;
+  try
+  {
+    NFmiArea::Write(file);
+    file << itsBottomLeftLatLon;
+    file << itsTopRightLatLon;
 
-  // Dummies to replace old removed variables
-  file << "0 0\n0 0\n";
+    // Dummies to replace old removed variables
+    file << "0 0\n0 0\n";
 
-  file << itsXScaleFactor << " ";
-  file << itsYScaleFactor << std::endl;
-  return file;
+    file << itsXScaleFactor << " ";
+    file << itsYScaleFactor << std::endl;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -249,34 +327,48 @@ std::ostream &NFmiLatLonArea::Write(std::ostream &file) const
 
 std::istream &NFmiLatLonArea::Read(std::istream &file)
 {
-  double dummy;
+  try
+  {
+    double dummy;
 
-  NFmiArea::Read(file);
-  file >> itsBottomLeftLatLon;
-  file >> itsTopRightLatLon;
-  PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
-  file >> dummy >> dummy >> dummy >> dummy;  // old removed variables
+    NFmiArea::Read(file);
+    file >> itsBottomLeftLatLon;
+    file >> itsTopRightLatLon;
+    PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
+    file >> dummy >> dummy >> dummy >> dummy;  // old removed variables
 
-  file >> itsXScaleFactor;
-  file >> itsYScaleFactor;
+    file >> itsXScaleFactor;
+    file >> itsYScaleFactor;
 
-  itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
-  Init();
+    Init();
 
-  // 28.8.2001/Marko&Esa Tätä kutsuttaessa kaikki dataosat päivittyvät,
-  // jolloin voidaan esim. editoida tiedostoissa olevia areoiden projektio
-  // parametreja siten (tätä ei voitu tehdä ennen koska skaalauskertoimet eivät päivittyneet)
+    // 28.8.2001/Marko&Esa Tätä kutsuttaessa kaikki dataosat päivittyvät,
+    // jolloin voidaan esim. editoida tiedostoissa olevia areoiden projektio
+    // parametreja siten (tätä ei voitu tehdä ennen koska skaalauskertoimet eivät päivittyneet)
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiLatLonArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "latlon:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
-      << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "latlon:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
+        << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -292,10 +384,17 @@ const std::string NFmiLatLonArea::AreaStr() const
 
 const std::string NFmiLatLonArea::WKT() const
 {
-  const char *fmt =
-      R"(PROJCS["unknown",GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",{},0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Equirectangular"],PARAMETER["standard_parallel_1",0],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1, AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]])";
+  try
+  {
+    const char *fmt =
+        R"(PROJCS["unknown",GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",{},0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Equirectangular"],PARAMETER["standard_parallel_1",0],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1, AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]])";
 
-  return fmt::format(fmt, kRearth);
+    return fmt::format(fmt, kRearth);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -310,7 +409,14 @@ const std::string NFmiLatLonArea::WKT() const
 
 bool NFmiLatLonArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiLatLonArea &>(theArea);
+  try
+  {
+    return *this == static_cast<const NFmiLatLonArea &>(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -325,13 +431,20 @@ bool NFmiLatLonArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiLatLonArea::operator==(const NFmiLatLonArea &theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-    return true;
+  try
+  {
+    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+        (itsXScaleFactor == theArea.itsXScaleFactor) &&
+        (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -342,12 +455,19 @@ bool NFmiLatLonArea::operator==(const NFmiLatLonArea &theArea) const
 
 std::size_t NFmiLatLonArea::HashValue() const
 {
-  std::size_t hash = NFmiArea::HashValue();
-  boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-  boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-  boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
-  boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
-  boost::hash_combine(hash, itsWorldRect.HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiArea::HashValue();
+    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
+    boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
+    boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
+    boost::hash_combine(hash, itsWorldRect.HashValue());
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ======================================================================

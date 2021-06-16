@@ -65,6 +65,7 @@
 // ======================================================================
 
 #include "NFmiOrthographicArea.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 #include <algorithm>
@@ -122,25 +123,32 @@ NFmiOrthographicArea::NFmiOrthographicArea(const NFmiPoint &theCentralLatLonPoin
       itsAzimuthAngle(theAzimuthAngle),
       itsZoomFactor(theRadialRange / kRearth)
 {
-  itsLat0 = FmiRad(CurrentCenter().Y());
-  itsLon0 = FmiRad(CurrentCenter().X());
-  itsSinLat0 = sin(itsLat0);
-  itsCosLat0 = cos(itsLat0);
+  try
+  {
+    itsLat0 = FmiRad(CurrentCenter().Y());
+    itsLon0 = FmiRad(CurrentCenter().X());
+    itsSinLat0 = sin(itsLat0);
+    itsCosLat0 = cos(itsLat0);
 
-  itsGlobeRadius = kRearth;
-  itsZoomFactor = theRadialRange / kRearth;
-  itsAzimuthAngle = theAzimuthAngle;
-  itsVisibilityTerm = kFloatMissing;
-  itsCurrentLatlonPoint = NFmiPoint(kFloatMissing, kFloatMissing);
+    itsGlobeRadius = kRearth;
+    itsZoomFactor = theRadialRange / kRearth;
+    itsAzimuthAngle = theAzimuthAngle;
+    itsVisibilityTerm = kFloatMissing;
+    itsCurrentLatlonPoint = NFmiPoint(kFloatMissing, kFloatMissing);
 
-  // Purpose: to create a square bounding the circle of radius 'theRadialRange' (in meters)
+    // Purpose: to create a square bounding the circle of radius 'theRadialRange' (in meters)
 
-  //  itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange,-itsRadialRange),
-  // 						    NFmiPoint(itsRadialRange,itsRadialRange));
+    //  itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange,-itsRadialRange),
+    // 						    NFmiPoint(itsRadialRange,itsRadialRange));
 
-  NFmiOrthographicArea::Init();  // Em.  'itsWorldRect' -lause korvattu tällä Init():llä
+    NFmiOrthographicArea::Init();  // Em.  'itsWorldRect' -lause korvattu tällä Init():llä
 
-  NFmiAzimuthalArea::Init(true);
+    NFmiAzimuthalArea::Init(true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //  ----------------------------------------------------------------------
@@ -171,28 +179,35 @@ NFmiOrthographicArea::NFmiOrthographicArea(const NFmiPoint &theBottomLeftLatLon,
       itsZoomFactor(1.0),
       itsGlobeRadius(kRearth)
 {
-  itsLat0 = FmiRad(CurrentCenter().Y());
-  itsLon0 = FmiRad(CurrentCenter().X());
-  itsSinLat0 = sin(itsLat0);
-  itsCosLat0 = cos(itsLat0);
+  try
+  {
+    itsLat0 = FmiRad(CurrentCenter().Y());
+    itsLon0 = FmiRad(CurrentCenter().X());
+    itsSinLat0 = sin(itsLat0);
+    itsCosLat0 = cos(itsLat0);
 
-  // HUOM!
-  // Tässä konstruktorissa on tarkoitus käyttää perinteisempää
-  // "nurkkapistekonstruktoria"
+    // HUOM!
+    // Tässä konstruktorissa on tarkoitus käyttää perinteisempää
+    // "nurkkapistekonstruktoria"
 
-  NFmiPoint bottomLeftWorldXY = LatLonToWorldXY(itsBottomLeftLatLon);
-  NFmiPoint topRightWorldXY = LatLonToWorldXY(itsTopRightLatLon);
+    NFmiPoint bottomLeftWorldXY = LatLonToWorldXY(itsBottomLeftLatLon);
+    NFmiPoint topRightWorldXY = LatLonToWorldXY(itsTopRightLatLon);
 
-  // Lasketaan "keskipistearvot" CurrentCenter():lle MAAILMANKOORDINAATTIEN avulla
-  // - *EI* latlon -keskileveys/korkeuskoordinaattien avulla
-  // ==> saadaan suorakulmaisen maailmankoordinaattialueen keskipiste
-  ///?????CurrentCenter(WorldXYToLatLon(0.5*(topRightWorldXY + bottomLeftWorldXY)));
+    // Lasketaan "keskipistearvot" CurrentCenter():lle MAAILMANKOORDINAATTIEN avulla
+    // - *EI* latlon -keskileveys/korkeuskoordinaattien avulla
+    // ==> saadaan suorakulmaisen maailmankoordinaattialueen keskipiste
+    ///?????CurrentCenter(WorldXYToLatLon(0.5*(topRightWorldXY + bottomLeftWorldXY)));
 
-  itsWorldRect = NFmiRect(bottomLeftWorldXY, topRightWorldXY);
+    itsWorldRect = NFmiRect(bottomLeftWorldXY, topRightWorldXY);
 
-  NFmiAzimuthalArea::Init(true);
+    NFmiAzimuthalArea::Init(true);
 
-  itsRadialRange = FmiMin(itsWorldRect.Width(), itsWorldRect.Height());
+    itsRadialRange = FmiMin(itsWorldRect.Width(), itsWorldRect.Height());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -203,19 +218,26 @@ NFmiOrthographicArea::NFmiOrthographicArea(const NFmiPoint &theBottomLeftLatLon,
 
 void NFmiOrthographicArea::Init(bool /* fKeepWorldRect */)
 {
-  double aspectRatio = Width() / Height();
-  itsZoomFactor = 1.0;
-  double width = itsZoomFactor * 2. * GlobeRadius();
-  double height = aspectRatio * width;
+  try
+  {
+    double aspectRatio = Width() / Height();
+    itsZoomFactor = 1.0;
+    double width = itsZoomFactor * 2. * GlobeRadius();
+    double height = aspectRatio * width;
 
-  itsWorldRect = NFmiRect(-width / 2., -height / 2., width / 2., height / 2.);
-  itsRadialRange = FmiMin(itsWorldRect.Width(), itsWorldRect.Height());
+    itsWorldRect = NFmiRect(-width / 2., -height / 2., width / 2., height / 2.);
+    itsRadialRange = FmiMin(itsWorldRect.Width(), itsWorldRect.Height());
 
-  itsXScaleFactor = Width() / itsWorldRect.Width();
-  itsYScaleFactor = Height() / itsWorldRect.Height();
+    itsXScaleFactor = Width() / itsWorldRect.Width();
+    itsYScaleFactor = Height() / itsWorldRect.Height();
 
-  itsTopRightLatLon = TopRightLatLon();
-  itsBottomLeftLatLon = BottomLeftLatLon();
+    itsTopRightLatLon = TopRightLatLon();
+    itsBottomLeftLatLon = BottomLeftLatLon();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -249,142 +271,201 @@ void NFmiOrthographicArea::Init(bool /* fKeepWorldRect */)
 
 const NFmiPoint NFmiOrthographicArea::WorldXYToLatLon(const NFmiPoint &theXY) const
 {
-  // HUOM! Tämä metodi on kirjoittu tarkoituksella  NFmiAzimuthalArea -emoluokan metodin
-  // WorldXYToLatLon()
-  // päälle (override) koska menettely yksinkertaistaa ja nopeuttaa jonkin verran koodia
-
-  double xUnrotated = theXY.X();
-  double yUnrotated = theXY.Y();
-
-  // Do we hit the globe at point 'theXY'?
-
-  double xyDist2 = xUnrotated * xUnrotated + yUnrotated * yUnrotated;
-
-  if (xyDist2 > kRearth * kRearth)
-    return NFmiPoint(kFloatMissing, kFloatMissing);  // Not hit but lost in outer space ...
-
-  if (xyDist2 == 0.)
-    return CurrentCenter();
-
-  double x = 0.;
-  double y = 0.;
-
-  if (itsAzimuthAngle != 0.)
+  try
   {
-    // Rotate point (x, y) about z-axis in right-handed cartesian coordinate system
-    // by the angle of 'itsAzimuthAngle' degrees
+    // HUOM! Tämä metodi on kirjoittu tarkoituksella  NFmiAzimuthalArea -emoluokan metodin
+    // WorldXYToLatLon()
+    // päälle (override) koska menettely yksinkertaistaa ja nopeuttaa jonkin verran koodia
 
-    double cosAng = cos(FmiRad(-itsAzimuthAngle));
-    double sinAng = sin(FmiRad(-itsAzimuthAngle));
+    double xUnrotated = theXY.X();
+    double yUnrotated = theXY.Y();
 
-    x = (xUnrotated * cosAng - yUnrotated * sinAng) / GlobeRadius();  // x scaled to [0..1]
-    y = (xUnrotated * sinAng + yUnrotated * cosAng) / GlobeRadius();  // y scaled to [0..1]
+    // Do we hit the globe at point 'theXY'?
+
+    double xyDist2 = xUnrotated * xUnrotated + yUnrotated * yUnrotated;
+
+    if (xyDist2 > kRearth * kRearth)
+      return NFmiPoint(kFloatMissing, kFloatMissing);  // Not hit but lost in outer space ...
+
+    if (xyDist2 == 0.)
+      return CurrentCenter();
+
+    double x = 0.;
+    double y = 0.;
+
+    if (itsAzimuthAngle != 0.)
+    {
+      // Rotate point (x, y) about z-axis in right-handed cartesian coordinate system
+      // by the angle of 'itsAzimuthAngle' degrees
+
+      double cosAng = cos(FmiRad(-itsAzimuthAngle));
+      double sinAng = sin(FmiRad(-itsAzimuthAngle));
+
+      x = (xUnrotated * cosAng - yUnrotated * sinAng) / GlobeRadius();  // x scaled to [0..1]
+      y = (xUnrotated * sinAng + yUnrotated * cosAng) / GlobeRadius();  // y scaled to [0..1]
+    }
+    else
+    {
+      x = xUnrotated / GlobeRadius();  // x scaled to [0..1]
+      y = yUnrotated / GlobeRadius();  // y scaled to [0..1]
+    }
+
+    // Finally, compute the longitude and latitude
+
+    double xyDist = sqrt(xyDist2) / GlobeRadius();  // Distance scaled to [0..1]
+    double c = asin(FmiMin(1., FmiMax(-1., xyDist)));
+    double sinc = sin(c);
+    double cosc = cos(c);
+
+    double lon = itsLon0 + atan(x * sinc / (xyDist * itsCosLat0 * cosc - y * itsSinLat0 * sinc));
+    double lat =
+        asin(MunFmiMin(1, MunFmiMax(-1, cosc * itsSinLat0 + (y * sinc * itsCosLat0) / xyDist)));
+
+    return NFmiPoint(FmiDeg(lon), FmiDeg(lat));
   }
-  else
+  catch (...)
   {
-    x = xUnrotated / GlobeRadius();  // x scaled to [0..1]
-    y = yUnrotated / GlobeRadius();  // y scaled to [0..1]
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // Finally, compute the longitude and latitude
-
-  double xyDist = sqrt(xyDist2) / GlobeRadius();  // Distance scaled to [0..1]
-  double c = asin(FmiMin(1., FmiMax(-1., xyDist)));
-  double sinc = sin(c);
-  double cosc = cos(c);
-
-  double lon = itsLon0 + atan(x * sinc / (xyDist * itsCosLat0 * cosc - y * itsSinLat0 * sinc));
-  double lat =
-      asin(MunFmiMin(1, MunFmiMax(-1, cosc * itsSinLat0 + (y * sinc * itsCosLat0) / xyDist)));
-
-  return NFmiPoint(FmiDeg(lon), FmiDeg(lat));
 }
 
 // ----------------------------------------------------------------------
 
 const NFmiPoint NFmiOrthographicArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const
 {
-  // HUOM! Tämä metodi on kirjoittu tarkoituksella  NFmiAzimuthalArea -emoluokan metodin
-  // LatLonToWorldXY()
-  // päälle (override) koska menettely yksinkertaistaa ja nopeuttaa jonkin verran koodia
-
-  double lon = FmiRad(theLatLonPoint.X());
-  double lat = FmiRad(theLatLonPoint.Y());
-  double dlon = lon - itsLon0;
-  double coslat = cos(lat);
-  double sinlat = sin(lat);
-  double cosdlon = cos(dlon);
-
-  // See "An Album of Map Projections" ----------------->
-  double cosz = itsSinLat0 * sinlat + itsCosLat0 * coslat * cosdlon;
-  if (cosz < 0.)
+  try
   {
-    // Reject the point.
-    return NFmiPoint(kFloatMissing, kFloatMissing);
+    // HUOM! Tämä metodi on kirjoittu tarkoituksella  NFmiAzimuthalArea -emoluokan metodin
+    // LatLonToWorldXY()
+    // päälle (override) koska menettely yksinkertaistaa ja nopeuttaa jonkin verran koodia
+
+    double lon = FmiRad(theLatLonPoint.X());
+    double lat = FmiRad(theLatLonPoint.Y());
+    double dlon = lon - itsLon0;
+    double coslat = cos(lat);
+    double sinlat = sin(lat);
+    double cosdlon = cos(dlon);
+
+    // See "An Album of Map Projections" ----------------->
+    double cosz = itsSinLat0 * sinlat + itsCosLat0 * coslat * cosdlon;
+    if (cosz < 0.)
+    {
+      // Reject the point.
+      return NFmiPoint(kFloatMissing, kFloatMissing);
+    }
+    // See "An Album of Map Projections" <----------------
+
+    double x = GlobeRadius() * coslat * sin(dlon);
+    double y = GlobeRadius() * (itsCosLat0 * sinlat - itsSinLat0 * coslat * cosdlon);
+
+    if (itsAzimuthAngle != 0.)
+    {
+      // Rotate point (x, y) about z-axis in right-handed cartesian coordinate system
+      // by the angle of 'itsAzimuthAngle' degrees
+
+      double cosAng = cos(FmiRad(-itsAzimuthAngle));
+      double sinAng = sin(FmiRad(-itsAzimuthAngle));
+
+      double xRotated = x * cosAng - y * sinAng;
+      double yRotated = x * sinAng + y * cosAng;
+
+      return NFmiPoint(xRotated, yRotated);
+    }
+
+    return NFmiPoint(x, y);
   }
-  // See "An Album of Map Projections" <----------------
-
-  double x = GlobeRadius() * coslat * sin(dlon);
-  double y = GlobeRadius() * (itsCosLat0 * sinlat - itsSinLat0 * coslat * cosdlon);
-
-  if (itsAzimuthAngle != 0.)
+  catch (...)
   {
-    // Rotate point (x, y) about z-axis in right-handed cartesian coordinate system
-    // by the angle of 'itsAzimuthAngle' degrees
-
-    double cosAng = cos(FmiRad(-itsAzimuthAngle));
-    double sinAng = sin(FmiRad(-itsAzimuthAngle));
-
-    double xRotated = x * cosAng - y * sinAng;
-    double yRotated = x * sinAng + y * cosAng;
-
-    return NFmiPoint(xRotated, yRotated);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return NFmiPoint(x, y);
 }
 
 // ----------------------------------------------------------------------
 
 void NFmiOrthographicArea::ZoomFactor(double theZoomFactor)
 {
-  // In orthographics only: for "entire world view", use zoom factor value 1.
+  try
+  {
+    // In orthographics only: for "entire world view", use zoom factor value 1.
 
-  itsZoomFactor = theZoomFactor;
+    itsZoomFactor = theZoomFactor;
 
-  Init();  // Re-zooming requires re-initialization of everything associated with zooming
+    Init();  // Re-zooming requires re-initialization of everything associated with zooming
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
 
 double NFmiOrthographicArea::ZoomFactor() const
 {
-  return itsZoomFactor;
+  try
+  {
+    return itsZoomFactor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 
 void NFmiOrthographicArea::GlobeRadius(double &theGlobeRadius)
 {
-  itsGlobeRadius = theGlobeRadius;
+  try
+  {
+    itsGlobeRadius = theGlobeRadius;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 
 void NFmiOrthographicArea::AzimuthAngle(double &theAzimuthAngle)
 {
-  itsAzimuthAngle = theAzimuthAngle;
+  try
+  {
+    itsAzimuthAngle = theAzimuthAngle;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double NFmiOrthographicArea::AzimuthAngle() const
 {
-  return itsAzimuthAngle;
+  try
+  {
+    return itsAzimuthAngle;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 
 NFmiArea *NFmiOrthographicArea::NewArea(const NFmiPoint & /* theBottomLeftLatLon */,
                                         const NFmiPoint & /* theTopRightLatLon */,
                                         bool /* allowPacificFix */) const
 {
-  return nullptr;
+  try
+  {
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -396,7 +477,14 @@ NFmiArea *NFmiOrthographicArea::NewArea(const NFmiPoint & /* theBottomLeftLatLon
 
 NFmiArea *NFmiOrthographicArea::Clone() const
 {
-  return new NFmiOrthographicArea(*this);
+  try
+  {
+    return new NFmiOrthographicArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -409,8 +497,15 @@ NFmiArea *NFmiOrthographicArea::Clone() const
 
 NFmiOrthographicArea &NFmiOrthographicArea::operator=(const NFmiOrthographicArea &theArea)
 {
-  NFmiAzimuthalArea::operator=(theArea);
-  return *this;
+  try
+  {
+    NFmiAzimuthalArea::operator=(theArea);
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -424,7 +519,14 @@ NFmiOrthographicArea &NFmiOrthographicArea::operator=(const NFmiOrthographicArea
 
 bool NFmiOrthographicArea::operator==(const NFmiOrthographicArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  try
+  {
+    return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -438,7 +540,14 @@ bool NFmiOrthographicArea::operator==(const NFmiOrthographicArea &theArea) const
 
 bool NFmiOrthographicArea::operator!=(const NFmiOrthographicArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -452,7 +561,14 @@ bool NFmiOrthographicArea::operator!=(const NFmiOrthographicArea &theArea) const
 
 bool NFmiOrthographicArea::operator==(const NFmiArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(theArea);
+  try
+  {
+    return NFmiAzimuthalArea::operator==(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -466,7 +582,14 @@ bool NFmiOrthographicArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiOrthographicArea::operator!=(const NFmiArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -479,8 +602,15 @@ bool NFmiOrthographicArea::operator!=(const NFmiArea &theArea) const
 
 std::ostream &NFmiOrthographicArea::Write(std::ostream &file) const
 {
-  NFmiAzimuthalArea::Write(file);
-  return file;
+  try
+  {
+    NFmiAzimuthalArea::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -494,18 +624,32 @@ std::ostream &NFmiOrthographicArea::Write(std::ostream &file) const
 
 std::istream &NFmiOrthographicArea::Read(std::istream &file)
 {
-  NFmiAzimuthalArea::Read(file);
+  try
+  {
+    NFmiAzimuthalArea::Read(file);
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiOrthographicArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "orthographic," << itsCurrentLatlonPoint.X() << ',' << itsCurrentLatlonPoint.Y() << ','
-      << itsGlobeRadius << ',' << itsAzimuthAngle << ':' << BottomLeftLatLon().X() << ','
-      << BottomLeftLatLon().Y() << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "orthographic," << itsCurrentLatlonPoint.X() << ',' << itsCurrentLatlonPoint.Y() << ','
+        << itsGlobeRadius << ',' << itsAzimuthAngle << ':' << BottomLeftLatLon().X() << ','
+        << BottomLeftLatLon().Y() << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -527,16 +671,23 @@ const std::string NFmiOrthographicArea::AreaStr() const
 
 const std::string NFmiOrthographicArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_Orthographic",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Orthographic"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  try
+  {
+    const char *fmt = R"(PROJCS["FMI_Orthographic",)"
+                      R"(GEOGCS["FMI_Sphere",)"
+                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                      R"(PRIMEM["Greenwich",0],)"
+                      R"(UNIT["Degree",0.0174532925199433]],)"
+                      R"(PROJECTION["Orthographic"],)"
+                      R"(PARAMETER["latitude_of_origin",{}],)"
+                      R"(PARAMETER["central_meridian",{}],)"
+                      R"(UNIT["Metre",1.0]])";
+    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -547,11 +698,18 @@ const std::string NFmiOrthographicArea::WKT() const
 
 std::size_t NFmiOrthographicArea::HashValue() const
 {
-  std::size_t hash = NFmiAzimuthalArea::HashValue();
-  boost::hash_combine(hash, boost::hash_value(itsAzimuthAngle));
-  boost::hash_combine(hash, boost::hash_value(itsGlobeRadius));
-  boost::hash_combine(hash, itsCurrentLatlonPoint.HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiAzimuthalArea::HashValue();
+    boost::hash_combine(hash, boost::hash_value(itsAzimuthAngle));
+    boost::hash_combine(hash, boost::hash_value(itsGlobeRadius));
+    boost::hash_combine(hash, itsCurrentLatlonPoint.HashValue());
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

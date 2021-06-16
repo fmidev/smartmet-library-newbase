@@ -87,6 +87,7 @@
 // ======================================================================
 
 #include "NFmiAzimuthalArea.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <cassert>
 #include <cmath>
@@ -277,15 +278,22 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const double theRadialRange,
 
 void NFmiAzimuthalArea::Init(bool /* fKeepWorldRect */)
 {
-  itsXScaleFactor = Width() / itsWorldRect.Width();
-  itsYScaleFactor = Height() / itsWorldRect.Height();
+  try
+  {
+    itsXScaleFactor = Width() / itsWorldRect.Width();
+    itsYScaleFactor = Height() / itsWorldRect.Height();
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
-  itsTopRightLatLon = TopRightLatLon();
-  itsBottomLeftLatLon = BottomLeftLatLon();
+    itsTopRightLatLon = TopRightLatLon();
+    itsBottomLeftLatLon = BottomLeftLatLon();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -300,16 +308,23 @@ void NFmiAzimuthalArea::Init(bool /* fKeepWorldRect */)
 
 const NFmiPoint NFmiAzimuthalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double xWorld, yWorld;
+  try
+  {
+    double xWorld, yWorld;
 
-  // Transform local xy-coordinates into world xy-coordinates (meters).
+    // Transform local xy-coordinates into world xy-coordinates (meters).
 
-  xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+    xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+    yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
-  // Transform world xy-coordinates into geodetic coordinates.
+    // Transform world xy-coordinates into geodetic coordinates.
 
-  return WorldXYToLatLon(NFmiPoint(xWorld, yWorld));
+    return WorldXYToLatLon(NFmiPoint(xWorld, yWorld));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -324,10 +339,17 @@ const NFmiPoint NFmiAzimuthalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiAzimuthalArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 {
-  double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  try
+  {
+    double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+    double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
-  return NFmiPoint(xWorld, yWorld);
+    return NFmiPoint(xWorld, yWorld);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -342,9 +364,16 @@ const NFmiPoint NFmiAzimuthalArea::XYToWorldXY(const NFmiPoint &theXYPoint) cons
 
 const NFmiPoint NFmiAzimuthalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
 {
-  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
-  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
-  return NFmiPoint(x,y);
+  try
+  {
+    double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+    double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+    return NFmiPoint(x,y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -376,123 +405,134 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint)
 
 const NFmiPoint NFmiAzimuthalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double lat0, lat, dlon, sinlat0, coslat0, coslat, delta;
-  double sinDelta, cosDelta, B, cosB, xWorld, yWorld, xWorldTangential, yWorldTangential, xyDist;
-  double dlonDeg, lonDeg, latDeg, trueLat, centralLat, centralLon;
-
-  trueLat = itsTrueLatitude.Value();
-  centralLat = itsCentralLatitude.Value();
-  centralLon = itsCentralLongitude.Value();
-
-  // See the second NOTE above
-  if ((trueLat != 90.) && (centralLat != 90.)) return NFmiPoint(kFloatMissing, kFloatMissing);
-
-  // ----------------------------------------------------------------------------------------
-  // STEP 1.
-  // Transform world xy-coordinates (defined by itsTrueLatitude) onto the tangential xy-plane
-  // ----------------------------------------------------------------------------------------
-
-  DistanceFromPerspectivePointToCenterOfEarth();
-
-  xWorld = theXYPoint.X();
-  yWorld = theXYPoint.Y();
-
-  xWorldTangential = 0.0;
-  yWorldTangential = 0.0;
-
-  if (trueLat == 90.)
+  try
   {
-    // TANGENTIAL case
+    double lat0, lat, dlon, sinlat0, coslat0, coslat, delta;
+    double sinDelta, cosDelta, B, cosB, xWorld, yWorld, xWorldTangential, yWorldTangential, xyDist;
+    double dlonDeg, lonDeg, latDeg, trueLat, centralLat, centralLon;
 
-    xWorldTangential = xWorld;
-    yWorldTangential = yWorld;
-  }
-  else
-  {
-    // NON-TANGENTIAL "secant" case
+    trueLat = itsTrueLatitude.Value();
+    centralLat = itsCentralLatitude.Value();
+    centralLon = itsCentralLongitude.Value();
 
-    // (D + kRearth)*xWorld/(D + kRearth*itsTrueLatitude.Sin());
-    if (xWorld != 0.0) xWorldTangential = xWorld / itsTrueLatScaleFactor;
+    // See the second NOTE above
+    if ((trueLat != 90.) && (centralLat != 90.))
+      return NFmiPoint(kFloatMissing, kFloatMissing);
 
-    // (D + kRearth)*yWorld/(D + kRearth*itsTrueLatitude.Sin());
-    if (yWorld != 0.0) yWorldTangential = yWorld / itsTrueLatScaleFactor;
-  }
+    // ----------------------------------------------------------------------------------------
+    // STEP 1.
+    // Transform world xy-coordinates (defined by itsTrueLatitude) onto the tangential xy-plane
+    // ----------------------------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------
-  // STEP 2.
-  // Transform tangential xy world coordinates into geodetic coordinates
-  // ----------------------------------------------------------------------
+    DistanceFromPerspectivePointToCenterOfEarth();
 
-  // XY distance measured between current point and the map center
-  xyDist = sqrt(xWorldTangential * xWorldTangential + yWorldTangential * yWorldTangential);
+    xWorld = theXYPoint.X();
+    yWorld = theXYPoint.Y();
 
-  lat0 = FmiRad(centralLat);  // = Reference latitude = central latitude
+    xWorldTangential = 0.0;
+    yWorldTangential = 0.0;
 
-  if (xyDist == 0.0) return NFmiPoint(centralLon, lat0);
+    if (trueLat == 90.)
+    {
+      // TANGENTIAL case
 
-  // Delta angle for the tangential plane depends on the tangential XY distance
-  delta = CalcDelta(xyDist);
-
-  if (centralLat == 90.)
-  {
-    // POLAR (=NORMAL) case
-
-    // Compute absolute latitude
-
-    // Fakta: lat = asin(cosdelta) = FmiRad(90) - delta
-    lat = FmiRad(90) - delta;  // = asin(cosDelta);
-    latDeg = FmiDeg(lat);
-
-    // Compute longitude difference relative to central longitude
-
-    if (yWorldTangential == 0.)
-      dlonDeg = Sign(xWorldTangential) * 90.;
+      xWorldTangential = xWorld;
+      yWorldTangential = yWorld;
+    }
     else
     {
-      // Fakta: dlon = asin((sinDelta*cosB)/cos(lat)) = atan(xWorldTangential/yWorldTangential)
+      // NON-TANGENTIAL "secant" case
 
-      Sign(yWorldTangential) < 0
-          ? dlonDeg =
-                Sign(xWorldTangential) * FmiDeg(atan(fabs(xWorldTangential / yWorldTangential)))
-          : dlonDeg = Sign(xWorldTangential) *
-                      (FmiDeg(atan(fabs(yWorldTangential / xWorldTangential))) + 90.);
+      // (D + kRearth)*xWorld/(D + kRearth*itsTrueLatitude.Sin());
+      if (xWorld != 0.0)
+        xWorldTangential = xWorld / itsTrueLatScaleFactor;
+
+      // (D + kRearth)*yWorld/(D + kRearth*itsTrueLatitude.Sin());
+      if (yWorld != 0.0)
+        yWorldTangential = yWorld / itsTrueLatScaleFactor;
     }
 
-    lonDeg = NFmiLongitude(centralLon + dlonDeg, PacificView()).Value();
-  }
-  else
-  {
-    // HUOM! HUOM! Tätä "ei-polaaria" tapausta ei ole testattu!
+    // ----------------------------------------------------------------------
+    // STEP 2.
+    // Transform tangential xy world coordinates into geodetic coordinates
+    // ----------------------------------------------------------------------
 
-    // NON-POLAR case
+    // XY distance measured between current point and the map center
+    xyDist = sqrt(xWorldTangential * xWorldTangential + yWorldTangential * yWorldTangential);
 
-    // Azimuthal angle for the XY point ON THE TANGENTIAL MAP PLANE
-    B = asin(yWorldTangential / xyDist);
-    cosB = cos(B);
+    lat0 = FmiRad(centralLat);  // = Reference latitude = central latitude
 
-    sinlat0 = sin(lat0);
-    coslat0 = cos(lat0);
-    cosDelta = cos(delta);
-    sinDelta = sin(delta);
+    if (xyDist == 0.0)
+      return NFmiPoint(centralLon, lat0);
 
-    // Compute absolute latitude
-    lat = asin(coslat0 * sinDelta * sin(B) + sinlat0 * cosDelta);
-    coslat = cos(lat);
-    latDeg = FmiDeg(lat);
+    // Delta angle for the tangential plane depends on the tangential XY distance
+    delta = CalcDelta(xyDist);
 
-    // Compute longitude difference relative to CentralLongitude
-    dlon = asin((sinDelta * cosB) / coslat);
-    dlonDeg = FmiDeg(dlon);
+    if (centralLat == 90.)
+    {
+      // POLAR (=NORMAL) case
 
-    // Quadrant check
-    // VOI OLLA ETTEI TÄMÄ TARKASTELU OLE RIITTÄVÄ!
-    if (xWorld > 0.0)
+      // Compute absolute latitude
+
+      // Fakta: lat = asin(cosdelta) = FmiRad(90) - delta
+      lat = FmiRad(90) - delta;  // = asin(cosDelta);
+      latDeg = FmiDeg(lat);
+
+      // Compute longitude difference relative to central longitude
+
+      if (yWorldTangential == 0.)
+        dlonDeg = Sign(xWorldTangential) * 90.;
+      else
+      {
+        // Fakta: dlon = asin((sinDelta*cosB)/cos(lat)) = atan(xWorldTangential/yWorldTangential)
+
+        Sign(yWorldTangential) < 0
+            ? dlonDeg =
+                  Sign(xWorldTangential) * FmiDeg(atan(fabs(xWorldTangential / yWorldTangential)))
+            : dlonDeg = Sign(xWorldTangential) *
+                        (FmiDeg(atan(fabs(yWorldTangential / xWorldTangential))) + 90.);
+      }
+
       lonDeg = NFmiLongitude(centralLon + dlonDeg, PacificView()).Value();
+    }
     else
-      lonDeg = NFmiLongitude(centralLon - dlonDeg, PacificView()).Value();
-  }
+    {
+      // HUOM! HUOM! Tätä "ei-polaaria" tapausta ei ole testattu!
 
-  return NFmiPoint(lonDeg, latDeg);
+      // NON-POLAR case
+
+      // Azimuthal angle for the XY point ON THE TANGENTIAL MAP PLANE
+      B = asin(yWorldTangential / xyDist);
+      cosB = cos(B);
+
+      sinlat0 = sin(lat0);
+      coslat0 = cos(lat0);
+      cosDelta = cos(delta);
+      sinDelta = sin(delta);
+
+      // Compute absolute latitude
+      lat = asin(coslat0 * sinDelta * sin(B) + sinlat0 * cosDelta);
+      coslat = cos(lat);
+      latDeg = FmiDeg(lat);
+
+      // Compute longitude difference relative to CentralLongitude
+      dlon = asin((sinDelta * cosB) / coslat);
+      dlonDeg = FmiDeg(dlon);
+
+      // Quadrant check
+      // VOI OLLA ETTEI TÄMÄ TARKASTELU OLE RIITTÄVÄ!
+      if (xWorld > 0.0)
+        lonDeg = NFmiLongitude(centralLon + dlonDeg, PacificView()).Value();
+      else
+        lonDeg = NFmiLongitude(centralLon - dlonDeg, PacificView()).Value();
+    }
+
+    return NFmiPoint(lonDeg, latDeg);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -525,95 +565,108 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) 
 
 const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const
 {
-  double k, lat0, lat, dlon, sinlat0, sinlat, coslat0, coslat, delta;
-  double xWorldTangential, yWorldTangential;
-  double xWorld, yWorld, trueLat, centralLat, centralLon;
-
-  trueLat = itsTrueLatitude.Value();
-  centralLat = itsCentralLatitude.Value();
-  centralLon = itsCentralLongitude.Value();
-
-  if ((trueLat != 90.) && (centralLat != 90.))
+  try
   {
-    // Jos tullaan t�h�n, projektion parametrit eiv�t ole sallittuja, muuta centralLat arvoon
-    // 90!!!!!!!
-    assert(!((trueLat != 90.) && (centralLat != 90.)));
-    return NFmiPoint::gMissingLatlon;
+    double k, lat0, lat, dlon, sinlat0, sinlat, coslat0, coslat, delta;
+    double xWorldTangential, yWorldTangential;
+    double xWorld, yWorld, trueLat, centralLat, centralLon;
+
+    trueLat = itsTrueLatitude.Value();
+    centralLat = itsCentralLatitude.Value();
+    centralLon = itsCentralLongitude.Value();
+
+    if ((trueLat != 90.) && (centralLat != 90.))
+    {
+      // Jos tullaan t�h�n, projektion parametrit eiv�t ole sallittuja, muuta centralLat arvoon
+      // 90!!!!!!!
+      assert(!((trueLat != 90.) && (centralLat != 90.)));
+      return NFmiPoint::gMissingLatlon;
+    }
+
+    lat0 = FmiRad(centralLat);
+    lat = FmiRad(theLatLonPoint.Y());
+    dlon = FmiRad(theLatLonPoint.X() - centralLon);
+    sinlat = sin(lat);
+    coslat = cos(lat);
+
+    DistanceFromPerspectivePointToCenterOfEarth();
+
+    // ----------------------------------------------------------------------
+    // STEP 1.
+    // Transform geodetic coordinates into world coordinates on a xy-plane tangential to
+    // the surface of Earth globe.
+    // ----------------------------------------------------------------------
+
+    if (centralLat == 90.)
+    {
+      // Polar (=normal) case, that is, lat0 = FmiRad(90 deg).
+      // NOTE! This polar case COULD be computed just the way non-polar case is computed
+      // by just assigning lat0 = FmiRad(90).
+      // Howewer, since sin(lat0) == 1 and cos(lat0) == 0,
+      // this is the reduced and somewhat faster way of computing the normal case:
+
+      delta = sinlat;
+      k = K(delta);
+      if (k == kFloatMissing)
+        return NFmiPoint::gMissingLatlon;
+
+      // Fakta:  k*coslat*sin(dlon) = 2*kRearth*tan(0.5*(kPii/2 - lat))*sin(dlon)
+      xWorldTangential = k * coslat * sin(dlon);
+      // Fakta:  k*(-coslat*cos(dlon)) = -2*kRearth*tan(0.5*(kPii/2 - lat))*cos(dlon)
+      yWorldTangential = k * (-coslat * cos(dlon));
+    }
+    else
+    {
+      // Non-polar case
+
+      sinlat0 = sin(lat0);
+      coslat0 = cos(lat0);
+
+      delta = sinlat0 * sinlat + coslat0 * coslat * cos(dlon);
+      k = K(delta);
+      if (k == kFloatMissing)
+        return NFmiPoint::gMissingLatlon;
+
+      xWorldTangential = k * coslat * sin(dlon);
+      yWorldTangential = k * (coslat0 * sinlat - sinlat0 * coslat * cos(dlon));
+    }
+
+    // ----------------------------------------------------------------------
+    // STEP 2.
+    // Transform tangential world xy-coordinates onto the xy-plane cutting Earth
+    // globe. This cutting xy-plane is parallel to tangential xy-plane and is
+    // defined by itsTrueLatitude
+    // ----------------------------------------------------------------------
+
+    xWorld = 0.0;
+    yWorld = 0.0;
+
+    if (trueLat == 90.)
+    {
+      // Cutting plane is already tangential to north pole - nothing to do.
+      if (xWorldTangential != 0.0)
+        xWorld = xWorldTangential;
+
+      if (yWorldTangential != 0.0)
+        yWorld = yWorldTangential;
+    }
+    else
+    {
+      // xWorldTangential*(D + kRearth*itsTrueLatitude.Sin())/(D + kRearth)
+      if (xWorldTangential != 0.0)
+        xWorld = xWorldTangential * itsTrueLatScaleFactor;
+
+      // yWorldTangential*(D + kRearth*itsTrueLatitude.Sin())/(D + kRearth)
+      if (yWorldTangential != 0.0)
+        yWorld = yWorldTangential * itsTrueLatScaleFactor;
+    }
+
+    return NFmiPoint(xWorld, yWorld);
   }
-
-  lat0 = FmiRad(centralLat);
-  lat = FmiRad(theLatLonPoint.Y());
-  dlon = FmiRad(theLatLonPoint.X() - centralLon);
-  sinlat = sin(lat);
-  coslat = cos(lat);
-
-  DistanceFromPerspectivePointToCenterOfEarth();
-
-  // ----------------------------------------------------------------------
-  // STEP 1.
-  // Transform geodetic coordinates into world coordinates on a xy-plane tangential to
-  // the surface of Earth globe.
-  // ----------------------------------------------------------------------
-
-  if (centralLat == 90.)
+  catch (...)
   {
-    // Polar (=normal) case, that is, lat0 = FmiRad(90 deg).
-    // NOTE! This polar case COULD be computed just the way non-polar case is computed
-    // by just assigning lat0 = FmiRad(90).
-    // Howewer, since sin(lat0) == 1 and cos(lat0) == 0,
-    // this is the reduced and somewhat faster way of computing the normal case:
-
-    delta = sinlat;
-    k = K(delta);
-    if (k == kFloatMissing) return NFmiPoint::gMissingLatlon;
-
-    // Fakta:  k*coslat*sin(dlon) = 2*kRearth*tan(0.5*(kPii/2 - lat))*sin(dlon)
-    xWorldTangential = k * coslat * sin(dlon);
-    // Fakta:  k*(-coslat*cos(dlon)) = -2*kRearth*tan(0.5*(kPii/2 - lat))*cos(dlon)
-    yWorldTangential = k * (-coslat * cos(dlon));
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  else
-  {
-    // Non-polar case
-
-    sinlat0 = sin(lat0);
-    coslat0 = cos(lat0);
-
-    delta = sinlat0 * sinlat + coslat0 * coslat * cos(dlon);
-    k = K(delta);
-    if (k == kFloatMissing) return NFmiPoint::gMissingLatlon;
-
-    xWorldTangential = k * coslat * sin(dlon);
-    yWorldTangential = k * (coslat0 * sinlat - sinlat0 * coslat * cos(dlon));
-  }
-
-  // ----------------------------------------------------------------------
-  // STEP 2.
-  // Transform tangential world xy-coordinates onto the xy-plane cutting Earth
-  // globe. This cutting xy-plane is parallel to tangential xy-plane and is
-  // defined by itsTrueLatitude
-  // ----------------------------------------------------------------------
-
-  xWorld = 0.0;
-  yWorld = 0.0;
-
-  if (trueLat == 90.)
-  {
-    // Cutting plane is already tangential to north pole - nothing to do.
-    if (xWorldTangential != 0.0) xWorld = xWorldTangential;
-
-    if (yWorldTangential != 0.0) yWorld = yWorldTangential;
-  }
-  else
-  {
-    // xWorldTangential*(D + kRearth*itsTrueLatitude.Sin())/(D + kRearth)
-    if (xWorldTangential != 0.0) xWorld = xWorldTangential * itsTrueLatScaleFactor;
-
-    // yWorldTangential*(D + kRearth*itsTrueLatitude.Sin())/(D + kRearth)
-    if (yWorldTangential != 0.0) yWorld = yWorldTangential * itsTrueLatScaleFactor;
-  }
-
-  return NFmiPoint(xWorld, yWorld);
 }
 
 // ----------------------------------------------------------------------
@@ -628,22 +681,27 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoi
 
 const NFmiPoint NFmiAzimuthalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
-  double xLocal, yLocal;
-
-  // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
-  NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
-  NFmiPoint xyWorld(LatLonToWorldXY(latlon));
-
-  if (xyWorld == NFmiPoint::gMissingLatlon)
+  try
   {
-    return xyWorld;
+    double xLocal, yLocal;
+
+    // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
+    NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
+    NFmiPoint xyWorld(LatLonToWorldXY(latlon));
+
+    if (xyWorld == NFmiPoint::gMissingLatlon)
+      return xyWorld;
+
+    // Finally, transform world xy-coordinates into local xy-coordinates
+    xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
+    yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
+
+    return NFmiPoint(xLocal, yLocal);
   }
-
-  // Finally, transform world xy-coordinates into local xy-coordinates
-  xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
-  yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
-
-  return NFmiPoint(xLocal, yLocal);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -659,15 +717,22 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 
 const NFmiPoint NFmiAzimuthalArea::RadialXYPoint(double theAzimuth, double theRadius) const
 {
-  double startAngle;
-  double radianAngle;
+  try
+  {
+    double startAngle;
+    double radianAngle;
 
-  // Start angle defaults to 0 deg. = North
-  startAngle = 0.5 * kPii;
+    // Start angle defaults to 0 deg. = North
+    startAngle = 0.5 * kPii;
 
-  radianAngle = startAngle - kPii * theAzimuth / 180.;
+    radianAngle = startAngle - kPii * theAzimuth / 180.;
 
-  return NFmiPoint(theRadius * cos(radianAngle), theRadius * sin(radianAngle));
+    return NFmiPoint(theRadius * cos(radianAngle), theRadius * sin(radianAngle));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -682,7 +747,14 @@ const NFmiPoint NFmiAzimuthalArea::RadialXYPoint(double theAzimuth, double theRa
 
 const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(double theAzimuth, double theRadius) const
 {
-  return RadialXYPoint(theAzimuth, theRadius);
+  try
+  {
+    return RadialXYPoint(theAzimuth, theRadius);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -698,16 +770,23 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(double theAzimuth, double the
 
 const NFmiPoint NFmiAzimuthalArea::ToXY(double theAzimuth, double theRadius) const
 {
-  double xLocal, yLocal;
+  try
+  {
+    double xLocal, yLocal;
 
-  // First, transform azimuth and radius into world coordinates (meters) on xy-plane.
-  NFmiPoint xyWorld(LatLonToWorldXY(theAzimuth, theRadius));
+    // First, transform azimuth and radius into world coordinates (meters) on xy-plane.
+    NFmiPoint xyWorld(LatLonToWorldXY(theAzimuth, theRadius));
 
-  // Finally, transform world xy-coordinates into local xy-coordinates
-  xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
-  yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
+    // Finally, transform world xy-coordinates into local xy-coordinates
+    xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
+    yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
 
-  return NFmiPoint(xLocal, yLocal);
+    return NFmiPoint(xLocal, yLocal);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -723,7 +802,14 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(double theAzimuth, double theRadius) con
 
 const NFmiPoint NFmiAzimuthalArea::ToLatLon(double theAzimuth, double theRadius) const
 {
-  return WorldXYToLatLon(RadialXYPoint(theAzimuth, theRadius));
+  try
+  {
+    return WorldXYToLatLon(RadialXYPoint(theAzimuth, theRadius));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -736,7 +822,14 @@ const NFmiPoint NFmiAzimuthalArea::ToLatLon(double theAzimuth, double theRadius)
 
 const NFmiPoint NFmiAzimuthalArea::CurrentCenter() const
 {
-  return NFmiPoint(itsCentralLongitude.Value(), itsCentralLatitude.Value());
+  try
+  {
+    return NFmiPoint(itsCentralLongitude.Value(), itsCentralLatitude.Value());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -752,21 +845,28 @@ const NFmiPoint NFmiAzimuthalArea::CurrentCenter() const
 
 NFmiAzimuthalArea &NFmiAzimuthalArea::operator=(const NFmiAzimuthalArea &theArea)
 {
-  NFmiArea::operator=(theArea);
+  try
+  {
+    NFmiArea::operator=(theArea);
 
-  itsBottomLeftLatLon = theArea.itsBottomLeftLatLon;
-  itsTopRightLatLon = theArea.itsTopRightLatLon;
-  itsCentralLongitude.SetValue(theArea.itsCentralLongitude.Value());
-  itsCentralLatitude.SetValue(theArea.itsCentralLatitude.Value());
-  itsTrueLatitude.SetValue(theArea.itsTrueLatitude.Value());
-  itsXScaleFactor = theArea.itsXScaleFactor;
-  itsYScaleFactor = theArea.itsYScaleFactor;
-  itsBottomLeftWorldXY = theArea.itsBottomLeftWorldXY;
-  itsWorldRect = theArea.itsWorldRect;
-  itsRadialRange = theArea.itsRadialRange;
-  itsTrueLatScaleFactor = theArea.itsTrueLatScaleFactor;
+    itsBottomLeftLatLon = theArea.itsBottomLeftLatLon;
+    itsTopRightLatLon = theArea.itsTopRightLatLon;
+    itsCentralLongitude.SetValue(theArea.itsCentralLongitude.Value());
+    itsCentralLatitude.SetValue(theArea.itsCentralLatitude.Value());
+    itsTrueLatitude.SetValue(theArea.itsTrueLatitude.Value());
+    itsXScaleFactor = theArea.itsXScaleFactor;
+    itsYScaleFactor = theArea.itsYScaleFactor;
+    itsBottomLeftWorldXY = theArea.itsBottomLeftWorldXY;
+    itsWorldRect = theArea.itsWorldRect;
+    itsRadialRange = theArea.itsRadialRange;
+    itsTrueLatScaleFactor = theArea.itsTrueLatScaleFactor;
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -781,18 +881,25 @@ NFmiAzimuthalArea &NFmiAzimuthalArea::operator=(const NFmiAzimuthalArea &theArea
 
 bool NFmiAzimuthalArea::operator==(const NFmiAzimuthalArea &theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsCentralLongitude.Value() == theArea.itsCentralLongitude.Value()) &&
-      (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
-      (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) &&
-      (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
-      (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange))
-    return true;
+  try
+  {
+    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+        (itsCentralLongitude.Value() == theArea.itsCentralLongitude.Value()) &&
+        (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
+        (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
+        (itsXScaleFactor == theArea.itsXScaleFactor) &&
+        (itsYScaleFactor == theArea.itsYScaleFactor) &&
+        (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
+        (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange))
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -806,7 +913,14 @@ bool NFmiAzimuthalArea::operator==(const NFmiAzimuthalArea &theArea) const
 
 bool NFmiAzimuthalArea::operator!=(const NFmiAzimuthalArea &theArea) const
 {
-  return (!(*this == theArea));
+  try
+  {
+    return (!(*this == theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -821,7 +935,14 @@ bool NFmiAzimuthalArea::operator!=(const NFmiAzimuthalArea &theArea) const
 
 bool NFmiAzimuthalArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiAzimuthalArea &>(theArea);
+  try
+  {
+    return *this == static_cast<const NFmiAzimuthalArea &>(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -833,7 +954,18 @@ bool NFmiAzimuthalArea::operator==(const NFmiArea &theArea) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAzimuthalArea::operator!=(const NFmiArea &theArea) const { return !(*this == theArea); }
+bool NFmiAzimuthalArea::operator!=(const NFmiArea &theArea) const
+{
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Write the projection to the given stream
@@ -845,26 +977,34 @@ bool NFmiAzimuthalArea::operator!=(const NFmiArea &theArea) const { return !(*th
 
 std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
 {
-  NFmiArea::Write(file);
-
-  file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude.Value() << endl
-       << itsCentralLatitude.Value() << endl
-       << itsTrueLatitude.Value() << endl;
-  int oldPrec = file.precision();
-  file.precision(15);
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 5)
+  try
   {
-    file << itsRadialRange << " 0"
-         << " 0" << endl;
-    file << itsWorldRect << ' ';
-  }
-  else
-    file << itsWorldRect << endl;
-  file.precision(oldPrec);
+    NFmiArea::Write(file);
 
-  return file;
+    file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude.Value() << endl
+         << itsCentralLatitude.Value() << endl
+         << itsTrueLatitude.Value() << endl;
+    int oldPrec = file.precision();
+    file.precision(15);
+
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 5)
+    {
+      file << itsRadialRange << " 0"
+           << " 0" << endl;
+      file << itsWorldRect << ' ';
+    }
+    else
+      file << itsWorldRect << endl;
+
+    file.precision(oldPrec);
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -878,32 +1018,39 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
 
 std::istream &NFmiAzimuthalArea::Read(std::istream &file)
 {
-  double centralLatitude, trueLatitude, centralLongitude;
-
-  NFmiArea::Read(file);
-
-  file >> itsBottomLeftLatLon;
-  file >> itsTopRightLatLon;
-  PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
-  file >> centralLongitude;
-  file >> centralLatitude;
-  file >> trueLatitude;
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 5)
+  try
   {
-    unsigned long dummy;
-    file >> itsRadialRange >> dummy >> dummy;
+    double centralLatitude, trueLatitude, centralLongitude;
+
+    NFmiArea::Read(file);
+
+    file >> itsBottomLeftLatLon;
+    file >> itsTopRightLatLon;
+    PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
+    file >> centralLongitude;
+    file >> centralLatitude;
+    file >> trueLatitude;
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 5)
+    {
+      unsigned long dummy;
+      file >> itsRadialRange >> dummy >> dummy;
+    }
+
+    itsCentralLongitude.SetValue(centralLongitude);
+    itsCentralLatitude.SetValue(centralLatitude);
+    itsTrueLatitude.SetValue(trueLatitude);
+
+    file >> itsWorldRect;
+
+    Init();
+
+    return file;
   }
-
-  itsCentralLongitude.SetValue(centralLongitude);
-  itsCentralLatitude.SetValue(centralLatitude);
-  itsTrueLatitude.SetValue(trueLatitude);
-
-  file >> itsWorldRect;
-
-  Init();
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -914,20 +1061,27 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
 
 std::size_t NFmiAzimuthalArea::HashValue() const
 {
-  std::size_t hash = NFmiArea::HashValue();
-  boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-  boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-  boost::hash_combine(hash, itsBottomLeftWorldXY.HashValue());
-  boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
-  boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
-  boost::hash_combine(hash, itsWorldRect.HashValue());
-  boost::hash_combine(hash, boost::hash_value(itsRadialRange));
-  boost::hash_combine(hash, itsCentralLongitude.HashValue());
-  boost::hash_combine(hash, itsCentralLatitude.HashValue());
-  boost::hash_combine(hash, itsTrueLatitude.HashValue());
-  boost::hash_combine(hash, boost::hash_value(itsTrueLatScaleFactor));
+  try
+  {
+    std::size_t hash = NFmiArea::HashValue();
+    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
+    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    boost::hash_combine(hash, itsBottomLeftWorldXY.HashValue());
+    boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
+    boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
+    boost::hash_combine(hash, itsWorldRect.HashValue());
+    boost::hash_combine(hash, boost::hash_value(itsRadialRange));
+    boost::hash_combine(hash, itsCentralLongitude.HashValue());
+    boost::hash_combine(hash, itsCentralLatitude.HashValue());
+    boost::hash_combine(hash, itsTrueLatitude.HashValue());
+    boost::hash_combine(hash, boost::hash_value(itsTrueLatScaleFactor));
 
-  return hash;
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

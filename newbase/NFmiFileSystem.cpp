@@ -8,6 +8,7 @@
 #include "NFmiFileSystem.h"
 #include "NFmiFileString.h"
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 
 #include <boost/filesystem.hpp>
 
@@ -1269,7 +1270,7 @@ bool CopyFile(const std::string &theSrcFileName, const std::string &theDstFileNa
 const std::string TemporaryFile(const std::string &thePath)
 {
   if (!DirectoryReadable(thePath))
-    throw runtime_error("Directory '" + thePath + "' does not exist or is not readable");
+    throw Fmi::Exception(BCP,"Directory '" + thePath + "' does not exist or is not readable");
 
   static unsigned long counter = 0;
 
@@ -1288,7 +1289,7 @@ const std::string TemporaryFile(const std::string &thePath)
     if (!FileExists(name.str())) return name.str();
   }
 
-  throw runtime_error("Failed to create a temporary filename in directory '" + thePath + "'");
+  throw Fmi::Exception(BCP,"Failed to create a temporary filename in directory '" + thePath + "'");
 }
 
 // ----------------------------------------------------------------------
@@ -1405,7 +1406,7 @@ void CleanDirectory(const std::string &thePath,
 {
   if (theMaxFileAgeInHours < 0) return;
   if (!DirectoryExists(thePath))
-    throw std::runtime_error("NFmiFileSystem::CleanDirectory - directory doesn't exist: " +
+    throw Fmi::Exception(BCP,"NFmiFileSystem::CleanDirectory - directory doesn't exist: " +
                              thePath);
 
   list<string> files = DirectoryFiles(thePath);
@@ -1448,7 +1449,7 @@ void CleanFilePattern(const std::string &theFilePattern,
   std::string path = fileString.Device().CharPtr();
   path += fileString.Path().CharPtr();
   if (!DirectoryExists(path))
-    throw std::runtime_error("NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
+    throw Fmi::Exception(BCP,"NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
   list<string> files = PatternFiles(theFilePattern);
   std::map<time_t, std::string> fileMap;
   for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
@@ -1487,7 +1488,7 @@ string FindQueryData(const string &thePath)
 {
   if (!DirectoryExists(thePath))
   {
-    if (!FileReadable(thePath)) throw runtime_error("File '" + thePath + "' is not readable");
+    if (!FileReadable(thePath)) throw Fmi::Exception(BCP,"File '" + thePath + "' is not readable");
     return thePath;
   }
 
@@ -1529,7 +1530,7 @@ string FindQueryData(const string &thePath)
     }
   }
 
-  if (newesttime == 0) throw runtime_error("No querydata found from '" + thePath + "'");
+  if (newesttime == 0) throw Fmi::Exception(BCP,"No querydata found from '" + thePath + "'");
 
   return newestfile;
 }
@@ -1605,7 +1606,7 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   std::string tmpFileName = theFileName + tmpHelpStr;
   std::ofstream out(tmpFileName.c_str(), std::ios::binary);
   if (!out)
-    throw runtime_error("Failed to open temporary file '" + tmpFileName +
+    throw Fmi::Exception(BCP,"Failed to open temporary file '" + tmpFileName +
                         "' for writing. No changes to original file '" + theFileName +
                         "' was made.");
   out << theContents;
@@ -1613,7 +1614,7 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   {
     out.close();  // pitää sulkea, muuten ei voi poistaa
     RemoveFile(tmpFileName);
-    throw runtime_error("Error while writing to temporary file: '" + tmpFileName +
+    throw Fmi::Exception(BCP,"Error while writing to temporary file: '" + tmpFileName +
                         "'. No changes to original file '" + theFileName + "' was made.");
   }
   out.close();
@@ -1626,14 +1627,14 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   // are operating with ascii file paths.
   if (!::MoveFileExA(tmpFileName.c_str(), theFileName.c_str(), MOVEFILE_REPLACE_EXISTING))
   {
-    throw std::runtime_error("Error while moving temporary file: '" + tmpFileName +
+    throw Fmi::Exception(BCP,"Error while moving temporary file: '" + tmpFileName +
                              "' to replace the original file '" + theFileName + "' was made.");
   }
 #else
   // RenameFile -funktio tuhoaa vanhan tiedoston uuden tieltä. En tiedä mitä pitäisi tehdä,
   // jos tämä epäonnistuu (vanha tiedosto on ehkä tuhoutunut ja uusi on ehkä tmp-tiedostona).
   if (!RenameFile(tmpFileName, theFileName))
-    throw runtime_error("Error while renaming temporary file: '" + tmpFileName +
+    throw Fmi::Exception(BCP,"Error while renaming temporary file: '" + tmpFileName +
                         "' to final file: '" + theFileName + "'. Results unknown.");
 #endif
 }

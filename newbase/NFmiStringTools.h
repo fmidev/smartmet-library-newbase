@@ -15,6 +15,7 @@
 
 #include "NFmiDef.h"
 #include "NFmiTypeNameTraits.h"
+#include <macgyver/Exception.h>
 #include <cstring>
 #include <iostream>
 #include <iterator>
@@ -92,7 +93,7 @@ inline bool Convert<bool>(const char *theThing)
   if (strcmp(theThing, "false") == 0) return false;
   if (strcmp(theThing, "1") == 0) return true;
   if (strcmp(theThing, "0") == 0) return false;
-  throw std::runtime_error("Failed to convert " + std::string(theThing) + " to boolean");
+  throw Fmi::Exception(BCP,"Failed to convert " + std::string(theThing) + " to boolean");
 }
 
 // This is requred so that "a b c" remains "a b c"
@@ -111,13 +112,13 @@ inline T Convert(const char *theThing)
   std::istringstream parser(theThing);
   parser >> result;
   if (parser.fail())
-    throw std::runtime_error("Failed to convert " + std::string(theThing) + " to type " +
+    throw Fmi::Exception(BCP,"Failed to convert " + std::string(theThing) + " to type " +
                              NFmiTypeNameTraits::Name<T>());
 
   long parserpos = static_cast<long>(parser.tellg());
   long strpos = static_cast<long>(strlen(theThing));
   if (parserpos != strpos && parserpos != -1)
-    throw std::runtime_error("Failed to fully convert " + std::string(theThing) + " to type " +
+    throw Fmi::Exception(BCP,"Failed to fully convert " + std::string(theThing) + " to type " +
                              NFmiTypeNameTraits::Name<T>());
   return result;
 }
@@ -134,7 +135,7 @@ template <typename T>
 inline const T Split(const std::string &theString, const std::string &theSeparator)
 {
   if (theSeparator.empty())
-    throw std::runtime_error("Cannot split based on empty separator string");
+    throw Fmi::Exception(BCP,"Cannot split based on empty separator string");
 
   T ret;
 

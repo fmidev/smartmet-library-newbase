@@ -1,32 +1,49 @@
 #include "NFmiEnumConverter.h"
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
+#include <macgyver/Exception.h>
 
 void NFmiEnumConverter::Impl::initRoadRegions()
 {
-  itsParamMap = ParameterMap{
-      {"None", kTieAlueNone}, {"U1", kTieAlueU1},   {"U2", kTieAlueU2},   {"U3", kTieAlueU3},
-      {"U4", kTieAlueU4},     {"U5", kTieAlueU5},   {"T1", kTieAlueT1},   {"T2", kTieAlueT2},
-      {"T3", kTieAlueT3},     {"T4", kTieAlueT4},   {"T5", kTieAlueT5},   {"H1", kTieAlueH1},
-      {"H2", kTieAlueH2},     {"H3", kTieAlueH3},   {"H4", kTieAlueH4},   {"H5", kTieAlueH5},
-      {"K1", kTieAlueK1},     {"K2", kTieAlueK2},   {"K3", kTieAlueK3},   {"K4", kTieAlueK4},
-      {"S1", kTieAlueS1},     {"S2", kTieAlueS2},   {"S3", kTieAlueS3},   {"S4", kTieAlueS4},
-      {"S5", kTieAlueS5},     {"V1", kTieAlueV1},   {"V2", kTieAlueV2},   {"V4", kTieAlueV4},
-      {"V5", kTieAlueV5},     {"O1e", kTieAlueO1e}, {"O1p", kTieAlueO1p}, {"O2", kTieAlueO2},
-      {"O3", kTieAlueO3},     {"O4", kTieAlueO4},   {"O5", kTieAlueO5},   {"L1", kTieAlueL1},
-      {"L2", kTieAlueL2},     {"L3", kTieAlueL3},   {"L4", kTieAlueL4},   {"L5", kTieAlueL5},
-      {"Ke1", kTieAlueKe1},   {"Ke2", kTieAlueKe2}};
+  try
+  {
+    itsParamMap = ParameterMap{
+        {"None", kTieAlueNone}, {"U1", kTieAlueU1},   {"U2", kTieAlueU2},   {"U3", kTieAlueU3},
+        {"U4", kTieAlueU4},     {"U5", kTieAlueU5},   {"T1", kTieAlueT1},   {"T2", kTieAlueT2},
+        {"T3", kTieAlueT3},     {"T4", kTieAlueT4},   {"T5", kTieAlueT5},   {"H1", kTieAlueH1},
+        {"H2", kTieAlueH2},     {"H3", kTieAlueH3},   {"H4", kTieAlueH4},   {"H5", kTieAlueH5},
+        {"K1", kTieAlueK1},     {"K2", kTieAlueK2},   {"K3", kTieAlueK3},   {"K4", kTieAlueK4},
+        {"S1", kTieAlueS1},     {"S2", kTieAlueS2},   {"S3", kTieAlueS3},   {"S4", kTieAlueS4},
+        {"S5", kTieAlueS5},     {"V1", kTieAlueV1},   {"V2", kTieAlueV2},   {"V4", kTieAlueV4},
+        {"V5", kTieAlueV5},     {"O1e", kTieAlueO1e}, {"O1p", kTieAlueO1p}, {"O2", kTieAlueO2},
+        {"O3", kTieAlueO3},     {"O4", kTieAlueO4},   {"O5", kTieAlueO5},   {"L1", kTieAlueL1},
+        {"L2", kTieAlueL2},     {"L3", kTieAlueL3},   {"L4", kTieAlueL4},   {"L5", kTieAlueL5},
+        {"Ke1", kTieAlueKe1},   {"Ke2", kTieAlueKe2}};
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiEnumConverter::Impl::initPressRegions()
 {
-  itsParamMap = ParameterMap{{"None", kPressMaskNone}, {"TampereenAlue", kPressTampereenAlue}};
+  try
+  {
+    itsParamMap = ParameterMap{{"None", kPressMaskNone}, {"TampereenAlue", kPressTampereenAlue}};
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiEnumConverter::Impl::initParamNames()
 {
   // clang-format off
-  itsParamMap = ParameterMap
+  try
+  {
+    itsParamMap = ParameterMap
     {
       { "1CloudBase", kFmi1CloudBase },
       { "1CloudCover", kFmi1CloudCover },
@@ -4899,6 +4916,11 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "tendency_of_atmosphere_mass_content_of_nitrogen_due_to_dry_deposition", cf_tendency_of_atmosphere_mass_content_of_nitrogen_due_to_dry_deposition },
       { "tendency_of_atmosphere_mass_content_of_nitrogen_due_to_deposition", cf_tendency_of_atmosphere_mass_content_of_nitrogen_due_to_deposition }
     };
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 
   // clang-format on
 }

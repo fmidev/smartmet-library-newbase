@@ -14,6 +14,7 @@
 
 #include "NFmiStationBag.h"
 #include "NFmiValueString.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -34,10 +35,17 @@ NFmiStationBag::NFmiStationBag() : NFmiLocationBag() {}
 NFmiStationBag::NFmiStationBag(unsigned long *theStationArray, unsigned long numberOfStations)
     : NFmiLocationBag()
 {
-  itsSize = numberOfStations;
-  itsLocations.reserve(numberOfStations);
-  for (unsigned long i = 0; i < numberOfStations; i++)
-    itsLocations.push_back(NFmiStation(theStationArray[i]).Clone());
+  try
+  {
+    itsSize = numberOfStations;
+    itsLocations.reserve(numberOfStations);
+    for (unsigned long i = 0; i < numberOfStations; i++)
+      itsLocations.push_back(NFmiStation(theStationArray[i]).Clone());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -69,10 +77,18 @@ NFmiStationBag::NFmiStationBag(const NFmiStationBag &theBag) = default;
 
 void NFmiStationBag::Destroy()
 {
-  for (unsigned long i = 0; i < itsLocations.size(); i++)
-    delete itsLocations[i];
-  itsLocations.clear();
-  itsSize = 0;
+  try
+  {
+    for (unsigned long i = 0; i < itsLocations.size(); i++)
+      delete itsLocations[i];
+
+    itsLocations.clear();
+    itsSize = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -84,15 +100,22 @@ void NFmiStationBag::Destroy()
 
 const NFmiLocationBag NFmiStationBag::Combine(const NFmiLocationBag &theBag)
 {
-  NFmiLocationBag outbag(theBag);
+  try
+  {
+    NFmiLocationBag outbag(theBag);
 
-  StorageType::const_iterator begin = itsLocations.begin();
-  StorageType::const_iterator end = itsLocations.end();
-  StorageType::const_iterator iter;
-  for (iter = begin; iter != end; ++iter)
-    outbag.AddLocation(*(*iter), true);
+    StorageType::const_iterator begin = itsLocations.begin();
+    StorageType::const_iterator end = itsLocations.end();
+    StorageType::const_iterator iter;
+    for (iter = begin; iter != end; ++iter)
+      outbag.AddLocation(*(*iter), true);
 
-  return outbag;
+    return outbag;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -104,12 +127,20 @@ const NFmiLocationBag NFmiStationBag::Combine(const NFmiLocationBag &theBag)
 
 bool NFmiStationBag::SetCurrent(long theStation)
 {
-  Reset();
-  while (Next())
+  try
   {
-    if (theStation == CurrentStation()) return true;
+    Reset();
+    while (Next())
+    {
+      if (theStation == CurrentStation())
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -122,7 +153,14 @@ bool NFmiStationBag::SetCurrent(long theStation)
 
 bool NFmiStationBag::AddLocation(const NFmiLocation &theLocation, bool theChecking)
 {
-  return (NFmiLocationBag::AddLocation(theLocation, theChecking));
+  try
+  {
+    return (NFmiLocationBag::AddLocation(theLocation, theChecking));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -134,7 +172,14 @@ bool NFmiStationBag::AddLocation(const NFmiLocation &theLocation, bool theChecki
 
 bool NFmiStationBag::AddStation(const NFmiStation &theStation)
 {
-  return (NFmiLocationBag::AddLocation(theStation));
+  try
+  {
+    return (NFmiLocationBag::AddLocation(theStation));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -143,7 +188,18 @@ bool NFmiStationBag::AddStation(const NFmiStation &theStation)
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag *NFmiStationBag::Clone() const { return new NFmiStationBag(*this); }
+NFmiLocationBag *NFmiStationBag::Clone() const
+{
+  try
+  {
+    return new NFmiStationBag(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -155,8 +211,15 @@ NFmiLocationBag *NFmiStationBag::Clone() const { return new NFmiStationBag(*this
 
 std::ostream &NFmiStationBag::Write(std::ostream &file) const
 {
-  NFmiLocationBag::Write(file);
-  return file;
+  try
+  {
+    NFmiLocationBag::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -170,8 +233,15 @@ std::ostream &NFmiStationBag::Write(std::ostream &file) const
 
 std::istream &NFmiStationBag::Read(std::istream &file)
 {
-  NFmiLocationBag::Read(file);
-  return file;
+  try
+  {
+    NFmiLocationBag::Read(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -184,8 +254,15 @@ std::istream &NFmiStationBag::Read(std::istream &file)
 
 NFmiStationBag &NFmiStationBag::operator=(const NFmiStationBag &theStationBag)
 {
-  NFmiLocationBag::operator=(*static_cast<const NFmiLocationBag *>(&theStationBag));
-  return *this;
+  try
+  {
+    NFmiLocationBag::operator=(*static_cast<const NFmiLocationBag *>(&theStationBag));
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

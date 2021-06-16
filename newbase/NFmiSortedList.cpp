@@ -15,6 +15,7 @@
 #include "NFmiSortedList.h"
 #include "NFmiMetTime.h"
 #include "NFmiSortable.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -58,10 +59,17 @@ NFmiSortedList::NFmiSortedList(NFmiSortedList &theList)
 
 bool NFmiSortedList::Add(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (itsSortOrder == kAscending)
-    return AddAscending(theItem, fAddDuplicates);
-  else
+  try
+  {
+    if (itsSortOrder == kAscending)
+      return AddAscending(theItem, fAddDuplicates);
+
     return AddDescending(theItem, fAddDuplicates);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -74,28 +82,37 @@ bool NFmiSortedList::Add(NFmiSortable *theItem, bool fAddDuplicates)
 
 bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (!itsNumberOffItems)
+  try
   {
+    if (!itsNumberOffItems)
+    {
+      AddEnd(theItem);
+      return true;
+    }
+
+    void *anItem;
+    NFmiVoidPtrIterator it(this);
+    it.Reset();
+    while (it.Next(anItem))
+    {
+      if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
+        return false;
+
+      if (*theItem < (*static_cast<NFmiSortable *>(anItem)))  // 11.02.1998/Marko
+      // new item with same 'order'-value as a item already in list will be placed last of the same
+      // order-values
+      {
+        AddBefore(theItem);
+        return true;
+      }
+    }
     AddEnd(theItem);
     return true;
   }
-  void *anItem;
-  NFmiVoidPtrIterator it(this);
-  it.Reset();
-  while (it.Next(anItem))
+  catch (...)
   {
-    if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
-      return false;
-    if (*theItem < (*static_cast<NFmiSortable *>(anItem)))  // 11.02.1998/Marko
-    // new item with same 'order'-value as a item already in list will be placed last of the same
-    // order-values
-    {
-      AddBefore(theItem);
-      return true;
-    }
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  AddEnd(theItem);
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -108,26 +125,35 @@ bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
 
 bool NFmiSortedList::AddDescending(NFmiSortable *theItem, bool fAddDuplicates)
 {
-  if (!itsNumberOffItems)
+  try
   {
+    if (!itsNumberOffItems)
+    {
+      AddEnd(theItem);
+      return true;
+    }
+
+    void *anItem;
+    NFmiVoidPtrIterator it(this);
+    it.Reset();
+    while (it.Next(anItem))
+    {
+      if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
+        return false;
+
+      if (*static_cast<NFmiSortable *>(anItem) < *theItem)
+      {
+        AddBefore(theItem);
+        return true;
+      }
+    }
     AddEnd(theItem);
     return true;
   }
-  void *anItem;
-  NFmiVoidPtrIterator it(this);
-  it.Reset();
-  while (it.Next(anItem))
+  catch (...)
   {
-    if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
-      return false;
-    if (*static_cast<NFmiSortable *>(anItem) < *theItem)
-    {
-      AddBefore(theItem);
-      return true;
-    }
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  AddEnd(theItem);
-  return true;
 }
 
 // ======================================================================

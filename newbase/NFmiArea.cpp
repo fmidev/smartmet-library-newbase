@@ -32,6 +32,7 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
 
+#include <macgyver/Exception.h>
 #include <gis/CoordinateMatrix.h>
 
 #include <iostream>
@@ -44,8 +45,16 @@
 
 void NFmiArea::Init(bool /* fKeepWorldRect */)
 {
-  CheckForPacificView();
+  try
+  {
+    CheckForPacificView();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \param newArea Undocumented
@@ -54,17 +63,31 @@ void NFmiArea::Init(bool /* fKeepWorldRect */)
 
 void NFmiArea::SetXYArea(const NFmiRect &newArea)
 {
-  Place(newArea.TopLeft());
-  Size(newArea.Size());
-  Init();
+  try
+  {
+    Place(newArea.TopLeft());
+    Size(newArea.Size());
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void FixPacificLongitude(NFmiPoint &lonLat)
 {
-  if (lonLat.X() < 0)
+  try
   {
-    NFmiLongitude lon(lonLat.X(), true);
-    lonLat.X(lon.Value());
+    if (lonLat.X() < 0)
+    {
+      NFmiLongitude lon(lonLat.X(), true);
+      lonLat.X(lon.Value());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -87,33 +110,40 @@ static void FixAtlanticLongitude(NFmiPoint &lonLat)
 
 const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 {
-  if (PacificView() && theArea->PacificView() == false)
+  try
   {
-    NFmiPoint topLeftLatlon = theArea->ToLatLon(theArea->TopLeft());
-    ::FixPacificLongitude(topLeftLatlon);
-    NFmiPoint bottomRightLatlon = theArea->ToLatLon(theArea->BottomRight());
-    ::FixPacificLongitude(bottomRightLatlon);
+    if (PacificView() && theArea->PacificView() == false)
+    {
+      NFmiPoint topLeftLatlon = theArea->ToLatLon(theArea->TopLeft());
+      ::FixPacificLongitude(topLeftLatlon);
+      NFmiPoint bottomRightLatlon = theArea->ToLatLon(theArea->BottomRight());
+      ::FixPacificLongitude(bottomRightLatlon);
 
-    NFmiPoint topLeft(ToXY(topLeftLatlon));
-    NFmiPoint bottomRight(ToXY(bottomRightLatlon));
-    NFmiRect rect(topLeft, bottomRight);
-    return rect;
-  }
-  else if (PacificView() == false && theArea->PacificView())
-  {
-    std::unique_ptr<NFmiArea> pacificAreaFromThis(DoForcePacificFix());
+      NFmiPoint topLeft(ToXY(topLeftLatlon));
+      NFmiPoint bottomRight(ToXY(bottomRightLatlon));
+      NFmiRect rect(topLeft, bottomRight);
+      return rect;
+    }
+    else if (PacificView() == false && theArea->PacificView())
+    {
+      std::unique_ptr<NFmiArea> pacificAreaFromThis(DoForcePacificFix());
 
-    NFmiPoint topLeft(pacificAreaFromThis->ToXY(theArea->ToLatLon(theArea->TopLeft())));
-    NFmiPoint bottomRight(pacificAreaFromThis->ToXY(theArea->ToLatLon(theArea->BottomRight())));
-    NFmiRect rect(topLeft, bottomRight);
-    return rect;
+      NFmiPoint topLeft(pacificAreaFromThis->ToXY(theArea->ToLatLon(theArea->TopLeft())));
+      NFmiPoint bottomRight(pacificAreaFromThis->ToXY(theArea->ToLatLon(theArea->BottomRight())));
+      NFmiRect rect(topLeft, bottomRight);
+      return rect;
+    }
+    else
+    {
+      NFmiPoint topLeft(ToXY(theArea->ToLatLon(theArea->TopLeft())));
+      NFmiPoint bottomRight(ToXY(theArea->ToLatLon(theArea->BottomRight())));
+      NFmiRect rect(topLeft, bottomRight);
+      return rect;
+    }
   }
-  else
+  catch (...)
   {
-    NFmiPoint topLeft(ToXY(theArea->ToLatLon(theArea->TopLeft())));
-    NFmiPoint bottomRight(ToXY(theArea->ToLatLon(theArea->BottomRight())));
-    NFmiRect rect(topLeft, bottomRight);
-    return rect;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -126,8 +156,15 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 
 std::ostream &NFmiArea::Write(std::ostream &file) const
 {
-  file << itsXYRectArea;
-  return file;
+  try
+  {
+    file << itsXYRectArea;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -139,8 +176,15 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
 std::istream &NFmiArea::Read(std::istream &file)
 {
-  file >> itsXYRectArea;
-  return file;
+  try
+  {
+    file >> itsXYRectArea;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -151,8 +195,16 @@ std::istream &NFmiArea::Read(std::istream &file)
 
 const NFmiPoint NFmiArea::WorldXYSize() const
 {
-  return WorldRect().Size();
+  try
+  {
+    return WorldRect().Size();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -161,8 +213,16 @@ const NFmiPoint NFmiArea::WorldXYSize() const
 
 const NFmiPoint NFmiArea::WorldXYPlace() const
 {
-  return WorldRect().Place();
+  try
+  {
+    return WorldRect().Place();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -171,8 +231,16 @@ const NFmiPoint NFmiArea::WorldXYPlace() const
 
 double NFmiArea::WorldXYWidth() const
 {
-  return WorldRect().Width();
+  try
+  {
+    return WorldRect().Width();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -181,8 +249,16 @@ double NFmiArea::WorldXYWidth() const
 
 double NFmiArea::WorldXYHeight() const
 {
-  return WorldRect().Height();
+  try
+  {
+    return WorldRect().Height();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -191,7 +267,14 @@ double NFmiArea::WorldXYHeight() const
 
 double NFmiArea::WorldXYAspectRatio() const
 {
-  return WorldXYWidth() / WorldXYHeight();
+  try
+  {
+    return WorldXYWidth() / WorldXYHeight();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -211,7 +294,14 @@ double NFmiArea::WorldXYAspectRatio() const
 NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon) const
 {
-  return NewArea(theBottomLeftLatLon, theTopRightLatLon);
+  try
+  {
+    return NewArea(theBottomLeftLatLon, theTopRightLatLon);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -234,14 +324,21 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 {
-  NFmiPoint newBottomLeftXY = theRect.BottomLeft();
-  NFmiPoint newTopRightXY = theRect.TopRight();
+  try
+  {
+    NFmiPoint newBottomLeftXY = theRect.BottomLeft();
+    NFmiPoint newTopRightXY = theRect.TopRight();
 
-  NFmiPoint newBottomLeftLatLon = ToLatLon(newBottomLeftXY);
-  NFmiPoint newTopRightLatLon = ToLatLon(newTopRightXY);
+    NFmiPoint newBottomLeftLatLon = ToLatLon(newBottomLeftXY);
+    NFmiPoint newTopRightLatLon = ToLatLon(newTopRightXY);
 
-  NFmiArea *newArea = NewArea(newBottomLeftLatLon, newTopRightLatLon);
-  return newArea;
+    NFmiArea *newArea = NewArea(newBottomLeftLatLon, newTopRightLatLon);
+    return newArea;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -264,42 +361,49 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
                                   FmiDirection theFixedPoint,
                                   bool fShrinkArea)
 {
-  double originalAspectRatio = WorldXYAspectRatio();
-
-  bool keepWidth;
-
-  if (fShrinkArea)
+  try
   {
-    // The new area will be "shrunk" to completely fit inside the current area
-    if ((theNewAspectRatioXperY < originalAspectRatio))
-      keepWidth = false;  // Maintain height, compute width
+    double originalAspectRatio = WorldXYAspectRatio();
+
+    bool keepWidth;
+
+    if (fShrinkArea)
+    {
+      // The new area will be "shrunk" to completely fit inside the current area
+      if ((theNewAspectRatioXperY < originalAspectRatio))
+        keepWidth = false;  // Maintain height, compute width
+      else
+        keepWidth = true;  // Maintain width, compute height
+    }
     else
-      keepWidth = true;  // Maintain width, compute height
+    {
+      // The new area will in part grow out of the current area
+      if ((theNewAspectRatioXperY < originalAspectRatio))
+        keepWidth = true;  // Maintain width, compute height
+      else
+        keepWidth = false;  // Maintain height, compute width
+    }
+
+    // Create copy of the original "world rectangle" to be freely modified
+    NFmiRect newWorldRect = WorldRect();
+
+    // REDIMENSIONING OF THE WORLD RECTANGLE
+    //----------------------------------------
+
+    if (!newWorldRect.AdjustAspectRatio(theNewAspectRatioXperY, keepWidth, theFixedPoint))
+      return nullptr;
+
+    // Create a new area with the new aspect ratio
+    NFmiArea *newArea =
+        NewArea(WorldXYToLatLon(newWorldRect.TopLeft()), WorldXYToLatLon(newWorldRect.BottomRight()));
+
+    // Return the re-dimensioned copy of the original area
+    return newArea;
   }
-  else
+  catch (...)
   {
-    // The new area will in part grow out of the current area
-    if ((theNewAspectRatioXperY < originalAspectRatio))
-      keepWidth = true;  // Maintain width, compute height
-    else
-      keepWidth = false;  // Maintain height, compute width
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // Create copy of the original "world rectangle" to be freely modified
-  NFmiRect newWorldRect = WorldRect();
-
-  // REDIMENSIONING OF THE WORLD RECTANGLE
-  //----------------------------------------
-
-  if (!newWorldRect.AdjustAspectRatio(theNewAspectRatioXperY, keepWidth, theFixedPoint))
-    return nullptr;
-
-  // Create a new area with the new aspect ratio
-  NFmiArea *newArea =
-      NewArea(WorldXYToLatLon(newWorldRect.TopLeft()), WorldXYToLatLon(newWorldRect.BottomRight()));
-
-  // Return the re-dimensioned copy of the original area
-  return newArea;
 }
 
 // ----------------------------------------------------------------------
@@ -320,49 +424,63 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
 
 NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
 {
-  NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
-  NFmiPoint newTopRightXY = theWorldRect.TopRight();
+  try
+  {
+    NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
+    NFmiPoint newTopRightXY = theWorldRect.TopRight();
 
-  NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
-  NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
+    NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
+    NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
 
-  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
-    return nullptr;
+    if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
+      return nullptr;
 
-  auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
+    auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
 
-  if (!IsInside(*newArea))
-    return nullptr;
+    if (!IsInside(*newArea))
+      return nullptr;
 
-  return newArea;
+    return newArea;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const
 {
+  try
+  {
 #ifdef NEW_NFMIAREA
-  auto x1 = impl->itsWorldRect.Left();
-  auto x2 = impl->itsWorldRect.Right();
-  const auto y1 = impl->itsWorldRect.Top();
-  const auto y2 = impl->itsWorldRect.Bottom();
+    auto x1 = impl->itsWorldRect.Left();
+    auto x2 = impl->itsWorldRect.Right();
+    const auto y1 = impl->itsWorldRect.Top();
+    const auto y2 = impl->itsWorldRect.Bottom();
 
-  if (impl->itsFlopped)
-    std::swap(x1, x2);
+    if (impl->itsFlopped)
+      std::swap(x1, x2);
 
 #else
-  auto x1 = WorldRect().Left();
-  auto x2 = WorldRect().Right();
-  const auto y1 = WorldRect().Top();
-  const auto y2 = WorldRect().Bottom();
+    auto x1 = WorldRect().Left();
+    auto x2 = WorldRect().Right();
+    const auto y1 = WorldRect().Top();
+    const auto y2 = WorldRect().Bottom();
 #endif
 
-  if (!wrap)
-    return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
+    if (!wrap)
+      return Fmi::CoordinateMatrix(nx, ny, x1, y1, x2, y2);
 
-  // Add one more column to the right since wrapping is requested. We assume an earlier phase
-  // has already checked the data is geographic and global apart from one column.
+    // Add one more column to the right since wrapping is requested. We assume an earlier phase
+    // has already checked the data is geographic and global apart from one column.
 
-  const auto dx = (x2 - x1) / (nx - 1);
-  return Fmi::CoordinateMatrix(nx + 1, ny, x1, y1, x2 + dx, y2);
+    const auto dx = (x2 - x1) / (nx - 1);
+    return Fmi::CoordinateMatrix(nx + 1, ny, x1, y1, x2 + dx, y2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -381,23 +499,30 @@ Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny,
 const NFmiAngle NFmiArea::TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
                                            double theLatitudeEpsilon) const
 {
-  using namespace std;
+  try
+  {
+    using namespace std;
 
-  NFmiPoint xyWorldPoint = LatLonToWorldXY(theLatLonPoint);
-  NFmiPoint latLonIncr =
-      NFmiPoint(0., theLatitudeEpsilon);  // Arbitrary small latitude increment in degrees
+    NFmiPoint xyWorldPoint = LatLonToWorldXY(theLatLonPoint);
+    NFmiPoint latLonIncr =
+        NFmiPoint(0., theLatitudeEpsilon);  // Arbitrary small latitude increment in degrees
 
-  // Move up toward geo-north along the meridian of the input point
-  NFmiPoint xyDistanceAlongMeridian = LatLonToWorldXY(theLatLonPoint + latLonIncr) - xyWorldPoint;
+    // Move up toward geo-north along the meridian of the input point
+    NFmiPoint xyDistanceAlongMeridian = LatLonToWorldXY(theLatLonPoint + latLonIncr) - xyWorldPoint;
 
-  // Get the angle between 'xyDistanceAlongMeridian.X()' and map "up" direction Y-axis
-  if (xyDistanceAlongMeridian.Y() == 0.)
-    return xyDistanceAlongMeridian.X() > 0.
-               ? NFmiAngle(90.)
-               : NFmiAngle(
-                     270.);  // Azimuth is exactly east 90 degrees or west 270 degrees, respectively
+    // Get the angle between 'xyDistanceAlongMeridian.X()' and map "up" direction Y-axis
+    if (xyDistanceAlongMeridian.Y() == 0.)
+      return xyDistanceAlongMeridian.X() > 0.
+                 ? NFmiAngle(90.)
+                 : NFmiAngle(
+                       270.);  // Azimuth is exactly east 90 degrees or west 270 degrees, respectively
 
-  return NFmiAngle(FmiDeg(atan2(xyDistanceAlongMeridian.X(), xyDistanceAlongMeridian.Y())));
+    return NFmiAngle(FmiDeg(atan2(xyDistanceAlongMeridian.X(), xyDistanceAlongMeridian.Y())));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -408,25 +533,46 @@ const NFmiAngle NFmiArea::TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
 
 const NFmiPoint NFmiArea::CenterLatLon() const
 {
-  NFmiPoint bl = BottomLeft();
-  NFmiPoint tr = TopRight();
+  try
+  {
+    NFmiPoint bl = BottomLeft();
+    NFmiPoint tr = TopRight();
 
-  NFmiPoint center(0.5 * (bl.X() + tr.X()), 0.5 * (bl.Y() + tr.Y()));
+    NFmiPoint center(0.5 * (bl.X() + tr.X()), 0.5 * (bl.Y() + tr.Y()));
 
-  return ToLatLon(center);
+    return ToLatLon(center);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiArea::IsPacificLongitude(double theLongitude)
 {
-  if (theLongitude > 180 && theLongitude <= 360)
-    return true;
-  else
-    return false;
+  try
+  {
+    if (theLongitude > 180 && theLongitude <= 360)
+      return true;
+    else
+      return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiArea::CheckForPacificView()
 {
-  fPacificView = NFmiArea::IsPacificView(BottomLeftLatLon(), TopRightLatLon());
+  try
+  {
+    fPacificView = NFmiArea::IsPacificView(BottomLeftLatLon(), TopRightLatLon());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // 1. Tarkistaa kattaako annetut pisteet Atlantic vai Pacific alueen
@@ -435,91 +581,126 @@ void NFmiArea::CheckForPacificView()
 PacificPointFixerData NFmiArea::PacificPointFixer(const NFmiPoint &theBottomLeftLatlon,
                                                   const NFmiPoint &theTopRightLatlon)
 {
-  bool usePacificView = NFmiArea::IsPacificView(theBottomLeftLatlon, theTopRightLatlon);
-  if (usePacificView)
+  try
   {
-    NFmiPoint bottomLeftLatLon = theBottomLeftLatlon;
-    NFmiPoint topRightLatLon = theTopRightLatlon;
-    NFmiAreaFactory::DoPossiblePacificFix(bottomLeftLatLon, topRightLatLon, usePacificView);
-    return PacificPointFixerData(bottomLeftLatLon, topRightLatLon, usePacificView);
+    bool usePacificView = NFmiArea::IsPacificView(theBottomLeftLatlon, theTopRightLatlon);
+    if (usePacificView)
+    {
+      NFmiPoint bottomLeftLatLon = theBottomLeftLatlon;
+      NFmiPoint topRightLatLon = theTopRightLatlon;
+      NFmiAreaFactory::DoPossiblePacificFix(bottomLeftLatLon, topRightLatLon, usePacificView);
+      return PacificPointFixerData(bottomLeftLatLon, topRightLatLon, usePacificView);
+    }
+    else
+      return PacificPointFixerData(theBottomLeftLatlon, theTopRightLatlon, usePacificView);
   }
-  else
-    return PacificPointFixerData(theBottomLeftLatlon, theTopRightLatlon, usePacificView);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
 {
-  // Obvious case
-  if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
-    return true;
-  // 0...360 coordinate system is used
-  if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
-    return true;
-  return false;
+  try
+  {
+    // Obvious case
+    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
+      return true;
+    // 0...360 coordinate system is used
+    if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
+      return true;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double NFmiArea::FixLongitude(double theLon) const
 {
-  if (!fPacificView)
+  try
   {
-    if (theLon > 180.00000001)  // Tämä ei voi olla tasan 180, koska SmartMet maailman rajaviivat
-                                // shapessa (maps\\shapes\\ne_10m_admin_0_countries) ja niiden
-                                // piirto imagine-kirjastolla menee jossain kohdissa sekaisin
-      // reunoilla, koska siellä on käytetty vähän yli 180-pituuspiirin
-      // meneviä arvoja Tyynenmeren 180 asteen pituuspiirin reunoilla
-      return theLon - 360;
+    if (!fPacificView)
+    {
+      if (theLon > 180.00000001)  // Tämä ei voi olla tasan 180, koska SmartMet maailman rajaviivat
+                                  // shapessa (maps\\shapes\\ne_10m_admin_0_countries) ja niiden
+                                  // piirto imagine-kirjastolla menee jossain kohdissa sekaisin
+        // reunoilla, koska siellä on käytetty vähän yli 180-pituuspiirin
+        // meneviä arvoja Tyynenmeren 180 asteen pituuspiirin reunoilla
+        return theLon - 360;
+      else
+        return theLon;
+    }
+    else if (theLon < 0)
+      return theLon + 360;
     else
       return theLon;
   }
-  else if (theLon < 0)
-    return theLon + 360;
-  else
-    return theLon;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiArea *NFmiArea::DoPossiblePacificFix() const
 {
-  // On olemassa pari erikoistapausta, mitkä halutaan eri areoissa korjata, että alueet toimisivat
-  // paremmin newbase:ssa.
-  if (fPacificView)
+  try
   {
-    bool usedPacificViewState = fPacificView;
-    NFmiPoint bottomleft = BottomLeftLatLon();
-    NFmiPoint topright = TopRightLatLon();
-    bool createNewArea =
-        NFmiAreaFactory::DoPossiblePacificFix(bottomleft, topright, usedPacificViewState);
-
-    if (createNewArea)
+    // On olemassa pari erikoistapausta, mitkä halutaan eri areoissa korjata, että alueet toimisivat
+    // paremmin newbase:ssa.
+    if (fPacificView)
     {
-      NFmiArea *newArea = NewArea(bottomleft, topright);
-      if (newArea)
+      bool usedPacificViewState = fPacificView;
+      NFmiPoint bottomleft = BottomLeftLatLon();
+      NFmiPoint topright = TopRightLatLon();
+      bool createNewArea =
+          NFmiAreaFactory::DoPossiblePacificFix(bottomleft, topright, usedPacificViewState);
+
+      if (createNewArea)
       {
-        newArea->PacificView(usedPacificViewState);
-        return newArea;
+        NFmiArea *newArea = NewArea(bottomleft, topright);
+        if (newArea)
+        {
+          newArea->PacificView(usedPacificViewState);
+          return newArea;
+        }
       }
     }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiArea *NFmiArea::DoForcePacificFix() const
 {
-  // Joskus on pakko muuttaa atlantic-area pacific tyyppiseksi vaikka väkisin
-  if (!fPacificView)
+  try
   {
-    NFmiPoint bottomleftLatlon = BottomLeftLatLon();
-    ::FixPacificLongitude(bottomleftLatlon);
-    NFmiPoint toprightLatlon = TopRightLatLon();
-    ::FixPacificLongitude(toprightLatlon);
-
-    NFmiArea *newArea = NewArea(bottomleftLatlon, toprightLatlon, false);
-    if (newArea)
+    // Joskus on pakko muuttaa atlantic-area pacific tyyppiseksi vaikka väkisin
+    if (!fPacificView)
     {
-      newArea->PacificView(true);
-      return newArea;
+      NFmiPoint bottomleftLatlon = BottomLeftLatLon();
+      ::FixPacificLongitude(bottomleftLatlon);
+      NFmiPoint toprightLatlon = TopRightLatLon();
+      ::FixPacificLongitude(toprightLatlon);
+
+      NFmiArea *newArea = NewArea(bottomleftLatlon, toprightLatlon, false);
+      if (newArea)
+      {
+        newArea->PacificView(true);
+        return newArea;
+      }
     }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -530,9 +711,16 @@ NFmiArea *NFmiArea::DoForcePacificFix() const
 
 std::size_t NFmiArea::HashValue() const
 {
-  std::size_t hash = itsXYRectArea.HashValue();
-  boost::hash_combine(hash, boost::hash_value(fPacificView));
-  return hash;
+  try
+  {
+    std::size_t hash = itsXYRectArea.HashValue();
+    boost::hash_combine(hash, boost::hash_value(fPacificView));
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -543,58 +731,79 @@ std::size_t NFmiArea::HashValue() const
 
 std::size_t NFmiArea::HashValueKludge() const
 {
+  try
+  {
 #ifdef UNIX
 #ifndef DISABLED_GDAL
-  if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this))
-    return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiGdalArea *>(this))
+      return a->HashValue();
 #endif
 #endif
-  if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this))
-    return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiGnomonicArea *>(this))
+      return a->HashValue();
 
-  if (const auto *a = dynamic_cast<const NFmiLambertEqualArea *>(this))
-    return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiLambertEqualArea *>(this))
+      return a->HashValue();
 
-  if (const auto *a = dynamic_cast<const NFmiMercatorArea *>(this))
-    return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiMercatorArea *>(this))
+      return a->HashValue();
 
-  // azimuthal is the base class
-  if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiOrthographicArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this))
-    return a->HashValue();
+    // azimuthal is the base class
+    if (const auto *a = dynamic_cast<const NFmiEquidistArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiOrthographicArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiStereographicArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiAzimuthalArea *>(this))
+      return a->HashValue();
 
-  // kkj is the base class
-  if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiPKJArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this))
-    return a->HashValue();
+    // kkj is the base class
+    if (const auto *a = dynamic_cast<const NFmiYKJArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiPKJArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiKKJArea *>(this))
+      return a->HashValue();
 
-  // latlon is the base class
-  if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this))
-    return a->HashValue();
-  if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this))
-    return a->HashValue();
+    // latlon is the base class
+    if (const auto *a = dynamic_cast<const NFmiRotatedLatLonArea *>(this))
+      return a->HashValue();
+    if (const auto *a = dynamic_cast<const NFmiLatLonArea *>(this))
+      return a->HashValue();
 
-  return HashValue();
+    return HashValue();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const Fmi::SpatialReference &NFmiArea::SpatialReference() const
 {
-  if (itsSpatialReference)
-    return *itsSpatialReference;
+  try
+  {
+    if (itsSpatialReference)
+      return *itsSpatialReference;
 
-  throw std::runtime_error(std::string("Spatial reference for ") + ClassName() +
-                           " not available, PROJ.4 = '" + itsProjStr + "'");
+    throw Fmi::Exception(BCP,std::string("Spatial reference for ") + ClassName() +
+                             " not available, PROJ.4 = '" + itsProjStr + "'");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 std::string NFmiArea::ProjStr() const
 {
-  return itsProjStr;
+  try
+  {
+    return itsProjStr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

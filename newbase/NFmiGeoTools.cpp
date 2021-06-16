@@ -13,6 +13,7 @@
 
 #include "NFmiGeoTools.h"
 #include "NFmiGlobals.h"
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 
@@ -85,24 +86,31 @@ double Distance(double theX1, double theY1, double theZ1, double theX2, double t
 
 double GeoDistance(double theLon1, double theLat1, double theLon2, double theLat2)
 {
-  using namespace std;
+  try
+  {
+    using namespace std;
 
-  double lo1 = FmiRad(theLon1);
-  double la1 = FmiRad(theLat1);
+    double lo1 = FmiRad(theLon1);
+    double la1 = FmiRad(theLat1);
 
-  double lo2 = FmiRad(theLon2);
-  double la2 = FmiRad(theLat2);
+    double lo2 = FmiRad(theLon2);
+    double la2 = FmiRad(theLat2);
 
-  double dlon = lo2 - lo1;
-  double dlat = la2 - la1;
-  double sindlat = sin(dlat / 2);
-  double sindlon = sin(dlon / 2);
+    double dlon = lo2 - lo1;
+    double dlat = la2 - la1;
+    double sindlat = sin(dlat / 2);
+    double sindlon = sin(dlon / 2);
 
-  double a = sindlat * sindlat + cos(la1) * cos(la2) * sindlon * sindlon;
-  double help1 = sqrt(a);
-  double c = 2. * asin(std::min(1., help1));
+    double a = sindlat * sindlat + cos(la1) * cos(la2) * sindlon * sindlon;
+    double help1 = sqrt(a);
+    double c = 2. * asin(std::min(1., help1));
 
-  return kRearth * c;
+    return kRearth * c;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -126,28 +134,35 @@ double GeoDistance(double theLon1, double theLat1, double theLon2, double theLat
 double DistanceFromLineSegment(
     double theX, double theY, double theX1, double theY1, double theX2, double theY2)
 {
-  // Length of the line itself
+  try
+  {
+    // Length of the line itself
 
-  const double length = Distance(theX1, theY1, theX2, theY2);
+    const double length = Distance(theX1, theY1, theX2, theY2);
 
-  // The special case when the line is a dot is handled quickly
-  if (length <= 0) return Distance(theX, theY, theX1, theY1);
+    // The special case when the line is a dot is handled quickly
+    if (length <= 0) return Distance(theX, theY, theX1, theY1);
 
-  // Intersection point in units of 0-1
+    // Intersection point in units of 0-1
 
-  const double u =
-      ((theX - theX1) * (theX2 - theX1) + (theY - theY1) * (theY2 - theY1)) / (length * length);
+    const double u =
+        ((theX - theX1) * (theX2 - theX1) + (theY - theY1) * (theY2 - theY1)) / (length * length);
 
-  // The nearest point is on the line if u=0..1
-  if (u >= 0 && u <= 1)
-    return Distance(theX, theY, (1 - u) * theX1 + u * theX2, (1 - u) * theY1 + u * theY2);
+    // The nearest point is on the line if u=0..1
+    if (u >= 0 && u <= 1)
+      return Distance(theX, theY, (1 - u) * theX1 + u * theX2, (1 - u) * theY1 + u * theY2);
 
-  // Otherwise the nearest point is the nearer end point
+    // Otherwise the nearest point is the nearer end point
 
-  if (u < 0)
-    return Distance(theX, theY, theX1, theY1);
-  else
-    return Distance(theX, theY, theX2, theY2);
+    if (u < 0)
+      return Distance(theX, theY, theX1, theY1);
+    else
+      return Distance(theX, theY, theX2, theY2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiGeoTools

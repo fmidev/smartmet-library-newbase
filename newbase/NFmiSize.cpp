@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiSize.h"
+#include <macgyver/Exception.h>
 #include <fstream>
 
 // ----------------------------------------------------------------------
@@ -64,8 +65,15 @@ NFmiSize::NFmiSize(const NFmiSize& theSize) = default;
 
 bool NFmiSize::First()
 {
-  Reset();
-  return Next();
+  try
+  {
+    Reset();
+    return Next();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -111,13 +119,20 @@ const char* NFmiSize::ClassName() const { return "NFmiSize"; }
 
 bool NFmiSize::Next()
 {
-  if (itsIndex + 1 < static_cast<long>(itsSize))
+  try
   {
-    itsIndex++;
-    return true;
-  }
-  else
+    if (itsIndex + 1 < static_cast<long>(itsSize))
+    {
+      itsIndex++;
+      return true;
+    }
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -128,10 +143,17 @@ bool NFmiSize::Next()
 
 void NFmiSize::Reset(FmiDirection directionToIter)
 {
-  if (directionToIter == kForward)
-    itsIndex = -1;
-  else
-    itsIndex = GetSize();
+  try
+  {
+    if (directionToIter == kForward)
+      itsIndex = -1;
+    else
+      itsIndex = GetSize();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -143,13 +165,19 @@ void NFmiSize::Reset(FmiDirection directionToIter)
 
 bool NFmiSize::SetCurrentIndex(unsigned long theIndex)
 {
-  if (theIndex < itsSize)
+  try
   {
-    itsIndex = theIndex;
-    return true;
-  }
-  else
+    if (theIndex < itsSize)
+    {
+      itsIndex = theIndex;
+      return true;
+    }
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -163,8 +191,15 @@ bool NFmiSize::SetCurrentIndex(unsigned long theIndex)
 
 std::ostream& NFmiSize::Write(std::ostream& file) const
 {
-  file << itsSize << "\n";
-  return file;
+  try
+  {
+    file << itsSize << "\n";
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -179,9 +214,16 @@ std::ostream& NFmiSize::Write(std::ostream& file) const
 
 std::istream& NFmiSize::Read(std::istream& file)
 {
-  file >> itsSize;
-  Reset();
-  return file;
+  try
+  {
+    file >> itsSize;
+    Reset();
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

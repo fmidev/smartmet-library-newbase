@@ -30,6 +30,7 @@
 #include "NFmiFileSystem.h"
 #include "NFmiPoint.h"
 #include "NFmiPreProcessor.h"
+#include <macgyver/Exception.h>
 #include <iostream>
 #include <list>
 #include <memory>
@@ -54,7 +55,8 @@ class NFmiTimeZoneEdge
   NFmiTimeZoneEdge(const NFmiPoint& thePoint1, const NFmiPoint& thePoint2)
       : itsPoint1(thePoint1), itsPoint2(thePoint2)
   {
-    if (itsPoint1.Y() > itsPoint2.Y()) swap(itsPoint1, itsPoint2);
+    if (itsPoint1.Y() > itsPoint2.Y())
+      swap(itsPoint1, itsPoint2);
   }
 
   NFmiTimeZoneEdge(double theX1, double theY1, double theX2, double theY2)
@@ -151,26 +153,33 @@ double NFmiTimeZoneRing::MaxLength = 5;
 
 void NFmiTimeZoneRing::Add(const NFmiPoint& thePoint)
 {
-  if (!itsStarted || thePoint.X() < itsMinX) itsMinX = thePoint.X();
-  if (!itsStarted || thePoint.X() > itsMaxX) itsMaxX = thePoint.X();
-  if (!itsStarted || thePoint.Y() < itsMinY) itsMinY = thePoint.Y();
-  if (!itsStarted || thePoint.Y() > itsMaxY) itsMaxY = thePoint.Y();
-
-  if (itsStarted)
+  try
   {
-    itsSignedArea += itsLastPoint.X() * thePoint.Y() - thePoint.X() * itsLastPoint.Y();
-    //	  cout << itsLastPoint.X() << ' ' << itsLastPoint.Y()
-    //		   << "\t--> "
-    //		   << thePoint.X() << ' ' << thePoint.Y()
-    //		   << "\t" << itsSignedArea << endl;
-    Add(NFmiTimeZoneEdge(itsLastPoint, thePoint));
+    if (!itsStarted || thePoint.X() < itsMinX) itsMinX = thePoint.X();
+    if (!itsStarted || thePoint.X() > itsMaxX) itsMaxX = thePoint.X();
+    if (!itsStarted || thePoint.Y() < itsMinY) itsMinY = thePoint.Y();
+    if (!itsStarted || thePoint.Y() > itsMaxY) itsMaxY = thePoint.Y();
+
+    if (itsStarted)
+    {
+      itsSignedArea += itsLastPoint.X() * thePoint.Y() - thePoint.X() * itsLastPoint.Y();
+      //	  cout << itsLastPoint.X() << ' ' << itsLastPoint.Y()
+      //		   << "\t--> "
+      //		   << thePoint.X() << ' ' << thePoint.Y()
+      //		   << "\t" << itsSignedArea << endl;
+      Add(NFmiTimeZoneEdge(itsLastPoint, thePoint));
+    }
+    else
+      itsFirstPoint = thePoint;
+
+    itsLastPoint = thePoint;
+
+    itsStarted = true;
   }
-  else
-    itsFirstPoint = thePoint;
-
-  itsLastPoint = thePoint;
-
-  itsStarted = true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -181,15 +190,22 @@ void NFmiTimeZoneRing::Add(const NFmiPoint& thePoint)
 
 void NFmiTimeZoneRing::Add(const NFmiTimeZoneEdge& theEdge)
 {
-  if (theEdge.Y2() - theEdge.Y1() >= MaxLength)
+  try
   {
-    double midx = 0.5 * (theEdge.X1() + theEdge.X2());
-    double midy = 0.5 * (theEdge.Y1() + theEdge.Y2());
-    Add(NFmiTimeZoneEdge(theEdge.X1(), theEdge.Y1(), midx, midy));
-    Add(NFmiTimeZoneEdge(midx, midy, theEdge.X2(), theEdge.Y2()));
+    if (theEdge.Y2() - theEdge.Y1() >= MaxLength)
+    {
+      double midx = 0.5 * (theEdge.X1() + theEdge.X2());
+      double midy = 0.5 * (theEdge.Y1() + theEdge.Y2());
+      Add(NFmiTimeZoneEdge(theEdge.X1(), theEdge.Y1(), midx, midy));
+      Add(NFmiTimeZoneEdge(midx, midy, theEdge.X2(), theEdge.Y2()));
+    }
+    else
+      itsData.insert(theEdge);
   }
-  else
-    itsData.insert(theEdge);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -200,7 +216,15 @@ void NFmiTimeZoneRing::Add(const NFmiTimeZoneEdge& theEdge)
 
 void NFmiTimeZoneRing::CheckClosed() const
 {
-  if (itsFirstPoint != itsLastPoint) throw runtime_error("NFmiTimeZoneRing is not closed!");
+  try
+  {
+    if (itsFirstPoint != itsLastPoint)
+      throw Fmi::Exception(BCP,"NFmiTimeZoneRing is not closed!");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -211,9 +235,18 @@ void NFmiTimeZoneRing::CheckClosed() const
 
 bool NFmiTimeZoneRing::Clockwise() const
 {
-  if (!itsStarted) return false;
-  CheckClosed();
-  return (itsSignedArea < 0);
+  try
+  {
+    if (!itsStarted)
+      return false;
+
+    CheckClosed();
+    return (itsSignedArea < 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -224,39 +257,54 @@ bool NFmiTimeZoneRing::Clockwise() const
 
 bool NFmiTimeZoneRing::Inside(const NFmiPoint& thePoint) const
 {
-  if (thePoint.X() == kFloatMissing || thePoint.Y() == kFloatMissing) return false;
-
-  if (!itsStarted) return false;
-
-  if (thePoint.X() < itsMinX || thePoint.X() > itsMaxX || thePoint.Y() < itsMinY ||
-      thePoint.Y() > itsMaxY)
-    return false;
-
-  CheckClosed();
-
-  const double min_lon = -180.0;
-  const double min_y = thePoint.Y() - MaxLength;
-  NFmiTimeZoneEdge dummy(min_lon, min_y, min_lon, min_y);
-  auto it = itsData.lower_bound(dummy);
-
-  double x = thePoint.X();
-  double y = thePoint.Y();
-
-  int counter = 0;
-  for (; it != itsData.end(); ++it)
+  try
   {
-    if (y <= it->Y1()) break;
-    if (y <= it->Y2())
-      if (x <= max(it->X1(), it->X2()))
-        if (it->Y1() != it->Y2())
+    if (thePoint.X() == kFloatMissing || thePoint.Y() == kFloatMissing)
+      return false;
+
+    if (!itsStarted)
+      return false;
+
+    if (thePoint.X() < itsMinX || thePoint.X() > itsMaxX || thePoint.Y() < itsMinY ||
+        thePoint.Y() > itsMaxY)
+      return false;
+
+    CheckClosed();
+
+    const double min_lon = -180.0;
+    const double min_y = thePoint.Y() - MaxLength;
+    NFmiTimeZoneEdge dummy(min_lon, min_y, min_lon, min_y);
+    auto it = itsData.lower_bound(dummy);
+
+    double x = thePoint.X();
+    double y = thePoint.Y();
+
+    int counter = 0;
+    for (; it != itsData.end(); ++it)
+    {
+      if (y <= it->Y1())
+        break;
+
+      if (y <= it->Y2())
+      {
+        if (x <= max(it->X1(), it->X2()))
         {
-          if (it->X1() == it->X2())
-            counter++;
-          else if (x <= (y - it->Y1()) * (it->X2() - it->X1()) / (it->Y2() - it->Y1()) + it->X1())
-            counter++;
+          if (it->Y1() != it->Y2())
+          {
+            if (it->X1() == it->X2())
+              counter++;
+            else if (x <= (y - it->Y1()) * (it->X2() - it->X1()) / (it->Y2() - it->Y1()) + it->X1())
+              counter++;
+          }
         }
+      }
+    }
+    return (counter % 2 != 0);
   }
-  return (counter % 2 != 0);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -301,10 +349,17 @@ class NFmiTimeZonePolygon
 
 void NFmiTimeZonePolygon::Add(const NFmiTimeZoneRing& theRing)
 {
-  if (theRing.Clockwise())
-    itsRings.push_back(theRing);
-  else
-    itsRings.push_front(theRing);
+  try
+  {
+    if (theRing.Clockwise())
+      itsRings.push_back(theRing);
+    else
+      itsRings.push_front(theRing);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -321,15 +376,23 @@ void NFmiTimeZonePolygon::Add(const NFmiTimeZoneRing& theRing)
 
 bool NFmiTimeZonePolygon::Inside(const NFmiPoint& thePoint) const
 {
-  if (itsRings.empty()) return false;
-
-  int i = 0;
-  for (const auto& itsRing : itsRings)
+  try
   {
-    if (itsRing.Inside(thePoint)) return itsRing.Clockwise();
-    i++;
+    if (itsRings.empty())
+      return false;
+
+    int i = 0;
+    for (const auto& itsRing : itsRings)
+    {
+      if (itsRing.Inside(thePoint)) return itsRing.Clockwise();
+      i++;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -360,15 +423,25 @@ class NFmiTimeZoneFinderPimple
 
 float NFmiTimeZoneFinderPimple::Find(const NFmiPoint& theLatLon) const
 {
-  if (theLatLon.X() == kFloatMissing || theLatLon.Y() == kFloatMissing) return kFloatMissing;
-
-  int i = 0;
-  for (const auto& it : itsData)
+  try
   {
-    if (it.Inside(theLatLon)) return it.TimeZone();
-    i++;
+    if (theLatLon.X() == kFloatMissing || theLatLon.Y() == kFloatMissing)
+      return kFloatMissing;
+
+    int i = 0;
+    for (const auto& it : itsData)
+    {
+      if (it.Inside(theLatLon))
+        return it.TimeZone();
+
+      i++;
+    }
+    return kFloatMissing;
   }
-  return kFloatMissing;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -384,7 +457,18 @@ NFmiTimeZoneFinder::~NFmiTimeZoneFinder() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiTimeZoneFinder::NFmiTimeZoneFinder() { itsPimple.reset(new NFmiTimeZoneFinderPimple()); }
+NFmiTimeZoneFinder::NFmiTimeZoneFinder()
+{
+  try
+  {
+    itsPimple.reset(new NFmiTimeZoneFinderPimple());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Copy constructor
@@ -395,7 +479,14 @@ NFmiTimeZoneFinder::NFmiTimeZoneFinder() { itsPimple.reset(new NFmiTimeZoneFinde
 
 NFmiTimeZoneFinder::NFmiTimeZoneFinder(const NFmiTimeZoneFinder& theFinder)
 {
-  itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+  try
+  {
+    itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -409,11 +500,17 @@ NFmiTimeZoneFinder::NFmiTimeZoneFinder(const NFmiTimeZoneFinder& theFinder)
 
 NFmiTimeZoneFinder& NFmiTimeZoneFinder::operator=(const NFmiTimeZoneFinder& theFinder)
 {
-  if (this != &theFinder)
+  try
   {
-    itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+    if (this != &theFinder)
+      itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -427,7 +524,14 @@ NFmiTimeZoneFinder& NFmiTimeZoneFinder::operator=(const NFmiTimeZoneFinder& theF
 
 float NFmiTimeZoneFinder::Find(const NFmiPoint& theLatLon) const
 {
-  return itsPimple->Find(theLatLon);
+  try
+  {
+    return itsPimple->Find(theLatLon);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -438,14 +542,36 @@ float NFmiTimeZoneFinder::Find(const NFmiPoint& theLatLon) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiTimeZoneFinder::Empty() const { return itsPimple->itsData.empty(); }
+bool NFmiTimeZoneFinder::Empty() const
+{
+  try
+  {
+    return itsPimple->itsData.empty();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Clear the finder
  */
 // ----------------------------------------------------------------------
 
-void NFmiTimeZoneFinder::Clear() { itsPimple->itsData.clear(); }
+void NFmiTimeZoneFinder::Clear()
+{
+  try
+  {
+    itsPimple->itsData.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Read the given timezone polygon file
@@ -470,69 +596,84 @@ void NFmiTimeZoneFinder::Clear() { itsPimple->itsData.clear(); }
 
 bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
 {
-  Clear();
-
-  if (!NFmiFileSystem::FileExists(theFileName)) return false;
-
-  const bool strip_pound = true;
-  NFmiPreProcessor processor(strip_pound);
-  processor.SetIncluding("include", "", "");
-  if (!processor.ReadAndStripFile(theFileName)) return false;
-
-  string text = processor.GetString();
-
-  istringstream input(text);
-
-  boost::shared_ptr<NFmiTimeZonePolygon> poly;
-  boost::shared_ptr<NFmiTimeZoneRing> ring;
-
-  string command;
-  while (input >> command)
+  try
   {
-    if (command == "timezone")
-    {
-      if (ring.get() != nullptr) poly->Add(*ring);
-      if (poly.get() != nullptr) itsPimple->itsData.push_back(*poly);
+    Clear();
 
-      float tz;
-      input >> tz;
-      poly.reset(new NFmiTimeZonePolygon(tz));
-      ring.reset(new NFmiTimeZoneRing());
-    }
-    else if (command == "xy")
-    {
-      double x, y;
-      input >> x >> y;
-
-      if (ring.get() == nullptr)
-      {
-        itsPimple->itsData.clear();
-        return false;
-      }
-
-      ring->Add(NFmiPoint(x, y));
-    }
-    else if (command == "ring")
-    {
-      if (poly.get() == nullptr || ring.get() == nullptr)
-      {
-        itsPimple->itsData.clear();
-        return false;
-      }
-      poly->Add(*ring);
-      ring.reset(new NFmiTimeZoneRing());
-    }
-    else
-    {
-      itsPimple->itsData.clear();
+    if (!NFmiFileSystem::FileExists(theFileName))
       return false;
+
+    const bool strip_pound = true;
+    NFmiPreProcessor processor(strip_pound);
+    processor.SetIncluding("include", "", "");
+    if (!processor.ReadAndStripFile(theFileName))
+      return false;
+
+    string text = processor.GetString();
+
+    istringstream input(text);
+
+    boost::shared_ptr<NFmiTimeZonePolygon> poly;
+    boost::shared_ptr<NFmiTimeZoneRing> ring;
+
+    string command;
+    while (input >> command)
+    {
+      if (command == "timezone")
+      {
+        if (ring.get() != nullptr)
+          poly->Add(*ring);
+
+        if (poly.get() != nullptr)
+          itsPimple->itsData.push_back(*poly);
+
+        float tz;
+        input >> tz;
+        poly.reset(new NFmiTimeZonePolygon(tz));
+        ring.reset(new NFmiTimeZoneRing());
+      }
+      else if (command == "xy")
+      {
+        double x, y;
+        input >> x >> y;
+
+        if (ring.get() == nullptr)
+        {
+          itsPimple->itsData.clear();
+          return false;
+        }
+
+        ring->Add(NFmiPoint(x, y));
+      }
+      else if (command == "ring")
+      {
+        if (poly.get() == nullptr || ring.get() == nullptr)
+        {
+          itsPimple->itsData.clear();
+          return false;
+        }
+        poly->Add(*ring);
+        ring.reset(new NFmiTimeZoneRing());
+      }
+      else
+      {
+        itsPimple->itsData.clear();
+        return false;
+      }
     }
+
+    if (ring.get())
+      poly->Add(*ring);
+
+    if (poly.get())
+      itsPimple->itsData.push_back(*poly);
+
+    return true;
   }
-
-  if (ring.get()) poly->Add(*ring);
-  if (poly.get()) itsPimple->itsData.push_back(*poly);
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 #ifndef NDEBUG
@@ -546,29 +687,36 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
 #include <iostream>
 void NFmiTimeZoneFinder::Check(const NFmiPoint& theLatLon) const
 {
-  int count = 0;
-  int poly = 0;
-  float tz = 0;
-
-  int p = 0;
-  for (NFmiTimeZoneFinderPimple::storage_type::const_iterator it = itsPimple->itsData.begin();
-       it != itsPimple->itsData.end();
-       ++it)
+  try
   {
-    bool match = it->Inside(theLatLon);
-    if (match)
+    int count = 0;
+    int poly = 0;
+    float tz = 0;
+
+    int p = 0;
+    for (NFmiTimeZoneFinderPimple::storage_type::const_iterator it = itsPimple->itsData.begin();
+         it != itsPimple->itsData.end();
+         ++it)
     {
-      if (count == 1)
+      bool match = it->Inside(theLatLon);
+      if (match)
       {
-        cout << theLatLon.X() << ' ' << theLatLon.Y() << " matches many polygons:" << endl;
-        cout << "match " << count << '\t' << poly << '\t' << tz << endl;
+        if (count == 1)
+        {
+          cout << theLatLon.X() << ' ' << theLatLon.Y() << " matches many polygons:" << endl;
+          cout << "match " << count << '\t' << poly << '\t' << tz << endl;
+        }
+        count++;
+        poly = p;
+        tz = it->TimeZone();
+        if (count > 1) cout << "match " << count << '\t' << p << '\t' << tz << endl;
       }
-      count++;
-      poly = p;
-      tz = it->TimeZone();
-      if (count > 1) cout << "match " << count << '\t' << p << '\t' << tz << endl;
+      p++;
     }
-    p++;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

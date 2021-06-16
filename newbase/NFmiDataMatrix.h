@@ -45,6 +45,7 @@
 
 #include "NFmiGlobals.h"  // kFloatMissing
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 
 #include <iostream>
 #include <sstream>
@@ -127,7 +128,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw std::runtime_error(
+    throw Fmi::Exception(BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -144,7 +145,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw std::runtime_error(
+    throw Fmi::Exception(BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -159,7 +160,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     indexStr += " and ";
     indexStr += NFmiStringTools::Convert(j);
     indexStr += "\n";
-    throw std::runtime_error(e.what() + std::string("\n") + indexStr);
+    throw Fmi::Exception(BCP,e.what() + std::string("\n") + indexStr);
   }
 
   //! Resize matrix to desired size, with given value for new elements.

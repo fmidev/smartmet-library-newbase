@@ -181,6 +181,7 @@
 #include "NFmiFileSystem.h"
 #include "NFmiPreProcessor.h"
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 
 #include <boost/algorithm/string/trim.hpp>
 
@@ -205,65 +206,97 @@ namespace
 
 string readfile(const std::string& filename)
 {
-  ifstream in(filename.c_str(), std::ios::binary);
-  if (!in) throw runtime_error("Failed to open " + filename + " for reading");
-  return NFmiStringTools::ReadFile(in);
+  try
+  {
+    ifstream in(filename.c_str(), std::ios::binary);
+    if (!in)
+      throw Fmi::Exception(BCP,"Failed to open " + filename + " for reading");
+
+    return NFmiStringTools::ReadFile(in);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //! Save new contents to given filename
 void savefile(const std::string& filename, const std::string& contents)
 {
-  NFmiFileSystem::SafeFileSave(filename, contents);
-  /*
-          ofstream out(filename.c_str(), ios::out);
-          if(!out)
-            throw runtime_error("Failed to open "+filename+" for writing");
-          out << contents;
-  */
+  try
+  {
+    NFmiFileSystem::SafeFileSave(filename, contents);
+    /*
+            ofstream out(filename.c_str(), ios::out);
+            if(!out)
+              throw Fmi::Exception(BCP,"Failed to open "+filename+" for writing");
+            out << contents;
+    */
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //! Perform string replacements in settings
 
 void replace_assignment(string& contents, const string& theVariableName, const string& theNewValue)
 {
-  istringstream input(contents);
-  string::size_type pos1 = 0;
-  for (;;)
+  try
   {
-    pos1 = contents.find(theVariableName, pos1);
-    if (pos1 == string::npos)
-      throw runtime_error("Unable to save new value for variable " + theVariableName);
-
-    pos1 += theVariableName.size();
-    input.seekg(pos1);
-
-    string token;
-    input >> token;
-    if (token == "=")
+    istringstream input(contents);
+    string::size_type pos1 = 0;
+    for (;;)
     {
-      getline(input, token);
-      const string::size_type pos2 = input.tellg();
+      pos1 = contents.find(theVariableName, pos1);
+      if (pos1 == string::npos)
+        throw Fmi::Exception(BCP,"Unable to save new value for variable " + theVariableName);
 
+      pos1 += theVariableName.size();
+      input.seekg(pos1);
+
+      string token;
+      input >> token;
+      if (token == "=")
       {
-        contents.replace(pos1, pos2 - pos1, " = " + theNewValue + '\n');
+        getline(input, token);
+        const string::size_type pos2 = input.tellg();
+
+        {
+          contents.replace(pos1, pos2 - pos1, " = " + theNewValue + '\n');
+        }
+        return;
       }
-      return;
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 //! Return the completed filename from the search path, or empty string
 string findfile(const std::string& filename, const std::list<std::string>& search_path)
 {
-  if (NFmiFileSystem::FileExists(filename)) return (filename);
-  const list<string>::const_iterator begin = search_path.begin();
-  const list<string>::const_iterator end = search_path.end();
-  for (list<string>::const_iterator iter = begin; iter != end; ++iter)
+  try
   {
-    string trialname = *iter + '/' + filename;
-    if (NFmiFileSystem::FileExists(trialname)) return trialname;
+    if (NFmiFileSystem::FileExists(filename))
+      return (filename);
+
+    const list<string>::const_iterator begin = search_path.begin();
+    const list<string>::const_iterator end = search_path.end();
+    for (list<string>::const_iterator iter = begin; iter != end; ++iter)
+    {
+      string trialname = *iter + '/' + filename;
+      if (NFmiFileSystem::FileExists(trialname)) return trialname;
+    }
+    return string("");
   }
-  return string("");
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -294,45 +327,53 @@ std::string expand(const std::string& value,
                    const std::string& delim2,
                    const std::list<std::string>& namespaces)
 {
-  string ret = value;
-
-  const unsigned long maxlength = 10000;
-  const unsigned long maxexpansions = 100;
-
-  unsigned long expansions = 0;
-  while (value.size() < maxlength && expansions < maxexpansions)
+  try
   {
-    string::size_type pos1 = ret.find(delim1);
-    if (pos1 == string::npos) break;
-    string::size_type pos2 = ret.find(delim2, pos1);
-    if (pos2 == string::npos)
-      throw runtime_error("Missing " + delim2 + " while expanding value " + value);
-    const string name = ret.substr(pos1 + delim1.size(), pos2 - pos1 - delim2.size() - 1);
+    string ret = value;
 
-    auto it = data.find(name);
-    if (it == data.end())
+    const unsigned long maxlength = 10000;
+    const unsigned long maxexpansions = 100;
+
+    unsigned long expansions = 0;
+    while (value.size() < maxlength && expansions < maxexpansions)
     {
-      for (const auto& iter : namespaces)
+      string::size_type pos1 = ret.find(delim1);
+      if (pos1 == string::npos) break;
+      string::size_type pos2 = ret.find(delim2, pos1);
+      if (pos2 == string::npos)
+        throw Fmi::Exception(BCP,"Missing " + delim2 + " while expanding value " + value);
+      const string name = ret.substr(pos1 + delim1.size(), pos2 - pos1 - delim2.size() - 1);
+
+      auto it = data.find(name);
+      if (it == data.end())
       {
-        const string newname = iter + "::" + name;
-        it = data.find(newname);
-        if (it != data.end()) break;
+        for (const auto& iter : namespaces)
+        {
+          const string newname = iter + "::" + name;
+          it = data.find(newname);
+          if (it != data.end()) break;
+        }
       }
+      if (it == data.end())
+        throw Fmi::Exception(BCP,"Cannot expand " + value + " since variable " + name + " has no value");
+
+      ret.replace(pos1, pos2 + 1 - pos1, it->second);
     }
-    if (it == data.end())
-      throw runtime_error("Cannot expand " + value + " since variable " + name + " has no value");
 
-    ret.replace(pos1, pos2 + 1 - pos1, it->second);
+    if (value.size() >= maxlength)
+      throw Fmi::Exception(BCP,"Result of expanding value " + value + " is too long");
+
+    if (expansions >= maxexpansions)
+      throw Fmi::Exception(BCP,"Too many expansions in value " + value + " (possible recursion)");
+
+    return ret;
   }
-
-  if (value.size() >= maxlength)
-    throw runtime_error("Result of expanding value " + value + " is too long");
-
-  if (expansions >= maxexpansions)
-    throw runtime_error("Too many expansions in value " + value + " (possible recursion)");
-
-  return ret;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -346,15 +387,22 @@ std::string expand(const std::string& value,
 NFmiSettingsImpl::NFmiSettingsImpl()
     : itsFilename(DEFAULT_FILE), itsData(), itIsInitialized(false), itsNamespaces()
 {
+  try
+  {
 #ifdef UNIX
-  itsSearchPath.emplace_back("/smartmet/cnf");
-  itsSearchPath.emplace_back("/fmi/conf");
-  itsSearchPath.emplace_back("/var/www/share/conf");
-  itsSearchPath.emplace_back(".");
+    itsSearchPath.emplace_back("/smartmet/cnf");
+    itsSearchPath.emplace_back("/fmi/conf");
+    itsSearchPath.emplace_back("/var/www/share/conf");
+    itsSearchPath.emplace_back(".");
 
 #else
-  itsSearchPath.push_back("conf");
+    itsSearchPath.push_back("conf");
 #endif
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -367,8 +415,16 @@ NFmiSettingsImpl::NFmiSettingsImpl()
 
 NFmiSettingsImpl::~NFmiSettingsImpl()
 {
-  itsInstance = nullptr;  // the pointer is address of static, not by new()
-  itIsDestroyed = true;
+  try
+  {
+    itsInstance = nullptr;  // the pointer is address of static, not by new()
+    itIsDestroyed = true;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -385,14 +441,21 @@ NFmiSettingsImpl::~NFmiSettingsImpl()
 
 NFmiSettingsImpl& NFmiSettingsImpl::Instance()
 {
-  if (!itsInstance)
+  try
   {
-    if (itIsDestroyed)
-      Die();
-    else
-      Create();
+    if (!itsInstance)
+    {
+      if (itIsDestroyed)
+        Die();
+      else
+        Create();
+    }
+    return *itsInstance;
   }
-  return *itsInstance;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -408,8 +471,15 @@ NFmiSettingsImpl& NFmiSettingsImpl::Instance()
 
 void NFmiSettingsImpl::Create()
 {
-  static NFmiSettingsImpl theSettings;
-  NFmiSettingsImpl::itsInstance = &theSettings;
+  try
+  {
+    static NFmiSettingsImpl theSettings;
+    NFmiSettingsImpl::itsInstance = &theSettings;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -424,7 +494,14 @@ void NFmiSettingsImpl::Create()
 
 void NFmiSettingsImpl::Die()
 {
-  throw runtime_error("NFmiSettingsImpl detected a dead reference problem");
+  try
+  {
+    throw Fmi::Exception(BCP,"NFmiSettingsImpl detected a dead reference problem");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -435,12 +512,19 @@ void NFmiSettingsImpl::Die()
 
 void NFmiSettingsImpl::Clear()
 {
-  itsFilename = DEFAULT_FILE;
-  itsData.clear();
-  itsNamespaces.clear();
-  itsExpandedVariables.clear();
-  itsChangedVariables.clear();
-  itsFilenames.clear();
+  try
+  {
+    itsFilename = DEFAULT_FILE;
+    itsData.clear();
+    itsNamespaces.clear();
+    itsExpandedVariables.clear();
+    itsChangedVariables.clear();
+    itsFilenames.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -452,8 +536,17 @@ void NFmiSettingsImpl::Clear()
 
 bool NFmiSettingsImpl::IsSet(const std::string& theName) const
 {
-  if (!itIsInitialized) Init();
-  return (itsData.find(theName) != itsData.end());
+  try
+  {
+    if (!itIsInitialized)
+      Init();
+
+    return (itsData.find(theName) != itsData.end());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -465,12 +558,21 @@ bool NFmiSettingsImpl::IsSet(const std::string& theName) const
 const std::string NFmiSettingsImpl::Value(const std::string& theName,
                                           const std::string& theAlternate) const
 {
-  if (!itIsInitialized) Init();
-  DataType::const_iterator pos = itsData.find(theName);
-  if (pos == itsData.end())
-    return theAlternate;
-  else
-    return expand(pos->second, itsData, "${", "}", itsNamespaces);
+  try
+  {
+    if (!itIsInitialized)
+      Init();
+
+    DataType::const_iterator pos = itsData.find(theName);
+    if (pos == itsData.end())
+      return theAlternate;
+    else
+      return expand(pos->second, itsData, "${", "}", itsNamespaces);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -481,11 +583,21 @@ const std::string NFmiSettingsImpl::Value(const std::string& theName,
 
 const std::string NFmiSettingsImpl::Require(const std::string& theName) const
 {
-  if (!itIsInitialized) Init();
-  DataType::const_iterator pos = itsData.find(theName);
-  if (pos == itsData.end())
-    throw runtime_error("The variable " + theName + " is required to have a value");
-  return expand(pos->second, itsData, "${", "}", itsNamespaces);
+  try
+  {
+    if (!itIsInitialized)
+      Init();
+
+    DataType::const_iterator pos = itsData.find(theName);
+    if (pos == itsData.end())
+      throw Fmi::Exception(BCP,"The variable " + theName + " is required to have a value");
+
+    return expand(pos->second, itsData, "${", "}", itsNamespaces);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -498,30 +610,37 @@ void NFmiSettingsImpl::Set(const std::string& theName,
                            const std::string& theValue,
                            bool modifyOnlyExisting) const
 {
-  if (itsExpandedVariables.find(theName) != itsExpandedVariables.end())
-    throw runtime_error("Cannot reset variable " + theName + " value, it must be edited by hand");
-
-  itIsInitialized = true;
-
-  const list<string> nonamespaces;
-  const string expanded = expand(theValue, itsData, "$(", ")", nonamespaces);
-
-  auto foundIter = itsData.find(theName);
-  if ((modifyOnlyExisting && foundIter == itsData.end()) ||
-      (foundIter != itsData.end() && theValue == foundIter->second))
-    return;  // Jos asetettavaa arvoa ei löydy asetuksista TAI sen arvo ei muutu, ei tehdä mitään
-
-  pair<DataType::iterator, bool> result = itsData.insert(make_pair(theName, expanded));
-
-  if (!result.second)
+  try
   {
-    if (expanded != theValue)
-      throw runtime_error("Cannot modify variable " + theName + " with expanding value");
-    else
-      result.first->second = expanded;
-  }
+    if (itsExpandedVariables.find(theName) != itsExpandedVariables.end())
+      throw Fmi::Exception(BCP,"Cannot reset variable " + theName + " value, it must be edited by hand");
 
-  itsChangedVariables.insert(theName);
+    itIsInitialized = true;
+
+    const list<string> nonamespaces;
+    const string expanded = expand(theValue, itsData, "$(", ")", nonamespaces);
+
+    auto foundIter = itsData.find(theName);
+    if ((modifyOnlyExisting && foundIter == itsData.end()) ||
+        (foundIter != itsData.end() && theValue == foundIter->second))
+      return;  // Jos asetettavaa arvoa ei löydy asetuksista TAI sen arvo ei muutu, ei tehdä mitään
+
+    pair<DataType::iterator, bool> result = itsData.insert(make_pair(theName, expanded));
+
+    if (!result.second)
+    {
+      if (expanded != theValue)
+        throw Fmi::Exception(BCP,"Cannot modify variable " + theName + " with expanding value");
+      else
+        result.first->second = expanded;
+    }
+
+    itsChangedVariables.insert(theName);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -532,15 +651,24 @@ void NFmiSettingsImpl::Set(const std::string& theName,
 
 void NFmiSettingsImpl::InternalSet(const std::string& theName, const std::string& theValue) const
 {
-  itIsInitialized = true;
+  try
+  {
+    itIsInitialized = true;
 
-  const string expanded = expand(theValue, itsData, "$(", ")", itsNamespaces);
+    const string expanded = expand(theValue, itsData, "$(", ")", itsNamespaces);
 
-  pair<DataType::iterator, bool> result = itsData.insert(make_pair(theName, expanded));
+    pair<DataType::iterator, bool> result = itsData.insert(make_pair(theName, expanded));
 
-  if (!result.second) result.first->second = expanded;
+    if (!result.second)
+      result.first->second = expanded;
 
-  if (expanded != theValue) itsExpandedVariables.insert(theName);
+    if (expanded != theValue)
+      itsExpandedVariables.insert(theName);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -552,7 +680,14 @@ void NFmiSettingsImpl::InternalSet(const std::string& theName, const std::string
 #undef SearchPath  // win32 macro pitää undefinata
 void NFmiSettingsImpl::SearchPath(const std::string& thePath) const
 {
-  itsSearchPath.push_back(thePath);
+  try
+  {
+    itsSearchPath.push_back(thePath);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -567,10 +702,19 @@ void NFmiSettingsImpl::SearchPath(const std::string& thePath) const
 
 bool NFmiSettingsImpl::Init(const std::string& theFilename) const
 {
-  if (!theFilename.empty()) itsFilename = theFilename;
-  itsData.clear();
-  itIsInitialized = Read(itsFilename);
-  return itIsInitialized;
+  try
+  {
+    if (!theFilename.empty())
+      itsFilename = theFilename;
+
+    itsData.clear();
+    itIsInitialized = Read(itsFilename);
+    return itIsInitialized;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -588,163 +732,172 @@ bool NFmiSettingsImpl::Init(const std::string& theFilename) const
 
 bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 {
-  // Safety against an empty name
-  if (theFilename.empty()) return false;
-
-  // Find the file from the search path
-  string filename = findfile(theFilename, itsSearchPath);
-  if (filename.empty()) return false;
-
-  // Process the file
-
-  const bool strip_pound = true;
-#ifdef UNIX
-  // AKa 21-Dec-2007: Disallow '/* ... */' comments on Linux:
-  //      subpath filters can contain '/*'.
-  //
-  //      Note: Also '//' comments could be disallowed, since '//' can occur
-  //            in Linux path meaning single '/' (i.e. if automatically crafted)
-  //
-  NFmiPreProcessor processor(strip_pound,
-                             true,  // "//" (double slash)
-                             false,
-                             false);  // "/*" and nested
-#else
-  NFmiPreProcessor processor(strip_pound);
-#endif
-  if (!processor.ReadAndStripFile(filename)) return false;
-
-  // Extract the assignments
-  string text = processor.GetString();
-  istringstream input(text);
-
-  unsigned long words;
-  string var;
-  while (true)
+  try
   {
-    // Extract variable name by seeking the next non variable name token
-    size_t startpos = input.tellg();
+    // Safety against an empty name
+    if (theFilename.empty())
+      return false;
 
-    string token;
-    for (words = 0; true; ++words)
+    // Find the file from the search path
+    string filename = findfile(theFilename, itsSearchPath);
+    if (filename.empty())
+      return false;
+
+    // Process the file
+
+    const bool strip_pound = true;
+#ifdef UNIX
+    // AKa 21-Dec-2007: Disallow '/* ... */' comments on Linux:
+    //      subpath filters can contain '/*'.
+    //
+    //      Note: Also '//' comments could be disallowed, since '//' can occur
+    //            in Linux path meaning single '/' (i.e. if automatically crafted)
+    //
+    NFmiPreProcessor processor(strip_pound,
+                               true,  // "//" (double slash)
+                               false,
+                               false);  // "/*" and nested
+#else
+    NFmiPreProcessor processor(strip_pound);
+#endif
+    if (!processor.ReadAndStripFile(filename)) return false;
+
+    // Extract the assignments
+    string text = processor.GetString();
+    istringstream input(text);
+
+    unsigned long words;
+    string var;
+    while (true)
     {
-      input >> token;
+      // Extract variable name by seeking the next non variable name token
+      size_t startpos = input.tellg();
 
-      if (!input.good()) break;
-
-      if (token == "}" || token == "{" || token == "=" || token == "+=") break;
-      if (words == 0 && token == "use") break;
-      if (words == 0) var = token;
-    }
-
-    if (!input.good())
-    {
-      if (words == 0)
-        break;
-      else
-        throw runtime_error("Error parsing the end of the configuration file");
-    }
-
-    // Extract name containing multiple words
-    if (words > 1)
-    {
-      size_t endpos = input.tellg();
-      size_t sz = static_cast<long>(endpos) - startpos - token.size();
-
-      input.seekg(startpos, ios::beg);
-      std::vector<char> buffer(sz + 1);
-      input.read(&buffer[0], sz);
-      buffer[sz] = '\0';
-      input.seekg(endpos, ios::beg);
-
-      var = &buffer[0];
-      boost::algorithm::trim(var);
-
-      if (var.find('\n') != string::npos)
-        throw runtime_error("Variable name '" + var + "' contains a newline");
-    }
-
-    if (token == "}")
-    {
-      if (words > 0) throw runtime_error("Name space ended after variable name '" + var + "'");
-
-      if (itsNamespaces.empty()) throw runtime_error("Too many }'s in the settings");
-      itsNamespaces.pop_front();
-    }
-    else if (token == "use")
-    {
-      if (itsNamespaces.empty()) throw runtime_error("Cannot use 'use' outside namespaces");
-
-      // Copy all variables from the given namespace to this one
-      string nspace;
-      input >> nspace;
-
-      for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+      string token;
+      for (words = 0; true; ++words)
       {
-        if (it->first.substr(0, nspace.size()) == nspace)
-        {
-          string suffix = it->first.substr(nspace.size());
-          if (!suffix.empty())
-          {
-            string newvar = itsNamespaces.front() + suffix;
-            InternalSet(newvar, it->second);
+        input >> token;
 
-            pair<FileMap::iterator, bool> result = itsFilenames.insert(make_pair(newvar, filename));
-            if (!result.second) result.first->second = filename;
-            itsChangedVariables.erase(newvar);
+        if (!input.good()) break;
+
+        if (token == "}" || token == "{" || token == "=" || token == "+=") break;
+        if (words == 0 && token == "use") break;
+        if (words == 0) var = token;
+      }
+
+      if (!input.good())
+      {
+        if (words == 0)
+          break;
+        else
+          throw Fmi::Exception(BCP,"Error parsing the end of the configuration file");
+      }
+
+      // Extract name containing multiple words
+      if (words > 1)
+      {
+        size_t endpos = input.tellg();
+        size_t sz = static_cast<long>(endpos) - startpos - token.size();
+
+        input.seekg(startpos, ios::beg);
+        std::vector<char> buffer(sz + 1);
+        input.read(&buffer[0], sz);
+        buffer[sz] = '\0';
+        input.seekg(endpos, ios::beg);
+
+        var = &buffer[0];
+        boost::algorithm::trim(var);
+
+        if (var.find('\n') != string::npos)
+          throw Fmi::Exception(BCP,"Variable name '" + var + "' contains a newline");
+      }
+
+      if (token == "}")
+      {
+        if (words > 0) throw Fmi::Exception(BCP,"Name space ended after variable name '" + var + "'");
+
+        if (itsNamespaces.empty()) throw Fmi::Exception(BCP,"Too many }'s in the settings");
+        itsNamespaces.pop_front();
+      }
+      else if (token == "use")
+      {
+        if (itsNamespaces.empty()) throw Fmi::Exception(BCP,"Cannot use 'use' outside namespaces");
+
+        // Copy all variables from the given namespace to this one
+        string nspace;
+        input >> nspace;
+
+        for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+        {
+          if (it->first.substr(0, nspace.size()) == nspace)
+          {
+            string suffix = it->first.substr(nspace.size());
+            if (!suffix.empty())
+            {
+              string newvar = itsNamespaces.front() + suffix;
+              InternalSet(newvar, it->second);
+
+              pair<FileMap::iterator, bool> result = itsFilenames.insert(make_pair(newvar, filename));
+              if (!result.second) result.first->second = filename;
+              itsChangedVariables.erase(newvar);
+            }
           }
         }
       }
-    }
-    else if (token == "=" || token == "+=")
-    {
-      if (words == 0) throw runtime_error("Assignment without variable name encountered");
-
-      string line;
-      getline(input, line);
-
-      istringstream lineinput(line);
-      string val, word;
-      while (lineinput >> word)
+      else if (token == "=" || token == "+=")
       {
-        if (!val.empty()) val += ' ';
-        val += word;
+        if (words == 0) throw Fmi::Exception(BCP,"Assignment without variable name encountered");
+
+        string line;
+        getline(input, line);
+
+        istringstream lineinput(line);
+        string val, word;
+        while (lineinput >> word)
+        {
+          if (!val.empty()) val += ' ';
+          val += word;
+        }
+
+        string fullvarname = (itsNamespaces.empty() ? var : itsNamespaces.front() + "::" + var);
+
+        if (token == "=")
+          InternalSet(fullvarname, val);
+        else
+        {
+          string tmpval = "$(" + var + ")," + val;
+          InternalSet(fullvarname, tmpval);
+        }
+
+        // save the origin of the variable, possibly overriding any old value
+        pair<FileMap::iterator, bool> result = itsFilenames.insert(make_pair(fullvarname, filename));
+        if (!result.second) result.first->second = filename;
+
+        // The value is now from file, and hence does not have a changed value
+        itsChangedVariables.erase(fullvarname);
       }
-
-      string fullvarname = (itsNamespaces.empty() ? var : itsNamespaces.front() + "::" + var);
-
-      if (token == "=")
-        InternalSet(fullvarname, val);
-      else
+      else if (token == "{")
       {
-        string tmpval = "$(" + var + ")," + val;
-        InternalSet(fullvarname, tmpval);
+        if (words == 0) throw Fmi::Exception(BCP,"Must start namespace after a variable name");
+
+        if (itsNamespaces.empty())
+          itsNamespaces.push_front(var);
+        else
+          itsNamespaces.push_front(itsNamespaces.front() + "::" + var);
       }
-
-      // save the origin of the variable, possibly overriding any old value
-      pair<FileMap::iterator, bool> result = itsFilenames.insert(make_pair(fullvarname, filename));
-      if (!result.second) result.first->second = filename;
-
-      // The value is now from file, and hence does not have a changed value
-      itsChangedVariables.erase(fullvarname);
-    }
-    else if (token == "{")
-    {
-      if (words == 0) throw runtime_error("Must start namespace after a variable name");
-
-      if (itsNamespaces.empty())
-        itsNamespaces.push_front(var);
       else
-        itsNamespaces.push_front(itsNamespaces.front() + "::" + var);
+        throw Fmi::Exception(BCP,"Expecting = or { after variable name '" + var +
+                            "' in the settings file, not token '" + token + "'");
     }
-    else
-      throw runtime_error("Expecting = or { after variable name '" + var +
-                          "' in the settings file, not token '" + token + "'");
+
+    itIsInitialized = true;
+
+    return true;
   }
-
-  itIsInitialized = true;
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -755,48 +908,55 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 
 void NFmiSettingsImpl::Save() const
 {
-  // nothing to do if no variables have been saved
-  if (itsChangedVariables.empty()) return;
-
-  // collect all files to be modified
-
-  std::set<string> modified_files;
-  for (const auto& itsChangedVariable : itsChangedVariables)
+  try
   {
-    auto foundIter = itsFilenames.find(itsChangedVariable);
-    if (foundIter != itsFilenames.end())
-      modified_files.insert(foundIter->second);  // laitetaan vain niiden tiedostojen nimet mukaan,
-                                                 // missä oli muuttuneita muuttujia
-  }
-  /*
+    // nothing to do if no variables have been saved
+    if (itsChangedVariables.empty()) return;
+
+    // collect all files to be modified
+
     std::set<string> modified_files;
-    for(FileMap::const_iterator kt=itsFilenames.begin(); kt!=itsFilenames.end(); ++kt)
-          modified_files.insert(kt->second);
-  */
+    for (const auto& itsChangedVariable : itsChangedVariables)
+    {
+      auto foundIter = itsFilenames.find(itsChangedVariable);
+      if (foundIter != itsFilenames.end())
+        modified_files.insert(foundIter->second);  // laitetaan vain niiden tiedostojen nimet mukaan,
+                                                   // missä oli muuttuneita muuttujia
+    }
+    /*
+      std::set<string> modified_files;
+      for(FileMap::const_iterator kt=itsFilenames.begin(); kt!=itsFilenames.end(); ++kt)
+            modified_files.insert(kt->second);
+    */
 
-  // then process the files one by one
-  for (const auto& modified_file : modified_files)
-  {
-    // collect all modified variables in this file
-    std::set<string> modified_variables;
-    for (FileMap::const_iterator jt = itsFilenames.begin(); jt != itsFilenames.end(); ++jt)
-      if (modified_file == jt->second)
-        if (itsChangedVariables.find(jt->first) != itsChangedVariables.end())
-          modified_variables.insert(jt->first);
+    // then process the files one by one
+    for (const auto& modified_file : modified_files)
+    {
+      // collect all modified variables in this file
+      std::set<string> modified_variables;
+      for (FileMap::const_iterator jt = itsFilenames.begin(); jt != itsFilenames.end(); ++jt)
+        if (modified_file == jt->second)
+          if (itsChangedVariables.find(jt->first) != itsChangedVariables.end())
+            modified_variables.insert(jt->first);
 
-    // read old contents
-    string contents = readfile(modified_file);
+      // read old contents
+      string contents = readfile(modified_file);
 
-    // perform replacements
-    for (const auto& modified_variable : modified_variables)
-      replace_assignment(contents, modified_variable, Value(modified_variable));
+      // perform replacements
+      for (const auto& modified_variable : modified_variables)
+        replace_assignment(contents, modified_variable, Value(modified_variable));
 
-    // save new contents
-    savefile(modified_file, contents);
+      // save new contents
+      savefile(modified_file, contents);
+    }
+
+    // indicate that all variables now have unchanged state compared to file
+    itsChangedVariables.clear();
   }
-
-  // indicate that all variables now have unchanged state compared to file
-  itsChangedVariables.clear();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -807,15 +967,22 @@ void NFmiSettingsImpl::Save() const
 
 string NFmiSettingsImpl::ToString(const string& thePrefix) const
 {
-  ostringstream out;
-  for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+  try
   {
-    if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+    ostringstream out;
+    for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
     {
-      out << it->first << " = " << it->second << endl;
+      if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+      {
+        out << it->first << " = " << it->second << endl;
+      }
     }
+    return out.str();
   }
-  return out.str();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -832,21 +999,28 @@ string NFmiSettingsImpl::ToString(const string& thePrefix) const
 
 std::vector<std::string> NFmiSettingsImpl::ListChildren(const std::string& thePrefix) const
 {
-  set<string> strs;  // this eliminates duplicate values
-  for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+  try
   {
-    if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+    set<string> strs;  // this eliminates duplicate values
+    for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
     {
-      string tmp(it->first.begin() + thePrefix.size(), it->first.end());
-      NFmiStringTools::TrimL(tmp, ':');
-      std::string::size_type idx = tmp.find(':');
-      string tmp2 = tmp;
-      if (idx != std::string::npos) tmp2 = std::string(tmp.begin(), tmp.begin() + idx);
-      strs.insert(tmp2);
+      if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+      {
+        string tmp(it->first.begin() + thePrefix.size(), it->first.end());
+        NFmiStringTools::TrimL(tmp, ':');
+        std::string::size_type idx = tmp.find(':');
+        string tmp2 = tmp;
+        if (idx != std::string::npos) tmp2 = std::string(tmp.begin(), tmp.begin() + idx);
+        strs.insert(tmp2);
+      }
     }
-  }
 
-  return std::vector<std::string>(strs.begin(), strs.end());
+    return std::vector<std::string>(strs.begin(), strs.end());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

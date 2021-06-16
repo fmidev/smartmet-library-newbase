@@ -19,6 +19,7 @@
 
 #include "NFmiMetTime.h"
 #include "NFmiLocation.h"
+#include <macgyver/Exception.h>
 #include <ctime>
 #include <iostream>
 #include <vector>
@@ -38,15 +39,22 @@ const NFmiMetTime NFmiMetTime::gMissingTime = NFmiMetTime(1900, 0, 0, 0, 0, 0);
 NFmiMetTime::NFmiMetTime(const long timeStepInMinutes)
     : fTimeStepInMinutes(timeStepInMinutes), itsNegativeRange(0), itsPositiveRange(0)
 {
-  _setCurrent();
-  SetSec(0);
-
-  NFmiMetTime aTimeNow = *this;
-
-  ConstructMetTime(static_cast<short>(fTimeStepInMinutes));
-  if (*this > aTimeNow)
+  try
   {
-    PreviousMetTime();
+    _setCurrent();
+    SetSec(0);
+
+    NFmiMetTime aTimeNow = *this;
+
+    ConstructMetTime(static_cast<short>(fTimeStepInMinutes));
+    if (*this > aTimeNow)
+    {
+      PreviousMetTime();
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -59,7 +67,14 @@ NFmiMetTime::NFmiMetTime(const long timeStepInMinutes)
 NFmiMetTime::NFmiMetTime(const boost::posix_time::ptime &theTime)
     : NFmiTime(theTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
 {
-  ConstructMetTime(1);
+  try
+  {
+    ConstructMetTime(1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -70,13 +85,20 @@ NFmiMetTime::NFmiMetTime(const boost::posix_time::ptime &theTime)
 
 boost::posix_time::ptime NFmiMetTime::PosixTime() const
 {
-  boost::gregorian::date date(GetYear(), GetMonth(), GetDay());
+  try
+  {
+    boost::gregorian::date date(GetYear(), GetMonth(), GetDay());
 
-  boost::posix_time::ptime utc(date,
-                               boost::posix_time::hours(GetHour()) +
-                                   boost::posix_time::minutes(GetMin()) +
-                                   boost::posix_time::seconds(GetSec()));
-  return utc;
+    boost::posix_time::ptime utc(date,
+                                 boost::posix_time::hours(GetHour()) +
+                                     boost::posix_time::minutes(GetMin()) +
+                                     boost::posix_time::seconds(GetSec()));
+    return utc;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -88,16 +110,30 @@ boost::posix_time::ptime NFmiMetTime::PosixTime() const
 NFmiMetTime::NFmiMetTime(const boost::local_time::local_date_time &theLocalTime)
     : NFmiTime(theLocalTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
 {
-  ConstructMetTime(1);
+  try
+  {
+    ConstructMetTime(1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiMetTime NFmiMetTime::now()
 {
-  NFmiTime wallClock;
-  NFmiMetTime timeStamp(wallClock.UTCTime());
-  timeStamp.SetMin(wallClock.GetMin());
-  timeStamp.SetSec(wallClock.GetSec());
-  return timeStamp;
+  try
+  {
+    NFmiTime wallClock;
+    NFmiMetTime timeStamp(wallClock.UTCTime());
+    timeStamp.SetMin(wallClock.GetMin());
+    timeStamp.SetSec(wallClock.GetSec());
+    return timeStamp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -109,12 +145,19 @@ NFmiMetTime NFmiMetTime::now()
 
 bool NFmiMetTime::IsEqual(const NFmiSortable &aFmiTest) const
 {
-  if (itsNegativeRange || itsPositiveRange)
+  try
   {
-    long diff = DifferenceInMinutes(*static_cast<const NFmiTime *>(&aFmiTest));
-    return diff <= itsNegativeRange && (-diff) <= itsPositiveRange;
+    if (itsNegativeRange || itsPositiveRange)
+    {
+      long diff = DifferenceInMinutes(*static_cast<const NFmiTime *>(&aFmiTest));
+      return diff <= itsNegativeRange && (-diff) <= itsPositiveRange;
+    }
+    return NFmiTime::IsEqual(aFmiTest);
   }
-  return NFmiTime::IsEqual(aFmiTest);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -130,14 +173,21 @@ bool NFmiMetTime::IsEqual(const NFmiSortable &aFmiTest) const
 
 NFmiMetTime &NFmiMetTime::operator=(const NFmiMetTime &aTime)
 {
-  if (&aTime != this)
+  try
   {
-    NFmiTime::operator=(aTime);                     // retain present time step
-    fTimeStepInMinutes = aTime.fTimeStepInMinutes;  // Persa korjasi Bug'in
-    itsNegativeRange = aTime.itsNegativeRange;
-    itsPositiveRange = aTime.itsPositiveRange;
+    if (&aTime != this)
+    {
+      NFmiTime::operator=(aTime);                     // retain present time step
+      fTimeStepInMinutes = aTime.fTimeStepInMinutes;  // Persa korjasi Bug'in
+      itsNegativeRange = aTime.itsNegativeRange;
+      itsPositiveRange = aTime.itsPositiveRange;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -150,11 +200,19 @@ NFmiMetTime &NFmiMetTime::operator=(const NFmiMetTime &aTime)
 // ----------------------------------------------------------------------
 std::ostream &NFmiMetTime::Write(std::ostream &file) const
 {
-  file << GetYear() << " " << GetMonth() << " " << GetDay() << " " << GetHour() << " " << GetMin()
-       << " " << GetSec();
+  try
+  {
+    file << GetYear() << " " << GetMonth() << " " << GetDay() << " " << GetHour() << " " << GetMin()
+         << " " << GetSec();
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 /*
 std::ostream & NFmiMetTime::Write(std::ostream & oStream) const
 {
@@ -187,11 +245,18 @@ std::ostream & NFmiMetTime::Write(std::ostream & oStream) const
 
 std::istream &NFmiMetTime::Read(std::istream &file)
 {
-  short year, month, day, hour, minutes, seconds;
-  file >> year >> month >> day >> hour >> minutes >> seconds;
-  SetDate(year, month, day);
-  SetTime(hour, minutes, seconds);
-  return file;
+  try
+  {
+    short year, month, day, hour, minutes, seconds;
+    file >> year >> month >> day >> hour >> minutes >> seconds;
+    SetDate(year, month, day);
+    SetTime(hour, minutes, seconds);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -202,8 +267,15 @@ std::istream &NFmiMetTime::Read(std::istream &file)
 
 NFmiMetTime &NFmiMetTime::operator++()
 {
-  NextMetTime(GetTimeStep());
-  return *this;
+  try
+  {
+    NextMetTime(GetTimeStep());
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -214,8 +286,15 @@ NFmiMetTime &NFmiMetTime::operator++()
 
 const NFmiMetTime NFmiMetTime::operator++(int)
 {
-  NextMetTime(GetTimeStep());
-  return *this;
+  try
+  {
+    NextMetTime(GetTimeStep());
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -226,8 +305,15 @@ const NFmiMetTime NFmiMetTime::operator++(int)
 
 NFmiMetTime &NFmiMetTime::operator--()  // prefix++
 {
-  PreviousMetTime(GetTimeStep());
-  return *this;
+  try
+  {
+    PreviousMetTime(GetTimeStep());
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -238,8 +324,15 @@ NFmiMetTime &NFmiMetTime::operator--()  // prefix++
 
 const NFmiMetTime NFmiMetTime::operator--(int)  // postfix++
 {
-  PreviousMetTime(GetTimeStep());
-  return *this;
+  try
+  {
+    PreviousMetTime(GetTimeStep());
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -250,13 +343,20 @@ const NFmiMetTime NFmiMetTime::operator--(int)  // postfix++
 
 void NFmiMetTime::NextMetTime()
 {
-  if (fTimeStepInMinutes.IsDate())
+  try
   {
-    NextMetTime(fTimeStepInMinutes);
+    if (fTimeStepInMinutes.IsDate())
+    {
+      NextMetTime(fTimeStepInMinutes);
+    }
+    else
+    {
+      NextMetTime(GetTimeStep());
+    }
   }
-  else
+  catch (...)
   {
-    NextMetTime(GetTimeStep());
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -268,13 +368,21 @@ void NFmiMetTime::NextMetTime()
 
 void NFmiMetTime::NextMetTime(const long deltaInMinutes)
 {
-  if (deltaInMinutes == 0) return;
+  try
+  {
+    if (deltaInMinutes == 0)
+      return;
 
-  long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
+    long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
 
-  // add observation interval and delete extra minutes (if any)
-  DecodeCompareValue(GetCompareValue() + deltaInMinutes - extraMinutes);
-  SetSec(static_cast<short>(0));
+    // add observation interval and delete extra minutes (if any)
+    DecodeCompareValue(GetCompareValue() + deltaInMinutes - extraMinutes);
+    SetSec(static_cast<short>(0));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -287,24 +395,33 @@ void NFmiMetTime::NextMetTime(const long deltaInMinutes)
 
 void NFmiMetTime::NextMetTime(const NFmiTimePerioid &thePerioid)
 {
-  if (thePerioid.IsDate())
+  try
   {
-    if ((GetMonth() + thePerioid.Month()) > 12)
+    if (thePerioid.IsDate())
     {
-      SetYear(short(GetYear() + thePerioid.Year() + 1));
-      SetMonth(short(GetMonth() + thePerioid.Month() - 12));
-      return;
-    }
-    else
-    {
-      SetYear(short(GetYear() + thePerioid.Year()));
-      SetMonth(short(GetMonth() + thePerioid.Month()));
-      if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
-      return;
-    }
-  }
+      if ((GetMonth() + thePerioid.Month()) > 12)
+      {
+        SetYear(short(GetYear() + thePerioid.Year() + 1));
+        SetMonth(short(GetMonth() + thePerioid.Month() - 12));
+        return;
+      }
+      else
+      {
+        SetYear(short(GetYear() + thePerioid.Year()));
+        SetMonth(short(GetMonth() + thePerioid.Month()));
+        if (thePerioid.Day())
+          DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
 
-  DecodeCompareValue(GetCompareValue() + (thePerioid.Hour() * 60L + thePerioid.Minute()));
+        return;
+      }
+    }
+
+    DecodeCompareValue(GetCompareValue() + (thePerioid.Hour() * 60L + thePerioid.Minute()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -315,18 +432,25 @@ void NFmiMetTime::NextMetTime(const NFmiTimePerioid &thePerioid)
 
 void NFmiMetTime::PreviousMetTime(const long deltaInMinutes)
 {
-  if (deltaInMinutes == 0) return;
+  try
+  {
+    if (deltaInMinutes == 0) return;
 
-  long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
+    long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
 
-  if (extraMinutes > 0)
-    // delete only extra minutes
-    DecodeCompareValue(GetCompareValue() - extraMinutes);
-  else
-    // subtract given interval
-    DecodeCompareValue(GetCompareValue() - deltaInMinutes);
+    if (extraMinutes > 0)
+      // delete only extra minutes
+      DecodeCompareValue(GetCompareValue() - extraMinutes);
+    else
+      // subtract given interval
+      DecodeCompareValue(GetCompareValue() - deltaInMinutes);
 
-  SetSec(static_cast<short>(0));
+    SetSec(static_cast<short>(0));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,24 +461,31 @@ void NFmiMetTime::PreviousMetTime(const long deltaInMinutes)
 
 void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
 {
-  if (thePerioid.IsDate())
+  try
   {
-    if ((GetMonth() - thePerioid.Month()) <= 0)
+    if (thePerioid.IsDate())
     {
-      SetYear(short(GetYear() - thePerioid.Year() - 1));
-      SetMonth(short(12 - GetMonth() + thePerioid.Month()));
-      return;
+      if ((GetMonth() - thePerioid.Month()) <= 0)
+      {
+        SetYear(short(GetYear() - thePerioid.Year() - 1));
+        SetMonth(short(12 - GetMonth() + thePerioid.Month()));
+        return;
+      }
+      else
+      {
+        SetYear(short(GetYear() - thePerioid.Year()));
+        SetMonth(short(GetMonth() - thePerioid.Month()));
+        if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
+        return;
+      }
     }
-    else
-    {
-      SetYear(short(GetYear() - thePerioid.Year()));
-      SetMonth(short(GetMonth() - thePerioid.Month()));
-      if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
-      return;
-    }
-  }
 
-  DecodeCompareValue(GetCompareValue() - thePerioid);
+    DecodeCompareValue(GetCompareValue() - thePerioid);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -365,22 +496,29 @@ void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
 
 void NFmiMetTime::NearestMetTime(const long deltaInMinutes, FmiDirection theDirect)
 {
-  if (deltaInMinutes == 0) return;
-  long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
-
-  if (extraMinutes == 0)  // already a meteorological time!
-    return;               // add vk 940824
-
-  if (theDirect == kForward)
-    NextMetTime(deltaInMinutes);
-  else if (theDirect == kBackward)
-    PreviousMetTime(deltaInMinutes);
-  else
+  try
   {
-    if (extraMinutes < (deltaInMinutes - extraMinutes))
+    if (deltaInMinutes == 0) return;
+    long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
+
+    if (extraMinutes == 0)  // already a meteorological time!
+      return;               // add vk 940824
+
+    if (theDirect == kForward)
+      NextMetTime(deltaInMinutes);
+    else if (theDirect == kBackward)
       PreviousMetTime(deltaInMinutes);
     else
-      NextMetTime(deltaInMinutes);
+    {
+      if (extraMinutes < (deltaInMinutes - extraMinutes))
+        PreviousMetTime(deltaInMinutes);
+      else
+        NextMetTime(deltaInMinutes);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -393,10 +531,18 @@ void NFmiMetTime::NearestMetTime(const long deltaInMinutes, FmiDirection theDire
 
 void NFmiMetTime::SetTimeStep(const long timeStepInMinutes, bool fSetTime, FmiDirection theDirect)
 {
-  fTimeStepInMinutes = timeStepInMinutes;
-  // timestepin voi muuttaa ilman, että aikaa ruvetaan säätämään,
-  // oletusarvoisesti aika säädetään kuten ennenkin
-  if (fSetTime) ConstructMetTime(fTimeStepInMinutes, theDirect);
+  try
+  {
+    fTimeStepInMinutes = timeStepInMinutes;
+    // timestepin voi muuttaa ilman, että aikaa ruvetaan säätämään,
+    // oletusarvoisesti aika säädetään kuten ennenkin
+    if (fSetTime)
+      ConstructMetTime(fTimeStepInMinutes, theDirect);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -407,24 +553,31 @@ void NFmiMetTime::SetTimeStep(const long timeStepInMinutes, bool fSetTime, FmiDi
 
 struct tm NFmiMetTime::GetSystemTime()
 {
-  time_t t;
-  static_cast<void>(time(&t));
-  tm ret;
+  try
+  {
+    time_t t;
+    static_cast<void>(time(&t));
+    tm ret;
 
 #ifdef _MSC_VER
-  // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-  // Closest things available are some what safer (but not thread safe) and with almost same
-  // function
-  // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-  // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
+    // Closest things available are some what safer (but not thread safe) and with almost same
+    // function
+    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
+    // and their return value is success status, not struct tm pointer.
 
-  ::gmtime_s(&ret, &t);
+    ::gmtime_s(&ret, &t);
 
 #else
-  gmtime_r(&t, &ret);
+    gmtime_r(&t, &ret);
 #endif
 
-  return ret;
+    return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -436,10 +589,17 @@ struct tm NFmiMetTime::GetSystemTime()
 
 const NFmiTime NFmiMetTime::UTCTime(float theLongitude) const
 {
-  NFmiTime theTime(*this);
-  theTime.ChangeByHours(static_cast<short>(CalcZoneDifferenceHour(theLongitude)));
+  try
+  {
+    NFmiTime theTime(*this);
+    theTime.ChangeByHours(static_cast<short>(CalcZoneDifferenceHour(theLongitude)));
 
-  return theTime;
+    return theTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -451,10 +611,17 @@ const NFmiTime NFmiMetTime::UTCTime(float theLongitude) const
 
 const NFmiTime NFmiMetTime::LocalTime(float theLongitude) const
 {
-  NFmiTime theTime(*this);
-  theTime.ChangeByHours(static_cast<short>(-CalcZoneDifferenceHour(theLongitude)));
+  try
+  {
+    NFmiTime theTime(*this);
+    theTime.ChangeByHours(static_cast<short>(-CalcZoneDifferenceHour(theLongitude)));
 
-  return theTime;
+    return theTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -466,11 +633,18 @@ const NFmiTime NFmiMetTime::LocalTime(float theLongitude) const
 
 const NFmiTime NFmiMetTime::LocalTime(const NFmiLocation &theLocation) const
 {
-  NFmiTime theTime(*this);
-  theTime.SetLocalPlace(static_cast<float>(theLocation.GetLongitude()));
-  theTime.ChangeByHours(static_cast<short>(-theTime.GetZoneDifferenceHour()));
+  try
+  {
+    NFmiTime theTime(*this);
+    theTime.SetLocalPlace(static_cast<float>(theLocation.GetLongitude()));
+    theTime.ChangeByHours(static_cast<short>(-theTime.GetZoneDifferenceHour()));
 
-  return theTime;
+    return theTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -482,7 +656,14 @@ const NFmiTime NFmiMetTime::LocalTime(const NFmiLocation &theLocation) const
 
 const NFmiTime NFmiMetTime::UTCTime(const NFmiLocation &theLocation) const
 {
-  return UTCTime(static_cast<float>(theLocation.GetLongitude()));
+  try
+  {
+    return UTCTime(static_cast<float>(theLocation.GetLongitude()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -497,46 +678,53 @@ const NFmiTime NFmiMetTime::UTCTime(const NFmiLocation &theLocation) const
 
 const NFmiTime NFmiMetTime::CorrectLocalTime() const
 {
-  // The UTC time
-  struct ::tm utc;
-  utc.tm_sec = GetSec();
-  utc.tm_min = GetMin();
-  utc.tm_hour = GetHour();
-  utc.tm_mday = GetDay();
-  utc.tm_mon = GetMonth() - 1;     // tm months start from 0
-  utc.tm_year = GetYear() - 1900;  // tm years start from 1900
-  utc.tm_wday = -1;
-  utc.tm_yday = -1;
-  utc.tm_isdst = -1;
+  try
+  {
+    // The UTC time
+    struct ::tm utc;
+    utc.tm_sec = GetSec();
+    utc.tm_min = GetMin();
+    utc.tm_hour = GetHour();
+    utc.tm_mday = GetDay();
+    utc.tm_mon = GetMonth() - 1;     // tm months start from 0
+    utc.tm_year = GetYear() - 1900;  // tm years start from 1900
+    utc.tm_wday = -1;
+    utc.tm_yday = -1;
+    utc.tm_isdst = -1;
 
-  ::time_t epochtime = NFmiStaticTime::my_timegm(&utc);
+    ::time_t epochtime = NFmiStaticTime::my_timegm(&utc);
 
-  // As local time
+    // As local time
 
-  struct ::tm local;
+    struct ::tm local;
 
 #ifdef _MSC_VER
-  // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-  // Closest things available are some what safer (but not thread safe) and with almost same
-  // function
-  // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-  // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
+    // Closest things available are some what safer (but not thread safe) and with almost same
+    // function
+    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
+    // and their return value is success status, not struct tm pointer.
 
-  ::localtime_s(&local, &epochtime);
+    ::localtime_s(&local, &epochtime);
 #else
-  ::localtime_r(&epochtime, &local);
+    ::localtime_r(&epochtime, &local);
 #endif
 
-  // And build a NFmiTime from the result
+    // And build a NFmiTime from the result
 
-  NFmiTime out(static_cast<short>(local.tm_year + 1900),
-               static_cast<short>(local.tm_mon + 1),
-               static_cast<short>(local.tm_mday),
-               static_cast<short>(local.tm_hour),
-               static_cast<short>(local.tm_min),
-               static_cast<short>(local.tm_sec));
+    NFmiTime out(static_cast<short>(local.tm_year + 1900),
+                 static_cast<short>(local.tm_mon + 1),
+                 static_cast<short>(local.tm_mday),
+                 static_cast<short>(local.tm_hour),
+                 static_cast<short>(local.tm_min),
+                 static_cast<short>(local.tm_sec));
 
-  return out;
+    return out;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

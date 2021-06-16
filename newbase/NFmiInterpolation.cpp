@@ -19,6 +19,7 @@
 #include "NFmiInterpolation.h"
 #include "NFmiModMeanCalculator.h"
 #include "NFmiPoint.h"
+#include <macgyver/Exception.h>
 #include <set>
 
 namespace NFmiInterpolation
@@ -38,22 +39,28 @@ namespace NFmiInterpolation
 
 double Linear(double theX, double theX1, double theX2, double theY1, double theY2)
 {
-  // Handle special case where X1==X2
-  if (theX1 == theX2)
+  try
   {
-    if (theX != theX1)
-      return kFloatMissing;
-    if (theY1 == kFloatMissing || theY2 == kFloatMissing)
-      return kFloatMissing;
-    if (theY1 != theY2)
-      return kFloatMissing;
-    return theY1;
-  }
-  else
-  {
+    // Handle special case where X1==X2
+    if (theX1 == theX2)
+    {
+      if (theX != theX1)
+        return kFloatMissing;
+      if (theY1 == kFloatMissing || theY2 == kFloatMissing)
+        return kFloatMissing;
+      if (theY1 != theY2)
+        return kFloatMissing;
+      return theY1;
+    }
+
     double factor = (theX - theX1) / (theX2 - theX1);
     return Linear(factor, theY1, theY2);
   }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+
 }
 
 // ----------------------------------------------------------------------
@@ -70,16 +77,14 @@ double Linear(double theX, double theX1, double theX2, double theY1, double theY
 
 double WindVector(double theFactor, double theLeftWV, double theRightWV)
 {
-  if (theLeftWV == kFloatMissing)
+  try
   {
-    return (theFactor == 1 ? theRightWV : kFloatMissing);
-  }
-  if (theRightWV == kFloatMissing)
-  {
-    return (theFactor == 0 ? theLeftWV : kFloatMissing);
-  }
-  else
-  {
+    if (theLeftWV == kFloatMissing)
+      return (theFactor == 1 ? theRightWV : kFloatMissing);
+
+    if (theRightWV == kFloatMissing)
+      return (theFactor == 0 ? theLeftWV : kFloatMissing);
+
     double leftWD = (static_cast<int>(theLeftWV) % 100) * 10.;
     auto leftWS = static_cast<double>(static_cast<int>(theLeftWV) / 100);
     double rightWD = (static_cast<int>(theRightWV) % 100) * 10.;
@@ -93,8 +98,12 @@ double WindVector(double theFactor, double theLeftWV, double theRightWV)
 
     if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
       return round(wsInterp) * 100 + round(wdInterp / 10.);
-    else
-      return kFloatMissing;
+
+    return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -105,48 +114,55 @@ double WindVector(double theX,
                   double theBottomLeft,
                   double theBottomRight)
 {
-  double dx = theX;
-  double dy = theY;
-
-  if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+  try
   {
-    double blWD = (static_cast<int>(theBottomLeft) % 100) * 10.;
-    auto blWS = static_cast<double>(static_cast<int>(theBottomLeft) / 100);
-    double brWD = (static_cast<int>(theBottomRight) % 100) * 10.;
-    auto brWS = static_cast<double>(static_cast<int>(theBottomRight) / 100);
-    double tlWD = (static_cast<int>(theTopLeft) % 100) * 10.;
-    auto tlWS = static_cast<double>(static_cast<int>(theTopLeft) / 100);
-    double trWD = (static_cast<int>(theTopRight) % 100) * 10.;
-    auto trWS = static_cast<double>(static_cast<int>(theTopRight) / 100);
+    double dx = theX;
+    double dy = theY;
 
-    NFmiInterpolation::WindInterpolator windInterpolator;
-    windInterpolator.operator()(blWS, blWD, (1 - dx) * (1 - dy));
-    windInterpolator.operator()(brWS, brWD, dx *(1 - dy));
-    windInterpolator.operator()(trWS, trWD, dx *dy);
-    windInterpolator.operator()(tlWS, tlWD, (1 - dx) * dy);
+    if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      double blWD = (static_cast<int>(theBottomLeft) % 100) * 10.;
+      auto blWS = static_cast<double>(static_cast<int>(theBottomLeft) / 100);
+      double brWD = (static_cast<int>(theBottomRight) % 100) * 10.;
+      auto brWS = static_cast<double>(static_cast<int>(theBottomRight) / 100);
+      double tlWD = (static_cast<int>(theTopLeft) % 100) * 10.;
+      auto tlWS = static_cast<double>(static_cast<int>(theTopLeft) / 100);
+      double trWD = (static_cast<int>(theTopRight) % 100) * 10.;
+      auto trWS = static_cast<double>(static_cast<int>(theTopRight) / 100);
 
-    double wdInterp = windInterpolator.Direction();
-    double wsInterp = windInterpolator.Speed();
+      NFmiInterpolation::WindInterpolator windInterpolator;
+      windInterpolator.operator()(blWS, blWD, (1 - dx) * (1 - dy));
+      windInterpolator.operator()(brWS, brWD, dx *(1 - dy));
+      windInterpolator.operator()(trWS, trWD, dx *dy);
+      windInterpolator.operator()(tlWS, tlWD, (1 - dx) * dy);
 
-    if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
-      return round(wsInterp) * 100 + round(wdInterp / 10.);
-    else
-      return kFloatMissing;
+      double wdInterp = windInterpolator.Direction();
+      double wsInterp = windInterpolator.Speed();
+
+      if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
+        return round(wsInterp) * 100 + round(wdInterp / 10.);
+      else
+        return kFloatMissing;
+    }
+
+    // Grid cell edges
+
+    if (dy == 0)
+      return WindVector(dx, theBottomLeft, theBottomRight);
+    if (dy == 1)
+      return WindVector(dx, theTopLeft, theTopRight);
+    if (dx == 0)
+      return WindVector(dy, theBottomLeft, theTopLeft);
+    if (dx == 1)
+      return WindVector(dy, theBottomRight, theTopRight);
+
+    return kFloatMissing;
   }
-
-  // Grid cell edges
-
-  if (dy == 0)
-    return WindVector(dx, theBottomLeft, theBottomRight);
-  if (dy == 1)
-    return WindVector(dx, theTopLeft, theTopRight);
-  if (dx == 0)
-    return WindVector(dy, theBottomLeft, theTopLeft);
-  if (dx == 1)
-    return WindVector(dy, theBottomRight, theTopRight);
-
-  return kFloatMissing;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -162,15 +178,20 @@ double WindVector(double theX,
 
 double Linear(double theFactor, double theLeft, double theRight)
 {
-  if (theLeft == kFloatMissing)
+  try
   {
-    return (theFactor == 1 ? theRight : kFloatMissing);
+    if (theLeft == kFloatMissing)
+      return (theFactor == 1 ? theRight : kFloatMissing);
+
+    if (theRight == kFloatMissing)
+      return (theFactor == 0 ? theLeft : kFloatMissing);
+
+    return (1 - theFactor) * theLeft + theFactor * theRight;
   }
-  if (theRight == kFloatMissing)
+  catch (...)
   {
-    return (theFactor == 0 ? theLeft : kFloatMissing);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return (1 - theFactor) * theLeft + theFactor * theRight;
 }
 
 // ----------------------------------------------------------------------
@@ -190,21 +211,26 @@ double Linear(double theFactor, double theLeft, double theRight)
 double ModLinear(
     double theX, double theX1, double theX2, double theY1, double theY2, unsigned int theModulo)
 {
-  // Handle special case where X1==X2
-  if (theX1 == theX2)
+  try
   {
-    if (theX != theX1)
-      return kFloatMissing;
-    if (theY1 == kFloatMissing || theY2 == kFloatMissing)
-      return kFloatMissing;
-    if (theY1 != theY2)
-      return kFloatMissing;
-    return theY1;
-  }
-  else
-  {
+    // Handle special case where X1==X2
+    if (theX1 == theX2)
+    {
+      if (theX != theX1)
+        return kFloatMissing;
+      if (theY1 == kFloatMissing || theY2 == kFloatMissing)
+        return kFloatMissing;
+      if (theY1 != theY2)
+        return kFloatMissing;
+      return theY1;
+    }
+
     double factor = (theX - theX1) / (theX2 - theX1);
     return ModLinear(factor, theY1, theY2, theModulo);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -222,20 +248,23 @@ double ModLinear(
 
 double ModLinear(double theFactor, double theLeft, double theRight, unsigned int theModulo)
 {
-  if (theLeft == kFloatMissing)
+  try
   {
-    return (theFactor == 1 ? theRight : kFloatMissing);
+    if (theLeft == kFloatMissing)
+      return (theFactor == 1 ? theRight : kFloatMissing);
+
+    if (theRight == kFloatMissing)
+      return (theFactor == 0 ? theLeft : kFloatMissing);
+
+    NFmiModMeanCalculator calculator(static_cast<float>(theModulo));
+    calculator(static_cast<float>(theLeft), static_cast<float>(1 - theFactor));
+    calculator(static_cast<float>(theRight), static_cast<float>(theFactor));
+    return calculator();
   }
-  if (theRight == kFloatMissing)
+  catch (...)
   {
-    return (theFactor == 0 ? theLeft : kFloatMissing);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  NFmiModMeanCalculator calculator(static_cast<float>(theModulo));
-
-  calculator(static_cast<float>(theLeft), static_cast<float>(1 - theFactor));
-  calculator(static_cast<float>(theRight), static_cast<float>(theFactor));
-  return calculator();
 }
 
 // ----------------------------------------------------------------------
@@ -263,65 +292,72 @@ double BiLinear(double theX,
                 double theBottomLeft,
                 double theBottomRight)
 {
-  double dx = theX;
-  double dy = theY;
-
-  if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+  try
   {
-    return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
-            (1 - dx) * dy * theTopLeft + dx * dy * theTopRight);
-  }
+    double dx = theX;
+    double dy = theY;
 
-  // Grid cell edges
+    if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
+              (1 - dx) * dy * theTopLeft + dx * dy * theTopRight);
+    }
 
-  if (dy == 0)
-    return Linear(dx, theBottomLeft, theBottomRight);
-  if (dy == 1)
-    return Linear(dx, theTopLeft, theTopRight);
-  if (dx == 0)
-    return Linear(dy, theBottomLeft, theTopLeft);
-  if (dx == 1)
-    return Linear(dy, theBottomRight, theTopRight);
+    // Grid cell edges
 
-  // If only one corner is missing, interpolate within
-  // the triangle formed by the three points, AND now
-  // also outside it on the other triangle (little extrapolation).
+    if (dy == 0)
+      return Linear(dx, theBottomLeft, theBottomRight);
+    if (dy == 1)
+      return Linear(dx, theTopLeft, theTopRight);
+    if (dx == 0)
+      return Linear(dy, theBottomLeft, theTopLeft);
+    if (dx == 1)
+      return Linear(dy, theBottomRight, theTopRight);
 
-  if (theTopLeft == kFloatMissing && theTopRight != kFloatMissing &&
-      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    double wsum = (dx * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
-    return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
-            dx * dy * theTopRight) /
-           wsum;
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    double wsum = ((1 - dx) * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
-    return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
-            (1 - dx) * dy * theTopLeft) /
-           wsum;
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-           theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    double wsum = ((1 - dx) * dy + dx * dy + dx * (1 - dy));
-    return (dx * (1 - dy) * theBottomRight + (1 - dx) * dy * theTopLeft + dx * dy * theTopRight) /
-           wsum;
-    ;
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
-  {
-    double wsum = ((1 - dx) * (1 - dy) + (1 - dx) * dy + dx * dy);
-    return ((1 - dx) * (1 - dy) * theBottomLeft + (1 - dx) * dy * theTopLeft +
-            dx * dy * theTopRight) /
-           wsum;
-  }
-  else
+    // If only one corner is missing, interpolate within
+    // the triangle formed by the three points, AND now
+    // also outside it on the other triangle (little extrapolation).
+
+    if (theTopLeft == kFloatMissing && theTopRight != kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      double wsum = (dx * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
+      return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
+              dx * dy * theTopRight) /
+             wsum;
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+             theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      double wsum = ((1 - dx) * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
+      return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
+              (1 - dx) * dy * theTopLeft) /
+             wsum;
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+             theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      double wsum = ((1 - dx) * dy + dx * dy + dx * (1 - dy));
+      return (dx * (1 - dy) * theBottomRight + (1 - dx) * dy * theTopLeft + dx * dy * theTopRight) /
+             wsum;
+      ;
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+             theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
+    {
+      double wsum = ((1 - dx) * (1 - dy) + (1 - dx) * dy + dx * dy);
+      return ((1 - dx) * (1 - dy) * theBottomLeft + (1 - dx) * dy * theTopLeft +
+              dx * dy * theTopRight) /
+             wsum;
+    }
+
     return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 class PointData
@@ -347,10 +383,17 @@ PointData CalcPointData(const NFmiPoint &referencePoint,
                         FmiDirection corner,
                         double value)
 {
-  double distX = referencePoint.X() - cornerPoint.X();
-  double distY = referencePoint.Y() - cornerPoint.Y();
-  double distance = ::sqrt(distX * distX + distY * distY);
-  return PointData(corner, value, distance);
+  try
+  {
+    double distX = referencePoint.X() - cornerPoint.X();
+    double distY = referencePoint.Y() - cornerPoint.Y();
+    double distance = ::sqrt(distX * distX + distY * distY);
+    return PointData(corner, value, distance);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -377,20 +420,27 @@ double NearestNonMissing(double theX,
                          double theBottomLeft,
                          double theBottomRight)
 {
-  NFmiPoint referencePoint(theX, theY);
-  std::multiset<PointData> sortedPointValues;
-  sortedPointValues.insert(
-      CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
-  sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
-  sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
-  sortedPointValues.insert(
-      CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
-  for (const auto &pointData : sortedPointValues)
+  try
   {
-    if (pointData.value_ != kFloatMissing)
-      return pointData.value_;
+    NFmiPoint referencePoint(theX, theY);
+    std::multiset<PointData> sortedPointValues;
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
+    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
+    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
+    for (const auto &pointData : sortedPointValues)
+    {
+      if (pointData.value_ != kFloatMissing)
+        return pointData.value_;
+    }
+    return kFloatMissing;
   }
-  return kFloatMissing;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -417,15 +467,22 @@ double NearestPoint(double theX,
                     double theBottomLeft,
                     double theBottomRight)
 {
-  NFmiPoint referencePoint(theX, theY);
-  std::multiset<PointData> sortedPointValues;
-  sortedPointValues.insert(
-      CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
-  sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
-  sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
-  sortedPointValues.insert(
-      CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
-  return sortedPointValues.begin()->value_;
+  try
+  {
+    NFmiPoint referencePoint(theX, theY);
+    std::multiset<PointData> sortedPointValues;
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
+    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
+    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
+    return sortedPointValues.begin()->value_;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -453,21 +510,28 @@ NFmiPoint BiLinear(double theX,
                    const NFmiPoint &theBottomLeft,
                    const NFmiPoint &theBottomRight)
 {
-  const auto dx = theX;
-  const auto dy = theY;
-  const auto xd = 1 - dx;
-  const auto yd = 1 - dy;
-  const auto bottomleft = xd * yd;
-  const auto bottomright = dx * yd;
-  const auto topleft = xd * dy;
-  const auto topright = dx * dy;
+  try
+  {
+    const auto dx = theX;
+    const auto dy = theY;
+    const auto xd = 1 - dx;
+    const auto yd = 1 - dy;
+    const auto bottomleft = xd * yd;
+    const auto bottomright = dx * yd;
+    const auto topleft = xd * dy;
+    const auto topright = dx * dy;
 
-  const auto x = bottomleft * theBottomLeft.X() + bottomright * theBottomRight.X() +
-                 topleft * theTopLeft.X() + topright * theTopRight.X();
-  const auto y = bottomleft * theBottomLeft.Y() + bottomright * theBottomRight.Y() +
-                 topleft * theTopLeft.Y() + topright * theTopRight.Y();
+    const auto x = bottomleft * theBottomLeft.X() + bottomright * theBottomRight.X() +
+                   topleft * theTopLeft.X() + topright * theTopRight.X();
+    const auto y = bottomleft * theBottomLeft.Y() + bottomright * theBottomRight.Y() +
+                   topleft * theTopLeft.Y() + topright * theTopRight.Y();
 
-  return NFmiPoint(x, y);
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -497,78 +561,85 @@ double ModBiLinear(double theX,
                    double theBottomRight,
                    unsigned int theModulo)
 {
-  NFmiModMeanCalculator calculator(static_cast<float>(theModulo));
-
-  double dx = theX;
-  double dy = theY;
-
-  if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+  try
   {
-    calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
-    calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
-    calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
-    calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
-    return calculator();
-  }
+    NFmiModMeanCalculator calculator(static_cast<float>(theModulo));
 
-  // Grid cell edges
+    double dx = theX;
+    double dy = theY;
 
-  if (dy == 0)
-    return ModLinear(dx, theBottomLeft, theBottomRight, theModulo);
-  if (dy == 1)
-    return ModLinear(dx, theTopLeft, theTopRight, theModulo);
-  if (dx == 0)
-    return ModLinear(dy, theBottomLeft, theTopLeft, theModulo);
-  if (dx == 1)
-    return ModLinear(dy, theBottomRight, theTopRight, theModulo);
+    if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
+      calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
+      calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
+      calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
+      return calculator();
+    }
 
-  // If only one corner is missing, interpolate within
-  // the triangle formed by the three points, but not
-  // outside it.
+    // Grid cell edges
 
-  if (theTopLeft == kFloatMissing && theTopRight != kFloatMissing &&
-      theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    if (dx < dy)
-      return kFloatMissing;
-    calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
-    calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
-    calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
-    return calculator();
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    if (1 - dx < dy)
-      return kFloatMissing;
-    calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
-    calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
-    calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
-    return calculator();
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-           theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
-  {
-    if (1 - dx > dy)
-      return kFloatMissing;
-    calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
-    calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
-    calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
-    return calculator();
-  }
-  else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
-           theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
-  {
-    if (dx > dy)
-      return kFloatMissing;
-    calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
-    calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
-    calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
-    return calculator();
-  }
-  else
+    if (dy == 0)
+      return ModLinear(dx, theBottomLeft, theBottomRight, theModulo);
+    if (dy == 1)
+      return ModLinear(dx, theTopLeft, theTopRight, theModulo);
+    if (dx == 0)
+      return ModLinear(dy, theBottomLeft, theTopLeft, theModulo);
+    if (dx == 1)
+      return ModLinear(dy, theBottomRight, theTopRight, theModulo);
+
+    // If only one corner is missing, interpolate within
+    // the triangle formed by the three points, but not
+    // outside it.
+
+    if (theTopLeft == kFloatMissing && theTopRight != kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      if (dx < dy)
+        return kFloatMissing;
+      calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
+      calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
+      calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
+      return calculator();
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+             theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      if (1 - dx < dy)
+        return kFloatMissing;
+      calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
+      calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
+      calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
+      return calculator();
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+             theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
+    {
+      if (1 - dx > dy)
+        return kFloatMissing;
+      calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
+      calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
+      calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
+      return calculator();
+    }
+    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+             theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
+    {
+      if (dx > dy)
+        return kFloatMissing;
+      calculator(static_cast<float>(theBottomLeft), static_cast<float>((1 - dx) * (1 - dy)));
+      calculator(static_cast<float>(theTopLeft), static_cast<float>((1 - dx) * dy));
+      calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
+      return calculator();
+    }
+
     return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -596,13 +667,20 @@ WindInterpolator::WindInterpolator()
 
 void WindInterpolator::Reset()
 {
-  itsCount = 0;
-  itsSpeedSum = 0;
-  itsSpeedSumX = 0;
-  itsSpeedSumY = 0;
-  itsWeightSum = 0;
-  itsBestDirection = 0;
-  itsBestWeight = 0;
+  try
+  {
+    itsCount = 0;
+    itsSpeedSum = 0;
+    itsSpeedSumX = 0;
+    itsSpeedSumY = 0;
+    itsWeightSum = 0;
+    itsBestDirection = 0;
+    itsBestWeight = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -613,28 +691,35 @@ void WindInterpolator::Reset()
 
 void WindInterpolator::operator()(double theSpeed, double theDirection, double theWeight)
 {
-  if (theSpeed == kFloatMissing || theDirection == kFloatMissing || theWeight <= 0)
-    return;
-
-  if (itsCount == 0 || theWeight > itsBestWeight)
+  try
   {
-    itsBestDirection = theDirection;
-    itsBestWeight = theWeight;
+    if (theSpeed == kFloatMissing || theDirection == kFloatMissing || theWeight <= 0)
+      return;
+
+    if (itsCount == 0 || theWeight > itsBestWeight)
+    {
+      itsBestDirection = theDirection;
+      itsBestWeight = theWeight;
+    }
+
+    ++itsCount;
+
+    itsWeightSum += theWeight;
+
+    itsSpeedSum += theWeight * theSpeed;
+
+    // Note that wind direction is measured against the Y-axis,
+    // not the X-axis. Hence sin and cos are not in the usual
+    // order.
+
+    double dir = FmiRad(theDirection);
+    itsSpeedSumX += theWeight * cos(dir);
+    itsSpeedSumY += theWeight * sin(dir);
   }
-
-  ++itsCount;
-
-  itsWeightSum += theWeight;
-
-  itsSpeedSum += theWeight * theSpeed;
-
-  // Note that wind direction is measured against the Y-axis,
-  // not the X-axis. Hence sin and cos are not in the usual
-  // order.
-
-  double dir = FmiRad(theDirection);
-  itsSpeedSumX += theWeight * cos(dir);
-  itsSpeedSumY += theWeight * sin(dir);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -650,10 +735,17 @@ void WindInterpolator::operator()(double theSpeed, double theDirection, double t
 
 double WindInterpolator::Speed() const
 {
-  if (itsCount == 0 || itsWeightSum == 0)
-    return kFloatMissing;
+  try
+  {
+    if (itsCount == 0 || itsWeightSum == 0)
+      return kFloatMissing;
 
-  return itsSpeedSum / itsWeightSum;
+    return itsSpeedSum / itsWeightSum;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -667,25 +759,32 @@ double WindInterpolator::Speed() const
 
 double WindInterpolator::Direction() const
 {
-  if (itsCount == 0 || itsWeightSum == 0)
-    return kFloatMissing;
+  try
+  {
+    if (itsCount == 0 || itsWeightSum == 0)
+      return kFloatMissing;
 
-  double x = itsSpeedSumX / itsWeightSum;
-  double y = itsSpeedSumY / itsWeightSum;
+    double x = itsSpeedSumX / itsWeightSum;
+    double y = itsSpeedSumY / itsWeightSum;
 
-  // If there is almost exact cancellation, return best
-  // weighted direction instead.
+    // If there is almost exact cancellation, return best
+    // weighted direction instead.
 
-  if (sqrt(x * x + y * y) < 0.01)
-    return itsBestDirection;
+    if (sqrt(x * x + y * y) < 0.01)
+      return itsBestDirection;
 
-  // Otherwise use the 2D mean
+    // Otherwise use the 2D mean
 
-  double dir = atan2(y, x);
-  dir = FmiDeg(dir);
-  if (dir < 0)
-    dir += 360;
-  return dir;
+    double dir = atan2(y, x);
+    dir = FmiDeg(dir);
+    if (dir < 0)
+      dir += 360;
+    return dir;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiInterpolation
