@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------
 
 #include "NFmiVPlaceDescriptor.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -13,7 +14,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiVPlaceDescriptor::~NFmiVPlaceDescriptor() { Destroy(); }
+NFmiVPlaceDescriptor::~NFmiVPlaceDescriptor()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -32,9 +45,16 @@ NFmiVPlaceDescriptor::NFmiVPlaceDescriptor() : itsLevelBag(nullptr), itsActivity
 NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(NFmiLevelBag &theLevelBag)
     : itsLevelBag(new NFmiLevelBag(theLevelBag)), itsActivity(nullptr)
 {
-  itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
-  for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
-    itsActivity[i] = true;
+  try
+  {
+    itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
+    for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -52,13 +72,20 @@ NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor &theVPlace
                       : nullptr),
       itsActivity(nullptr)
 {
-  if (itsLevelBag)
+  try
   {
-    itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
-    for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
+    if (itsLevelBag)
     {
-      itsActivity[i] = true;
+      itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
+      for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
+      {
+        itsActivity[i] = true;
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -70,15 +97,22 @@ NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor &theVPlace
 
 void NFmiVPlaceDescriptor::Destroy()
 {
-  if (itsActivity)
+  try
   {
-    delete[] static_cast<bool *>(itsActivity);
-    itsActivity = nullptr;
+    if (itsActivity)
+    {
+      delete[] static_cast<bool *>(itsActivity);
+      itsActivity = nullptr;
+    }
+    if (itsLevelBag)
+    {
+      delete itsLevelBag;
+      itsLevelBag = nullptr;
+    }
   }
-  if (itsLevelBag)
+  catch (...)
   {
-    delete itsLevelBag;
-    itsLevelBag = nullptr;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -90,10 +124,17 @@ void NFmiVPlaceDescriptor::Destroy()
 
 bool NFmiVPlaceDescriptor::Next()
 {
-  if (itsLevelBag)
-    return itsLevelBag->Next();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->Next();
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -104,10 +145,17 @@ bool NFmiVPlaceDescriptor::Next()
 
 bool NFmiVPlaceDescriptor::Previous()  // 15.1.1997/Marko
 {
-  if (itsLevelBag)
-    return itsLevelBag->Previous();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->Previous();
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -118,10 +166,17 @@ bool NFmiVPlaceDescriptor::Previous()  // 15.1.1997/Marko
 
 NFmiLevel *NFmiVPlaceDescriptor::Level() const
 {
-  if (itsLevelBag)
-    return itsLevelBag->Level();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->Level();
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -133,10 +188,17 @@ NFmiLevel *NFmiVPlaceDescriptor::Level() const
 
 NFmiLevel *NFmiVPlaceDescriptor::Level(unsigned long theIndex) const
 {
-  if (itsLevelBag)
-    return itsLevelBag->Level(theIndex);
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->Level(theIndex);
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -147,10 +209,17 @@ NFmiLevel *NFmiVPlaceDescriptor::Level(unsigned long theIndex) const
 
 NFmiLevel *NFmiVPlaceDescriptor::LevelMinValue() const
 {
-  if (itsLevelBag)
-    return itsLevelBag->LevelMinValue();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->LevelMinValue();
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -161,10 +230,17 @@ NFmiLevel *NFmiVPlaceDescriptor::LevelMinValue() const
 
 NFmiLevel *NFmiVPlaceDescriptor::LevelMaxValue() const
 {
-  if (itsLevelBag)
-    return itsLevelBag->LevelMaxValue();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->LevelMaxValue();
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -177,19 +253,26 @@ NFmiLevel *NFmiVPlaceDescriptor::LevelMaxValue() const
 
 bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
 {
-  bool tempBoolean;
-  itsLevelBag->Reset();
-
-  do
+  try
   {
-    tempBoolean = itsLevelBag->Next();
-    if (!tempBoolean) break;
-  } while (!(*itsLevelBag->Level() == theLevel));
+    bool tempBoolean;
+    itsLevelBag->Reset();
 
-  if (tempBoolean)
-    return true;
-  else
+    do
+    {
+      tempBoolean = itsLevelBag->Next();
+      if (!tempBoolean) break;
+    } while (!(*itsLevelBag->Level() == theLevel));
+
+    if (tempBoolean)
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -200,12 +283,21 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
 
 void NFmiVPlaceDescriptor::LevelBag(NFmiLevelBag &theLevelBag)
 {
-  if (itsLevelBag) Destroy();
-  itsLevelBag = new NFmiLevelBag(theLevelBag);
+  try
+  {
+    if (itsLevelBag)
+      Destroy();
 
-  itsActivity = new bool[Size()];
-  for (int i = 0; i < static_cast<int>(Size()); i++)
-    itsActivity[i] = true;
+    itsLevelBag = new NFmiLevelBag(theLevelBag);
+
+    itsActivity = new bool[Size()];
+    for (int i = 0; i < static_cast<int>(Size()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -216,10 +308,17 @@ void NFmiVPlaceDescriptor::LevelBag(NFmiLevelBag &theLevelBag)
 
 unsigned long NFmiVPlaceDescriptor::Index() const
 {
-  if (itsLevelBag)
-    return itsLevelBag->CurrentIndex();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->CurrentIndex();
+
     return static_cast<unsigned long>(-1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -230,10 +329,17 @@ unsigned long NFmiVPlaceDescriptor::Index() const
 
 unsigned long NFmiVPlaceDescriptor::Size() const
 {
-  if (itsLevelBag)
-    return itsLevelBag->GetSize();
-  else
+  try
+  {
+    if (itsLevelBag)
+      return itsLevelBag->GetSize();
+
     return static_cast<unsigned long>(0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -244,10 +350,17 @@ unsigned long NFmiVPlaceDescriptor::Size() const
 
 bool NFmiVPlaceDescriptor::IsLevel() const
 {
-  if (itsLevelBag)
-    return true;
-  else
+  try
+  {
+    if (itsLevelBag)
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -258,9 +371,19 @@ bool NFmiVPlaceDescriptor::IsLevel() const
 
 bool NFmiVPlaceDescriptor::NextActive()
 {
-  while (Next())
-    if (IsActive()) return true;
-  return false;
+  try
+  {
+    while (Next())
+    {
+      if (IsActive())
+        return true;
+    }
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -272,9 +395,16 @@ bool NFmiVPlaceDescriptor::NextActive()
 
 bool NFmiVPlaceDescriptor::SetActivity(bool theActivityState)
 {
-  bool temp = itsActivity[Index()];
-  itsActivity[Index()] = theActivityState;
-  return temp;
+  try
+  {
+    bool temp = itsActivity[Index()];
+    itsActivity[Index()] = theActivityState;
+    return temp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -289,19 +419,26 @@ bool NFmiVPlaceDescriptor::SetActivity(bool theActivityState)
 NFmiVPlaceDescriptor &NFmiVPlaceDescriptor::operator=(
     const NFmiVPlaceDescriptor &theVPlaceDescriptor)
 {
-  Destroy();
-
-  itsLevelBag = theVPlaceDescriptor.itsLevelBag ? new NFmiLevelBag(*theVPlaceDescriptor.itsLevelBag)
-                                                : nullptr;
-
-  if (itsLevelBag)
+  try
   {
-    itsActivity = new bool[itsLevelBag->GetSize()];
-    for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
-      itsActivity[i] = theVPlaceDescriptor.itsActivity[i];
-  }
+    Destroy();
 
-  return *this;
+    itsLevelBag = theVPlaceDescriptor.itsLevelBag ? new NFmiLevelBag(*theVPlaceDescriptor.itsLevelBag)
+                                                  : nullptr;
+
+    if (itsLevelBag)
+    {
+      itsActivity = new bool[itsLevelBag->GetSize()];
+      for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
+        itsActivity[i] = theVPlaceDescriptor.itsActivity[i];
+    }
+
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -315,10 +452,20 @@ NFmiVPlaceDescriptor &NFmiVPlaceDescriptor::operator=(
 
 bool NFmiVPlaceDescriptor::operator==(const NFmiVPlaceDescriptor &theVPlaceDescriptor) const
 {
-  bool retVal = false;
-  if (this->itsLevelBag && theVPlaceDescriptor.itsLevelBag)
-    if (*(this->itsLevelBag) == *(theVPlaceDescriptor.itsLevelBag)) retVal = true;
-  return retVal;
+  try
+  {
+    bool retVal = false;
+    if (this->itsLevelBag && theVPlaceDescriptor.itsLevelBag)
+    {
+      if (*(this->itsLevelBag) == *(theVPlaceDescriptor.itsLevelBag))
+        retVal = true;
+    }
+    return retVal;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -332,16 +479,23 @@ bool NFmiVPlaceDescriptor::operator==(const NFmiVPlaceDescriptor &theVPlaceDescr
 
 std::ostream &NFmiVPlaceDescriptor::Write(std::ostream &file) const
 {
-  if (itsLevelBag)
-    file << *itsLevelBag;
-  else
+  try
   {
-    // Huom: Unixissa suora tulostus hankalaa, pitää castata objekti
-    //       constiksi jne, hankalampaa lukea.
-    NFmiLevelBag tmp;
-    file << tmp;
+    if (itsLevelBag)
+      file << *itsLevelBag;
+    else
+    {
+      // Huom: Unixissa suora tulostus hankalaa, pitää castata objekti
+      //       constiksi jne, hankalampaa lukea.
+      NFmiLevelBag tmp;
+      file << tmp;
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -355,16 +509,23 @@ std::ostream &NFmiVPlaceDescriptor::Write(std::ostream &file) const
 
 std::istream &NFmiVPlaceDescriptor::Read(std::istream &file)
 {
-  Destroy();
+  try
+  {
+    Destroy();
 
-  itsLevelBag = new NFmiLevelBag;
-  file >> *itsLevelBag;
+    itsLevelBag = new NFmiLevelBag;
+    file >> *itsLevelBag;
 
-  itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
-  for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
-    itsActivity[i] = true;
+    itsActivity = new bool[static_cast<int>(itsLevelBag->GetSize())];
+    for (int i = 0; i < static_cast<int>(itsLevelBag->GetSize()); i++)
+      itsActivity[i] = true;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -376,7 +537,14 @@ std::istream &NFmiVPlaceDescriptor::Read(std::istream &file)
 
 bool NFmiVPlaceDescriptor::Index(unsigned long theIndex)
 {
-  return itsLevelBag->SetCurrentIndex(theIndex);
+  try
+  {
+    return itsLevelBag->SetCurrentIndex(theIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

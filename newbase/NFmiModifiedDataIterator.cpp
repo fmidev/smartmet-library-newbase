@@ -14,6 +14,7 @@
 
 #include "NFmiModifiedDataIterator.h"
 #include "NFmiInfoModifier.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -49,16 +50,28 @@ NFmiModifiedDataIterator::NFmiModifiedDataIterator(NFmiInfoModifier* theData,
 
 void NFmiModifiedDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  try
+  {
+    if (!theDataModifier)
+      return;
 
-  theDataModifier->Clear();
+    theDataModifier->Clear();
 
-  for (long t = itsDtStart; t <= itsDtEnd; t++)
-    for (long y = itsDyStart; y <= itsDyEnd; y++)
-      for (long x = itsDxStart; x <= itsDxEnd; x++)
+    for (long t = itsDtStart; t <= itsDtEnd; t++)
+    {
+      for (long y = itsDyStart; y <= itsDyEnd; y++)
       {
-        theDataModifier->Calculate(static_cast<float>(itsPrimaryModifier->PeekValue(t, x, y)));
+        for (long x = itsDxStart; x <= itsDxEnd; x++)
+        {
+          theDataModifier->Calculate(static_cast<float>(itsPrimaryModifier->PeekValue(t, x, y)));
+        }
       }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

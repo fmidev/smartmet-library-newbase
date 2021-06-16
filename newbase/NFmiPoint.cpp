@@ -26,6 +26,7 @@
 // ======================================================================
 
 #include "NFmiPoint.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fstream>
 
@@ -42,8 +43,15 @@ const NFmiPoint NFmiPoint::gMissingLatlon = NFmiPoint(kFloatMissing, kFloatMissi
 
 void NFmiPoint::Set(double theX, double theY)
 {
-  itsX = theX;
-  itsY = theY;
+  try
+  {
+    itsX = theX;
+    itsY = theY;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -57,9 +65,16 @@ void NFmiPoint::Set(double theX, double theY)
 
 NFmiPoint& NFmiPoint::operator+=(const NFmiPoint& thePoint)
 {
-  itsX += thePoint.itsX;
-  itsY += thePoint.itsY;
-  return *this;
+  try
+  {
+    itsX += thePoint.itsX;
+    itsY += thePoint.itsY;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -75,9 +90,16 @@ NFmiPoint& NFmiPoint::operator+=(const NFmiPoint& thePoint)
 
 NFmiPoint& NFmiPoint::operator-=(const NFmiPoint& thePoint)
 {
-  itsX -= thePoint.itsX;
-  itsY -= thePoint.itsY;
-  return *this;
+  try
+  {
+    itsX -= thePoint.itsX;
+    itsY -= thePoint.itsY;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -91,9 +113,16 @@ NFmiPoint& NFmiPoint::operator-=(const NFmiPoint& thePoint)
 
 NFmiPoint& NFmiPoint::operator*=(const NFmiPoint& thePoint)
 {
-  itsX *= thePoint.itsX;
-  itsY *= thePoint.itsY;
-  return *this;
+  try
+  {
+    itsX *= thePoint.itsX;
+    itsY *= thePoint.itsY;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -108,9 +137,16 @@ NFmiPoint& NFmiPoint::operator*=(const NFmiPoint& thePoint)
 
 NFmiPoint& NFmiPoint::operator/=(const NFmiPoint& thePoint)
 {
-  itsX /= thePoint.itsX;
-  itsY /= thePoint.itsY;
-  return *this;
+  try
+  {
+    itsX /= thePoint.itsX;
+    itsY /= thePoint.itsY;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //___________________________________________________________
@@ -127,9 +163,16 @@ NFmiPoint& NFmiPoint::operator/=(const NFmiPoint& thePoint)
 
 FmiDirection NFmiPoint::DirectionOfDifference(const NFmiPoint& thePoint) const
 {
-  auto quarterOfOrigin = static_cast<int>(itsY < thePoint.itsY ? kUp : kDown);
-  return FmiDirection(itsX < thePoint.itsX ? quarterOfOrigin | static_cast<int>(kLeft)
-                                           : quarterOfOrigin | static_cast<int>(kRight));
+  try
+  {
+    auto quarterOfOrigin = static_cast<int>(itsY < thePoint.itsY ? kUp : kDown);
+    return FmiDirection(itsX < thePoint.itsX ? quarterOfOrigin | static_cast<int>(kLeft)
+                                             : quarterOfOrigin | static_cast<int>(kRight));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -143,9 +186,16 @@ FmiDirection NFmiPoint::DirectionOfDifference(const NFmiPoint& thePoint) const
 
 std::ostream& NFmiPoint::Write(std::ostream& file) const
 {
-  file << itsX << " ";
-  file << itsY << std::endl;
-  return file;
+  try
+  {
+    file << itsX << " ";
+    file << itsY << std::endl;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -159,9 +209,16 @@ std::ostream& NFmiPoint::Write(std::ostream& file) const
 
 std::istream& NFmiPoint::Read(std::istream& file)
 {
-  file >> itsX;
-  file >> itsY;
-  return file;
+  try
+  {
+    file >> itsX;
+    file >> itsY;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -172,7 +229,14 @@ std::istream& NFmiPoint::Read(std::istream& file)
 
 std::size_t NFmiPoint::HashValue() const
 {
-  std::size_t hash = boost::hash_value(itsX);
-  boost::hash_combine(hash, boost::hash_value(itsY));
-  return hash;
+  try
+  {
+    std::size_t hash = boost::hash_value(itsX);
+    boost::hash_combine(hash, boost::hash_value(itsY));
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

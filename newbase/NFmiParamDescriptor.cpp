@@ -15,6 +15,7 @@
 #include "NFmiParamDescriptor.h"
 #include "NFmiDataDescriptor.h"
 #include "NFmiParamBag.h"
+#include <macgyver/Exception.h>
 #include <cassert>
 
 #include "NFmiVersion.h"
@@ -42,9 +43,16 @@ NFmiParamDescriptor::NFmiParamDescriptor()
 NFmiParamDescriptor::NFmiParamDescriptor(const NFmiParamBag &theParamBag, bool interpolate)
     : itsParamBag(new NFmiParamBag(theParamBag)), itsActivity(nullptr), fInterpolate(interpolate)
 {
-  itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];
-  for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
-    itsActivity[i] = true;
+  try
+  {
+    itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];
+    for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -63,11 +71,18 @@ NFmiParamDescriptor::NFmiParamDescriptor(const NFmiParamDescriptor &theParamDesc
       itsActivity(nullptr),
       fInterpolate(theParamDescriptor.fInterpolate)
 {
-  if (itsParamBag != nullptr)
+  try
   {
-    itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];  // 5.3.1997/Marko
-    for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
-      itsActivity[i] = theParamDescriptor.itsActivity[i];
+    if (itsParamBag != nullptr)
+    {
+      itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];  // 5.3.1997/Marko
+      for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
+        itsActivity[i] = theParamDescriptor.itsActivity[i];
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -79,15 +94,23 @@ NFmiParamDescriptor::NFmiParamDescriptor(const NFmiParamDescriptor &theParamDesc
 
 void NFmiParamDescriptor::Destroy()
 {
-  if (itsActivity != nullptr)
+  try
   {
-    delete[] static_cast<bool *>(itsActivity);
-    itsActivity = nullptr;
+    if (itsActivity != nullptr)
+    {
+      delete[] static_cast<bool *>(itsActivity);
+      itsActivity = nullptr;
+    }
+
+    if (itsParamBag != nullptr)
+    {
+      delete itsParamBag;
+      itsParamBag = nullptr;
+    }
   }
-  if (itsParamBag != nullptr)
+  catch (...)
   {
-    delete itsParamBag;
-    itsParamBag = nullptr;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -100,7 +123,14 @@ void NFmiParamDescriptor::Destroy()
 
 bool NFmiParamDescriptor::Param(const NFmiDataIdent &theDataIdent)
 {
-  return itsParamBag->Current(theDataIdent, true);
+  try
+  {
+    return itsParamBag->Current(theDataIdent, true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -112,7 +142,14 @@ bool NFmiParamDescriptor::Param(const NFmiDataIdent &theDataIdent)
 
 bool NFmiParamDescriptor::Param(const NFmiParam &theParam)
 {
-  return itsParamBag->Current(theParam, true);
+  try
+  {
+    return itsParamBag->Current(theParam, true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -124,7 +161,14 @@ bool NFmiParamDescriptor::Param(const NFmiParam &theParam)
 
 bool NFmiParamDescriptor::Param(FmiParameterName theParam)
 {
-  return itsParamBag->SetCurrent(theParam, false);
+  try
+  {
+    return itsParamBag->SetCurrent(theParam, false);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -138,12 +182,19 @@ bool NFmiParamDescriptor::Param(FmiParameterName theParam)
 
 unsigned long NFmiParamDescriptor::SizeActive() const
 {
-  unsigned long theActiveSize = 0;
+  try
+  {
+    unsigned long theActiveSize = 0;
 
-  for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
-    if (itsActivity[i] == true) theActiveSize++;
+    for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
+      if (itsActivity[i] == true) theActiveSize++;
 
-  return theActiveSize;
+    return theActiveSize;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -156,8 +207,15 @@ unsigned long NFmiParamDescriptor::SizeActive() const
 
 bool NFmiParamDescriptor::SetActivity(bool theActivityState, bool fIgnoreSubParam)
 {
-  // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
-  return itsParamBag->SetCurrentActive(theActivityState == true, fIgnoreSubParam == true);
+  try
+  {
+    // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
+    return itsParamBag->SetCurrentActive(theActivityState == true, fIgnoreSubParam == true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -169,8 +227,15 @@ bool NFmiParamDescriptor::SetActivity(bool theActivityState, bool fIgnoreSubPara
 
 bool NFmiParamDescriptor::SetActivity(bool theActivityState)
 {
-  // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
-  return itsParamBag->SetCurrentActive(theActivityState == true);
+  try
+  {
+    // ei käytetä enää parDesc:in aktiviteetti taulua, vaan antaa parambagin hoitaa homma
+    return itsParamBag->SetCurrentActive(theActivityState == true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -186,7 +251,14 @@ bool NFmiParamDescriptor::SetActivity(bool theActivityState,
                                       unsigned long theIndex,
                                       bool fIgnoreSubParam)
 {
-  return itsParamBag->SetActive(theIndex, theActivityState, fIgnoreSubParam == true);
+  try
+  {
+    return itsParamBag->SetActive(theIndex, theActivityState, fIgnoreSubParam == true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -197,10 +269,17 @@ bool NFmiParamDescriptor::SetActivity(bool theActivityState,
 
 bool NFmiParamDescriptor::NextActive()
 {
-  while (Next())
-    if (IsActive()) return true;
+  try
+  {
+    while (Next())
+      if (IsActive()) return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -212,11 +291,19 @@ bool NFmiParamDescriptor::NextActive()
 
 bool NFmiParamDescriptor::NextActive(bool fIgnoreSubParam)
 {
-  while (Next(fIgnoreSubParam))
-    if (IsActive()) return true;
+  try
+  {
+    while (Next(fIgnoreSubParam))
+      if (IsActive()) return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -229,18 +316,25 @@ bool NFmiParamDescriptor::NextActive(bool fIgnoreSubParam)
 
 NFmiParamDescriptor &NFmiParamDescriptor::operator=(const NFmiParamDescriptor &theParamDescriptor)
 {
-  Destroy();
-
-  itsParamBag =
-      theParamDescriptor.itsParamBag ? new NFmiParamBag(*theParamDescriptor.itsParamBag) : nullptr;
-
-  if (itsParamBag)
+  try
   {
-    itsActivity = new bool[itsParamBag->GetSize()];
-    for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
-      itsActivity[i] = theParamDescriptor.itsActivity[i];
+    Destroy();
+
+    itsParamBag =
+        theParamDescriptor.itsParamBag ? new NFmiParamBag(*theParamDescriptor.itsParamBag) : nullptr;
+
+    if (itsParamBag)
+    {
+      itsActivity = new bool[itsParamBag->GetSize()];
+      for (int i = 0; i < static_cast<int>(itsParamBag->GetSize()); i++)
+        itsActivity[i] = theParamDescriptor.itsActivity[i];
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -254,19 +348,27 @@ NFmiParamDescriptor &NFmiParamDescriptor::operator=(const NFmiParamDescriptor &t
 
 bool NFmiParamDescriptor::operator==(const NFmiParamDescriptor &theParamDescriptor) const
 {
-  bool retVal = false;
-  if (this->Size() == theParamDescriptor.Size())
+  try
   {
-    for (int i = 0; i < static_cast<int>(Size()); i++)
-      if (!(this->itsActivity[i] == theParamDescriptor.itsActivity[i])) return false;
+    bool retVal = false;
+    if (this->Size() == theParamDescriptor.Size())
+    {
+      for (int i = 0; i < static_cast<int>(Size()); i++)
+        if (!(this->itsActivity[i] == theParamDescriptor.itsActivity[i])) return false;
+    }
+    if (this->itsParamBag && theParamDescriptor.itsParamBag)
+    {
+      return ((this->fInterpolate == theParamDescriptor.fInterpolate) &&
+              (*(this->itsParamBag) == *(theParamDescriptor.itsParamBag)));
+    }
+    return retVal;
   }
-  if (this->itsParamBag && theParamDescriptor.itsParamBag)
+  catch (...)
   {
-    return ((this->fInterpolate == theParamDescriptor.fInterpolate) &&
-            (*(this->itsParamBag) == *(theParamDescriptor.itsParamBag)));
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return retVal;
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \param theCombine Undocumented
@@ -276,14 +378,21 @@ bool NFmiParamDescriptor::operator==(const NFmiParamDescriptor &theParamDescript
 
 const NFmiParamDescriptor NFmiParamDescriptor::Combine(const NFmiParamDescriptor &theCombine)
 {
-  if (itsParamBag && theCombine.itsParamBag)
-    return NFmiParamDescriptor(itsParamBag->Combine(*(theCombine).itsParamBag));
-  else if (itsParamBag)
-    return NFmiParamDescriptor(*itsParamBag);
-  else if (theCombine.itsParamBag)
-    return NFmiParamDescriptor(*theCombine.itsParamBag);
-  else
-    return NFmiParamDescriptor();
+  try
+  {
+    if (itsParamBag && theCombine.itsParamBag)
+      return NFmiParamDescriptor(itsParamBag->Combine(*(theCombine).itsParamBag));
+    else if (itsParamBag)
+      return NFmiParamDescriptor(*itsParamBag);
+    else if (theCombine.itsParamBag)
+      return NFmiParamDescriptor(*theCombine.itsParamBag);
+    else
+      return NFmiParamDescriptor();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -297,21 +406,28 @@ const NFmiParamDescriptor NFmiParamDescriptor::Combine(const NFmiParamDescriptor
 
 std::ostream &NFmiParamDescriptor::Write(std::ostream &file) const
 {
-  file << ClassId() << " " << ClassName() << std::endl;
+  try
+  {
+    file << ClassId() << " " << ClassName() << std::endl;
 
-  file << fInterpolate << " "
-       << "0 "
-       << "0 "
-       << "0 " << std::endl;  // Varalla tulevaisuuta varten
+    file << fInterpolate << " "
+         << "0 "
+         << "0 "
+         << "0 " << std::endl;  // Varalla tulevaisuuta varten
 
-  file << *itsParamBag;
+    file << *itsParamBag;
 
-  for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
-    file << itsActivity[i] << " ";
+    for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
+      file << itsActivity[i] << " ";
 
-  file << std::endl;
+    file << std::endl;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -325,36 +441,43 @@ std::ostream &NFmiParamDescriptor::Write(std::ostream &file) const
 
 std::istream &NFmiParamDescriptor::Read(std::istream &file)
 {
-  Destroy();
-
-  unsigned long classIdent;
-  char dirty[30];
-  file >> classIdent >> dirty;
-
-  unsigned long theReserve;
-  unsigned long theInterpolate;
-  file >> theInterpolate >> theReserve >> theReserve >> theReserve;
-  fInterpolate = theInterpolate != 0;
-
-  itsParamBag = new NFmiParamBag;
-
-  file >> *itsParamBag;
-
-  itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];
-  itsParamBag->Reset();
-  for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
+  try
   {
-    // We trust all data to be at least version 6 by now
-    if (DefaultFmiInfoVersion >= 3)
-      file >> itsActivity[i];
-    else
-    {
-      itsParamBag->Next();
-      itsActivity[i] = itsParamBag->Current()->IsDataParam();
-    }
-  }
+    Destroy();
 
-  return file;
+    unsigned long classIdent;
+    char dirty[30];
+    file >> classIdent >> dirty;
+
+    unsigned long theReserve;
+    unsigned long theInterpolate;
+    file >> theInterpolate >> theReserve >> theReserve >> theReserve;
+    fInterpolate = theInterpolate != 0;
+
+    itsParamBag = new NFmiParamBag;
+
+    file >> *itsParamBag;
+
+    itsActivity = new bool[static_cast<int>(itsParamBag->GetSize())];
+    itsParamBag->Reset();
+    for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
+    {
+      // We trust all data to be at least version 6 by now
+      if (DefaultFmiInfoVersion >= 3)
+        file >> itsActivity[i];
+      else
+      {
+        itsParamBag->Next();
+        itsActivity[i] = itsParamBag->Current()->IsDataParam();
+      }
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -367,25 +490,32 @@ std::istream &NFmiParamDescriptor::Read(std::istream &file)
 
 NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSubParam) const
 {
-  // 18.8.2000/Marko lisäsi tarkastuksia.
-  // Paluuarvo on ongelmallinen, koska parambagi voi palauttaa 0 pointterin.
-  // ParamDescriptorinkin pitäisi kai palauttaa pointteri?
-  // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
-  // jos 0-pointteri.
-
-  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
-
-  // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
-  // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
-  // pielessä)
-
-  if (param)
-    return *param;
-  else
+  try
   {
-    // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
-    // jolloin palautetaan 1. parametrin tuottaja
-    return *(itsParamBag->Param(0, fIgnoreSubParam == true));
+    // 18.8.2000/Marko lisäsi tarkastuksia.
+    // Paluuarvo on ongelmallinen, koska parambagi voi palauttaa 0 pointterin.
+    // ParamDescriptorinkin pitäisi kai palauttaa pointteri?
+    // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
+    // jos 0-pointteri.
+
+    NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
+
+    // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
+    // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
+    // pielessä)
+
+    if (param)
+      return *param;
+    else
+    {
+      // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
+      // jolloin palautetaan 1. parametrin tuottaja
+      return *(itsParamBag->Param(0, fIgnoreSubParam == true));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -399,26 +529,33 @@ NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSu
 
 NFmiDataIdent &NFmiParamDescriptor::EditParam(unsigned long theIndex, bool fIgnoreSubParam)
 {
-  // 18.8.2000/Marko lisäsi tarkastuksia.
-  // Paluuarvo on ongelmallinen, koska parambagi voi palauttaa 0 pointterin.
-  // ParamDescriptorinkin pitäisi kai palauttaa pointteri?
-  // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
-  // jos 0-pointteri.
-
-  NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
-
-  // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
-  // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
-  // pielessä)
-
-  if (param)
-    return *param;
-  else
+  try
   {
-    // 28.12.2001/Marko Tämä on hätäviritys virhetilanteeseen.
-    static NFmiParam dummyParam(kFmiBadParameter, "virheparametri, korjaa koodiasi");
-    static NFmiDataIdent dummy(dummyParam);
-    return dummy;
+    // 18.8.2000/Marko lisäsi tarkastuksia.
+    // Paluuarvo on ongelmallinen, koska parambagi voi palauttaa 0 pointterin.
+    // ParamDescriptorinkin pitäisi kai palauttaa pointteri?
+    // Laitoin assertin jolloin ohjelma pysähtyy debug moodissa mutta ei release moodissa
+    // jos 0-pointteri.
+
+    NFmiDataIdent *param = itsParamBag->Param(theIndex, fIgnoreSubParam == true);
+
+    // 28.12.2001/Marko Poistin assertin ja palauttaa nyt virhetilanteessa dummy-dataidentin.
+    // assert(param); // korjaa ohjelmaasi jos se pysähtyy tähän, tämä on vakava virhe (theIndex on
+    // pielessä)
+
+    if (param)
+      return *param;
+    else
+    {
+      // 28.12.2001/Marko Tämä on hätäviritys virhetilanteeseen.
+      static NFmiParam dummyParam(kFmiBadParameter, "virheparametri, korjaa koodiasi");
+      static NFmiDataIdent dummy(dummyParam);
+      return dummy;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -431,7 +568,14 @@ NFmiDataIdent &NFmiParamDescriptor::EditParam(unsigned long theIndex, bool fIgno
 
 bool NFmiParamDescriptor::Index(unsigned long theIndex)
 {
-  return itsParamBag->SetCurrentIndex(theIndex);
+  try
+  {
+    return itsParamBag->SetCurrentIndex(theIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -446,7 +590,14 @@ bool NFmiParamDescriptor::Index(unsigned long theIndex)
 
 bool NFmiParamDescriptor::FindSubParam(const NFmiParam &theParam)
 {
-  return itsParamBag->FindSubParam(theParam);
+  try
+  {
+    return itsParamBag->FindSubParam(theParam);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -458,7 +609,14 @@ bool NFmiParamDescriptor::FindSubParam(const NFmiParam &theParam)
 
 bool NFmiParamDescriptor::FindSubParam(const NFmiDataIdent &theDataIdent)
 {
-  return itsParamBag->FindSubParam(theDataIdent);
+  try
+  {
+    return itsParamBag->FindSubParam(theDataIdent);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

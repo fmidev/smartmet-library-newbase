@@ -64,6 +64,7 @@
 // ======================================================================
 
 #include "NFmiGnomonicArea.h"
+#include <macgyver/Exception.h>
 #include <fmt/format.h>
 #include <cmath>
 
@@ -119,7 +120,14 @@ NFmiGnomonicArea::NFmiGnomonicArea(const NFmiPoint &theBottomLeftLatLon,
                         theTrueLatitude,
                         usePacificView)
 {
-  Init();
+  try
+  {
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -153,19 +161,26 @@ NFmiGnomonicArea::NFmiGnomonicArea(const NFmiPoint &theBottomLeftLatLon,
                         theTrueLatitude)
 
 {
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+  try
+  {
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
-  itsBottomLeftWorldXY =
-      LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
-  itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
-                          itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
+    itsBottomLeftWorldXY =
+        LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
+    itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
+                            itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-  Init(true);
+    Init(true);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
-  // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
+    // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -194,18 +209,25 @@ NFmiGnomonicArea::NFmiGnomonicArea(const double theRadialRange,
                         theCentralLatitude,
                         theTrueLatitude)
 {
-  // Purpose: to create a square bounding the circle of radius theRadialRange
+  try
+  {
+    // Purpose: to create a square bounding the circle of radius theRadialRange
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
 
-  itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
-                          NFmiPoint(itsRadialRange, itsRadialRange));
+    itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
+                            NFmiPoint(itsRadialRange, itsRadialRange));
 
-  Init(true);
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
-  // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    Init(true);
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
+    // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -217,10 +239,17 @@ NFmiGnomonicArea::NFmiGnomonicArea(const double theRadialRange,
 
 double NFmiGnomonicArea::K(const double delta) const
 {
-  double D;
+  try
+  {
+    double D;
 
-  D = DistanceFromPerspectivePointToCenterOfEarth();
-  return kRearth * (D + kRearth) / (D + (kRearth * delta));
+    D = DistanceFromPerspectivePointToCenterOfEarth();
+    return kRearth * (D + kRearth) / (D + (kRearth * delta));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -232,10 +261,17 @@ double NFmiGnomonicArea::K(const double delta) const
 
 double NFmiGnomonicArea::CalcDelta(const double xyDistance) const
 {
-  // Calculates the delta angle for gnomonic projection.
-  // See details in ref. [1] pp. 58-62.
-  // return atan(xyDistance/(itsTrueLatitude.Sin()*kRearth));
-  return atan(xyDistance / kRearth);  // 11.5.98/EL
+  try
+  {
+    // Calculates the delta angle for gnomonic projection.
+    // See details in ref. [1] pp. 58-62.
+    // return atan(xyDistance/(itsTrueLatitude.Sin()*kRearth));
+    return atan(xyDistance / kRearth);  // 11.5.98/EL
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -246,9 +282,16 @@ double NFmiGnomonicArea::CalcDelta(const double xyDistance) const
 
 double NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() const
 {
-  // Distance (in world-coordinate meters) for gnomonic projection.
-  // See details in ref. [1] pp. 58-62.
-  return 0.0;
+  try
+  {
+    // Distance (in world-coordinate meters) for gnomonic projection.
+    // See details in ref. [1] pp. 58-62.
+    return 0.0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -264,28 +307,35 @@ NFmiArea *NFmiGnomonicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                     const NFmiPoint &theTopRightLatLon,
                                     bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiGnomonicArea(fixedPointData.itsBottomLeftLatlon,
-                                fixedPointData.itsTopRightLatlon,
-                                itsCentralLongitude.Value(),
-                                TopLeft(),
-                                BottomRight(),
-                                itsCentralLatitude.Value(),
-                                itsTrueLatitude.Value(),
-                                fixedPointData.fIsPacific);
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiGnomonicArea(fixedPointData.itsBottomLeftLatlon,
+                                  fixedPointData.itsTopRightLatlon,
+                                  itsCentralLongitude.Value(),
+                                  TopLeft(),
+                                  BottomRight(),
+                                  itsCentralLatitude.Value(),
+                                  itsTrueLatitude.Value(),
+                                  fixedPointData.fIsPacific);
+    }
+    else
+      return new NFmiGnomonicArea(theBottomLeftLatLon,
+                                  theTopRightLatLon,
+                                  itsCentralLongitude.Value(),
+                                  TopLeft(),
+                                  BottomRight(),
+                                  itsCentralLatitude.Value(),
+                                  itsTrueLatitude.Value(),
+                                  PacificView());
   }
-  else
-    return new NFmiGnomonicArea(theBottomLeftLatLon,
-                                theTopRightLatLon,
-                                itsCentralLongitude.Value(),
-                                TopLeft(),
-                                BottomRight(),
-                                itsCentralLatitude.Value(),
-                                itsTrueLatitude.Value(),
-                                PacificView());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -297,7 +347,14 @@ NFmiArea *NFmiGnomonicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiGnomonicArea::Clone() const
 {
-  return new NFmiGnomonicArea(*this);
+  try
+  {
+    return new NFmiGnomonicArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -323,7 +380,14 @@ NFmiGnomonicArea &NFmiGnomonicArea::operator=(const NFmiGnomonicArea &theArea) =
 
 bool NFmiGnomonicArea::operator==(const NFmiGnomonicArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  try
+  {
+    return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,7 +401,14 @@ bool NFmiGnomonicArea::operator==(const NFmiGnomonicArea &theArea) const
 
 bool NFmiGnomonicArea::operator!=(const NFmiGnomonicArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -351,7 +422,14 @@ bool NFmiGnomonicArea::operator!=(const NFmiGnomonicArea &theArea) const
 
 bool NFmiGnomonicArea::operator==(const NFmiArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(theArea);
+  try
+  {
+    return NFmiAzimuthalArea::operator==(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -365,8 +443,16 @@ bool NFmiGnomonicArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiGnomonicArea::operator!=(const NFmiArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -378,8 +464,15 @@ bool NFmiGnomonicArea::operator!=(const NFmiArea &theArea) const
 
 std::ostream &NFmiGnomonicArea::Write(std::ostream &file) const
 {
-  NFmiAzimuthalArea::Write(file);
-  return file;
+  try
+  {
+    NFmiAzimuthalArea::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -393,10 +486,17 @@ std::ostream &NFmiGnomonicArea::Write(std::ostream &file) const
 
 std::istream &NFmiGnomonicArea::Read(std::istream &file)
 {
-  NFmiAzimuthalArea::Read(file);
+  try
+  {
+    NFmiAzimuthalArea::Read(file);
 
-  // Init(); // 26.10.99/EL: Siirretty emoluokkaan
-  return file;
+    // Init(); // 26.10.99/EL: Siirretty emoluokkaan
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -407,31 +507,45 @@ std::istream &NFmiGnomonicArea::Read(std::istream &file)
 
 void NFmiGnomonicArea::Init(bool fKeepWorldRect)
 {
-  if (!fKeepWorldRect)
+  try
   {
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
+    if (!fKeepWorldRect)
+    {
+      itsTrueLatScaleFactor =
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
 
-    itsWorldRect =
-        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+      itsWorldRect =
+          NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    }
+
+    NFmiAzimuthalArea::Init(fKeepWorldRect);
+
+    const char *fmt = "+proj=gnom +lon_0={} +lat_0={} +R={} +lat_ts={}";
+    itsProjStr =
+        fmt::format(fmt, CentralLongitude(), CentralLatitude(), kRearth, itsTrueLatitude.Value());
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
-
-  NFmiAzimuthalArea::Init(fKeepWorldRect);
-
-  const char *fmt = "+proj=gnom +lon_0={} +lat_0={} +R={} +lat_ts={}";
-  itsProjStr =
-      fmt::format(fmt, CentralLongitude(), CentralLatitude(), kRearth, itsTrueLatitude.Value());
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiGnomonicArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "stereographic," << CentralLongitude() << ',' << CentralLatitude() << ','
-      << itsTrueLatitude.Value() << ':' << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y()
-      << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "stereographic," << CentralLongitude() << ',' << CentralLatitude() << ','
+        << itsTrueLatitude.Value() << ':' << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y()
+        << ',' << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -453,16 +567,23 @@ const std::string NFmiGnomonicArea::AreaStr() const
 
 const std::string NFmiGnomonicArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_Gnomonic",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Gnomonic"],)"
-                    R"(PARAMETER["latitude_of_origin",{}],)"
-                    R"(PARAMETER["central_meridian",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  try
+  {
+    const char *fmt = R"(PROJCS["FMI_Gnomonic",)"
+                      R"(GEOGCS["FMI_Sphere",)"
+                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                      R"(PRIMEM["Greenwich",0],)"
+                      R"(UNIT["Degree",0.0174532925199433]],)"
+                      R"(PROJECTION["Gnomonic"],)"
+                      R"(PARAMETER["latitude_of_origin",{}],)"
+                      R"(PARAMETER["central_meridian",{}],)"
+                      R"(UNIT["Metre",1.0]])";
+    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -473,9 +594,16 @@ const std::string NFmiGnomonicArea::WKT() const
 
 std::size_t NFmiGnomonicArea::HashValue() const
 {
-  std::size_t hash = NFmiAzimuthalArea::HashValue();
-  // no private members
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiAzimuthalArea::HashValue();
+    // no private members
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

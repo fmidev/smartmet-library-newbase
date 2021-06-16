@@ -18,6 +18,7 @@
 
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiSimpleCondition.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -108,7 +109,15 @@ NFmiAreaMaskImpl::~NFmiAreaMaskImpl() = default;
 
 void NFmiAreaMaskImpl::Initialize(void)
 {
-  if (itsSimpleCondition) itsSimpleCondition->Initialize();
+  try
+  {
+    if (itsSimpleCondition)
+      itsSimpleCondition->Initialize();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -120,12 +129,17 @@ void NFmiAreaMaskImpl::Initialize(void)
 
 bool NFmiAreaMaskImpl::IsMasked(const NFmiPoint &theLatLon) const
 {
-  if (!fEnabled)
-    return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
-  else
+  try
   {
+    if (!fEnabled)
+      return true;  // jos maski ei ole käytössä, on maski aina 'päällä'
+
     double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
     return itsMaskCondition.IsMasked(testValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -141,12 +155,17 @@ bool NFmiAreaMaskImpl::IsMasked(const NFmiPoint &theLatLon) const
 
 double NFmiAreaMaskImpl::MaskValue(const NFmiPoint &theLatLon) const
 {
-  if (!fEnabled)
-    return 1.;
-  else
+  try
   {
+    if (!fEnabled)
+      return 1.;
+
     double testValue = CalcValueFromLocation(theLatLon);  // CalcValueFromLocation on virtuaalinen
     return itsMaskCondition.MaskValue(testValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -161,9 +180,16 @@ double NFmiAreaMaskImpl::MaskValue(const NFmiPoint &theLatLon) const
 double NFmiAreaMaskImpl::Value(const NFmiCalculationParams &theCalculationParams,
                                bool /* fUseTimeInterpolationAlways */)
 {
-  // useimmille maskiluokille tämä riittää, koska ne eivät
-  // ole riippuvaisia ajasta.
-  return CalcValueFromLocation(theCalculationParams.itsLatlon);
+  try
+  {
+    // useimmille maskiluokille tämä riittää, koska ne eivät
+    // ole riippuvaisia ajasta.
+    return CalcValueFromLocation(theCalculationParams.itsLatlon);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -173,7 +199,11 @@ double NFmiAreaMaskImpl::Value(const NFmiCalculationParams &theCalculationParams
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskImpl::Time(const NFmiMetTime & /* theTime */) { return false; }
+bool NFmiAreaMaskImpl::Time(const NFmiMetTime & /* theTime */)
+{
+  return false;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented, unused
@@ -196,9 +226,16 @@ bool NFmiAreaMaskImpl::IsWantedParam(const NFmiDataIdent & /* theParam */,
 
 const NFmiString NFmiAreaMaskImpl::MaskString() const
 {
-  NFmiString subStr(MakeSubMaskString());
-  NFmiString returnValue(itsMaskCondition.MaskString(subStr));
-  return returnValue;
+  try
+  {
+    NFmiString subStr(MakeSubMaskString());
+    NFmiString returnValue(itsMaskCondition.MaskString(subStr));
+    return returnValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -207,33 +244,66 @@ const NFmiString NFmiAreaMaskImpl::MaskString() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiDataIdent *NFmiAreaMaskImpl::DataIdent() const { return nullptr; }
+const NFmiDataIdent *NFmiAreaMaskImpl::DataIdent() const
+{
+  return nullptr;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiParam *NFmiAreaMaskImpl::Param() const { return nullptr; }
+const NFmiParam *NFmiAreaMaskImpl::Param() const
+{
+  return nullptr;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiLevel *NFmiAreaMaskImpl::Level() const { return nullptr; }
-void NFmiAreaMaskImpl::Level(const NFmiLevel & /* theLevel */) {}
+const NFmiLevel *NFmiAreaMaskImpl::Level() const
+{
+  return nullptr;
+}
+
+void NFmiAreaMaskImpl::Level(const NFmiLevel & /* theLevel */)
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskImpl::UseLevelInfo() const { return false; }
-bool NFmiAreaMaskImpl::UsePressureLevelInterpolation() const { return false; }
-void NFmiAreaMaskImpl::UsePressureLevelInterpolation(bool /* newValue */) {}
-double NFmiAreaMaskImpl::UsedPressureLevelValue() const { return kFloatMissing; }
-void NFmiAreaMaskImpl::UsedPressureLevelValue(double /* newValue */) {}
+bool NFmiAreaMaskImpl::UseLevelInfo() const
+{
+  return false;
+}
+
+bool NFmiAreaMaskImpl::UsePressureLevelInterpolation() const
+{
+  return false;
+}
+
+void NFmiAreaMaskImpl::UsePressureLevelInterpolation(bool /* newValue */)
+{
+}
+
+double NFmiAreaMaskImpl::UsedPressureLevelValue() const
+{
+  return kFloatMissing;
+}
+
+void NFmiAreaMaskImpl::UsedPressureLevelValue(double /* newValue */)
+{
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theMask Undocumented, unused
@@ -241,7 +311,11 @@ void NFmiAreaMaskImpl::UsedPressureLevelValue(double /* newValue */) {}
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskImpl::AddMask(NFmiAreaMask * /* theMask */) { return false; }
+bool NFmiAreaMaskImpl::AddMask(NFmiAreaMask * /* theMask */)
+{
+  return false;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Palauttaa joko this:in jos index = 1 ja muuten indeksillä
@@ -253,7 +327,11 @@ bool NFmiAreaMaskImpl::AddMask(NFmiAreaMask * /* theMask */) { return false; }
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMask *NFmiAreaMaskImpl::AreaMask(int /* theIndex */) const { return nullptr; }
+NFmiAreaMask *NFmiAreaMaskImpl::AreaMask(int /* theIndex */) const
+{
+  return nullptr;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented, unused
@@ -261,7 +339,11 @@ NFmiAreaMask *NFmiAreaMaskImpl::AreaMask(int /* theIndex */) const { return null
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskImpl::RemoveSubMask(int /* theIndex*/) { return false; }
+bool NFmiAreaMaskImpl::RemoveSubMask(int /* theIndex*/)
+{
+  return false;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theLatLon Undocumented, unused
@@ -282,8 +364,15 @@ double NFmiAreaMaskImpl::CalcValueFromLocation(const NFmiPoint & /* theLatLon */
 
 const NFmiString NFmiAreaMaskImpl::MakeSubMaskString() const
 {
-  NFmiString returnVal;
-  return returnVal;
+  try
+  {
+    NFmiString returnVal;
+    return returnVal;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -294,7 +383,14 @@ const NFmiString NFmiAreaMaskImpl::MakeSubMaskString() const
 
 void NFmiAreaMaskImpl::Condition(const NFmiCalculationCondition &theCondition)
 {
-  itsMaskCondition = theCondition;
+  try
+  {
+    itsMaskCondition = theCondition;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -303,19 +399,41 @@ void NFmiAreaMaskImpl::Condition(const NFmiCalculationCondition &theCondition)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskImpl::IsRampMask() const { return itsMaskCondition.IsRampMask(); }
+bool NFmiAreaMaskImpl::IsRampMask() const
+{
+  try
+  {
+    return itsMaskCondition.IsRampMask();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ======================================================================
 
-void NFmiAreaMaskImpl::DoIntegrationCalculations(float value) {}
+void NFmiAreaMaskImpl::DoIntegrationCalculations(float value)
+{
+}
 
-void NFmiAreaMaskImpl::InitializeIntegrationValues() {}
+void NFmiAreaMaskImpl::InitializeIntegrationValues()
+{
+}
 
 bool NFmiAreaMaskImpl::SimpleConditionCheck(const NFmiCalculationParams &theCalculationParams)
 {
-  if (itsSimpleCondition)
-    return itsSimpleCondition->CheckCondition(theCalculationParams, true);
-  else
+  try
+  {
+    if (itsSimpleCondition)
+      return itsSimpleCondition->CheckCondition(theCalculationParams, true);
+
     return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 float NFmiAreaMaskImpl::CalculationPointValue(int theOffsetX,

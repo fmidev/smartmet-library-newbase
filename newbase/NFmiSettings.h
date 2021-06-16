@@ -89,7 +89,7 @@ inline bool Require<bool>(const std::string& theName)
   msg += " value '";
   msg += tmp;
   msg += "' must be true/false";
-  throw std::runtime_error(msg);
+  throw Fmi::Exception(BCP,msg);
 }
 
 // ----------------------------------------------------------------------
@@ -115,7 +115,7 @@ inline T Require(const std::string& theName)
     msg += " value '";
     msg += tmp;
     msg += "' is not of correct type";
-    throw std::runtime_error(msg);
+    throw Fmi::Exception(BCP,msg);
   }
 }
 
@@ -171,7 +171,7 @@ inline T RequireRange(const std::string& theName, const T& theLowerLimit, const 
   msg += NFmiStringTools::Convert(theLowerLimit);
   msg += "...";
   msg += NFmiStringTools::Convert(theUpperLimit);
-  throw std::runtime_error(msg);
+  throw Fmi::Exception(BCP,msg);
 }
 
 // ----------------------------------------------------------------------

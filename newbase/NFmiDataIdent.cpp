@@ -15,6 +15,7 @@
 #include "NFmiDataIdent.h"
 #include "NFmiParamBag.h"
 #include "NFmiVoidPtrList.h"
+#include <macgyver/Exception.h>
 #include <fstream>
 
 #include "NFmiVersion.h"
@@ -59,16 +60,23 @@ NFmiDataIdent::NFmiDataIdent(const NFmiParam &theParam,
       itsSecondaryProducerIterator(nullptr),
       itsCurrentSecondaryProducer(nullptr)
 {
-  if (theSecondaryProducerList && theSecondaryProducerList->NumberOfItems() > 0)
+  try
   {
-    itsSecondaryProducers = new NFmiVoidPtrList;
-    NFmiVoidPtrIterator it(theSecondaryProducerList);
-    void *vPt;
-    while (it.Next(vPt))
-      itsSecondaryProducers->AddEnd(
-          static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
-    itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
-    itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+    if (theSecondaryProducerList && theSecondaryProducerList->NumberOfItems() > 0)
+    {
+      itsSecondaryProducers = new NFmiVoidPtrList;
+      NFmiVoidPtrIterator it(theSecondaryProducerList);
+      void *vPt;
+      while (it.Next(vPt))
+        itsSecondaryProducers->AddEnd(
+            static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
+      itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
+      itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -95,16 +103,23 @@ NFmiDataIdent::NFmiDataIdent(const NFmiDataIdent &theDataIdent)
       itsSecondaryProducerIterator(nullptr),
       itsCurrentSecondaryProducer(nullptr)
 {
-  if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+  try
   {
-    itsSecondaryProducers = new NFmiVoidPtrList;
-    NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
-    void *vPt;
-    while (it.Next(vPt))
-      itsSecondaryProducers->AddEnd(
-          static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
-    itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
-    itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+    if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+    {
+      itsSecondaryProducers = new NFmiVoidPtrList;
+      NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
+      void *vPt;
+      while (it.Next(vPt))
+        itsSecondaryProducers->AddEnd(
+            static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
+      itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
+      itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -116,19 +131,26 @@ NFmiDataIdent::NFmiDataIdent(const NFmiDataIdent &theDataIdent)
 
 void NFmiDataIdent::Destroy()
 {
-  delete itsParam;
-  delete itsProducer;
-  delete itsDataParams;
-  if (itsSecondaryProducers)
+  try
   {
-    NFmiVoidPtrIterator iter(itsSecondaryProducers);
-    void *vPt;  // iter.Reset() ??
-    while (iter.Next(vPt))
-      delete (static_cast<NFmiProducer *>(vPt));
-    delete itsSecondaryProducers;
+    delete itsParam;
+    delete itsProducer;
+    delete itsDataParams;
+    if (itsSecondaryProducers)
+    {
+      NFmiVoidPtrIterator iter(itsSecondaryProducers);
+      void *vPt;  // iter.Reset() ??
+      while (iter.Next(vPt))
+        delete (static_cast<NFmiProducer *>(vPt));
+      delete itsSecondaryProducers;
+    }
+    delete itsSecondaryProducerIterator;
+    delete itsCurrentSecondaryProducer;
   }
-  delete itsSecondaryProducerIterator;
-  delete itsCurrentSecondaryProducer;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -142,14 +164,22 @@ void NFmiDataIdent::Destroy()
 
 bool NFmiDataIdent::IsDataParam(const FmiParameterName &theParam)
 {
-  if (itsDataParams)
+  try
   {
-    for (ResetDataParams(); NextDataParam();)
+    if (itsDataParams)
     {
-      if ((FmiParameterName(CurrentDataParam().GetParam()->GetIdent())) == theParam) return true;
+      for (ResetDataParams(); NextDataParam();)
+      {
+        if ((FmiParameterName(CurrentDataParam().GetParam()->GetIdent())) == theParam)
+          return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -163,14 +193,22 @@ bool NFmiDataIdent::IsDataParam(const FmiParameterName &theParam)
 
 bool NFmiDataIdent::IsDataParam(const NFmiDataIdent &theDataIdent)
 {
-  if (itsDataParams)
+  try
   {
-    for (ResetDataParams(); NextDataParam();)
+    if (itsDataParams)
     {
-      if (CurrentDataParam() == theDataIdent) return true;
+      for (ResetDataParams(); NextDataParam();)
+      {
+        if (CurrentDataParam() == theDataIdent)
+          return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -181,13 +219,20 @@ bool NFmiDataIdent::IsDataParam(const NFmiDataIdent &theDataIdent)
 
 void NFmiDataIdent::SetProducers(const NFmiProducer &theProducer)
 {
-  *itsProducer = theProducer;
-  if (fHasDataParams)
+  try
   {
-    for (ResetDataParams(); NextDataParam();)
+    *itsProducer = theProducer;
+    if (fHasDataParams)
     {
-      CurrentDataParam().SetProducers(theProducer);
+      for (ResetDataParams(); NextDataParam();)
+      {
+        CurrentDataParam().SetProducers(theProducer);
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -202,39 +247,46 @@ void NFmiDataIdent::SetProducers(const NFmiProducer &theProducer)
 
 NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
 {
-  if(&theDataIdent != this)
+  try
   {
-    Destroy();
-    itsParam = theDataIdent.itsParam->Clone();
-    itsProducer = new NFmiProducer(*(theDataIdent.itsProducer));
-    itsType = theDataIdent.itsType;
-    fIsGroup = theDataIdent.fIsGroup;
-    fIsActive = theDataIdent.fIsActive;
-    fContainsIndividualParams = theDataIdent.fContainsIndividualParams;
-    fIsDataParam = theDataIdent.fIsDataParam;
-    fHasDataParams = theDataIdent.fHasDataParams;
-    itsDataParams =
-        theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
-    if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+    if (&theDataIdent != this)
     {
-      itsSecondaryProducers = new NFmiVoidPtrList;
-      NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
-      void *vPt;
-      while (it.Next(vPt))
-        itsSecondaryProducers->AddEnd(
-            static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
-      itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
-      itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+      Destroy();
+      itsParam = theDataIdent.itsParam->Clone();
+      itsProducer = new NFmiProducer(*(theDataIdent.itsProducer));
+      itsType = theDataIdent.itsType;
+      fIsGroup = theDataIdent.fIsGroup;
+      fIsActive = theDataIdent.fIsActive;
+      fContainsIndividualParams = theDataIdent.fContainsIndividualParams;
+      fIsDataParam = theDataIdent.fIsDataParam;
+      fHasDataParams = theDataIdent.fHasDataParams;
+      itsDataParams =
+          theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
+      if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+      {
+        itsSecondaryProducers = new NFmiVoidPtrList;
+        NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
+        void *vPt;
+        while (it.Next(vPt))
+          itsSecondaryProducers->AddEnd(
+              static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
+        itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
+        itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+      }
+      else  // 24.2.1999/Marko Lisäsin else haaran, koska muuten kaatuu jos on ensin ollut
+        // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
+      {
+        itsSecondaryProducers = nullptr;
+        itsSecondaryProducerIterator = nullptr;
+        itsCurrentSecondaryProducer = nullptr;
+      }
     }
-    else  // 24.2.1999/Marko Lisäsin else haaran, koska muuten kaatuu jos on ensin ollut
-      // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
-    {
-      itsSecondaryProducers = nullptr;
-      itsSecondaryProducerIterator = nullptr;
-      itsCurrentSecondaryProducer = nullptr;
-    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -248,43 +300,48 @@ NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
 
 std::ostream &NFmiDataIdent::Write(std::ostream &file) const
 {
-  file << (*itsParam);
-  file << (*itsProducer);
-  file << itsType << " ";
-  file << fIsGroup << " ";
-  file << fIsActive << " ";
-  file << fContainsIndividualParams << " ";
-  file << fIsDataParam << " ";
-  file << fHasDataParams << " ";
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file << "0 ";               // Varattu
-    file << "0 " << std::endl;  // Varattu
-    if (fHasDataParams)
-    {
-      file << *itsDataParams;
-    }
+    file << (*itsParam);
+    file << (*itsProducer);
+    file << itsType << " ";
+    file << fIsGroup << " ";
+    file << fIsActive << " ";
+    file << fContainsIndividualParams << " ";
+    file << fIsDataParam << " ";
+    file << fHasDataParams << " ";
 
-    if (itsSecondaryProducers)
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
     {
-      file << itsSecondaryProducers->NumberOfItems() << std::endl;
+      file << "0 ";               // Varattu
+      file << "0 " << std::endl;  // Varattu
+      if (fHasDataParams)
+        file << *itsDataParams;
 
-      NFmiVoidPtrIterator theProdItem(*itsSecondaryProducers);
-      void *theVoid;
-      while (theProdItem.Next(theVoid))
-        file << *(static_cast<NFmiProducer *>(theVoid));
+      if (itsSecondaryProducers)
+      {
+        file << itsSecondaryProducers->NumberOfItems() << std::endl;
+
+        NFmiVoidPtrIterator theProdItem(*itsSecondaryProducers);
+        void *theVoid;
+        while (theProdItem.Next(theVoid))
+          file << *(static_cast<NFmiProducer *>(theVoid));
+      }
+      else
+        file << 0 << std::endl;
     }
     else
-      file << 0 << std::endl;
-  }
-  else
-  {
-    file << std::endl;
-  }
+    {
+      file << std::endl;
+    }
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -298,52 +355,59 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
 
 std::istream &NFmiDataIdent::Read(std::istream &file)
 {
-  unsigned long fReserve;
-
-  Destroy();
-
-  itsParam = new NFmiParam;
-  itsProducer = new NFmiProducer;
-
-  file >> *itsParam;
-  file >> *itsProducer;
-  file >> itsType;
-  file >> fIsGroup;
-  file >> fIsActive;
-  file >> fContainsIndividualParams;
-  file >> fIsDataParam;
-  file >> fHasDataParams;
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file >> fReserve;
-    file >> fReserve;
-    if (fHasDataParams)
+    unsigned long fReserve;
+
+    Destroy();
+
+    itsParam = new NFmiParam;
+    itsProducer = new NFmiProducer;
+
+    file >> *itsParam;
+    file >> *itsProducer;
+    file >> itsType;
+    file >> fIsGroup;
+    file >> fIsActive;
+    file >> fContainsIndividualParams;
+    file >> fIsDataParam;
+    file >> fHasDataParams;
+
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
     {
-      delete itsDataParams;
-      itsDataParams = new NFmiParamBag;
-      file >> *itsDataParams;
-    }
-
-    long theNumberOfItems;
-    file >> theNumberOfItems;
-
-    if (theNumberOfItems)
-    {
-      itsSecondaryProducers = new NFmiVoidPtrList;
-
-      NFmiProducer theProducer;
-      for (int i = 0; i < theNumberOfItems; i++)
+      file >> fReserve;
+      file >> fReserve;
+      if (fHasDataParams)
       {
-        file >> theProducer;
-        itsSecondaryProducers->AddEnd(static_cast<void *>(new NFmiProducer(theProducer)));
+        delete itsDataParams;
+        itsDataParams = new NFmiParamBag;
+        file >> *itsDataParams;
       }
-      itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
-      itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+
+      long theNumberOfItems;
+      file >> theNumberOfItems;
+
+      if (theNumberOfItems)
+      {
+        itsSecondaryProducers = new NFmiVoidPtrList;
+
+        NFmiProducer theProducer;
+        for (int i = 0; i < theNumberOfItems; i++)
+        {
+          file >> theProducer;
+          itsSecondaryProducers->AddEnd(static_cast<void *>(new NFmiProducer(theProducer)));
+        }
+        itsSecondaryProducerIterator = new NFmiVoidPtrIterator(itsSecondaryProducers);
+        itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
+      }
     }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -355,7 +419,17 @@ std::istream &NFmiDataIdent::Read(std::istream &file)
 // seuraavia metodeja ei saa inline:ksi, koska NFmiDataIdent ja NFmiParamBag
 // eivät voi include:oida toisiaan ristiin ja NFmiParambag includoi jo NFmiDataIdent:in
 
-const NFmiDataIdent &NFmiDataIdent::FirstDataParam() const { return *itsDataParams->GetFirst(); }
+const NFmiDataIdent &NFmiDataIdent::FirstDataParam() const
+{
+  try
+  {
+    return *itsDataParams->GetFirst();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -363,21 +437,54 @@ const NFmiDataIdent &NFmiDataIdent::FirstDataParam() const { return *itsDataPara
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataIdent::ResetDataParams() { itsDataParams->Reset(); }
+void NFmiDataIdent::ResetDataParams()
+{
+  try
+  {
+    itsDataParams->Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiDataIdent &NFmiDataIdent::CurrentDataParam() { return *(itsDataParams->Current()); }
+NFmiDataIdent &NFmiDataIdent::CurrentDataParam()
+{
+  try
+  {
+    return *(itsDataParams->Current());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataIdent::NextDataParam() { return itsDataParams->Next(); }
+bool NFmiDataIdent::NextDataParam()
+{
+  try
+  {
+    return itsDataParams->Next();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -388,7 +495,14 @@ bool NFmiDataIdent::NextDataParam() { return itsDataParams->Next(); }
 
 bool NFmiDataIdent::ResetLastDataParams()
 {
-  return itsDataParams->SetCurrentIndex(itsDataParams->GetSize() - 1);
+  try
+  {
+    return itsDataParams->SetCurrentIndex(itsDataParams->GetSize() - 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -397,14 +511,36 @@ bool NFmiDataIdent::ResetLastDataParams()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataIdent::PreviousDataParam() { return itsDataParams->Previous(); }
+bool NFmiDataIdent::PreviousDataParam()
+{
+  try
+  {
+    return itsDataParams->Previous();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataIdent::NextActiveDataParam() { return itsDataParams->NextActive(); }
+bool NFmiDataIdent::NextActiveDataParam()
+{
+  try
+  {
+    return itsDataParams->NextActive();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented
@@ -414,7 +550,14 @@ bool NFmiDataIdent::NextActiveDataParam() { return itsDataParams->NextActive(); 
 
 void NFmiDataIdent::SetActiveDataParam(const NFmiParam &theParam, bool isActive)
 {
-  itsDataParams->SetActive(theParam, isActive);
+  try
+  {
+    itsDataParams->SetActive(theParam, isActive);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -423,7 +566,17 @@ void NFmiDataIdent::SetActiveDataParam(const NFmiParam &theParam, bool isActive)
  */
 // ----------------------------------------------------------------------
 
-NFmiDataIdent &NFmiDataIdent::CurrentActiveDataParam() { return *(itsDataParams->Current()); }
+NFmiDataIdent &NFmiDataIdent::CurrentActiveDataParam()
+{
+  try
+  {
+    return *(itsDataParams->Current());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented
@@ -432,9 +585,18 @@ NFmiDataIdent &NFmiDataIdent::CurrentActiveDataParam() { return *(itsDataParams-
 
 void NFmiDataIdent::SetParam(const NFmiParam &theParam)
 {
-  if (itsParam) delete itsParam;
-  itsParam = theParam.Clone();
-  fIsDataParam = true;
+  try
+  {
+    if (itsParam)
+      delete itsParam;
+
+    itsParam = theParam.Clone();
+    fIsDataParam = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -445,9 +607,19 @@ void NFmiDataIdent::SetParam(const NFmiParam &theParam)
 
 void NFmiDataIdent::SetProducer(const NFmiProducer &theProducer)
 {
-  if (itsProducer) delete itsProducer;
-  itsProducer = new NFmiProducer(theProducer);
-  if (itsDataParams) itsDataParams->SetProducer(theProducer);
+  try
+  {
+    if (itsProducer)
+      delete itsProducer;
+
+    itsProducer = new NFmiProducer(theProducer);
+    if (itsDataParams)
+      itsDataParams->SetProducer(theProducer);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -458,13 +630,22 @@ void NFmiDataIdent::SetProducer(const NFmiProducer &theProducer)
 
 void NFmiDataIdent::SetIncrementalType(bool newState)
 {
-  if (newState)
+  try
   {
-    if (!IsIncremental()) itsType += kIncrementalParam;
+    if (newState)
+    {
+      if (!IsIncremental())
+        itsType += kIncrementalParam;
+    }
+    else
+    {
+      if (IsIncremental())
+        itsType -= kIncrementalParam;
+    }
   }
-  else
+  catch (...)
   {
-    if (IsIncremental()) itsType -= kIncrementalParam;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -474,7 +655,18 @@ void NFmiDataIdent::SetIncrementalType(bool newState)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataIdent::ResetSecondaryProducer() { itsSecondaryProducerIterator->Reset(); }
+void NFmiDataIdent::ResetSecondaryProducer()
+{
+  try
+  {
+    itsSecondaryProducerIterator->Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -483,7 +675,14 @@ void NFmiDataIdent::ResetSecondaryProducer() { itsSecondaryProducerIterator->Res
 
 NFmiProducer *NFmiDataIdent::CurrentSecondaryProducer() const
 {
-  return static_cast<NFmiProducer *>(itsCurrentSecondaryProducer->GetVoidPtr());
+  try
+  {
+    return static_cast<NFmiProducer *>(itsCurrentSecondaryProducer->GetVoidPtr());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -494,7 +693,14 @@ NFmiProducer *NFmiDataIdent::CurrentSecondaryProducer() const
 
 bool NFmiDataIdent::NextSecondaryProducer()
 {
-  return itsSecondaryProducerIterator->NextPtr(itsCurrentSecondaryProducer);
+  try
+  {
+    return itsSecondaryProducerIterator->NextPtr(itsCurrentSecondaryProducer);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -22,6 +22,7 @@
 #include "NFmiIndexMask.h"
 #include "NFmiIndexMaskSource.h"
 #include "NFmiMetTime.h"
+#include <macgyver/Exception.h>
 
 namespace NFmiDataIntegrator
 {
@@ -47,17 +48,25 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiMetTime& theEndTime,
                 NFmiDataModifier& theTimeModifier)
 {
-  theTimeModifier.Clear();
-
-  if (!theQI.Time(theStartTime)) return kFloatMissing;
-
-  do
+  try
   {
-    const float tmp = theQI.FloatValue();
-    theTimeModifier.Calculate(tmp);
-  } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    theTimeModifier.Clear();
 
-  return theTimeModifier.CalculationResult();
+    if (!theQI.Time(theStartTime))
+      return kFloatMissing;
+
+    do
+    {
+      const float tmp = theQI.FloatValue();
+      theTimeModifier.Calculate(tmp);
+    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+
+    return theTimeModifier.CalculationResult();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -92,36 +101,47 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 NFmiDataModifier& theSubTimeModifier,
                 NFmiDataModifier& theMainTimeModifier)
 {
-  // Safety against bad loop
-  if (theInterval < 0) return kFloatMissing;
-  // Default case
-  if (theInterval == 0) return Integrate(theQI, theStartTime, theEndTime, theMainTimeModifier);
-
-  theMainTimeModifier.Clear();
-
-  NFmiTime time1(theStartTime);
-
-  if (!theQI.Time(time1)) return kFloatMissing;
-
-  do
+  try
   {
-    NFmiTime time2(time1);
-    time1.ChangeByHours(theInterval);
+    // Safety against bad loop
+    if (theInterval < 0)
+      return kFloatMissing;
 
-    theSubTimeModifier.Clear();
+    // Default case
+    if (theInterval == 0)
+      return Integrate(theQI, theStartTime, theEndTime, theMainTimeModifier);
+
+    theMainTimeModifier.Clear();
+
+    NFmiTime time1(theStartTime);
+
+    if (!theQI.Time(time1))
+      return kFloatMissing;
 
     do
     {
-      const float tmp = theQI.FloatValue();
-      theSubTimeModifier.Calculate(tmp);
-    } while (theQI.NextTime() && theQI.Time() < time2);
+      NFmiTime time2(time1);
+      time1.ChangeByHours(theInterval);
 
-    const float subresult = theSubTimeModifier.CalculationResult();
-    theMainTimeModifier.Calculate(subresult);
+      theSubTimeModifier.Clear();
 
-  } while (theQI.IsValidTime() && theQI.Time() <= theEndTime);
+      do
+      {
+        const float tmp = theQI.FloatValue();
+        theSubTimeModifier.Calculate(tmp);
+      } while (theQI.NextTime() && theQI.Time() < time2);
 
-  return theMainTimeModifier.CalculationResult();
+      const float subresult = theSubTimeModifier.CalculationResult();
+      theMainTimeModifier.Calculate(subresult);
+
+    } while (theQI.IsValidTime() && theQI.Time() <= theEndTime);
+
+    return theMainTimeModifier.CalculationResult();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -144,16 +164,24 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiIndexMask& theIndexMask,
                 NFmiDataModifier& theSpaceModifier)
 {
-  if (theIndexMask.empty()) return kFloatMissing;
-
-  for (unsigned long it : theIndexMask)
+  try
   {
-    theQI.LocationIndex(it);
-    const float tmp = theQI.FloatValue();
-    theSpaceModifier.Calculate(tmp);
-  }
+    if (theIndexMask.empty())
+      return kFloatMissing;
 
-  return theSpaceModifier.CalculationResult();
+    for (unsigned long it : theIndexMask)
+    {
+      theQI.LocationIndex(it);
+      const float tmp = theQI.FloatValue();
+      theSpaceModifier.Calculate(tmp);
+    }
+
+    return theSpaceModifier.CalculationResult();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -185,18 +213,28 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiMetTime& theEndTime,
                 NFmiDataModifier& theTimeModifier)
 {
-  theTimeModifier.Clear();
-
-  if (!theQI.Time(theStartTime)) return kFloatMissing;
-  if (theIndexMask.empty()) return kFloatMissing;
-
-  do
+  try
   {
-    const float tmp = Integrate(theQI, theIndexMask, theSpaceModifier);
-    theTimeModifier.Calculate(tmp);
-  } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    theTimeModifier.Clear();
 
-  return theTimeModifier.CalculationResult();
+    if (!theQI.Time(theStartTime))
+      return kFloatMissing;
+
+    if (theIndexMask.empty())
+      return kFloatMissing;
+
+    do
+    {
+      const float tmp = Integrate(theQI, theIndexMask, theSpaceModifier);
+      theTimeModifier.Calculate(tmp);
+    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+
+    return theTimeModifier.CalculationResult();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -228,30 +266,39 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiIndexMask& theIndexMask,
                 NFmiDataModifier& theSpaceModifier)
 {
-  theSpaceModifier.Clear();
-
-  if (theIndexMask.empty()) return kFloatMissing;
-
-  for (unsigned long it : theIndexMask)
+  try
   {
-    theTimeModifier.Clear();
+    theSpaceModifier.Clear();
 
-    if (!theQI.Time(theStartTime)) return kFloatMissing;
+    if (theIndexMask.empty())
+      return kFloatMissing;
 
-    do
+    for (unsigned long it : theIndexMask)
     {
-      theQI.LocationIndex(it);
+      theTimeModifier.Clear();
 
-      const float tmp = theQI.FloatValue();
+      if (!theQI.Time(theStartTime))
+        return kFloatMissing;
 
-      theTimeModifier.Calculate(tmp);
-    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+      do
+      {
+        theQI.LocationIndex(it);
 
-    const float timeresult = theTimeModifier.CalculationResult();
-    theSpaceModifier.Calculate(timeresult);
+        const float tmp = theQI.FloatValue();
+
+        theTimeModifier.Calculate(tmp);
+      } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+
+      const float timeresult = theTimeModifier.CalculationResult();
+      theSpaceModifier.Calculate(timeresult);
+    }
+
+    return theSpaceModifier.CalculationResult();
   }
-
-  return theSpaceModifier.CalculationResult();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -282,18 +329,26 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiMetTime& theEndTime,
                 NFmiDataModifier& theTimeModifier)
 {
-  theTimeModifier.Clear();
-
-  if (!theQI.Time(theStartTime)) return kFloatMissing;
-
-  do
+  try
   {
-    const NFmiIndexMask& mask = theMaskSource.Find(theQI.Time());
-    const float tmp = Integrate(theQI, mask, theSpaceModifier);
-    theTimeModifier.Calculate(tmp);
-  } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    theTimeModifier.Clear();
 
-  return theTimeModifier.CalculationResult();
+    if (!theQI.Time(theStartTime))
+      return kFloatMissing;
+
+    do
+    {
+      const NFmiIndexMask& mask = theMaskSource.Find(theQI.Time());
+      const float tmp = Integrate(theQI, mask, theSpaceModifier);
+      theTimeModifier.Calculate(tmp);
+    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+
+    return theTimeModifier.CalculationResult();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,55 +392,64 @@ float Integrate(NFmiFastQueryInfo& theQI,
                 const NFmiIndexMask& theIndexMask,
                 NFmiDataModifier& theSpaceModifier)
 {
-  // Safety against bad loop
-  if (theInterval < 0) return kFloatMissing;
-
-  // Don't create subintervals unless necessary
-  if (theInterval == 0)
-    return Integrate(
-        theQI, theStartTime, theEndTime, theMainTimeModifier, theIndexMask, theSpaceModifier);
-
-  theSpaceModifier.Clear();
-
-  if (theIndexMask.empty()) return kFloatMissing;
-
-  for (unsigned long it : theIndexMask)
+  try
   {
-    theMainTimeModifier.Clear();
+    // Safety against bad loop
+    if (theInterval < 0) return kFloatMissing;
 
-    NFmiTime time1(theStartTime);
+    // Don't create subintervals unless necessary
+    if (theInterval == 0)
+      return Integrate(
+          theQI, theStartTime, theEndTime, theMainTimeModifier, theIndexMask, theSpaceModifier);
 
-    if (!theQI.Time(time1)) return kFloatMissing;
+    theSpaceModifier.Clear();
 
-    do
+    if (theIndexMask.empty())
+      return kFloatMissing;
+
+    for (unsigned long it : theIndexMask)
     {
-      NFmiTime time2(time1);
-      time2.ChangeByHours(theInterval);
+      theMainTimeModifier.Clear();
 
-      theSubTimeModifier.Clear();
+      NFmiTime time1(theStartTime);
+
+      if (!theQI.Time(time1))
+        return kFloatMissing;
 
       do
       {
-        theQI.LocationIndex(it);
-        const float tmp = theQI.FloatValue();
+        NFmiTime time2(time1);
+        time2.ChangeByHours(theInterval);
 
-        theSubTimeModifier.Calculate(tmp);
-      } while (theQI.NextTime() && theQI.Time() < time2);
+        theSubTimeModifier.Clear();
 
-      const float subtimeresult = theSubTimeModifier.CalculationResult();
-      theMainTimeModifier.Calculate(subtimeresult);
+        do
+        {
+          theQI.LocationIndex(it);
+          const float tmp = theQI.FloatValue();
 
-      time1 = time2;
+          theSubTimeModifier.Calculate(tmp);
+        } while (theQI.NextTime() && theQI.Time() < time2);
 
+        const float subtimeresult = theSubTimeModifier.CalculationResult();
+        theMainTimeModifier.Calculate(subtimeresult);
+
+        time1 = time2;
+
+      }
+
+      while (theQI.IsValidTime() && theQI.Time() < theEndTime);
+
+      const float timeresult = theMainTimeModifier.CalculationResult();
+      theSpaceModifier.Calculate(timeresult);
     }
 
-    while (theQI.IsValidTime() && theQI.Time() < theEndTime);
-
-    const float timeresult = theMainTimeModifier.CalculationResult();
-    theSpaceModifier.Calculate(timeresult);
+    return theSpaceModifier.CalculationResult();
   }
-
-  return theSpaceModifier.CalculationResult();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiDataIntegrator

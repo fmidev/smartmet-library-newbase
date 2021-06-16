@@ -15,6 +15,7 @@
 #include "NFmiDataPool.h"
 #include "NFmiString.h"
 #include "NFmiTransformList.h"
+#include <macgyver/Exception.h>
 
 #include <algorithm>
 #include <cmath>
@@ -83,10 +84,17 @@ NFmiDataPool::NFmiDataPool(const NFmiDataPool &theDataPool)
 // ----------------------------------------------------------------------
 void NFmiDataPool::Destroy()
 {
-  if (itsData)
+  try
   {
-    delete[] itsData;
-    itsData = nullptr;
+    if (itsData)
+    {
+      delete[] itsData;
+      itsData = nullptr;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -99,41 +107,50 @@ void NFmiDataPool::Destroy()
 
 bool NFmiDataPool::Init(unsigned long theNumber)
 {
-  if (!theNumber) return false;
-
-  Destroy();
-
-  itsSize = theNumber;
-
-#ifdef FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
   try
-#endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
   {
-    itsData = new float[itsSize];
-  }
+    if (!theNumber)
+      return false;
+
+    Destroy();
+
+    itsSize = theNumber;
+
 #ifdef FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
+    try
+#endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
+    {
+      itsData = new float[itsSize];
+    }
+#ifdef FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
+    catch (...)
+    {
+      throw static_cast<double>(sizeof(float) * itsSize / (1024. * 1024.));
+
+      // tässä on tarkoitus heittää speciaali poikkeus mutta vain meteorologin editorissa
+      // tämä double poikkeus kertoo pyydetyn datan koon MB yksikössä ja että datassa sinänsä
+      // ei ollut vikaa, mutta ei saatu varattua
+      // tarpeeksi isoa yhtenäistä muistialuettä char taulukolle johon data luettaisiin.
+    }
+#endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
+
+    if (itsData)
+    {
+      // Test
+      Reset();
+      for (unsigned long i = 0; i < theNumber; i++)
+        itsData[i] = kFloatMissing;
+
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
   catch (...)
   {
-    throw static_cast<double>(sizeof(float) * itsSize / (1024. * 1024.));
-
-    // tässä on tarkoitus heittää speciaali poikkeus mutta vain meteorologin editorissa
-    // tämä double poikkeus kertoo pyydetyn datan koon MB yksikössä ja että datassa sinänsä
-    // ei ollut vikaa, mutta ei saatu varattua
-    // tarpeeksi isoa yhtenäistä muistialuettä char taulukolle johon data luettaisiin.
-  }
-#endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
-
-  if (itsData)
-  {
-    // Test
-    Reset();
-    for (unsigned long i = 0; i < theNumber; i++)
-      itsData[i] = kFloatMissing;
-    return true;
-  }
-  else
-  {
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -147,15 +164,23 @@ bool NFmiDataPool::Init(unsigned long theNumber)
 
 bool NFmiDataPool::Init(unsigned long theNumber, const float *theData)
 {
-  if (!theNumber) return false;
+  try
+  {
+    if (!theNumber)
+      return false;
 
-  Destroy();
+    Destroy();
 
-  itsSize = theNumber;
-  itsData = new float[itsSize];
+    itsSize = theNumber;
+    itsData = new float[itsSize];
 
-  memcpy(itsData, theData, itsSize * sizeof(float));
-  return true;
+    memcpy(itsData, theData, itsSize * sizeof(float));
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -167,14 +192,21 @@ bool NFmiDataPool::Init(unsigned long theNumber, const float *theData)
 
 bool NFmiDataPool::InitMissingValues(const NFmiDataPool &theDataPool)
 {
-  itsMissingValueIndex = theDataPool.itsMissingValueIndex;
-  itsCurrentMissingValueIndex = theDataPool.itsCurrentMissingValueIndex;
+  try
+  {
+    itsMissingValueIndex = theDataPool.itsMissingValueIndex;
+    itsCurrentMissingValueIndex = theDataPool.itsCurrentMissingValueIndex;
 
-  memcpy(itsMissingValue,
-         theDataPool.itsMissingValue,
-         sizeof(double) * kMaxNumberOfDifferentMissingValues);
+    memcpy(itsMissingValue,
+           theDataPool.itsMissingValue,
+           sizeof(double) * kMaxNumberOfDifferentMissingValues);
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -186,17 +218,24 @@ bool NFmiDataPool::InitMissingValues(const NFmiDataPool &theDataPool)
 
 bool NFmiDataPool::Index(unsigned long newIndex)
 {
-  if (IsInside(newIndex))
+  try
   {
-    itsIndex = long(newIndex);
-    if (itsIndex == 0)
-      fFirst = true;
-    else if (newIndex == itsSize)
-      fLast = true;
-    return true;
-  }
-  else
+    if (IsInside(newIndex))
+    {
+      itsIndex = long(newIndex);
+      if (itsIndex == 0)
+        fFirst = true;
+      else if (newIndex == itsSize)
+        fLast = true;
+      return true;
+    }
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -208,10 +247,17 @@ bool NFmiDataPool::Index(unsigned long newIndex)
 
 bool NFmiDataPool::Next(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex += numberOfSteps))
-    return true;
-  else
+  try
+  {
+    if (numberOfSteps && IsInside(itsIndex += numberOfSteps))
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -223,10 +269,17 @@ bool NFmiDataPool::Next(unsigned long numberOfSteps)
 
 bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 {
-  if (numberOfSteps && IsInside(itsIndex -= numberOfSteps))
-    return true;
-  else
+  try
+  {
+    if (numberOfSteps && IsInside(itsIndex -= numberOfSteps))
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -239,12 +292,19 @@ bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 
 bool NFmiDataPool::FloatValueAddress(unsigned long theIndex, float **address) const
 {
-  if (IsInside(theIndex))
+  try
   {
-    *address = &(itsData[theIndex]);
-    return true;
+    if (IsInside(theIndex))
+    {
+      *address = &(itsData[theIndex]);
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -257,14 +317,22 @@ bool NFmiDataPool::FloatValueAddress(unsigned long theIndex, float **address) co
 
 bool NFmiDataPool::MemCopy(unsigned long theNumber, float *theData)
 {
-  if (!(theNumber && itsData && (itsIndex != -1))) return false;
-
-  if ((itsSize - itsIndex) >= theNumber)
+  try
   {
-    memcpy(&(itsData[itsIndex]), theData, theNumber * sizeof(float));
-    return true;
+    if (!(theNumber && itsData && (itsIndex != -1)))
+      return false;
+
+    if ((itsSize - itsIndex) >= theNumber)
+    {
+      memcpy(&(itsData[itsIndex]), theData, theNumber * sizeof(float));
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -276,9 +344,17 @@ bool NFmiDataPool::MemCopy(unsigned long theNumber, float *theData)
 
 float NFmiDataPool::FloatValue(unsigned long theIndex) const
 {
-  if (!IsInside(theIndex)) return kFloatMissing;
+  try
+  {
+    if (!IsInside(theIndex))
+      return kFloatMissing;
 
-  return itsData[theIndex];
+    return itsData[theIndex];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -288,7 +364,18 @@ float NFmiDataPool::FloatValue(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataPool::IndexFloatValue(unsigned long theIndex) const { return FloatValue(theIndex); }
+float NFmiDataPool::IndexFloatValue(unsigned long theIndex) const
+{
+  try
+  {
+    return FloatValue(theIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -299,13 +386,21 @@ float NFmiDataPool::IndexFloatValue(unsigned long theIndex) const { return Float
 
 bool NFmiDataPool::FloatValue(unsigned long theIndex, float theData)
 {
-  if (IsInside(theIndex))
+  try
   {
-    itsData[theIndex] = theData;
-    return true;
+    if (IsInside(theIndex))
+    {
+      itsData[theIndex] = theData;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \param theMissingValue Undocumented
@@ -315,27 +410,37 @@ bool NFmiDataPool::FloatValue(unsigned long theIndex, float theData)
 
 bool NFmiDataPool::IsMissingValue(double theMissingValue)
 {
-  // At first, try this:
-  if (itsCurrentMissingValueIndex >= 0)
-    if (itsMissingValue[itsCurrentMissingValueIndex] == theMissingValue) return true;
-
-  int index = 0;
-  bool valueFound = false;
-  itsCurrentMissingValueIndex = -1;
-
-  while (index <= itsMissingValueIndex)
+  try
   {
-    valueFound = (itsMissingValue[index] == theMissingValue);
-    if (valueFound)
+    // At first, try this:
+    if (itsCurrentMissingValueIndex >= 0)
     {
-      itsCurrentMissingValueIndex = index;
-      break;
+      if (itsMissingValue[itsCurrentMissingValueIndex] == theMissingValue)
+        return true;
     }
 
-    index++;
-  }
+    int index = 0;
+    bool valueFound = false;
+    itsCurrentMissingValueIndex = -1;
 
-  return valueFound;
+    while (index <= itsMissingValueIndex)
+    {
+      valueFound = (itsMissingValue[index] == theMissingValue);
+      if (valueFound)
+      {
+        itsCurrentMissingValueIndex = index;
+        break;
+      }
+
+      index++;
+    }
+
+    return valueFound;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -346,10 +451,19 @@ bool NFmiDataPool::IsMissingValue(double theMissingValue)
 
 double NFmiDataPool::MinValue()
 {
-  if (fabs(itsMinValue) == kFloatMissing)  // Min and max have not been calculated yet
-    CalcMinMaxValues();
-  return itsMinValue;
+  try
+  {
+    if (fabs(itsMinValue) == kFloatMissing)  // Min and max have not been calculated yet
+      CalcMinMaxValues();
+
+    return itsMinValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -358,9 +472,17 @@ double NFmiDataPool::MinValue()
 
 double NFmiDataPool::MaxValue()
 {
-  if (fabs(itsMaxValue) == kFloatMissing)  // Min and max have not been calculated yet
-    CalcMinMaxValues();
-  return itsMaxValue;
+  try
+  {
+    if (fabs(itsMaxValue) == kFloatMissing)  // Min and max have not been calculated yet
+      CalcMinMaxValues();
+
+    return itsMaxValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -371,26 +493,36 @@ double NFmiDataPool::MaxValue()
 
 bool NFmiDataPool::CalcMinMaxValues()
 {
-  unsigned long saveIndex = itsIndex;
-  double value;
-
-  itsMaxValue = kMinDouble;
-  itsMinValue = kMaxDouble;
-
-  Reset();
-  while (Next())
+  try
   {
-    value = FloatValue();
+    unsigned long saveIndex = itsIndex;
+    double value;
 
-    if (!IsMissingValue(value))
+    itsMaxValue = kMinDouble;
+    itsMinValue = kMaxDouble;
+
+    Reset();
+    while (Next())
     {
-      if (value > itsMaxValue) itsMaxValue = value;
-      if (value < itsMinValue) itsMinValue = value;
-    }
-  }
+      value = FloatValue();
 
-  itsIndex = saveIndex;
-  return true;
+      if (!IsMissingValue(value))
+      {
+        if (value > itsMaxValue)
+          itsMaxValue = value;
+
+        if (value < itsMinValue)
+          itsMinValue = value;
+      }
+    }
+
+    itsIndex = saveIndex;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -407,59 +539,66 @@ void NFmiDataPool::Normalize(double theInputMinValue,
                              double theOutputMinValue,
                              double theOutputMaxValue)
 {
-  // Maps values from range [theInputMinValue..theInputMaxValue]
-  // into a new range [theOutputMinValue..theOutputMaxValue].
-  // Input values less than theInputMinValue will be clamped to theInputMinValue.
-  // Respectively, values greater than theInputMaxValue will be clamped to theInputMaxValue
-  //
-  // NOTE: Data values coded as "missing data values" are not transformed anyhow
-
-  // Find current min and max on the data pool
-  double gridMin = MinValue();
-  double gridMax = MaxValue();
-  bool clamped = (gridMin < theInputMinValue) || (gridMax > theInputMaxValue);
-  bool inputRangeEqualsOutputRange =
-      (theInputMinValue == theOutputMinValue) && (theInputMaxValue == theOutputMaxValue);
-
-  if (!clamped && inputRangeEqualsOutputRange)
-    return;  // Unclamped input range equals output range - nothing to do !
-
-  float currentValue;
-  double transformedValue;
-  double outputRange = theOutputMaxValue - theOutputMinValue;
-  double inputRange = theInputMaxValue - theInputMinValue;
-  double inputOutputRatio = 0.0;
-
-  if (inputRange != 0.) inputOutputRatio = outputRange / inputRange;
-
-  Reset();
-  while (Next())
+  try
   {
-    currentValue = FloatValue();
-    if (!IsMissingValue(currentValue))
+    // Maps values from range [theInputMinValue..theInputMaxValue]
+    // into a new range [theOutputMinValue..theOutputMaxValue].
+    // Input values less than theInputMinValue will be clamped to theInputMinValue.
+    // Respectively, values greater than theInputMaxValue will be clamped to theInputMaxValue
+    //
+    // NOTE: Data values coded as "missing data values" are not transformed anyhow
+
+    // Find current min and max on the data pool
+    double gridMin = MinValue();
+    double gridMax = MaxValue();
+    bool clamped = (gridMin < theInputMinValue) || (gridMax > theInputMaxValue);
+    bool inputRangeEqualsOutputRange =
+        (theInputMinValue == theOutputMinValue) && (theInputMaxValue == theOutputMaxValue);
+
+    if (!clamped && inputRangeEqualsOutputRange)
+      return;  // Unclamped input range equals output range - nothing to do !
+
+    float currentValue;
+    double transformedValue;
+    double outputRange = theOutputMaxValue - theOutputMinValue;
+    double inputRange = theInputMaxValue - theInputMinValue;
+    double inputOutputRatio = 0.0;
+
+    if (inputRange != 0.) inputOutputRatio = outputRange / inputRange;
+
+    Reset();
+    while (Next())
     {
-      currentValue =
-          std::min(static_cast<float>(theInputMaxValue),
-                   std::max(currentValue, static_cast<float>(theInputMinValue)));  // Clamp
+      currentValue = FloatValue();
+      if (!IsMissingValue(currentValue))
+      {
+        currentValue =
+            std::min(static_cast<float>(theInputMaxValue),
+                     std::max(currentValue, static_cast<float>(theInputMinValue)));  // Clamp
 
-      if (inputRange != 0.)
-        transformedValue = theOutputMinValue + (currentValue - theInputMinValue) * inputOutputRatio;
-      else
-        transformedValue = theOutputMaxValue;
+        if (inputRange != 0.)
+          transformedValue = theOutputMinValue + (currentValue - theInputMinValue) * inputOutputRatio;
+        else
+          transformedValue = theOutputMaxValue;
 
-      FloatValue(static_cast<float>(transformedValue));
+        FloatValue(static_cast<float>(transformedValue));
+      }
+    }
+
+    if (inputRange != 0.)
+    {
+      itsMinValue = theOutputMinValue + (gridMin - theInputMinValue) * inputOutputRatio;
+      itsMaxValue = theOutputMaxValue + (gridMax - theInputMaxValue) * inputOutputRatio;
+    }
+    else
+    {
+      itsMinValue = theOutputMinValue;
+      itsMaxValue = theOutputMaxValue;
     }
   }
-
-  if (inputRange != 0.)
+  catch (...)
   {
-    itsMinValue = theOutputMinValue + (gridMin - theInputMinValue) * inputOutputRatio;
-    itsMaxValue = theOutputMaxValue + (gridMax - theInputMaxValue) * inputOutputRatio;
-  }
-  else
-  {
-    itsMinValue = theOutputMinValue;
-    itsMaxValue = theOutputMaxValue;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -471,31 +610,38 @@ void NFmiDataPool::Normalize(double theInputMinValue,
 
 void NFmiDataPool::Transform(NFmiTransformList &theList)
 {
-  // Transforms current data pool values as specified in the input transform list
-  // NOTE: This method changes current data pool values - EVERY single data value
-  // in the data pool gets transformed as specified in the input transformation list.
-  // Min and max values get changed accordingly.
-
-  double currentValue;
-  float newValue;
-
-  itsMaxValue = kMinDouble;
-  itsMinValue = kMaxDouble;
-
-  Reset();
-  while (Next())
+  try
   {
-    currentValue = FloatValue();
-    if (!IsMissingValue(currentValue))
-    {
-      newValue = static_cast<float>(theList.Transform(currentValue));
-      FloatValue(newValue);
+    // Transforms current data pool values as specified in the input transform list
+    // NOTE: This method changes current data pool values - EVERY single data value
+    // in the data pool gets transformed as specified in the input transformation list.
+    // Min and max values get changed accordingly.
 
-      if (newValue < itsMinValue)
-        itsMinValue = newValue;
-      else if (newValue > itsMaxValue)
-        itsMaxValue = newValue;
+    double currentValue;
+    float newValue;
+
+    itsMaxValue = kMinDouble;
+    itsMinValue = kMaxDouble;
+
+    Reset();
+    while (Next())
+    {
+      currentValue = FloatValue();
+      if (!IsMissingValue(currentValue))
+      {
+        newValue = static_cast<float>(theList.Transform(currentValue));
+        FloatValue(newValue);
+
+        if (newValue < itsMinValue)
+          itsMinValue = newValue;
+        else if (newValue > itsMaxValue)
+          itsMaxValue = newValue;
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -509,13 +655,21 @@ void NFmiDataPool::Transform(NFmiTransformList &theList)
 
 const float *NFmiDataPool::Data(unsigned long theBeginIndex, unsigned long theNumberOfItems)
 {
-  // Returns the pointer location in data pool corresponding to 'theBeginIndex'.
-  // Also checks that at least 'theNumberOfItems' items can be safely read
-  // starting from this location.
+  try
+  {
+    // Returns the pointer location in data pool corresponding to 'theBeginIndex'.
+    // Also checks that at least 'theNumberOfItems' items can be safely read
+    // starting from this location.
 
-  if (!IsInside(theBeginIndex) || !IsInside(theBeginIndex + theNumberOfItems - 1)) return nullptr;
+    if (!IsInside(theBeginIndex) || !IsInside(theBeginIndex + theNumberOfItems - 1))
+      return nullptr;
 
-  return &(itsData[theBeginIndex]);
+    return &(itsData[theBeginIndex]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -528,50 +682,58 @@ const float *NFmiDataPool::Data(unsigned long theBeginIndex, unsigned long theNu
 
 bool NFmiDataPool::ReadBinaryData(unsigned long theNumber, const char *theFileName)
 {
-  // TODO: miksei dataa lueta suoraan oikeaan paikkaan??
-
-  std::ifstream in(theFileName, std::ios::binary);
-
-  if (!in) return false;
-
-  itsSize = theNumber;
-
-  auto *floatdata = new float[theNumber];
-
-  in.read(reinterpret_cast<char *>(floatdata), theNumber * sizeof(float));
-
-  if (in.fail())
+  try
   {
-    delete[] floatdata;
-    throw runtime_error("NFmiDataPool::ReadBinaryData - Failed to read binary querydata buffer");
-  }
+    // TODO: miksei dataa lueta suoraan oikeaan paikkaan??
+
+    std::ifstream in(theFileName, std::ios::binary);
+
+    if (!in)
+      return false;
+
+    itsSize = theNumber;
+
+    auto *floatdata = new float[theNumber];
+
+    in.read(reinterpret_cast<char *>(floatdata), theNumber * sizeof(float));
+
+    if (in.fail())
+    {
+      delete[] floatdata;
+      throw Fmi::Exception(BCP,"NFmiDataPool::ReadBinaryData - Failed to read binary querydata buffer");
+    }
 
 #ifdef IRIX
-  if (theNumber > 1)
-  {
-    char tmp1, tmp2, tmp3, tmp4;
-    char *ptr = reinterpret_cast<char *>(floatdata);
-    for (long i = 3; i < theNumber * sizeof(float); i += 4)
+    if (theNumber > 1)
     {
-      tmp1 = ptr[i - 3];
-      tmp2 = ptr[i - 2];
-      tmp3 = ptr[i - 1];
-      tmp4 = ptr[i - 0];
+      char tmp1, tmp2, tmp3, tmp4;
+      char *ptr = reinterpret_cast<char *>(floatdata);
+      for (long i = 3; i < theNumber * sizeof(float); i += 4)
+      {
+        tmp1 = ptr[i - 3];
+        tmp2 = ptr[i - 2];
+        tmp3 = ptr[i - 1];
+        tmp4 = ptr[i - 0];
 
-      ptr[i - 3] = tmp4;
-      ptr[i - 2] = tmp3;
-      ptr[i - 1] = tmp2;
-      ptr[i - 0] = tmp1;
+        ptr[i - 3] = tmp4;
+        ptr[i - 2] = tmp3;
+        ptr[i - 1] = tmp2;
+        ptr[i - 0] = tmp1;
+      }
     }
-  }
 #endif
 
-  Init(theNumber, floatdata);
+    Init(theNumber, floatdata);
 
-  in.close();
-  delete[] floatdata;
+    in.close();
+    delete[] floatdata;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -584,28 +746,36 @@ bool NFmiDataPool::ReadBinaryData(unsigned long theNumber, const char *theFileNa
 
 bool NFmiDataPool::ReadTextData(unsigned long theNumber, const char *theFileName)
 {
-  // TODO: miksei dataa lueta suoraan oikeaan paikkaan?
+  try
+  {
+    // TODO: miksei dataa lueta suoraan oikeaan paikkaan?
 
-  std::ifstream in(theFileName);
+    std::ifstream in(theFileName);
 
-  if (!in) return false;
+    if (!in)
+      return false;
 
-  itsSize = theNumber;
-  unsigned long i;
+    itsSize = theNumber;
+    unsigned long i;
 
-  auto *floatdata = new float[theNumber];
+    auto *floatdata = new float[theNumber];
 
-  for (i = 0; i < theNumber; i++)
-    in >> floatdata[i];
+    for (i = 0; i < theNumber; i++)
+      in >> floatdata[i];
 
-  // Initialize data pool with array 'byteData'
+    // Initialize data pool with array 'byteData'
 
-  Init(theNumber, floatdata);
+    Init(theNumber, floatdata);
 
-  in.close();
-  delete[] floatdata;
+    in.close();
+    delete[] floatdata;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -618,15 +788,24 @@ bool NFmiDataPool::ReadTextData(unsigned long theNumber, const char *theFileName
 
 bool NFmiDataPool::WriteBinaryData(unsigned long theNumber, const char *theFileName)
 {
-  std::ofstream out(theFileName, std::ios::binary);
+  try
+  {
+    std::ofstream out(theFileName, std::ios::binary);
 
-  if (!out) return false;
+    if (!out)
+      return false;
 
-  if (theNumber == 0) return false;
+    if (theNumber == 0)
+      return false;
 
-  out.write(reinterpret_cast<char *>(itsData), theNumber * sizeof(float));
+    out.write(reinterpret_cast<char *>(itsData), theNumber * sizeof(float));
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -639,18 +818,25 @@ bool NFmiDataPool::WriteBinaryData(unsigned long theNumber, const char *theFileN
 
 bool NFmiDataPool::WriteTextData(unsigned long theNumber, const char *theFileName)
 {
-  std::ofstream out(theFileName);
+  try
+  {
+    std::ofstream out(theFileName);
 
-  if (!out) return false;
+    if (!out) return false;
 
-  if (theNumber == 0) return false;
+    if (theNumber == 0) return false;
 
-  for (unsigned long i = 0; i < theNumber; i++)
-    out << itsData[i];
+    for (unsigned long i = 0; i < theNumber; i++)
+      out << itsData[i];
 
-  out.close();
+    out.close();
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -665,20 +851,27 @@ bool NFmiDataPool::WriteTextData(unsigned long theNumber, const char *theFileNam
 
 NFmiDataPool &NFmiDataPool::operator=(const NFmiDataPool &theDataPool)
 {
-  if (this != &theDataPool)
+  try
   {
-    itsSize = theDataPool.itsSize;
-    itsIndex = theDataPool.itsIndex;
-    itsMinValue = theDataPool.itsMinValue;
-    itsMaxValue = theDataPool.itsMaxValue;
-    fFirst = theDataPool.fFirst;
-    fLast = theDataPool.fLast;
+    if (this != &theDataPool)
+    {
+      itsSize = theDataPool.itsSize;
+      itsIndex = theDataPool.itsIndex;
+      itsMinValue = theDataPool.itsMinValue;
+      itsMaxValue = theDataPool.itsMaxValue;
+      fFirst = theDataPool.fFirst;
+      fLast = theDataPool.fLast;
 
-    InitMissingValues(theDataPool);
-    Init(theDataPool.itsSize, theDataPool.itsData);
+      InitMissingValues(theDataPool);
+      Init(theDataPool.itsSize, theDataPool.itsData);
+    }
+
+    return *this;
   }
-
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -692,16 +885,24 @@ NFmiDataPool &NFmiDataPool::operator=(const NFmiDataPool &theDataPool)
 
 bool NFmiDataPool::operator==(const NFmiDataPool &theDataPool) const
 {
-  // NOTE: Currently does NOT compare the missing value equality !
-
-  if ((itsSize == theDataPool.itsSize) && (itsIndex == theDataPool.itsIndex) &&
-      (itsMinValue == theDataPool.itsMinValue) && (itsMaxValue == theDataPool.itsMaxValue) &&
-      (fFirst == theDataPool.fFirst) && (fLast == theDataPool.fLast))
+  try
   {
-    if (memcmp(itsData, theDataPool.itsData, itsSize * sizeof(float)) == 0) return true;
-  }
+    // NOTE: Currently does NOT compare the missing value equality !
 
-  return false;
+    if ((itsSize == theDataPool.itsSize) && (itsIndex == theDataPool.itsIndex) &&
+        (itsMinValue == theDataPool.itsMinValue) && (itsMaxValue == theDataPool.itsMaxValue) &&
+        (fFirst == theDataPool.fFirst) && (fLast == theDataPool.fLast))
+    {
+      if (memcmp(itsData, theDataPool.itsData, itsSize * sizeof(float)) == 0)
+        return true;
+    }
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -717,7 +918,14 @@ bool NFmiDataPool::operator==(const NFmiDataPool &theDataPool) const
 
 bool NFmiDataPool::operator!=(const NFmiDataPool &theDataPool) const
 {
-  return !(*this == theDataPool);
+  try
+  {
+    return !(*this == theDataPool);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -731,35 +939,42 @@ bool NFmiDataPool::operator!=(const NFmiDataPool &theDataPool) const
 
 std::ostream &NFmiDataPool::Write(std::ostream &file) const
 {
-  // Used to be data type - now old kFloat value 6 for backward compatibility
-  const int kFloat = 6;
-  file << kFloat << std::endl;
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 6)
+  try
   {
-    file << fUseBinaryStorage << std::endl;
-  }
-  file << itsSize * sizeof(float) << std::endl;
+    // Used to be data type - now old kFloat value 6 for backward compatibility
+    const int kFloat = 6;
+    file << kFloat << std::endl;
 
-  if (fUseBinaryStorage)
-  {
-    // Native endianness output
-    file.write(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
-    file << std::endl;
-  }
-  else
-  {
-    // Muutin metodin constiksi, jolloin Reset ja Next eivdt kelpaa
-
-    long index = -1;
-    while (IsInside(++index))
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 6)
     {
-      file << itsData[index] << " ";
+      file << fUseBinaryStorage << std::endl;
     }
-  }
+    file << itsSize * sizeof(float) << std::endl;
 
-  return file;
+    if (fUseBinaryStorage)
+    {
+      // Native endianness output
+      file.write(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
+      file << std::endl;
+    }
+    else
+    {
+      // Muutin metodin constiksi, jolloin Reset ja Next eivdt kelpaa
+
+      long index = -1;
+      while (IsInside(++index))
+      {
+        file << itsData[index] << " ";
+      }
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -773,51 +988,57 @@ std::ostream &NFmiDataPool::Write(std::ostream &file) const
 
 std::istream &NFmiDataPool::Read(std::istream &file)
 {
-  Destroy();
-
-  // Backward compatibility only
-  unsigned long theType;
-  file >> theType;
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 6)
+  try
   {
-    file >> fUseBinaryStorage;
-  }
-  else
-    fUseBinaryStorage = false;
+    Destroy();
 
-  int poolsize;
-  file >> poolsize;
-  if (poolsize % sizeof(float) != 0)
-    throw runtime_error("Datapool size must be multiple of sizeof(float)");
+    // Backward compatibility only
+    unsigned long theType;
+    file >> theType;
 
-  itsSize = poolsize / sizeof(float);
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 6)
+      file >> fUseBinaryStorage;
+    else
+      fUseBinaryStorage = false;
 
-  Init(itsSize);
+    int poolsize;
+    file >> poolsize;
+    if (poolsize % sizeof(float) != 0)
+      throw Fmi::Exception(BCP,"Datapool size must be multiple of sizeof(float)");
 
-  if (fUseBinaryStorage)
-  {
-    char ch;
-    file.get(ch);
-    file.read(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
-    DoEndianByteSwap();  // tarkistaa ensin, pitääkö swapata ensinkään!!
-  }
-  else
-  {
-    if (itsSize > 0)
+    itsSize = poolsize / sizeof(float);
+
+    Init(itsSize);
+
+    if (fUseBinaryStorage)
     {
-      Reset();
-      while (Next())
+      char ch;
+      file.get(ch);
+      file.read(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
+      DoEndianByteSwap();  // tarkistaa ensin, pitääkö swapata ensinkään!!
+    }
+    else
+    {
+      if (itsSize > 0)
       {
-        file >> itsData[itsIndex];
+        Reset();
+        while (Next())
+        {
+          file >> itsData[itsIndex];
+        }
       }
     }
+
+    if (file.fail())
+      throw Fmi::Exception(BCP,"NFmiDataPool::Read - Failed to read querydata data buffer");
+
+    return file;
   }
-
-  if (file.fail()) throw runtime_error("NFmiDataPool::Read - Failed to read querydata data buffer");
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -827,29 +1048,36 @@ std::istream &NFmiDataPool::Read(std::istream &file)
 // ----------------------------------------------------------------------
 void NFmiDataPool::DoEndianByteSwap()
 {
-  if (fDoEndianByteSwap)  // tämä tieto on annettu ulkoa (qdata on kysynyt qinfolta, tarvitaanko
-                          // swappaus)
+  try
   {
-    // Mika: Lisätty swab operaatio
-    if (itsSize > 1)
+    if (fDoEndianByteSwap)  // tämä tieto on annettu ulkoa (qdata on kysynyt qinfolta, tarvitaanko
+                            // swappaus)
     {
-      char tmp1, tmp2, tmp3, tmp4;
-      char *ptr;
-      ptr = reinterpret_cast<char *>(itsData);
-      for (unsigned long i = 3; i < itsSize * sizeof(float); i += 4)
+      // Mika: Lisätty swab operaatio
+      if (itsSize > 1)
       {
-        tmp1 = ptr[i - 3];
-        tmp2 = ptr[i - 2];
-        tmp3 = ptr[i - 1];
-        tmp4 = ptr[i - 0];
+        char tmp1, tmp2, tmp3, tmp4;
+        char *ptr;
+        ptr = reinterpret_cast<char *>(itsData);
+        for (unsigned long i = 3; i < itsSize * sizeof(float); i += 4)
+        {
+          tmp1 = ptr[i - 3];
+          tmp2 = ptr[i - 2];
+          tmp3 = ptr[i - 1];
+          tmp4 = ptr[i - 0];
 
-        ptr[i - 3] = tmp4;
-        ptr[i - 2] = tmp3;
-        ptr[i - 1] = tmp2;
-        ptr[i - 0] = tmp1;
+          ptr[i - 3] = tmp4;
+          ptr[i - 2] = tmp3;
+          ptr[i - 1] = tmp2;
+          ptr[i - 0] = tmp1;
+        }
       }
+      fDoEndianByteSwap = false;
     }
-    fDoEndianByteSwap = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -10,6 +10,7 @@
 #include "NFmiGdalArea.h"
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <gis/CoordinateTransformation.h>
@@ -78,7 +79,14 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsTopRightLatLon(theTopRightLatLon),
       itsWorldRect()
 {
-  init();
+  try
+  {
+    init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -101,25 +109,32 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsTopRightLatLon(theTopRightLatLon),
       itsWorldRect()
 {
-  itsProjStr = Fmi::OGR::exportToProj(theCRS);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
-
-  // Guess a good value for itsDescription
-
-  const char *auth = theCRS.GetAuthorityName(nullptr);
-  if (auth != nullptr)
+  try
   {
-    itsDescription = std::string(auth);
-    const char *code = theCRS.GetAuthorityCode(nullptr);
-    if (code != nullptr)
-      itsDescription += ":" + std::string(code);
-  }
-  else
-  {
-    itsDescription = Fmi::OGR::exportToWkt(theCRS);
-  }
+    itsProjStr = Fmi::OGR::exportToProj(theCRS);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
 
-  init();
+    // Guess a good value for itsDescription
+
+    const char *auth = theCRS.GetAuthorityName(nullptr);
+    if (auth != nullptr)
+    {
+      itsDescription = std::string(auth);
+      const char *code = theCRS.GetAuthorityCode(nullptr);
+      if (code != nullptr)
+        itsDescription += ":" + std::string(code);
+    }
+    else
+    {
+      itsDescription = Fmi::OGR::exportToWkt(theCRS);
+    }
+
+    init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -144,59 +159,66 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       itsTopRightLatLon(),
       itsWorldRect(NFmiPoint(theXmin, theYmin), NFmiPoint(theXmax, theYmax))
 {
-  itsProjStr = Fmi::OGR::exportToProj(theCRS);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
-
-  // Guess a good value for itsDescription
-
-  const char *auth = theCRS.GetAuthorityName(nullptr);
-  if (auth != nullptr)
+  try
   {
-    itsDescription = std::string(auth);
-    const char *code = theCRS.GetAuthorityCode(nullptr);
-    if (code != nullptr)
-      itsDescription += ":" + std::string(code);
+    itsProjStr = Fmi::OGR::exportToProj(theCRS);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+
+    // Guess a good value for itsDescription
+
+    const char *auth = theCRS.GetAuthorityName(nullptr);
+    if (auth != nullptr)
+    {
+      itsDescription = std::string(auth);
+      const char *code = theCRS.GetAuthorityCode(nullptr);
+      if (code != nullptr)
+        itsDescription += ":" + std::string(code);
+    }
+    else
+    {
+      itsDescription = Fmi::OGR::exportToWkt(theCRS);
+    }
+
+    // The needed spatial references
+
+    OGRErr err;
+    std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+    if (itsDatum == "FMI")
+      err = datum->SetFromUserInput(fmiwkt.c_str());
+    else
+      err = datum->SetFromUserInput(itsDatum.c_str());
+
+    if (err != OGRERR_NONE)
+      throw Fmi::Exception(BCP,"Failed to set datum: '" + itsDatum + "'");
+
+    // The needed coordinate transformations
+
+    itsWorldXYToLatLonTransformation =
+        std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
+    itsLatLonToWorldXYTransformation =
+        std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
+
+    // Bottom left and top right coordinates - needed only for geographic projections (Width()
+    // calculations)
+    // The same data could be extracted from the WorldXYRect too though - and these variables
+    // would not be needed.
+
+    double x1 = theXmin;
+    double y1 = theYmin;
+    double x2 = theXmax;
+    double y2 = theYmax;
+    itsWorldXYToLatLonTransformation->transform(x1, y1);
+    itsWorldXYToLatLonTransformation->transform(x2, y2);
+    itsBottomLeftLatLon = NFmiPoint(x1, y1);
+    itsTopRightLatLon = NFmiPoint(x2, y2);
+
+    // Initialize itsWKT
+    itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
   }
-  else
+  catch (...)
   {
-    itsDescription = Fmi::OGR::exportToWkt(theCRS);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // The needed spatial references
-
-  OGRErr err;
-  std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
-  if (itsDatum == "FMI")
-    err = datum->SetFromUserInput(fmiwkt.c_str());
-  else
-    err = datum->SetFromUserInput(itsDatum.c_str());
-
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
-
-  // The needed coordinate transformations
-
-  itsWorldXYToLatLonTransformation =
-      std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
-  itsLatLonToWorldXYTransformation =
-      std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
-
-  // Bottom left and top right coordinates - needed only for geographic projections (Width()
-  // calculations)
-  // The same data could be extracted from the WorldXYRect too though - and these variables
-  // would not be needed.
-
-  double x1 = theXmin;
-  double y1 = theYmin;
-  double x2 = theXmax;
-  double y2 = theYmax;
-  itsWorldXYToLatLonTransformation->transform(x1, y1);
-  itsWorldXYToLatLonTransformation->transform(x2, y2);
-  itsBottomLeftLatLon = NFmiPoint(x1, y1);
-  itsTopRightLatLon = NFmiPoint(x2, y2);
-
-  // Initialize itsWKT
-  itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
 }
 
 // ----------------------------------------------------------------------
@@ -207,8 +229,16 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
 
 unsigned long NFmiGdalArea::ClassId() const
 {
-  return kNFmiGdalArea;
+  try
+  {
+    return kNFmiGdalArea;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Return class name
@@ -217,7 +247,14 @@ unsigned long NFmiGdalArea::ClassId() const
 
 const char *NFmiGdalArea::ClassName() const
 {
-  return "kNFmiGdalArea";
+  try
+  {
+    return "kNFmiGdalArea";
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -227,7 +264,14 @@ const char *NFmiGdalArea::ClassName() const
 
 NFmiArea *NFmiGdalArea::Clone() const
 {
-  return new NFmiGdalArea(*this);
+  try
+  {
+    return new NFmiGdalArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -237,10 +281,17 @@ NFmiArea *NFmiGdalArea::Clone() const
 
 const std::string NFmiGdalArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << itsDatum << ':' << itsDescription << "|" << BottomLeftLatLon().X() << ","
-      << BottomLeftLatLon().Y() << "," << TopRightLatLon().X() << "," << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << itsDatum << ':' << itsDescription << "|" << BottomLeftLatLon().X() << ","
+        << BottomLeftLatLon().Y() << "," << TopRightLatLon().X() << "," << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -250,7 +301,14 @@ const std::string NFmiGdalArea::AreaStr() const
 
 const std::string &NFmiGdalArea::Datum() const
 {
-  return itsDatum;
+  try
+  {
+    return itsDatum;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -260,7 +318,14 @@ const std::string &NFmiGdalArea::Datum() const
 
 const std::string NFmiGdalArea::WKT() const
 {
-  return itsWKT;
+  try
+  {
+    return itsWKT;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -270,9 +335,16 @@ const std::string NFmiGdalArea::WKT() const
 
 bool NFmiGdalArea::operator==(const NFmiGdalArea &theArea) const
 {
-  return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon &&
-          itsTopRightLatLon == theArea.itsTopRightLatLon && itsWorldRect == theArea.itsWorldRect &&
-          itsDescription == theArea.itsDescription && itsDatum == theArea.itsDatum);
+  try
+  {
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon &&
+            itsTopRightLatLon == theArea.itsTopRightLatLon && itsWorldRect == theArea.itsWorldRect &&
+            itsDescription == theArea.itsDescription && itsDatum == theArea.itsDatum);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -283,8 +355,16 @@ bool NFmiGdalArea::operator==(const NFmiGdalArea &theArea) const
 
 bool NFmiGdalArea::operator!=(const NFmiGdalArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Equality comparison
@@ -293,7 +373,14 @@ bool NFmiGdalArea::operator!=(const NFmiGdalArea &theArea) const
 
 bool NFmiGdalArea::operator==(const NFmiArea &theArea) const
 {
-  return *this == static_cast<const NFmiGdalArea &>(theArea);
+  try
+  {
+    return *this == static_cast<const NFmiGdalArea &>(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -304,8 +391,16 @@ bool NFmiGdalArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiGdalArea::operator!=(const NFmiArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Write the projection definition to a file
@@ -314,13 +409,20 @@ bool NFmiGdalArea::operator!=(const NFmiArea &theArea) const
 
 std::ostream &NFmiGdalArea::Write(std::ostream &file) const
 {
-  NFmiString tmp1 = itsDatum;
-  NFmiString tmp2 = itsDescription;
+  try
+  {
+    NFmiString tmp1 = itsDatum;
+    NFmiString tmp2 = itsDescription;
 
-  NFmiArea::Write(file);
-  file << itsBottomLeftLatLon << itsTopRightLatLon << tmp1 << tmp2;
+    NFmiArea::Write(file);
+    file << itsBottomLeftLatLon << itsTopRightLatLon << tmp1 << tmp2;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -331,18 +433,25 @@ std::ostream &NFmiGdalArea::Write(std::ostream &file) const
 
 std::istream &NFmiGdalArea::Read(std::istream &file)
 {
-  NFmiString tmp1;
-  NFmiString tmp2;
+  try
+  {
+    NFmiString tmp1;
+    NFmiString tmp2;
 
-  NFmiArea::Read(file);
-  file >> itsBottomLeftLatLon >> itsTopRightLatLon >> tmp1 >> tmp2;
+    NFmiArea::Read(file);
+    file >> itsBottomLeftLatLon >> itsTopRightLatLon >> tmp1 >> tmp2;
 
-  itsDatum = tmp1.CharPtr();
-  itsDescription = tmp2.CharPtr();
+    itsDatum = tmp1.CharPtr();
+    itsDescription = tmp2.CharPtr();
 
-  init();
+    init();
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -353,13 +462,20 @@ std::istream &NFmiGdalArea::Read(std::istream &file)
 
 const NFmiPoint NFmiGdalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
-  double xscale = Width() / itsWorldRect.Width();
-  double yscale = Height() / itsWorldRect.Height();
+  try
+  {
+    double xscale = Width() / itsWorldRect.Width();
+    double yscale = Height() / itsWorldRect.Height();
 
-  double worldx = itsWorldRect.Left() + (theXYPoint.X() - Left()) / xscale;
-  double worldy = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / yscale;
+    double worldx = itsWorldRect.Left() + (theXYPoint.X() - Left()) / xscale;
+    double worldy = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / yscale;
 
-  return WorldXYToLatLon(NFmiPoint(worldx, worldy));
+    return WorldXYToLatLon(NFmiPoint(worldx, worldy));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -370,16 +486,23 @@ const NFmiPoint NFmiGdalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiGdalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
-  NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
-  NFmiPoint worldxy = LatLonToWorldXY(latlon);
+  try
+  {
+    NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
+    NFmiPoint worldxy = LatLonToWorldXY(latlon);
 
-  double xscale = Width() / itsWorldRect.Width();
-  double yscale = Height() / itsWorldRect.Height();
+    double xscale = Width() / itsWorldRect.Width();
+    double yscale = Height() / itsWorldRect.Height();
 
-  double x = Left() + xscale * (worldxy.X() - itsWorldRect.Left());
-  double y = Top() + yscale * (itsWorldRect.Bottom() - worldxy.Y());
+    double x = Left() + xscale * (worldxy.X() - itsWorldRect.Left());
+    double y = Top() + yscale * (itsWorldRect.Bottom() - worldxy.Y());
 
-  return NFmiPoint(x, y);
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -390,13 +513,20 @@ const NFmiPoint NFmiGdalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 
 const NFmiPoint NFmiGdalArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 {
-  double xscale = Width() / itsWorldRect.Width();
-  double yscale = Height() / itsWorldRect.Height();
+  try
+  {
+    double xscale = Width() / itsWorldRect.Width();
+    double yscale = Height() / itsWorldRect.Height();
 
-  double worldx = itsWorldRect.Left() + (theXYPoint.X() - Left()) / xscale;
-  double worldy = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / yscale;
+    double worldx = itsWorldRect.Left() + (theXYPoint.X() - Left()) / xscale;
+    double worldy = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / yscale;
 
-  return NFmiPoint(worldx, worldy);
+    return NFmiPoint(worldx, worldy);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -408,12 +538,19 @@ const NFmiPoint NFmiGdalArea::XYToWorldXY(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiGdalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) const
 {
-  double xscale = Width() / itsWorldRect.Width();
-  double yscale = Height() / itsWorldRect.Height();
+  try
+  {
+    double xscale = Width() / itsWorldRect.Width();
+    double yscale = Height() / itsWorldRect.Height();
 
-  double x = xscale * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
-  double y = Top() - yscale * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
-  return NFmiPoint(x, y);
+    double x = xscale * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+    double y = Top() - yscale * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -424,13 +561,22 @@ const NFmiPoint NFmiGdalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint) cons
 
 const NFmiPoint NFmiGdalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 {
-  if (!itsWorldXYToLatLonTransformation)
-    throw std::runtime_error("Trying to use an uninitialized GDAL area");
-  double x = theXYPoint.X();
-  double y = theXYPoint.Y();
-  if (!itsWorldXYToLatLonTransformation->transform(x, y))
-    return NFmiPoint(kFloatMissing, kFloatMissing);
-  return NFmiPoint(x, y);
+  try
+  {
+    if (!itsWorldXYToLatLonTransformation)
+      throw Fmi::Exception(BCP,"Trying to use an uninitialized GDAL area");
+
+    double x = theXYPoint.X();
+    double y = theXYPoint.Y();
+    if (!itsWorldXYToLatLonTransformation->transform(x, y))
+      return NFmiPoint(kFloatMissing, kFloatMissing);
+
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -441,13 +587,22 @@ const NFmiPoint NFmiGdalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 
 const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const
 {
-  if (!itsLatLonToWorldXYTransformation)
-    throw std::runtime_error("Trying to use an uninitialized GDAL area");
-  double x = theLatLonPoint.X();
-  double y = theLatLonPoint.Y();
-  if (!itsLatLonToWorldXYTransformation->transform(x, y))
-    return NFmiPoint(kFloatMissing, kFloatMissing);
-  return NFmiPoint(x, y);
+  try
+  {
+    if (!itsLatLonToWorldXYTransformation)
+      throw Fmi::Exception(BCP,"Trying to use an uninitialized GDAL area");
+
+    double x = theLatLonPoint.X();
+    double y = theLatLonPoint.Y();
+    if (!itsLatLonToWorldXYTransformation->transform(x, y))
+      return NFmiPoint(kFloatMissing, kFloatMissing);
+
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -458,8 +613,16 @@ const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) c
 
 const NFmiRect NFmiGdalArea::WorldRect() const
 {
-  return itsWorldRect;
+  try
+  {
+    return itsWorldRect;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \brief
@@ -470,25 +633,32 @@ NFmiArea *NFmiGdalArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                 const NFmiPoint &theTopRightLatLon,
                                 bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fix = NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiGdalArea(itsDatum,
-                            itsDescription,
-                            fix.itsBottomLeftLatlon,
-                            fix.itsTopRightLatlon,
-                            TopLeft(),
-                            BottomRight(),
-                            fix.fIsPacific);
-  }
-  else
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fix = NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiGdalArea(itsDatum,
+                              itsDescription,
+                              fix.itsBottomLeftLatlon,
+                              fix.itsTopRightLatlon,
+                              TopLeft(),
+                              BottomRight(),
+                              fix.fIsPacific);
+    }
+
     return new NFmiGdalArea(itsDatum,
                             itsDescription,
                             theBottomLeftLatLon,
                             theTopRightLatLon,
-                            TopLeft(),
+                             TopLeft(),
                             BottomRight(),
                             PacificView());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -499,37 +669,44 @@ NFmiArea *NFmiGdalArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 void NFmiGdalArea::init()
 {
-  // The needed spatial references
-
-  if (!itsSpatialReference)
+  try
   {
-    itsProjStr = itsDescription;
-    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+    // The needed spatial references
+
+    if (!itsSpatialReference)
+    {
+      itsProjStr = itsDescription;
+      itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+    }
+
+    OGRErr err;
+    std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+    if (itsDatum == "FMI")
+      err = datum->SetFromUserInput(fmiwkt.c_str());
+    else
+      err = datum->SetFromUserInput(itsDatum.c_str());
+
+    if (err != OGRERR_NONE)
+      throw Fmi::Exception(BCP,"Failed to set datum: '" + itsDatum + "'");
+
+    // The needed coordinate transformations
+
+    itsWorldXYToLatLonTransformation =
+        std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
+    itsLatLonToWorldXYTransformation =
+        std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
+
+    // The needed world XY rectangle
+
+    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+
+    // Initialize itsWKT
+    itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
   }
-
-  OGRErr err;
-  std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
-  if (itsDatum == "FMI")
-    err = datum->SetFromUserInput(fmiwkt.c_str());
-  else
-    err = datum->SetFromUserInput(itsDatum.c_str());
-
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("Failed to set datum: '" + itsDatum + "'");
-
-  // The needed coordinate transformations
-
-  itsWorldXYToLatLonTransformation =
-      std::make_shared<Fmi::CoordinateTransformation>(*itsSpatialReference, *datum);
-  itsLatLonToWorldXYTransformation =
-      std::make_shared<Fmi::CoordinateTransformation>(*datum, *itsSpatialReference);
-
-  // The needed world XY rectangle
-
-  itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
-
-  // Initialize itsWKT
-  itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -540,17 +717,23 @@ void NFmiGdalArea::init()
 
 double NFmiGdalArea::WorldXYWidth() const
 {
-  if (!itsSpatialReference->isGeographic())
-    return WorldRect().Width();
-  else
+  try
   {
+    if (!itsSpatialReference->isGeographic())
+      return WorldRect().Width();
+
     double pi = boost::math::constants::pi<double>();
     double circumference = 2 * pi * 6371220;
     double dlon = itsTopRightLatLon.X() - itsBottomLeftLatLon.X();
     if (dlon < 0)
       dlon += 360;
+
     double clat = 0.5 * (itsBottomLeftLatLon.Y() + itsTopRightLatLon.Y());
     return dlon / 360 * circumference * cos(clat * pi / 180);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -562,14 +745,19 @@ double NFmiGdalArea::WorldXYWidth() const
 
 double NFmiGdalArea::WorldXYHeight() const
 {
-  if (!itsSpatialReference->isGeographic())
-    return WorldRect().Height();
-  else
+  try
   {
+    if (!itsSpatialReference->isGeographic())
+      return WorldRect().Height();
+
     double pi = boost::math::constants::pi<double>();
     double circumference = 2 * pi * 6371220;
     double dlat = itsTopRightLatLon.Y() - itsBottomLeftLatLon.Y();
     return dlat / 360.0 * circumference;  // angle -> meters
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -581,18 +769,25 @@ double NFmiGdalArea::WorldXYHeight() const
 
 std::size_t NFmiGdalArea::HashValue() const
 {
-  std::size_t hash = NFmiArea::HashValue();
+  try
+  {
+    std::size_t hash = NFmiArea::HashValue();
 
-  // some of these may be redundant:
-  boost::hash_combine(hash, boost::hash_value(itsDatum));
-  boost::hash_combine(hash, boost::hash_value(itsDescription));
-  boost::hash_combine(hash, boost::hash_value(itsWKT));
+    // some of these may be redundant:
+    boost::hash_combine(hash, boost::hash_value(itsDatum));
+    boost::hash_combine(hash, boost::hash_value(itsDescription));
+    boost::hash_combine(hash, boost::hash_value(itsWKT));
 
-  boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-  boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-  boost::hash_combine(hash, itsWorldRect.HashValue());
+    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
+    boost::hash_combine(hash, itsWorldRect.HashValue());
 
-  return hash;
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 #endif  // DISABLED_GDAL

@@ -15,6 +15,7 @@
 #include "NFmiQueryInfoSatel.h"
 #include "NFmiQueryData.h"
 #include "NFmiSaveBaseFactory.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -22,7 +23,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfoSatel::~NFmiQueryInfoSatel() { Destroy(); }
+NFmiQueryInfoSatel::~NFmiQueryInfoSatel()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -95,8 +108,15 @@ NFmiQueryInfoSatel::NFmiQueryInfoSatel(const NFmiQueryInfoSatel &theInfo)
 
 void NFmiQueryInfoSatel::Destroy()
 {
-  delete itsSatelName;
-  itsSatelName = nullptr;
+  try
+  {
+    delete itsSatelName;
+    itsSatelName = nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -105,7 +125,17 @@ void NFmiQueryInfoSatel::Destroy()
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo *NFmiQueryInfoSatel::Clone() const { return new NFmiQueryInfoSatel(*this); }
+NFmiQueryInfo *NFmiQueryInfoSatel::Clone() const
+{
+  try
+  {
+    return new NFmiQueryInfoSatel(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -116,7 +146,17 @@ NFmiQueryInfo *NFmiQueryInfoSatel::Clone() const { return new NFmiQueryInfoSatel
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo &NFmiQueryInfoSatel::operator=(const NFmiQueryInfo & /* theInfo */) { return *this; }
+NFmiQueryInfo &NFmiQueryInfoSatel::operator=(const NFmiQueryInfo & /* theInfo */)
+{
+  try
+  {
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -128,11 +168,18 @@ NFmiQueryInfo &NFmiQueryInfoSatel::operator=(const NFmiQueryInfo & /* theInfo */
 
 std::ostream &NFmiQueryInfoSatel::Write(std::ostream &file) const
 {
-  NFmiQueryInfo::Write(file);
+  try
+  {
+    NFmiQueryInfo::Write(file);
 
-  file << static_cast<char *>(*itsSatelName) << std::endl;
+    file << static_cast<char *>(*itsSatelName) << std::endl;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -146,16 +193,23 @@ std::ostream &NFmiQueryInfoSatel::Write(std::ostream &file) const
 
 std::istream &NFmiQueryInfoSatel::Read(std::istream &file)
 {
-  Destroy();
+  try
+  {
+    Destroy();
 
-  NFmiQueryInfo::Read(file);
+    NFmiQueryInfo::Read(file);
 
-  char theSatelName[256];
-  file >> theSatelName;
+    char theSatelName[256];
+    file >> theSatelName;
 
-  itsSatelName = new NFmiString(theSatelName);
+    itsSatelName = new NFmiString(theSatelName);
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -17,6 +17,7 @@
 #include "NFmiDataIdent.h"
 #include "NFmiInterpolation.h"
 #include "NFmiParamBag.h"
+#include <macgyver/Exception.h>
 
 #include <algorithm>
 #include <cmath>  // Mika: abs()
@@ -69,45 +70,50 @@ static double WeightedMean(double missingValue,
                            double value4,
                            float factor4)
 {
-  // HUOM faktoreiden summan ei tartte olla 1
+  try
+  {
+    // HUOM faktoreiden summan ei tartte olla 1
 
-  double sum = 0.;
-  double facSum = 0.;
-  bool any = false;
+    double sum = 0.;
+    double facSum = 0.;
+    bool any = false;
 
-  if (value1 != missingValue)
-  {
-    any = true;
-    sum += value1 * factor1;
-    facSum += factor1;
-  }
-  if (value2 != missingValue)
-  {
-    any = true;
-    sum += value2 * factor2;
-    facSum += factor2;
-  }
-  if (value3 != missingValue && factor3 != kFloatMissing)
-  {
-    any = true;
-    sum += value3 * factor3;
-    facSum += factor3;
-  }
-  if (value4 != missingValue && factor4 != kFloatMissing)
-  {
-    any = true;
-    sum += value4 * factor4;
-    facSum += factor4;
-  }
+    if (value1 != missingValue)
+    {
+      any = true;
+      sum += value1 * factor1;
+      facSum += factor1;
+    }
+    if (value2 != missingValue)
+    {
+      any = true;
+      sum += value2 * factor2;
+      facSum += factor2;
+    }
+    if (value3 != missingValue && factor3 != kFloatMissing)
+    {
+      any = true;
+      sum += value3 * factor3;
+      facSum += factor3;
+    }
+    if (value4 != missingValue && factor4 != kFloatMissing)
+    {
+      any = true;
+      sum += value4 * factor4;
+      facSum += factor4;
+    }
 
-  if (!any)
-    return missingValue;
-  else
-  {
+    if (!any)
+      return missingValue;
+
     if (facSum > 0.)
       return sum / facSum;
-    else
-      return 0;
+
+    return 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -122,11 +128,18 @@ static double WeightedMean(double missingValue,
 NFmiTotalWind::NFmiTotalWind(double theInfoVersion)
     : NFmiCombinedParam(theInfoVersion), itsData(), itsPrecision()
 {
-  itsData.longType = kTCombinedWeatherMissing;
-  SetWindDirection(kT6BitMissing);
-  SetWindSpeed(WindSpeedMissingValue());  // Marko testi, toimii sekä versiolle 6 että 7!!!
-  SetWindGust(WindGustMissingValue());
-  fDataOk = true;
+  try
+  {
+    itsData.longType = kTCombinedWeatherMissing;
+    SetWindDirection(kT6BitMissing);
+    SetWindSpeed(WindSpeedMissingValue());  // Marko testi, toimii sekä versiolle 6 että 7!!!
+    SetWindGust(WindGustMissingValue());
+    fDataOk = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -145,18 +158,25 @@ NFmiTotalWind::NFmiTotalWind(unsigned long theValue,
                              float theWindGustValue)
     : NFmiCombinedParam(theInfoVersion), itsData(), itsPrecision()
 {
-  itsData.longType = kTCombinedWeatherMissing;
-  if (theParamType == kFmiPackedWind)
+  try
   {
-    // huom! puuskaa ei aseteta tässä tapauksessa, koska se tulee pakattuna arvona!!!
-    itsData.longType = theValue;
-    fDataOk = true;
+    itsData.longType = kTCombinedWeatherMissing;
+    if (theParamType == kFmiPackedWind)
+    {
+      // huom! puuskaa ei aseteta tässä tapauksessa, koska se tulee pakattuna arvona!!!
+      itsData.longType = theValue;
+      fDataOk = true;
+    }
+    else
+    {
+      FromWindVector(theValue);
+      SetWindGust(WindGustVx(theWindGustValue));  // jos parametri on windvector, laitetaan mahd.
+                                                  // puuska arvo myös kohdalleen
+    }
   }
-  else
+  catch (...)
   {
-    FromWindVector(theValue);
-    SetWindGust(WindGustVx(theWindGustValue));  // jos parametri on windvector, laitetaan mahd.
-                                                // puuska arvo myös kohdalleen
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -176,18 +196,25 @@ NFmiTotalWind::NFmiTotalWind(float theValue,
                              float theWindGustValue)
     : NFmiCombinedParam(theInfoVersion), itsData(), itsPrecision()
 {
-  itsData.longType = kTCombinedWeatherMissing;
-  if (theParamType == kFmiPackedWind)
+  try
   {
-    // huom! puuskaa ei aseteta tässä tapauksessa, koska se tulee pakattuna arvona!!!
-    itsData.longType = ConvertFloatToLong(theValue);
-    fDataOk = true;
+    itsData.longType = kTCombinedWeatherMissing;
+    if (theParamType == kFmiPackedWind)
+    {
+      // huom! puuskaa ei aseteta tässä tapauksessa, koska se tulee pakattuna arvona!!!
+      itsData.longType = ConvertFloatToLong(theValue);
+      fDataOk = true;
+    }
+    else
+    {
+      FromWindVector(static_cast<long unsigned int>(theValue));
+      SetWindGust(WindGustVx(theWindGustValue));  // jos parametri on windvector, laitetaan mahd.
+                                                  // puuska arvo myös kohdalleen
+    }
   }
-  else
+  catch (...)
   {
-    FromWindVector(static_cast<long unsigned int>(theValue));
-    SetWindGust(WindGustVx(theWindGustValue));  // jos parametri on windvector, laitetaan mahd.
-                                                // puuska arvo myös kohdalleen
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -209,12 +236,19 @@ NFmiTotalWind::NFmiTotalWind(float theFirstValue,
                              float theWindGustValue)
     : NFmiCombinedParam(theInfoVersion), itsData(), itsPrecision()
 {
-  if (theParamType == kFmiDirectionAndSpeed)
-    SetFromDirectionAndSpeed(theFirstValue, theSecondValue);
-  else if (theParamType == kFmiUVComponents)
-    SetFromUVComponents(
-        theFirstValue, theSecondValue, true);  // true=aseta mm. myös gustindex puuttuvaksi
-  SetWindGust(WindGustVx(theWindGustValue));
+  try
+  {
+    if (theParamType == kFmiDirectionAndSpeed)
+      SetFromDirectionAndSpeed(theFirstValue, theSecondValue);
+    else if (theParamType == kFmiUVComponents)
+      SetFromUVComponents(
+          theFirstValue, theSecondValue, true);  // true=aseta mm. myös gustindex puuttuvaksi
+    SetWindGust(WindGustVx(theWindGustValue));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -226,24 +260,31 @@ NFmiTotalWind::NFmiTotalWind(float theFirstValue,
 
 void NFmiTotalWind::SetFromDirectionAndSpeed(float theDirection, float theSpeed)
 {
-  itsData.longType = kTCombinedWeatherMissing;
-  fDataOk = true;  // jos molemmat puuttuu
-  if (theDirection != kFloatMissing)
+  try
   {
-    if (theDirection == 999)
-      SetWindDirection(kTVariableWind);
-    else
-      SetWindDirection(static_cast<int>(round(theDirection / 10.0)) % 36);
+    itsData.longType = kTCombinedWeatherMissing;
+    fDataOk = true;  // jos molemmat puuttuu
+    if (theDirection != kFloatMissing)
+    {
+      if (theDirection == 999)
+        SetWindDirection(kTVariableWind);
+      else
+        SetWindDirection(static_cast<int>(round(theDirection / 10.0)) % 36);
 
-    if (theSpeed != kFloatMissing)
-      SetWindSpeedFromRealValue(theSpeed);
-    else
-      fDataOk = false;  // vaan toinen on puuttuva
+      if (theSpeed != kFloatMissing)
+        SetWindSpeedFromRealValue(theSpeed);
+      else
+        fDataOk = false;  // vaan toinen on puuttuva
+    }
+    else if (theSpeed != kFloatMissing)
+    {
+      SetWindSpeedFromRealValue(theSpeed);  // Marko testi
+      fDataOk = false;
+    }
   }
-  else if (theSpeed != kFloatMissing)
+  catch (...)
   {
-    SetWindSpeedFromRealValue(theSpeed);  // Marko testi
-    fDataOk = false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -259,20 +300,27 @@ void NFmiTotalWind::SetFromUVComponents(float theUValue,
                                         float theVValue,
                                         bool fSetValuesMissingFirst)
 {
-  if (fSetValuesMissingFirst) itsData.longType = kTCombinedWeatherMissing;
-  NFmiWindDirection theDirection(theUValue, theVValue);
-  if (theDirection.Value() != kFloatMissing)
+  try
   {
-    SetWindDirection(static_cast<unsigned long>(round(theDirection.Value() / 10.0)));
-    SetWindSpeedFromRealValue(sqrt(theUValue * theUValue + theVValue * theVValue));
+    if (fSetValuesMissingFirst) itsData.longType = kTCombinedWeatherMissing;
+    NFmiWindDirection theDirection(theUValue, theVValue);
+    if (theDirection.Value() != kFloatMissing)
+    {
+      SetWindDirection(static_cast<unsigned long>(round(theDirection.Value() / 10.0)));
+      SetWindSpeedFromRealValue(sqrt(theUValue * theUValue + theVValue * theVValue));
 
-    fDataOk = true;
+      fDataOk = true;
+    }
+    else
+    {
+      SetWindDirection(kT6BitMissing);
+      SetWindSpeed(WindSpeedMissingValue());
+      fDataOk = false;
+    }
   }
-  else
+  catch (...)
   {
-    SetWindDirection(kT6BitMissing);
-    SetWindSpeed(WindSpeedMissingValue());
-    fDataOk = false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -285,19 +333,26 @@ void NFmiTotalWind::SetFromUVComponents(float theUValue,
 
 bool NFmiTotalWind::CheckWindVector(unsigned long theValue)
 {
-  bool retVal = false;
-  if (theValue != kUnsignedLongMissing && theValue != kFloatMissing)
+  try
   {
-    unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
-    if (theValue % 100 <= 36)
+    bool retVal = false;
+    if (theValue != kUnsignedLongMissing && theValue != kFloatMissing)
     {
-      if (theValue / 100 <= maxWindSpeedValue)  // nopeus
+      unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
+      if (theValue % 100 <= 36)
+      {
+        if (theValue / 100 <= maxWindSpeedValue)  // nopeus
+          retVal = true;
+      }
+      else if (theValue % 100 == 62 && theValue / 100 <= maxWindSpeedValue)  // vaihtelevaa tuulta
         retVal = true;
     }
-    else if (theValue % 100 == 62 && theValue / 100 <= maxWindSpeedValue)  // vaihtelevaa tuulta
-      retVal = true;
+    return retVal;
   }
-  return retVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -309,25 +364,32 @@ bool NFmiTotalWind::CheckWindVector(unsigned long theValue)
 
 bool NFmiTotalWind::FromWindVector(unsigned long theValue)
 {
-  if (!CheckWindVector(theValue))
+  try
   {
-    itsData.longType = kTCombinedWeatherMissing;
-    fDataOk = true;
-  }
-  else
-  {
-    itsData.longType = kTCombinedWeatherMissing;
-    unsigned int speed = WindSpeedFromWindVector(theValue);
-    unsigned int direction = WindDirectionFromWindVector(theValue);
-    SetWindSpeedFromRealValue(speed);
-    SetWindDirection(direction);
-    if ((speed != WindSpeedMissingValue() && direction != kT6BitMissing) ||
-        (speed == WindSpeedMissingValue() && direction == kT6BitMissing))
+    if (!CheckWindVector(theValue))
+    {
+      itsData.longType = kTCombinedWeatherMissing;
       fDataOk = true;
+    }
     else
-      fDataOk = false;
+    {
+      itsData.longType = kTCombinedWeatherMissing;
+      unsigned int speed = WindSpeedFromWindVector(theValue);
+      unsigned int direction = WindDirectionFromWindVector(theValue);
+      SetWindSpeedFromRealValue(speed);
+      SetWindDirection(direction);
+      if ((speed != WindSpeedMissingValue() && direction != kT6BitMissing) ||
+          (speed == WindSpeedMissingValue() && direction == kT6BitMissing))
+        fDataOk = true;
+      else
+        fDataOk = false;
+    }
+    return fDataOk;
   }
-  return fDataOk;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -338,12 +400,19 @@ bool NFmiTotalWind::FromWindVector(unsigned long theValue)
 
 unsigned long NFmiTotalWind::ToWindVector()
 {
-  unsigned long windVector = kUnsignedLongMissing;
-  if (itsData.longType == kTCombinedWeatherMissing) return windVector;
-  auto speed = static_cast<unsigned long>(round(WindSpeedVx(WindSpeed())));
-  unsigned long dir = WindDirection();
-  if (speed != kFloatMissing && dir != kT6BitMissing) windVector = speed * 100 + (dir);
-  return windVector;
+  try
+  {
+    unsigned long windVector = kUnsignedLongMissing;
+    if (itsData.longType == kTCombinedWeatherMissing) return windVector;
+    auto speed = static_cast<unsigned long>(round(WindSpeedVx(WindSpeed())));
+    unsigned long dir = WindDirection();
+    if (speed != kFloatMissing && dir != kT6BitMissing) windVector = speed * 100 + (dir);
+    return windVector;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -355,12 +424,18 @@ unsigned long NFmiTotalWind::ToWindVector()
 
 unsigned long NFmiTotalWind::WindSpeedFromWindVector(unsigned long theValue)
 {
-  int speed = WindSpeedMissingValue();
-  if (theValue != kUnsignedLongMissing && theValue != kFloatMissing)
+  try
   {
-    speed = (static_cast<int>(theValue)) / 100;
+    int speed = WindSpeedMissingValue();
+    if (theValue != kUnsignedLongMissing && theValue != kFloatMissing)
+      speed = (static_cast<int>(theValue)) / 100;
+
+    return speed;
   }
-  return speed;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -372,15 +447,22 @@ unsigned long NFmiTotalWind::WindSpeedFromWindVector(unsigned long theValue)
 
 bool NFmiTotalWind::IsMemberParam(FmiParameterName type) const
 {
-  switch (type)
+  try
   {
-    // onko tässä kaikki
-    case kFmiWindDirection:
-    case kFmiWindSpeedMS:
-    case kFmiWindVectorMS:
-      return true;
-    default:
-      return false;
+    switch (type)
+    {
+      // onko tässä kaikki
+      case kFmiWindDirection:
+      case kFmiWindSpeedMS:
+      case kFmiWindVectorMS:
+        return true;
+      default:
+        return false;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -393,14 +475,22 @@ bool NFmiTotalWind::IsMemberParam(FmiParameterName type) const
 
 unsigned long NFmiTotalWind::WindDirectionFromWindVector(unsigned long theValue)
 {
-  int dir = kT6BitMissing;
-  if (theValue != kUnsignedLongMissing && theValue != kFloatMissing && theValue != 999)
+  try
   {
-    dir = (static_cast<int>(theValue)) % 100;
+    int dir = kT6BitMissing;
+    if (theValue != kUnsignedLongMissing && theValue != kFloatMissing && theValue != 999)
+    {
+      dir = (static_cast<int>(theValue)) % 100;
+    }
+    else if (theValue == 999)
+      dir = kTVariableWind;
+
+    return dir;
   }
-  else if (theValue == 999)
-    dir = kTVariableWind;
-  return dir;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -413,39 +503,46 @@ unsigned long NFmiTotalWind::WindDirectionFromWindVector(unsigned long theValue)
 
 bool NFmiTotalWind::SubValue(double theValue, FmiParameterName theParam)
 {
-  bool returnVal = false;
-  switch (theParam)
+  try
   {
-    case kFmiWindDirection:
-      // alle 0 ja yli 360 arvot huolehditaan WindDirection(double):ssa
-      if (theValue == 999)
-        returnVal = WindDirection(kTVariableWind);
-      else if (theValue == kFloatMissing)
-        returnVal = WindDirection(static_cast<unsigned long>(theValue));
-      else
-        returnVal = WindDirection(static_cast<unsigned long>(round(theValue / 10.0)));
-      break;
-    case kFmiWindSpeedMS:
+    bool returnVal = false;
+    switch (theParam)
     {
-      double maxWindSpeedValue = (itsInfoVersion >= 7.) ? 409.4 : 500.;
-      if (theValue != kFloatMissing) theValue = FmiMax(0., FmiMin(maxWindSpeedValue, theValue));
-      returnVal = WindSpeed(WindSpeedVx(theValue));
-      break;
+      case kFmiWindDirection:
+        // alle 0 ja yli 360 arvot huolehditaan WindDirection(double):ssa
+        if (theValue == 999)
+          returnVal = WindDirection(kTVariableWind);
+        else if (theValue == kFloatMissing)
+          returnVal = WindDirection(static_cast<unsigned long>(theValue));
+        else
+          returnVal = WindDirection(static_cast<unsigned long>(round(theValue / 10.0)));
+        break;
+      case kFmiWindSpeedMS:
+      {
+        double maxWindSpeedValue = (itsInfoVersion >= 7.) ? 409.4 : 500.;
+        if (theValue != kFloatMissing) theValue = FmiMax(0., FmiMin(maxWindSpeedValue, theValue));
+        returnVal = WindSpeed(WindSpeedVx(theValue));
+        break;
+      }
+      case kFmiHourlyMaximumGust:
+      {
+        double maxGustSpeedValue = (itsInfoVersion >= 7.) ? 409.4 : 14.;
+        if (theValue != kFloatMissing) theValue = FmiMax(0., FmiMin(maxGustSpeedValue, theValue));
+        returnVal = WindGust(WindGustVx(theValue));
+        break;
+      }
+      case kFmiWindVectorMS:
+        returnVal = FromWindVector(static_cast<unsigned long>(FmiMax(0.0, theValue)));
+        break;
+      default:
+        break;
     }
-    case kFmiHourlyMaximumGust:
-    {
-      double maxGustSpeedValue = (itsInfoVersion >= 7.) ? 409.4 : 14.;
-      if (theValue != kFloatMissing) theValue = FmiMax(0., FmiMin(maxGustSpeedValue, theValue));
-      returnVal = WindGust(WindGustVx(theValue));
-      break;
-    }
-    case kFmiWindVectorMS:
-      returnVal = FromWindVector(static_cast<unsigned long>(FmiMax(0.0, theValue)));
-      break;
-    default:
-      break;
+    return returnVal;
   }
-  return returnVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -459,34 +556,41 @@ bool NFmiTotalWind::SubValue(double theValue, FmiParameterName theParam)
 double NFmiTotalWind::SubValue(FmiParameterName theParam,
                                NFmiIntegrationSelector * /* theSelector */)
 {
-  // palauttaa kFloatMissing, jos arvo on puuttuva
-  double returnVal = kFloatMissing;
-  unsigned long tempValue = 0;
-  switch (theParam)
+  try
   {
-    case kFmiWindDirection:
-      returnVal = WindDirectionValue();
-      break;
-    case kFmiWindSpeedMS:
-      returnVal = WindSpeedVx(WindSpeed());
-      break;
-    case kFmiHourlyMaximumGust:
-      returnVal = WindGustVx(WindGust());
-      break;
-    case kFmiWindVectorMS:
-      tempValue = ToWindVector();
-      if (tempValue != kUnsignedLongMissing) returnVal = tempValue;
-      break;
-    case kFmiWindUMS:
-      returnVal = CalcU();
-      break;
-    case kFmiWindVMS:
-      returnVal = CalcV();
-      break;
-    default:
-      break;
+    // palauttaa kFloatMissing, jos arvo on puuttuva
+    double returnVal = kFloatMissing;
+    unsigned long tempValue = 0;
+    switch (theParam)
+    {
+      case kFmiWindDirection:
+        returnVal = WindDirectionValue();
+        break;
+      case kFmiWindSpeedMS:
+        returnVal = WindSpeedVx(WindSpeed());
+        break;
+      case kFmiHourlyMaximumGust:
+        returnVal = WindGustVx(WindGust());
+        break;
+      case kFmiWindVectorMS:
+        tempValue = ToWindVector();
+        if (tempValue != kUnsignedLongMissing) returnVal = tempValue;
+        break;
+      case kFmiWindUMS:
+        returnVal = CalcU();
+        break;
+      case kFmiWindVMS:
+        returnVal = CalcV();
+        break;
+      default:
+        break;
+    }
+    return returnVal;
   }
-  return returnVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -499,17 +603,24 @@ double NFmiTotalWind::SubValue(FmiParameterName theParam,
 
 double NFmiTotalWind::WindDirectionValue()
 {
-  double returnVal = kFloatMissing;
-  unsigned long tempValue = WindDirection();
-  if (tempValue != kT6BitMissing && tempValue != kTVariableWind)
+  try
   {
-    if (tempValue > 36) tempValue = tempValue % 36;
-    returnVal = tempValue * 10;
-    if (returnVal == 0 && WindSpeed() != 0) returnVal = 360;
+    double returnVal = kFloatMissing;
+    unsigned long tempValue = WindDirection();
+    if (tempValue != kT6BitMissing && tempValue != kTVariableWind)
+    {
+      if (tempValue > 36) tempValue = tempValue % 36;
+      returnVal = tempValue * 10;
+      if (returnVal == 0 && WindSpeed() != 0) returnVal = 360;
+    }
+    else if (tempValue == kTVariableWind)
+      returnVal = 999;  // tuuli on vaihtelevaa
+    return returnVal;
   }
-  else if (tempValue == kTVariableWind)
-    returnVal = 999;  // tuuli on vaihtelevaa
-  return returnVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -520,20 +631,27 @@ double NFmiTotalWind::WindDirectionValue()
 
 double NFmiTotalWind::CalcU()
 {
-  double value = kFloatMissing;
-  double WS = WindSpeedVx(WindSpeed());
-  auto WD = static_cast<int>(WindDirectionValue());
-  if (WD ==
-      999)  // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla myös puuttuvaa)
-    return 0;
-  if (WS != kFloatMissing && WD != kFloatMissing)
+  try
   {
-    value = WS * sin((((180 + WD) % 360) / 360.) * (2. * kPii));  // huom! tuulen suunta pitää ensin
-    // kääntää 180 astetta ja sitten
-    // muuttaa radiaaneiksi kulma/360
-    // * 2*pii
+    double value = kFloatMissing;
+    double WS = WindSpeedVx(WindSpeed());
+    auto WD = static_cast<int>(WindDirectionValue());
+    // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla myös puuttuvaa)
+    if (WD == 999)
+      return 0;
+
+    if (WS != kFloatMissing && WD != kFloatMissing)
+    {
+      // huom! tuulen suunta pitää ensin kääntää 180 astetta ja sitten
+      // muuttaa radiaaneiksi kulma/360 * 2*pii
+      value = WS * sin((((180 + WD) % 360) / 360.) * (2. * kPii));
+    }
+    return value;
   }
-  return value;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -546,20 +664,27 @@ double NFmiTotalWind::CalcU()
 
 double NFmiTotalWind::CalcV()
 {
-  double value = kFloatMissing;
-  double WS = WindSpeedVx(WindSpeed());
-  auto WD = static_cast<int>(WindDirectionValue());
-  if (WD ==
-      999)  // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla myös puuttuvaa)
-    return 0;
-  if (WS != kFloatMissing && WD != kFloatMissing)
+  try
   {
-    value = WS * cos((((180 + WD) % 360) / 360.) * (2. * kPii));  // huom! tuulen suunta pitää ensin
-    // kääntää 180 astetta ja sitten
-    // muuttaa radiaaneiksi kulma/360
-    // * 2*pii
+    double value = kFloatMissing;
+    double WS = WindSpeedVx(WindSpeed());
+    auto WD = static_cast<int>(WindDirectionValue());
+    // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla myös puuttuvaa)
+    if (WD == 999)
+      return 0;
+
+    if (WS != kFloatMissing && WD != kFloatMissing)
+    {
+      // huom! tuulen suunta pitää ensin kääntää 180 astetta ja sitten
+      // muuttaa radiaaneiksi kulma/360 * 2*pii
+      value = WS * cos((((180 + WD) % 360) / 360.) * (2. * kPii));
+    }
+    return value;
   }
-  return value;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -571,41 +696,48 @@ double NFmiTotalWind::CalcV()
 
 double NFmiTotalWind::RawSubValue(FmiParameterName theParam)
 {
-  // Persa lisäsi tämän, vaan ei kirjoittanut vielä sisältöä
-  // Tällä hetkellä toimii aivan samoin kuin SubValue
-
-  // palauttaa kFloatMissing, jos arvo on puuttuva
-  double returnVal = kFloatMissing;
-  unsigned long tempValue = 0;
-  switch (theParam)
+  try
   {
-    case kFmiWindDirection:
-      tempValue = WindDirection();
-      if (tempValue != kT6BitMissing && tempValue != kTVariableWind)
-      {
-        if (tempValue > 36) tempValue = tempValue % 36;
-        returnVal = tempValue * 10;
-        if (returnVal == 0 && WindSpeed() != 0) returnVal = 360;
-      }
-      else if (tempValue == kTVariableWind)
-        returnVal = 999;  // tuuli on vaihtelevaa
-      break;
-    case kFmiWindSpeedMS:
-      tempValue = WindSpeed();
-      if (tempValue != WindSpeedMissingValue()) returnVal = tempValue;
-      break;
-    case kFmiHourlyMaximumGust:
-      tempValue = WindGust();
-      if (tempValue != WindGustMissingValue()) returnVal = tempValue;
-      break;
-    case kFmiWindVectorMS:
-      tempValue = ToWindVector();
-      if (tempValue != kUnsignedLongMissing) returnVal = tempValue;
-      break;
-    default:
-      break;
+    // Persa lisäsi tämän, vaan ei kirjoittanut vielä sisältöä
+    // Tällä hetkellä toimii aivan samoin kuin SubValue
+
+    // palauttaa kFloatMissing, jos arvo on puuttuva
+    double returnVal = kFloatMissing;
+    unsigned long tempValue = 0;
+    switch (theParam)
+    {
+      case kFmiWindDirection:
+        tempValue = WindDirection();
+        if (tempValue != kT6BitMissing && tempValue != kTVariableWind)
+        {
+          if (tempValue > 36) tempValue = tempValue % 36;
+          returnVal = tempValue * 10;
+          if (returnVal == 0 && WindSpeed() != 0) returnVal = 360;
+        }
+        else if (tempValue == kTVariableWind)
+          returnVal = 999;  // tuuli on vaihtelevaa
+        break;
+      case kFmiWindSpeedMS:
+        tempValue = WindSpeed();
+        if (tempValue != WindSpeedMissingValue()) returnVal = tempValue;
+        break;
+      case kFmiHourlyMaximumGust:
+        tempValue = WindGust();
+        if (tempValue != WindGustMissingValue()) returnVal = tempValue;
+        break;
+      case kFmiWindVectorMS:
+        tempValue = ToWindVector();
+        if (tempValue != kUnsignedLongMissing) returnVal = tempValue;
+        break;
+      default:
+        break;
+    }
+    return returnVal;
   }
-  return returnVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -619,42 +751,49 @@ double NFmiTotalWind::RawSubValue(FmiParameterName theParam)
 NFmiDataIdent *NFmiTotalWind::CreateParam(const NFmiProducer &theProducer,
                                           NFmiVoidPtrList *theSecondaryProducerList)
 {
-  NFmiParam param;
-  NFmiParamBag subParamBag;
+  try
+  {
+    NFmiParam param;
+    NFmiParamBag subParamBag;
 
-  // lisää tänne gustit ym!
-  unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
-  unsigned long maxGustSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 14;
-  param = NFmiParam(kFmiWindSpeedMS, "Wind speed", 0, maxWindSpeedValue, 1, 0, "%.1f", kLinearly);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
-  param = NFmiParam(kFmiWindDirection, "Wind dir", 0, 360, 1, 0, "%.1f", kLinearly);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
-  param = NFmiParam(
-      kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kNearestPoint);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kNumberParam));
+    // lisää tänne gustit ym!
+    unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
+    unsigned long maxGustSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 14;
+    param = NFmiParam(kFmiWindSpeedMS, "Wind speed", 0, maxWindSpeedValue, 1, 0, "%.1f", kLinearly);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
+    param = NFmiParam(kFmiWindDirection, "Wind dir", 0, 360, 1, 0, "%.1f", kLinearly);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
+    param = NFmiParam(
+        kFmiWindVectorMS, "Wind vector", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kNearestPoint);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kNumberParam));
 
-  param =
-      NFmiParam(kFmiHourlyMaximumGust, "MaxGustMS", 0, maxGustSpeedValue, 1, 0, "%.1f", kLinearly);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
-  param = NFmiParam(kFmiWindUMS, "U", 0, 300, 1, 0, "%.1f", kLinearly);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
-  param = NFmiParam(kFmiWindVMS, "V", 0, 300, 1, 0, "%.1f", kLinearly);
-  subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
+    param =
+        NFmiParam(kFmiHourlyMaximumGust, "MaxGustMS", 0, maxGustSpeedValue, 1, 0, "%.1f", kLinearly);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
+    param = NFmiParam(kFmiWindUMS, "U", 0, 300, 1, 0, "%.1f", kLinearly);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
+    param = NFmiParam(kFmiWindVMS, "V", 0, 300, 1, 0, "%.1f", kLinearly);
+    subParamBag.Add(NFmiDataIdent(param, theProducer, kContinuousParam));
 
-  param = NFmiParam(
-      kFmiTotalWindMS, "Wind", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kByCombinedParam);
-  auto *theDataIdent = new NFmiDataIdent(param,
-                                         theProducer,
-                                         kContinuousParam,
-                                         true,
-                                         true,
-                                         true,
-                                         true,
-                                         true,
-                                         &subParamBag,
-                                         theSecondaryProducerList);
+    param = NFmiParam(
+        kFmiTotalWindMS, "Wind", kFloatMissing, kFloatMissing, 1, 0, "%.1f", kByCombinedParam);
+    auto *theDataIdent = new NFmiDataIdent(param,
+                                           theProducer,
+                                           kContinuousParam,
+                                           true,
+                                           true,
+                                           true,
+                                           true,
+                                           true,
+                                           &subParamBag,
+                                           theSecondaryProducerList);
 
-  return theDataIdent;
+    return theDataIdent;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -670,21 +809,28 @@ NFmiDataIdent *NFmiTotalWind::CreateParam(const NFmiProducer &theProducer,
 
 int NFmiTotalWind::PartSum(int value1, int value2, float factor1, float factor2, int missingValue)
 {
-  int retValue = missingValue;
-  if (factor1 == 0 && factor2 != 0)
-    retValue = value2;
-  else if (factor2 == 0 && factor1 != 0)
-    retValue = value1;
+  try
+  {
+    int retValue = missingValue;
+    if (factor1 == 0 && factor2 != 0)
+      retValue = value2;
+    else if (factor2 == 0 && factor1 != 0)
+      retValue = value1;
 
-  // molemmilla factor>0
-  else if (value1 != missingValue && value2 != missingValue)
-    retValue = static_cast<unsigned long>(value1 * factor1 + value2 * factor2);
-  else if (value1 != missingValue && value2 == missingValue)
-    retValue = value2;
-  else if (value1 == missingValue && value2 != missingValue)
-    retValue = value1;
+    // molemmilla factor>0
+    else if (value1 != missingValue && value2 != missingValue)
+      retValue = static_cast<unsigned long>(value1 * factor1 + value2 * factor2);
+    else if (value1 != missingValue && value2 == missingValue)
+      retValue = value2;
+    else if (value1 == missingValue && value2 != missingValue)
+      retValue = value1;
 
-  return retValue;
+    return retValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -698,68 +844,75 @@ int NFmiTotalWind::PartSum(int value1, int value2, float factor1, float factor2,
 
 unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long dir2, float factor)
 {
-  double meanValue = 0.f;
-
-  short lkm1 = 0;  // alle 180 astetta
-  short lkm2 = 0;  // yli 180 astetta
-
-  unsigned long dirTable[2];
-  dirTable[0] = dir1;
-  dirTable[1] = dir2;
-
-  if (dir1 == kTVariableWind)  // vaihtelevaa tuulta
+  try
   {
-    if (factor == 0)
-      return kTVariableWind;
-    else
-      return dir2;  // ei tarvitse laskea mitään
-  }
-  else if (dir2 == kTVariableWind)
-  {
-    if (factor == 1)
-      return kTVariableWind;
-    else
-      return dir1;  // ei tarvitse laskea mitään
-  }
-  if (dir1 == kT6BitMissing)
-  {
-    if (factor == 0)
-      return kT6BitMissing;  // palautetaan puuttuva tieto
-    else
-      return dir2;  // ei tarvitse laskea mitään
-  }
+    double meanValue = 0.f;
 
-  for (unsigned long i : dirTable)  // katsotaan kummalla puolella 180:aa astetta arvot ovat
-  {
-    if (i != kT6BitMissing)
+    short lkm1 = 0;  // alle 180 astetta
+    short lkm2 = 0;  // yli 180 astetta
+
+    unsigned long dirTable[2];
+    dirTable[0] = dir1;
+    dirTable[1] = dir2;
+
+    if (dir1 == kTVariableWind)  // vaihtelevaa tuulta
     {
-      if (i < 18)
-        lkm1++;
-      else if (i >= 18)
-        lkm2++;
-    }
-    else
-      return kT6BitMissing;  // ei voi laskea keskiarvoa, kun vaan toinen on olemassa
-  }
-  if (lkm1 == 0 && lkm2 == 0) return kT6BitMissing;
-  if (lkm1 == 0 || lkm2 == 0)  // molemmat samalla puolella
-    meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
-  else  // 360 astetta ylittyy
-  {
-    // Mika: cast välttämätön g++ kääntäjällä
-    if (abs(static_cast<int>(dirTable[0]) - static_cast<int>(dirTable[1])) > 18)
-    {
-      if (dirTable[0] < dirTable[1])
-        meanValue = ((dirTable[0] + 36) * (1 - factor) + dirTable[1] * factor);
+      if (factor == 0)
+        return kTVariableWind;
       else
-        meanValue = ((dirTable[1] + 36) * (factor) + dirTable[0] * (1 - factor));
-      if (meanValue > 36) meanValue = meanValue - 36;
+        return dir2;  // ei tarvitse laskea mitään
     }
-    else
-      meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
-  }
+    else if (dir2 == kTVariableWind)
+    {
+      if (factor == 1)
+        return kTVariableWind;
+      else
+        return dir1;  // ei tarvitse laskea mitään
+    }
+    if (dir1 == kT6BitMissing)
+    {
+      if (factor == 0)
+        return kT6BitMissing;  // palautetaan puuttuva tieto
+      else
+        return dir2;  // ei tarvitse laskea mitään
+    }
 
-  return static_cast<unsigned long>(meanValue);
+    for (unsigned long i : dirTable)  // katsotaan kummalla puolella 180:aa astetta arvot ovat
+    {
+      if (i != kT6BitMissing)
+      {
+        if (i < 18)
+          lkm1++;
+        else if (i >= 18)
+          lkm2++;
+      }
+      else
+        return kT6BitMissing;  // ei voi laskea keskiarvoa, kun vaan toinen on olemassa
+    }
+    if (lkm1 == 0 && lkm2 == 0) return kT6BitMissing;
+    if (lkm1 == 0 || lkm2 == 0)  // molemmat samalla puolella
+      meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
+    else  // 360 astetta ylittyy
+    {
+      // Mika: cast välttämätön g++ kääntäjällä
+      if (abs(static_cast<int>(dirTable[0]) - static_cast<int>(dirTable[1])) > 18)
+      {
+        if (dirTable[0] < dirTable[1])
+          meanValue = ((dirTable[0] + 36) * (1 - factor) + dirTable[1] * factor);
+        else
+          meanValue = ((dirTable[1] + 36) * (factor) + dirTable[0] * (1 - factor));
+        if (meanValue > 36) meanValue = meanValue - 36;
+      }
+      else
+        meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
+    }
+
+    return static_cast<unsigned long>(meanValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -772,12 +925,19 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
 
 NFmiTotalWind *NFmiTotalWind::Mean(const NFmiTotalWind &theTotalWind, float factor)
 {
-  this->SetWindDirection(
-      WindDirectionMean(this->WindDirection(), theTotalWind.WindDirection(), factor));
-  this->SetWindSpeed(PartSum(
-      this->WindSpeed(), theTotalWind.WindSpeed(), (1 - factor), factor, WindSpeedMissingValue()));
-  this->SetWindGust(kT4BitMissing);
-  return this;
+  try
+  {
+    this->SetWindDirection(
+        WindDirectionMean(this->WindDirection(), theTotalWind.WindDirection(), factor));
+    this->SetWindSpeed(PartSum(
+        this->WindSpeed(), theTotalWind.WindSpeed(), (1 - factor), factor, WindSpeedMissingValue()));
+    this->SetWindGust(kT4BitMissing);
+    return this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -806,55 +966,62 @@ bool NFmiTotalWind::SetToWeightedMean(NFmiCombinedParam *theCombinedParam1,
                                       float fac4)
 
 {
-  auto *theWind1 = static_cast<NFmiTotalWind *>(theCombinedParam1);
-  auto *theWind2 = static_cast<NFmiTotalWind *>(theCombinedParam2);
-  auto *theWind3 = static_cast<NFmiTotalWind *>(theCombinedParam3);
-  auto *theWind4 = static_cast<NFmiTotalWind *>(theCombinedParam4);
+  try
+  {
+    auto *theWind1 = static_cast<NFmiTotalWind *>(theCombinedParam1);
+    auto *theWind2 = static_cast<NFmiTotalWind *>(theCombinedParam2);
+    auto *theWind3 = static_cast<NFmiTotalWind *>(theCombinedParam3);
+    auto *theWind4 = static_cast<NFmiTotalWind *>(theCombinedParam4);
 
-  float factorSum = fac1 + fac2;
-  if (fac3 != kFloatMissing) factorSum += fac3;
-  if (fac4 != kFloatMissing) factorSum += fac4;
+    float factorSum = fac1 + fac2;
+    if (fac3 != kFloatMissing) factorSum += fac3;
+    if (fac4 != kFloatMissing) factorSum += fac4;
 
-  float factor1 = fac1 / factorSum;
-  float factor2 = fac2 / factorSum;
-  float factor3, factor4;
-  if (fac3 == kFloatMissing)
-    factor3 = kFloatMissing;
-  else
-    factor3 = fac3 / factorSum;
-  if (fac4 == kFloatMissing)
-    factor4 = kFloatMissing;
-  else
-    factor4 = fac4 / factorSum;
+    float factor1 = fac1 / factorSum;
+    float factor2 = fac2 / factorSum;
+    float factor3, factor4;
+    if (fac3 == kFloatMissing)
+      factor3 = kFloatMissing;
+    else
+      factor3 = fac3 / factorSum;
+    if (fac4 == kFloatMissing)
+      factor4 = kFloatMissing;
+    else
+      factor4 = fac4 / factorSum;
 
-  NFmiInterpolation::WindInterpolator windInterpolator;
-  windInterpolator.operator()(
-      theWind1->SubValue(kFmiWindSpeedMS), theWind1->SubValue(kFmiWindDirection), factor1);
-  windInterpolator.operator()(
-      theWind2->SubValue(kFmiWindSpeedMS), theWind2->SubValue(kFmiWindDirection), factor2);
-  windInterpolator.operator()(
-      theWind3->SubValue(kFmiWindSpeedMS), theWind3->SubValue(kFmiWindDirection), factor3);
-  windInterpolator.operator()(
-      theWind4->SubValue(kFmiWindSpeedMS), theWind4->SubValue(kFmiWindDirection), factor4);
+    NFmiInterpolation::WindInterpolator windInterpolator;
+    windInterpolator.operator()(
+        theWind1->SubValue(kFmiWindSpeedMS), theWind1->SubValue(kFmiWindDirection), factor1);
+    windInterpolator.operator()(
+        theWind2->SubValue(kFmiWindSpeedMS), theWind2->SubValue(kFmiWindDirection), factor2);
+    windInterpolator.operator()(
+        theWind3->SubValue(kFmiWindSpeedMS), theWind3->SubValue(kFmiWindDirection), factor3);
+    windInterpolator.operator()(
+        theWind4->SubValue(kFmiWindSpeedMS), theWind4->SubValue(kFmiWindDirection), factor4);
 
-  // Muutin tuulen interpolointia siten, että tuulen nopeus lasketaan skalaarisesti
-  // ja suunta ottaa huomioon jatkuvuuden 360 kohdalla (ennen laskettiin u- ja v-komponenttien
-  // avulla)
-  SetFromDirectionAndSpeed(static_cast<float>(windInterpolator.Direction()),
-                           static_cast<float>(windInterpolator.Speed()));
+    // Muutin tuulen interpolointia siten, että tuulen nopeus lasketaan skalaarisesti
+    // ja suunta ottaa huomioon jatkuvuuden 360 kohdalla (ennen laskettiin u- ja v-komponenttien
+    // avulla)
+    SetFromDirectionAndSpeed(static_cast<float>(windInterpolator.Direction()),
+                             static_cast<float>(windInterpolator.Speed()));
 
-  double gust = WeightedMean(kFloatMissing,
-                             theWind1->SubValue(kFmiHourlyMaximumGust),
-                             factor1,
-                             theWind2->SubValue(kFmiHourlyMaximumGust),
-                             factor2,
-                             theWind3->SubValue(kFmiHourlyMaximumGust),
-                             factor3,
-                             theWind4->SubValue(kFmiHourlyMaximumGust),
-                             factor4);
-  SetWindGust(WindGustVx(gust));
+    double gust = WeightedMean(kFloatMissing,
+                               theWind1->SubValue(kFmiHourlyMaximumGust),
+                               factor1,
+                               theWind2->SubValue(kFmiHourlyMaximumGust),
+                               factor2,
+                               theWind3->SubValue(kFmiHourlyMaximumGust),
+                               factor3,
+                               theWind4->SubValue(kFmiHourlyMaximumGust),
+                               factor4);
+    SetWindGust(WindGustVx(gust));
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -918,34 +1085,41 @@ bool NFmiTotalWind::SetToWeightedPeriod(NFmiQueryInfo * /* info */,
 
 bool NFmiTotalWind::WindDirection(unsigned long theValue)
 {
-  int integerValue = theValue;
-  if (theValue != kFloatMissing)  // vai float???
+  try
   {
-    if (integerValue < 0)  // integerValue tarvitaan, että nähtäisiin alle nollan arvot
+    int integerValue = theValue;
+    if (theValue != kFloatMissing)  // vai float???
     {
-      theValue = 36 + integerValue % 36;
+      if (integerValue < 0)  // integerValue tarvitaan, että nähtäisiin alle nollan arvot
+      {
+        theValue = 36 + integerValue % 36;
+      }
+      else if (theValue > 36 && theValue != kT6BitMissing && theValue != kTVariableWind)
+      {
+        theValue = theValue % 36;
+      }
+      SetWindDirection(theValue);
+      if (integerValue == 0 && WindSpeed() != 0) SetWindDirection(36);
+      if (WindSpeed() == WindSpeedMissingValue())
+        fDataOk = false;
+      else
+        fDataOk = true;
+
+      return true;
     }
-    else if (theValue > 36 && theValue != kT6BitMissing && theValue != kTVariableWind)
-    {
-      theValue = theValue % 36;
-    }
-    SetWindDirection(theValue);
-    if (integerValue == 0 && WindSpeed() != 0) SetWindDirection(36);
-    if (WindSpeed() == WindSpeedMissingValue())
-      fDataOk = false;
-    else
-      fDataOk = true;
-    return true;
-  }
-  else
-  {
+
     SetWindDirection(kT6BitMissing);
     if (WindSpeed() == WindSpeedMissingValue())
       fDataOk = false;
     else
       fDataOk = true;
+
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -957,30 +1131,36 @@ bool NFmiTotalWind::WindDirection(unsigned long theValue)
 
 bool NFmiTotalWind::WindSpeed(unsigned long theValue)
 {
-  if (theValue != kFloatMissing)
+  try
   {
-    unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
-    if (theValue > maxWindSpeedValue && theValue != WindSpeedMissingValue())  // Marko testi
-      theValue = maxWindSpeedValue;  // suurin mahd. int luku (= 409.4 m/s) tai (V6 500 = 500 m/s)
-    SetWindSpeed(theValue);
-    if (theValue == 0) SetWindDirection(0);  // tyyni
+    if (theValue != kFloatMissing)
+    {
+      unsigned long maxWindSpeedValue = (itsInfoVersion >= 7.) ? 4094 : 500;
+      if (theValue > maxWindSpeedValue && theValue != WindSpeedMissingValue())  // Marko testi
+        theValue = maxWindSpeedValue;  // suurin mahd. int luku (= 409.4 m/s) tai (V6 500 = 500 m/s)
+      SetWindSpeed(theValue);
+      if (theValue == 0) SetWindDirection(0);  // tyyni
 
-    if (WindDirection() == kT6BitMissing)
-      fDataOk = false;
-    else
-      fDataOk = true;
+      if (WindDirection() == kT6BitMissing)
+        fDataOk = false;
+      else
+        fDataOk = true;
 
-    return true;
-  }
-  else
-  {
+      return true;
+    }
+
     SetWindSpeed(WindSpeedMissingValue());
     if (WindDirection() == kT6BitMissing)
       fDataOk = false;
     else
       fDataOk = true;
+
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -992,8 +1172,15 @@ bool NFmiTotalWind::WindSpeed(unsigned long theValue)
 
 bool NFmiTotalWind::WindGust(unsigned long theValue)
 {
-  SetWindGust(theValue);
-  return true;
+  try
+  {
+    SetWindGust(theValue);
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1005,18 +1192,25 @@ bool NFmiTotalWind::WindGust(unsigned long theValue)
 
 bool NFmiTotalWind::LongValue(unsigned long theValue)
 {
-  //  if(theValue != kUnsignedLongMissing && theValue != kFloatMissing)
-  if (theValue != kTCombinedWeatherMissing && theValue != kFloatMissing)
+  try
   {
-    itsData.longType = theValue;
-    fDataOk = true;
-    return true;
+    //  if(theValue != kUnsignedLongMissing && theValue != kFloatMissing)
+    if (theValue != kTCombinedWeatherMissing && theValue != kFloatMissing)
+    {
+      itsData.longType = theValue;
+      fDataOk = true;
+      return true;
+    }
+    else
+    {
+      itsData.longType = kTCombinedWeatherMissing;
+      fDataOk = true;
+      return false;
+    }
   }
-  else
+  catch (...)
   {
-    itsData.longType = kTCombinedWeatherMissing;
-    fDataOk = true;
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1029,14 +1223,32 @@ bool NFmiTotalWind::LongValue(unsigned long theValue)
 
 double NFmiTotalWind::WindSpeedV7(unsigned long theValue)
 {
-  if (theValue == kT12BitMissing) return kFloatMissing;
-  return theValue / 10.0;
+  try
+  {
+    if (theValue == kT12BitMissing)
+      return kFloatMissing;
+
+    return theValue / 10.0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double NFmiTotalWind::WindGustV7(unsigned long theValue)
 {
-  if (theValue == kWindGustV7Missing || theValue == kT12BitMissing) return kFloatMissing;
-  return theValue / 10.0;
+  try
+  {
+    if (theValue == kWindGustV7Missing || theValue == kT12BitMissing)
+      return kFloatMissing;
+
+    return theValue / 10.0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1048,14 +1260,32 @@ double NFmiTotalWind::WindGustV7(unsigned long theValue)
 
 unsigned long NFmiTotalWind::WindSpeedV7(double theValue)
 {
-  if (theValue == kFloatMissing) return kT12BitMissing;
-  return static_cast<unsigned long>(round((theValue * 10.)));
+  try
+  {
+    if (theValue == kFloatMissing)
+      return kT12BitMissing;
+
+    return static_cast<unsigned long>(round((theValue * 10.)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 unsigned long NFmiTotalWind::WindGustV7(double theValue)
 {
-  if (theValue == kFloatMissing) return kWindGustV7Missing;
-  return static_cast<unsigned long>(round((theValue * 10.)));
+  try
+  {
+    if (theValue == kFloatMissing)
+      return kWindGustV7Missing;
+
+    return static_cast<unsigned long>(round((theValue * 10.)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1067,14 +1297,32 @@ unsigned long NFmiTotalWind::WindGustV7(double theValue)
 
 double NFmiTotalWind::WindSpeedV6(unsigned long theValue)
 {
-  if (theValue == kT9BitMissing) return kFloatMissing;
-  return theValue;
+  try
+  {
+    if (theValue == kT9BitMissing)
+      return kFloatMissing;
+
+    return theValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double NFmiTotalWind::WindGustV6(unsigned long theValue)
 {
-  if (theValue == kT4BitMissing) return kFloatMissing;
-  return theValue;
+  try
+  {
+    if (theValue == kT4BitMissing)
+      return kFloatMissing;
+
+    return theValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1086,14 +1334,32 @@ double NFmiTotalWind::WindGustV6(unsigned long theValue)
 
 unsigned long NFmiTotalWind::WindSpeedV6(double theValue)
 {
-  if (theValue == kFloatMissing) return kT9BitMissing;
-  return static_cast<unsigned long>(round(theValue));
+  try
+  {
+    if (theValue == kFloatMissing)
+      return kT9BitMissing;
+
+    return static_cast<unsigned long>(round(theValue));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 unsigned long NFmiTotalWind::WindGustV6(double theValue)
 {
-  if (theValue == kFloatMissing) return kT4BitMissing;
-  return static_cast<unsigned long>(round(theValue));
+  try
+  {
+    if (theValue == kFloatMissing)
+      return kT4BitMissing;
+
+    return static_cast<unsigned long>(round(theValue));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

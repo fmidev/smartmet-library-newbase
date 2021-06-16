@@ -88,6 +88,7 @@
 // ======================================================================
 
 #include "NFmiMercatorArea.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
 #include <limits>
@@ -133,7 +134,14 @@ NFmiMercatorArea::NFmiMercatorArea(const NFmiPoint& theBottomLeftLatLon,
       itsYScaleFactor(),
       itsWorldRect()
 {
-  Init();
+  try
+  {
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -157,7 +165,14 @@ NFmiMercatorArea::NFmiMercatorArea(const NFmiMercatorArea& theLatLonArea)
 
 NFmiArea* NFmiMercatorArea::Clone() const
 {
-  return new NFmiMercatorArea(*this);
+  try
+  {
+    return new NFmiMercatorArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -167,28 +182,35 @@ NFmiArea* NFmiMercatorArea::Clone() const
 
 void NFmiMercatorArea::Init(bool fKeepWorldRect)
 {
-  // Sopimus:
-  // alueen oikean ylänurkan longitudin on oltava suurempi kuin vasemman alanurkan longitudin.
-  if (itsTopRightLatLon.X() < itsBottomLeftLatLon.X())
+  try
   {
-    // Em. sopimus ei toteudu ==> tehdään täysi kierros lännestä itään ==> oikean ylänurkan
-    // longitudi on nyt suurempi kuin vasemman alanurkan longitudi
-    itsTopRightLatLon += NFmiPoint(360., 0.);
+    // Sopimus:
+    // alueen oikean ylänurkan longitudin on oltava suurempi kuin vasemman alanurkan longitudin.
+    if (itsTopRightLatLon.X() < itsBottomLeftLatLon.X())
+    {
+      // Em. sopimus ei toteudu ==> tehdään täysi kierros lännestä itään ==> oikean ylänurkan
+      // longitudi on nyt suurempi kuin vasemman alanurkan longitudi
+      itsTopRightLatLon += NFmiPoint(360., 0.);
+    }
+
+    if (!fKeepWorldRect)
+      itsWorldRect =
+          NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
+                   LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
+
+    itsXScaleFactor = Width() / itsWorldRect.Width();
+    itsYScaleFactor = Height() / itsWorldRect.Height();
+
+    NFmiArea::Init(fKeepWorldRect);
+
+    const char* fmt = "+proj=merc +R={} +wktext +over +no_defs +type=crs";
+    itsProjStr = fmt::format(fmt, kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
-
-  if (!fKeepWorldRect)
-    itsWorldRect =
-        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
-                 LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
-
-  itsXScaleFactor = Width() / itsWorldRect.Width();
-  itsYScaleFactor = Height() / itsWorldRect.Height();
-
-  NFmiArea::Init(fKeepWorldRect);
-
-  const char* fmt = "+proj=merc +R={} +wktext +over +no_defs +type=crs";
-  itsProjStr = fmt::format(fmt, kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -200,13 +222,20 @@ void NFmiMercatorArea::Init(bool fKeepWorldRect)
 
 const NFmiPoint NFmiMercatorArea::LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const
 {
-  // Computes the metric world xy coordinates from the input geodetic coordinates
+  try
+  {
+    // Computes the metric world xy coordinates from the input geodetic coordinates
 
-  // Limit Y-values to prevent infinity
+    // Limit Y-values to prevent infinity
 
-  double y = std::max(std::min(theLatLonPoint.Y(), 89.9999), -89.9999);
+    double y = std::max(std::min(theLatLonPoint.Y(), 89.9999), -89.9999);
 
-  return NFmiPoint(kRearth * FmiRad(theLatLonPoint.X()), kRearth * log(tan(FmiRad(45. + 0.5 * y))));
+    return NFmiPoint(kRearth * FmiRad(theLatLonPoint.X()), kRearth * log(tan(FmiRad(45. + 0.5 * y))));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -218,19 +247,26 @@ const NFmiPoint NFmiMercatorArea::LatLonToWorldXY(const NFmiPoint& theLatLonPoin
 
 const NFmiPoint NFmiMercatorArea::ToXY(const NFmiPoint& theLatLonPoint) const
 {
-  // Transforms input geodetic coordinates (longitude,latitude) into local (relative)
-  // coordinates on xy-plane.
-  double xLocal, yLocal;
+  try
+  {
+    // Transforms input geodetic coordinates (longitude,latitude) into local (relative)
+    // coordinates on xy-plane.
+    double xLocal, yLocal;
 
-  // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
-  NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
-  NFmiPoint xyWorld(LatLonToWorldXY(latlon));
+    // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
+    NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
+    NFmiPoint xyWorld(LatLonToWorldXY(latlon));
 
-  // Finally, transform world xy-coordinates into local xy-coordinates
-  xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
-  yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
+    // Finally, transform world xy-coordinates into local xy-coordinates
+    xLocal = Left() + itsXScaleFactor * (xyWorld.X() - itsWorldRect.Left());
+    yLocal = Top() + itsYScaleFactor * (itsWorldRect.Bottom() - xyWorld.Y());
 
-  return NFmiPoint(xLocal, yLocal);
+    return NFmiPoint(xLocal, yLocal);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -242,13 +278,20 @@ const NFmiPoint NFmiMercatorArea::ToXY(const NFmiPoint& theLatLonPoint) const
 
 const NFmiPoint NFmiMercatorArea::WorldXYToLatLon(const NFmiPoint& theXYPoint) const
 {
-  // Computes the geodetic coordinates (in degrees) from the input (metric) world xy coordinates
+  try
+  {
+    // Computes the geodetic coordinates (in degrees) from the input (metric) world xy coordinates
 
-  double worldY = theXYPoint.Y();
-  double lon = NFmiLongitude(FmiDeg(theXYPoint.X() / kRearth), PacificView()).Value();
-  double lat = FmiDeg(2.0 * atan(exp(worldY / kRearth)) - 0.5 * kPii);
+    double worldY = theXYPoint.Y();
+    double lon = NFmiLongitude(FmiDeg(theXYPoint.X() / kRearth), PacificView()).Value();
+    double lat = FmiDeg(2.0 * atan(exp(worldY / kRearth)) - 0.5 * kPii);
 
-  return NFmiPoint(lon, lat);
+    return NFmiPoint(lon, lat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -260,11 +303,18 @@ const NFmiPoint NFmiMercatorArea::WorldXYToLatLon(const NFmiPoint& theXYPoint) c
 
 const NFmiPoint NFmiMercatorArea::XYToWorldXY(const NFmiPoint& theXYPoint) const
 {
-  // Transform local xy-coordinates into world xy-coordinates (meters).
-  double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
-  double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
+  try
+  {
+    // Transform local xy-coordinates into world xy-coordinates (meters).
+    double xWorld = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;
+    double yWorld = itsWorldRect.Bottom() - (theXYPoint.Y() - Top()) / itsYScaleFactor;
 
-  return NFmiPoint(xWorld, yWorld);
+    return NFmiPoint(xWorld, yWorld);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -276,9 +326,16 @@ const NFmiPoint NFmiMercatorArea::XYToWorldXY(const NFmiPoint& theXYPoint) const
 
 const NFmiPoint NFmiMercatorArea::WorldXYToXY(const NFmiPoint& theWorldXYPoint) const
 {
-  double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
-  double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
-  return NFmiPoint(x, y);
+  try
+  {
+    double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
+    double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -290,9 +347,16 @@ const NFmiPoint NFmiMercatorArea::WorldXYToXY(const NFmiPoint& theWorldXYPoint) 
 
 const NFmiPoint NFmiMercatorArea::ToLatLon(const NFmiPoint& theXYPoint) const
 {
-  // Transforms input local xy-coordinates into geodetic coordinates
-  // (longitude,latitude) on globe.
-  return WorldXYToLatLon(XYToWorldXY(theXYPoint));
+  try
+  {
+    // Transforms input local xy-coordinates into geodetic coordinates
+    // (longitude,latitude) on globe.
+    return WorldXYToLatLon(XYToWorldXY(theXYPoint));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -303,7 +367,14 @@ const NFmiPoint NFmiMercatorArea::ToLatLon(const NFmiPoint& theXYPoint) const
 
 double NFmiMercatorArea::XScale() const
 {
-  return 1. / itsXScaleFactor;
+  try
+  {
+    return 1. / itsXScaleFactor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -313,7 +384,14 @@ double NFmiMercatorArea::XScale() const
 
 double NFmiMercatorArea::YScale() const
 {
-  return 1. / itsYScaleFactor;
+  try
+  {
+    return 1. / itsYScaleFactor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -328,19 +406,26 @@ NFmiArea* NFmiMercatorArea::NewArea(const NFmiPoint& theBottomLeftLatLon,
                                     const NFmiPoint& theTopRightLatLon,
                                     bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiMercatorArea(fixedPointData.itsBottomLeftLatlon,
-                                fixedPointData.itsTopRightLatlon,
-                                TopLeft(),
-                                BottomRight(),
-                                fixedPointData.fIsPacific);
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiMercatorArea(fixedPointData.itsBottomLeftLatlon,
+                                  fixedPointData.itsTopRightLatlon,
+                                  TopLeft(),
+                                  BottomRight(),
+                                  fixedPointData.fIsPacific);
+    }
+    else
+      return new NFmiMercatorArea(
+          theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
   }
-  else
-    return new NFmiMercatorArea(
-        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -354,16 +439,23 @@ NFmiArea* NFmiMercatorArea::NewArea(const NFmiPoint& theBottomLeftLatLon,
 
 std::ostream& NFmiMercatorArea::Write(std::ostream& file) const
 {
-  NFmiArea::Write(file);
-  file << itsBottomLeftLatLon;
-  file << itsTopRightLatLon;
+  try
+  {
+    NFmiArea::Write(file);
+    file << itsBottomLeftLatLon;
+    file << itsTopRightLatLon;
 
-  // Dummies to replace old removed variables
-  file << "0 0\n0 0\n";
+    // Dummies to replace old removed variables
+    file << "0 0\n0 0\n";
 
-  file << itsXScaleFactor << " ";
-  file << itsYScaleFactor << std::endl;
-  return file;
+    file << itsXScaleFactor << " ";
+    file << itsYScaleFactor << std::endl;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -377,35 +469,49 @@ std::ostream& NFmiMercatorArea::Write(std::ostream& file) const
 
 std::istream& NFmiMercatorArea::Read(std::istream& file)
 {
-  double dummy;
+  try
+  {
+    double dummy;
 
-  NFmiArea::Read(file);
-  file >> itsBottomLeftLatLon;
-  file >> itsTopRightLatLon;
-  PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
+    NFmiArea::Read(file);
+    file >> itsBottomLeftLatLon;
+    file >> itsTopRightLatLon;
+    PacificView(NFmiArea::IsPacificView(itsBottomLeftLatLon, itsTopRightLatLon));
 
-  file >> dummy >> dummy >> dummy >> dummy;  // old removed variables
+    file >> dummy >> dummy >> dummy >> dummy;  // old removed variables
 
-  file >> itsXScaleFactor;
-  file >> itsYScaleFactor;
+    file >> itsXScaleFactor;
+    file >> itsYScaleFactor;
 
-  itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
-  Init();
+    Init();
 
-  // 28.8.2001/Marko&Esa Tätä kutsuttaessa kaikki dataosat päivittyvät,
-  // jolloin voidaan esim. editoida tiedostoissa olevia areoiden projektio
-  // parametreja siten (tätä ei voitu tehdä ennen koska skaalauskertoimet eivät päivittyneet)
+    // 28.8.2001/Marko&Esa Tätä kutsuttaessa kaikki dataosat päivittyvät,
+    // jolloin voidaan esim. editoida tiedostoissa olevia areoiden projektio
+    // parametreja siten (tätä ei voitu tehdä ennen koska skaalauskertoimet eivät päivittyneet)
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiMercatorArea::AreaStr() const
 {
-  std::ostringstream out;
-  out << "mercator:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
-      << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    std::ostringstream out;
+    out << "mercator:" << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ','
+        << TopRightLatLon().X() << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -430,14 +536,21 @@ const std::string NFmiMercatorArea::AreaStr() const
 
 const std::string NFmiMercatorArea::WKT() const
 {
-  const char* fmt = R"(PROJCS["FMI_Transverse_Mercator",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Transverse_Mercator"],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth);
+  try
+  {
+    const char* fmt = R"(PROJCS["FMI_Transverse_Mercator",)"
+                      R"(GEOGCS["FMI_Sphere",)"
+                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                      R"(PRIMEM["Greenwich",0],)"
+                      R"(UNIT["Degree",0.0174532925199433]],)"
+                      R"(PROJECTION["Transverse_Mercator"],)"
+                      R"(UNIT["Metre",1.0]])";
+    return fmt::format(fmt, kRearth);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -452,7 +565,14 @@ const std::string NFmiMercatorArea::WKT() const
 
 bool NFmiMercatorArea::operator==(const NFmiArea& theArea) const
 {
-  return *this == static_cast<const NFmiMercatorArea&>(theArea);
+  try
+  {
+    return *this == static_cast<const NFmiMercatorArea&>(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -467,13 +587,20 @@ bool NFmiMercatorArea::operator==(const NFmiArea& theArea) const
 
 bool NFmiMercatorArea::operator==(const NFmiMercatorArea& theArea) const
 {
-  if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-      (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-      (itsXScaleFactor == theArea.itsXScaleFactor) &&
-      (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-    return true;
+  try
+  {
+    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+        (itsXScaleFactor == theArea.itsXScaleFactor) &&
+        (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -484,13 +611,20 @@ bool NFmiMercatorArea::operator==(const NFmiMercatorArea& theArea) const
 
 std::size_t NFmiMercatorArea::HashValue() const
 {
-  std::size_t hash = NFmiArea::HashValue();
-  boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-  boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-  boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
-  boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
-  boost::hash_combine(hash, itsWorldRect.HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiArea::HashValue();
+    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
+    boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
+    boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
+    boost::hash_combine(hash, itsWorldRect.HashValue());
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

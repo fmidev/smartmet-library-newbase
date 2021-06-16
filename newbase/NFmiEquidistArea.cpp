@@ -71,6 +71,7 @@
 // ======================================================================
 
 #include "NFmiEquidistArea.h"
+#include <macgyver/Exception.h>
 #include <algorithm>
 
 #include <fmt/format.h>
@@ -103,22 +104,29 @@ NFmiEquidistArea::NFmiEquidistArea(double theRadialRangeInMeters,
                                    const NFmiPoint &theBottomRightXY)
     : NFmiAzimuthalArea(theRadialRangeInMeters, theCenterLatLon, theTopLeftXY, theBottomRightXY)
 {
-  // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
-  // ympyrälle
-  // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
+  try
+  {
+    // Muodostaa projektioalueen rajaamalla "world-xy"-tasossa 'theRadialRangeInMeters'-säteiselle
+    // ympyrälle
+    // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
-  NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
-  itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
-                                   centerWorldXY.Y() - theRadialRangeInMeters);
-  itsWorldRect = NFmiRect(
-      itsBottomLeftWorldXY,
-      itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
+    NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
+    itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
+                                     centerWorldXY.Y() - theRadialRangeInMeters);
+    itsWorldRect = NFmiRect(
+        itsBottomLeftWorldXY,
+        itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-  Init(true);
+    Init(true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -150,7 +158,14 @@ NFmiEquidistArea::NFmiEquidistArea(const NFmiPoint &theBottomLeftLatLon,
                         90.0,
                         usePacificView)
 {
-  Init();
+  try
+  {
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -181,19 +196,26 @@ NFmiEquidistArea::NFmiEquidistArea(const NFmiPoint &theBottomLeftLatLon,
                         theCentralLatitude,
                         90.0)
 {
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+  try
+  {
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
-  itsBottomLeftWorldXY =
-      LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
-  itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
-                          itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
+    itsBottomLeftWorldXY =
+        LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
+    itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
+                            itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-  Init(true);
+    Init(true);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
-  // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
+    // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -216,19 +238,26 @@ NFmiEquidistArea::NFmiEquidistArea(const double theRadialRange,
     : NFmiAzimuthalArea(
           theRadialRange, theOrientation, theTopLeftXY, theBottomRightXY, theCentralLatitude, 90.0)
 {
-  // Purpose: to create a square bounding the circle of radius theRadialRange
+  try
+  {
+    // Purpose: to create a square bounding the circle of radius theRadialRange
 
-  itsTrueLatScaleFactor =
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-      (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
+    itsTrueLatScaleFactor =
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
 
-  itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
-                          NFmiPoint(itsRadialRange, itsRadialRange));
+    itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
+                            NFmiPoint(itsRadialRange, itsRadialRange));
 
-  Init(true);
+    Init(true);
 
-  // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
-  // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+    // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
+    // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -242,20 +271,27 @@ NFmiEquidistArea::NFmiEquidistArea(const double theRadialRange,
 
 double NFmiEquidistArea::K(const double delta) const
 {
-  double d = std::max(-1.0, std::min(delta, 1.0));
+  try
+  {
+    double d = std::max(-1.0, std::min(delta, 1.0));
 
-  // See ref [3] p. 228
-  if (sin(d) == 0.0 || d == 1)
-    return kRearth;
+    // See ref [3] p. 228
+    if (sin(d) == 0.0 || d == 1)
+      return kRearth;
 
-  // return kRearth*d/sin(delta); // 27.7.98/EL Replaced this one ...
-  // ... with these ones
+    // return kRearth*d/sin(delta); // 27.7.98/EL Replaced this one ...
+    // ... with these ones
 
-  double acosDelta = acos(d);
-  if (acosDelta == 0)
-    return kRearth;
-  else
+    double acosDelta = acos(d);
+    if (acosDelta == 0)
+      return kRearth;
+
     return kRearth * acosDelta / sin(acosDelta);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -267,9 +303,16 @@ double NFmiEquidistArea::K(const double delta) const
 
 double NFmiEquidistArea::CalcDelta(const double xyDistance) const
 {
-  // Calculates the delta angle for azimuthal equidistant projection.
-  // See details in ref. [1] pp. 67-68; arc delta = arc OP = OP' = xyDistance
-  return xyDistance / kRearth;
+  try
+  {
+    // Calculates the delta angle for azimuthal equidistant projection.
+    // See details in ref. [1] pp. 67-68; arc delta = arc OP = OP' = xyDistance
+    return xyDistance / kRearth;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -280,7 +323,14 @@ double NFmiEquidistArea::CalcDelta(const double xyDistance) const
 
 double NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() const
 {
-  return 0.0;  // This is a non-perspective projection
+  try
+  {
+    return 0.0;  // This is a non-perspective projection
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -296,19 +346,21 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                     const NFmiPoint &theTopRightLatLon,
                                     bool allowPacificFix) const
 {
-  if (allowPacificFix)
+  try
   {
-    PacificPointFixerData fixedPointData =
-        NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
-    return new NFmiEquidistArea(fixedPointData.itsBottomLeftLatlon,
-                                fixedPointData.itsTopRightLatlon,
-                                itsCentralLongitude.Value(),
-                                TopLeft(),
-                                BottomRight(),
-                                itsCentralLatitude.Value(),
-                                fixedPointData.fIsPacific);
-  }
-  else
+    if (allowPacificFix)
+    {
+      PacificPointFixerData fixedPointData =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      return new NFmiEquidistArea(fixedPointData.itsBottomLeftLatlon,
+                                  fixedPointData.itsTopRightLatlon,
+                                  itsCentralLongitude.Value(),
+                                  TopLeft(),
+                                  BottomRight(),
+                                  itsCentralLatitude.Value(),
+                                  fixedPointData.fIsPacific);
+    }
+
     return new NFmiEquidistArea(theBottomLeftLatLon,
                                 theTopRightLatLon,
                                 itsCentralLongitude.Value(),
@@ -316,6 +368,11 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                 BottomRight(),
                                 itsCentralLatitude.Value(),
                                 PacificView());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -327,7 +384,14 @@ NFmiArea *NFmiEquidistArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiEquidistArea::Clone() const
 {
-  return new NFmiEquidistArea(*this);
+  try
+  {
+    return new NFmiEquidistArea(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -353,7 +417,14 @@ NFmiEquidistArea &NFmiEquidistArea::operator=(const NFmiEquidistArea &theArea) =
 
 bool NFmiEquidistArea::operator==(const NFmiEquidistArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  try
+  {
+    return NFmiAzimuthalArea::operator==(static_cast<const NFmiAzimuthalArea &>(theArea));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -367,7 +438,14 @@ bool NFmiEquidistArea::operator==(const NFmiEquidistArea &theArea) const
 
 bool NFmiEquidistArea::operator!=(const NFmiEquidistArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -381,7 +459,14 @@ bool NFmiEquidistArea::operator!=(const NFmiEquidistArea &theArea) const
 
 bool NFmiEquidistArea::operator==(const NFmiArea &theArea) const
 {
-  return NFmiAzimuthalArea::operator==(theArea);
+  try
+  {
+    return NFmiAzimuthalArea::operator==(theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -395,7 +480,14 @@ bool NFmiEquidistArea::operator==(const NFmiArea &theArea) const
 
 bool NFmiEquidistArea::operator!=(const NFmiArea &theArea) const
 {
-  return !(*this == theArea);
+  try
+  {
+    return !(*this == theArea);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -405,33 +497,47 @@ bool NFmiEquidistArea::operator!=(const NFmiArea &theArea) const
 
 void NFmiEquidistArea::Init(bool fKeepWorldRect)
 {
-  if (!fKeepWorldRect)
+  try
   {
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+    if (!fKeepWorldRect)
+    {
+      itsTrueLatScaleFactor =
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
-    itsWorldRect =
-        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+      itsWorldRect =
+          NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    }
+
+    NFmiAzimuthalArea::Init(fKeepWorldRect);
+
+    const char *fmt =
+        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +no_defs +type=crs";
+
+    itsProjStr = fmt::format(fmt, CentralLatitude(), CentralLongitude(), kRearth);
+    itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
-
-  NFmiAzimuthalArea::Init(fKeepWorldRect);
-
-  const char *fmt =
-      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +no_defs +type=crs";
-
-  itsProjStr = fmt::format(fmt, CentralLatitude(), CentralLongitude(), kRearth);
-  itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const std::string NFmiEquidistArea::AreaStr() const
 {
-  // Todo: use cppformat instead
-  std::ostringstream out;
-  out << "equidist," << CentralLongitude() << ',' << CentralLatitude() << ':'
-      << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ',' << TopRightLatLon().X()
-      << ',' << TopRightLatLon().Y();
-  return out.str();
+  try
+  {
+    // Todo: use cppformat instead
+    std::ostringstream out;
+    out << "equidist," << CentralLongitude() << ',' << CentralLatitude() << ':'
+        << BottomLeftLatLon().X() << ',' << BottomLeftLatLon().Y() << ',' << TopRightLatLon().X()
+        << ',' << TopRightLatLon().Y();
+    return out.str();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -453,16 +559,23 @@ const std::string NFmiEquidistArea::AreaStr() const
 
 const std::string NFmiEquidistArea::WKT() const
 {
-  const char *fmt = R"(PROJCS["FMI_Azimuthal_Equidistant",)"
-                    R"(GEOGCS["FMI_Sphere",)"
-                    R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                    R"(PRIMEM["Greenwich",0],)"
-                    R"(UNIT["Degree",0.0174532925199433]],)"
-                    R"(PROJECTION["Azimuthal_Equidistant"],)"
-                    R"(PARAMETER["latitude_of_center",{}],)"
-                    R"(PARAMETER["longitude_of_center",{}],)"
-                    R"(UNIT["Metre",1.0]])";
-  return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  try
+  {
+    const char *fmt = R"(PROJCS["FMI_Azimuthal_Equidistant",)"
+                      R"(GEOGCS["FMI_Sphere",)"
+                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                      R"(PRIMEM["Greenwich",0],)"
+                      R"(UNIT["Degree",0.0174532925199433]],)"
+                      R"(PROJECTION["Azimuthal_Equidistant"],)"
+                      R"(PARAMETER["latitude_of_center",{}],)"
+                      R"(PARAMETER["longitude_of_center",{}],)"
+                      R"(UNIT["Metre",1.0]])";
+    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -473,9 +586,16 @@ const std::string NFmiEquidistArea::WKT() const
 
 std::size_t NFmiEquidistArea::HashValue() const
 {
-  std::size_t hash = NFmiAzimuthalArea::HashValue();
-  // no private members
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiAzimuthalArea::HashValue();
+    // no private members
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

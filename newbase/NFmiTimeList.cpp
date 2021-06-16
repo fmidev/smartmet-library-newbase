@@ -15,6 +15,7 @@
 #include "NFmiTimeList.h"
 #include "NFmiMetTime.h"
 #include "NFmiTimeBag.h"
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -27,7 +28,19 @@
 
 using namespace std;
 
-NFmiTimeList::~NFmiTimeList() { Clear(true); }
+NFmiTimeList::~NFmiTimeList()
+{
+  try
+  {
+    Clear(true);
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -41,9 +54,16 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeList &theList)
       itsIndex(theList.itsIndex),
       itsIsReset(theList.itsIsReset)
 {
-  int vecSize = itsVectorList.size();
-  for (int i = 0; i < vecSize; i++)
-    itsVectorList[i] = new NFmiMetTime(*theList.itsVectorList[i]);
+  try
+  {
+    int vecSize = itsVectorList.size();
+    for (int i = 0; i < vecSize; i++)
+      itsVectorList[i] = new NFmiMetTime(*theList.itsVectorList[i]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -59,13 +79,20 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeBag &theTimes)
       itsIndex(theTimes.CurrentIndex()),
       itsIsReset(theTimes.CurrentIndex() >= 0 ? false : true)
 {
-  NFmiTimeBag tmpBag(theTimes);
-  tmpBag.Reset();
-  int vecSize = itsVectorList.size();
-  for (int i = 0; i < vecSize; i++)
+  try
   {
-    tmpBag.Next();
-    itsVectorList[i] = new NFmiMetTime(tmpBag.CurrentTime());
+    NFmiTimeBag tmpBag(theTimes);
+    tmpBag.Reset();
+    int vecSize = itsVectorList.size();
+    for (int i = 0; i < vecSize; i++)
+    {
+      tmpBag.Next();
+      itsVectorList[i] = new NFmiMetTime(tmpBag.CurrentTime());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -78,28 +105,35 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeBag &theTimes)
 // Marko: en ole testannut funktiota, enkä tajua mihin sitä voisi tarvita, joten varokaa.
 bool NFmiTimeList::Next(NFmiMetTime **theItem) const
 {
-  *theItem = Current();
-  if (*theItem)
+  try
   {
-    Next();
-    return true;
+    *theItem = Current();
+    if (*theItem)
+    {
+      Next();
+      return true;
+    }
+
+    return false;
+    /*
+    *theItem=Current();
+    if(*theItem)
+          {						// VAROITUS !
+            itsIter->Next();		// Viimeisen alkion jälkeen mennään listan ulkopuolelle
+    true:lla;
+            return true;			// vasta seuraavalla kerralla tämä Next palauttaa false !!
+            // return Next();		<-- Näin kursori jääsi osoittamaan viimeistä itemiä, mutta
+    toisaalta nyt }						// return false on harhaan johtava,
+    sillä onhan saatu mielekäs theItem.
+
+          return false;			// Suosittelen metodien Next(void) & Current() käyttöä,
+    jolloin ei voi joutua ulos listalta
+  */  // viljo 12.05.-97
   }
-
-  return false;
-  /*
-  *theItem=Current();
-  if(*theItem)
-        {						// VAROITUS !
-          itsIter->Next();		// Viimeisen alkion jälkeen mennään listan ulkopuolelle
-  true:lla;
-          return true;			// vasta seuraavalla kerralla tämä Next palauttaa false !!
-          // return Next();		<-- Näin kursori jääsi osoittamaan viimeistä itemiä, mutta
-  toisaalta nyt }						// return false on harhaan johtava,
-  sillä onhan saatu mielekäs theItem.
-
-        return false;			// Suosittelen metodien Next(void) & Current() käyttöä,
-  jolloin ei voi joutua ulos listalta
-*/  // viljo 12.05.-97
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -110,19 +144,33 @@ bool NFmiTimeList::Next(NFmiMetTime **theItem) const
 
 bool NFmiTimeList::Next() const
 {
-  if (itsIsReset)
-    return First();
-  else
+  try
   {
+    if (itsIsReset)
+      return First();
+
     itsIndex++;
     return IndexOk(itsIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiTimeList::IndexOk(int theIndex) const
 {
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size()) return true;
-  return false;
+  try
+  {
+    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size())
+      return true;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -133,12 +181,17 @@ bool NFmiTimeList::IndexOk(int theIndex) const
 
 bool NFmiTimeList::Previous() const
 {
-  if (itsIsReset)
-    return false;
-  else
+  try
   {
+    if (itsIsReset)
+      return false;
+
     itsIndex--;
     return IndexOk(itsIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -150,8 +203,17 @@ bool NFmiTimeList::Previous() const
 
 NFmiMetTime *NFmiTimeList::Current() const
 {
-  if (IndexOk(itsIndex)) return itsVectorList[itsIndex];
-  return nullptr;
+  try
+  {
+    if (IndexOk(itsIndex))
+      return itsVectorList[itsIndex];
+
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -162,9 +224,16 @@ NFmiMetTime *NFmiTimeList::Current() const
 
 bool NFmiTimeList::Reset() const
 {
-  itsIsReset = true;
-  itsIndex = -1;
-  return true;
+  try
+  {
+    itsIsReset = true;
+    itsIndex = -1;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -175,16 +244,21 @@ bool NFmiTimeList::Reset() const
 
 bool NFmiTimeList::First() const
 {
-  if (itsVectorList.empty())
+  try
   {
-    Reset();
-    return false;
-  }
-  else
-  {
+    if (itsVectorList.empty())
+    {
+      Reset();
+      return false;
+    }
+
     itsIsReset = false;
     itsIndex = 0;
     return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -206,28 +280,36 @@ bool NFmiTimeList::First() const
 
 void NFmiTimeList::Add(NFmiMetTime *theItem, bool fAllowDuplicates, bool fAddEnd)
 {
-  // etsitään ensimmäinen kohta, jossa vanha aika >= uusi aika
-
-  auto it(itsVectorList.begin());
-
-  if (fAddEnd)  // pakko optimoida, koska salamadatassa on jumalattomasti aikoja ja ne ovat jo
-                // järjestyksessä!!!
-    itsVectorList.push_back(theItem);
-  else
+  try
   {
-    for (; it != itsVectorList.end(); ++it)
-      if (**it >= *theItem) break;
+    // etsitään ensimmäinen kohta, jossa vanha aika >= uusi aika
 
-    // jos kaikki ajat olivat pienempiä, liitetään vain perään
-    if (it == itsVectorList.end()) itsVectorList.push_back(theItem);
+    auto it(itsVectorList.begin());
 
-    // jos löytyi sama aika, ei insertoida vaan deletoidaan pois (paitsi jos duplikaatit sallitaan)
-    else if ((**it == *theItem) && (!fAllowDuplicates))
-      delete theItem;
-
-    // muuten insertoidaan oikeaan kohtaan
+    if (fAddEnd)  // pakko optimoida, koska salamadatassa on jumalattomasti aikoja ja ne ovat jo
+                  // järjestyksessä!!!
+      itsVectorList.push_back(theItem);
     else
-      itsVectorList.insert(it, theItem);
+    {
+      for (; it != itsVectorList.end(); ++it)
+        if (**it >= *theItem) break;
+
+      // jos kaikki ajat olivat pienempiä, liitetään vain perään
+      if (it == itsVectorList.end())
+        itsVectorList.push_back(theItem);
+
+      // jos löytyi sama aika, ei insertoida vaan deletoidaan pois (paitsi jos duplikaatit sallitaan)
+      else if ((**it == *theItem) && (!fAllowDuplicates))
+        delete theItem;
+
+      // muuten insertoidaan oikeaan kohtaan
+      else
+        itsVectorList.insert(it, theItem);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -239,12 +321,19 @@ void NFmiTimeList::Add(NFmiMetTime *theItem, bool fAllowDuplicates, bool fAddEnd
 
 void NFmiTimeList::AddOver(NFmiMetTime *theItem)
 {
-  if (Find(*theItem))
+  try
   {
-    delete theItem;
-    return;
+    if (Find(*theItem))
+    {
+      delete theItem;
+      return;
+    }
+    Add(theItem);
   }
-  Add(theItem);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -255,17 +344,24 @@ void NFmiTimeList::AddOver(NFmiMetTime *theItem)
 
 void NFmiTimeList::Add(NFmiTimeList *theList)
 {
-  int vecSize = theList->itsVectorList.size();
-  for (int i = 0; i < vecSize; i++)
-    itsVectorList.push_back(new NFmiMetTime(*theList->itsVectorList[i]));
-  // vanha versio resetoi lopuksi, en näe mitää syytä moiseen/Marko
+  try
+  {
+    int vecSize = theList->itsVectorList.size();
+    for (int i = 0; i < vecSize; i++)
+      itsVectorList.push_back(new NFmiMetTime(*theList->itsVectorList[i]));
+    // vanha versio resetoi lopuksi, en näe mitää syytä moiseen/Marko
 
-  /*
-    *itsList+=(*theList->itsList);
-    delete itsIter;
-    itsIter = new NFmiVoidPtrIterator(itsList);
-    itsIter->Reset();
-    */
+    /*
+      *itsList+=(*theList->itsList);
+      delete itsIter;
+      itsIter = new NFmiVoidPtrIterator(itsList);
+      itsIter->Reset();
+      */
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -276,27 +372,34 @@ void NFmiTimeList::Add(NFmiTimeList *theList)
 
 void NFmiTimeList::Clear(bool fDeleteData)
 {
-  if (fDeleteData)
+  try
   {
-    int vecSize = itsVectorList.size();
-    for (int i = 0; i < vecSize; i++)
-      delete itsVectorList[i];
-  }
-  std::vector<NFmiMetTime *>().swap(itsVectorList);
-  Reset();  // vanha laittoi tyhjennyksen jälkeen Firstiin, missä ei ole järkeä
+    if (fDeleteData)
+    {
+      int vecSize = itsVectorList.size();
+      for (int i = 0; i < vecSize; i++)
+        delete itsVectorList[i];
+    }
+    std::vector<NFmiMetTime *>().swap(itsVectorList);
+    Reset();  // vanha laittoi tyhjennyksen jälkeen Firstiin, missä ei ole järkeä
 
-  /*
-    if( fDeleteData )
-          {
-            NFmiMetTime * aItem = 0;
-            First();
-            while(Next(&aItem))
-                  delete aItem;
-          }
-    if(itsList)
-          itsList->Clear();
-    First();
-    */
+    /*
+      if( fDeleteData )
+            {
+              NFmiMetTime * aItem = 0;
+              First();
+              while(Next(&aItem))
+                    delete aItem;
+            }
+      if(itsList)
+            itsList->Clear();
+      First();
+      */
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -310,13 +413,20 @@ void NFmiTimeList::Clear(bool fDeleteData)
 
 NFmiTimeList &NFmiTimeList::operator=(const NFmiTimeList &theList)
 {
-  Clear(true);  // vanha vuoti, koska ei tuhonnut metTimeja listasta, saattaa kaataa ohjelmia, jotka
-                // luottavat tähän ominaisuuteen
-  int vecSize = theList.itsVectorList.size();
-  for (int i = 0; i < vecSize; i++)
-    itsVectorList.push_back(new NFmiMetTime(*theList.itsVectorList[i]));
+  try
+  {
+    Clear(true);  // vanha vuoti, koska ei tuhonnut metTimeja listasta, saattaa kaataa ohjelmia, jotka
+                  // luottavat tähän ominaisuuteen
+    int vecSize = theList.itsVectorList.size();
+    for (int i = 0; i < vecSize; i++)
+      itsVectorList.push_back(new NFmiMetTime(*theList.itsVectorList[i]));
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -328,13 +438,20 @@ NFmiTimeList &NFmiTimeList::operator=(const NFmiTimeList &theList)
 
 bool NFmiTimeList::operator==(const NFmiTimeList &theList) const
 {
-  bool retVal = false;
-  for (this->Reset(), theList.Reset(); this->Next() && theList.Next();)
+  try
   {
-    if (!(this->Current()->IsEqual(*(theList.Current())))) return false;
-    retVal = true;
+    bool retVal = false;
+    for (this->Reset(), theList.Reset(); this->Next() && theList.Next();)
+    {
+      if (!(this->Current()->IsEqual(*(theList.Current())))) return false;
+      retVal = true;
+    }
+    return retVal;
   }
-  return retVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -346,13 +463,20 @@ bool NFmiTimeList::operator==(const NFmiTimeList &theList) const
 
 bool NFmiTimeList::Index(int theIndex) const
 {
-  if (IndexOk(theIndex))
+  try
   {
-    itsIndex = theIndex;
-    return true;
+    if (IndexOk(theIndex))
+    {
+      itsIndex = theIndex;
+      return true;
+    }
+    return false;
+    //  return itsIter?itsIter->Index(theIndex):false;
   }
-  return false;
-  //  return itsIter?itsIter->Index(theIndex):false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -363,8 +487,15 @@ bool NFmiTimeList::Index(int theIndex) const
 
 int NFmiTimeList::Index() const
 {
-  return itsIndex;
-  //  return itsIter?itsIter->Index():false;		// index = -1 out of list
+  try
+  {
+    return itsIndex;
+    //  return itsIter?itsIter->Index():false;		// index = -1 out of list
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -378,18 +509,25 @@ int NFmiTimeList::Index() const
 
 std::ostream &NFmiTimeList::Write(std::ostream &file) const
 {
-  long items = NumberOfItems();
-  file << items << std::endl;
-  First();
-  NFmiMetTime *aItem;
-  for (long i = 0; i < items; i++)
+  try
   {
-    Next(&aItem);
+    long items = NumberOfItems();
+    file << items << std::endl;
+    First();
+    NFmiMetTime *aItem;
+    for (long i = 0; i < items; i++)
+    {
+      Next(&aItem);
 
-    file << aItem->GetYear() << " " << aItem->GetMonth() << " " << aItem->GetDay() << " "
-         << aItem->GetHour() << " " << aItem->GetMin() << " " << aItem->GetSec() << std::endl;
+      file << aItem->GetYear() << " " << aItem->GetMonth() << " " << aItem->GetDay() << " "
+           << aItem->GetHour() << " " << aItem->GetMin() << " " << aItem->GetSec() << std::endl;
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -403,21 +541,28 @@ std::ostream &NFmiTimeList::Write(std::ostream &file) const
 
 std::istream &NFmiTimeList::Read(std::istream &file)
 {
-  int items;
-  short year, month, day, hour, min, sec;
-
-  file >> items;
-  First();
-  NFmiMetTime *aItem;
-  for (long i = 0; i < items; i++)
+  try
   {
-    file >> year >> month >> day >> hour >> min >> sec;
-    aItem = new NFmiMetTime(year, month, day, hour, min, sec, 1);
-    if (sec) aItem->SetSec(sec);
+    int items;
+    short year, month, day, hour, min, sec;
 
-    Add(aItem, true);  // true= sallitaan duplikaatit
+    file >> items;
+    First();
+    NFmiMetTime *aItem;
+    for (long i = 0; i < items; i++)
+    {
+      file >> year >> month >> day >> hour >> min >> sec;
+      aItem = new NFmiMetTime(year, month, day, hour, min, sec, 1);
+      if (sec) aItem->SetSec(sec);
+
+      Add(aItem, true);  // true= sallitaan duplikaatit
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // apu-funktori, jolla vertaillaan aikalistalla olevia aika-pointtereita
@@ -436,32 +581,39 @@ struct ComparePtrs : public binary_function<T, T, bool>
 
 bool NFmiTimeList::Find(const NFmiMetTime &theTime)
 {
-  itsIndex = -1;
-  if (itsVectorList.empty()) return false;
-  auto pos = std::lower_bound(
-      itsVectorList.begin(), itsVectorList.end(), &theTime, ComparePtrs<NFmiMetTime>());
-  if (pos != itsVectorList.end())
+  try
   {
-    if (theTime == *(*pos))  // tässä pitää vielä tarkistaa löytyikö varmasti oikea aika!
+    itsIndex = -1;
+    if (itsVectorList.empty()) return false;
+    auto pos = std::lower_bound(
+        itsVectorList.begin(), itsVectorList.end(), &theTime, ComparePtrs<NFmiMetTime>());
+    if (pos != itsVectorList.end())
     {
-      itsIndex = std::distance(itsVectorList.begin(), pos);
-      return true;
+      if (theTime == *(*pos))  // tässä pitää vielä tarkistaa löytyikö varmasti oikea aika!
+      {
+        itsIndex = std::distance(itsVectorList.begin(), pos);
+        return true;
+      }
     }
-  }
-  return false;
-
-  /*
-    if(First())
-          {
-            do
-                  {
-                    if(*Current() == theTime)
-                          return true;
-                  }
-            while(Next());
-          }
     return false;
-  */
+
+    /*
+      if(First())
+            {
+              do
+                    {
+                      if(*Current() == theTime)
+                            return true;
+                    }
+              while(Next());
+            }
+      return false;
+    */
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -481,23 +633,32 @@ bool NFmiTimeList::FindNearestTime(const NFmiMetTime &theTime,
                                    FmiDirection theDirection,
                                    unsigned long theTimeRangeInMinutes)
 {
-  if (itsVectorList.empty()) return false;
-
-  auto firstNotLess = std::lower_bound(
-      itsVectorList.begin(), itsVectorList.end(), &theTime, ComparePtrs<NFmiMetTime>());
-  if (firstNotLess != itsVectorList.end() && *(*firstNotLess) == theTime)
+  try
   {
-    // Searched time was found from time-vector
-    itsIndex = CalcTimeListIndex(firstNotLess);
-    return true;
-  }
+    if (itsVectorList.empty())
+      return false;
 
-  if (theDirection == kBackward)
-    return FindNearestBackwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
-  else if (theDirection == kForward)
-    return FindNearestForwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
-  else
+    auto firstNotLess = std::lower_bound(
+        itsVectorList.begin(), itsVectorList.end(), &theTime, ComparePtrs<NFmiMetTime>());
+    if (firstNotLess != itsVectorList.end() && *(*firstNotLess) == theTime)
+    {
+      // Searched time was found from time-vector
+      itsIndex = CalcTimeListIndex(firstNotLess);
+      return true;
+    }
+
+    if (theDirection == kBackward)
+      return FindNearestBackwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
+
+    if (theDirection == kForward)
+      return FindNearestForwardTime(firstNotLess, theTime, theTimeRangeInMinutes);
+
     return FindNearestTime(firstNotLess, theTime, theTimeRangeInMinutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
@@ -505,13 +666,18 @@ bool NFmiTimeList::FindNearestBackwardTime(std::vector<NFmiMetTime *>::iterator 
                                            const NFmiMetTime &theTime,
                                            unsigned long theTimeRangeInMinutes)
 {
-  if (firstNotLess == itsVectorList.begin())
-    return false;  // All times in itsVectorList were bigger than theTime
-  else
+  try
   {
+    if (firstNotLess == itsVectorList.begin())
+      return false;  // All times in itsVectorList were bigger than theTime
+
     firstNotLess--;  // Lets move to previous time which is what we are searching here (parameter's
-                     // descriptive name false after this)
+                       // descriptive name false after this)
     return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -520,11 +686,16 @@ bool NFmiTimeList::FindNearestForwardTime(std::vector<NFmiMetTime *>::iterator &
                                           const NFmiMetTime &theTime,
                                           unsigned long theTimeRangeInMinutes)
 {
-  if (firstNotLess == itsVectorList.end())
-    return false;  // All times in itsVectorList were less than theTime
-  else
+  try
   {
+    if (firstNotLess == itsVectorList.end())
+      return false;  // All times in itsVectorList were less than theTime
+
     return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -533,19 +704,21 @@ bool NFmiTimeList::FindNearestTime(std::vector<NFmiMetTime *>::iterator &firstNo
                                    const NFmiMetTime &theTime,
                                    unsigned long theTimeRangeInMinutes)
 {
-  if (firstNotLess == itsVectorList.begin())
+  try
   {
-    // Only list's first time is possible
-    return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
-  }
-  else if (firstNotLess == itsVectorList.end())
-  {
-    // Only list's last time is possible
-    firstNotLess--;
-    return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
-  }
-  else
-  {
+    if (firstNotLess == itsVectorList.begin())
+    {
+      // Only list's first time is possible
+      return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
+    }
+
+    if (firstNotLess == itsVectorList.end())
+    {
+      // Only list's last time is possible
+      firstNotLess--;
+      return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
+    }
+
     // Must check the first not-less time and the previous time
     auto timeIter2 = firstNotLess;
     double diff2 = std::fabs(theTime.DifferenceInMinutes(*(*timeIter2)));
@@ -555,40 +728,66 @@ bool NFmiTimeList::FindNearestTime(std::vector<NFmiMetTime *>::iterator &firstNo
     // first time in the list has precedence if difference is equal
     if (diff1 <= diff2)
       return CheckFoundTimeIter(timeIter1, theTime, theTimeRangeInMinutes);
-    else
-      return CheckFoundTimeIter(timeIter2, theTime, theTimeRangeInMinutes);
+
+    return CheckFoundTimeIter(timeIter2, theTime, theTimeRangeInMinutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 // Assumption: theIter -iterator is from the itsVectorList.
 int NFmiTimeList::CalcTimeListIndex(const std::vector<NFmiMetTime *>::iterator &theIter)
 {
-  return static_cast<int>(std::distance(itsVectorList.begin(), theIter));
+  try
+  {
+    return static_cast<int>(std::distance(itsVectorList.begin(), theIter));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiTimeList::IsSearchedTimeInRange(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
                                          const NFmiMetTime &theTime,
                                          unsigned long theTimeRangeInMinutes)
 {
-  if (theTimeRangeInMinutes == kUnsignedLongMissing)
-    return true;
-  else if (theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter))))
-    return true;
-  else
+  try
+  {
+    if (theTimeRangeInMinutes == kUnsignedLongMissing)
+      return true;
+
+    if (theTimeRangeInMinutes >= std::fabs(theTime.DifferenceInMinutes(*(*foundTimeIter))))
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiTimeList::CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
                                       const NFmiMetTime &theTime,
                                       unsigned long theTimeRangeInMinutes)
 {
-  if (IsSearchedTimeInRange(foundTimeIter, theTime, theTimeRangeInMinutes))
+  try
   {
-    itsIndex = CalcTimeListIndex(foundTimeIter);
-    return true;
-  }
-  else
+    if (IsSearchedTimeInRange(foundTimeIter, theTime, theTimeRangeInMinutes))
+    {
+      itsIndex = CalcTimeListIndex(foundTimeIter);
+      return true;
+    }
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -605,11 +804,19 @@ bool NFmiTimeList::CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foun
 bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
                                      unsigned long theTimeRangeInMinutes)
 {
-  if (theTimeRangeInMinutes == kUnsignedLongMissing ||
-      static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
-          theTimeRangeInMinutes)
-    return true;
-  return false;
+  try
+  {
+    if (theTimeRangeInMinutes == kUnsignedLongMissing ||
+        static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
+            theTimeRangeInMinutes)
+      return true;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -627,67 +834,100 @@ const NFmiTimeList NFmiTimeList::Combine(NFmiTimeList &theList,
                                          int theStartTimeFunction,
                                          int theEndTimeFunction)
 {
-  NFmiTimeList combinedList(*this);
-  for (theList.Reset(); theList.Next();)
+  try
   {
-    auto *tempTime = new NFmiMetTime(*theList.Current());
-    combinedList.Add(tempTime, false, false);  // 1. false ei salli duplikaatteja, 2. false etsii
-                                               // ajan paikan olemassa olevasta listasta
+    NFmiTimeList combinedList(*this);
+    for (theList.Reset(); theList.Next();)
+    {
+      auto *tempTime = new NFmiMetTime(*theList.Current());
+      combinedList.Add(tempTime, false, false);  // 1. false ei salli duplikaatteja, 2. false etsii
+                                                 // ajan paikan olemassa olevasta listasta
+    }
+    if (theStartTimeFunction == 0 && theEndTimeFunction == 0) return combinedList;
+
+    // pitää mahdollisesti karsia aikoja, en optimoinut ollenkaan
+    NFmiMetTime startTime;
+    if (theStartTimeFunction == 0)
+      startTime = FirstTime() < theList.FirstTime() ? FirstTime() : theList.FirstTime();
+    else if (theStartTimeFunction == 1)
+      startTime = FirstTime();
+    else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
+      startTime = theList.FirstTime();
+
+    NFmiMetTime endTime;
+    if (theEndTimeFunction == 0)
+      endTime = LastTime() > theList.LastTime() ? LastTime() : theList.LastTime();
+    else if (theEndTimeFunction == 1)
+      endTime = LastTime();
+    else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
+      endTime = theList.LastTime();
+
+    return combinedList.GetIntersection(startTime, endTime);
   }
-  if (theStartTimeFunction == 0 && theEndTimeFunction == 0) return combinedList;
-
-  // pitää mahdollisesti karsia aikoja, en optimoinut ollenkaan
-  NFmiMetTime startTime;
-  if (theStartTimeFunction == 0)
-    startTime = FirstTime() < theList.FirstTime() ? FirstTime() : theList.FirstTime();
-  else if (theStartTimeFunction == 1)
-    startTime = FirstTime();
-  else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
-    startTime = theList.FirstTime();
-
-  NFmiMetTime endTime;
-  if (theEndTimeFunction == 0)
-    endTime = LastTime() > theList.LastTime() ? LastTime() : theList.LastTime();
-  else if (theEndTimeFunction == 1)
-    endTime = LastTime();
-  else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
-    endTime = theList.LastTime();
-
-  return combinedList.GetIntersection(startTime, endTime);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
 
 const NFmiMetTime &NFmiTimeList::FirstTime() const
 {
-  static NFmiMetTime dummy;
-  if (IndexOk(0)) return *itsVectorList[0];
-  return dummy;
+  try
+  {
+    static NFmiMetTime dummy;
+    if (IndexOk(0))
+      return *itsVectorList[0];
+
+    return dummy;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime &NFmiTimeList::LastTime() const
 {
-  static NFmiMetTime dummy;
-  int index = NumberOfItems() - 1;
-  if (IndexOk(index)) return *itsVectorList[index];
-  return dummy;
+  try
+  {
+    static NFmiMetTime dummy;
+    int index = NumberOfItems() - 1;
+    if (IndexOk(index))
+      return *itsVectorList[index];
+
+    return dummy;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 int NFmiTimeList::CurrentResolution() const
 {
-  if (itsIndex > 0 && itsIndex < static_cast<int>(itsVectorList.size()))
-    return itsVectorList[itsIndex]->DifferenceInMinutes(*itsVectorList[itsIndex - 1]);
-  else if (itsIndex == 0 && itsVectorList.size() > 1)
-    return itsVectorList[itsIndex + 1]->DifferenceInMinutes(*itsVectorList[itsIndex]);
-  // HUOM! loppu osa koodia on poikeus tapausten tarkastelua ja pitäisi heittää esim. poikkeus.
-  // Mutta laitoin koodin toimimaan kuten timebag:in Resolution-metodi toimisi
-  // (palauttaa aina arvon), ettei tule ongelmia erilaisissa koodeissa nyt kun
-  // käytetään enemmän timelist-dataa.
-  else if (itsVectorList.size() >
-           1)  // jos esim reset-tilassa, palauttaa 1. ja 2. ajan välisen resoluution
-    return itsVectorList[1]->DifferenceInMinutes(*itsVectorList[0]);
-  else
+  try
+  {
+    if (itsIndex > 0 && itsIndex < static_cast<int>(itsVectorList.size()))
+      return itsVectorList[itsIndex]->DifferenceInMinutes(*itsVectorList[itsIndex - 1]);
+
+    if (itsIndex == 0 && itsVectorList.size() > 1)
+      return itsVectorList[itsIndex + 1]->DifferenceInMinutes(*itsVectorList[itsIndex]);
+    // HUOM! loppu osa koodia on poikeus tapausten tarkastelua ja pitäisi heittää esim. poikkeus.
+    // Mutta laitoin koodin toimimaan kuten timebag:in Resolution-metodi toimisi
+    // (palauttaa aina arvon), ettei tule ongelmia erilaisissa koodeissa nyt kun
+    // käytetään enemmän timelist-dataa.
+    if (itsVectorList.size() > 1)
+      // jos esim reset-tilassa, palauttaa 1. ja 2. ajan välisen resoluution
+      return itsVectorList[1]->DifferenceInMinutes(*itsVectorList[0]);
+
     return 60;  // jos listassa on vain yksi tai nolla aikaa palautetaan 60 minuuttia
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // etsii annettuun aikaan lähimmän edellisen ja lähimmän seuraavan ajan ja palauttaa ne
@@ -700,27 +940,43 @@ int NFmiTimeList::FindNearestTimes(const NFmiMetTime &theTime,
                                    NFmiMetTime &theTime1,
                                    NFmiMetTime &theTime2)
 {
-  int oldIndex = itsIndex;
-  int returnIndex = -1;
-  if (FindNearestTime(theTime, kBackward, theMaxMinuteRange))
+  try
   {
-    if (itsIndex >= 0 && itsIndex < static_cast<int>(itsVectorList.size()) - 1)
+    int oldIndex = itsIndex;
+    int returnIndex = -1;
+    if (FindNearestTime(theTime, kBackward, theMaxMinuteRange))
     {
-      theTime1 = *itsVectorList[itsIndex];
-      theTime2 = *itsVectorList[itsIndex + 1];
-      // Do not accept too long gaps
-      if (theMaxMinuteRange < 0 || theTime2.DifferenceInMinutes(theTime1) <= theMaxMinuteRange)
-        returnIndex = itsIndex;
+      if (itsIndex >= 0 && itsIndex < static_cast<int>(itsVectorList.size()) - 1)
+      {
+        theTime1 = *itsVectorList[itsIndex];
+        theTime2 = *itsVectorList[itsIndex + 1];
+        // Do not accept too long gaps
+        if (theMaxMinuteRange < 0 || theTime2.DifferenceInMinutes(theTime1) <= theMaxMinuteRange)
+          returnIndex = itsIndex;
+      }
     }
+    itsIndex = oldIndex;  // palautetaan indeksi osoittamaan varmuuden vuoksi takaisin
+    return returnIndex;
   }
-  itsIndex = oldIndex;  // palautetaan indeksi osoittamaan varmuuden vuoksi takaisin
-  return returnIndex;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime *NFmiTimeList::Time(int theIndex) const
 {
-  if (IndexOk(theIndex)) return itsVectorList[theIndex];
-  return nullptr;
+  try
+  {
+    if (IndexOk(theIndex))
+      return itsVectorList[theIndex];
+
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -740,15 +996,22 @@ const NFmiMetTime *NFmiTimeList::Time(int theIndex) const
 const NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime &theStartLimit,
                                                  const NFmiMetTime &theEndLimit)
 {
-  NFmiTimeList returnTimeList;
-  NFmiMetTime tmpTime;
-  for (Reset(); Next();)
+  try
   {
-    tmpTime = *Current();
-    if (tmpTime >= theStartLimit && tmpTime <= theEndLimit)
-      returnTimeList.Add(new NFmiMetTime(tmpTime));
+    NFmiTimeList returnTimeList;
+    NFmiMetTime tmpTime;
+    for (Reset(); Next();)
+    {
+      tmpTime = *Current();
+      if (tmpTime >= theStartLimit && tmpTime <= theEndLimit)
+        returnTimeList.Add(new NFmiMetTime(tmpTime));
+    }
+    return returnTimeList;
   }
-  return returnTimeList;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -761,13 +1024,21 @@ const NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime &theStartLimi
 // ----------------------------------------------------------------------
 bool NFmiTimeList::IsInside(const NFmiMetTime &theTime) const
 {
-  int timeCount = NumberOfItems();
-  if (timeCount < 1)
-    return false;
-  else if (timeCount == 1)
-    return *itsVectorList[0] == theTime;
-  else
+  try
+  {
+    int timeCount = NumberOfItems();
+    if (timeCount < 1)
+      return false;
+
+    if (timeCount == 1)
+      return *itsVectorList[0] == theTime;
+
     return *itsVectorList[0] <= theTime && theTime <= *itsVectorList[timeCount - 1];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -792,24 +1063,31 @@ struct PointerDestroyer
 // ----------------------------------------------------------------------
 void NFmiTimeList::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 {
-  if (NumberOfItems() > theMaxTimeCount)
+  try
   {
-    if (fFromEnd)
+    if (NumberOfItems() > theMaxTimeCount)
     {
-      std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
-      std::copy(itsVectorList.begin(), itsVectorList.begin() + theMaxTimeCount, tmpList.begin());
-      std::for_each(
-          itsVectorList.begin() + theMaxTimeCount, itsVectorList.end(), PointerDestroyer());
-      itsVectorList.swap(tmpList);
+      if (fFromEnd)
+      {
+        std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
+        std::copy(itsVectorList.begin(), itsVectorList.begin() + theMaxTimeCount, tmpList.begin());
+        std::for_each(
+            itsVectorList.begin() + theMaxTimeCount, itsVectorList.end(), PointerDestroyer());
+        itsVectorList.swap(tmpList);
+      }
+      else
+      {
+        std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
+        std::copy(itsVectorList.end() - theMaxTimeCount, itsVectorList.end(), tmpList.begin());
+        std::for_each(
+            itsVectorList.begin(), itsVectorList.end() - theMaxTimeCount, PointerDestroyer());
+        itsVectorList.swap(tmpList);
+      }
     }
-    else
-    {
-      std::vector<NFmiMetTime *> tmpList(theMaxTimeCount);
-      std::copy(itsVectorList.end() - theMaxTimeCount, itsVectorList.end(), tmpList.begin());
-      std::for_each(
-          itsVectorList.begin(), itsVectorList.end() - theMaxTimeCount, PointerDestroyer());
-      itsVectorList.swap(tmpList);
-    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -824,10 +1102,17 @@ void NFmiTimeList::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 // ----------------------------------------------------------------------
 void NFmiTimeList::SetNewStartTime(const NFmiMetTime &theTime)
 {
-  if (NumberOfItems() > 0)
+  try
   {
-    long diffInMinutes = theTime.DifferenceInMinutes(*itsVectorList[0]);
-    for (size_t i = 0; i < itsVectorList.size(); i++)
-      itsVectorList[i]->ChangeByMinutes(diffInMinutes);
+    if (NumberOfItems() > 0)
+    {
+      long diffInMinutes = theTime.DifferenceInMinutes(*itsVectorList[0]);
+      for (size_t i = 0; i < itsVectorList.size(); i++)
+        itsVectorList[i]->ChangeByMinutes(diffInMinutes);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }

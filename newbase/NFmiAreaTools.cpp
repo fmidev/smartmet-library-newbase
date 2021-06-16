@@ -14,6 +14,7 @@
 
 #include "NFmiAreaTools.h"
 #include "NFmiArea.h"
+#include <macgyver/Exception.h>
 #include <algorithm>
 
 // Local utility functions
@@ -38,10 +39,17 @@ void update_bbox(const NFmiPoint& thePoint,
                  double& theMaxLon,
                  double& theMaxLat)
 {
-  theMinLon = std::min(theMinLon, thePoint.X());
-  theMinLat = std::min(theMinLat, thePoint.Y());
-  theMaxLon = std::max(theMaxLon, thePoint.X());
-  theMaxLat = std::max(theMaxLat, thePoint.Y());
+  try
+  {
+    theMinLon = std::min(theMinLon, thePoint.X());
+    theMinLat = std::min(theMinLat, thePoint.Y());
+    theMaxLon = std::max(theMaxLon, thePoint.X());
+    theMaxLat = std::max(theMaxLat, thePoint.Y());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace
@@ -70,59 +78,66 @@ void LatLonBoundingBox(const NFmiArea& theArea,
                        double& theMaxLon,
                        double& theMaxLat)
 {
-  // Good initial values are obtained from the corners
-
-  theMinLon = theArea.TopLeftLatLon().X();
-  theMinLat = theArea.TopLeftLatLon().Y();
-  theMaxLon = theMinLon;
-  theMaxLat = theMinLat;
-
-  const unsigned int divisions = 500;
-
-  // Go through the top edge
-
-  const double left = theArea.Left();
-  const double right = theArea.Right();
-  const double bottom = theArea.Bottom();
-  const double top = theArea.Top();
-  const double width = right - left;
-  const double height = bottom - top;
-
-  // Go through the top edge
-
-  unsigned int i = 0;
-  for (i = 0; i <= divisions; i++)
+  try
   {
-    NFmiPoint xy(left + width * i / divisions, top);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    // Good initial values are obtained from the corners
+
+    theMinLon = theArea.TopLeftLatLon().X();
+    theMinLat = theArea.TopLeftLatLon().Y();
+    theMaxLon = theMinLon;
+    theMaxLat = theMinLat;
+
+    const unsigned int divisions = 500;
+
+    // Go through the top edge
+
+    const double left = theArea.Left();
+    const double right = theArea.Right();
+    const double bottom = theArea.Bottom();
+    const double top = theArea.Top();
+    const double width = right - left;
+    const double height = bottom - top;
+
+    // Go through the top edge
+
+    unsigned int i = 0;
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left + width * i / divisions, top);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the bottom edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left + width * i / divisions, bottom);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the left edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left, top + height * i / divisions);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the right edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(right, top + height * i / divisions);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
   }
-
-  // Go through the bottom edge
-
-  for (i = 0; i <= divisions; i++)
+  catch (...)
   {
-    NFmiPoint xy(left + width * i / divisions, bottom);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
-  }
-
-  // Go through the left edge
-
-  for (i = 0; i <= divisions; i++)
-  {
-    NFmiPoint xy(left, top + height * i / divisions);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
-  }
-
-  // Go through the right edge
-
-  for (i = 0; i <= divisions; i++)
-  {
-    NFmiPoint xy(right, top + height * i / divisions);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

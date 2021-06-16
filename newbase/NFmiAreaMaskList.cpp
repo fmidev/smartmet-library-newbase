@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiAreaMaskList.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -27,33 +28,47 @@ NFmiAreaMaskList::~NFmiAreaMaskList() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMaskInUse(false) {}
+NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMaskInUse(false)
+{
+}
 
-NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther)
-
-    = default;
+NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther) = default;
 
 boost::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
     const boost::shared_ptr<NFmiAreaMaskList> &theOther)
 {
-  if (theOther)
+  try
   {
-    boost::shared_ptr<NFmiAreaMaskList> copyMaskList(new NFmiAreaMaskList());
-    for (theOther->Reset(); theOther->Next();)
+    if (theOther)
     {
-      boost::shared_ptr<NFmiAreaMask> copyedMask(theOther->Current()->Clone());
-      copyMaskList->Add(copyedMask);
+      boost::shared_ptr<NFmiAreaMaskList> copyMaskList(new NFmiAreaMaskList());
+      for (theOther->Reset(); theOther->Next();)
+      {
+        boost::shared_ptr<NFmiAreaMask> copyedMask(theOther->Current()->Clone());
+        copyMaskList->Add(copyedMask);
+      }
+      copyMaskList->CheckIfMaskUsed();
+      return copyMaskList;
     }
-    copyMaskList->CheckIfMaskUsed();
-    return copyMaskList;
-  }
-  else
+
     return boost::shared_ptr<NFmiAreaMaskList>();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 unsigned long NFmiAreaMaskList::NumberOfItems()
 {
-  return static_cast<unsigned long>(itsMaskVector.size());
+  try
+  {
+    return static_cast<unsigned long>(itsMaskVector.size());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -67,7 +82,14 @@ unsigned long NFmiAreaMaskList::NumberOfItems()
 
 void NFmiAreaMaskList::Add(boost::shared_ptr<NFmiAreaMask> &theMask)
 {
-  itsMaskVector.push_back(theMask);
+  try
+  {
+    itsMaskVector.push_back(theMask);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -79,8 +101,15 @@ void NFmiAreaMaskList::Add(boost::shared_ptr<NFmiAreaMask> &theMask)
 
 bool NFmiAreaMaskList::Reset()
 {
-  itsCurrentIndex = -1;
-  return true;
+  try
+  {
+    itsCurrentIndex = -1;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -92,20 +121,34 @@ bool NFmiAreaMaskList::Reset()
 
 bool NFmiAreaMaskList::Next()
 {
-  itsCurrentIndex++;
-  if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size())
-    return true;
-  else
+  try
+  {
+    itsCurrentIndex++;
+    if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size())
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tämä tarkistaa vektori-taulukkoon osoittavia indeksejä, jotka alkavat 0:sta.
 bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 {
-  if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size())
-    return true;
-  else
+  try
+  {
+    if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size())
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -117,13 +160,18 @@ bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 
 boost::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
 {
-  if (IsValidIndex(itsCurrentIndex))
-    return itsMaskVector[itsCurrentIndex];
-  else
+  try
   {
+    if (IsValidIndex(itsCurrentIndex))
+      return itsMaskVector[itsCurrentIndex];
+
     // jos indeksi on vektorin ulkopuolella, palautetaan 0-pointteri (shared_ptr tyhjänä)
     static boost::shared_ptr<NFmiAreaMask> dummy;
     return dummy;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -137,13 +185,20 @@ boost::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
 
 bool NFmiAreaMaskList::Remove()
 {
-  if (IsValidIndex(itsCurrentIndex))
+  try
   {
-    itsMaskVector.erase(itsMaskVector.begin() + itsCurrentIndex);
-    return true;
-  }
-  else
+    if (IsValidIndex(itsCurrentIndex))
+    {
+      itsMaskVector.erase(itsMaskVector.begin() + itsCurrentIndex);
+      return true;
+    }
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -158,23 +213,27 @@ bool NFmiAreaMaskList::Remove()
 
 bool NFmiAreaMaskList::IsMasked(const NFmiPoint &theLatLon)
 {
-  if (fMaskInUse)  // 1999.09.24/Marko Muutin tämän katsomaan ensin onko maski käytössä
-  {                // jos on, katsotaan onko maskattu, muuten on aina maskattu
-                   // näin pääsee eroon muutamasta ikävästä if-lause testeistä
-    for (auto &index : itsMaskVector)
-    {
-      if (index->IsEnabled())
+  try
+  {
+    if (fMaskInUse)  // 1999.09.24/Marko Muutin tämän katsomaan ensin onko maski käytössä
+    {                // jos on, katsotaan onko maskattu, muuten on aina maskattu
+                     // näin pääsee eroon muutamasta ikävästä if-lause testeistä
+      for (auto &index : itsMaskVector)
       {
-        if (!(index->IsMasked(theLatLon)))
+        if (index->IsEnabled())
         {
-          return false;
+          if (!(index->IsMasked(theLatLon)))
+            return false;
         }
       }
+      return true;
     }
     return true;
   }
-  else
-    return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -191,33 +250,41 @@ bool NFmiAreaMaskList::IsMasked(const NFmiPoint &theLatLon)
 
 double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
 {
-  if (fMaskInUse)  // 1999.09.24/Marko Muutin tämän katsomaan ensin onko maski käytössä
-  {                // jos on, katsotaan onko maskattu, muuten on aina maskattu
-                   // näin pääsee eroon muutamasta ikävästä if-lause testeistä
-    double sum = 0, tempValue = 0;
-    int count = 0;
-    for (auto &index : itsMaskVector)
-    {
-      if (index->IsEnabled())
+  try
+  {
+    if (fMaskInUse)  // 1999.09.24/Marko Muutin tämän katsomaan ensin onko maski käytössä
+    {                // jos on, katsotaan onko maskattu, muuten on aina maskattu
+                     // näin pääsee eroon muutamasta ikävästä if-lause testeistä
+      double sum = 0, tempValue = 0;
+      int count = 0;
+      for (auto &index : itsMaskVector)
       {
-        tempValue = index->MaskValue(theLatLon);
-        if (!tempValue)
+        if (index->IsEnabled())
         {
-          return 0.;
-        }
-        else
-        {
-          if (index->IsRampMask())
+          tempValue = index->MaskValue(theLatLon);
+          if (!tempValue)
           {
-            sum += tempValue;
-            count++;
+            return 0.;
+          }
+          else
+          {
+            if (index->IsRampMask())
+            {
+              sum += tempValue;
+              count++;
+            }
           }
         }
       }
+      if (count)
+        return sum / count;
     }
-    if (count) return sum / count;
+    return 1.;
   }
-  return 1.;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -233,16 +300,21 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
 
 bool NFmiAreaMaskList::Find(unsigned long theIndex)
 {
-  int vectorIndex = static_cast<int>(theIndex) - 1;
-  if (IsValidIndex(vectorIndex))
+  try
   {
-    itsCurrentIndex = vectorIndex;
-    return true;
-  }
-  else
-  {
+    int vectorIndex = static_cast<int>(theIndex) - 1;
+    if (IsValidIndex(vectorIndex))
+    {
+      itsCurrentIndex = vectorIndex;
+      return true;
+    }
+
     itsCurrentIndex = -1;
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -253,7 +325,18 @@ bool NFmiAreaMaskList::Find(unsigned long theIndex)
  */
 // ----------------------------------------------------------------------
 
-void NFmiAreaMaskList::Clear() { itsMaskVector.clear(); }
+void NFmiAreaMaskList::Clear()
+{
+  try
+  {
+    itsMaskVector.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  *  Tarkistaa listassa olevilta maskeilta, onko
@@ -270,15 +353,20 @@ void NFmiAreaMaskList::Clear() { itsMaskVector.clear(); }
 
 bool NFmiAreaMaskList::CheckIfMaskUsed()
 {
-  fMaskInUse = false;
-  for (auto &index : itsMaskVector)
+  try
   {
-    if (index->IsEnabled())
+    fMaskInUse = false;
+    for (auto &index : itsMaskVector)
     {
-      fMaskInUse = true;
+      if (index->IsEnabled())
+        fMaskInUse = true;
     }
+    return fMaskInUse;
   }
-  return fMaskInUse;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -293,14 +381,22 @@ bool NFmiAreaMaskList::CheckIfMaskUsed()
 
 bool NFmiAreaMaskList::SyncronizeMaskTime(const NFmiMetTime &theTime)
 {
-  if (fMaskInUse)
+  try
   {
-    for (auto &index : itsMaskVector)
+    if (fMaskInUse)
     {
-      if (index->IsEnabled()) index->Time(theTime);
+      for (auto &index : itsMaskVector)
+      {
+        if (index->IsEnabled())
+          index->Time(theTime);
+      }
     }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -311,7 +407,18 @@ bool NFmiAreaMaskList::SyncronizeMaskTime(const NFmiMetTime &theTime)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskList::Index(unsigned long theIndex) { return Find(theIndex); }
+bool NFmiAreaMaskList::Index(unsigned long theIndex)
+{
+  try
+  {
+    return Find(theIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented, unused
@@ -322,11 +429,19 @@ bool NFmiAreaMaskList::Index(unsigned long theIndex) { return Find(theIndex); }
 
 bool NFmiAreaMaskList::Find(const NFmiDataIdent &theParam)
 {
-  for (auto &index : itsMaskVector)
+  try
   {
-    if (index->IsWantedParam(theParam)) return true;
+    for (auto &index : itsMaskVector)
+    {
+      if (index->IsWantedParam(theParam))
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -340,11 +455,19 @@ bool NFmiAreaMaskList::Find(const NFmiDataIdent &theParam)
 
 bool NFmiAreaMaskList::Find(const NFmiDataIdent &theParam, const NFmiLevel *theLevel)
 {
-  for (auto &index : itsMaskVector)
+  try
   {
-    if (index->IsWantedParam(theParam, theLevel)) return true;
+    for (auto &index : itsMaskVector)
+    {
+      if (index->IsWantedParam(theParam, theLevel))
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

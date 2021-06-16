@@ -21,6 +21,7 @@
 #include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
+#include <macgyver/Exception.h>
 #include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -38,51 +39,58 @@
 
 void *CreateSaveBase(unsigned int classId)
 {
-  switch (classId)
+  try
   {
-    case kNFmiGrid:
-      return static_cast<void *>(new NFmiGrid);
+    switch (classId)
+    {
+      case kNFmiGrid:
+        return static_cast<void *>(new NFmiGrid);
 
-    case kNFmiLambertEqualArea:
-      return static_cast<void *>(new NFmiLambertEqualArea);
-    case kNFmiLatLonArea:
-      return static_cast<void *>(new NFmiLatLonArea);
-    case kNFmiRotatedLatLonArea:
-      return static_cast<void *>(new NFmiRotatedLatLonArea);
-    case kNFmiStereographicArea:
-      return static_cast<void *>(new NFmiStereographicArea);
-    case kNFmiYKJArea:
-      return static_cast<void *>(new NFmiYKJArea);
-    case kNFmiEquiDistArea:
-      return static_cast<void *>(new NFmiEquidistArea);
-    case kNFmiMercatorArea:
-      return static_cast<void *>(new NFmiMercatorArea);
-    case kNFmiWebMercatorArea:
-      return static_cast<void *>(new NFmiWebMercatorArea);
-    case kNFmiGnomonicArea:
-      return static_cast<void *>(new NFmiGnomonicArea);
-    case kNFmiLambertConformalConicArea:
-      return static_cast<void *>(new NFmiLambertConformalConicArea);
+      case kNFmiLambertEqualArea:
+        return static_cast<void *>(new NFmiLambertEqualArea);
+      case kNFmiLatLonArea:
+        return static_cast<void *>(new NFmiLatLonArea);
+      case kNFmiRotatedLatLonArea:
+        return static_cast<void *>(new NFmiRotatedLatLonArea);
+      case kNFmiStereographicArea:
+        return static_cast<void *>(new NFmiStereographicArea);
+      case kNFmiYKJArea:
+        return static_cast<void *>(new NFmiYKJArea);
+      case kNFmiEquiDistArea:
+        return static_cast<void *>(new NFmiEquidistArea);
+      case kNFmiMercatorArea:
+        return static_cast<void *>(new NFmiMercatorArea);
+      case kNFmiWebMercatorArea:
+        return static_cast<void *>(new NFmiWebMercatorArea);
+      case kNFmiGnomonicArea:
+        return static_cast<void *>(new NFmiGnomonicArea);
+      case kNFmiLambertConformalConicArea:
+        return static_cast<void *>(new NFmiLambertConformalConicArea);
 
-    case kNFmiQueryData:
-      return static_cast<void *>(new NFmiQueryData);
-    case kNFmiQueryInfo:
-      return static_cast<void *>(new NFmiQueryInfo);
+      case kNFmiQueryData:
+        return static_cast<void *>(new NFmiQueryData);
+      case kNFmiQueryInfo:
+        return static_cast<void *>(new NFmiQueryInfo);
 
-    case kNFmiLocationBag:
-      return static_cast<void *>(new NFmiLocationBag);
-    case kNFmiStationBag:
-      return static_cast<void *>(new NFmiStationBag);
+      case kNFmiLocationBag:
+        return static_cast<void *>(new NFmiLocationBag);
+      case kNFmiStationBag:
+        return static_cast<void *>(new NFmiStationBag);
 #ifdef UNIX
 #ifndef DISABLED_GDAL
-    case kNFmiGdalArea:
-      return static_cast<void *>(new NFmiGdalArea);
+      case kNFmiGdalArea:
+        return static_cast<void *>(new NFmiGdalArea);
 #endif
 #endif
 
-    default:
-      throw std::runtime_error("Newbase: unable to create unknown class " +
-                               boost::lexical_cast<std::string>(classId));
+      default:
+        throw Fmi::Exception(BCP,"Newbase: unable to create unknown class " +
+                                 boost::lexical_cast<std::string>(classId));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

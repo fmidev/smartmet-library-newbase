@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiRect.h"
+#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <algorithm>
 #include <fstream>
@@ -60,8 +61,15 @@ NFmiRect::NFmiRect(double left, double top, double right, double bottom)
 
 void NFmiRect::Inflate(double theValue)
 {
-  itsSize += NFmiPoint(2 * theValue, 2 * theValue);
-  itsPlace -= NFmiPoint(theValue, theValue);
+  try
+  {
+    itsSize += NFmiPoint(2 * theValue, 2 * theValue);
+    itsPlace -= NFmiPoint(theValue, theValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -73,8 +81,15 @@ void NFmiRect::Inflate(double theValue)
 
 void NFmiRect::Inflate(double theXValue, double theYValue)
 {
-  itsSize += NFmiPoint(2 * theXValue, 2 * theYValue);
-  itsPlace -= NFmiPoint(theXValue, theYValue);
+  try
+  {
+    itsSize += NFmiPoint(2 * theXValue, 2 * theYValue);
+    itsPlace -= NFmiPoint(theXValue, theYValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -85,10 +100,17 @@ void NFmiRect::Inflate(double theXValue, double theYValue)
 
 void NFmiRect::Inflate(const NFmiPoint &theValue)
 {
-  NFmiPoint theSizingValue(theValue);
-  theSizingValue += theValue;
-  itsSize += theSizingValue;
-  itsPlace -= theValue;
+  try
+  {
+    NFmiPoint theSizingValue(theValue);
+    theSizingValue += theValue;
+    itsSize += theSizingValue;
+    itsPlace -= theValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -100,24 +122,31 @@ void NFmiRect::Inflate(const NFmiPoint &theValue)
 
 const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
 {
-  double dLeftTop = TopLeft().Distance(thePoint);
-  double dRightTop = TopRight().Distance(thePoint);
-  double dLeftBottom = BottomLeft().Distance(thePoint);
-  double dRightBottom = BottomRight().Distance(thePoint);
+  try
+  {
+    double dLeftTop = TopLeft().Distance(thePoint);
+    double dRightTop = TopRight().Distance(thePoint);
+    double dLeftBottom = BottomLeft().Distance(thePoint);
+    double dRightBottom = BottomRight().Distance(thePoint);
 
-  if (dLeftTop <= dRightTop)
-  {
-    if (dLeftTop <= dLeftBottom)
-      return TopLeft();
+    if (dLeftTop <= dRightTop)
+    {
+      if (dLeftTop <= dLeftBottom)
+        return TopLeft();
+      else
+        return BottomLeft();
+    }
     else
-      return BottomLeft();
+    {
+      if (dRightTop <= dRightBottom)
+        return TopRight();
+      else
+        return BottomRight();
+    }
   }
-  else
+  catch (...)
   {
-    if (dRightTop <= dRightBottom)
-      return TopRight();
-    else
-      return BottomRight();
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -137,46 +166,53 @@ const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
 
 bool NFmiRect::AdjustAspectRatio(double theRatioXperY, bool fKeepX, FmiDirection theDirection)
 {
-  if (theRatioXperY == 0.) return false;
-
-  NFmiRect originalRect(itsPlace, itsPlace + itsSize);  // 9.9.99/EL
-
-  if (fKeepX)
-    Size(NFmiPoint(Width(), Width() / theRatioXperY));
-  else
-    Size(NFmiPoint(theRatioXperY * Height(), Height()));
-
-  double newWidth = Width();
-  double newHeight = Height();
-
-  // Origona on nurkka 'kTopLeft' missä (X,Y) = TopLeft()
-  // X kasvaa "vasemmalta oikealle"
-  // Y kasvaa "ylhäältä alas"
-
-  switch (theDirection)
+  try
   {
-    case kTopLeft:
-      return true;  // Nurkka on origossa - Place() pysyy paikallaan
+    if (theRatioXperY == 0.) return false;
 
-    case kTopRight:
-      Place(NFmiPoint(originalRect.TopRight().X() - newWidth, TopRight().Y()));
-      return true;
+    NFmiRect originalRect(itsPlace, itsPlace + itsSize);  // 9.9.99/EL
 
-    case kBottomLeft:
-      Place(NFmiPoint(originalRect.BottomLeft().X(), originalRect.BottomLeft().Y() - newHeight));
-      return true;
+    if (fKeepX)
+      Size(NFmiPoint(Width(), Width() / theRatioXperY));
+    else
+      Size(NFmiPoint(theRatioXperY * Height(), Height()));
 
-    case kBottomRight:
-      Place(NFmiPoint(originalRect.BottomRight().X() - newWidth,
-                      originalRect.BottomRight().Y() - newHeight));
-      return true;
+    double newWidth = Width();
+    double newHeight = Height();
 
-    case kCenter:
-      Center(originalRect.Center());
-      return true;
+    // Origona on nurkka 'kTopLeft' missä (X,Y) = TopLeft()
+    // X kasvaa "vasemmalta oikealle"
+    // Y kasvaa "ylhäältä alas"
 
-    default:
-      return false;
+    switch (theDirection)
+    {
+      case kTopLeft:
+        return true;  // Nurkka on origossa - Place() pysyy paikallaan
+
+      case kTopRight:
+        Place(NFmiPoint(originalRect.TopRight().X() - newWidth, TopRight().Y()));
+        return true;
+
+      case kBottomLeft:
+        Place(NFmiPoint(originalRect.BottomLeft().X(), originalRect.BottomLeft().Y() - newHeight));
+        return true;
+
+      case kBottomRight:
+        Place(NFmiPoint(originalRect.BottomRight().X() - newWidth,
+                        originalRect.BottomRight().Y() - newHeight));
+        return true;
+
+      case kCenter:
+        Center(originalRect.Center());
+        return true;
+
+      default:
+        return false;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -193,8 +229,15 @@ bool NFmiRect::AdjustAspectRatio(double theRatioXperY, bool fKeepX, FmiDirection
 // ----------------------------------------------------------------------
 const NFmiPoint NFmiRect::Project(const NFmiPoint &thePlace) const
 {
-  NFmiPoint newPoint = thePlace - TopLeft();
-  return NFmiPoint(newPoint.X() / Width(), newPoint.Y() / Height());
+  try
+  {
+    NFmiPoint newPoint = thePlace - TopLeft();
+    return NFmiPoint(newPoint.X() / Width(), newPoint.Y() / Height());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -208,8 +251,15 @@ const NFmiPoint NFmiRect::Project(const NFmiPoint &thePlace) const
 
 NFmiRect &NFmiRect::operator+=(const NFmiPoint &thePoint)
 {
-  itsPlace += thePoint;
-  return *this;
+  try
+  {
+    itsPlace += thePoint;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -223,8 +273,15 @@ NFmiRect &NFmiRect::operator+=(const NFmiPoint &thePoint)
 
 NFmiRect &NFmiRect::operator-=(const NFmiPoint &thePoint)
 {
-  itsPlace -= thePoint;
-  return *this;
+  try
+  {
+    itsPlace -= thePoint;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -238,13 +295,20 @@ NFmiRect &NFmiRect::operator-=(const NFmiPoint &thePoint)
 
 NFmiRect &NFmiRect::operator+=(const NFmiRect &theRect)
 {
-  itsPlace = NFmiPoint(Left() < theRect.Left() ? Left() : theRect.Left(),
-                       Top() < theRect.Top() ? Top() : theRect.Top());
+  try
+  {
+    itsPlace = NFmiPoint(Left() < theRect.Left() ? Left() : theRect.Left(),
+                         Top() < theRect.Top() ? Top() : theRect.Top());
 
-  itsSize = NFmiPoint(Right() > theRect.Right() ? Right() : theRect.Right(),
-                      Bottom() > theRect.Bottom() ? Bottom() : theRect.Bottom()) -
-            itsPlace;
-  return *this;
+    itsSize = NFmiPoint(Right() > theRect.Right() ? Right() : theRect.Right(),
+                        Bottom() > theRect.Bottom() ? Bottom() : theRect.Bottom()) -
+              itsPlace;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -258,13 +322,20 @@ NFmiRect &NFmiRect::operator+=(const NFmiRect &theRect)
 
 NFmiRect &NFmiRect::operator-=(const NFmiRect &theRect)
 {
-  itsPlace = NFmiPoint(Left() > theRect.Left() ? Left() : theRect.Left(),
-                       Top() > theRect.Top() ? Top() : theRect.Top());
+  try
+  {
+    itsPlace = NFmiPoint(Left() > theRect.Left() ? Left() : theRect.Left(),
+                         Top() > theRect.Top() ? Top() : theRect.Top());
 
-  itsSize = NFmiPoint(Right() < theRect.Right() ? Right() : theRect.Right(),
-                      Bottom() < theRect.Bottom() ? Bottom() : theRect.Bottom()) -
-            itsPlace;
-  return *this;
+    itsSize = NFmiPoint(Right() < theRect.Right() ? Right() : theRect.Right(),
+                        Bottom() < theRect.Bottom() ? Bottom() : theRect.Bottom()) -
+              itsPlace;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -275,7 +346,14 @@ NFmiRect &NFmiRect::operator-=(const NFmiRect &theRect)
 
 void NFmiRect::Center(const NFmiPoint &newCenter)
 {
-  Place(NFmiPoint(newCenter.X() - (Width() / 2.), newCenter.Y() - (Height() / 2.)));
+  try
+  {
+    Place(NFmiPoint(newCenter.X() - (Width() / 2.), newCenter.Y() - (Height() / 2.)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -288,11 +366,18 @@ void NFmiRect::Center(const NFmiPoint &newCenter)
 
 const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
 {
-  double left = Left() < theRect.Left() ? Left() : theRect.Left();
-  double top = Top() < theRect.Top() ? Top() : theRect.Top();
-  double right = Right() > theRect.Right() ? Right() : theRect.Right();
-  double bottom = Bottom() > theRect.Bottom() ? Bottom() : theRect.Bottom();
-  return NFmiRect(left, top, right, bottom);
+  try
+  {
+    double left = Left() < theRect.Left() ? Left() : theRect.Left();
+    double top = Top() < theRect.Top() ? Top() : theRect.Top();
+    double right = Right() > theRect.Right() ? Right() : theRect.Right();
+    double bottom = Bottom() > theRect.Bottom() ? Bottom() : theRect.Bottom();
+    return NFmiRect(left, top, right, bottom);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -306,11 +391,18 @@ const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
 
 const NFmiRect NFmiRect::Intersection(const NFmiRect &theRect) const
 {
-  double left = Left() > theRect.Left() ? Left() : theRect.Left();
-  double top = Top() > theRect.Top() ? Top() : theRect.Top();
-  double right = Right() < theRect.Right() ? Right() : theRect.Right();
-  double bottom = Bottom() < theRect.Bottom() ? Bottom() : theRect.Bottom();
-  return NFmiRect(left, top, right, bottom);
+  try
+  {
+    double left = Left() > theRect.Left() ? Left() : theRect.Left();
+    double top = Top() > theRect.Top() ? Top() : theRect.Top();
+    double right = Right() < theRect.Right() ? Right() : theRect.Right();
+    double bottom = Bottom() < theRect.Bottom() ? Bottom() : theRect.Bottom();
+    return NFmiRect(left, top, right, bottom);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -324,9 +416,16 @@ const NFmiRect NFmiRect::Intersection(const NFmiRect &theRect) const
 
 std::ostream &NFmiRect::Write(std::ostream &file) const
 {
-  file << itsPlace;
-  file << itsSize;
-  return file;
+  try
+  {
+    file << itsPlace;
+    file << itsSize;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -340,9 +439,16 @@ std::ostream &NFmiRect::Write(std::ostream &file) const
 
 std::istream &NFmiRect::Read(std::istream &file)
 {
-  file >> itsPlace;
-  file >> itsSize;
-  return file;
+  try
+  {
+    file >> itsPlace;
+    file >> itsSize;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -357,8 +463,15 @@ std::istream &NFmiRect::Read(std::istream &file)
 
 NFmiRect operator+(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 {
-  return NFmiRect(NFmiPoint(leftPoint.X() + rightRect.Left(), leftPoint.Y() + rightRect.Top()),
-                  NFmiPoint(leftPoint.X() + rightRect.Right(), leftPoint.Y() + rightRect.Bottom()));
+  try
+  {
+    return NFmiRect(NFmiPoint(leftPoint.X() + rightRect.Left(), leftPoint.Y() + rightRect.Top()),
+                    NFmiPoint(leftPoint.X() + rightRect.Right(), leftPoint.Y() + rightRect.Bottom()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -373,8 +486,15 @@ NFmiRect operator+(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 
 NFmiRect operator-(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 {
-  return NFmiRect(NFmiPoint(leftPoint.X() - rightRect.Left(), leftPoint.Y() - rightRect.Top()),
-                  NFmiPoint(leftPoint.X() - rightRect.Right(), leftPoint.Y() - rightRect.Bottom()));
+  try
+  {
+    return NFmiRect(NFmiPoint(leftPoint.X() - rightRect.Left(), leftPoint.Y() - rightRect.Top()),
+                    NFmiPoint(leftPoint.X() - rightRect.Right(), leftPoint.Y() - rightRect.Bottom()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -389,8 +509,15 @@ NFmiRect operator-(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 
 NFmiRect operator+(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 {
-  return NFmiRect(NFmiPoint(rightPoint.X() + leftRect.Left(), rightPoint.Y() + leftRect.Top()),
-                  NFmiPoint(rightPoint.X() + leftRect.Right(), rightPoint.Y() + leftRect.Bottom()));
+  try
+  {
+    return NFmiRect(NFmiPoint(rightPoint.X() + leftRect.Left(), rightPoint.Y() + leftRect.Top()),
+                    NFmiPoint(rightPoint.X() + leftRect.Right(), rightPoint.Y() + leftRect.Bottom()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -405,17 +532,31 @@ NFmiRect operator+(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 
 NFmiRect operator-(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 {
-  return NFmiRect(NFmiPoint(rightPoint.X() - leftRect.Left(), rightPoint.Y() - leftRect.Top()),
-                  NFmiPoint(rightPoint.X() - leftRect.Right(), rightPoint.Y() - leftRect.Bottom()));
+  try
+  {
+    return NFmiRect(NFmiPoint(rightPoint.X() - leftRect.Left(), rightPoint.Y() - leftRect.Top()),
+                    NFmiPoint(rightPoint.X() - leftRect.Right(), rightPoint.Y() - leftRect.Bottom()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiRect::Intersect(const NFmiRect &theRect) const
 {
-  if (this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
-      this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top())
-    return true;
-  else
-    return false;
+  try
+  {
+    if (this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
+        this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top())
+      return true;
+    else
+      return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -426,9 +567,16 @@ bool NFmiRect::Intersect(const NFmiRect &theRect) const
 
 std::size_t NFmiRect::HashValue() const
 {
-  std::size_t hash = itsPlace.HashValue();
-  boost::hash_combine(hash, itsSize.HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = itsPlace.HashValue();
+    boost::hash_combine(hash, itsSize.HashValue());
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
