@@ -127,6 +127,8 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   {
     itsSimpleCondition = theSimpleCondition;
   }
+  float FunctionDataTimeOffsetInHours() const override { return itsFunctionDataTimeOffsetInHours; }
+  void FunctionDataTimeOffsetInHours(float newValue) override { itsFunctionDataTimeOffsetInHours = newValue; }
 
  protected:
   virtual double CalcValueFromLocation(const NFmiPoint &theLatLon) const;
@@ -164,6 +166,10 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   bool fHasSubMasks;
   bool fEnabled;
   boost::shared_ptr<NFmiSimpleCondition> itsSimpleCondition;
+  // Jossain tilanteissa smarttool funktion datalle voidaan haluta tehdä aikasiirto,
+  // jolloin käytetään tämän arvoa tekemään siirto, esim. peekxy3(T_ec[-3h] 10 0)
+  // kutsussa tehdään funktiole annettavalle parametrille T_ec 3 tunnin siirto taaksepäin.
+  float itsFunctionDataTimeOffsetInHours = 0;
 };  // class NFmiAreaMaskImpl
 
 // ----------------------------------------------------------------------

@@ -1040,6 +1040,9 @@ NFmiCalculationParams NFmiInfoAreaMaskPeekXY3::MakeModifiedCalculationParams(
 
   NFmiCalculationParams modifiedCalculationParams(theCalculationParams);
   modifiedCalculationParams.itsLatlon = loc.GetLocation();
+  if (itsFunctionDataTimeOffsetInHours != 0)
+    modifiedCalculationParams.itsTime.ChangeByMinutes(
+        static_cast<long>(itsFunctionDataTimeOffsetInHours * 60.f));
   return modifiedCalculationParams;
 }
 

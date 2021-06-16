@@ -357,6 +357,8 @@ class NFmiAreaMask
   // käytetään mm. erilaisissa integraatiolaskuissa
   virtual const boost::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const = 0;
   virtual void SimpleCondition(boost::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) = 0;
+  virtual float FunctionDataTimeOffsetInHours() const = 0;
+  virtual void FunctionDataTimeOffsetInHours(float newValue) = 0;
 
   static boost::shared_ptr<NFmiFastQueryInfo> DoShallowCopy(
       const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
