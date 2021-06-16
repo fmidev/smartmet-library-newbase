@@ -330,7 +330,7 @@ void convert()
     NFmiStringTools::Convert<int>("1.234");
     TEST_FAILED("Should have failed to convert '1.234' to integer");
   }
-  catch (std::runtime_error& e)
+  catch (Fmi::Exception& e)
   {
   }
 
@@ -339,7 +339,7 @@ void convert()
     NFmiStringTools::Convert<int>("1X");
     TEST_FAILED("Should have failed to convert '1X' to integer");
   }
-  catch (std::runtime_error& e)
+  catch (Fmi::Exception& e)
   {
   }
 
