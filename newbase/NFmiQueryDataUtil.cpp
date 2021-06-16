@@ -4128,7 +4128,7 @@ bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
         if (timeCounter >= wantedTimeSteps)  // esim. jos halutaan 15 tuntia alusta, ehto ottaa
                                              // mukaan ajat 0-15 eli periaatteessa 16 tunnin datan,
                                              // mutta se on sama kuin 15 tuntia alusta eteenpäin.
-          continue;  // kopioidaan dataa vain haluttu aikajakso alusta
+          continue;                          // kopioidaan dataa vain haluttu aikajakso alusta
         for (theInfo2.ResetLocation(), theInfo1.ResetLocation();
              theInfo2.NextLocation() && theInfo1.NextLocation();)
         {

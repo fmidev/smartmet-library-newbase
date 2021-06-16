@@ -22,14 +22,14 @@
 class NFmiSatel
 {
  public:
-  virtual ~NFmiSatel(void);
-  NFmiSatel(void);
+  virtual ~NFmiSatel();
+  NFmiSatel();
   NFmiSatel(const NFmiSatel& theSatel);
   NFmiSatel(char* theSatelFileName);
 
-  virtual const NFmiString GetName(void) const;
-  virtual unsigned long GetSize(void);
-  virtual const char* GetData(void);
+  virtual const NFmiString GetName() const;
+  virtual unsigned long GetSize();
+  virtual const char* GetData();
 
   virtual std::ostream& Write(std::ostream& file) const;
   virtual std::istream& Read(std::istream& file);
@@ -48,7 +48,7 @@ class NFmiSatel
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatel::NFmiSatel(void)
+inline NFmiSatel::NFmiSatel()
 {
   itsSatelName = "NONE";
   itsSatelData = 0;
@@ -104,7 +104,7 @@ inline NFmiSatel::NFmiSatel(const NFmiSatel& theSatel)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatel::~NFmiSatel(void)
+inline NFmiSatel::~NFmiSatel()
 {
   if (itsSatelData)
     delete itsSatelData;
@@ -116,7 +116,7 @@ inline NFmiSatel::~NFmiSatel(void)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiSatel::GetName(void) const
+inline const NFmiString NFmiSatel::GetName() const
 {
   return itsSatelName;
 }
@@ -126,7 +126,7 @@ inline const NFmiString NFmiSatel::GetName(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSatel::GetSize(void)
+inline unsigned long NFmiSatel::GetSize()
 {
   return itsSatelDataSize;
 }
@@ -136,7 +136,7 @@ inline unsigned long NFmiSatel::GetSize(void)
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiSatel::GetData(void)
+inline const char* NFmiSatel::GetData()
 {
   return itsSatelData ? itsSatelData : "";
 }

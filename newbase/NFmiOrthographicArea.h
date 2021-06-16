@@ -15,9 +15,9 @@
 class NFmiOrthographicArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiOrthographicArea(void);
+  virtual ~NFmiOrthographicArea();
 
-  NFmiOrthographicArea(void);
+  NFmiOrthographicArea();
 
   NFmiOrthographicArea(const NFmiOrthographicArea &thePerspectiveArea);
 
@@ -48,15 +48,15 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXY) const;
 
   void ZoomFactor(double theZoomFactor);
-  double ZoomFactor(void) const;
+  double ZoomFactor() const;
 
-  virtual double GlobeRadius(void) const;
+  virtual double GlobeRadius() const;
   virtual void GlobeRadius(double &theGlobeRadius);
 
-  virtual double AzimuthAngle(void) const;
+  virtual double AzimuthAngle() const;
   virtual void AzimuthAngle(double &theAzimuthAngle);
 
-  virtual NFmiArea *Clone(void) const;
+  virtual NFmiArea *Clone() const;
   virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                             const NFmiPoint &theTopRightLatLon,
                             bool allowPacificFix = true) const;
@@ -70,8 +70,8 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
   bool operator==(const NFmiArea &theArea) const;
   bool operator!=(const NFmiArea &theArea) const;
 
-  virtual const char *ClassName(void) const;
-  const std::string AreaStr(void) const;
+  virtual const char *ClassName() const;
+  const std::string AreaStr() const;
   virtual const std::string WKT() const;
 
   virtual std::ostream &Write(std::ostream &file) const;
@@ -82,7 +82,7 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
  protected:
   virtual double K(const double /* delta */) const { return 1.; };
   virtual double CalcDelta(const double /* xyDistance */) const { return 0.; };
-  virtual double DistanceFromPerspectivePointToCenterOfEarth(void) const { return 0.; };
+  virtual double DistanceFromPerspectivePointToCenterOfEarth() const { return 0.; };
   double itsAzimuthAngle;
   double itsLat0;
   double itsLon0;
@@ -105,16 +105,16 @@ typedef NFmiOrthographicArea *PNFmiOrthographicArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiOrthographicArea::~NFmiOrthographicArea(void) {}
+inline NFmiOrthographicArea::~NFmiOrthographicArea() {}
 // ----------------------------------------------------------------------
 
-inline double NFmiOrthographicArea::GlobeRadius(void) const
+inline double NFmiOrthographicArea::GlobeRadius() const
 {
   return itsGlobeRadius;
 }
 // ----------------------------------------------------------------------
 
-inline const char *NFmiOrthographicArea::ClassName(void) const
+inline const char *NFmiOrthographicArea::ClassName() const
 {
   return "kNFmiOrthographicArea";
 }

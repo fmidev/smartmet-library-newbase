@@ -14,8 +14,8 @@
 class NFmiRotatedLatLonArea : public NFmiLatLonArea
 {
  public:
-  virtual ~NFmiRotatedLatLonArea(void);
-  NFmiRotatedLatLonArea(void);
+  virtual ~NFmiRotatedLatLonArea();
+  NFmiRotatedLatLonArea();
   NFmiRotatedLatLonArea(const NFmiRotatedLatLonArea &theRotatedLatLonArea);
   NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLon,
                         const NFmiPoint &theTopRightLatLon,
@@ -26,7 +26,7 @@ class NFmiRotatedLatLonArea : public NFmiLatLonArea
                         const bool initiallyRotated = false,
                         bool usePacificView = false);
 
-  virtual NFmiArea *Clone(void) const;
+  virtual NFmiArea *Clone() const;
   virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
   virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
   virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
@@ -35,14 +35,14 @@ class NFmiRotatedLatLonArea : public NFmiLatLonArea
   virtual bool IsInside(const NFmiPoint &theLatLonPoint) const;
   virtual const NFmiPoint ToRotLatLon(const NFmiPoint &theLatLonPoint) const;
   virtual const NFmiPoint ToRegLatLon(const NFmiPoint &theRotLatLonPoint) const;
-  const NFmiPoint &SouthernPole(void) const { return itsSouthernPole; }
+  const NFmiPoint &SouthernPole() const { return itsSouthernPole; }
   virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                             const NFmiPoint &theTopRightLatLon,
                             bool allowPacificFix = true) const;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
-  const std::string AreaStr(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char *ClassName() const;
+  const std::string AreaStr() const;
   virtual const std::string WKT() const;
 
   using NFmiLatLonArea::operator==;
@@ -73,14 +73,14 @@ typedef NFmiRotatedLatLonArea *PNFmiRotatedLatLonArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiRotatedLatLonArea::~NFmiRotatedLatLonArea(void) {}
+inline NFmiRotatedLatLonArea::~NFmiRotatedLatLonArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRotatedLatLonArea::ClassId(void) const
+inline unsigned long NFmiRotatedLatLonArea::ClassId() const
 {
   return kNFmiRotatedLatLonArea;
 }
@@ -90,7 +90,7 @@ inline unsigned long NFmiRotatedLatLonArea::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiRotatedLatLonArea::ClassName(void) const
+inline const char *NFmiRotatedLatLonArea::ClassName() const
 {
   return "NFmiRotatedLatLonArea";
 }

@@ -14,22 +14,22 @@
 class NFmiCalculationCondition
 {
  public:
-  NFmiCalculationCondition(void);
+  NFmiCalculationCondition();
   NFmiCalculationCondition(FmiMaskOperation theCondition,
                            double theLowerLimit,
                            double theUpperLimit = 1);
 
   void Condition(FmiMaskOperation theCondition);
-  double UpperLimit(void) const;
-  double LowerLimit(void) const;
+  double UpperLimit() const;
+  double LowerLimit() const;
 
-  FmiMaskOperation Condition(void) const;
+  FmiMaskOperation Condition() const;
   void UpperLimit(double newValue);
   void LowerLimit(double newValue);
 
   bool IsMasked(double theValue) const;
   double MaskValue(double theValue) const;
-  bool IsRampMask(void) const;
+  bool IsRampMask() const;
   const NFmiString MaskString(const NFmiString& theParamName) const;
 
   void Write(std::ostream& os) const;
@@ -71,7 +71,7 @@ inline void NFmiCalculationCondition::Condition(FmiMaskOperation theCondition)
  */
 // ----------------------------------------------------------------------
 
-inline FmiMaskOperation NFmiCalculationCondition::Condition(void) const
+inline FmiMaskOperation NFmiCalculationCondition::Condition() const
 {
   return itsCondition;
 }
@@ -81,7 +81,7 @@ inline FmiMaskOperation NFmiCalculationCondition::Condition(void) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiCalculationCondition::UpperLimit(void) const
+inline double NFmiCalculationCondition::UpperLimit() const
 {
   return itsUpperLimit;
 }
@@ -101,7 +101,7 @@ inline void NFmiCalculationCondition::UpperLimit(double newValue)
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiCalculationCondition::LowerLimit(void) const
+inline double NFmiCalculationCondition::LowerLimit() const
 {
   return itsLowerLimit;
 }
@@ -121,7 +121,7 @@ inline void NFmiCalculationCondition::LowerLimit(double newValue)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiCalculationCondition::IsRampMask(void) const
+inline bool NFmiCalculationCondition::IsRampMask() const
 {
   return (itsCondition == kFmiMaskRisingRamp || itsCondition == kFmiMaskLoweringRamp ||
           itsCondition == kFmiMaskDoubleRamp);

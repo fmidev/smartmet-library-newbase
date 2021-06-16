@@ -13,8 +13,8 @@
 class NFmiPKJArea : public NFmiKKJArea
 {
  public:
-  virtual ~NFmiPKJArea(void);
-  NFmiPKJArea(void);
+  virtual ~NFmiPKJArea();
+  NFmiPKJArea();
   NFmiPKJArea(const NFmiPKJArea& thePKJArea);
 
   NFmiPKJArea(const NFmiPoint& theBottomLeftLatLon,
@@ -40,10 +40,10 @@ class NFmiPKJArea : public NFmiKKJArea
                             const NFmiPoint& theTopRightLatLon,
                             bool allowPacificFix = true) const;
 
-  virtual NFmiArea* Clone(void) const;
+  virtual NFmiArea* Clone() const;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char* ClassName() const;
 
   NFmiPKJArea& operator=(const NFmiPKJArea& theArea);
 
@@ -80,14 +80,14 @@ typedef NFmiPKJArea* PNFmiPKJArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPKJArea::~NFmiPKJArea(void) {}
+inline NFmiPKJArea::~NFmiPKJArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiPKJArea::ClassId(void) const
+inline unsigned long NFmiPKJArea::ClassId() const
 {
   return kNFmiPKJArea;
 }
@@ -97,7 +97,7 @@ inline unsigned long NFmiPKJArea::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiPKJArea::ClassName(void) const
+inline const char* NFmiPKJArea::ClassName() const
 {
   return "NFmiPKJArea";
 }

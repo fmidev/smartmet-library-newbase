@@ -17,18 +17,18 @@ class NFmiQueryInfo;
 class NFmiDataIterator
 {
  public:
-  virtual ~NFmiDataIterator(void);
+  virtual ~NFmiDataIterator();
   NFmiDataIterator(NFmiQueryInfo* theData = 0);
 
   virtual void DoForEach(NFmiDataModifier* theDataModifier = 0);
   virtual void SetDimensions(long dx, long dy, long dt);
 
-  NFmiAreaMask* Mask(void);
+  NFmiAreaMask* Mask();
   void Mask(NFmiAreaMask* newMask);
-  bool MaskInUse(void) const;
+  bool MaskInUse() const;
 
  protected:
-  void CheckIfMaskIsUsed(void);  // tarkistaa käytetäänkö maskia ja asetetaan fMaskInUse arvo
+  void CheckIfMaskIsUsed();  // tarkistaa käytetäänkö maskia ja asetetaan fMaskInUse arvo
   bool IsMasked(const NFmiPoint& theLatLonPoint);
   NFmiQueryInfo* itsData;  // ei omista, ei tuhoa!
   NFmiAreaMask* itsMask;  // ei omista, ei tuhoa! // jos iterointia halutaan rajata maskilla, tähän
@@ -56,7 +56,7 @@ inline void NFmiDataIterator::SetDimensions(long /* dx */, long /* dy */, long /
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMask* NFmiDataIterator::Mask(void)
+inline NFmiAreaMask* NFmiDataIterator::Mask()
 {
   return itsMask;
 }
@@ -80,7 +80,7 @@ inline void NFmiDataIterator::Mask(NFmiAreaMask* newMask)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataIterator::MaskInUse(void) const
+inline bool NFmiDataIterator::MaskInUse() const
 {
   return fMaskInUse;
 }

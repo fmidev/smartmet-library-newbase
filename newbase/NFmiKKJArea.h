@@ -14,8 +14,8 @@
 class NFmiKKJArea : public NFmiArea
 {
  public:
-  virtual ~NFmiKKJArea(void);
-  NFmiKKJArea(void);
+  virtual ~NFmiKKJArea();
+  NFmiKKJArea();
   NFmiKKJArea(const NFmiKKJArea& theKKJArea);
 
   NFmiKKJArea(const NFmiPoint& theBottomLeftLatLon,
@@ -36,7 +36,7 @@ class NFmiKKJArea : public NFmiArea
   NFmiKKJArea(const NFmiPoint& theTopLeftXY, const NFmiPoint& theBottomRightXY);
 
   virtual void Init(bool fKeepWorldRect = false);
-  virtual const NFmiRect WorldRect(void) const;
+  virtual const NFmiRect WorldRect() const;
 
   virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
   virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
@@ -54,15 +54,15 @@ class NFmiKKJArea : public NFmiArea
   virtual bool operator==(const NFmiArea& theArea) const;
   virtual bool operator!=(const NFmiArea& theArea) const;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
-  const std::string AreaStr(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char* ClassName() const;
+  const std::string AreaStr() const;
   virtual const std::string WKT() const;
 
   virtual std::ostream& Write(std::ostream& file) const;
   virtual std::istream& Read(std::istream& file);
 
-  void SetupGaussKruger(void);
+  void SetupGaussKruger();
   void SetupAnyEllipsoid(double theA, double theP);
 
   std::size_t HashValue() const;
@@ -97,14 +97,14 @@ typedef NFmiKKJArea* PNFmiKKJArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiKKJArea::~NFmiKKJArea(void) {}
+inline NFmiKKJArea::~NFmiKKJArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiKKJArea::WorldRect(void) const
+inline const NFmiRect NFmiKKJArea::WorldRect() const
 {
   return itsWorldRect;
 }
@@ -114,7 +114,7 @@ inline const NFmiRect NFmiKKJArea::WorldRect(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiKKJArea::ClassId(void) const
+inline unsigned long NFmiKKJArea::ClassId() const
 {
   return kNFmiKKJArea;
 }
@@ -124,7 +124,7 @@ inline unsigned long NFmiKKJArea::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiKKJArea::ClassName(void) const
+inline const char* NFmiKKJArea::ClassName() const
 {
   return "NFmiKKJArea";
 }

@@ -15,7 +15,7 @@
 class NFmiStationBag : public NFmiLocationBag
 {
  public:
-  NFmiStationBag(void);
+  NFmiStationBag();
   NFmiStationBag(unsigned long *theStationArray, unsigned long theNumberOfStations);
   NFmiStationBag(NFmiStation *theStationArray, unsigned long theNumberOfStations);
   NFmiStationBag(NFmiLocation *theLocationArray,
@@ -23,12 +23,12 @@ class NFmiStationBag : public NFmiLocationBag
                  NFmiIndividual *theStationArray);
   NFmiStationBag(const NFmiStationBag &theBag);
 
-  ~NFmiStationBag(void) { Destroy(); }
-  long CurrentStation(void) const;
+  ~NFmiStationBag() { Destroy(); }
+  long CurrentStation() const;
   bool SetCurrent(long theStation);
 
   bool Current(const NFmiStation &theStation);
-  const NFmiStation Current(void) const;
+  const NFmiStation Current() const;
 
   bool AddStation(const NFmiStation &theStation);
 
@@ -37,12 +37,12 @@ class NFmiStationBag : public NFmiLocationBag
   bool Location(const NFmiLocation &theLocation);
 
   using NFmiLocationBag::Location;
-  const NFmiLocation *Location(void) const;
+  const NFmiLocation *Location() const;
 
-  NFmiLocationBag *Clone(void) const;
-  void Destroy(void);
+  NFmiLocationBag *Clone() const;
+  void Destroy();
 
-  unsigned long ClassId(void) const { return kNFmiStationBag; }
+  unsigned long ClassId() const { return kNFmiStationBag; }
   std::ostream &Write(std::ostream &file) const;
   std::istream &Read(std::istream &file);
 
@@ -86,7 +86,7 @@ inline std::istream &operator>>(std::istream &file, NFmiStationBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiStation NFmiStationBag::Current(void) const
+inline const NFmiStation NFmiStationBag::Current() const
 {
   return *static_cast<NFmiStation *>(itsLocations[itsIndex]);
 }
@@ -97,7 +97,7 @@ inline const NFmiStation NFmiStationBag::Current(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiStationBag::CurrentStation(void) const
+inline long NFmiStationBag::CurrentStation() const
 {
   return Current().GetIdent();
 }
@@ -119,7 +119,7 @@ inline bool NFmiStationBag::Current(const NFmiStation &theStation)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLocation *NFmiStationBag::Location(void) const
+inline const NFmiLocation *NFmiStationBag::Location() const
 {
   return (static_cast<NFmiStation *>(itsLocations[itsIndex]));
 }

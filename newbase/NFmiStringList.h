@@ -15,8 +15,8 @@
 class NFmiStringList
 {
  public:
-  virtual ~NFmiStringList(void);
-  NFmiStringList(void);
+  virtual ~NFmiStringList();
+  NFmiStringList();
   NFmiStringList(const NFmiStringList &theList);
 
   NFmiStringList &operator=(NFmiStringList &theList);
@@ -26,21 +26,21 @@ class NFmiStringList
   void Add(NFmiString *theStr, unsigned short theLengthLimitForStrItem);
   bool Reset(FmiDirection theDirect = kForward);
   bool Next(NFmiString **theItem);
-  bool Next(void);
-  bool Previous(void);
-  NFmiString *Current(void) const;
+  bool Next();
+  bool Previous();
+  NFmiString *Current() const;
 
   bool FindWithStatus(long status);
   bool Find(const NFmiString &string);
-  int NumberOfItems(void) const;
+  int NumberOfItems() const;
   void Clear(bool fDeleteData = false);
-  bool Remove(void);
+  bool Remove();
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
   bool Index(int theIndex);
-  int Index(void) const;
+  int Index() const;
 
  private:
   typedef std::vector<NFmiString *> StorageType;
@@ -49,7 +49,7 @@ class NFmiStringList
   //! Note: For backward compatibility this index runs from 0 to N-1
   unsigned int itsIndex;
 
-  void Destroy(void);
+  void Destroy();
 
 };  // class NFmiStringList
 
@@ -62,7 +62,7 @@ typedef NFmiStringList *PNFmiStringList;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStringList::NFmiStringList(void) : itsList(), itsIndex(0) {}
+inline NFmiStringList::NFmiStringList() : itsList(), itsIndex(0) {}
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -92,7 +92,7 @@ inline bool NFmiStringList::Index(int theIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiStringList::Index(void) const
+inline int NFmiStringList::Index() const
 {
   return itsIndex;
 }
@@ -104,7 +104,7 @@ inline int NFmiStringList::Index(void) const
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiStringList::NumberOfItems(void) const
+inline int NFmiStringList::NumberOfItems() const
 {
   return static_cast<int>(itsList.size());
 }

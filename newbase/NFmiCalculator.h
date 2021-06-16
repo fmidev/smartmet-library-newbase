@@ -15,22 +15,22 @@
 class NFmiCalculator
 {
  public:
-  virtual ~NFmiCalculator(void);
+  virtual ~NFmiCalculator();
   NFmiCalculator(NFmiQueryInfo* theData, NFmiDataModifier* theDataModifier);
   NFmiCalculator(NFmiDataIterator* theDataIterator, NFmiDataModifier* theDataModifier);
 
-  virtual double FloatValue(void);
-  virtual NFmiCombinedParam* CombinedValue(void);
-  float CalculatedValue(void);
+  virtual double FloatValue();
+  virtual NFmiCombinedParam* CombinedValue();
+  float CalculatedValue();
 
   void SetData(NFmiQueryInfo* theData);
 
   void DataIterator(NFmiDataIterator* theIterator);
-  NFmiDataIterator* DataIterator(void);
+  NFmiDataIterator* DataIterator();
 
   void SetDataModifier(NFmiDataModifier* theModifier);
-  NFmiDataModifier* DataModifier(void);
-  NFmiDataModifier* CalculatedModifier(void);
+  NFmiDataModifier* DataModifier();
+  NFmiDataModifier* CalculatedModifier();
 
  private:
   NFmiCalculator(const NFmiCalculator& theCalculator);
@@ -81,7 +81,7 @@ inline void NFmiCalculator::SetData(NFmiQueryInfo* theData)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataIterator* NFmiCalculator::DataIterator(void)
+inline NFmiDataIterator* NFmiCalculator::DataIterator()
 {
   return itsDataIterator;
 }
@@ -92,7 +92,7 @@ inline NFmiDataIterator* NFmiCalculator::DataIterator(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifier* NFmiCalculator::DataModifier(void)
+inline NFmiDataModifier* NFmiCalculator::DataModifier()
 {
   return itsDataModifier;
 }

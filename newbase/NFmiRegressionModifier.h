@@ -17,7 +17,7 @@ class NFmiRegressionModifier : public NFmiInfoModifier
   NFmiRegressionModifier(NFmiDataIdent* theParam, NFmiLevel* theLevel, NFmiQueryInfo* theData = 0);
 
   virtual std::ostream& WriteOperand(std::ostream& file) const;
-  virtual double FloatValue(void);
+  virtual double FloatValue();
 
  protected:
   NFmiDataModifierList* itsRegressionItems;

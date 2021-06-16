@@ -83,7 +83,7 @@ double CalculateValue(double value1,
 
 }  // namespace
 
-NFmiSimpleConditionPart::~NFmiSimpleConditionPart(void) = default;
+NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
 
 NFmiSimpleConditionPart::NFmiSimpleConditionPart(
     boost::shared_ptr<NFmiAreaMask> &mask1,
@@ -102,7 +102,7 @@ NFmiSimpleConditionPart::NFmiSimpleConditionPart(const NFmiSimpleConditionPart &
 {
 }
 
-void NFmiSimpleConditionPart::Initialize(void)
+void NFmiSimpleConditionPart::Initialize()
 {
   try
   {
@@ -115,7 +115,7 @@ void NFmiSimpleConditionPart::Initialize(void)
   }
 }
 
-NFmiSimpleConditionPart *NFmiSimpleConditionPart::Clone(void) const
+NFmiSimpleConditionPart *NFmiSimpleConditionPart::Clone() const
 {
   try
   {
@@ -185,7 +185,7 @@ double NFmiSimpleConditionPart::HeightValue(double theHeight,
   }
 }
 
-NFmiSingleCondition::~NFmiSingleCondition(void) = default;
+NFmiSingleCondition::~NFmiSingleCondition() = default;
 
 NFmiSingleCondition::NFmiSingleCondition(const boost::shared_ptr<NFmiSimpleConditionPart> &thePart1,
                                          FmiMaskOperation theConditionOperand1,
@@ -222,7 +222,7 @@ static void InitializePart(boost::shared_ptr<NFmiSimpleConditionPart> &part)
   }
 }
 
-void NFmiSingleCondition::Initialize(void)
+void NFmiSingleCondition::Initialize()
 {
   try
   {
@@ -236,7 +236,7 @@ void NFmiSingleCondition::Initialize(void)
   }
 }
 
-NFmiSingleCondition *NFmiSingleCondition::Clone(void) const
+NFmiSingleCondition *NFmiSingleCondition::Clone() const
 {
   try
   {
@@ -379,7 +379,7 @@ bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
   }
 }
 
-NFmiSimpleCondition::~NFmiSimpleCondition(void) = default;
+NFmiSimpleCondition::~NFmiSimpleCondition() = default;
 
 NFmiSimpleCondition::NFmiSimpleCondition(
     const boost::shared_ptr<NFmiSingleCondition> &theCondition1,
@@ -411,7 +411,7 @@ static void InitializePart(boost::shared_ptr<NFmiSingleCondition> &condition)
 
 // T�t� kutsutaan konstruktorin j�lkeen, t�ss� alustetaan ainakin tieto siit� onko maski ns.
 // stationaarist� dataa
-void NFmiSimpleCondition::Initialize(void)
+void NFmiSimpleCondition::Initialize()
 {
   try
   {
@@ -424,7 +424,7 @@ void NFmiSimpleCondition::Initialize(void)
   }
 }
 
-NFmiSimpleCondition *NFmiSimpleCondition::Clone(void) const
+NFmiSimpleCondition *NFmiSimpleCondition::Clone() const
 {
   try
   {

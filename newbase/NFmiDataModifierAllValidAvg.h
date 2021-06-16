@@ -12,8 +12,8 @@
 class NFmiDataModifierAllValidAvg : public NFmiDataModifierAvg
 {
  public:
-  virtual ~NFmiDataModifierAllValidAvg(void);
-  NFmiDataModifierAllValidAvg(void);
+  virtual ~NFmiDataModifierAllValidAvg();
+  NFmiDataModifierAllValidAvg();
   virtual void Calculate(float theValue);
   virtual void Calculate(NFmiQueryInfo* theQI);
 

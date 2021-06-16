@@ -933,8 +933,8 @@ void NFmiTime::SetZoneDifferenceHour()
     itsZoneDifferenceHour = static_cast<short>(
         _timezone / 3600 -
         nowparts.tm_isdst);  // Visual C++ 2015 ei enää tye epäturvallista globaali
-    // muuttujaa timezone:a, siksi pitää käyttää _timezone
-    // makroa (löytyy myös vanhemmista VC++ versioista)
+                             // muuttujaa timezone:a, siksi pitää käyttää _timezone
+                             // makroa (löytyy myös vanhemmista VC++ versioista)
 #else
     itsZoneDifferenceHour = static_cast<short>(timezone / 3600 - nowparts.tm_isdst);
 #endif

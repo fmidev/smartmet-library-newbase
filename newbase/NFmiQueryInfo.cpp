@@ -1277,7 +1277,7 @@ const NFmiString NFmiQueryInfo::PostProc() const
  */
 // ----------------------------------------------------------------------
 /*
-void * NFmiQueryInfo::VoidValue(void)
+void * NFmiQueryInfo::VoidValue()
 {
   return itsRefQueryData->VoidValue(*this);
 }
@@ -5478,7 +5478,7 @@ void NFmiQueryInfo::StaticDataMask(const NFmiBitMask & newMask, bool useNewMask)
  */
 // ----------------------------------------------------------------------
 /*
-const NFmiBitMask & NFmiQueryInfo::StaticDataMask(void)
+const NFmiBitMask & NFmiQueryInfo::StaticDataMask()
 {
   return *itsStaticDataMask;
 }

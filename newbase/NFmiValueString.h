@@ -25,8 +25,8 @@ enum FmiValues
 class NFmiValueString : public NFmiString
 {
  public:
-  ~NFmiValueString(void);
-  NFmiValueString(void);
+  ~NFmiValueString();
+  NFmiValueString();
 
   NFmiValueString(const short theValue, const char *theFormat = "%hd");
   NFmiValueString(const int theValue, const char *format = "%d");
@@ -50,12 +50,12 @@ class NFmiValueString : public NFmiString
   bool ConvertToLong(long &convertValue, const int start = 0, const int size = 0) const;
   bool ConvertToDouble(double &convertValue, const int start = 0, const int size = 0) const;
 
-  unsigned int SignificantDecimals(void) const;
+  unsigned int SignificantDecimals() const;
 
   bool IsNumeric(int start = 0, int size = 0) const;
   unsigned long SearchNumeric(unsigned long start = 1) const;
 
-  bool IsShort(void) const;
+  bool IsShort() const;
   bool IsInt(int start = 0, int size = 0) const;
   bool IsFloat(int start = 0, int size = 0) const;
   bool IsLong(int start = 0, int size = 0) const;

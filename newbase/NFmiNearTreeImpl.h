@@ -173,7 +173,7 @@ class NFmiNearTreeImpl
 // ----------------------------------------------------------------------
 
 template <typename T, typename F>
-NFmiNearTreeImpl<T, F>::~NFmiNearTreeImpl(void)
+NFmiNearTreeImpl<T, F>::~NFmiNearTreeImpl()
 {
   delete itsLeftBranch;
   delete itsRightBranch;
@@ -188,7 +188,7 @@ NFmiNearTreeImpl<T, F>::~NFmiNearTreeImpl(void)
 // ----------------------------------------------------------------------
 
 template <typename T, typename F>
-void NFmiNearTreeImpl<T, F>::Clear(void)
+void NFmiNearTreeImpl<T, F>::Clear()
 {
   // emulating destructor
   delete itsLeftObject;

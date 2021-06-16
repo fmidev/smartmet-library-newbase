@@ -20,8 +20,8 @@
 class NFmiValueStation : public NFmiStation
 {
  public:
-  virtual ~NFmiValueStation(void);
-  NFmiValueStation(void);
+  virtual ~NFmiValueStation();
+  NFmiValueStation();
   NFmiValueStation(const NFmiValueStation &theValueStation);
 
   NFmiValueStation(double theValue,
@@ -33,7 +33,7 @@ class NFmiValueStation : public NFmiStation
   virtual bool IsEqual(const NFmiSortable &theLocation) const;
 
   double GetValue() const;
-  virtual NFmiLocation *Clone(void) const;
+  virtual NFmiLocation *Clone() const;
 
  private:
   double itsValue;
@@ -46,14 +46,14 @@ class NFmiValueStation : public NFmiStation
  */
 // ----------------------------------------------------------------------
 
-inline NFmiValueStation::~NFmiValueStation(void) {}
+inline NFmiValueStation::~NFmiValueStation() {}
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
  */
 // ----------------------------------------------------------------------
 
-inline NFmiValueStation::NFmiValueStation(void) : NFmiStation(0), itsValue(kFloatMissing) {}
+inline NFmiValueStation::NFmiValueStation() : NFmiStation(0), itsValue(kFloatMissing) {}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -98,7 +98,7 @@ inline NFmiValueStation::NFmiValueStation(double theValue,
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocation *NFmiValueStation::Clone(void) const
+inline NFmiLocation *NFmiValueStation::Clone() const
 {
   return new NFmiValueStation(*this);
 }
@@ -108,7 +108,7 @@ inline NFmiLocation *NFmiValueStation::Clone(void) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiValueStation::GetValue(void) const
+inline double NFmiValueStation::GetValue() const
 {
   return itsValue;
 }

@@ -14,7 +14,7 @@
 class NFmiParam : public NFmiIndividual
 {
  public:
-  NFmiParam(void);
+  NFmiParam();
   NFmiParam(const NFmiParam &theParam);
 
   explicit NFmiParam(unsigned long theIdent,
@@ -30,27 +30,27 @@ class NFmiParam : public NFmiIndividual
   bool operator==(const NFmiParam &theParam) const;
   bool operator<(const NFmiParam &theParam) const;
 
-  virtual NFmiParam *Clone(void) const;
+  virtual NFmiParam *Clone() const;
 
-  double MaxValue(void) const;
-  double MinValue(void) const;
+  double MaxValue() const;
+  double MinValue() const;
   void MaxValue(double newValue);
   void MinValue(double newValue);
 
-  float Scale(void) const;
-  float Base(void) const;
-  const NFmiString &Precision(void) const;
+  float Scale() const;
+  float Base() const;
+  const NFmiString &Precision() const;
   void Scale(float newValue);
   void Base(float newValue);
   void Precision(const NFmiString &newValue);
-  bool IsScaleBase(void);
+  bool IsScaleBase();
 
-  FmiInterpolationMethod InterpolationMethod(void) const;
+  FmiInterpolationMethod InterpolationMethod() const;
   void InterpolationMethod(FmiInterpolationMethod theInterpolationMethod);
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
-  virtual const char *ClassName(void) const;
+  virtual const char *ClassName() const;
 
  protected:
  private:
@@ -69,7 +69,7 @@ class NFmiParam : public NFmiIndividual
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParam::NFmiParam(void)
+inline NFmiParam::NFmiParam()
     : NFmiIndividual(),
       itsMinValue(kFloatMissing),
       itsMaxValue(kFloatMissing),
@@ -105,7 +105,7 @@ inline bool NFmiParam::operator<(const NFmiParam &theParam) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiParam::MaxValue(void) const
+inline double NFmiParam::MaxValue() const
 {
   return itsMaxValue;
 }
@@ -115,7 +115,7 @@ inline double NFmiParam::MaxValue(void) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiParam::MinValue(void) const
+inline double NFmiParam::MinValue() const
 {
   return itsMinValue;
 }
@@ -145,7 +145,7 @@ inline void NFmiParam::MinValue(double newValue)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString &NFmiParam::Precision(void) const
+inline const NFmiString &NFmiParam::Precision() const
 {
   return itsPrecision;
 }
@@ -185,7 +185,7 @@ inline void NFmiParam::Precision(const NFmiString &newValue)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParam::IsScaleBase(void)
+inline bool NFmiParam::IsScaleBase()
 {
   return !(itsScale == kFloatMissing || itsBase == kFloatMissing);
 }
@@ -196,7 +196,7 @@ inline bool NFmiParam::IsScaleBase(void)
  */
 // ----------------------------------------------------------------------
 
-inline FmiInterpolationMethod NFmiParam::InterpolationMethod(void) const
+inline FmiInterpolationMethod NFmiParam::InterpolationMethod() const
 {
   return itsInterpolationMethod;
 }
@@ -221,7 +221,7 @@ inline void NFmiParam::InterpolationMethod(FmiInterpolationMethod theInterpolati
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParam *NFmiParam::Clone(void) const
+inline NFmiParam *NFmiParam::Clone() const
 {
   return new NFmiParam(*this);
 }
@@ -231,7 +231,7 @@ inline NFmiParam *NFmiParam::Clone(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiParam::ClassName(void) const
+inline const char *NFmiParam::ClassName() const
 {
   return "NFmiParam";
 }

@@ -4772,7 +4772,7 @@ bool NFmiWeatherAndCloudiness::LowClouds(unsigned long theValue)
         theValue = 10;
       SetLowClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
-      //laitoin
+      // laitoin
       // kaikkien kerrosten asetuksissa N:n nollauksen pois
       SetTotalCloudiness(CalcTotalCloudiness());
       return true;
@@ -4803,7 +4803,7 @@ bool NFmiWeatherAndCloudiness::MiddleClouds(unsigned long theValue)
         theValue = 10;
       SetMiddleClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
-      //laitoin
+      // laitoin
       // kaikkien kerrosten asetuksissa N:n nollauksen pois
       SetTotalCloudiness(CalcTotalCloudiness());
       return true;
@@ -4835,7 +4835,7 @@ bool NFmiWeatherAndCloudiness::HighClouds(unsigned long theValue)
         theValue = maxHighCloudValue;
       SetHighClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
-      //laitoin
+      // laitoin
       // kaikkien kerrosten asetuksissa N:n nollauksen pois
       SetTotalCloudiness(CalcTotalCloudiness());
       return true;

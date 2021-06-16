@@ -14,8 +14,8 @@
 class NFmiMercatorArea : public NFmiArea
 {
  public:
-  virtual ~NFmiMercatorArea(void);
-  NFmiMercatorArea(void);
+  virtual ~NFmiMercatorArea();
+  NFmiMercatorArea();
   NFmiMercatorArea(const NFmiMercatorArea &theLatLonArea);
   NFmiMercatorArea(const NFmiPoint &theBottomLeftLatLon,
                    const NFmiPoint &theTopRightLatLon,
@@ -23,14 +23,14 @@ class NFmiMercatorArea : public NFmiArea
                    const NFmiPoint &theBottomRightXY = NFmiPoint(1., 1.),
                    bool usePacificView = false);
 
-  virtual NFmiArea *Clone(void) const;
+  virtual NFmiArea *Clone() const;
   virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
   virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
-  virtual double XScale(void) const;
-  virtual double YScale(void) const;
+  virtual double XScale() const;
+  virtual double YScale() const;
   virtual void Init(bool fKeepWorldRect = false);
 
-  virtual const NFmiRect WorldRect(void) const;
+  virtual const NFmiRect WorldRect() const;
 
   virtual const NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
   virtual const NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXYPoint) const;
@@ -39,9 +39,9 @@ class NFmiMercatorArea : public NFmiArea
   virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                             const NFmiPoint &theTopRightLatLon,
                             bool allowPacificFix = true) const;
-  virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
-  const std::string AreaStr(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char *ClassName() const;
+  const std::string AreaStr() const;
   virtual const std::string WKT() const;
   virtual bool operator==(const NFmiMercatorArea &theArea) const;
   virtual bool operator==(const NFmiArea &theArea) const;
@@ -67,14 +67,14 @@ typedef NFmiMercatorArea *PNFmiMercatorArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiMercatorArea::~NFmiMercatorArea(void) {}
+inline NFmiMercatorArea::~NFmiMercatorArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiMercatorArea::WorldRect(void) const
+inline const NFmiRect NFmiMercatorArea::WorldRect() const
 {
   return itsWorldRect;
 }
@@ -84,7 +84,7 @@ inline const NFmiRect NFmiMercatorArea::WorldRect(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiMercatorArea::ClassId(void) const
+inline unsigned long NFmiMercatorArea::ClassId() const
 {
   return kNFmiMercatorArea;
 }
@@ -94,7 +94,7 @@ inline unsigned long NFmiMercatorArea::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiMercatorArea::ClassName(void) const
+inline const char *NFmiMercatorArea::ClassName() const
 {
   return "NFmiMercatorArea";
 }

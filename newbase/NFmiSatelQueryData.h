@@ -21,18 +21,18 @@
 class NFmiSatelQueryData : public NFmiQueryData
 {
  public:
-  ~NFmiSatelQueryData(void);
-  NFmiSatelQueryData(void);
+  ~NFmiSatelQueryData();
+  NFmiSatelQueryData();
   NFmiSatelQueryData(const NFmiSatelQueryData &theData);
   NFmiSatelQueryData(NFmiQueryInfo &theInfo);
 
-  virtual NFmiSatel *Value(void);
+  virtual NFmiSatel *Value();
   bool Value(NFmiSatel *theData);
 
-  virtual unsigned long ClassId(void) const;
+  virtual unsigned long ClassId() const;
 
   using NFmiQueryData::Clone;
-  virtual NFmiQueryData *Clone(void);
+  virtual NFmiQueryData *Clone();
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
@@ -46,7 +46,7 @@ class NFmiSatelQueryData : public NFmiQueryData
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatelQueryData::~NFmiSatelQueryData(void)
+inline NFmiSatelQueryData::~NFmiSatelQueryData()
 {
   Reset();
   while (Next())
@@ -61,7 +61,7 @@ inline NFmiSatelQueryData::~NFmiSatelQueryData(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatelQueryData::NFmiSatelQueryData(void) : NFmiQueryData(kVoid) {}
+inline NFmiSatelQueryData::NFmiSatelQueryData() : NFmiQueryData(kVoid) {}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -94,7 +94,7 @@ inline NFmiSatelQueryData::NFmiSatelQueryData(NFmiQueryInfo &theInfo)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatel *NFmiSatelQueryData::Value(void)
+inline NFmiSatel *NFmiSatelQueryData::Value()
 {
   return static_cast<NFmiSatel *>(VoidValue());
 }
@@ -116,7 +116,7 @@ inline bool NFmiSatelQueryData::Value(NFmiSatel *theData)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSatelQueryData::ClassId(void) const
+inline unsigned long NFmiSatelQueryData::ClassId() const
 {
   return kNFmiSatelQueryData;
 }
@@ -167,7 +167,7 @@ inline std::istream &NFmiSatelQueryData::Read(std::istream &file)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiQueryData *NFmiSatelQueryData::Clone(void)
+inline NFmiQueryData *NFmiSatelQueryData::Clone()
 {
   NFmiSatelQueryData *data = new NFmiSatelQueryData(*this);
   Reset();

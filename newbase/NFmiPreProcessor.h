@@ -33,7 +33,7 @@ class NFmiPreProcessor : public NFmiCommentStripper
   bool CompleteFileName(std::string& theFileName);
 
   using NFmiCommentStripper::Strip;
-  bool Strip(void);
+  bool Strip();
 
   bool StripDoubleEnds(const std::string& theBeginDirective,
                        const std::string& theEndDirective,
@@ -64,25 +64,25 @@ class NFmiPreProcessor : public NFmiCommentStripper
   bool SetReplaceMap(const std::map<std::string, std::string>& theMap);
   bool AddReplaceString(const std::string fromString, const std::string toString);
 
-  int NumOfReplacesDone(void) const;
-  bool NoFilesIncluded(void);
+  int NumOfReplacesDone() const;
+  bool NoFilesIncluded();
 
   void SetNumOfIncludes(int newValue) { itsCurNumOfIncludes = newValue; }
-  bool ReplaceAll(void);
+  bool ReplaceAll();
 
  private:
-  bool StripConditionally(void);
-  bool Replace(void);
-  bool Include(void);
-  bool Define(void);
+  bool StripConditionally();
+  bool Replace();
+  bool Include();
+  bool Define();
   bool StripNestedConditionally(std::vector<unsigned long> theBeginPositions,
                                 std::vector<unsigned long> theEndPositions,
                                 bool theCond);
   bool IncludeFile(const std::string& theFileName, std::string& theFileContentsToInclude);
-  bool IsConditional(void) const;
-  bool IsInclude(void) const;
-  bool IsReplace(void) const;
-  bool IsDefine(void) const;
+  bool IsConditional() const;
+  bool IsInclude() const;
+  bool IsReplace() const;
+  bool IsDefine() const;
 
   std::string itsDefineDirective;
   std::string itsIncludeDirective;
@@ -109,7 +109,7 @@ class NFmiPreProcessor : public NFmiCommentStripper
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiPreProcessor::NumOfReplacesDone(void) const
+inline int NFmiPreProcessor::NumOfReplacesDone() const
 {
   return itsNumOfReplacesDone;
 }
@@ -120,7 +120,7 @@ inline int NFmiPreProcessor::NumOfReplacesDone(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::NoFilesIncluded(void)
+inline bool NFmiPreProcessor::NoFilesIncluded()
 {
   return fNoFilesIncluded;
 }
@@ -130,7 +130,7 @@ inline bool NFmiPreProcessor::NoFilesIncluded(void)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsDefine(void) const
+inline bool NFmiPreProcessor::IsDefine() const
 {
   return !itsDefineDirective.empty();
 }
@@ -140,7 +140,7 @@ inline bool NFmiPreProcessor::IsDefine(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsConditional(void) const
+inline bool NFmiPreProcessor::IsConditional() const
 {
   return !itsConditionalBeginDirective.empty();
 }
@@ -151,7 +151,7 @@ inline bool NFmiPreProcessor::IsConditional(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsReplace(void) const
+inline bool NFmiPreProcessor::IsReplace() const
 {
   return !itsReplaceMap.empty();
 }
@@ -161,7 +161,7 @@ inline bool NFmiPreProcessor::IsReplace(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsInclude(void) const
+inline bool NFmiPreProcessor::IsInclude() const
 {
   return !itsIncludeDirective.empty();
 }

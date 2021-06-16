@@ -23,7 +23,7 @@ enum FmiIntegrationSelector
 class NFmiIntegrationSelector
 {
  public:
-  virtual ~NFmiIntegrationSelector(void);
+  virtual ~NFmiIntegrationSelector();
   NFmiIntegrationSelector(FmiIntegrationSelector theSelectorType = kFmiNoIntegration,
                           FmiProbabilityCondition theProbabilityCondition = kNoCondition,
                           float theProbabilityLowerLimit = kFloatMissing,
@@ -32,11 +32,11 @@ class NFmiIntegrationSelector
 
   NFmiIntegrationSelector(const NFmiIntegrationSelector& theSelector);
 
-  FmiIntegrationSelector Type(void) const;
-  FmiProbabilityCondition ProbabilityCondition(void) const;
-  float ProbabilityLowerLimit(void) const;
-  float ProbabilityUpperLimit(void) const;
-  float ProbabilityScale(void) const;
+  FmiIntegrationSelector Type() const;
+  FmiProbabilityCondition ProbabilityCondition() const;
+  float ProbabilityLowerLimit() const;
+  float ProbabilityUpperLimit() const;
+  float ProbabilityScale() const;
 
   void Type(FmiIntegrationSelector theType);
   void ProbabilityCondition(FmiProbabilityCondition theCondition);
@@ -61,7 +61,7 @@ class NFmiIntegrationSelector
  */
 // ----------------------------------------------------------------------
 
-inline FmiIntegrationSelector NFmiIntegrationSelector::Type(void) const
+inline FmiIntegrationSelector NFmiIntegrationSelector::Type() const
 {
   return itsType;
 }
@@ -71,7 +71,7 @@ inline FmiIntegrationSelector NFmiIntegrationSelector::Type(void) const
  */
 // ----------------------------------------------------------------------
 
-inline FmiProbabilityCondition NFmiIntegrationSelector::ProbabilityCondition(void) const
+inline FmiProbabilityCondition NFmiIntegrationSelector::ProbabilityCondition() const
 {
   return itsProbabilityCondition;
 }
@@ -82,7 +82,7 @@ inline FmiProbabilityCondition NFmiIntegrationSelector::ProbabilityCondition(voi
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiIntegrationSelector::ProbabilityLowerLimit(void) const
+inline float NFmiIntegrationSelector::ProbabilityLowerLimit() const
 {
   return itsProbabilityLowerLimit;
 }
@@ -93,7 +93,7 @@ inline float NFmiIntegrationSelector::ProbabilityLowerLimit(void) const
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiIntegrationSelector::ProbabilityUpperLimit(void) const
+inline float NFmiIntegrationSelector::ProbabilityUpperLimit() const
 {
   return itsProbabilityUpperLimit;
 }
@@ -104,7 +104,7 @@ inline float NFmiIntegrationSelector::ProbabilityUpperLimit(void) const
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiIntegrationSelector::ProbabilityScale(void) const
+inline float NFmiIntegrationSelector::ProbabilityScale() const
 {
   return itsProbabilityScale;
 }

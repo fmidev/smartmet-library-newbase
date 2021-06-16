@@ -12,15 +12,15 @@
 class NFmiDataModifierStandardDeviation : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierStandardDeviation(void);
-  NFmiDataModifierStandardDeviation(void);
+  virtual ~NFmiDataModifierStandardDeviation();
+  NFmiDataModifierStandardDeviation();
 
-  void Clear(void);
+  void Clear();
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   virtual void Calculate(float theValue);
-  virtual float CalculationResult(void);
+  virtual float CalculationResult();
 
  protected:
   long itsCounter;

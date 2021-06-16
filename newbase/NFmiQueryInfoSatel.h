@@ -16,8 +16,8 @@ class NFmiQueryData;
 class NFmiQueryInfoSatel : public NFmiQueryInfo
 {
  public:
-  ~NFmiQueryInfoSatel(void);
-  NFmiQueryInfoSatel(void);
+  ~NFmiQueryInfoSatel();
+  NFmiQueryInfoSatel();
   NFmiQueryInfoSatel(const NFmiQueryInfoSatel& theInfo);
 
   NFmiQueryInfoSatel(const NFmiParamDescriptor& theParamDescriptor,
@@ -33,18 +33,18 @@ class NFmiQueryInfoSatel : public NFmiQueryInfo
 
   virtual NFmiQueryInfo& operator=(const NFmiQueryInfo& theInfo);
 
-  NFmiQueryInfo* Clone(void) const;
+  NFmiQueryInfo* Clone() const;
 
   virtual std::ostream& Write(std::ostream& file) const;
   virtual std::istream& Read(std::istream& file);
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char* ClassName() const;
 
  private:
   NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo);
 
-  void Destroy(void);
+  void Destroy();
   NFmiString* itsSatelName;
 
 };  // class NFMiQueryInfoSatel
@@ -55,7 +55,7 @@ class NFmiQueryInfoSatel : public NFmiQueryInfo
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfoSatel::ClassId(void) const
+inline unsigned long NFmiQueryInfoSatel::ClassId() const
 {
   return kNFmiSatelQueryInfo;
 }
@@ -65,7 +65,7 @@ inline unsigned long NFmiQueryInfoSatel::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiQueryInfoSatel::ClassName(void) const
+inline const char* NFmiQueryInfoSatel::ClassName() const
 {
   return "NFmiQueryInfoSatel";
 }

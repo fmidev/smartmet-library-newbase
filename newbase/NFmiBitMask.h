@@ -18,7 +18,7 @@ class NFmiDataModifier;
 class NFmiBitMask
 {
  public:
-  virtual ~NFmiBitMask(void);
+  virtual ~NFmiBitMask();
   explicit NFmiBitMask(long theSize = 32);
   NFmiBitMask(const NFmiBitMask& theMaskData);
 
@@ -27,7 +27,7 @@ class NFmiBitMask
   bool operator!=(const NFmiBitMask& theBitMask) const;
 
   // Bit-related 'long' typed mask array modification methods
-  long Size(void) const;
+  long Size() const;
   void Init(long theSize = 32);
   void Init(NFmiBitMask* theBitMask);
   void Init(NFmiQueryInfo* theData, NFmiDataModifier* theMaskMethod);
@@ -35,8 +35,8 @@ class NFmiBitMask
   bool Mask(const bool& theBit);
   bool Mask(const long& theIndex, const bool& theBit);
   bool IsMasked(const long& theIndex) const;
-  long MaskedCount(void) const;
-  void InverseMask(void);
+  long MaskedCount() const;
+  void InverseMask();
 
  private:
   // Bit-related 'long' modification methods
@@ -118,7 +118,7 @@ class NFmiBitMask
  */
 // ----------------------------------------------------------------------
 
-inline NFmiBitMask::~NFmiBitMask(void)
+inline NFmiBitMask::~NFmiBitMask()
 {
   if (itsMaskData)
     delete[] itsMaskData;
@@ -130,7 +130,7 @@ inline NFmiBitMask::~NFmiBitMask(void)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiBitMask::Size(void) const
+inline long NFmiBitMask::Size() const
 {
   return itsSize;
 }

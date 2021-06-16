@@ -17,7 +17,7 @@ class NFmiTimePerioid
 {
  public:
   virtual ~NFmiTimePerioid() {}
-  NFmiTimePerioid(void);
+  NFmiTimePerioid();
   NFmiTimePerioid(const NFmiTimePerioid &theTimePerioid);
   NFmiTimePerioid(long minutes);
   NFmiTimePerioid(long years,
@@ -37,13 +37,13 @@ class NFmiTimePerioid
                    long microSeconds = 0);
   void TimePerioid(long seconds, long microSeconds = 0);
 
-  long Year(void) const;
-  long Month(void) const;
-  long Day(void) const;
-  long Hour(void) const;
-  long Minute(void) const;
-  long Second(void) const;
-  long MicroSecond(void) const;
+  long Year() const;
+  long Month() const;
+  long Day() const;
+  long Hour() const;
+  long Minute() const;
+  long Second() const;
+  long MicroSecond() const;
 
   void Year(long theYears);
   void Month(long theMonths);
@@ -53,24 +53,24 @@ class NFmiTimePerioid
   void Second(long theSecond);
   void MicroSecond(long theMicroSecond);
 
-  bool IsValue(void) const;
+  bool IsValue() const;
 
   NFmiTimePerioid &operator=(const NFmiTimePerioid &theTimePerioid);
   NFmiTimePerioid &operator+=(const NFmiTimePerioid &theTimePerioid);
 
-  operator long(void) const;
+  operator long() const;
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
-  virtual const char *ClassName(void) const;
+  virtual const char *ClassName() const;
 
  protected:
   // used only NFmiMetTime ..
 
-  bool IsDate(void) const;
+  bool IsDate() const;
   NFmiTimePerioid &operator=(const long theMinutes);
-  void CalculatePerioid(void);
+  void CalculatePerioid();
 
  private:
   long itsYears;
@@ -93,7 +93,7 @@ class NFmiTimePerioid
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Year(void) const
+inline long NFmiTimePerioid::Year() const
 {
   return itsYears;
 }
@@ -103,7 +103,7 @@ inline long NFmiTimePerioid::Year(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Month(void) const
+inline long NFmiTimePerioid::Month() const
 {
   return itsMonths;
 }
@@ -113,7 +113,7 @@ inline long NFmiTimePerioid::Month(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Day(void) const
+inline long NFmiTimePerioid::Day() const
 {
   return itsDays;
 }
@@ -123,7 +123,7 @@ inline long NFmiTimePerioid::Day(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Hour(void) const
+inline long NFmiTimePerioid::Hour() const
 {
   return itsHours;
 }
@@ -133,7 +133,7 @@ inline long NFmiTimePerioid::Hour(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Minute(void) const
+inline long NFmiTimePerioid::Minute() const
 {
   return itsMinutes;
 }
@@ -143,7 +143,7 @@ inline long NFmiTimePerioid::Minute(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Second(void) const
+inline long NFmiTimePerioid::Second() const
 {
   return itsSeconds;
 }
@@ -153,7 +153,7 @@ inline long NFmiTimePerioid::Second(void) const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::MicroSecond(void) const
+inline long NFmiTimePerioid::MicroSecond() const
 {
   return itsMicroSeconds;
 }
@@ -233,7 +233,7 @@ inline void NFmiTimePerioid::MicroSecond(long theMicroSecond)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimePerioid::IsValue(void) const
+inline bool NFmiTimePerioid::IsValue() const
 {
   return (itsYears != 0 || itsMonths != 0 || itsDays != 0 || itsHours != 0 || itsMinutes != 0 ||
           itsSeconds != 0 || itsMicroSeconds != 0);
@@ -245,7 +245,7 @@ inline bool NFmiTimePerioid::IsValue(void) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimePerioid::operator long(void) const
+inline NFmiTimePerioid::operator long() const
 {
   return (itsDays * 24 * 60 + itsHours * 60 + itsMinutes);
 }
@@ -256,7 +256,7 @@ inline NFmiTimePerioid::operator long(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimePerioid::ClassName(void) const
+inline const char *NFmiTimePerioid::ClassName() const
 {
   return "NFmiTimePerioid";
 }
@@ -266,7 +266,7 @@ inline const char *NFmiTimePerioid::ClassName(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimePerioid::IsDate(void) const
+inline bool NFmiTimePerioid::IsDate() const
 {
   return (itsYears != 0 || itsMonths != 0 || itsDays != 0);
 }

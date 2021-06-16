@@ -35,9 +35,9 @@ class NFmiSmoother
   static NFmiSmootherMethod SmootherValue(const std::string& theName);
   static const std::string SmootherName(NFmiSmootherMethod theSmoother);
 
-  NFmiSmootherMethod Smoother(void) const;
-  int Factor(void) const;
-  float Radius(void) const;
+  NFmiSmootherMethod Smoother() const;
+  int Factor() const;
+  float Radius() const;
 
   void Smoother(NFmiSmootherMethod smoother);
   void Factor(int factor);
@@ -55,7 +55,7 @@ class NFmiSmoother
 
  private:
   // Disable void constructor
-  NFmiSmoother(void);
+  NFmiSmoother();
 
   const NFmiDataMatrix<float> SmoothenKernel(const Fmi::CoordinateMatrix& thePts,
                                              const NFmiDataMatrix<float>& theValues) const;
@@ -77,7 +77,7 @@ class NFmiSmoother
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSmoother::NFmiSmootherMethod NFmiSmoother::Smoother(void) const
+inline NFmiSmoother::NFmiSmootherMethod NFmiSmoother::Smoother() const
 {
   return itsSmoother;
 }
@@ -87,7 +87,7 @@ inline NFmiSmoother::NFmiSmootherMethod NFmiSmoother::Smoother(void) const
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiSmoother::Factor(void) const
+inline int NFmiSmoother::Factor() const
 {
   return itsFactor;
 }
@@ -97,7 +97,7 @@ inline int NFmiSmoother::Factor(void) const
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiSmoother::Radius(void) const
+inline float NFmiSmoother::Radius() const
 {
   return itsRadius;
 }

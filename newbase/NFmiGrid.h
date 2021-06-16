@@ -25,11 +25,11 @@ class CoordinateMatrix;
 class NFmiLocationCache
 {
  public:
-  NFmiLocationCache(void);
-  ~NFmiLocationCache(void);
+  NFmiLocationCache();
+  ~NFmiLocationCache();
 
-  bool NoValue(void) const { return itsLocationIndex == gMissingIndex; }
-  bool NoInterpolation(void) const { return fNoInterpolation; }
+  bool NoValue() const { return itsLocationIndex == gMissingIndex; }
+  bool NoInterpolation() const { return fNoInterpolation; }
   void CalcIsInterpolationNeeded(
       int theGridSizeX, int theGridSizeY);  // tämä lasketaan vain kerran kun cachea muodostetaan
   static NFmiLocationCache MakePeekedLocation(const NFmiLocationCache &theOrigLocation,
@@ -49,12 +49,12 @@ class NFmiLocationCache
 class NFmiTimeCache
 {
  public:
-  NFmiTimeCache(void);
-  ~NFmiTimeCache(void);
+  NFmiTimeCache();
+  ~NFmiTimeCache();
 
-  bool NoValue(void) const { return itsTimeIndex1 == gMissingIndex; }
-  bool NoInterpolation(void) const { return itsTimeIndex1 == itsTimeIndex2; }
-  void CalcIsInterpolationNeeded(void);  // tämä lasketaan vain kerran kun cachea muodostetaan
+  bool NoValue() const { return itsTimeIndex1 == gMissingIndex; }
+  bool NoInterpolation() const { return itsTimeIndex1 == itsTimeIndex2; }
+  void CalcIsInterpolationNeeded();  // tämä lasketaan vain kerran kun cachea muodostetaan
 
   unsigned long itsTimeIndex1;
   unsigned long itsTimeIndex2;
@@ -65,7 +65,7 @@ class NFmiTimeCache
 class NFmiGrid : public NFmiGridBase
 {
  public:
-  virtual ~NFmiGrid(void);
+  virtual ~NFmiGrid();
 
   NFmiGrid(const NFmiArea *theArea = 0,
            unsigned long theXNumber = 0,
@@ -136,13 +136,13 @@ class NFmiGrid : public NFmiGridBase
 
   bool InterpolateToXYPoint(const NFmiPoint &xy, double &theValue, FmiInterpolationMethod method);
 
-  const NFmiPoint LatLon(void) const;
+  const NFmiPoint LatLon() const;
   const NFmiPoint LatLon(unsigned long theIndex) const;
   const NFmiPoint WorldXY(unsigned long theIndex) const;
-  const NFmiPoint RelativePoint(void) const;
+  const NFmiPoint RelativePoint() const;
   const NFmiPoint RelativePoint(unsigned long theIndex) const;
-  const NFmiPoint XY(void) const;
-  NFmiArea *Area(void) const;
+  const NFmiPoint XY() const;
+  NFmiArea *Area() const;
   bool AreGridsIdentical(const NFmiGrid &theOtherGrid) const;
 
   NFmiPoint WorldXY() const;  // actual metric coordinate, or latlon for point data
@@ -165,8 +165,8 @@ class NFmiGrid : public NFmiGridBase
   void CalcLatlonCachePoints(NFmiGrid &theTargetGrid,
                              NFmiDataMatrix<NFmiLocationCache> &theLocationCache);
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char *ClassName() const;
   bool operator==(const NFmiGrid &theGrid) const;
   NFmiGrid &operator=(const NFmiGrid &theGrid);
 
@@ -196,7 +196,7 @@ typedef NFmiGrid *PNFmiGrid;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid::~NFmiGrid(void)
+inline NFmiGrid::~NFmiGrid()
 {
   delete itsArea;
 }
@@ -266,7 +266,7 @@ inline const NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::XY(void) const
+inline const NFmiPoint NFmiGrid::XY() const
 {
   return GridToXY(GridPoint());
 }
@@ -276,7 +276,7 @@ inline const NFmiPoint NFmiGrid::XY(void) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiArea *NFmiGrid::Area(void) const
+inline NFmiArea *NFmiGrid::Area() const
 {
   return itsArea;
 }
@@ -384,7 +384,7 @@ inline NFmiPoint NFmiGrid::WorldXY() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGrid::LatLon(void) const
+inline const NFmiPoint NFmiGrid::LatLon() const
 {
   return GridToLatLon(GridPoint());
 }
@@ -569,7 +569,7 @@ inline bool NFmiGrid::InterpolateToXYPoint(double x,
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGrid::ClassId(void) const
+inline unsigned long NFmiGrid::ClassId() const
 {
   return kNFmiGrid;
 }
@@ -579,7 +579,7 @@ inline unsigned long NFmiGrid::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiGrid::ClassName(void) const
+inline const char *NFmiGrid::ClassName() const
 {
   return "NFmiGrid";
 }

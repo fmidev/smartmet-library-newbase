@@ -40,11 +40,11 @@ enum FmiJoinOperator
 class NFmiDataModifierBase
 {
  public:
-  virtual ~NFmiDataModifierBase(void);
+  virtual ~NFmiDataModifierBase();
   NFmiDataModifierBase(const NFmiDataModifierBase& other);
   NFmiDataModifierBase(FmiJoinOperator theJoinOperator = kFmiAdd);
 
-  FmiJoinOperator JoinOperator(void);
+  FmiJoinOperator JoinOperator();
 
   virtual std::ostream& Write(std::ostream& file);
   virtual std::ostream& WriteOperator(std::ostream& file) const;

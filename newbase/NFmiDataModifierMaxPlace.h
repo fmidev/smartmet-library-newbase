@@ -20,13 +20,13 @@
 class NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
 {
  public:
-  virtual ~NFmiDataModifierMaxPlace(void);
-  NFmiDataModifierMaxPlace(void);
+  virtual ~NFmiDataModifierMaxPlace();
+  NFmiDataModifierMaxPlace();
 
-  void Clear(void);
+  void Clear();
 
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult(void);
+  virtual float CalculationResult();
 
  protected:
   virtual bool IsNewExtreme(float value);

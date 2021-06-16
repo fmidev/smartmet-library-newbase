@@ -18,8 +18,8 @@ class NFmiLevel;
 class NFmiLevelBag : public NFmiSize
 {
  public:
-  virtual ~NFmiLevelBag(void);
-  NFmiLevelBag(void);
+  virtual ~NFmiLevelBag();
+  NFmiLevelBag();
   NFmiLevelBag(const NFmiLevelBag &theLevelBag);
   NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels);
 
@@ -28,11 +28,11 @@ class NFmiLevelBag : public NFmiSize
   NFmiLevelBag &operator=(const NFmiLevelBag &theLevelBag);
   bool operator==(const NFmiLevelBag &theLevelBag) const;
 
-  bool IsStep(void);
-  NFmiLevel *LevelMinValue(void);
-  NFmiLevel *LevelMaxValue(void);
+  bool IsStep();
+  NFmiLevel *LevelMinValue();
+  NFmiLevel *LevelMaxValue();
 
-  NFmiLevel *Level(void) const;
+  NFmiLevel *Level() const;
   NFmiLevel *Level(unsigned long theIndex) const;
   bool Level(const NFmiLevel &theLevel);
   bool AddLevel(const NFmiLevel &theLevel);
@@ -41,7 +41,7 @@ class NFmiLevelBag : public NFmiSize
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
-  virtual const char *ClassName(void) const;
+  virtual const char *ClassName() const;
 
  private:
   NFmiLevel *itsLevels;
@@ -84,7 +84,7 @@ inline std::istream &operator>>(std::istream &file, NFmiLevelBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLevelBag::IsStep(void)
+inline bool NFmiLevelBag::IsStep()
 {
   return true;
   // return (itsStep >=0 ? true : false);
@@ -96,7 +96,7 @@ inline bool NFmiLevelBag::IsStep(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel *NFmiLevelBag::LevelMinValue(void)
+inline NFmiLevel *NFmiLevelBag::LevelMinValue()
 {
   return &itsLevels[0];
 }
@@ -106,7 +106,7 @@ inline NFmiLevel *NFmiLevelBag::LevelMinValue(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel *NFmiLevelBag::LevelMaxValue(void)
+inline NFmiLevel *NFmiLevelBag::LevelMaxValue()
 {
   return &itsLevels[itsSize - 1];
 }
@@ -116,7 +116,7 @@ inline NFmiLevel *NFmiLevelBag::LevelMaxValue(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel *NFmiLevelBag::Level(void) const
+inline NFmiLevel *NFmiLevelBag::Level() const
 {
   //  return &(itsLevels[itsIndex]);
   if (itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
@@ -146,7 +146,7 @@ inline NFmiLevel *NFmiLevelBag::Level(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiLevelBag::ClassName(void) const
+inline const char *NFmiLevelBag::ClassName() const
 {
   return "NFmiLevelBag";
 }

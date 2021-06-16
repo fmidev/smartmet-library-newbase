@@ -14,9 +14,9 @@
 class NFmiStereographicArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiStereographicArea(void);
+  virtual ~NFmiStereographicArea();
 
-  NFmiStereographicArea(void);
+  NFmiStereographicArea();
 
   NFmiStereographicArea(const NFmiStereographicArea& theStereographicArea);
 
@@ -51,11 +51,11 @@ class NFmiStereographicArea : public NFmiAzimuthalArea
                         const double theTrueLatitude = 60.);
 
   virtual void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* Clone(void) const;
+  virtual NFmiArea* Clone() const;
   virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
                             const NFmiPoint& theTopRightLatLon,
                             bool allowPacificFix = true) const;
-  virtual const NFmiRect WorldRect(void) const;
+  virtual const NFmiRect WorldRect() const;
 
   using NFmiArea::CreateNewArea;
   NFmiArea* CreateNewArea(const NFmiRect& theRect) const;
@@ -70,9 +70,9 @@ class NFmiStereographicArea : public NFmiAzimuthalArea
   bool operator==(const NFmiArea& theArea) const;
   bool operator!=(const NFmiArea& theArea) const;
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char* ClassName(void) const;
-  const std::string AreaStr(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char* ClassName() const;
+  const std::string AreaStr() const;
   virtual const std::string WKT() const;
 
   virtual std::ostream& Write(std::ostream& file) const;
@@ -83,7 +83,7 @@ class NFmiStereographicArea : public NFmiAzimuthalArea
  protected:
   virtual double K(const double delta) const;
   virtual double CalcDelta(const double xyDistance) const;
-  virtual double DistanceFromPerspectivePointToCenterOfEarth(void) const;
+  virtual double DistanceFromPerspectivePointToCenterOfEarth() const;
 
  private:
 };  // class NFmiStereographicArea
@@ -97,14 +97,14 @@ typedef NFmiStereographicArea* PNFmiStereographicArea;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStereographicArea::~NFmiStereographicArea(void) {}
+inline NFmiStereographicArea::~NFmiStereographicArea() {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiStereographicArea::WorldRect(void) const
+inline const NFmiRect NFmiStereographicArea::WorldRect() const
 {
   return itsWorldRect;
 }
@@ -114,7 +114,7 @@ inline const NFmiRect NFmiStereographicArea::WorldRect(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiStereographicArea::ClassId(void) const
+inline unsigned long NFmiStereographicArea::ClassId() const
 {
   return kNFmiStereographicArea;
 }
@@ -124,7 +124,7 @@ inline unsigned long NFmiStereographicArea::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiStereographicArea::ClassName(void) const
+inline const char* NFmiStereographicArea::ClassName() const
 {
   return "kNFmiStereographicArea";
 }

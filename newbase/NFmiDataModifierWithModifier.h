@@ -12,18 +12,18 @@
 class NFmiDataModifierWithModifier : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierWithModifier(void);
+  virtual ~NFmiDataModifierWithModifier();
   NFmiDataModifierWithModifier(NFmiQueryInfo* theQueryInfoCopy,
                                NFmiDataModifier* theDataModifier,
                                int theXRange,
                                int theYRange);
 
   virtual float FloatOperation(float theValue);
-  virtual void Clear(void);
+  virtual void Clear();
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   virtual void Calculate(float theValue);
-  virtual float CalculationResult(void);
+  virtual float CalculationResult();
 
  protected:
   NFmiQueryInfo* itsQueryInfoCopy;
@@ -43,7 +43,7 @@ class NFmiDataModifierWithModifier : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier(void)
+inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier()
 {
   delete itsModifier;
 }
@@ -75,7 +75,7 @@ inline NFmiDataModifierWithModifier::NFmiDataModifierWithModifier(NFmiQueryInfo*
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifierWithModifier::Clear(void)
+inline void NFmiDataModifierWithModifier::Clear()
 {
   itsModifier->Clear();
 }
@@ -85,7 +85,7 @@ inline void NFmiDataModifierWithModifier::Clear(void)
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifierWithModifier::CalculationResult(void)
+inline float NFmiDataModifierWithModifier::CalculationResult()
 {
   return itsModifier->CalculationResult();
 }

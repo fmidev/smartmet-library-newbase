@@ -4432,7 +4432,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
       // huom! isUnder on true myös jos P == 1. painearvo
       bool isUnder = theHeight <= firstHeightValue;
       //		if((fHeightParamIsRising && isUnder) || (!(fHeightParamIsRising ||
-      //isUnder)))
+      // isUnder)))
       if (fHeightParamIsRising ^ isUnder)
       {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
          // haluttu korkeus voi vielä löytyä

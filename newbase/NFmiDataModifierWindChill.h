@@ -15,7 +15,7 @@ class NFmiQueryInfo;
 class NFmiDataModifierWindChill : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierWindChill(void);
+  virtual ~NFmiDataModifierWindChill();
 
   // anna se queryinfo mistä halutaan laskea windchilliä konstruktorissa!
   NFmiDataModifierWindChill(NFmiQueryInfo* theQueryInfo,
@@ -24,14 +24,14 @@ class NFmiDataModifierWindChill : public NFmiDataModifier
                             int theTeperatureParamId = 4,
                             int theWindSpeedParamId = 21);
 
-  void Clear(void);
+  void Clear();
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
   virtual void Calculate(float theValue);
-  virtual float CalculationResult(void);
+  virtual float CalculationResult();
 
-  const NFmiPoint& LatLon(void) const;
+  const NFmiPoint& LatLon() const;
   void LatLon(const NFmiPoint& newLatLon);
 
  private:
@@ -52,7 +52,7 @@ class NFmiDataModifierWindChill : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint& NFmiDataModifierWindChill::LatLon(void) const
+inline const NFmiPoint& NFmiDataModifierWindChill::LatLon() const
 {
   return itsLatLonPoint;
 }

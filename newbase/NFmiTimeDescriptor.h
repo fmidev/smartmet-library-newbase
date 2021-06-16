@@ -19,9 +19,9 @@ class NFmiTimeList;
 class NFmiTimeDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiTimeDescriptor(void);
+  virtual ~NFmiTimeDescriptor();
 
-  NFmiTimeDescriptor(void);
+  NFmiTimeDescriptor();
 
   NFmiTimeDescriptor(const NFmiTimeDescriptor &theTimeDescriptor);
 
@@ -49,29 +49,29 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   // the TimeDescriptor was constructed
   // -----------------------------------------------------------------
 
-  virtual bool Next(void);
-  virtual bool Previous(void);
-  virtual void Reset(void);
-  void First(void)
+  virtual bool Next();
+  virtual bool Previous();
+  virtual void Reset();
+  void First()
   {
     Reset();
     Next();
   };
 
-  const NFmiMetTime &Time(void) const;
+  const NFmiMetTime &Time() const;
   bool Time(const NFmiMetTime &theTime);
   bool TimeToNearestStep(const NFmiMetTime &theTime,
                          FmiDirection theDirection = kCenter,
                          unsigned long theTimeRangeInMinutes = kUnsignedLongMissing);
   bool Time(const unsigned long &theIndex);
-  const NFmiMetTime &FirstTime(void) const;
-  const NFmiMetTime &LastTime(void) const;
+  const NFmiMetTime &FirstTime() const;
+  const NFmiMetTime &LastTime() const;
 
   // -------------------------------------------------
   // ForecastPeriod(): returns current forecast length
   // -------------------------------------------------
 
-  unsigned long ForecastPeriod(void) const;
+  unsigned long ForecastPeriod() const;
 
   // ------------------------------------------------------------------------------------
   // If OriginTime (or ValidTime) is a list, method OriginTime() (or ValidTime() ) is
@@ -79,45 +79,45 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   // If OriginTime (or ValidTime) is'nt a list, it always returns the constant time
   // ------------------------------------------------------------------------------------
 
-  const NFmiMetTime &OriginTime(void) const;
+  const NFmiMetTime &OriginTime() const;
   void OriginTime(const NFmiMetTime &newTime);
-  const NFmiMetTime &ValidTime(void) const;
+  const NFmiMetTime &ValidTime() const;
 
-  bool IsOriginTime(void) const;
-  bool IsValidTime(void) const;
+  bool IsOriginTime() const;
+  bool IsValidTime() const;
 
   // ---------------------------------------------------------------------
   // Following methods operate just in TimeDescriptor's list part
   // ---------------------------------------------------------------------
 
-  virtual unsigned long Index(void) const;
-  virtual unsigned long Size(void) const;
-  bool IsEmpty(void) const;  // Jouduin tekemään IsEmpty -metodin, koska Size -metodi palauttaa
+  virtual unsigned long Index() const;
+  virtual unsigned long Size() const;
+  bool IsEmpty() const;  // Jouduin tekemään IsEmpty -metodin, koska Size -metodi palauttaa
   // joskus tyhjänä 1:n (NFmiTimeBag palauttaa tyhjänä 1:n kun resolution
   // on 0 jostain historiallisista v. 1998 syistä)
-  virtual unsigned long SizeActive(void) const;
+  virtual unsigned long SizeActive() const;
 
-  virtual bool NextActive(void);
-  virtual bool PreviousActive(void);
-  virtual bool FirstActive(void);
-  virtual bool LastActive(void);
-  virtual bool IsActive(void) const;
+  virtual bool NextActive();
+  virtual bool PreviousActive();
+  virtual bool FirstActive();
+  virtual bool LastActive();
+  virtual bool IsActive() const;
   virtual bool SetActivity(bool theActivityState);
   virtual bool SetActivePeriod(bool theActivityState, const NFmiTimeBag &thePeriod);
-  virtual NFmiTimeBag GetActivePeriod(void);
+  virtual NFmiTimeBag GetActivePeriod();
 
   void SetLocalTimes(const float theLongitude);  // Muuttaa ajan paikalliseksi
-  FmiTimeLocalzation TimeLocalzation(void) const;
-  bool IsInterpolation(void) const;
-  bool IsOriginLastest(void) const;
+  FmiTimeLocalzation TimeLocalzation() const;
+  bool IsInterpolation() const;
+  bool IsOriginLastest() const;
   void OriginLastest(bool theLastest);
-  const NFmiTimePerioid Resolution(void) const;
-  const NFmiTimePerioid ActiveResolution(void);
+  const NFmiTimePerioid Resolution() const;
+  const NFmiTimePerioid ActiveResolution();
 
-  NFmiTimeBag *ValidTimeBag(void) const;
-  NFmiTimeBag *OriginTimeBag(void) const;
-  NFmiTimeList *ValidTimeList(void) const;
-  bool UseTimeList(void) const;
+  NFmiTimeBag *ValidTimeBag() const;
+  NFmiTimeBag *OriginTimeBag() const;
+  NFmiTimeList *ValidTimeList() const;
+  bool UseTimeList() const;
 
   NFmiTimeDescriptor &operator=(const NFmiTimeDescriptor &theTimeDescriptor);
   bool operator==(const NFmiTimeDescriptor &theTimeDescriptor) const;
@@ -129,16 +129,16 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
                                      const NFmiMetTime &theEndLimit);
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
-  virtual unsigned long ClassId(void) const;
-  virtual const char *ClassName(void) const;
+  virtual unsigned long ClassId() const;
+  virtual const char *ClassName() const;
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
-  unsigned long LocalTimeStep(void);
-  void ReduseTimeBag(void);
-  void ExtendTimeBag(void);
-  //  unsigned long TimeResolution(void); // poistettu, käytä Resolution-metodia
+  unsigned long LocalTimeStep();
+  void ReduseTimeBag();
+  void ExtendTimeBag();
+  //  unsigned long TimeResolution(); // poistettu, käytä Resolution-metodia
   bool IsInside(const NFmiMetTime &theTime) const;
   bool FindNearestTime(const NFmiMetTime &theTime,
                        FmiDirection theDirection = kCenter,
@@ -146,7 +146,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   void SetNewStartTime(const NFmiMetTime &theTime);
 
  protected:
-  void Destroy(void);
+  void Destroy();
 
  private:
   // ----
@@ -179,7 +179,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation(void) const
+inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation() const
 {
   return itsIsLocalTime;
 }
@@ -189,7 +189,7 @@ inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsInterpolation(void) const
+inline bool NFmiTimeDescriptor::IsInterpolation() const
 {
   return itsIsInterpolation;
 }
@@ -199,7 +199,7 @@ inline bool NFmiTimeDescriptor::IsInterpolation(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsOriginLastest(void) const
+inline bool NFmiTimeDescriptor::IsOriginLastest() const
 {
   return itsIsOriginLastest;
 }
@@ -219,7 +219,7 @@ inline void NFmiTimeDescriptor::OriginLastest(bool theLastest)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimeBag *NFmiTimeDescriptor::ValidTimeBag(void) const
+inline NFmiTimeBag *NFmiTimeDescriptor::ValidTimeBag() const
 {
   return itsValidTimeBag;
 }
@@ -229,11 +229,11 @@ inline NFmiTimeBag *NFmiTimeDescriptor::ValidTimeBag(void) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTimeBag *NFmiTimeDescriptor::OriginTimeBag(void) const
+inline NFmiTimeBag *NFmiTimeDescriptor::OriginTimeBag() const
 {
   return itsOriginTimeBag;
 }
-inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList(void) const
+inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList() const
 {
   return itsTimeList;
 }
@@ -243,7 +243,7 @@ inline NFmiTimeList *NFmiTimeDescriptor::ValidTimeList(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::ForecastPeriod(void) const
+inline unsigned long NFmiTimeDescriptor::ForecastPeriod() const
 {
   return itsTimeList ? 0 : (ValidTime().DifferenceInMinutes(OriginTime()));
 }
@@ -254,7 +254,7 @@ inline unsigned long NFmiTimeDescriptor::ForecastPeriod(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsOriginTime(void) const
+inline bool NFmiTimeDescriptor::IsOriginTime() const
 {
   return !itsTimeBagIdent;
 }
@@ -264,7 +264,7 @@ inline bool NFmiTimeDescriptor::IsOriginTime(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsValidTime(void) const
+inline bool NFmiTimeDescriptor::IsValidTime() const
 {
   return itsTimeBagIdent;
 }
@@ -274,7 +274,7 @@ inline bool NFmiTimeDescriptor::IsValidTime(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsActive(void) const
+inline bool NFmiTimeDescriptor::IsActive() const
 {
   return (itsActivity[Index()]);
 }
@@ -284,7 +284,7 @@ inline bool NFmiTimeDescriptor::IsActive(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::UseTimeList(void) const
+inline bool NFmiTimeDescriptor::UseTimeList() const
 {
   return itsTimeList != 0;
 }
@@ -294,7 +294,7 @@ inline bool NFmiTimeDescriptor::UseTimeList(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::ClassId(void) const
+inline unsigned long NFmiTimeDescriptor::ClassId() const
 {
   return kNFmiTimeDescriptor;
 }
@@ -304,7 +304,7 @@ inline unsigned long NFmiTimeDescriptor::ClassId(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimeDescriptor::ClassName(void) const
+inline const char *NFmiTimeDescriptor::ClassName() const
 {
   return "NFmiTimeDescriptor";
 }
@@ -314,7 +314,7 @@ inline const char *NFmiTimeDescriptor::ClassName(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::LocalTimeStep(void)
+inline unsigned long NFmiTimeDescriptor::LocalTimeStep()
 {
   return itsLocalTimeStep;
 }
@@ -325,7 +325,7 @@ inline unsigned long NFmiTimeDescriptor::LocalTimeStep(void)
 // ----------------------------------------------------------------------
 /*
 inline
-unsigned long NFmiTimeDescriptor::TimeResolution(void)
+unsigned long NFmiTimeDescriptor::TimeResolution()
 {
   return itsValidTimeBag->Resolution();
 }

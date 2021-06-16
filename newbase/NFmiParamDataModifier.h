@@ -19,7 +19,7 @@ class NFmiDataModifierList;
 class NFmiParamDataModifier : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiParamDataModifier(void);
+  virtual ~NFmiParamDataModifier();
   // NFmiDataModifier(const NFmiDataModifier & theModier); // compiler generated
   NFmiParamDataModifier(NFmiDataIdent* theParam,
                         NFmiLevel* theLevel = 0,
@@ -32,16 +32,16 @@ class NFmiParamDataModifier : public NFmiDataModifier
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
 
-  virtual float CalculationResult(void);
+  virtual float CalculationResult();
   virtual void Calculate(float);
 
-  void Clear(void);
+  void Clear();
 
   bool Match(const NFmiDataIdent& theParam, const NFmiLevel* theLevel);
   bool AddSubModifier(NFmiDataModifier* theModifier);
-  NFmiDataModifierList* SubModifiers(void);
-  NFmiDataIdent* Param(void);
-  NFmiLevel* Level(void);
+  NFmiDataModifierList* SubModifiers();
+  NFmiDataIdent* Param();
+  NFmiLevel* Level();
 
  protected:
   NFmiDataIdent* itsParam;           // Omistaa/tuhoaa
@@ -61,7 +61,7 @@ class NFmiParamDataModifier : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataIdent* NFmiParamDataModifier::Param(void)
+inline NFmiDataIdent* NFmiParamDataModifier::Param()
 {
   return itsParam;
 }
@@ -71,7 +71,7 @@ inline NFmiDataIdent* NFmiParamDataModifier::Param(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel* NFmiParamDataModifier::Level(void)
+inline NFmiLevel* NFmiParamDataModifier::Level()
 {
   return itsLevel;
 }

@@ -4291,7 +4291,7 @@ double NFmiInfoRectAreaIntegrator::Value(const NFmiCalculationParams &theCalcula
 // *****  NFmiInfoAreaIntegrationFunc ***********************
 // **********************************************************
 
-NFmiInfoAreaIntegrationFunc::~NFmiInfoAreaIntegrationFunc(void) = default;
+NFmiInfoAreaIntegrationFunc::~NFmiInfoAreaIntegrationFunc() = default;
 
 NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
     const NFmiCalculationCondition &theOperation,
@@ -4332,7 +4332,7 @@ NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
 {
 }
 
-NFmiAreaMask *NFmiInfoAreaIntegrationFunc::Clone(void) const
+NFmiAreaMask *NFmiInfoAreaIntegrationFunc::Clone() const
 {
   try
   {
@@ -4403,7 +4403,7 @@ void NFmiInfoAreaIntegrationFunc::InitializeIntegrationValues()
 // *****  NFmiInfoAreaMaskAreaProbFunc **********************
 // **********************************************************
 
-NFmiInfoAreaMaskAreaProbFunc::~NFmiInfoAreaMaskAreaProbFunc(void) = default;
+NFmiInfoAreaMaskAreaProbFunc::~NFmiInfoAreaMaskAreaProbFunc() = default;
 
 NFmiInfoAreaMaskAreaProbFunc::NFmiInfoAreaMaskAreaProbFunc(
     const NFmiCalculationCondition &theOperation,
@@ -4431,7 +4431,7 @@ NFmiInfoAreaMaskAreaProbFunc::NFmiInfoAreaMaskAreaProbFunc(
 {
 }
 
-NFmiAreaMask *NFmiInfoAreaMaskAreaProbFunc::Clone(void) const
+NFmiAreaMask *NFmiInfoAreaMaskAreaProbFunc::Clone() const
 {
   try
   {
@@ -4486,9 +4486,9 @@ void NFmiInfoAreaMaskAreaProbFunc::DoIntegrationCalculations(float value)
 // *****  NFmiTimeShiftedInfoAreaMask ***********************
 // **********************************************************
 
-NFmiTimeShiftedInfoAreaMask::~NFmiTimeShiftedInfoAreaMask(void) = default;
+NFmiTimeShiftedInfoAreaMask::~NFmiTimeShiftedInfoAreaMask() = default;
 
-NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask(void)
+NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask()
     : NFmiInfoAreaMask(), itsTimeOffsetInHours(0), itsChangeByMinutesValue(0)
 {
 }
@@ -4520,7 +4520,7 @@ NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask(
 {
 }
 
-NFmiAreaMask *NFmiTimeShiftedInfoAreaMask::Clone(void) const
+NFmiAreaMask *NFmiTimeShiftedInfoAreaMask::Clone() const
 {
   try
   {

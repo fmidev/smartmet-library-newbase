@@ -20,14 +20,14 @@
 class NFmiProducer : public NFmiIndividual
 {
  public:
-  NFmiProducer(void);
+  NFmiProducer();
   NFmiProducer(const NFmiProducer& theProducer);
   explicit NFmiProducer(unsigned long theIdent, const NFmiString& theName = "Kennel");
 
   NFmiProducer& operator=(const NFmiProducer& theProducer);
   bool operator==(const NFmiProducer& theProducer) const;
 
-  virtual const char* ClassName(void) const;
+  virtual const char* ClassName() const;
 
  private:
 };  // class NFmiProducer
@@ -38,7 +38,7 @@ class NFmiProducer : public NFmiIndividual
  */
 // ----------------------------------------------------------------------
 
-inline NFmiProducer::NFmiProducer(void) {}
+inline NFmiProducer::NFmiProducer() {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -97,7 +97,7 @@ inline NFmiProducer& NFmiProducer::operator=(const NFmiProducer& theProducer)
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiProducer::ClassName(void) const
+inline const char* NFmiProducer::ClassName() const
 {
   return "NFmiProducer";
 }

@@ -863,7 +863,7 @@ std::istream &NFmiString::Read(std::istream &file)
  */
 // ----------------------------------------------------------------------
 #ifndef UNIX
-void NFmiString::UpperCase(void)
+void NFmiString::UpperCase()
 {
   try
   {
@@ -902,7 +902,7 @@ void NFmiString::UpperCase()
  */
 // ----------------------------------------------------------------------
 #ifndef UNIX
-void NFmiString::LowerCase(void)
+void NFmiString::LowerCase()
 {
   try
   {
