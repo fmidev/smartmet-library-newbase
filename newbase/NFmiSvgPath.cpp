@@ -235,7 +235,8 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
     bool isRelative = false;
     do
     {
-      if (!EatWhiteSpaces(strStream)) break;
+      if (!EatWhiteSpaces(strStream))
+        break;
 
       // katsotaan peek:illa ensin onko merkki, koska käskyt
       // voivat olla yhdessä 1. koordinaatin kanssa.
@@ -263,7 +264,8 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
 
       // Tarkistetaan luvun onnistuminen
 
-      if (strStream.fail()) return false;
+      if (strStream.fail())
+        return false;
 
       switch (eType)
       {
@@ -271,13 +273,17 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
         case NFmiSvgPath::kElementLineto:
         {
           strStream >> x;
-          if (strStream.fail()) return false;
+          if (strStream.fail())
+            return false;
 
-          if (!EatWhiteSpaces(strStream)) return false;
+          if (!EatWhiteSpaces(strStream))
+            return false;
 
-          if (strStream.peek() == ',') strStream.get();
+          if (strStream.peek() == ',')
+            strStream.get();
           strStream >> y;
-          if (strStream.fail()) return false;
+          if (strStream.fail())
+            return false;
 
           if (isRelative)
           {
@@ -436,11 +442,13 @@ std::ostream& NFmiSvgPath::Write(std::ostream& file) const
       file << '"';
       for (auto it = begin(); it != end(); ++it)
       {
-        if (it != begin()) file << ' ';
+        if (it != begin())
+          file << ' ';
 
         file << SvgElementToChar(it->itsType);
 
-        if (it->itsType != kElementClosePath) file << ' ' << it->itsX << ' ' << it->itsY;
+        if (it->itsType != kElementClosePath)
+          file << ' ' << it->itsX << ' ' << it->itsY;
       }
       file << '"';
     }
@@ -474,7 +482,8 @@ std::istream& NFmiSvgPath::Read(std::istream& file)
     {
       clear();  // Pitääkö tyhjentää olemassa oleva polku ennen lukua?!?! Nyt tyhjenee.
       string polygonDataStr;
-      if (GetPolygonStringFromStream(file, polygonDataStr)) ExtractSvgPath(*this, polygonDataStr);
+      if (GetPolygonStringFromStream(file, polygonDataStr))
+        ExtractSvgPath(*this, polygonDataStr);
     }
     return file;
   }
@@ -503,7 +512,8 @@ bool NFmiSvgPath::IsInside(const NFmiPoint& thePoint) const
 {
   try
   {
-    if (empty()) return false;
+    if (empty())
+      return false;
 
     // lyhyt nimi koodin luettavuuden kannalta
     const NFmiPoint& p = thePoint;
@@ -544,7 +554,8 @@ bool NFmiSvgPath::IsInside(const NFmiPoint& thePoint) const
 
     if (itsBBoxValid)
     {
-      if (p.X() < itsMinX || p.X() > itsMaxX || p.Y() < itsMinY || p.Y() > itsMaxY) return false;
+      if (p.X() < itsMinX || p.X() > itsMaxX || p.Y() < itsMinY || p.Y() > itsMaxY)
+        return false;
     }
 
     // Joudutaan laskemaan suoraan
@@ -564,13 +575,15 @@ bool NFmiSvgPath::IsInside(const NFmiPoint& thePoint) const
         firstPoint = p2;
       else
       {
-        if (p2->itsType == NFmiSvgPath::kElementClosePath) p2 = firstPoint;
+        if (p2->itsType == NFmiSvgPath::kElementClosePath)
+          p2 = firstPoint;
         if (p.Y() > FmiMin(p1->itsY, p2->itsY) && p.Y() <= FmiMax(p1->itsY, p2->itsY) &&
             p.X() <= FmiMax(p1->itsX, p2->itsX) && p1->itsY != p2->itsY)
         {
           const double xinters =
               ((p.Y() - p1->itsY) * (p2->itsX - p1->itsX) / (p2->itsY - p1->itsY) + p1->itsX);
-          if (p1->itsX == p2->itsX || p.X() <= xinters) counter++;
+          if (p1->itsX == p2->itsX || p.X() <= xinters)
+            counter++;
         }
       }
       p1 = p2;

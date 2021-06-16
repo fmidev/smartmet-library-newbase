@@ -559,8 +559,9 @@ short NFmiTime::GetWeekday() const
 {
   try
   {
-    NFmiTime Sunday(
-        static_cast<short>(1830), static_cast<short>(1), static_cast<short>(4));  // toimiikohan?????
+    NFmiTime Sunday(static_cast<short>(1830),
+                    static_cast<short>(1),
+                    static_cast<short>(4));  // toimiikohan?????
 
     return static_cast<short>(1 + DifferenceInDays(Sunday) % 7);
   }
@@ -917,11 +918,10 @@ void NFmiTime::SetZoneDifferenceHour()
     struct tm nowparts;
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::localtime_s(&nowparts, &now);
 
@@ -931,9 +931,10 @@ void NFmiTime::SetZoneDifferenceHour()
 
 #ifdef _MSC_VER
     itsZoneDifferenceHour = static_cast<short>(
-        _timezone / 3600 - nowparts.tm_isdst);  // Visual C++ 2015 ei enää tye epäturvallista globaali
-  // muuttujaa timezone:a, siksi pitää käyttää _timezone
-  // makroa (löytyy myös vanhemmista VC++ versioista)
+        _timezone / 3600 -
+        nowparts.tm_isdst);  // Visual C++ 2015 ei enää tye epäturvallista globaali
+    // muuttujaa timezone:a, siksi pitää käyttää _timezone
+    // makroa (löytyy myös vanhemmista VC++ versioista)
 #else
     itsZoneDifferenceHour = static_cast<short>(timezone / 3600 - nowparts.tm_isdst);
 #endif
@@ -977,8 +978,8 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
   try
   {
     if (theLongitude == kFloatMissing)
-      return itsZoneDifferenceHour;  // tÃ¤mÃ¤ on virhetilanne, mutta ei tehdÃ¤ muuta kuin palautetaan
-                                     // vanha arvo
+      return itsZoneDifferenceHour;  // tÃ¤mÃ¤ on virhetilanne, mutta ei tehdÃ¤ muuta kuin
+                                     // palautetaan vanha arvo
 
     struct tm newtime;
     time_t aclock;
@@ -986,11 +987,10 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
     time(&aclock);
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::localtime_s(&newtime, &aclock);
 
@@ -1183,7 +1183,8 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
         strh.UpperCase();
         theString += strh;
       }
-      else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") || str4 == NFmiString("TTTT"))
+      else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") ||
+               str4 == NFmiString("TTTT"))
       {
         str6 = theTimeCode.GetChars(ind, 6);
         theString += RelativeDay(theLanguage, str6, subPlusInd);
@@ -1302,7 +1303,8 @@ const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
     thePlusInd = 0;
 
     int diff = GetJulianDay() - currentTime.GetJulianDay();
-    if (diff < -100)  // vuodenvaihde ja karkausvuosi hoidettu, voisi viedÃ¤ NFmiTime:een; ei tastattu
+    if (diff <
+        -100)  // vuodenvaihde ja karkausvuosi hoidettu, voisi viedÃ¤ NFmiTime:een; ei tastattu
       diff += DaysInYear(currentTime.GetYear());
     if (diff > 100)
       diff -= DaysInYear(GetYear());

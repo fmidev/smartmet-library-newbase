@@ -105,7 +105,8 @@ NFmiDataIdent::NFmiDataIdent(const NFmiDataIdent &theDataIdent)
 {
   try
   {
-    if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+    if (theDataIdent.itsSecondaryProducers &&
+        theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
     {
       itsSecondaryProducers = new NFmiVoidPtrList;
       NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
@@ -262,7 +263,8 @@ NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
       fHasDataParams = theDataIdent.fHasDataParams;
       itsDataParams =
           theDataIdent.itsDataParams ? new NFmiParamBag(*(theDataIdent.itsDataParams)) : nullptr;
-      if (theDataIdent.itsSecondaryProducers && theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
+      if (theDataIdent.itsSecondaryProducers &&
+          theDataIdent.itsSecondaryProducers->NumberOfItems() > 0)
       {
         itsSecondaryProducers = new NFmiVoidPtrList;
         NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
@@ -274,7 +276,7 @@ NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
         itsCurrentSecondaryProducer = new NFmiVoidPtrData(itsSecondaryProducerIterator->Current());
       }
       else  // 24.2.1999/Marko Lisäsin else haaran, koska muuten kaatuu jos on ensin ollut
-        // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
+            // dataparamsseja ja sitten sijoitetaan identti missä ei ole dataparamsseja
       {
         itsSecondaryProducers = nullptr;
         itsSecondaryProducerIterator = nullptr;

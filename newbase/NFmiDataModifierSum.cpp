@@ -40,14 +40,20 @@ NFmiDataModifierSum::NFmiDataModifierSum(const NFmiDataModifierSum& theOther)
 
     = default;
 
-NFmiDataModifier* NFmiDataModifierSum::Clone() const { return new NFmiDataModifierSum(*this); }
+NFmiDataModifier* NFmiDataModifierSum::Clone() const
+{
+  return new NFmiDataModifierSum(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierSum::Sum() { return itsSum; }
+float NFmiDataModifierSum::Sum()
+{
+  return itsSum;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -59,7 +65,8 @@ void NFmiDataModifierSum::Calculate(float theValue)
   if (CheckMissingValues(theValue))
   {
     fCalculationResultOk = true;
-    if (IsInside(theValue)) itsSum += theValue;
+    if (IsInside(theValue))
+      itsSum += theValue;
   }
 }
 
@@ -69,7 +76,10 @@ void NFmiDataModifierSum::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierSum::Calculate(NFmiQueryInfo* theQI) { Calculate(theQI->FloatValue()); }
+void NFmiDataModifierSum::Calculate(NFmiQueryInfo* theQI)
+{
+  Calculate(theQI->FloatValue());
+}
 // ----------------------------------------------------------------------
 /*!
  *

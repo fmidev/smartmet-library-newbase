@@ -21,7 +21,10 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifier::~NFmiDataModifier() { delete itsCombinedParam; }
+NFmiDataModifier::~NFmiDataModifier()
+{
+  delete itsCombinedParam;
+}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -68,7 +71,10 @@ NFmiDataModifier::NFmiDataModifier(const NFmiDataModifier& theModier)
 {
 }
 
-NFmiDataModifier* NFmiDataModifier::Clone() const { return new NFmiDataModifier(*this); }
+NFmiDataModifier* NFmiDataModifier::Clone() const
+{
+  return new NFmiDataModifier(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -114,21 +120,30 @@ bool NFmiDataModifier::SetLimits(float theLowerLimit, float theUpperLimit)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifier::IsCombinedParam() { return fIsCombinedParam; }
+bool NFmiDataModifier::IsCombinedParam()
+{
+  return fIsCombinedParam;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-double NFmiDataModifier::FloatValue() { return CalculationResult(); }
+double NFmiDataModifier::FloatValue()
+{
+  return CalculationResult();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiCombinedParam* NFmiDataModifier::CombinedCalculationResult() { return nullptr; }
+NFmiCombinedParam* NFmiDataModifier::CombinedCalculationResult()
+{
+  return nullptr;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumenetd
@@ -141,11 +156,13 @@ bool NFmiDataModifier::CheckMissingValues(float theValue)
   if (theValue != kFloatMissing && theValue != kRadarPrecipitationMissing)
   {
     // 25.9.01Lasse  esim summasta voisi poistaa vastaavan
-    if (fMissingValuesAllowed || itsNumberOfMissingValues < 1) fCalculationResultOk = true;
+    if (fMissingValuesAllowed || itsNumberOfMissingValues < 1)
+      fCalculationResultOk = true;
     return true;
   }
   itsNumberOfMissingValues++;
-  if (!fMissingValuesAllowed) fCalculationResultOk = false;
+  if (!fMissingValuesAllowed)
+    fCalculationResultOk = false;
   return false;
 }
 

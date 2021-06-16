@@ -1,7 +1,7 @@
 #include "NFmiWGS84.h"
-#include <macgyver/Exception.h>
 #include <fmt/format.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
 #include <memory>
 
 // ----------------------------------------------------------------------

@@ -120,7 +120,8 @@ class NFmiBitMask
 
 inline NFmiBitMask::~NFmiBitMask(void)
 {
-  if (itsMaskData) delete[] itsMaskData;
+  if (itsMaskData)
+    delete[] itsMaskData;
 }
 
 // ----------------------------------------------------------------------
@@ -129,6 +130,9 @@ inline NFmiBitMask::~NFmiBitMask(void)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiBitMask::Size(void) const { return itsSize; }
+inline long NFmiBitMask::Size(void) const
+{
+  return itsSize;
+}
 
 // ======================================================================

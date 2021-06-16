@@ -41,7 +41,8 @@ NFmiDataModifierExtreme::NFmiDataModifierExtreme(const NFmiDataModifierExtreme &
 
 void NFmiDataModifierExtreme::SetTime(NFmiQueryInfo *theQI)
 {
-  if (theQI) itsExtremeTime = theQI->Time();
+  if (theQI)
+    itsExtremeTime = theQI->Time();
 }
 
 // ----------------------------------------------------------------------
@@ -50,7 +51,10 @@ void NFmiDataModifierExtreme::SetTime(NFmiQueryInfo *theQI)
  */
 // ----------------------------------------------------------------------
 
-const NFmiTime NFmiDataModifierExtreme::GetTime() { return itsExtremeTime; }
+const NFmiTime NFmiDataModifierExtreme::GetTime()
+{
+  return itsExtremeTime;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theQI Undocumented

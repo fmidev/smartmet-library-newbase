@@ -14,9 +14,9 @@
 
 #include "NFmiLatLonArea.h"
 #include "NFmiAreaFactory.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 
 #include <iostream>
 
@@ -340,7 +340,8 @@ std::istream &NFmiLatLonArea::Read(std::istream &file)
     file >> itsXScaleFactor;
     file >> itsYScaleFactor;
 
-    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    itsWorldRect =
+        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     Init();
 

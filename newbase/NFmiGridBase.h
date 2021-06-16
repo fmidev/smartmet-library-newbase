@@ -212,7 +212,8 @@ typedef NFmiGridBase* PNFmiGridBase;
 inline NFmiGridBase::~NFmiGridBase()
 {
   delete itsData;
-  if (itsFloatData) delete[] itsFloatData;
+  if (itsFloatData)
+    delete[] itsFloatData;
 }
 
 // ----------------------------------------------------------------------
@@ -263,28 +264,40 @@ inline NFmiGridBase::NFmiGridBase(unsigned long theXNumber,
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataPool* NFmiGridBase::DataPool() const { return itsData; }
+inline NFmiDataPool* NFmiGridBase::DataPool() const
+{
+  return itsData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::XNumber() const { return (itsLastX - itsFirstX + 1); }
+inline unsigned long NFmiGridBase::XNumber() const
+{
+  return (itsLastX - itsFirstX + 1);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::YNumber() const { return (itsLastY - itsFirstY + 1); }
+inline unsigned long NFmiGridBase::YNumber() const
+{
+  return (itsLastY - itsFirstY + 1);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGridBase::NextRow() { return Next(XNumber()); }
+inline bool NFmiGridBase::NextRow()
+{
+  return Next(XNumber());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented
@@ -328,14 +341,20 @@ inline void NFmiGridBase::Origo(FmiDirection theStartingCorner)
  */
 // ----------------------------------------------------------------------
 
-inline FmiDirection NFmiGridBase::Origo() const { return itsStartingCorner; }
+inline FmiDirection NFmiGridBase::Origo() const
+{
+  return itsStartingCorner;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theList Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiGridBase::Transform(NFmiTransformList& theList) { itsData->Transform(theList); }
+inline void NFmiGridBase::Transform(NFmiTransformList& theList)
+{
+  itsData->Transform(theList);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theInterpolationMethod Undocumented
@@ -353,21 +372,30 @@ inline void NFmiGridBase::InterpolationMethod(FmiInterpolationMethod theInterpol
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::OriginalXNumber() const { return itsXNumber; }
+inline unsigned long NFmiGridBase::OriginalXNumber() const
+{
+  return itsXNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::OriginalYNumber() const { return itsYNumber; }
+inline unsigned long NFmiGridBase::OriginalYNumber() const
+{
+  return itsYNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::OriginalSize() const { return itsXNumber * itsYNumber; }
+inline unsigned long NFmiGridBase::OriginalSize() const
+{
+  return itsXNumber * itsYNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -441,7 +469,8 @@ inline bool NFmiGridBase::IsInsideGrid(const NFmiPoint& point) const
 {
   // Negative coordinates were handled incorrectly for over 10 years
   // before this fix was added - Mika
-  if (point.X() < 0 || point.Y() < 0) return false;
+  if (point.X() < 0 || point.Y() < 0)
+    return false;
 
   return IsInsideGrid(static_cast<unsigned long>(point.X()), static_cast<unsigned long>(point.Y()));
 }
@@ -453,7 +482,10 @@ inline bool NFmiGridBase::IsInsideGrid(const NFmiPoint& point) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiGridBase::MinValue() { return (itsData ? itsData->MinValue() : kFloatMissing); }
+inline double NFmiGridBase::MinValue()
+{
+  return (itsData ? itsData->MinValue() : kFloatMissing);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -461,7 +493,10 @@ inline double NFmiGridBase::MinValue() { return (itsData ? itsData->MinValue() :
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiGridBase::MaxValue() { return (itsData ? itsData->MaxValue() : kFloatMissing); }
+inline double NFmiGridBase::MaxValue()
+{
+  return (itsData ? itsData->MaxValue() : kFloatMissing);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theClampMinValue Undocumented
@@ -481,7 +516,10 @@ inline void NFmiGridBase::Clamp(double theClampMinValue, double theClampMaxValue
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiGridBase::Normalize() { itsData->Normalize(); }
+inline void NFmiGridBase::Normalize()
+{
+  itsData->Normalize();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theInputMinValue Undocumented
@@ -506,7 +544,10 @@ inline void NFmiGridBase::Normalize(double theInputMinValue,
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiGridBase::ResetMissingValues() { itsData->ResetMissingValues(); }
+inline void NFmiGridBase::ResetMissingValues()
+{
+  itsData->ResetMissingValues();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMissingValue Undocumented
@@ -691,7 +732,10 @@ inline const NFmiPoint NFmiGridBase::LastGridPoint() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::DataIndex() const { return DataIndex(itsCurrentX, itsCurrentY); }
+inline unsigned long NFmiGridBase::DataIndex() const
+{
+  return DataIndex(itsCurrentX, itsCurrentY);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param x Undocumented
@@ -712,7 +756,10 @@ inline unsigned long NFmiGridBase::Index(unsigned long x, unsigned long y) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::Index() const { return Index(itsCurrentX, itsCurrentY); }
+inline unsigned long NFmiGridBase::Index() const
+{
+  return Index(itsCurrentX, itsCurrentY);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -730,7 +777,10 @@ inline FmiInterpolationMethod NFmiGridBase::InterpolationMethod() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGridBase::Size() const { return XNumber() * YNumber(); }
+inline unsigned long NFmiGridBase::Size() const
+{
+  return XNumber() * YNumber();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -839,6 +889,9 @@ inline void NFmiGridBase::CenterY()
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiGridBase::ClassName() const { return "NFmiGridBase"; }
+inline const char* NFmiGridBase::ClassName() const
+{
+  return "NFmiGridBase";
+}
 
 // ======================================================================

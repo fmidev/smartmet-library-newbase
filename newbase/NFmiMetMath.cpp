@@ -429,10 +429,12 @@ float FmiSummerSimmerIndex(float rh, float t)
   try
   {
     // The chart is vertical at this temperature by 0.1 degree accuracy
-    if (t <= simmer_limit) return t;
+    if (t <= simmer_limit)
+      return t;
 
     // Missing doesn't matter until now that temp > simmer_limit
-    if (rh == kFloatMissing || t == kFloatMissing) return kFloatMissing;
+    if (rh == kFloatMissing || t == kFloatMissing)
+      return kFloatMissing;
 
     // SSI
 
@@ -480,11 +482,13 @@ float FmiWindChill(float wind, float temp)
 {
   try
   {
-    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f) return kFloatMissing;
+    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f)
+      return kFloatMissing;
 
     float kmh = wind * 3.6f;
 
-    if (kmh < 5.0f) return temp + (-1.59f + 0.1345f * temp) / 5.0f * kmh;
+    if (kmh < 5.0f)
+      return temp + (-1.59f + 0.1345f * temp) / 5.0f * kmh;
 
     float wpow = std::pow(kmh, 0.16f);
 
@@ -532,7 +536,8 @@ float FmiFeelsLikeTemperature(float wind, float rh, float temp, float rad)
 {
   try
   {
-    if (temp == kFloatMissing || wind == kFloatMissing || rh == kFloatMissing) return kFloatMissing;
+    if (temp == kFloatMissing || wind == kFloatMissing || rh == kFloatMissing)
+      return kFloatMissing;
 
     // Calculate adjusted wind chill portion. Note that even though
     // the Canadien formula uses km/h, we use m/s and have fitted
@@ -585,7 +590,8 @@ float FmiOldConvectiveHumanHeatFlux(float wind, float temp)
 {
   try
   {
-    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f) return kFloatMissing;
+    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f)
+      return kFloatMissing;
 
     // Njurmelta kaava
     using namespace std;
@@ -614,7 +620,8 @@ float FmiApparentTemperature(float wind, float rh, float temp)
 {
   try
   {
-    if (temp == kFloatMissing || wind == kFloatMissing || rh == kFloatMissing) return kFloatMissing;
+    if (temp == kFloatMissing || wind == kFloatMissing || rh == kFloatMissing)
+      return kFloatMissing;
 
     // Water vapour pressure in hPa
 

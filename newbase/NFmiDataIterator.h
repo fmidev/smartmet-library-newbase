@@ -56,7 +56,10 @@ inline void NFmiDataIterator::SetDimensions(long /* dx */, long /* dy */, long /
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMask* NFmiDataIterator::Mask(void) { return itsMask; }
+inline NFmiAreaMask* NFmiDataIterator::Mask(void)
+{
+  return itsMask;
+}
 // ----------------------------------------------------------------------
 /*!
  * Anna 0-pointteri, jos haluat lopettaa maskin käytön
@@ -65,7 +68,10 @@ inline NFmiAreaMask* NFmiDataIterator::Mask(void) { return itsMask; }
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataIterator::Mask(NFmiAreaMask* newMask) { itsMask = newMask; }
+inline void NFmiDataIterator::Mask(NFmiAreaMask* newMask)
+{
+  itsMask = newMask;
+}
 // ----------------------------------------------------------------------
 /*!
  * Tätä ei aseteta, vaan se tarkistetaan
@@ -74,6 +80,9 @@ inline void NFmiDataIterator::Mask(NFmiAreaMask* newMask) { itsMask = newMask; }
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataIterator::MaskInUse(void) const { return fMaskInUse; }
+inline bool NFmiDataIterator::MaskInUse(void) const
+{
+  return fMaskInUse;
+}
 
 // ======================================================================

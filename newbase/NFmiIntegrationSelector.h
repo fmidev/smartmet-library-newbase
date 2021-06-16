@@ -61,7 +61,10 @@ class NFmiIntegrationSelector
  */
 // ----------------------------------------------------------------------
 
-inline FmiIntegrationSelector NFmiIntegrationSelector::Type(void) const { return itsType; }
+inline FmiIntegrationSelector NFmiIntegrationSelector::Type(void) const
+{
+  return itsType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -101,14 +104,20 @@ inline float NFmiIntegrationSelector::ProbabilityUpperLimit(void) const
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiIntegrationSelector::ProbabilityScale(void) const { return itsProbabilityScale; }
+inline float NFmiIntegrationSelector::ProbabilityScale(void) const
+{
+  return itsProbabilityScale;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theType Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiIntegrationSelector::Type(FmiIntegrationSelector theType) { itsType = theType; }
+inline void NFmiIntegrationSelector::Type(FmiIntegrationSelector theType)
+{
+  itsType = theType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theCondition Undocumented
@@ -162,7 +171,8 @@ inline void NFmiIntegrationSelector::ProbabilityScale(float theScale)
 
 inline void NFmiIntegrationSelector::ScaleLowerLimit(float theFactor)
 {
-  if (itsProbabilityLowerLimit != kFloatMissing) itsProbabilityLowerLimit *= theFactor;
+  if (itsProbabilityLowerLimit != kFloatMissing)
+    itsProbabilityLowerLimit *= theFactor;
 }
 
 // ----------------------------------------------------------------------
@@ -173,7 +183,8 @@ inline void NFmiIntegrationSelector::ScaleLowerLimit(float theFactor)
 
 inline void NFmiIntegrationSelector::ScaleUpperLimit(float theFactor)
 {
-  if (itsProbabilityLowerLimit != kFloatMissing) itsProbabilityUpperLimit *= theFactor;
+  if (itsProbabilityLowerLimit != kFloatMissing)
+    itsProbabilityUpperLimit *= theFactor;
 }
 
 // ======================================================================

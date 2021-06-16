@@ -477,7 +477,7 @@ void NFmiQueryDataUtil::LimitChecker::Update()
         itsLimitDifference = itsUpperLimit - itsLowerLimit;
         if (itsLimitDifference)
           return;
-        throw Fmi::Exception(BCP,"Kiertävä arvoisen parametrin max ja min rajat olivat samat.");
+        throw Fmi::Exception(BCP, "Kiertävä arvoisen parametrin max ja min rajat olivat samat.");
       }
     }
   }
@@ -595,7 +595,7 @@ NFmiQueryData *NFmiQueryDataUtil::GridQD2NewGridQD(NFmiQueryData *theSourceData,
           bool status = GridInfo2NewGridInfo(sourceInfo, destInfo);
           // interpolointi ei onnistunut??!!??
           if (!status)
-            throw Fmi::Exception(BCP,"NFmiQueryDataUtil::GridQD2NewGridQD failed");
+            throw Fmi::Exception(BCP, "NFmiQueryDataUtil::GridQD2NewGridQD failed");
         }
       }
     }
@@ -734,16 +734,16 @@ NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo)
     }
 
     if (srcInfo.SizeParams() == 0)
-      throw Fmi::Exception(BCP,"CreateEmptyData: number of parameters is zero");
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of parameters is zero");
     if (srcInfo.SizeTimes() == 0)
-      throw Fmi::Exception(BCP,"CreateEmptyData: number of times is zero");
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of times is zero");
     if (srcInfo.SizeLevels() == 0)
-      throw Fmi::Exception(BCP,"CreateEmptyData: number of levels is zero");
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of levels is zero");
     if (srcInfo.SizeLocations() == 0)
-      throw Fmi::Exception(BCP,"CreateEmptyData: number of locations is zero");
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of locations is zero");
 
     // Should never be reached
-    throw Fmi::Exception(BCP,"CreateEmptyData: total size of data descriptors is zero");
+    throw Fmi::Exception(BCP, "CreateEmptyData: total size of data descriptors is zero");
   }
   catch (...)
   {
@@ -768,7 +768,7 @@ NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo,
   try
   {
     if (srcInfo.Size() == 0)
-      throw Fmi::Exception(BCP,"Attempt to create empty querydata as a memory mapped file");
+      throw Fmi::Exception(BCP, "Attempt to create empty querydata as a memory mapped file");
 
     auto *data = new NFmiQueryData(srcInfo);
 
@@ -808,7 +808,8 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractParams(NFmiQueryData *theSourceData,
                           dataInfo->HPlaceDescriptor(),
                           dataInfo->VPlaceDescriptor());
     tmpInfo.InfoVersion(
-        dataInfo->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+        dataInfo
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
     NFmiQueryData *destData = CreateEmptyData(tmpInfo);
     if (destData)
     {
@@ -933,8 +934,8 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
     unsigned long zeroPointIndex =
         static_cast<int>(gridPoint.Y()) * gridXNumber +
         static_cast<int>(gridPoint.X());  // nollapisteindeksi tarkoittaa sen hilapisteen indeksiä,
-                                            // joka saadaan kun griPoint leikataan alas lähimpään
-                                            // kokonais hilapisteeseen
+                                          // joka saadaan kun griPoint leikataan alas lähimpään
+                                          // kokonais hilapisteeseen
     if (!theInfo.LocationIndex(zeroPointIndex))
       return value;
 
@@ -1050,7 +1051,8 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractLocations(NFmiQueryData *theSourceData,
                           locDesc,
                           dataInfo->VPlaceDescriptor());
     tmpInfo.InfoVersion(
-        dataInfo->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+        dataInfo
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
     NFmiQueryData *destData = CreateEmptyData(tmpInfo);
     if (destData)
     {
@@ -1524,7 +1526,7 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
     float value = kFloatMissing;
     unsigned long oldTimeIndex = theInfo.TimeIndex();
     theInfo.TimeIndex(theOneStepBeforeTimeIndex);
-    if (theOneStepBeforeTimeIndex ==  0)
+    if (theOneStepBeforeTimeIndex == 0)
     {
       // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
       std::vector<double> valueVec(3);
@@ -1553,9 +1555,9 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
       valueVec[2] = theInfo.PeekTimeValue(1);
       value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
     }
-    else if (theOneStepBeforeTimeIndex >  theInfo.SizeTimes() - 2)
-        value = kFloatMissing; // ei voi interpoloida, annettu indeksi väärin?
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
+    else if (theOneStepBeforeTimeIndex > theInfo.SizeTimes() - 2)
+      value = kFloatMissing;  // ei voi interpoloida, annettu indeksi väärin?
+    else                      // muuten tehdään normaali 4:n pisteen interpolointi
     {
       std::vector<double> valueVec(4);
       std::vector<double> timeVec(4);
@@ -1639,8 +1641,8 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
       value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
     }
     else if (theOneStepBeforeTimeIndex > theInfo.SizeTimes() - 2)
-      value = kFloatMissing; // ei voi interpoloida, annettu indeksi väärin?
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
+      value = kFloatMissing;  // ei voi interpoloida, annettu indeksi väärin?
+    else                      // muuten tehdään normaali 4:n pisteen interpolointi
     {
       std::vector<double> valueVec(4);
       valueVec[0] = theInfo.PeekTimeValue(-1);
@@ -1783,9 +1785,9 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
     bool useLagrange = theInterpolationMethod == kLagrange;
     unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
                                           // ajan aikaindeksi, joka löytyy lähdedatasta
-    double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1 avaruudessa
-                                      // niiden kahden aikapisteen välissä, jotka ovat lähinnä
-                                      // interpoloitavaa pistettä lähdedatassa.
+    double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1
+                                      // avaruudessa niiden kahden aikapisteen välissä, jotka ovat
+                                      // lähinnä interpoloitavaa pistettä lähdedatassa.
     std::vector<double> timeFactors;  // tähän lasketaan joka aika-askeleella mahdolliset lagrange
                                       // laskuissa tarvittavat aikakertoimet
 
@@ -1864,7 +1866,8 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
         }
       }
 
-      for (theDestination.ResetParam(); theDestination.NextParam();)  // juoksutetaan parametrit läpi
+      for (theDestination.ResetParam();
+           theDestination.NextParam();)  // juoksutetaan parametrit läpi
       {
         const NFmiParam *tmpParam = theDestination.Param().GetParam();
         NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
@@ -2452,7 +2455,8 @@ static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &the
     bool is1TimeBag = !theTimeDescriptor1.UseTimeList();
     bool is2TimeBag = !theTimeDescriptor2.UseTimeList();
     if (is1TimeBag ^ is2TimeBag)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiQueryDataUtil::MakeWantedTimeDescriptor: Ei osaa yhdistää timeList- ja "
           "timeBag-dataa.");
 
@@ -2528,7 +2532,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(NFmiFastQueryInfo &theSourceInfo1
                                                                 theOriginTimeFunction,
                                                                 fMakeChangingTimeResolution);
     if (newTimeDesc.Resolution() == 0)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiQueryDataUtil::CombineTimes: Aikaresoluutioksi tuli 0, tarkista onko alkuperäisissä "
           "datoissa aikaresoluutiota.");
 
@@ -2572,7 +2577,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(NFmiFastQueryInfo &theSourceInfo1
                  theSourceInfo2.NextLocation();)
             {
               for (destInfo.ResetLevel(), theSourceInfo1.ResetLevel(), theSourceInfo2.ResetLevel();
-                   destInfo.NextLevel() && theSourceInfo1.NextLevel() && theSourceInfo2.NextLevel();)
+                   destInfo.NextLevel() && theSourceInfo1.NextLevel() &&
+                   theSourceInfo2.NextLevel();)
               {
                 float value = kFloatMissing;
                 if (useInfo1)
@@ -2670,7 +2676,7 @@ static const NFmiLevel &FindFirstLevel(float theLevelValue,
       if (static_cast<unsigned int>(theLevelValue) == theGridRecordDatas[i]->itsLevel.LevelValue())
         return theGridRecordDatas[i]->itsLevel;
     }
-    throw Fmi::Exception(BCP,"Error in FindFirstLevel-function.");
+    throw Fmi::Exception(BCP, "Error in FindFirstLevel-function.");
   }
   catch (...)
   {
@@ -2689,7 +2695,7 @@ static const NFmiDataIdent &FindFirstParam(int theParId,
       if (static_cast<unsigned int>(theParId) == theGridRecordDatas[i]->itsParam.GetParamIdent())
         return theGridRecordDatas[i]->itsParam;
     }
-    throw Fmi::Exception(BCP,"Error in FindFirstParam-function.");
+    throw Fmi::Exception(BCP, "Error in FindFirstParam-function.");
   }
   catch (...)
   {
@@ -2779,7 +2785,8 @@ static NFmiHPlaceDescriptor GetHPlaceDesc(NFmiQueryDataUtil::GridDataVector &the
     size_t gribCount = theGridRecordDatas.size();
     for (size_t i = 1; i < gribCount; i++)
       if (!(tmpGrid == theGridRecordDatas[i]->itsGrid))
-        throw Fmi::Exception(BCP,"Kaikki grid-määritykset eivät olleet samanlaisia! Lopetetaan...");
+        throw Fmi::Exception(BCP,
+                             "Kaikki grid-määritykset eivät olleet samanlaisia! Lopetetaan...");
 
     NFmiGrid grid(tmpGrid.itsArea, tmpGrid.itsNX, tmpGrid.itsNY);
 
@@ -2837,11 +2844,11 @@ static void FillQDataWithGribRecords(NFmiQueryData &theQData,
       if (info.Time(tmp->itsValidTime) && info.Level(tmp->itsLevel) && info.Param(tmp->itsParam))
       {
         if (!info.SetValues(tmp->itsGridData))
-          throw Fmi::Exception(BCP,"qdatan täyttö gribi datalla epäonnistui, lopetetaan...");
+          throw Fmi::Exception(BCP, "qdatan täyttö gribi datalla epäonnistui, lopetetaan...");
       }
       else
-        throw Fmi::Exception(BCP,
-            "qdatan täyttö ohjelma ei saanut asetettua aikaa/paikkaa/leveliä, lopetetaan...");
+        throw Fmi::Exception(
+            BCP, "qdatan täyttö ohjelma ei saanut asetettua aikaa/paikkaa/leveliä, lopetetaan...");
     }
   }
   catch (...)
@@ -3136,7 +3143,8 @@ static void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
 
           if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
             precipitation = precipitation1h;
-          else if (precipitation == kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
+          else if (precipitation ==
+                   kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
           {
             if (precipitation3h != kFloatMissing)  // 3. priority 3h sateelle
             {
@@ -3186,7 +3194,8 @@ static void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
             {
               if (precipitation <= 0)
                 hSade = 0;
-              else if ((precipitation != kFloatMissing && precipitation > 0) || doHSade1ZeroOnRainFix)
+              else if ((precipitation != kFloatMissing && precipitation > 0) ||
+                       doHSade1ZeroOnRainFix)
               {
                 hSade = 62;  // alustetaan sade vesisateeksi
                 theSourceInfo.ParamIndex(temperatureIndex);
@@ -3910,7 +3919,7 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
     {
       NFmiTimeBag tbag;
       if (!ConvertTimeList2TimeBag(*tdesc.ValidTimeList(), tbag))
-        throw Fmi::Exception(BCP,"Unable to force a time bag version of the given querydata");
+        throw Fmi::Exception(BCP, "Unable to force a time bag version of the given querydata");
       tdesc = NFmiTimeDescriptor(tdesc.OriginTime(), tbag);
     }
 
@@ -3924,7 +3933,8 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
 
       unsigned int usedThreadCount = boost::thread::hardware_concurrency();
       if (theMaxUsedThreadCount > 0)
-        usedThreadCount = std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
+        usedThreadCount =
+            std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
       if (usedThreadCount > destInfo.SizeTimes())
         usedThreadCount = destInfo.SizeTimes();
 
@@ -3957,7 +3967,8 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
         for (unsigned int i = 0; i < usedThreadCount; i++)
         {
           targetInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(destInfo));
-          sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theSourceInfo));
+          sourceInfos[i] =
+              boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theSourceInfo));
         }
 
         unsigned long usedStartTimeIndex = 0;
@@ -4103,7 +4114,8 @@ bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
 {
   try
   {
-    auto wantedTimeSteps = int(theWantedHoursFromStart / (theInfo1.ValidTimes().Resolution() / 60.));
+    auto wantedTimeSteps =
+        int(theWantedHoursFromStart / (theInfo1.ValidTimes().Resolution() / 60.));
     float tmpValue = kFloatMissing;
     for (theInfo2.ResetParam(); theInfo2.NextParam();)
     {
@@ -4113,10 +4125,10 @@ bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
       for (theInfo2.ResetTime(), theInfo1.ResetTime(); theInfo2.NextTime() && theInfo1.NextTime();
            timeCounter++)
       {
-        if (timeCounter >= wantedTimeSteps)  // esim. jos halutaan 15 tuntia alusta, ehto ottaa mukaan
-                                             // ajat 0-15 eli periaatteessa 16 tunnin datan, mutta se
-                                             // on sama kuin 15 tuntia alusta eteenpäin.
-          continue;                          // kopioidaan dataa vain haluttu aikajakso alusta
+        if (timeCounter >= wantedTimeSteps)  // esim. jos halutaan 15 tuntia alusta, ehto ottaa
+                                             // mukaan ajat 0-15 eli periaatteessa 16 tunnin datan,
+                                             // mutta se on sama kuin 15 tuntia alusta eteenpäin.
+          continue;  // kopioidaan dataa vain haluttu aikajakso alusta
         for (theInfo2.ResetLocation(), theInfo1.ResetLocation();
              theInfo2.NextLocation() && theInfo1.NextLocation();)
         {
@@ -4690,7 +4702,8 @@ NFmiQueryData *NFmiQueryDataUtil::DoTimeFiltering(NFmiQueryData *theSourceData,
             static_cast<int>(round((theTimeOffsetEndInMinutes - theTimeOffsetStartInMinutes) /
                                    static_cast<int>(sourceInfo.TimeResolution()))) +
             1;
-        int startShift = theTimeOffsetStartInMinutes / static_cast<int>(sourceInfo.TimeResolution());
+        int startShift =
+            theTimeOffsetStartInMinutes / static_cast<int>(sourceInfo.TimeResolution());
         NFmiRelativeTimeIntegrationIterator2 timeIterator(&sourceInfo, stepNumber, startShift);
         NFmiCalculator calculator(&timeIterator, modifier);
         sourceInfo.TimeIntegrationCalculator(&calculator);
@@ -4837,17 +4850,17 @@ static void CheckCropLimits(int nx, int ny, int theLeft, int theTop, int theRigh
   {
     // Tarkastellaan, että annetut croppi rajat olivat järkeviä.
     if (theLeft < 0 || theLeft >= nx)
-      throw Fmi::Exception(BCP,"cropin vasen-reuna oli yli originaali hilan rajojen.");
+      throw Fmi::Exception(BCP, "cropin vasen-reuna oli yli originaali hilan rajojen.");
     if (theRight < 0 || theRight >= nx)
-      throw Fmi::Exception(BCP,"cropin oikea-reuna oli yli originaali hilan rajojen.");
+      throw Fmi::Exception(BCP, "cropin oikea-reuna oli yli originaali hilan rajojen.");
     if (theBottom < 0 || theBottom >= ny)
-      throw Fmi::Exception(BCP,"cropin ala-reuna oli yli originaali hilan rajojen.");
+      throw Fmi::Exception(BCP, "cropin ala-reuna oli yli originaali hilan rajojen.");
     if (theTop < 0 || theTop >= ny)
-      throw Fmi::Exception(BCP,"cropin ylä-reuna oli yli originaali hilan rajojen.");
+      throw Fmi::Exception(BCP, "cropin ylä-reuna oli yli originaali hilan rajojen.");
     if (theLeft > theRight)
-      throw Fmi::Exception(BCP,"cropin vasen-reuna oli yli oikean reunan.");
+      throw Fmi::Exception(BCP, "cropin vasen-reuna oli yli oikean reunan.");
     if (theBottom > theTop)
-      throw Fmi::Exception(BCP,"cropin ala-reuna oli yli ylä-reunan.");
+      throw Fmi::Exception(BCP, "cropin ala-reuna oli yli ylä-reunan.");
   }
   catch (...)
   {
@@ -4959,8 +4972,10 @@ NFmiQueryData *NFmiQueryDataUtil::QDCrop(
       {
         NFmiGrid grid(area, theRight - theLeft + 1, theTop - theBottom + 1);
         NFmiHPlaceDescriptor hPlace(grid);
-        NFmiQueryInfo innerInfo(
-            theInfo.ParamDescriptor(), theInfo.TimeDescriptor(), hPlace, theInfo.VPlaceDescriptor());
+        NFmiQueryInfo innerInfo(theInfo.ParamDescriptor(),
+                                theInfo.TimeDescriptor(),
+                                hPlace,
+                                theInfo.VPlaceDescriptor());
         data = NFmiQueryDataUtil::CreateEmptyData(innerInfo);
         if (data)
         {
@@ -5232,7 +5247,7 @@ static NFmiParamDescriptor MakeParamDesc(
         paramSet.insert(i->Param());
     }
     if (paramSet.empty())
-      throw Fmi::Exception(BCP,"Error in MakeParamDesc, no parameters were found.");
+      throw Fmi::Exception(BCP, "Error in MakeParamDesc, no parameters were found.");
 
     std::vector<NFmiDataIdent> paramVec(paramSet.begin(), paramSet.end());
 
@@ -5293,7 +5308,7 @@ static NFmiVPlaceDescriptor MakeVPlaceDesc(
         levelSet.insert(*(i->Level()));
     }
     if (levelSet.empty())
-      throw Fmi::Exception(BCP,"Error in MakeVPlaceDesc, no levels were found.");
+      throw Fmi::Exception(BCP, "Error in MakeVPlaceDesc, no levels were found.");
 
     std::vector<NFmiLevel> levelVec(levelSet.begin(), levelSet.end());
 
@@ -5324,16 +5339,16 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
   {
     if (theFInfoVectorIn.size() == 0)
       throw Fmi::Exception(BCP,
-          "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
+                           "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
     auto &firstInfo = theFInfoVectorIn[0];
     if (firstInfo == nullptr)
-      throw Fmi::Exception(BCP,"Error in MakeCombinedDatasMetaInfo, 1. fastInfo was 0-pointer.");
+      throw Fmi::Exception(BCP, "Error in MakeCombinedDatasMetaInfo, 1. fastInfo was 0-pointer.");
 
     auto paramDescriptor = ::MakeParamDescriptor(theFInfoVectorIn, firstInfo, fFirstInfoDefines);
     NFmiMetTime origTime = firstInfo->OriginTime();
     NFmiTimeDescriptor timeDesc(origTime, ::MakeTimeList(theValidTimesIn));
     if (firstInfo->Grid() == nullptr)
-      throw Fmi::Exception(BCP,"Error in MakeCombinedDatasMetaInfo, 1. fastInfo's has no grid.");
+      throw Fmi::Exception(BCP, "Error in MakeCombinedDatasMetaInfo, 1. fastInfo's has no grid.");
     NFmiHPlaceDescriptor hPlaceDesc = firstInfo->HPlaceDescriptor();
     NFmiVPlaceDescriptor vPlaceDesc;
     if (fFirstInfoDefines)
@@ -5625,8 +5640,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
     auto baseQData = GetNewestQueryData(theBaseDataFileFilter);
     auto filenames = GetFileNamesForCombinationWork(theFileFilter);
 
-    // fileFilteristä pitää ottaa hakemisto irti, koska PatternFiles-funktio palautta vain tiedostojen
-    // nimet, ei polkua mukana
+    // fileFilteristä pitää ottaa hakemisto irti, koska PatternFiles-funktio palautta vain
+    // tiedostojen nimet, ei polkua mukana
     std::string dirName = GetFileFilterDirectory(theFileFilter);
     auto qDataVector = ReadQueryDataFilesForCombinationWork(
         baseQData, dirName, filenames, theStopFunctor, fDoRebuildCheck);
@@ -5817,9 +5832,9 @@ static void FillGridDataWithLocationInterpolation(
 
     const auto targetXSize = theTargetInfo.GridXNumber();
 
-    // Process interpolation in source data order to prevent cache trashing, the file may be huge and
-    // memory mapped. Split processing based on parameter, their respecive data is in continous disk
-    // blocks. Then we sort based on the XY-location, and then process their levels and times.
+    // Process interpolation in source data order to prevent cache trashing, the file may be huge
+    // and memory mapped. Split processing based on parameter, their respecive data is in continous
+    // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
     // Build the location to location mapping
     std::vector<IndexMapping> index_mappings;
@@ -5840,10 +5855,10 @@ static void FillGridDataWithLocationInterpolation(
 
     // Sort based on source data grid ordering
 
-    std::sort(
-        index_mappings.begin(),
-        index_mappings.end(),
-        [](const IndexMapping &lhs, const IndexMapping &rhs) { return lhs.source < rhs.source; });
+    std::sort(index_mappings.begin(),
+              index_mappings.end(),
+              [](const IndexMapping &lhs, const IndexMapping &rhs)
+              { return lhs.source < rhs.source; });
 
     // Then process each param, location, level and time
 
@@ -5911,9 +5926,9 @@ static void FillGridDataWithTimeAndLocationInterpolation(
 
     const auto targetXSize = theTargetInfo.GridXNumber();
 
-    // Process interpolation in source data order to prevent cache trashing, the file may be huge and
-    // memory mapped. Split processing based on parameter, their respecive data is in continous disk
-    // blocks. Then we sort based on the XY-location, and then process their levels and times.
+    // Process interpolation in source data order to prevent cache trashing, the file may be huge
+    // and memory mapped. Split processing based on parameter, their respecive data is in continous
+    // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
     // Build the location to location mapping
     std::vector<IndexMapping> index_mappings;
@@ -5934,10 +5949,10 @@ static void FillGridDataWithTimeAndLocationInterpolation(
 
     // Sort based on source data grid ordering
 
-    std::sort(
-        index_mappings.begin(),
-        index_mappings.end(),
-        [](const IndexMapping &lhs, const IndexMapping &rhs) { return lhs.source < rhs.source; });
+    std::sort(index_mappings.begin(),
+              index_mappings.end(),
+              [](const IndexMapping &lhs, const IndexMapping &rhs)
+              { return lhs.source < rhs.source; });
 
     // Then process each param, location, level and time
 
@@ -6056,8 +6071,11 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
         FillGridDataWithoutInterpolation(
             theSourceInfo, theTargetInfo, theStartTimeIndex, theEndTimeIndex);
       else
-        FillGridDataWithLocationInterpolation(
-            theSourceInfo, theTargetInfo, theLocationCacheMatrix, theStartTimeIndex, theEndTimeIndex);
+        FillGridDataWithLocationInterpolation(theSourceInfo,
+                                              theTargetInfo,
+                                              theLocationCacheMatrix,
+                                              theStartTimeIndex,
+                                              theEndTimeIndex);
     }
   }
   catch (...)
@@ -6080,7 +6098,8 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
   try
   {
     if (theStartInd > theEndInd)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "Error in NFmiQueryDataUtil::CalcTimeIndexiesForThreeThreads: time-indexies given wrong "
           "way?");
 
@@ -6118,8 +6137,8 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
     {
       theStartInd1 = theStartInd;
       theStartInd2 = theStartInd + partSize;
-      theStartInd3 =
-          theStartInd + partSize * 2;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
+      theStartInd3 = theStartInd +
+                     partSize * 2;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
     }
     else if (totalSize % 3 == 2)
     {
@@ -6196,7 +6215,7 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                              1,
                              theLogger);
 
-#else  // DISABLE_THIS_THREAD
+#else   // DISABLE_THIS_THREAD
 
       if (fUseOnlyOneThread || target1.SizeTimes() < 3)
       {  // jos aikoja oli alle kolme, tai ei haluta jakaa työtä, lasketaan data yhdessä säikeessä
@@ -6417,7 +6436,8 @@ bool NFmiQueryDataUtil::AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *
     {
       if (AreAreasEqual(theGrid1->Area(), theGrid2->Area()))
       {
-        if (theGrid1->XNumber() == theGrid2->XNumber() && theGrid1->YNumber() == theGrid2->YNumber())
+        if (theGrid1->XNumber() == theGrid2->XNumber() &&
+            theGrid1->YNumber() == theGrid2->YNumber())
           return true;
       }
     }
@@ -6471,8 +6491,8 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
   {
     if (theArea1 && theArea2)
     {
-      if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea ||
-          theArea1->ClassId() == kNFmiGnomonicArea)
+      if (theArea1->ClassId() == kNFmiStereographicArea ||
+          theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
       {
         if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
             static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())

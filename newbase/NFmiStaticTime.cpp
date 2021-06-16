@@ -184,11 +184,10 @@ void NFmiStaticTime::_set2CurrentLocalTime(time_t theTime)
     struct tm xTime;
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::localtime_s(&xTime, &theTime);
 
@@ -224,11 +223,10 @@ struct tm NFmiStaticTime::GetSystemTime()
     tm ret;
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::localtime_s(&ret, &t);
 
@@ -365,14 +363,20 @@ bool NFmiStaticTime::IsLessThan(const NFmiSortable &aFmiTest) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiStaticTime::SetMissing() { fYear = 0; }
+void NFmiStaticTime::SetMissing()
+{
+  fYear = 0;
+}
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStaticTime::IsMissing() { return fYear == 0; }
+bool NFmiStaticTime::IsMissing()
+{
+  return fYear == 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param year Undocumented
@@ -834,7 +838,8 @@ std::ostream &NFmiStaticTime::Write(std::ostream &oStream) const
     for (int i = 0; i < t->tm_mon; i++)
     {
       epoch += mon[m] * DAY;
-      if (m == 1 && y % 4 == 0 && (y % 100 != 0 || y % 400 == 0)) epoch += DAY;
+      if (m == 1 && y % 4 == 0 && (y % 100 != 0 || y % 400 == 0))
+        epoch += DAY;
       if (++m > 11)
       {
         m = 0;

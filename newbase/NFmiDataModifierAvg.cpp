@@ -37,14 +37,20 @@ NFmiDataModifierAvg::NFmiDataModifierAvg(const NFmiDataModifierAvg& theOther)
 
     = default;
 
-NFmiDataModifier* NFmiDataModifierAvg::Clone() const { return new NFmiDataModifierAvg(*this); }
+NFmiDataModifier* NFmiDataModifierAvg::Clone() const
+{
+  return new NFmiDataModifierAvg(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierAvg::Avg() { return itsAverage; }
+float NFmiDataModifierAvg::Avg()
+{
+  return itsAverage;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -66,7 +72,10 @@ void NFmiDataModifierAvg::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierAvg::Calculate(NFmiQueryInfo* theQI) { Calculate(theQI->FloatValue()); }
+void NFmiDataModifierAvg::Calculate(NFmiQueryInfo* theQI)
+{
+  Calculate(theQI->FloatValue());
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -100,5 +109,8 @@ float NFmiDataModifierAvg::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-long NFmiDataModifierAvg::Counter() { return itsCounter; }
+long NFmiDataModifierAvg::Counter()
+{
+  return itsCounter;
+}
 // ======================================================================

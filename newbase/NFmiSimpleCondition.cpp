@@ -69,7 +69,8 @@ double CalculateValue(double value1,
       case NFmiAreaMask::Pow:
         return std::pow(value1, value2);
       default:
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             "Internal program error with SimpleCondition's calculation operator - unknown "
             "operator");
     }
@@ -137,8 +138,9 @@ double NFmiSimpleConditionPart::Value(const NFmiCalculationParams &theCalculatio
     if (!itsMask2)
       return value1;
 
-    double value2 = itsMask2->Value(theCalculationParams,
-        ::UseTimeInterpolation(isMask2StationaryData, fUseTimeInterpolationAlways));
+    double value2 =
+        itsMask2->Value(theCalculationParams,
+                        ::UseTimeInterpolation(isMask2StationaryData, fUseTimeInterpolationAlways));
     return ::CalculateValue(value1, value2, itsCalculationOperator);
   }
   catch (...)
@@ -271,7 +273,8 @@ static bool EvaluateCondition(double value1, FmiMaskOperation operand, double va
       case kFmiMaskNotEqual:
         return value1 != value2;
       default:
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             "Error in SimpleCondition's EvaluateCondition function: unsupported condition operand");
     }
   }
@@ -329,7 +332,6 @@ bool NFmiSingleCondition::CheckCondition(const NFmiCalculationParams &theCalcula
     if (!part3)
       return ::EvaluateCondition(value1, conditionOperand1, value2);
 
-
     double value3 = part3->Value(theCalculationParams, fUseTimeInterpolationAlways);
     return ::EvaluateRangeCondition(value1, conditionOperand1, value2, conditionOperand2, value3);
   }
@@ -367,7 +369,6 @@ bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
     double value2 = part2->HeightValue(theHeight, theCalculationParams);
     if (!part3)
       return ::EvaluateCondition(value1, conditionOperand1, value2);
-
 
     double value3 = part3->HeightValue(theHeight, theCalculationParams);
     return ::EvaluateRangeCondition(value1, conditionOperand1, value2, conditionOperand2, value3);
@@ -450,7 +451,8 @@ static bool EvaluateBinaryCondition(bool condition1,
       case NFmiAreaMask::kXor:
         return condition1 ^ condition2;
       default:
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             "Error in SimpleCondition's EvaluateCondition function: unsupported binary operator");
     }
   }

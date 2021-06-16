@@ -57,7 +57,8 @@ class NFmiVoidPtrItem
  public:
   ~NFmiVoidPtrItem(void)
   {
-    if (itsValue->Remove()) delete itsValue;
+    if (itsValue->Remove())
+      delete itsValue;
   }
 
   NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = 0) : itsNextItem(item), itsValue()

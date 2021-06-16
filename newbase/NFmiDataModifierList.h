@@ -55,7 +55,10 @@ class NFmiDataModifierList : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataModifierList::BoolOperation(float) { return false; }
+inline bool NFmiDataModifierList::BoolOperation(float)
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -63,7 +66,10 @@ inline bool NFmiDataModifierList::BoolOperation(float) { return false; }
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifierList::FloatOperation(float theValue) { return theValue; }
+inline float NFmiDataModifierList::FloatOperation(float theValue)
+{
+  return theValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -88,6 +94,9 @@ inline void NFmiDataModifierList::Clear(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiDataModifierList::NumberOfItems(void) { return itsList.NumberOfItems(); }
+inline unsigned long NFmiDataModifierList::NumberOfItems(void)
+{
+  return itsList.NumberOfItems();
+}
 
 // ======================================================================

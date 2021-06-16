@@ -87,28 +87,40 @@ class NFmiTransformList
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiTransformList::FirstPair(void) { return itsVeryFirstPair; }
+inline const NFmiPoint NFmiTransformList::FirstPair(void)
+{
+  return itsVeryFirstPair;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return The last of all of the pairs in the list
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiTransformList::LastPair(void) { return itsVeryLastPair; }
+inline const NFmiPoint NFmiTransformList::LastPair(void)
+{
+  return itsVeryLastPair;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return The first input value of all of the pairs in the list
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiTransformList::FirstInputValue(void) { return itsVeryFirstPair.X(); }
+inline double NFmiTransformList::FirstInputValue(void)
+{
+  return itsVeryFirstPair.X();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return The last input value of all of the pairs in the list
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiTransformList::LastInputValue(void) { return itsVeryLastPair.X(); }
+inline double NFmiTransformList::LastInputValue(void)
+{
+  return itsVeryLastPair.X();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theRangeIndex Undocumented
@@ -163,14 +175,20 @@ inline double NFmiTransformList::LastOutputValue(int theRangeIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::RangeIndex(void) { return itsPreviousInputRangeIndex; }
+inline int NFmiTransformList::RangeIndex(void)
+{
+  return itsPreviousInputRangeIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::MaxRangeIndex(void) { return itsCurrentMaxIndex; }
+inline int NFmiTransformList::MaxRangeIndex(void)
+{
+  return itsCurrentMaxIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theRangeIndex Undocumented
@@ -189,7 +207,10 @@ inline bool NFmiTransformList::IsConstantRange(int theRangeIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::PreviousInputRangeIndex(void) { return itsPreviousInputRangeIndex; }
+inline int NFmiTransformList::PreviousInputRangeIndex(void)
+{
+  return itsPreviousInputRangeIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * Global output operator from NFmiTransformList class
@@ -213,6 +234,9 @@ inline std::ostream& operator<<(std::ostream& os, const NFmiTransformList& item)
  * \return The input stream read from
  */
 // ----------------------------------------------------------------------
-inline std::istream& operator>>(std::istream& is, NFmiTransformList& item) { return item.Read(is); }
+inline std::istream& operator>>(std::istream& is, NFmiTransformList& item)
+{
+  return item.Read(is);
+}
 
 // ======================================================================

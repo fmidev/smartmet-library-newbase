@@ -51,7 +51,8 @@ void NFmiRelativeTimeIntegrationIterator::DoForEach(NFmiDataModifier* theDataMod
 {
   try
   {
-    if (!theDataModifier) return;
+    if (!theDataModifier)
+      return;
 
     theDataModifier->Clear();
 
@@ -102,7 +103,8 @@ void NFmiRelativeTimeIntegrationIterator2::DoForEach(NFmiDataModifier* theDataMo
 {
   try
   {
-    if (!theDataModifier) return;
+    if (!theDataModifier)
+      return;
 
     theDataModifier->Clear();
 

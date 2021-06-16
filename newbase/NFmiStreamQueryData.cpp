@@ -41,10 +41,12 @@ const string find_newest_querydata(const string &thePath)
 {
   try
   {
-    if (!NFmiFileSystem::DirectoryExists(thePath)) return "";
+    if (!NFmiFileSystem::DirectoryExists(thePath))
+      return "";
 
     list<string> files = NFmiFileSystem::DirectoryFiles(thePath);
-    if (files.empty()) return "";
+    if (files.empty())
+      return "";
 
     string newestfile;
     time_t newesttime = 0;
@@ -95,7 +97,7 @@ NFmiStreamQueryData::~NFmiStreamQueryData()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -212,7 +214,8 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
   try
   {
     auto version = static_cast<unsigned short>(theLibVersion);
-    if (version < 5) version = 5;
+    if (version < 5)
+      version = 5;
 
     ofstream dataFile(theFileName, ios::binary | ios::out);
     if (dataFile)
@@ -266,7 +269,8 @@ bool NFmiStreamQueryData::ReadLatestData(const NFmiString &theFileName,
       return ReadData(theFileName, theQueryData);
 
     string newestfile = NFmiFileSystem::NewestFile(theFileName.CharPtr());
-    if (newestfile.empty()) return false;
+    if (newestfile.empty())
+      return false;
 
     string fullname = theFileName.CharPtr();
     fullname += '/';
@@ -298,7 +302,8 @@ bool NFmiStreamQueryData::SafeReadLatestData(const NFmiString &theFileName,
       return ReadData(theFileName, theQueryData);
 
     string newestfile = find_newest_querydata(theFileName.CharPtr());
-    if (newestfile.empty()) return false;
+    if (newestfile.empty())
+      return false;
 
     string fullname = theFileName.CharPtr();
     fullname += '/';
@@ -349,7 +354,8 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
     catch (char *msg)
     {
       cerr << msg << endl;
-      cerr << "Could not open file: " << static_cast<char *>(theFileName) << " for reading." << endl;
+      cerr << "Could not open file: " << static_cast<char *>(theFileName) << " for reading."
+           << endl;
       dataFile.close();
       delete theTempData;  // siivotaan jäljet kun ongelmia tuli
       theTempData = nullptr;
@@ -365,7 +371,7 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
       dataFile.close();
       delete theTempData;  // siivotaan jäljet kun ongelmia tuli
       theTempData = 0;
-      throw Fmi::Exception(BCP,errStr);
+      throw Fmi::Exception(BCP, errStr);
     }
 #endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
     catch (...)
@@ -453,7 +459,7 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
 {
   try
   {
-  // Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
+    // Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
 #ifndef UNIX
     int result = ::_setmode(_fileno(stdin), _O_BINARY);
     if (result == -1)
@@ -514,12 +520,14 @@ bool NFmiStreamQueryData::WriteCout(NFmiQueryData *theQueryData) const
   {
     NFmiQueryData *tempData = theQueryData ? theQueryData : itsQueryData;
     tempData->UseBinaryStorage(true);
-    if (tempData->InfoVersion() < 6.) tempData->InfoVersion(DefaultFmiInfoVersion);
+    if (tempData->InfoVersion() < 6.)
+      tempData->InfoVersion(DefaultFmiInfoVersion);
 
-  // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
+      // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
 #ifndef UNIX
     int result = ::_setmode(_fileno(stdout), _O_BINARY);
-    if (result == -1) cerr << "Could not set standard input into binary mode!";
+    if (result == -1)
+      cerr << "Could not set standard input into binary mode!";
 #endif
 
     cout << *tempData;

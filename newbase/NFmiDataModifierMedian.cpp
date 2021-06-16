@@ -79,7 +79,10 @@ void NFmiDataModifierMedian::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierMedian::Calculate(NFmiQueryInfo* theQI) { Calculate(theQI->FloatValue()); }
+void NFmiDataModifierMedian::Calculate(NFmiQueryInfo* theQI)
+{
+  Calculate(theQI->FloatValue());
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -100,7 +103,8 @@ void NFmiDataModifierMedian::Clear()
 
 float NFmiDataModifierMedian::CalculationResult()
 {
-  if (fCalculationResultOk) return Median();
+  if (fCalculationResultOk)
+    return Median();
 
   return kFloatMissing;
 }

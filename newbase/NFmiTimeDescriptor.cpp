@@ -34,7 +34,7 @@ NFmiTimeDescriptor::~NFmiTimeDescriptor()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -1007,7 +1007,8 @@ bool NFmiTimeDescriptor::PreviousActive()
   try
   {
     while (Previous())
-      if (IsActive()) return true;
+      if (IsActive())
+        return true;
 
     return false;
   }
@@ -1028,7 +1029,8 @@ bool NFmiTimeDescriptor::NextActive()
   try
   {
     while (Next())
-      if (IsActive()) return true;
+      if (IsActive())
+        return true;
 
     return false;
   }
@@ -1228,8 +1230,8 @@ NFmiTimeDescriptor NFmiTimeDescriptor::Combine(const NFmiTimeDescriptor &theComb
       }
       else if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
       {
-        NFmiTimeList timeList =
-            itsTimeList->Combine(*(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);
+        NFmiTimeList timeList = itsTimeList->Combine(
+            *(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);
         return NFmiTimeDescriptor(
             itsOriginTimeBag->FirstTime(), timeList, itsIsLocalTime, itsIsInterpolation);
       }

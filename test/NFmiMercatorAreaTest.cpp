@@ -39,7 +39,8 @@ void areastr()
   std::string expected = "mercator:20,60,40,70";
 
   std::string result = area.AreaStr();
-  if (result != expected) TEST_FAILED("Expected " + expected + ", got " + result + " instead");
+  if (result != expected)
+    TEST_FAILED("Expected " + expected + ", got " + result + " instead");
 
   TEST_PASSED();
 }
@@ -55,7 +56,8 @@ void wkt()
       "Sphere\",6371220,0]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]],"
       "PROJECTION[\"Transverse_Mercator\"],UNIT[\"Metre\",1.0]]";
   std::string result = area.WKT();
-  if (result != expected) TEST_FAILED("Expected " + expected + ", got " + result + " instead");
+  if (result != expected)
+    TEST_FAILED("Expected " + expected + ", got " + result + " instead");
 
   TEST_PASSED();
 }

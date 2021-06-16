@@ -80,7 +80,10 @@ void NFmiRegressionItem::Calculate(NFmiQueryInfo *theData)
  */
 // ----------------------------------------------------------------------
 
-float NFmiRegressionItem::CalculationResult() { return static_cast<float>(itsReturnValue); }
+float NFmiRegressionItem::CalculationResult()
+{
+  return static_cast<float>(itsReturnValue);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

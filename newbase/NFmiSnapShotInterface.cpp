@@ -27,7 +27,7 @@ NFmiSnapShotInterface::~NFmiSnapShotInterface()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }

@@ -355,8 +355,8 @@ bool NFmiPreProcessor::Include()
       newString += oldString.substr(0, pos);
       posHelp = oldString.find_first_of("\n", pos + lenDef + 1);
       fileName = oldString.substr(pos + lenDef + 1, posHelp - pos - lenDef - 1);
-      NFmiStringTools::TrimR(fileName);  // tämä viritys johtuu metkun editorin smarttool dialogista,
-                                         // poistetaan mahd. white spacet nimen lopusta
+      NFmiStringTools::TrimR(fileName);  // tämä viritys johtuu metkun editorin smarttool
+                                         // dialogista, poistetaan mahd. white spacet nimen lopusta
       RemovePossibleCharactersFromStartAndEnd(fileName, '"');  // tämä poistaa nimestä ""-merkit jos
                                                                // include:ssa on laitettu tiedoston
                                                                // nimi heittomerkkeihin
@@ -443,9 +443,11 @@ bool NFmiPreProcessor::IncludeFile(const string &theFileName, string &theFileCon
                                        itsConditionalNotBeginDirective,
                                        itsConditionalEndDirective,
                                        itsConditionalElseDirective);
-    if (IsInclude()) stripper.SetIncluding(itsIncludeDirective, itsIncludePath, itsIncludeExtension);
+    if (IsInclude())
+      stripper.SetIncluding(itsIncludeDirective, itsIncludePath, itsIncludeExtension);
 
-    if (fUseReplace) stripper.SetDefine(itsDefineDirective, true);
+    if (fUseReplace)
+      stripper.SetDefine(itsDefineDirective, true);
 
     if (!stripper.ReadAndStripFile(theFileName))
     {
@@ -593,8 +595,9 @@ bool NFmiPreProcessor::StripConditionally()
   {
     if (!fConditionValue)
     {
-      if (!StripDoubleEnds(
-              itsConditionalBeginDirective, itsConditionalEndDirective, itsConditionalElseDirective))
+      if (!StripDoubleEnds(itsConditionalBeginDirective,
+                           itsConditionalEndDirective,
+                           itsConditionalElseDirective))
         return false;
 
       if (!itsConditionalNotBeginDirective.empty())
@@ -848,7 +851,8 @@ bool NFmiPreProcessor::Define()
             line.replace(pos, it->first.size(), it->second);
 
             // Safety against eternal loop
-            if (++count > 100) return false;
+            if (++count > 100)
+              return false;
           }
         }
 
@@ -865,12 +869,10 @@ bool NFmiPreProcessor::Define()
 
         // Store the definition for local substitution (current file) or to the replace map.
         //
-        // Local substitution ('define' mode) is used for upcoming definitions in replace mode too if
-        // definition
-        // for the define directive having itself as the value is encountered. Local substitution
-        // stays in effect
-        // for the rest of the current file (not to the files included) or until a definition with any
-        // other value is made.
+        // Local substitution ('define' mode) is used for upcoming definitions in replace mode too
+        // if definition for the define directive having itself as the value is encountered. Local
+        // substitution stays in effect for the rest of the current file (not to the files included)
+        // or until a definition with any other value is made.
 
         if (fUseReplace && (name == itsDefineDirective))
           fUseDefine = (value == itsDefineDirective);

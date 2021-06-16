@@ -780,11 +780,11 @@ std::string &TrimL(std::string &theString, char theChar)
     unsigned int pos = 0;
     if (theChar == ' ')
     {
- #ifdef PERKELEEN_296
+#ifdef PERKELEEN_296
       while (pos < theString.size() && isspace(theString[pos]))
 #else
       while (pos < theString.size() && ::isspace(static_cast<unsigned char>(theString[pos])))
-  // while(pos<theString.size() && ::isspace(theString[pos]))
+      // while(pos<theString.size() && ::isspace(theString[pos]))
 #endif
         pos++;
     }
@@ -1044,7 +1044,7 @@ const std::map<std::string, std::string> ParseQueryString()
   {
     const char *env = getenv("QUERY_STRING");
     if (env == nullptr)
-      throw Fmi::Exception(BCP,"ParseQueryString:: Environment variable QUERY_STRING is not set");
+      throw Fmi::Exception(BCP, "ParseQueryString:: Environment variable QUERY_STRING is not set");
 
     return ParseQueryString(env);
   }

@@ -271,9 +271,7 @@ const NFmiLevel *NFmiAreaMaskImpl::Level() const
   return nullptr;
 }
 
-void NFmiAreaMaskImpl::Level(const NFmiLevel & /* theLevel */)
-{
-}
+void NFmiAreaMaskImpl::Level(const NFmiLevel & /* theLevel */) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -291,18 +289,14 @@ bool NFmiAreaMaskImpl::UsePressureLevelInterpolation() const
   return false;
 }
 
-void NFmiAreaMaskImpl::UsePressureLevelInterpolation(bool /* newValue */)
-{
-}
+void NFmiAreaMaskImpl::UsePressureLevelInterpolation(bool /* newValue */) {}
 
 double NFmiAreaMaskImpl::UsedPressureLevelValue() const
 {
   return kFloatMissing;
 }
 
-void NFmiAreaMaskImpl::UsedPressureLevelValue(double /* newValue */)
-{
-}
+void NFmiAreaMaskImpl::UsedPressureLevelValue(double /* newValue */) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -413,13 +407,9 @@ bool NFmiAreaMaskImpl::IsRampMask() const
 
 // ======================================================================
 
-void NFmiAreaMaskImpl::DoIntegrationCalculations(float value)
-{
-}
+void NFmiAreaMaskImpl::DoIntegrationCalculations(float value) {}
 
-void NFmiAreaMaskImpl::InitializeIntegrationValues()
-{
-}
+void NFmiAreaMaskImpl::InitializeIntegrationValues() {}
 
 bool NFmiAreaMaskImpl::SimpleConditionCheck(const NFmiCalculationParams &theCalculationParams)
 {

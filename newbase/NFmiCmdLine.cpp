@@ -98,9 +98,9 @@
 // ======================================================================
 
 #include "NFmiCmdLine.h"
+#include <macgyver/Exception.h>
 #include <cstdio>
 #include <cstring>
-#include <macgyver/Exception.h>
 
 using namespace std;
 
@@ -169,11 +169,13 @@ bool NFmiCmdLine::GetSpaceStringValue(NFmiString &theString, NFmiString &theValu
   {
     theString.TrimL();
 
-    if (!theString.GetLen()) return false;
+    if (!theString.GetLen())
+      return false;
 
     int theSpaceIndex = theString.Search(NFmiString(" "));
 
-    if (!theSpaceIndex) theSpaceIndex = theString.GetLen() + 1;
+    if (!theSpaceIndex)
+      theSpaceIndex = theString.GetLen() + 1;
 
     NFmiString theStr1(theString.GetChars(1, theSpaceIndex - 1));
     NFmiString theStr2(theString.GetChars(theSpaceIndex, theString.GetLen() - theSpaceIndex + 1));
@@ -269,7 +271,8 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
     // If optallow is NULL, force it to "" (No options allowed)
     char nopt[1] = "";
     p = optallow;
-    if (p == nullptr) p = nopt;
+    if (p == nullptr)
+      p = nopt;
     itsOptionsAllowed = new char[strlen(p) + 1];
     strcpy(itsOptionsAllowed, p);
     // Save Command
@@ -282,8 +285,10 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
     //  while (true)
     for (;;)  // Marko muutti erilaiseksi iki-luupiksi ja poisti varoituksen
     {
-      if (i >= itsArgc) break;
-      if (itsArgv[i][0] != '-') break;
+      if (i >= itsArgc)
+        break;
+      if (itsArgv[i][0] != '-')
+        break;
       if (strlen(itsArgv[i]) == 1)
       {
         ++i;
@@ -293,11 +298,11 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
       if ((p = strchr(itsOptionsAllowed, itsArgv[i][1])) == nullptr)
       {
         char e[256];
-  #ifdef _MSC_VER
+#ifdef _MSC_VER
         ::_snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-  #else
+#else
         ::snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-  #endif
+#endif
         e[sizeof(e) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
         itsStatus.ErrorLog(e);
         return;
@@ -374,7 +379,7 @@ NFmiCmdLine::~NFmiCmdLine()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -532,7 +537,8 @@ int NFmiCmdLine::isOption(char c) const
   try
   {
     for (int i = 0; i < itsOptionCount; i++)
-      if (itsOptionLetters[i] == c) return 1;
+      if (itsOptionLetters[i] == c)
+        return 1;
 
     return 0;
   }
@@ -560,7 +566,8 @@ const char *NFmiCmdLine::OptionValue(char c) const
   {
     int i;
     for (i = 0; i < itsOptionCount; i++)
-      if (itsOptionLetters[i] == c) break;
+      if (itsOptionLetters[i] == c)
+        break;
     if (i <= itsOptionCount)
       return itsOptionValues[i];
     else

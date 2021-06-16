@@ -20,9 +20,9 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+#include <macgyver/Exception.h>
 #include <functional>
 
 using namespace std;
@@ -41,7 +41,7 @@ NFmiLocationBag::~NFmiLocationBag()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -379,8 +379,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
       double dist = theLocation.Distance(*itsLocations[i]);
       if (dist <= theMaxDistance && (!found || dist < best_distance))
       {
-        if (theArea->IsInside(itsLocations[i]->GetLocation()))  // optimointi kysymys, kumpi hitaampi
-                                                                // Distance vai IsInside?
+        if (theArea->IsInside(itsLocations[i]->GetLocation()))  // optimointi kysymys, kumpi
+                                                                // hitaampi Distance vai IsInside?
         {
           found = true;
           best_index = i;

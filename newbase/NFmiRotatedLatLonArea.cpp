@@ -13,9 +13,9 @@
 // ======================================================================
 
 #include "NFmiRotatedLatLonArea.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
 
 using namespace std;
@@ -571,8 +571,8 @@ const NFmiAngle NFmiRotatedLatLonArea::TrueNorthAzimuth(const NFmiPoint &theLatL
     if (xyDistanceAlongMeridian.Y() == 0.)
       return xyDistanceAlongMeridian.X() > 0.
                  ? NFmiAngle(90.)
-                 : NFmiAngle(
-                       270.);  // Azimuth is exactly east 90 degrees or west 270 degrees, respectively
+                 : NFmiAngle(270.);  // Azimuth is exactly east 90 degrees or west 270 degrees,
+                                     // respectively
 
     return NFmiAngle(FmiDeg(atan2(xyDistanceAlongMeridian.X(), xyDistanceAlongMeridian.Y())));
   }

@@ -64,12 +64,14 @@ NFmiDataModifierVariance::NFmiDataModifierVariance(NFmiDataIdent* theDataIdent,
 double NFmiDataModifierVariance::FloatValue()
 {
   double variance = NFmiRegressionModifier::FloatValue();
-  if (variance == kFloatMissing) return variance;
+  if (variance == kFloatMissing)
+    return variance;
   double raw;
   if (!fVarianceOnly)
   {
     raw = itsData->FloatValue();
-    if (raw == kFloatMissing) return raw;
+    if (raw == kFloatMissing)
+      return raw;
 
     return raw + itsVarianceLevel * GaussianRandom() * variance;
   }

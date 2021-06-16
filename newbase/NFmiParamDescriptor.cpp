@@ -187,7 +187,8 @@ unsigned long NFmiParamDescriptor::SizeActive() const
     unsigned long theActiveSize = 0;
 
     for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
-      if (itsActivity[i] == true) theActiveSize++;
+      if (itsActivity[i] == true)
+        theActiveSize++;
 
     return theActiveSize;
   }
@@ -272,7 +273,8 @@ bool NFmiParamDescriptor::NextActive()
   try
   {
     while (Next())
-      if (IsActive()) return true;
+      if (IsActive())
+        return true;
 
     return false;
   }
@@ -294,7 +296,8 @@ bool NFmiParamDescriptor::NextActive(bool fIgnoreSubParam)
   try
   {
     while (Next(fIgnoreSubParam))
-      if (IsActive()) return true;
+      if (IsActive())
+        return true;
 
     return false;
   }
@@ -320,8 +323,8 @@ NFmiParamDescriptor &NFmiParamDescriptor::operator=(const NFmiParamDescriptor &t
   {
     Destroy();
 
-    itsParamBag =
-        theParamDescriptor.itsParamBag ? new NFmiParamBag(*theParamDescriptor.itsParamBag) : nullptr;
+    itsParamBag = theParamDescriptor.itsParamBag ? new NFmiParamBag(*theParamDescriptor.itsParamBag)
+                                                 : nullptr;
 
     if (itsParamBag)
     {
@@ -354,7 +357,8 @@ bool NFmiParamDescriptor::operator==(const NFmiParamDescriptor &theParamDescript
     if (this->Size() == theParamDescriptor.Size())
     {
       for (int i = 0; i < static_cast<int>(Size()); i++)
-        if (!(this->itsActivity[i] == theParamDescriptor.itsActivity[i])) return false;
+        if (!(this->itsActivity[i] == theParamDescriptor.itsActivity[i]))
+          return false;
     }
     if (this->itsParamBag && theParamDescriptor.itsParamBag)
     {

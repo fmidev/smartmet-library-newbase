@@ -66,8 +66,8 @@
 // ======================================================================
 
 #include "NFmiStereographicArea.h"
-#include <macgyver/Exception.h>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <cmath>
 
 using namespace std;

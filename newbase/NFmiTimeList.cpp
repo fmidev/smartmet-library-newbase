@@ -36,7 +36,7 @@ NFmiTimeList::~NFmiTimeList()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -121,7 +121,8 @@ bool NFmiTimeList::Next(NFmiMetTime **theItem) const
           {						// VAROITUS !
             itsIter->Next();		// Viimeisen alkion jälkeen mennään listan ulkopuolelle
     true:lla;
-            return true;			// vasta seuraavalla kerralla tämä Next palauttaa false !!
+            return true;			// vasta seuraavalla kerralla tämä Next palauttaa false
+    !!
             // return Next();		<-- Näin kursori jääsi osoittamaan viimeistä itemiä, mutta
     toisaalta nyt }						// return false on harhaan johtava,
     sillä onhan saatu mielekäs theItem.
@@ -292,13 +293,15 @@ void NFmiTimeList::Add(NFmiMetTime *theItem, bool fAllowDuplicates, bool fAddEnd
     else
     {
       for (; it != itsVectorList.end(); ++it)
-        if (**it >= *theItem) break;
+        if (**it >= *theItem)
+          break;
 
       // jos kaikki ajat olivat pienempiä, liitetään vain perään
       if (it == itsVectorList.end())
         itsVectorList.push_back(theItem);
 
-      // jos löytyi sama aika, ei insertoida vaan deletoidaan pois (paitsi jos duplikaatit sallitaan)
+      // jos löytyi sama aika, ei insertoida vaan deletoidaan pois (paitsi jos duplikaatit
+      // sallitaan)
       else if ((**it == *theItem) && (!fAllowDuplicates))
         delete theItem;
 
@@ -415,8 +418,8 @@ NFmiTimeList &NFmiTimeList::operator=(const NFmiTimeList &theList)
 {
   try
   {
-    Clear(true);  // vanha vuoti, koska ei tuhonnut metTimeja listasta, saattaa kaataa ohjelmia, jotka
-                  // luottavat tähän ominaisuuteen
+    Clear(true);  // vanha vuoti, koska ei tuhonnut metTimeja listasta, saattaa kaataa ohjelmia,
+                  // jotka luottavat tähän ominaisuuteen
     int vecSize = theList.itsVectorList.size();
     for (int i = 0; i < vecSize; i++)
       itsVectorList.push_back(new NFmiMetTime(*theList.itsVectorList[i]));
@@ -443,7 +446,8 @@ bool NFmiTimeList::operator==(const NFmiTimeList &theList) const
     bool retVal = false;
     for (this->Reset(), theList.Reset(); this->Next() && theList.Next();)
     {
-      if (!(this->Current()->IsEqual(*(theList.Current())))) return false;
+      if (!(this->Current()->IsEqual(*(theList.Current()))))
+        return false;
       retVal = true;
     }
     return retVal;
@@ -553,7 +557,8 @@ std::istream &NFmiTimeList::Read(std::istream &file)
     {
       file >> year >> month >> day >> hour >> min >> sec;
       aItem = new NFmiMetTime(year, month, day, hour, min, sec, 1);
-      if (sec) aItem->SetSec(sec);
+      if (sec)
+        aItem->SetSec(sec);
 
       Add(aItem, true);  // true= sallitaan duplikaatit
     }
@@ -584,7 +589,8 @@ bool NFmiTimeList::Find(const NFmiMetTime &theTime)
   try
   {
     itsIndex = -1;
-    if (itsVectorList.empty()) return false;
+    if (itsVectorList.empty())
+      return false;
     auto pos = std::lower_bound(
         itsVectorList.begin(), itsVectorList.end(), &theTime, ComparePtrs<NFmiMetTime>());
     if (pos != itsVectorList.end())
@@ -672,7 +678,7 @@ bool NFmiTimeList::FindNearestBackwardTime(std::vector<NFmiMetTime *>::iterator 
       return false;  // All times in itsVectorList were bigger than theTime
 
     firstNotLess--;  // Lets move to previous time which is what we are searching here (parameter's
-                       // descriptive name false after this)
+                     // descriptive name false after this)
     return CheckFoundTimeIter(firstNotLess, theTime, theTimeRangeInMinutes);
   }
   catch (...)
@@ -843,7 +849,8 @@ const NFmiTimeList NFmiTimeList::Combine(NFmiTimeList &theList,
       combinedList.Add(tempTime, false, false);  // 1. false ei salli duplikaatteja, 2. false etsii
                                                  // ajan paikan olemassa olevasta listasta
     }
-    if (theStartTimeFunction == 0 && theEndTimeFunction == 0) return combinedList;
+    if (theStartTimeFunction == 0 && theEndTimeFunction == 0)
+      return combinedList;
 
     // pitää mahdollisesti karsia aikoja, en optimoinut ollenkaan
     NFmiMetTime startTime;

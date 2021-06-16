@@ -30,7 +30,7 @@ NFmiParamDataModifierList::~NFmiParamDataModifierList()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -41,9 +41,7 @@ NFmiParamDataModifierList::~NFmiParamDataModifierList()
  */
 // ----------------------------------------------------------------------
 
-NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter()
-{
-}
+NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -196,7 +194,8 @@ bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam)
     for (Reset(); Next();)
     {
       paramPtr = Current()->Param();
-      if (paramPtr && (*paramPtr == theParam)) return true;
+      if (paramPtr && (*paramPtr == theParam))
+        return true;
     }
     return false;
   }
@@ -220,7 +219,8 @@ bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam, const NFmiLe
   {
     for (Reset(); Next();)
     {
-      if (Current()->Match(theParam, theLevel)) return true;
+      if (Current()->Match(theParam, theLevel))
+        return true;
     }
     return false;
   }

@@ -15,8 +15,8 @@
 // ======================================================================
 
 #include "NFmiAngle.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <iostream>
 
 using namespace std;
@@ -586,6 +586,5 @@ std::size_t NFmiAngle::HashValue() const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ======================================================================

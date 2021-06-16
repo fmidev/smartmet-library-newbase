@@ -25,11 +25,11 @@
 #include "NFmiInterpolation.h"
 #include "NFmiMetTime.h"
 #include "NFmiQueryData.h"
-#include <macgyver/Exception.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <utility>
 
@@ -48,7 +48,8 @@ std::size_t find_newest_data(std::vector<boost::shared_ptr<NFmiFastQueryInfo> > 
     std::size_t best = 0;
     for (std::size_t i = 1; i < theInfos.size(); i++)
     {
-      if (theInfos[i]->OriginTime() > theInfos[best]->OriginTime()) best = i;
+      if (theInfos[i]->OriginTime() > theInfos[best]->OriginTime())
+        best = i;
     }
     return best;
   }
@@ -77,7 +78,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
     if (!NFmiFileSystem::DirectoryExists(thePath))
     {
       if (!NFmiFileSystem::FileReadable(thePath))
-        throw Fmi::Exception(BCP,"File '" + thePath + "' is not readable");
+        throw Fmi::Exception(BCP, "File '" + thePath + "' is not readable");
 
       files.push_back(thePath);
     }
@@ -88,14 +89,16 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
 
       for (const std::string &name : dirfiles)
       {
-        if (name.empty() || name[0] == '.') continue;
+        if (name.empty() || name[0] == '.')
+          continue;
 
         if (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd") ||
             boost::iends_with(name, ".sqd.gz") || boost::iends_with(name, ".fqd.gz") ||
             boost::iends_with(name, ".sqd.bz2") || boost::iends_with(name, ".fqd.bz2"))
         {
           std::string filename = thePath + '/' + name;
-          if (NFmiFileSystem::FileSize(filename) != 0) files.push_back(filename);
+          if (NFmiFileSystem::FileSize(filename) != 0)
+            files.push_back(filename);
         }
       }
     }
@@ -143,7 +146,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQue
   try
   {
     if (theInfos.size() == 0)
-      throw Fmi::Exception(BCP,"Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
+      throw Fmi::Exception(BCP, "Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
 
     Init();
   }
@@ -254,7 +257,8 @@ void NFmiMultiQueryInfo::Init()
       }
     }
 
-    // time -> index set correspondance is now established, initialize the data structures accordingly
+    // time -> index set correspondance is now established, initialize the data structures
+    // accordingly
 
     // int j = 0;
     for (const auto &idx : time_index)
@@ -356,7 +360,7 @@ const NFmiMetTime &NFmiMultiQueryInfo::ValidTime() const
     if (itsMultiTimeIndex < itsMultiIndexes.size())
       return itsMultiIndexes[itsMultiTimeIndex].valid_time;
 
-    throw Fmi::Exception(BCP,"Trying to access valid time for time index -1");
+    throw Fmi::Exception(BCP, "Trying to access valid time for time index -1");
   }
   catch (...)
   {
@@ -541,9 +545,8 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
         if (pos != itsMultiIndexes.begin())
         {
           --pos;
-          if (pos ==
-              itsMultiIndexes
-                  .end())  // en tiedä toimiiko siten, että jos tekee startissa --, menee ohi vectorin
+          if (pos == itsMultiIndexes.end())  // en tiedä toimiiko siten, että jos tekee startissa
+                                             // --, menee ohi vectorin
             ++pos;
         }
       }
@@ -554,7 +557,8 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
         {
           double diff1 = theTime.DifferenceInMinutes(itsMultiIndexes[index].valid_time);
           double diff2 = theTime.DifferenceInMinutes(itsMultiIndexes[index - 1].valid_time);
-          if (fabs(diff2) < fabs(diff1)) --pos;
+          if (fabs(diff2) < fabs(diff1))
+            --pos;
         }
       }
       // HUOM! else eli muuten tai theDirection == kForward vaihtoehto puuttuu!!!!
@@ -563,7 +567,8 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
       if (indexFinal != -1 && theTimeRangeInMinutes != kLongMissing)
       {
         double diffFinal = theTime.DifferenceInMinutes(itsMultiIndexes[indexFinal].valid_time);
-        if (fabs(diffFinal) > theTimeRangeInMinutes) return false;
+        if (fabs(diffFinal) > theTimeRangeInMinutes)
+          return false;
       }
       TimeIndex(indexFinal);
       return true;
@@ -623,7 +628,8 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
 {
   try
   {
-    if (thePos == itsMultiIndexes.end()) return kFloatMissing;
+    if (thePos == itsMultiIndexes.end())
+      return kFloatMissing;
 
     if (thePos->valid_time == theTime)
     {
@@ -634,7 +640,8 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
     // Interpolate if possible
 
     unsigned long idx2 = thePos - itsMultiIndexes.begin();
-    if (idx2 == 0) return kFloatMissing;
+    if (idx2 == 0)
+      return kFloatMissing;
 
     unsigned long idx1 = idx2 - 1;
 
@@ -645,7 +652,8 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
     {
       TimeIndex(idx1);
       value1 = FloatValue();
-      if ((value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing) || idx1 == 0) break;
+      if ((value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing) || idx1 == 0)
+        break;
       --idx1;
     }
 

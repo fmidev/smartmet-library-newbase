@@ -93,21 +93,30 @@ NFmiStatusPositionString::NFmiStatusPositionString(
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusPositionString::StartPosition() { return itsStartPosition; }
+long NFmiStatusPositionString::StartPosition()
+{
+  return itsStartPosition;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusPositionString::EndPosition() { return itsEndPosition; }
+long NFmiStatusPositionString::EndPosition()
+{
+  return itsEndPosition;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiString* NFmiStatusPositionString::Clone() const { return new NFmiStatusPositionString(*this); }
+NFmiString* NFmiStatusPositionString::Clone() const
+{
+  return new NFmiStatusPositionString(*this);
+}
 
 // ----------------------------------------------------------------------
 /*!

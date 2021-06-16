@@ -76,8 +76,10 @@ void NFmiDataModifierMinMax::Calculate(float theValue)
 {
   if (CheckMissingValues(theValue))
   {
-    if (itsMaxValue < theValue) itsMaxValue = theValue;
-    if (itsMinValue > theValue) itsMinValue = theValue;
+    if (itsMaxValue < theValue)
+      itsMaxValue = theValue;
+    if (itsMinValue > theValue)
+      itsMinValue = theValue;
   }
 }
 
@@ -100,5 +102,8 @@ void NFmiDataModifierMinMax::Clear()
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierMinMax::CalculationResult() { return kFloatMissing; }
+float NFmiDataModifierMinMax::CalculationResult()
+{
+  return kFloatMissing;
+}
 // ======================================================================

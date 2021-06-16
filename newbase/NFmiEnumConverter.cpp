@@ -269,4 +269,3 @@ list<string> NFmiEnumConverter::Names()
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-

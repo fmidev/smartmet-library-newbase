@@ -47,7 +47,7 @@ NFmiMultiPolygonAreaMask::~NFmiMultiPolygonAreaMask()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -211,7 +211,8 @@ std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
     do
     {
       file >> value;
-      if (file.fail()) break;
+      if (file.fail())
+        break;
       tmp = new NFmiSvgPath;
       file >> *tmp;
       if (file.fail())

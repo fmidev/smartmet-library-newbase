@@ -781,7 +781,8 @@ const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePa
           if (distance < lastDistance)
           {
             recalculate = false;
-            if (lastInside) mask.insert(idx);
+            if (lastInside)
+              mask.insert(idx);
           }
         }
 
@@ -880,7 +881,8 @@ const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &theP
             if (distance < lastDistance)
             {
               recalculate = false;
-              if (!lastInside) mask.insert(idx);
+              if (!lastInside)
+                mask.insert(idx);
             }
           }
 
@@ -894,7 +896,8 @@ const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &theP
             lastInside = NFmiSvgTools::IsInside(thePath, p);
             lastDistance = xy.Distance(nearest);
 
-            if (!lastInside) mask.insert(idx);
+            if (!lastInside)
+              mask.insert(idx);
           }
         }
     }
@@ -1050,7 +1053,8 @@ const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
     NFmiIndexMask mask;
 
     // Handle empty paths
-    if (thePath.empty()) return mask;
+    if (thePath.empty())
+      return mask;
 
     // Establish grid resolution
 
@@ -1190,7 +1194,8 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
       {
         const unsigned long idx = j * nx + i;
         xy = theGrid.GridToWorldXY(i, j);
-        if (p.Distance(xy) <= theDistance * 1000) mask.insert(idx);
+        if (p.Distance(xy) <= theDistance * 1000)
+          mask.insert(idx);
       }
     }
     return mask;
@@ -1224,7 +1229,8 @@ const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
     masks.resize(theDistances.size());
 
     // Handle special cases
-    if (theDistances.empty() || thePath.empty()) return masks;
+    if (theDistances.empty() || thePath.empty())
+      return masks;
 
     // Establish grid resolution
 
@@ -1340,7 +1346,8 @@ const NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
   {
     NFmiIndexMask mask;
 
-    if (!theInfo.IsGrid()) return mask;
+    if (!theInfo.IsGrid())
+      return mask;
 
     const unsigned long nx = theGrid.XNumber();
     const unsigned long ny = theGrid.YNumber();
@@ -1353,7 +1360,8 @@ const NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
         const unsigned long idx = j * nx + i;
         latlon = theGrid.GridToLatLon(i, j);
         double value = theInfo.InterpolatedValue(latlon);
-        if (theCondition.IsMasked(value)) mask.insert(idx);
+        if (theCondition.IsMasked(value))
+          mask.insert(idx);
       }
     }
     return mask;

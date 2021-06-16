@@ -87,8 +87,8 @@
 // ======================================================================
 
 #include "NFmiAzimuthalArea.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -368,7 +368,7 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToXY(const NFmiPoint &theWorldXYPoint)
   {
     double x = itsXScaleFactor * (theWorldXYPoint.X() - itsWorldRect.Left()) + Left();
     double y = Top() - itsYScaleFactor * (theWorldXYPoint.Y() - itsWorldRect.Bottom());
-    return NFmiPoint(x,y);
+    return NFmiPoint(x, y);
   }
   catch (...)
   {

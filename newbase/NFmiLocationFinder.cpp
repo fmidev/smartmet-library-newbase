@@ -126,7 +126,8 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
     // Open the file, returning false if the file cannot be read
 
     ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
-    if (!in) return false;
+    if (!in)
+      return false;
 
     // Process one line at a time
 
@@ -135,7 +136,8 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
     {
       // Ignore the line if it is a comment line
 
-      if (line[0] == '#' || line.substr(0, 2) == "//") continue;
+      if (line[0] == '#' || line.substr(0, 2) == "//")
+        continue;
 
       // Split the line from tabulators into a vector
 
@@ -145,21 +147,25 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
       while (pos1 < line.size())
       {
         string::size_type pos2 = line.find("\t", pos1);
-        if (pos2 == string::npos) pos2 = line.size();
+        if (pos2 == string::npos)
+          pos2 = line.size();
         fields.push_back(line.substr(pos1, pos2 - pos1));
         pos1 = pos2 + 1;
       }
 
       // We require 6 text fields + 2 number fields + optional extra fields
 
-      if (fields.size() < maxwords) continue;
+      if (fields.size() < maxwords)
+        continue;
 
       // Extract the numbers. Note that atof returns nothing
       // to indicate success, hence we use sscanf instead.
 
       double value1, value2;
-      if (sscanf(fields[coordinate1].c_str(), "%lg", &value1) != 1) continue;
-      if (sscanf(fields[coordinate2].c_str(), "%lg", &value2) != 1) continue;
+      if (sscanf(fields[coordinate1].c_str(), "%lg", &value1) != 1)
+        continue;
+      if (sscanf(fields[coordinate2].c_str(), "%lg", &value2) != 1)
+        continue;
 
       double longitude = lonFirst ? value1 : value2;
       double latitude = lonFirst ? value2 : value1;
@@ -170,7 +176,8 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
       for (unsigned int idx = 0; idx < maxlocations; idx++)
       {
         string word = fields[idx];
-        if (word.empty()) continue;
+        if (word.empty())
+          continue;
 
         // Convert the name to lower case
 
@@ -224,7 +231,8 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
     // Open the file, returning false if the file cannot be read
 
     ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
-    if (!in) return false;
+    if (!in)
+      return false;
 
     // Process one line at a time
 
@@ -235,7 +243,8 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
     {
       // Ignore the line if it is a comment line or "thrash" line
 
-      if (line[0] == '#' || line.substr(0, 2) == "//" || line.size() < 6) continue;
+      if (line[0] == '#' || line.substr(0, 2) == "//" || line.size() < 6)
+        continue;
 
       // Split the line from white spaces into a vector
 
@@ -248,12 +257,14 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       while (pos1 < line.size())
       {
         pos2 = line.find_first_of("\t", pos1);
-        if (pos2 == string::npos) pos2 = line.size();
+        if (pos2 == string::npos)
+          pos2 = line.size();
         fields.push_back(line.substr(pos1, pos2 - pos1));
         if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
         {
           firstCoord = fields.size();  // you must know which words shall be converted to doubles
-          if (firstCoord > 2) nlong++;
+          if (firstCoord > 2)
+            nlong++;
         }
 
         if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
@@ -290,7 +301,8 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       for (unsigned int idx = 0; idx < maxlocations && idx < firstCoord - 1; idx++)
       {
         string word = fields[idx];
-        if (word.empty()) continue;
+        if (word.empty())
+          continue;
 
         // Convert the name to lower case
 

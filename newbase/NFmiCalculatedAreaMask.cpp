@@ -63,7 +63,7 @@ NFmiCalculatedAreaMask::~NFmiCalculatedAreaMask()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -74,9 +74,7 @@ NFmiCalculatedAreaMask::~NFmiCalculatedAreaMask()
  */
 // ----------------------------------------------------------------------
 
-NFmiCalculatedAreaMask::NFmiCalculatedAreaMask() : NFmiAreaMaskImpl(), itsDataIdent(nullptr)
-{
-}
+NFmiCalculatedAreaMask::NFmiCalculatedAreaMask() : NFmiAreaMaskImpl(), itsDataIdent(nullptr) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -214,9 +212,7 @@ const NFmiParam* NFmiCalculatedAreaMask::Param() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLatLonAreaMask::NFmiLatLonAreaMask() : NFmiCalculatedAreaMask()
-{
-}
+NFmiLatLonAreaMask::NFmiLatLonAreaMask() : NFmiCalculatedAreaMask() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -315,9 +311,7 @@ const NFmiString NFmiLatLonAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() : NFmiLatLonAreaMask(), itsTime()
-{
-}
+NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() : NFmiLatLonAreaMask(), itsTime() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -327,7 +321,8 @@ NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() : NFmiLatLonAreaMask(),
  */
 // ----------------------------------------------------------------------
 
-NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiElevationAngleAreaMask& theMask) = default;
+NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiElevationAngleAreaMask& theMask) =
+    default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -453,9 +448,7 @@ const NFmiString NFmiElevationAngleAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiJulianDayAreaMask::NFmiJulianDayAreaMask() : NFmiElevationAngleAreaMask(), itsJulianDay(0)
-{
-}
+NFmiJulianDayAreaMask::NFmiJulianDayAreaMask() : NFmiElevationAngleAreaMask(), itsJulianDay(0) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -573,9 +566,7 @@ const NFmiString NFmiJulianDayAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() : NFmiElevationAngleAreaMask()
-{
-}
+NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() : NFmiElevationAngleAreaMask() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -671,9 +662,7 @@ const NFmiString NFmiLocalHourAreaMask::MakeSubMaskString() const
 
 NFmiUtcHourAreaMask::~NFmiUtcHourAreaMask() = default;
 
-NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() : NFmiElevationAngleAreaMask()
-{
-}
+NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() : NFmiElevationAngleAreaMask() {}
 
 NFmiUtcHourAreaMask::NFmiUtcHourAreaMask(const NFmiUtcHourAreaMask& theMask) = default;
 
@@ -723,9 +712,7 @@ const NFmiString NFmiUtcHourAreaMask::MakeSubMaskString() const
 
 NFmiMinuteAreaMask::~NFmiMinuteAreaMask() = default;
 
-NFmiMinuteAreaMask::NFmiMinuteAreaMask() : NFmiElevationAngleAreaMask()
-{
-}
+NFmiMinuteAreaMask::NFmiMinuteAreaMask() : NFmiElevationAngleAreaMask() {}
 
 NFmiMinuteAreaMask::NFmiMinuteAreaMask(const NFmiMinuteAreaMask& theMask) = default;
 
@@ -984,8 +971,8 @@ double NFmiTimeStepAreaMask::Value(const NFmiCalculationParams& theCalculationPa
   try
   {
     if (fUseTimeInterpolationAlways)
-      itsInfo->Time(
-          theCalculationParams.itsTime);  // asetetaan ensin aika kohdalleen ja sitten kysytään arvoa
+      itsInfo->Time(theCalculationParams
+                        .itsTime);  // asetetaan ensin aika kohdalleen ja sitten kysytään arvoa
     else
       itsInfo->TimeIndex(
           theCalculationParams
@@ -1026,7 +1013,10 @@ NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const NFmiGridSizeAreaMask& theMask)
 {
 }
 
-NFmiAreaMask* NFmiGridSizeAreaMask::Clone() const { return new NFmiGridSizeAreaMask(*this); }
+NFmiAreaMask* NFmiGridSizeAreaMask::Clone() const
+{
+  return new NFmiGridSizeAreaMask(*this);
+}
 double NFmiGridSizeAreaMask::Value(const NFmiCalculationParams& theCalculationParams,
                                    bool /* fUseTimeInterpolationAlways */)
 {

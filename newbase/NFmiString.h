@@ -102,28 +102,40 @@ class NFmiString : public NFmiSortable
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiString::GetLen(void) const { return fLength; }
+inline unsigned long NFmiString::GetLen(void) const
+{
+  return fLength;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const unsigned char *NFmiString::GetCharPtr(void) const { return fChar; }
+inline const unsigned char *NFmiString::GetCharPtr(void) const
+{
+  return fChar;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiString::CharPtr(void) const { return reinterpret_cast<const char *>(fChar); }
+inline const char *NFmiString::CharPtr(void) const
+{
+  return reinterpret_cast<const char *>(fChar);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiString::IsValue(void) const { return bool(fLength >= 1); }
+inline bool NFmiString::IsValue(void) const
+{
+  return bool(fLength >= 1);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator
@@ -135,7 +147,8 @@ inline bool NFmiString::IsValue(void) const { return bool(fLength >= 1); }
 
 inline NFmiString &NFmiString::operator=(const NFmiString &aFmiString)
 {
-  if (this != &aFmiString) Set(aFmiString.fChar, aFmiString.fLength);
+  if (this != &aFmiString)
+    Set(aFmiString.fChar, aFmiString.fLength);
   return *this;
 }
 
@@ -171,7 +184,10 @@ inline NFmiString &NFmiString::operator+=(const unsigned char *aChar)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiString *NFmiString::Clone() const { return new NFmiString(*this); }
+inline NFmiString *NFmiString::Clone() const
+{
+  return new NFmiString(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param aFmiString Undocumented
@@ -215,7 +231,10 @@ inline unsigned char NFmiString::operator[](const unsigned long counter) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiString::ClassId(void) const { return kNFmiString; }
+inline unsigned long NFmiString::ClassId(void) const
+{
+  return kNFmiString;
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -225,7 +244,10 @@ inline unsigned long NFmiString::ClassId(void) const { return kNFmiString; }
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiString::operator==(const NFmiString &other) const { return IsEqual(other) == true; }
+inline bool NFmiString::operator==(const NFmiString &other) const
+{
+  return IsEqual(other) == true;
+}
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -246,14 +268,20 @@ inline bool NFmiString::operator==(const char *other) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiString::operator char *() const { return reinterpret_cast<char *>(fChar); }
+inline NFmiString::operator char *() const
+{
+  return reinterpret_cast<char *>(fChar);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiString::operator unsigned char *() const { return fChar; }
+inline NFmiString::operator unsigned char *() const
+{
+  return fChar;
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiString
@@ -265,7 +293,10 @@ inline NFmiString::operator unsigned char *() const { return fChar; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiString &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiString &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiString
@@ -275,7 +306,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiString &ob) { retu
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiString &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiString &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

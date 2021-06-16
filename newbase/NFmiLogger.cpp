@@ -157,7 +157,8 @@ void NFmiLogger::InitFromSettings(const std::string &theBaseNameSpace)
     fCleanBackupFiles = NFmiSettings::Require<bool>(itsBaseNameSpace + "::CleanBackupFiles");
     itsKeepFilesDays = NFmiSettings::Require<int>(itsBaseNameSpace + "::KeepFilesDays");
     itsNoLevelLabel = NFmiSettings::Require<string>(itsBaseNameSpace + "::NoLevelLabel");
-    itsImportantInfoLabel = NFmiSettings::Require<string>(itsBaseNameSpace + "::ImportantInfoLabel");
+    itsImportantInfoLabel =
+        NFmiSettings::Require<string>(itsBaseNameSpace + "::ImportantInfoLabel");
     itsInfoLabel = NFmiSettings::Require<string>(itsBaseNameSpace + "::InfoLabel");
     itsDebugInfoLabel = NFmiSettings::Require<string>(itsBaseNameSpace + "::DebugInfoLabel");
     itsMinorWarningLabel = NFmiSettings::Require<string>(itsBaseNameSpace + "::MinorWarningLabel");
@@ -185,8 +186,9 @@ void NFmiLogger::StoreToSettings()
                         true);
       NFmiSettings::Set(
           itsBaseNameSpace + "::LogFilePath", NFmiStringTools::Convert(itsLogFilePath), true);
-      NFmiSettings::Set(
-          itsBaseNameSpace + "::LogFileBaseName", NFmiStringTools::Convert(itsLogFileBaseName), true);
+      NFmiSettings::Set(itsBaseNameSpace + "::LogFileBaseName",
+                        NFmiStringTools::Convert(itsLogFileBaseName),
+                        true);
       NFmiSettings::Set(itsBaseNameSpace + "::TimeStampStringFormat",
                         NFmiStringTools::Convert(itsTimeStampStringFormat),
                         true);
@@ -202,8 +204,9 @@ void NFmiLogger::StoreToSettings()
           itsBaseNameSpace + "::UseLocalTime", NFmiStringTools::Convert(fUseLocalTime), true);
       NFmiSettings::Set(
           itsBaseNameSpace + "::UseBackupSystem", NFmiStringTools::Convert(fUseBackupSystem), true);
-      NFmiSettings::Set(
-          itsBaseNameSpace + "::CleanBackupFiles", NFmiStringTools::Convert(fCleanBackupFiles), true);
+      NFmiSettings::Set(itsBaseNameSpace + "::CleanBackupFiles",
+                        NFmiStringTools::Convert(fCleanBackupFiles),
+                        true);
       NFmiSettings::Set(
           itsBaseNameSpace + "::KeepFilesDays", NFmiStringTools::Convert(itsKeepFilesDays), true);
       NFmiSettings::Set(
@@ -222,11 +225,12 @@ void NFmiLogger::StoreToSettings()
           itsBaseNameSpace + "::WarningLabel", NFmiStringTools::Convert(itsWarningLabel), true);
       NFmiSettings::Set(
           itsBaseNameSpace + "::ErrorLabel", NFmiStringTools::Convert(itsErrorLabel), true);
-      NFmiSettings::Set(
-          itsBaseNameSpace + "::FatalErrorLabel", NFmiStringTools::Convert(itsFatalErrorLabel), true);
+      NFmiSettings::Set(itsBaseNameSpace + "::FatalErrorLabel",
+                        NFmiStringTools::Convert(itsFatalErrorLabel),
+                        true);
     }
 
-    throw Fmi::Exception(BCP,"Error in NFmiLogger::StoreToSettings, unable to store setting.");
+    throw Fmi::Exception(BCP, "Error in NFmiLogger::StoreToSettings, unable to store setting.");
   }
   catch (...)
   {
@@ -378,11 +382,16 @@ bool NFmiLogger::LogMessage(const string &theMessage, Level theMessageLevel, int
       finalString = MakeFinalMessage(theMessage, theMessageLevel);
 
     bool status = true;  // Huom! jos yksikin lähetyksistä epäonnistuu, palautuu false
-    if (theDevices & kFile) status &= Log2File(finalString);
-    if (theDevices & kGsm) status &= Log2Gsm(finalString);
-    if (theDevices & kEmail) status &= Log2Email(finalString);
-    if (theDevices & kStdOut) status &= Log2StdOut(finalString);
-    if (theDevices & kStdErr) status &= Log2StdErr(finalString);
+    if (theDevices & kFile)
+      status &= Log2File(finalString);
+    if (theDevices & kGsm)
+      status &= Log2Gsm(finalString);
+    if (theDevices & kEmail)
+      status &= Log2Email(finalString);
+    if (theDevices & kStdOut)
+      status &= Log2StdOut(finalString);
+    if (theDevices & kStdErr)
+      status &= Log2StdErr(finalString);
     return status;
   }
   catch (...)
@@ -832,7 +841,8 @@ bool NFmiLogger::IsFileBackUpTime()
             return true;
           break;
         case kDaily:
-          if (itsCurrentTime.GetDay() != itsLastLoggedTime.GetDay() || diffInHours >= 24) return true;
+          if (itsCurrentTime.GetDay() != itsLastLoggedTime.GetDay() || diffInHours >= 24)
+            return true;
           break;
         case kMonthly:
           if (itsCurrentTime.GetMonth() != itsLastLoggedTime.GetMonth() || diffInHours >= 31 * 24)

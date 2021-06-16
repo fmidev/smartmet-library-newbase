@@ -30,7 +30,7 @@ NFmiLevelBag::~NFmiLevelBag()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -41,9 +41,7 @@ NFmiLevelBag::~NFmiLevelBag()
  */
 // ----------------------------------------------------------------------
 
-NFmiLevelBag::NFmiLevelBag() : itsLevels(nullptr), itsStep(0)
-{
-}
+NFmiLevelBag::NFmiLevelBag() : itsLevels(nullptr), itsStep(0) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -184,7 +182,8 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
   {
     int i;
     for (i = 0; i < static_cast<int>(itsSize); i++)
-      if (itsLevels[i] == theLevel) break;
+      if (itsLevels[i] == theLevel)
+        break;
 
     if (i == static_cast<int>(itsSize))
     {

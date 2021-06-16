@@ -55,6 +55,9 @@ class NFmiStatus
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStatus::operator bool(void) const { return !itsErrorLog.IsValue(); }
+inline NFmiStatus::operator bool(void) const
+{
+  return !itsErrorLog.IsValue();
+}
 
 // ======================================================================

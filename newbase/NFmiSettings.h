@@ -80,8 +80,10 @@ inline bool Require<bool>(const std::string& theName)
 {
   std::string tmp = Require<std::string>(theName);
 
-  if (tmp == "true" || tmp == "1") return true;
-  if (tmp == "false" || tmp == "0") return false;
+  if (tmp == "true" || tmp == "1")
+    return true;
+  if (tmp == "false" || tmp == "0")
+    return false;
 
   std::string msg;
   msg += "Variable ";
@@ -89,7 +91,7 @@ inline bool Require<bool>(const std::string& theName)
   msg += " value '";
   msg += tmp;
   msg += "' must be true/false";
-  throw Fmi::Exception(BCP,msg);
+  throw Fmi::Exception(BCP, msg);
 }
 
 // ----------------------------------------------------------------------
@@ -115,7 +117,7 @@ inline T Require(const std::string& theName)
     msg += " value '";
     msg += tmp;
     msg += "' is not of correct type";
-    throw Fmi::Exception(BCP,msg);
+    throw Fmi::Exception(BCP, msg);
   }
 }
 
@@ -160,7 +162,8 @@ template <typename T>
 inline T RequireRange(const std::string& theName, const T& theLowerLimit, const T& theUpperLimit)
 {
   T value(Require<T>(theName));
-  if (value >= theLowerLimit && value <= theUpperLimit) return value;
+  if (value >= theLowerLimit && value <= theUpperLimit)
+    return value;
 
   std::string msg;
   msg += "Variable ";
@@ -171,7 +174,7 @@ inline T RequireRange(const std::string& theName, const T& theLowerLimit, const 
   msg += NFmiStringTools::Convert(theLowerLimit);
   msg += "...";
   msg += NFmiStringTools::Convert(theUpperLimit);
-  throw Fmi::Exception(BCP,msg);
+  throw Fmi::Exception(BCP, msg);
 }
 
 // ----------------------------------------------------------------------

@@ -93,98 +93,140 @@ class NFmiTimePerioid
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Year(void) const { return itsYears; }
+inline long NFmiTimePerioid::Year(void) const
+{
+  return itsYears;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Month(void) const { return itsMonths; }
+inline long NFmiTimePerioid::Month(void) const
+{
+  return itsMonths;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Day(void) const { return itsDays; }
+inline long NFmiTimePerioid::Day(void) const
+{
+  return itsDays;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Hour(void) const { return itsHours; }
+inline long NFmiTimePerioid::Hour(void) const
+{
+  return itsHours;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Minute(void) const { return itsMinutes; }
+inline long NFmiTimePerioid::Minute(void) const
+{
+  return itsMinutes;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::Second(void) const { return itsSeconds; }
+inline long NFmiTimePerioid::Second(void) const
+{
+  return itsSeconds;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiTimePerioid::MicroSecond(void) const { return itsMicroSeconds; }
+inline long NFmiTimePerioid::MicroSecond(void) const
+{
+  return itsMicroSeconds;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theYears Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Year(long theYears) { itsYears = theYears; }
+inline void NFmiTimePerioid::Year(long theYears)
+{
+  itsYears = theYears;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMonths Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Month(long theMonths) { itsMonths = theMonths; }
+inline void NFmiTimePerioid::Month(long theMonths)
+{
+  itsMonths = theMonths;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theDays Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Day(long theDays) { itsDays = theDays; }
+inline void NFmiTimePerioid::Day(long theDays)
+{
+  itsDays = theDays;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theHours Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Hour(long theHours) { itsHours = theHours; }
+inline void NFmiTimePerioid::Hour(long theHours)
+{
+  itsHours = theHours;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMinutes Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Minute(long theMinutes) { itsMinutes = theMinutes; }
+inline void NFmiTimePerioid::Minute(long theMinutes)
+{
+  itsMinutes = theMinutes;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theSecond Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::Second(long theSecond) { itsSeconds = theSecond; }
+inline void NFmiTimePerioid::Second(long theSecond)
+{
+  itsSeconds = theSecond;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMicroSecond Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimePerioid::MicroSecond(long theMicroSecond) { itsMicroSeconds = theMicroSecond; }
+inline void NFmiTimePerioid::MicroSecond(long theMicroSecond)
+{
+  itsMicroSeconds = theMicroSecond;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -214,7 +256,10 @@ inline NFmiTimePerioid::operator long(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimePerioid::ClassName(void) const { return "NFmiTimePerioid"; }
+inline const char *NFmiTimePerioid::ClassName(void) const
+{
+  return "NFmiTimePerioid";
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -251,6 +296,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiTimePerioid &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiTimePerioid &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiTimePerioid &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

@@ -90,7 +90,10 @@ class NFmiSvgPath
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_iterator NFmiSvgPath::begin(void) const { return itsData.begin(); }
+inline NFmiSvgPath::const_iterator NFmiSvgPath::begin(void) const
+{
+  return itsData.begin();
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief begin metodi
@@ -109,7 +112,10 @@ inline NFmiSvgPath::iterator NFmiSvgPath::begin(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_iterator NFmiSvgPath::end(void) const { return itsData.end(); }
+inline NFmiSvgPath::const_iterator NFmiSvgPath::end(void) const
+{
+  return itsData.end();
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief end metodi
@@ -128,14 +134,20 @@ inline NFmiSvgPath::iterator NFmiSvgPath::end(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_reference NFmiSvgPath::front(void) const { return itsData.front(); }
+inline NFmiSvgPath::const_reference NFmiSvgPath::front(void) const
+{
+  return itsData.front();
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Palauttaa viimeisen elementin
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSvgPath::const_reference NFmiSvgPath::back(void) const { return itsData.back(); }
+inline NFmiSvgPath::const_reference NFmiSvgPath::back(void) const
+{
+  return itsData.back();
+}
 // ----------------------------------------------------------------------
 /*!
  * Global operator>> overload for NFmiSvgPath class
@@ -161,6 +173,9 @@ inline std::ostream& operator<<(std::ostream& os, const NFmiSvgPath& item)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream& operator>>(std::istream& is, NFmiSvgPath& item) { return item.Read(is); }
+inline std::istream& operator>>(std::istream& is, NFmiSvgPath& item)
+{
+  return item.Read(is);
+}
 
 // ======================================================================

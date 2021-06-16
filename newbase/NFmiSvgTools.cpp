@@ -61,7 +61,8 @@ double Distance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 {
   try
   {
-    if (thePath.empty()) return -1;
+    if (thePath.empty())
+      return -1;
 
     double minDist = -1;
 
@@ -84,7 +85,8 @@ double Distance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
           double dist = NFmiGeoTools::DistanceFromLineSegment(
               thePoint.X(), thePoint.Y(), lastX, lastY, firstPoint->itsX, firstPoint->itsY);
 
-          if (minDist < 0 || dist < minDist) minDist = dist;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
           lastX = firstPoint->itsX;
           lastY = firstPoint->itsY;
           break;
@@ -94,7 +96,8 @@ double Distance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
           double dist = NFmiGeoTools::DistanceFromLineSegment(
               thePoint.X(), thePoint.Y(), lastX, lastY, it->itsX, it->itsY);
 
-          if (minDist < 0 || dist < minDist) minDist = dist;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
           lastX = it->itsX;
           lastY = it->itsY;
           break;
@@ -132,7 +135,8 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 {
   try
   {
-    if (thePath.empty()) return -1;
+    if (thePath.empty())
+      return -1;
 
     // Nurkilla ei ole väliä
     NFmiEquidistArea area(NFmiPoint(20, 50),
@@ -162,7 +166,8 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
           double dist = NFmiGeoTools::DistanceFromLineSegment(
               center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), firstPoint.X(), firstPoint.Y());
 
-          if (minDist < 0 || dist < minDist) minDist = dist;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
           lastPoint = firstPoint;
           break;
         }
@@ -172,7 +177,8 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
           double dist = NFmiGeoTools::DistanceFromLineSegment(
               center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), p.X(), p.Y());
 
-          if (minDist < 0 || dist < minDist) minDist = dist;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
           lastPoint = p;
           break;
         }
@@ -224,10 +230,14 @@ void BoundingBox(
         case NFmiSvgPath::kElementMoveto:
         case NFmiSvgPath::kElementLineto:
 
-          if (firstmove || it.itsX < theXmin) theXmin = it.itsX;
-          if (firstmove || it.itsX > theXmax) theXmax = it.itsX;
-          if (firstmove || it.itsY < theYmin) theYmin = it.itsY;
-          if (firstmove || it.itsY > theYmax) theYmax = it.itsY;
+          if (firstmove || it.itsX < theXmin)
+            theXmin = it.itsX;
+          if (firstmove || it.itsX > theXmax)
+            theXmax = it.itsX;
+          if (firstmove || it.itsY < theYmin)
+            theYmin = it.itsY;
+          if (firstmove || it.itsY > theYmax)
+            theYmax = it.itsY;
           firstmove = false;
           break;
         case NFmiSvgPath::kElementNotValid:

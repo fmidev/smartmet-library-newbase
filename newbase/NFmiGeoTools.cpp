@@ -141,7 +141,8 @@ double DistanceFromLineSegment(
     const double length = Distance(theX1, theY1, theX2, theY2);
 
     // The special case when the line is a dot is handled quickly
-    if (length <= 0) return Distance(theX, theY, theX1, theY1);
+    if (length <= 0)
+      return Distance(theX, theY, theX1, theY1);
 
     // Intersection point in units of 0-1
 

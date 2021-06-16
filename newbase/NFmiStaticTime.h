@@ -112,42 +112,60 @@ typedef NFmiStaticTime TFmiStaticTime;
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetYear(void) const { return fYear; }
+inline short NFmiStaticTime::GetYear(void) const
+{
+  return fYear;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetMonth(void) const { return fMonth; }
+inline short NFmiStaticTime::GetMonth(void) const
+{
+  return fMonth;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetDay(void) const { return fDay; }
+inline short NFmiStaticTime::GetDay(void) const
+{
+  return fDay;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetHour(void) const { return fHour; }
+inline short NFmiStaticTime::GetHour(void) const
+{
+  return fHour;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetMin(void) const { return fMin; }
+inline short NFmiStaticTime::GetMin(void) const
+{
+  return fMin;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline short NFmiStaticTime::GetSec(void) const { return fSec; }
+inline short NFmiStaticTime::GetSec(void) const
+{
+  return fSec;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Meneillään olevan vuorokauden tunti desimaalilukuna
@@ -165,7 +183,10 @@ inline double NFmiStaticTime::CalcHourOfDay(void) const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiStaticTime::ClassName(void) const { return "NFmiStaticTime"; }
+inline const char* NFmiStaticTime::ClassName(void) const
+{
+  return "NFmiStaticTime";
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiStaticTime
@@ -176,6 +197,9 @@ inline const char* NFmiStaticTime::ClassName(void) const { return "NFmiStaticTim
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream& operator<<(std::ostream& os, const NFmiStaticTime& ob) { return ob.Write(os); }
+inline std::ostream& operator<<(std::ostream& os, const NFmiStaticTime& ob)
+{
+  return ob.Write(os);
+}
 
 // ======================================================================

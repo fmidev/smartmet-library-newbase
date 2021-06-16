@@ -175,21 +175,30 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiAreaMaskImpl::IsMasked(int /* theIndex */) const { return false; }
+inline bool NFmiAreaMaskImpl::IsMasked(int /* theIndex */) const
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiAreaMaskImpl::IsEnabled(void) const { return fEnabled; }
+inline bool NFmiAreaMaskImpl::IsEnabled(void) const
+{
+  return fEnabled;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theNewState Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiAreaMaskImpl::Enable(bool theNewState) { fEnabled = theNewState; }
+inline void NFmiAreaMaskImpl::Enable(bool theNewState)
+{
+  fEnabled = theNewState;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -219,35 +228,50 @@ inline void NFmiAreaMaskImpl::UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> & 
  */
 // ----------------------------------------------------------------------
 
-inline NFmiInfoData::Type NFmiAreaMaskImpl::GetDataType(void) const { return itsDataType; }
+inline NFmiInfoData::Type NFmiAreaMaskImpl::GetDataType(void) const
+{
+  return itsDataType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theType Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiAreaMaskImpl::SetDataType(NFmiInfoData::Type theType) { itsDataType = theType; }
+inline void NFmiAreaMaskImpl::SetDataType(NFmiInfoData::Type theType)
+{
+  itsDataType = theType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theType Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiAreaMaskImpl::MaskType(Type theType) { itsMaskType = theType; }
+inline void NFmiAreaMaskImpl::MaskType(Type theType)
+{
+  itsMaskType = theType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMaskImpl::Type NFmiAreaMaskImpl::MaskType(void) const { return itsMaskType; }
+inline NFmiAreaMaskImpl::Type NFmiAreaMaskImpl::MaskType(void) const
+{
+  return itsMaskType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMask *NFmiAreaMaskImpl::Clone(void) const { return new NFmiAreaMaskImpl(*this); }
+inline NFmiAreaMask *NFmiAreaMaskImpl::Clone(void) const
+{
+  return new NFmiAreaMaskImpl(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newOperator Undocumented
@@ -365,14 +389,20 @@ inline void NFmiAreaMaskImpl::UpperLimit(double theUpperLimit)
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAreaMaskImpl::LowerLimit(void) const { return itsMaskCondition.LowerLimit(); }
+inline double NFmiAreaMaskImpl::LowerLimit(void) const
+{
+  return itsMaskCondition.LowerLimit();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiAreaMaskImpl::UpperLimit(void) const { return itsMaskCondition.UpperLimit(); }
+inline double NFmiAreaMaskImpl::UpperLimit(void) const
+{
+  return itsMaskCondition.UpperLimit();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMaskOperation Undocumented

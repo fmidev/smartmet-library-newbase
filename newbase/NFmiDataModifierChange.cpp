@@ -55,7 +55,8 @@ void NFmiDataModifierChange::Calculate(float theValue)
 
 void NFmiDataModifierChange::Calculate(NFmiQueryInfo* theQI)
 {
-  if (theQI) Calculate(theQI->FloatValue());
+  if (theQI)
+    Calculate(theQI->FloatValue());
 }
 
 // ----------------------------------------------------------------------
@@ -79,11 +80,14 @@ void NFmiDataModifierChange::Clear()
 
 float NFmiDataModifierChange::CalculationResult()
 {
-  if (!itsFirstValueOK) return kFloatMissing;
+  if (!itsFirstValueOK)
+    return kFloatMissing;
 
-  if (itsFirstValue == kFloatMissing) return itsLastValue;
+  if (itsFirstValue == kFloatMissing)
+    return itsLastValue;
 
-  if (itsLastValue == kFloatMissing) return kFloatMissing;
+  if (itsLastValue == kFloatMissing)
+    return kFloatMissing;
 
   return itsLastValue - itsFirstValue;
 }

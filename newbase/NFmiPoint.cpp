@@ -26,8 +26,8 @@
 // ======================================================================
 
 #include "NFmiPoint.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <fstream>
 
 const NFmiPoint NFmiPoint::gMissingLatlon = NFmiPoint(kFloatMissing, kFloatMissing);

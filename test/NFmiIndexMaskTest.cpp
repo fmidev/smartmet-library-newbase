@@ -24,7 +24,8 @@ void clear(void)
   NFmiIndexMask mask;
   mask.insert(1);
   mask.clear();
-  if (!mask.empty()) TEST_FAILED("clear() failed according to empty()");
+  if (!mask.empty())
+    TEST_FAILED("clear() failed according to empty()");
 
   TEST_PASSED();
 }
@@ -40,10 +41,12 @@ void empty(void)
   using namespace std;
 
   NFmiIndexMask mask;
-  if (!mask.empty()) TEST_FAILED("Mask must be empty after construction");
+  if (!mask.empty())
+    TEST_FAILED("Mask must be empty after construction");
 
   mask.insert(0);
-  if (mask.empty()) TEST_FAILED("Mask must not be empty after insertion");
+  if (mask.empty())
+    TEST_FAILED("Mask must not be empty after insertion");
 
   TEST_PASSED();
 }
@@ -59,16 +62,20 @@ void insert(void)
   using namespace std;
 
   NFmiIndexMask mask;
-  if (mask.size() != 0) TEST_FAILED("Mask size must be 0 after construction");
+  if (mask.size() != 0)
+    TEST_FAILED("Mask size must be 0 after construction");
 
   mask.insert(1);
-  if (mask.size() != 1) TEST_FAILED("Mask size must be 1 after 1 insert");
+  if (mask.size() != 1)
+    TEST_FAILED("Mask size must be 1 after 1 insert");
 
   mask.insert(2);
-  if (mask.size() != 2) TEST_FAILED("Mask size must be 2 after 2 unique inserts");
+  if (mask.size() != 2)
+    TEST_FAILED("Mask size must be 2 after 2 unique inserts");
 
   mask.insert(1);
-  if (mask.size() != 2) TEST_FAILED("Mask size must not change after duplicate insert");
+  if (mask.size() != 2)
+    TEST_FAILED("Mask size must not change after duplicate insert");
 
   TEST_PASSED();
 }
@@ -84,15 +91,20 @@ void find(void)
   using namespace std;
 
   NFmiIndexMask mask;
-  if (mask.find(0) != mask.end()) TEST_FAILED("Find should fail for empty masks");
+  if (mask.find(0) != mask.end())
+    TEST_FAILED("Find should fail for empty masks");
 
   mask.insert(1);
-  if (mask.find(1) == mask.end()) TEST_FAILED("Find should find an element inserted earlier");
-  if (mask.find(0) != mask.end()) TEST_FAILED("Find should not find a wrong element");
+  if (mask.find(1) == mask.end())
+    TEST_FAILED("Find should find an element inserted earlier");
+  if (mask.find(0) != mask.end())
+    TEST_FAILED("Find should not find a wrong element");
 
   mask.insert(2);
-  if (mask.find(1) == mask.end()) TEST_FAILED("Find should work for old elements too");
-  if (mask.find(2) == mask.end()) TEST_FAILED("Find should work for many elements");
+  if (mask.find(1) == mask.end())
+    TEST_FAILED("Find should work for old elements too");
+  if (mask.find(2) == mask.end())
+    TEST_FAILED("Find should work for many elements");
   if (mask.find(0) != mask.end())
     TEST_FAILED("Find should not find 0 when 1 and 2 have been inserted");
 
@@ -124,13 +136,17 @@ void equality(void)
   mask3.insert(2);
   mask3.insert(3);
 
-  if (mask1 == mask2) TEST_FAILED("operator== failed for different masks");
+  if (mask1 == mask2)
+    TEST_FAILED("operator== failed for different masks");
 
-  if (!(mask1 == mask3)) TEST_FAILED("operator== failed for identical masks");
+  if (!(mask1 == mask3))
+    TEST_FAILED("operator== failed for identical masks");
 
-  if (!(mask1 != mask2)) TEST_FAILED("operator!= failed for different masks");
+  if (!(mask1 != mask2))
+    TEST_FAILED("operator!= failed for different masks");
 
-  if (mask1 != mask3) TEST_FAILED("operator!= failed for identical masks");
+  if (mask1 != mask3)
+    TEST_FAILED("operator!= failed for identical masks");
 
   TEST_PASSED();
 }
@@ -149,14 +165,17 @@ void iterating(void)
 
   NFmiIndexMask mask;
 
-  if (mask.begin() != mask.end()) TEST_FAILED("begin() must equal end() for empty mask");
+  if (mask.begin() != mask.end())
+    TEST_FAILED("begin() must equal end() for empty mask");
 
   mask.insert(0);
   it = mask.begin();
-  if (++it != mask.end()) TEST_FAILED("++begin() must equal end() for mask of size 1");
+  if (++it != mask.end())
+    TEST_FAILED("++begin() must equal end() for mask of size 1");
 
   it = mask.end();
-  if (mask.begin() != --it) TEST_FAILED("begin() must equal --end() for mask of size 1");
+  if (mask.begin() != --it)
+    TEST_FAILED("begin() must equal --end() for mask of size 1");
 
   TEST_PASSED();
 }
@@ -187,29 +206,44 @@ void logical(void)
 
   {
     NFmiIndexMask mask = mask1 & mask2;
-    if (mask.size() != 3) TEST_FAILED("mask operator& failed to return size 3");
-    if (mask.find(1) == mask.end()) TEST_FAILED("mask operator& failed to keep index 1");
-    if (mask.find(3) == mask.end()) TEST_FAILED("mask operator& failed to keep index 3");
-    if (mask.find(5) == mask.end()) TEST_FAILED("mask operator& failed to keep index 5");
+    if (mask.size() != 3)
+      TEST_FAILED("mask operator& failed to return size 3");
+    if (mask.find(1) == mask.end())
+      TEST_FAILED("mask operator& failed to keep index 1");
+    if (mask.find(3) == mask.end())
+      TEST_FAILED("mask operator& failed to keep index 3");
+    if (mask.find(5) == mask.end())
+      TEST_FAILED("mask operator& failed to keep index 5");
   }
 
   {
     NFmiIndexMask mask = mask1 | mask2;
-    if (mask.size() != 6) TEST_FAILED("mask operator| failed to return size 6");
-    if (mask.find(1) == mask.end()) TEST_FAILED("mask operator| failed to keep index 1");
-    if (mask.find(2) == mask.end()) TEST_FAILED("mask operator| failed to keep index 2");
-    if (mask.find(3) == mask.end()) TEST_FAILED("mask operator| failed to keep index 3");
-    if (mask.find(4) == mask.end()) TEST_FAILED("mask operator| failed to keep index 4");
-    if (mask.find(5) == mask.end()) TEST_FAILED("mask operator| failed to keep index 5");
-    if (mask.find(7) == mask.end()) TEST_FAILED("mask operator| failed to keep index 7");
+    if (mask.size() != 6)
+      TEST_FAILED("mask operator| failed to return size 6");
+    if (mask.find(1) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 1");
+    if (mask.find(2) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 2");
+    if (mask.find(3) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 3");
+    if (mask.find(4) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 4");
+    if (mask.find(5) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 5");
+    if (mask.find(7) == mask.end())
+      TEST_FAILED("mask operator| failed to keep index 7");
   }
 
   {
     NFmiIndexMask mask = mask1 ^ mask2;
-    if (mask.size() != 3) TEST_FAILED("mask operator^ failed to return size 3");
-    if (mask.find(2) == mask.end()) TEST_FAILED("mask operator^ failed to keep index 2");
-    if (mask.find(4) == mask.end()) TEST_FAILED("mask operator^ failed to keep index 4");
-    if (mask.find(7) == mask.end()) TEST_FAILED("mask operator^ failed to keep index 7");
+    if (mask.size() != 3)
+      TEST_FAILED("mask operator^ failed to return size 3");
+    if (mask.find(2) == mask.end())
+      TEST_FAILED("mask operator^ failed to keep index 2");
+    if (mask.find(4) == mask.end())
+      TEST_FAILED("mask operator^ failed to keep index 4");
+    if (mask.find(7) == mask.end())
+      TEST_FAILED("mask operator^ failed to keep index 7");
   }
 
   TEST_PASSED();

@@ -31,7 +31,7 @@ class NFmiEnumConverter
  private:
   struct Comparator
   {
-      bool operator()(const char *a, const char *b) const;
+    bool operator()(const char *a, const char *b) const;
   };
 
   class Impl

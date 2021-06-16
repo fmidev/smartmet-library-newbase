@@ -37,7 +37,7 @@ NFmiStringList::~NFmiStringList()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -289,7 +289,8 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
       ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLenght);
       // if line feed not found, the end of the word which is longer than lineLenght must be splitt
       // into the next line
-      if (!ind) ind = lineLenght;
+      if (!ind)
+        ind = lineLenght;
       // the line feed found stays at the end of the line added to the list
       tempStr = new NFmiString(strLeft->GetChars(1, ind));
       Add(tempStr);
@@ -416,7 +417,7 @@ std::istream &NFmiStringList::Read(std::istream &file)
       else if (classId == kNFmiStatusPositionString)
         item = new NFmiStatusPositionString;
       else
-        throw Fmi::Exception(BCP,"Unknown string type in input stream");
+        throw Fmi::Exception(BCP, "Unknown string type in input stream");
 
       file >> *item;
       Add(item);
@@ -444,7 +445,8 @@ bool NFmiStringList::FindWithStatus(long status)
     {
       if (Current()->ClassId() == kNFmiStatusString ||
           Current()->ClassId() == kNFmiStatusPositionString)
-        if (status == (static_cast<NFmiStatusString *>(Current())->Status())) return true;
+        if (status == (static_cast<NFmiStatusString *>(Current())->Status()))
+          return true;
     }
     Reset();
     return false;
@@ -502,7 +504,8 @@ bool NFmiStringList::Remove()
       delete *iter;
       *iter = nullptr;
       itsList.erase(iter);
-      if (itsIndex > itsList.size()) Reset();
+      if (itsIndex > itsList.size())
+        Reset();
       return true;
     }
     return false;

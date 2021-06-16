@@ -29,11 +29,14 @@ void firstchartoupper()
 
   string tmp;
 
-  if (FirstCharToUpper(tmp = "test") != "Test") TEST_FAILED("Failed to capitalize 'test'");
+  if (FirstCharToUpper(tmp = "test") != "Test")
+    TEST_FAILED("Failed to capitalize 'test'");
 
-  if (FirstCharToUpper(tmp = "") != "") TEST_FAILED("Should return empty string for empty string");
+  if (FirstCharToUpper(tmp = "") != "")
+    TEST_FAILED("Should return empty string for empty string");
 
-  if (FirstCharToUpper(tmp = "ääliö") != "Ääliö") TEST_FAILED("Failed to capitalize 'ääliö'");
+  if (FirstCharToUpper(tmp = "ääliö") != "Ääliö")
+    TEST_FAILED("Failed to capitalize 'ääliö'");
 
   TEST_PASSED();
 }
@@ -50,9 +53,12 @@ void lowercase()
 
   string tmp;
 
-  if (LowerCase(tmp = "test") != "test") TEST_FAILED("Failed to convert 'test'");
-  if (LowerCase(tmp = "TEST") != "test") TEST_FAILED("Failed to convert 'TEST'");
-  if (LowerCase(tmp = "ÄÄLIÖ") != "ääliö") TEST_FAILED("Failed to convert 'ÄÄLIÖ'");
+  if (LowerCase(tmp = "test") != "test")
+    TEST_FAILED("Failed to convert 'test'");
+  if (LowerCase(tmp = "TEST") != "test")
+    TEST_FAILED("Failed to convert 'TEST'");
+  if (LowerCase(tmp = "ÄÄLIÖ") != "ääliö")
+    TEST_FAILED("Failed to convert 'ÄÄLIÖ'");
 
   if (LowerCase(tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖabcdefghijklmnopqrstuvwxyz01234567890!#%&/"
                       "()=?+*^~,;.:-_ ") !=
@@ -76,9 +82,12 @@ void uppercase()
 
   string tmp;
 
-  if (UpperCase(tmp = "test") != "TEST") TEST_FAILED("Failed to convert 'test'");
-  if (UpperCase(tmp = "TEST") != "TEST") TEST_FAILED("Failed to convert 'TEST'");
-  if (UpperCase(tmp = "ääliö") != "ÄÄLIÖ") TEST_FAILED("Failed to convert 'ääliö'");
+  if (UpperCase(tmp = "test") != "TEST")
+    TEST_FAILED("Failed to convert 'test'");
+  if (UpperCase(tmp = "TEST") != "TEST")
+    TEST_FAILED("Failed to convert 'TEST'");
+  if (UpperCase(tmp = "ääliö") != "ÄÄLIÖ")
+    TEST_FAILED("Failed to convert 'ääliö'");
 
   if (UpperCase(tmp = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖabcdefghijklmnopqrstuvwxyzäåö01234567890!#%&/"
                       "()=?+*^~,;.:-_ ") !=
@@ -122,12 +131,18 @@ void triml()
   using namespace NFmiStringTools;
 
   string tmp;
-  if (TrimL(tmp = "test") != "test") TEST_FAILED("Failed to trim 'test'");
-  if (TrimL(tmp = " test") != "test") TEST_FAILED("Failed to trim ' test'");
-  if (TrimL(tmp = "  test") != "test") TEST_FAILED("Failed to trim '  test'");
-  if (TrimL(tmp = "test", 't') != "est") TEST_FAILED("Failed to trim t out of 'test'");
-  if (TrimL(tmp = "  ") != "") TEST_FAILED("Failed to trim '  ' to ''");
-  if (TrimL(tmp = "\n\t ") != "") TEST_FAILED("Failed to trim '\\n\\t ' to ''");
+  if (TrimL(tmp = "test") != "test")
+    TEST_FAILED("Failed to trim 'test'");
+  if (TrimL(tmp = " test") != "test")
+    TEST_FAILED("Failed to trim ' test'");
+  if (TrimL(tmp = "  test") != "test")
+    TEST_FAILED("Failed to trim '  test'");
+  if (TrimL(tmp = "test", 't') != "est")
+    TEST_FAILED("Failed to trim t out of 'test'");
+  if (TrimL(tmp = "  ") != "")
+    TEST_FAILED("Failed to trim '  ' to ''");
+  if (TrimL(tmp = "\n\t ") != "")
+    TEST_FAILED("Failed to trim '\\n\\t ' to ''");
 
   TEST_PASSED();
 }
@@ -143,12 +158,18 @@ void trimr()
   using namespace NFmiStringTools;
 
   string tmp;
-  if (TrimR(tmp = "test") != "test") TEST_FAILED("Failed to trim 'test'");
-  if (TrimR(tmp = "test ") != "test") TEST_FAILED("Failed to trim 'test '");
-  if (TrimR(tmp = "test  ") != "test") TEST_FAILED("Failed to trim 'test  '");
-  if (TrimR(tmp = "test", 't') != "tes") TEST_FAILED("Failed to trim t out of 'test'");
-  if (TrimR(tmp = "  ") != "") TEST_FAILED("Failed to trim '  ' to ''");
-  if (TrimR(tmp = "\n\t ") != "") TEST_FAILED("Failed to trim '\\n\\t ' to ''")
+  if (TrimR(tmp = "test") != "test")
+    TEST_FAILED("Failed to trim 'test'");
+  if (TrimR(tmp = "test ") != "test")
+    TEST_FAILED("Failed to trim 'test '");
+  if (TrimR(tmp = "test  ") != "test")
+    TEST_FAILED("Failed to trim 'test  '");
+  if (TrimR(tmp = "test", 't') != "tes")
+    TEST_FAILED("Failed to trim t out of 'test'");
+  if (TrimR(tmp = "  ") != "")
+    TEST_FAILED("Failed to trim '  ' to ''");
+  if (TrimR(tmp = "\n\t ") != "")
+    TEST_FAILED("Failed to trim '\\n\\t ' to ''")
 
   TEST_PASSED();
 }
@@ -165,20 +186,32 @@ void trim()
 
   string tmp;
 
-  if (Trim(tmp = "test") != "test") TEST_FAILED("Failed to trim 'test'");
-  if (Trim(tmp = " test") != "test") TEST_FAILED("Failed to trim ' test'");
-  if (Trim(tmp = "  test") != "test") TEST_FAILED("Failed to trim '  test'");
-  if (Trim(tmp = "test", 't') != "es") TEST_FAILED("Failed to trim t out of 'test'");
-  if (Trim(tmp = "  ") != "") TEST_FAILED("Failed to trim '  ' to ''");
-  if (Trim(tmp = "\n\t ") != "") TEST_FAILED("Failed to trim '\\n\\t ' to ''");
+  if (Trim(tmp = "test") != "test")
+    TEST_FAILED("Failed to trim 'test'");
+  if (Trim(tmp = " test") != "test")
+    TEST_FAILED("Failed to trim ' test'");
+  if (Trim(tmp = "  test") != "test")
+    TEST_FAILED("Failed to trim '  test'");
+  if (Trim(tmp = "test", 't') != "es")
+    TEST_FAILED("Failed to trim t out of 'test'");
+  if (Trim(tmp = "  ") != "")
+    TEST_FAILED("Failed to trim '  ' to ''");
+  if (Trim(tmp = "\n\t ") != "")
+    TEST_FAILED("Failed to trim '\\n\\t ' to ''");
 
-  if (Trim(tmp = "test") != "test") TEST_FAILED("Failed to trim 'test'");
-  if (Trim(tmp = "test ") != "test") TEST_FAILED("Failed to trim 'test '");
-  if (Trim(tmp = "test  ") != "test") TEST_FAILED("Failed to trim 'test  '");
-  if (Trim(tmp = "  ") != "") TEST_FAILED("Failed to trim '  ' to ''");
-  if (Trim(tmp = "\n\t ") != "") TEST_FAILED("Failed to trim '\\n\\t ' to ''");
+  if (Trim(tmp = "test") != "test")
+    TEST_FAILED("Failed to trim 'test'");
+  if (Trim(tmp = "test ") != "test")
+    TEST_FAILED("Failed to trim 'test '");
+  if (Trim(tmp = "test  ") != "test")
+    TEST_FAILED("Failed to trim 'test  '");
+  if (Trim(tmp = "  ") != "")
+    TEST_FAILED("Failed to trim '  ' to ''");
+  if (Trim(tmp = "\n\t ") != "")
+    TEST_FAILED("Failed to trim '\\n\\t ' to ''");
 
-  if (Trim(tmp = " äaö ") != "äaö") TEST_FAILED("Failed to trim ' äaö ' to 'äaö");
+  if (Trim(tmp = " äaö ") != "äaö")
+    TEST_FAILED("Failed to trim ' äaö ' to 'äaö");
 
   TEST_PASSED();
 }
@@ -195,52 +228,62 @@ void split()
 
   {
     vector<string> result = Split("1,2,3");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2,3 into vector of strings");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2,3 into vector of strings");
   }
 
   {
     list<int> result = Split<list<int> >("1,2,3");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2,3 into list of integers");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2,3 into list of integers");
   }
 
   {
     list<string> result = Split<list<string> >("1,2,3");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2,3 into list of strings");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2,3 into list of strings");
   }
 
   {
     vector<double> result = Split<vector<double> >("1,2,3");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2,3 into vector of doubles");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2,3 into vector of doubles");
   }
 
   {
     set<int> result = Split<set<int> >("1,2,3,2,1");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2,3,2,1 into set of integers");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2,3,2,1 into set of integers");
   }
 
   {
     vector<string> result = Split(",2,3");
-    if (result.size() != 3) TEST_FAILED("Failed to split ,2,3 into 3 parts");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split ,2,3 into 3 parts");
   }
 
   {
     vector<string> result = Split("1,2,");
-    if (result.size() != 3) TEST_FAILED("Failed to split 1,2, into 3 parts");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split 1,2, into 3 parts");
   }
 
   {
     vector<string> result = Split(",,");
-    if (result.size() != 3) TEST_FAILED("Failed to split ,, into 3 parts");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to split ,, into 3 parts");
   }
 
   {
     vector<string> result = Split(",");
-    if (result.size() != 2) TEST_FAILED("Failed to split , into 2 parts");
+    if (result.size() != 2)
+      TEST_FAILED("Failed to split , into 2 parts");
   }
 
   {
     vector<string> result = Split("");
-    if (result.size() != 0) TEST_FAILED("Failed to split '' into 0 parts");
+    if (result.size() != 0)
+      TEST_FAILED("Failed to split '' into 0 parts");
   }
 
   TEST_PASSED();
@@ -259,25 +302,31 @@ void join()
   {
     vector<string> input = Split("");
 
-    if (Join(input) != "") TEST_FAILED("Failed to join ''");
+    if (Join(input) != "")
+      TEST_FAILED("Failed to join ''");
 
-    if (Join(input, ",") != "") TEST_FAILED("Failed to join ''");
+    if (Join(input, ",") != "")
+      TEST_FAILED("Failed to join ''");
   }
 
   {
     vector<string> input = Split("1");
 
-    if (Join(input) != "1") TEST_FAILED("Failed to join 1");
+    if (Join(input) != "1")
+      TEST_FAILED("Failed to join 1");
 
-    if (Join(input, ",") != "1") TEST_FAILED("Failed to join 1");
+    if (Join(input, ",") != "1")
+      TEST_FAILED("Failed to join 1");
   }
 
   {
     vector<string> input = Split("1,2,3");
 
-    if (Join(input) != "123") TEST_FAILED("Failed to join 123");
+    if (Join(input) != "123")
+      TEST_FAILED("Failed to join 123");
 
-    if (Join(input, ",") != "1,2,3") TEST_FAILED("Failed to join 1,2,3");
+    if (Join(input, ",") != "1,2,3")
+      TEST_FAILED("Failed to join 1,2,3");
   }
 
   TEST_PASSED();
@@ -297,12 +346,14 @@ void convert()
   if (NFmiStringTools::Convert<string>("abba pappa") != "abba pappa")
     TEST_FAILED("Failed to parse string 'abba pappa'");
 
-  if (NFmiStringTools::Convert(1) != "1") TEST_FAILED("Failed to decompile 1 into '1'");
+  if (NFmiStringTools::Convert(1) != "1")
+    TEST_FAILED("Failed to decompile 1 into '1'");
 
   if (NFmiStringTools::Convert(1.234) != "1.234")
     TEST_FAILED("Failed to decompile 1.234 into '1.234'");
 
-  if (NFmiStringTools::Convert<int>("1") != 1) TEST_FAILED("Failed to convert '1' into 1");
+  if (NFmiStringTools::Convert<int>("1") != 1)
+    TEST_FAILED("Failed to convert '1' into 1");
 
   if (NFmiStringTools::Convert<double>("1.234") != 1.234)
     TEST_FAILED("Failed to convert '1.234' into 1.234");
@@ -374,7 +425,8 @@ void urlencode()
   if (UrlEncode(str) != str)
     TEST_FAILED("Failed to encode lower case alphabet correctly: " + UrlEncode(str));
 
-  if (UrlEncode("_") != "_") TEST_FAILED("Failed to encode '_' correctly: " + UrlEncode("_"));
+  if (UrlEncode("_") != "_")
+    TEST_FAILED("Failed to encode '_' correctly: " + UrlEncode("_"));
 
   str = "\n\t !\"#%&/()=+?";
   if (UrlEncode(str) != "%0A%09%20%21%22%23%25%26%2F%28%29%3D%2B%3F")
@@ -405,7 +457,8 @@ void urldecode()
   if (UrlDecode(str) != str)
     TEST_FAILED("Failed to decode lower case alphabet correctly: " + UrlDecode(str));
 
-  if (UrlDecode("_") != "_") TEST_FAILED("Failed to decode '_' correctly: " + UrlDecode("_"));
+  if (UrlDecode("_") != "_")
+    TEST_FAILED("Failed to decode '_' correctly: " + UrlDecode("_"));
 
   str = "%0A%09%20%21%22%23%25%26%2F%28%29%3D%2B%3F";
   if (UrlDecode(str) != "\n\t !\"#%&/()=+?")
@@ -429,39 +482,50 @@ void parsequerystring()
 
   {
     result = ParseQueryString("");
-    if (!result.empty()) TEST_FAILED("Parsing an empty string should return empty map");
+    if (!result.empty())
+      TEST_FAILED("Parsing an empty string should return empty map");
   }
 
   {
     result = ParseQueryString("a=1");
-    if (result.size() != 1) TEST_FAILED("Failed to parse 'a=1'");
+    if (result.size() != 1)
+      TEST_FAILED("Failed to parse 'a=1'");
     it = result.find("a");
-    if (it == result.end() || it->second != "1") TEST_FAILED("Failed to extract 'a' value '1'");
+    if (it == result.end() || it->second != "1")
+      TEST_FAILED("Failed to extract 'a' value '1'");
   }
 
   {
     result = ParseQueryString("QUERYSTRING=b=2");
-    if (result.size() != 1) TEST_FAILED("Failed to parse 'QUERYSTRING=b=2'");
+    if (result.size() != 1)
+      TEST_FAILED("Failed to parse 'QUERYSTRING=b=2'");
     it = result.find("b");
-    if (it == result.end() || it->second != "2") TEST_FAILED("Failed to extract 'b' value '2'");
+    if (it == result.end() || it->second != "2")
+      TEST_FAILED("Failed to extract 'b' value '2'");
   }
 
   {
     result = ParseQueryString("a=1&b=2&c=3");
-    if (result.size() != 3) TEST_FAILED("Failed to parse 'a=1&b=2&c=3'");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to parse 'a=1&b=2&c=3'");
     it = result.find("a");
-    if (it == result.end() || it->second != "1") TEST_FAILED("Failed to extract 'a' value '1'");
+    if (it == result.end() || it->second != "1")
+      TEST_FAILED("Failed to extract 'a' value '1'");
     it = result.find("b");
-    if (it == result.end() || it->second != "2") TEST_FAILED("Failed to extract 'b' value '2'");
+    if (it == result.end() || it->second != "2")
+      TEST_FAILED("Failed to extract 'b' value '2'");
     it = result.find("c");
-    if (it == result.end() || it->second != "3") TEST_FAILED("Failed to extract 'c' value '3'");
+    if (it == result.end() || it->second != "3")
+      TEST_FAILED("Failed to extract 'c' value '3'");
   }
 
   {
     result = ParseQueryString("space=%20&newline=%0A&tabulator=%09");
-    if (result.size() != 3) TEST_FAILED("Failed to parse 'space=%20&newline=%0A&tabulator=%09'");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to parse 'space=%20&newline=%0A&tabulator=%09'");
     it = result.find("space");
-    if (it == result.end() || it->second != " ") TEST_FAILED("Failed to extract 'space' value ' '");
+    if (it == result.end() || it->second != " ")
+      TEST_FAILED("Failed to extract 'space' value ' '");
     it = result.find("newline");
     if (it == result.end() || it->second != "\n")
       TEST_FAILED("Failed to extract 'newline' value '\n'");
@@ -472,7 +536,8 @@ void parsequerystring()
 
   {
     result = ParseQueryString("%20=space&%0A=newline&%09=tabulator");
-    if (result.size() != 3) TEST_FAILED("Failed to parse '%20=space&%0A=newline&%09=tabulator'");
+    if (result.size() != 3)
+      TEST_FAILED("Failed to parse '%20=space&%0A=newline&%09=tabulator'");
     it = result.find(" ");
     if (it == result.end() || it->second != "space")
       TEST_FAILED("Failed to extract ' ' value 'space'");
@@ -499,9 +564,12 @@ void basename()
 
   string tmp;
 
-  if ((tmp = Basename("foobar")) != "foobar") TEST_FAILED("Failed to extract basename of foobar");
-  if ((tmp = Basename("foo/bar")) != "bar") TEST_FAILED("Failed to extract basename of foo/bar");
-  if ((tmp = Basename("foo/")) != "foo") TEST_FAILED("Failed to extract basename of foo/");
+  if ((tmp = Basename("foobar")) != "foobar")
+    TEST_FAILED("Failed to extract basename of foobar");
+  if ((tmp = Basename("foo/bar")) != "bar")
+    TEST_FAILED("Failed to extract basename of foo/bar");
+  if ((tmp = Basename("foo/")) != "foo")
+    TEST_FAILED("Failed to extract basename of foo/");
 
   TEST_PASSED();
 }
@@ -518,9 +586,12 @@ void suffix()
 
   string tmp;
 
-  if ((tmp = Suffix("foo.bar")) != "bar") TEST_FAILED("Failed to extract suffix of foo.bar");
-  if ((tmp = Suffix("foobar")) != "") TEST_FAILED("Failed to extract suffix of foobar");
-  if ((tmp = Suffix("foobar.")) != "") TEST_FAILED("Failed to extract suffix of foobar.");
+  if ((tmp = Suffix("foo.bar")) != "bar")
+    TEST_FAILED("Failed to extract suffix of foo.bar");
+  if ((tmp = Suffix("foobar")) != "")
+    TEST_FAILED("Failed to extract suffix of foobar");
+  if ((tmp = Suffix("foobar.")) != "")
+    TEST_FAILED("Failed to extract suffix of foobar.");
 
   TEST_PASSED();
 }

@@ -24,16 +24,21 @@ void distance(void)
   using namespace std;
   using namespace NFmiGeoTools;
 
-  if (Distance(0, 0, 0, 0) != 0) TEST_FAILED("Distance between (0,0) and (0,0) is not 0");
+  if (Distance(0, 0, 0, 0) != 0)
+    TEST_FAILED("Distance between (0,0) and (0,0) is not 0");
 
-  if (Distance(0, 0, 1, 0) != 1) TEST_FAILED("Distance between (0,0) and (1,0) is not 1");
+  if (Distance(0, 0, 1, 0) != 1)
+    TEST_FAILED("Distance between (0,0) and (1,0) is not 1");
 
   // pythagoras: 3*3+4*4=5*5
-  if (Distance(1, 2, 4, 6) != 5) TEST_FAILED("Distance between (1,2) and (4,6) is not 5");
+  if (Distance(1, 2, 4, 6) != 5)
+    TEST_FAILED("Distance between (1,2) and (4,6) is not 5");
 
-  if (Distance(0, 0, 0, 0, 0, 0) != 0) TEST_FAILED("Distance between (0,0,0) and (0,0,0) is not 0");
+  if (Distance(0, 0, 0, 0, 0, 0) != 0)
+    TEST_FAILED("Distance between (0,0,0) and (0,0,0) is not 0");
 
-  if (Distance(0, 0, 0, 1, 0, 0) != 1) TEST_FAILED("Distance between (0,0,0) and (1,0,0) is not 1");
+  if (Distance(0, 0, 0, 1, 0, 0) != 1)
+    TEST_FAILED("Distance between (0,0,0) and (1,0,0) is not 1");
 
   if (std::abs(Distance(1, 2, 3, 6, 5, 4) - std::sqrt(35.0)) > 1e-6)
     TEST_FAILED("Distance between (1,2,3) and (6,5,4) is not sqrt(35)");
@@ -87,7 +92,8 @@ void geodistance(void)
   using namespace std;
   using namespace NFmiGeoTools;
 
-  if (GeoDistance(25, 60, 25, 60) != 0) TEST_FAILED("GeoDistance of (25,60) from (25,60) is not ?");
+  if (GeoDistance(25, 60, 25, 60) != 0)
+    TEST_FAILED("GeoDistance of (25,60) from (25,60) is not ?");
 
   // 2*kPii*kRearth*30/360 = 3335962.99150298
   if (std::abs(GeoDistance(25, 60, 0, 90) - 3335962) > 1)

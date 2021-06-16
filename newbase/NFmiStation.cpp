@@ -134,7 +134,10 @@ bool NFmiStation::IsEqual(const NFmiSortable &theLocation) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStation::IsLessThan(const NFmiSortable & /* theLocation */) const { return false; }
+bool NFmiStation::IsLessThan(const NFmiSortable & /* theLocation */) const
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theStation Undocumented

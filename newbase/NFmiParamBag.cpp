@@ -33,7 +33,7 @@ NFmiParamBag::~NFmiParamBag()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -190,7 +190,8 @@ bool NFmiParamBag::operator==(const NFmiParamBag& theOtherParams) const
   try
   {
     bool retVal = false;
-    if (GetSize() != theOtherParams.GetSize()) return false;
+    if (GetSize() != theOtherParams.GetSize())
+      return false;
 
     for (unsigned long i = 0; i < GetSize(); i++)
     {
@@ -443,7 +444,8 @@ NFmiDataIdent* NFmiParamBag::Current(bool fIgnoreSubParam) const
   try
   {
     if (!fIgnoreSubParam)
-      if (fIsSubParamUsed) return itsUsedSubParam;
+      if (fIsSubParamUsed)
+        return itsUsedSubParam;
     if (GetSize() > 0 && itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
       return const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]);
     else

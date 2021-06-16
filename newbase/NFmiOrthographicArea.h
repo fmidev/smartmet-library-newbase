@@ -108,9 +108,15 @@ typedef NFmiOrthographicArea *PNFmiOrthographicArea;
 inline NFmiOrthographicArea::~NFmiOrthographicArea(void) {}
 // ----------------------------------------------------------------------
 
-inline double NFmiOrthographicArea::GlobeRadius(void) const { return itsGlobeRadius; }
+inline double NFmiOrthographicArea::GlobeRadius(void) const
+{
+  return itsGlobeRadius;
+}
 // ----------------------------------------------------------------------
 
-inline const char *NFmiOrthographicArea::ClassName(void) const { return "kNFmiOrthographicArea"; }
+inline const char *NFmiOrthographicArea::ClassName(void) const
+{
+  return "kNFmiOrthographicArea";
+}
 
 // ======================================================================

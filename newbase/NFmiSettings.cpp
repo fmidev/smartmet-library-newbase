@@ -10,7 +10,6 @@
 
 namespace NFmiSettings
 {
-
 void Clear()
 {
   try

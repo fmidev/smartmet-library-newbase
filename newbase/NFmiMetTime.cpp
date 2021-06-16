@@ -434,7 +434,8 @@ void NFmiMetTime::PreviousMetTime(const long deltaInMinutes)
 {
   try
   {
-    if (deltaInMinutes == 0) return;
+    if (deltaInMinutes == 0)
+      return;
 
     long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
 
@@ -475,7 +476,8 @@ void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
       {
         SetYear(short(GetYear() - thePerioid.Year()));
         SetMonth(short(GetMonth() - thePerioid.Month()));
-        if (thePerioid.Day()) DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
+        if (thePerioid.Day())
+          DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
         return;
       }
     }
@@ -498,7 +500,8 @@ void NFmiMetTime::NearestMetTime(const long deltaInMinutes, FmiDirection theDire
 {
   try
   {
-    if (deltaInMinutes == 0) return;
+    if (deltaInMinutes == 0)
+      return;
     long extraMinutes = (60L * GetHour() + GetMin()) % deltaInMinutes;
 
     if (extraMinutes == 0)  // already a meteorological time!
@@ -560,11 +563,10 @@ struct tm NFmiMetTime::GetSystemTime()
     tm ret;
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::gmtime_s(&ret, &t);
 
@@ -699,11 +701,10 @@ const NFmiTime NFmiMetTime::CorrectLocalTime() const
     struct ::tm local;
 
 #ifdef _MSC_VER
-    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-    // Closest things available are some what safer (but not thread safe) and with almost same
-    // function
-    // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-    // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
     ::localtime_s(&local, &epochtime);
 #else

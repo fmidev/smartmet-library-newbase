@@ -94,7 +94,10 @@ inline NFmiSatelQueryData::NFmiSatelQueryData(NFmiQueryInfo &theInfo)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSatel *NFmiSatelQueryData::Value(void) { return static_cast<NFmiSatel *>(VoidValue()); }
+inline NFmiSatel *NFmiSatelQueryData::Value(void)
+{
+  return static_cast<NFmiSatel *>(VoidValue());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theData Undocumented
@@ -113,7 +116,10 @@ inline bool NFmiSatelQueryData::Value(NFmiSatel *theData)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSatelQueryData::ClassId(void) const { return kNFmiSatelQueryData; }
+inline unsigned long NFmiSatelQueryData::ClassId(void) const
+{
+  return kNFmiSatelQueryData;
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream

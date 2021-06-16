@@ -1,8 +1,8 @@
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiStringTools.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <cmath>
 
 using namespace std;
@@ -82,8 +82,12 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
     const char *fmt =
         "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext "
         "+no_defs +type=crs";
-    itsProjStr = fmt::format(
-        fmt, itsTrueLatitude1, itsTrueLatitude2, itsCentralLatitude, itsCentralLongitude, itsRadius);
+    itsProjStr = fmt::format(fmt,
+                             itsTrueLatitude1,
+                             itsTrueLatitude2,
+                             itsCentralLatitude,
+                             itsCentralLongitude,
+                             itsRadius);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -373,8 +377,12 @@ const std::string NFmiLambertConformalConicArea::WKT() const
                       R"(PARAMETER["standard_parallel_1",{}],)"
                       R"(PARAMETER["standard_parallel_2",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(
-        fmt, itsRadius, itsCentralLatitude, itsCentralLongitude, itsTrueLatitude1, itsTrueLatitude2);
+    return fmt::format(fmt,
+                       itsRadius,
+                       itsCentralLatitude,
+                       itsCentralLongitude,
+                       itsTrueLatitude1,
+                       itsTrueLatitude2);
   }
   catch (...)
   {

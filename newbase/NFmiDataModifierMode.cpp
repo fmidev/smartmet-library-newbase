@@ -21,7 +21,10 @@ NFmiDataModifierMode::NFmiDataModifierMode(const NFmiDataModifierMode& theOther)
 
     = default;
 
-NFmiDataModifier* NFmiDataModifierMode::Clone() const { return new NFmiDataModifierMode(*this); }
+NFmiDataModifier* NFmiDataModifierMode::Clone() const
+{
+  return new NFmiDataModifierMode(*this);
+}
 
 void NFmiDataModifierMode::Calculate(float theValue)
 {
@@ -35,10 +38,14 @@ void NFmiDataModifierMode::Calculate(float theValue)
   }
 }
 
-void NFmiDataModifierMode::Clear() { itsDataVector.clear(); }
+void NFmiDataModifierMode::Clear()
+{
+  itsDataVector.clear();
+}
 float NFmiDataModifierMode::CalculationResult()
 {
   auto pos = std::max_element(itsDataVector.begin(), itsDataVector.end());
-  if (pos != itsDataVector.end()) return (*pos).Value();
+  if (pos != itsDataVector.end())
+    return (*pos).Value();
   return kFloatMissing;
 }

@@ -102,7 +102,8 @@ float NFmiParam::Scale() const
 {
   try
   {
-    if (itsScale == kFloatMissing) return 1;
+    if (itsScale == kFloatMissing)
+      return 1;
 
     return itsScale;
   }
@@ -122,7 +123,8 @@ float NFmiParam::Base() const
 {
   try
   {
-    if (itsBase == kFloatMissing) return 0;
+    if (itsBase == kFloatMissing)
+      return 0;
 
     return itsBase;
   }

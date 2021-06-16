@@ -93,11 +93,17 @@ inline NFmiYKJArea::~NFmiYKJArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiYKJArea::ClassId(void) const { return kNFmiYKJArea; }
+inline unsigned long NFmiYKJArea::ClassId(void) const
+{
+  return kNFmiYKJArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiYKJArea::ClassName(void) const { return "NFmiYKJArea"; }
+inline const char* NFmiYKJArea::ClassName(void) const
+{
+  return "NFmiYKJArea";
+}

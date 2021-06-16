@@ -198,14 +198,16 @@ void save()
 
   {
     ofstream out1(conffile1.c_str(), ios::out);
-    if (!out1) TEST_FAILED("Failed to open " + conffile1 + " for writing");
+    if (!out1)
+      TEST_FAILED("Failed to open " + conffile1 + " for writing");
     out1 << "a = a" << endl << "b = b" << endl << "c\t=\tc" << endl;
     out1.close();
   }
 
   {
     ofstream out2(conffile2.c_str(), ios::out);
-    if (!out2) TEST_FAILED("Failed to open " + conffile2 + " for writing");
+    if (!out2)
+      TEST_FAILED("Failed to open " + conffile2 + " for writing");
     out2 << "A = A" << endl << "B = B" << endl << "c\t=\tc" << endl;
     out2.close();
   }
@@ -233,7 +235,8 @@ void save()
     TEST_FAILED("Failed to change 'a' to 'new a'");
   if (NFmiSettingsImpl::Instance().Value("b") != "new b")
     TEST_FAILED("Failed to change 'b' to 'new b'");
-  if (NFmiSettingsImpl::Instance().Value("c") != "c") TEST_FAILED("Failed to keep 'c' as 'c'");
+  if (NFmiSettingsImpl::Instance().Value("c") != "c")
+    TEST_FAILED("Failed to keep 'c' as 'c'");
 
   NFmiSettingsImpl::Instance().Clear();
   if (!NFmiSettingsImpl::Instance().Read(conffile2))

@@ -34,7 +34,8 @@ void filecomplete(void)
   std::string result;
 
   result = FileComplete("NFmiFileSystemTest.cpp", "");
-  if (result != "NFmiFileSystemTest.cpp") TEST_FAILED("Should have found NFmiFileSystemTest.cpp");
+  if (result != "NFmiFileSystemTest.cpp")
+    TEST_FAILED("Should have found NFmiFileSystemTest.cpp");
 
   result = FileComplete("NFmiFileSystem.cpp", "");
   if (result != "NFmiFileSystem.cpp")
@@ -65,10 +66,12 @@ void temporaryfile(void)
   string result;
 
   result = TemporaryFile(".");
-  if (result.empty()) TEST_FAILED("Failed to create filename in .");
+  if (result.empty())
+    TEST_FAILED("Failed to create filename in .");
 
   result = TemporaryFile("/tmp");
-  if (result.empty()) TEST_FAILED("Failed to create filename in /tmp");
+  if (result.empty())
+    TEST_FAILED("Failed to create filename in /tmp");
 
   try
   {
@@ -95,11 +98,14 @@ void dirname(void)
 
   string result;
 
-  if ((result = DirName("")) != ".") TEST_FAILED("For '' should get '.', not '" + result + "'");
+  if ((result = DirName("")) != ".")
+    TEST_FAILED("For '' should get '.', not '" + result + "'");
 
-  if ((result = DirName(".")) != ".") TEST_FAILED("For '.' should get '.', not '" + result + "'");
+  if ((result = DirName(".")) != ".")
+    TEST_FAILED("For '.' should get '.', not '" + result + "'");
 
-  if ((result = DirName("/")) != "/") TEST_FAILED("For '/' should get '/', not '" + result + "'");
+  if ((result = DirName("/")) != "/")
+    TEST_FAILED("For '/' should get '/', not '" + result + "'");
 
   if ((result = DirName("/aa")) != "/")
     TEST_FAILED("For '/aa' should get '/', not '" + result + "'");
@@ -116,7 +122,8 @@ void dirname(void)
   if ((result = DirName("/aa/bb/cc")) != "/aa/bb")
     TEST_FAILED("For '/aa/bb/cc' should get '/aa/bb', not '" + result + "'");
 
-  if ((result = DirName("aa")) != ".") TEST_FAILED("For 'aa' should get '.', not '" + result + "'");
+  if ((result = DirName("aa")) != ".")
+    TEST_FAILED("For 'aa' should get '.', not '" + result + "'");
 
   if ((result = DirName("aa/")) != ".")
     TEST_FAILED("For 'aa/' should get '.', not '" + result + "'");
@@ -146,11 +153,14 @@ void basename(void)
 
   string result;
 
-  if ((result = BaseName("")) != "") TEST_FAILED("For '' should get '', not '" + result + "'");
+  if ((result = BaseName("")) != "")
+    TEST_FAILED("For '' should get '', not '" + result + "'");
 
-  if ((result = BaseName(".")) != ".") TEST_FAILED("For '.' should get '.', not '" + result + "'");
+  if ((result = BaseName(".")) != ".")
+    TEST_FAILED("For '.' should get '.', not '" + result + "'");
 
-  if ((result = BaseName("/")) != "/") TEST_FAILED("For '/' should get '/', not '" + result + "'");
+  if ((result = BaseName("/")) != "/")
+    TEST_FAILED("For '/' should get '/', not '" + result + "'");
 
   if ((result = BaseName("/aa")) != "aa")
     TEST_FAILED("For '/aa' should get 'aa', not '" + result + "'");
@@ -259,22 +269,28 @@ void findfile()
   std::string result;
 
   NFmiFileSystem::FindFile(dir + "/akka.txt", true, &result);
-  if (result != "akka.txt") TEST_FAILED("akka.txt should have matched akka.txt, not " + result);
+  if (result != "akka.txt")
+    TEST_FAILED("akka.txt should have matched akka.txt, not " + result);
 
   NFmiFileSystem::FindFile(dir + "/a??a.txt", true, &result);
-  if (result != "akka.txt") TEST_FAILED("a??a.txt should have matched akka.txt, not " + result);
+  if (result != "akka.txt")
+    TEST_FAILED("a??a.txt should have matched akka.txt, not " + result);
 
   NFmiFileSystem::FindFile(dir + "/a??a.txt", false, &result);
-  if (result != "abba.txt") TEST_FAILED("a??a.txt should have matched abba.txt, not " + result);
+  if (result != "abba.txt")
+    TEST_FAILED("a??a.txt should have matched abba.txt, not " + result);
 
   NFmiFileSystem::FindFile(dir + "/a*.txt", true, &result);
-  if (result != "akka.txt") TEST_FAILED("a*.txt should have matched akka.txt, not " + result);
+  if (result != "akka.txt")
+    TEST_FAILED("a*.txt should have matched akka.txt, not " + result);
 
   NFmiFileSystem::FindFile(dir + "/*a.txt", true, &result);
-  if (result != "kappa.txt") TEST_FAILED("a*.txt should have matched kappa.txt, not " + result);
+  if (result != "kappa.txt")
+    TEST_FAILED("a*.txt should have matched kappa.txt, not " + result);
 
   NFmiFileSystem::FindFile(dir + "/*b*a.txt", true, &result);
-  if (result != "babba.txt") TEST_FAILED("*b*a.txt should have matched babba.txt, not " + result);
+  if (result != "babba.txt")
+    TEST_FAILED("*b*a.txt should have matched babba.txt, not " + result);
 
   std::string cmd = "rm -rf " + dir;
   system(cmd.c_str());
@@ -315,16 +331,20 @@ void patternfiles()
     TEST_FAILED("First match for akka.txt should have been akka.txt, not " + out.front());
 
   out = NFmiFileSystem::PatternFiles(dir + "/a??a.txt");
-  if (out.size() != 2) TEST_FAILED("a??a.txt should have matched 2 files");
+  if (out.size() != 2)
+    TEST_FAILED("a??a.txt should have matched 2 files");
 
   out = NFmiFileSystem::PatternFiles(dir + "/a*.txt");
-  if (out.size() != 2) TEST_FAILED("a*.txt should have matched 2 files");
+  if (out.size() != 2)
+    TEST_FAILED("a*.txt should have matched 2 files");
 
   out = NFmiFileSystem::PatternFiles(dir + "/*a.txt");
-  if (out.size() != 4) TEST_FAILED("*a.txt should have matched 4 files");
+  if (out.size() != 4)
+    TEST_FAILED("*a.txt should have matched 4 files");
 
   out = NFmiFileSystem::PatternFiles(dir + "/*b*a.txt");
-  if (out.size() != 2) TEST_FAILED("*b*a.txt should have matched 2 files");
+  if (out.size() != 2)
+    TEST_FAILED("*b*a.txt should have matched 2 files");
 
   std::string cmd = "rm -rf " + dir;
   system(cmd.c_str());
@@ -332,7 +352,8 @@ void patternfiles()
   // Test also without path component
 
   out = NFmiFileSystem::PatternFiles("*.cpp");
-  if (out.size() < 20) TEST_FAILED("*.cpp should have matched atleast 20 files");
+  if (out.size() < 20)
+    TEST_FAILED("*.cpp should have matched atleast 20 files");
 
   TEST_PASSED();
 }

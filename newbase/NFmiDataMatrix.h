@@ -53,7 +53,7 @@
 
 //! A 2D data container
 template <class T>  // miten annetaan containeri template parametrina??????
-class NFmiDataMatrix : public std::vector<std::vector<T> >
+class NFmiDataMatrix : public std::vector<std::vector<T>>
 {
  public:
   typedef typename std::vector<T>::size_type size_type;
@@ -128,7 +128,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw Fmi::Exception(BCP,
+    throw Fmi::Exception(
+        BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -145,7 +146,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw Fmi::Exception(BCP,
+    throw Fmi::Exception(
+        BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -160,14 +162,15 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     indexStr += " and ";
     indexStr += NFmiStringTools::Convert(j);
     indexStr += "\n";
-    throw Fmi::Exception(BCP,e.what() + std::string("\n") + indexStr);
+    throw Fmi::Exception(BCP, e.what() + std::string("\n") + indexStr);
   }
 
   //! Resize matrix to desired size, with given value for new elements.
 
   void Resize(size_type theNX, size_type theNY, const T& theValue = T())
   {
-    if (itsNY == theNY && itsNX == theNX) return;
+    if (itsNY == theNY && itsNX == theNX)
+      return;
 
     itsNY = theNY;
     itsNX = theNX;
@@ -220,7 +223,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
 
   NFmiDataMatrix<T>& operator=(NFmiDataMatrix<T>&& other)
   {
-    if(&other != this)
+    if (&other != this)
     {
       itsNX = other.itsNX;
       itsNY = other.itsNY;
@@ -235,7 +238,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
   {
     for (size_type j = 0; j < itsNY; j++)
       for (size_type i = 0; i < itsNX; i++)
-        if (this->operator[](i)[j] == theSourceValue) this->operator[](i)[j] = theTargetValue;
+        if (this->operator[](i)[j] == theSourceValue)
+          this->operator[](i)[j] = theTargetValue;
   }
 
   //! Addition operator matrix += matrix

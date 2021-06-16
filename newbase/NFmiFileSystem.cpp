@@ -84,7 +84,8 @@ using namespace std;
 #ifndef UNIX
 static bool IsWinDir(const struct _finddata_t &fileinfo)
 {
-  if ((fileinfo.attrib & 16) == 16) return true;
+  if ((fileinfo.attrib & 16) == 16)
+    return true;
   return false;
 }
 #endif
@@ -241,13 +242,16 @@ namespace NFmiFileSystem
 const string FileComplete(const string &theFile, const string &theSearchPath)
 {
   // Safety
-  if (theFile.empty() || theSearchPath.empty()) return theFile;
+  if (theFile.empty() || theSearchPath.empty())
+    return theFile;
 
   // Return existing files as is
-  if (FileExists(theFile) || DirectoryExists(theFile)) return theFile;
+  if (FileExists(theFile) || DirectoryExists(theFile))
+    return theFile;
 
   // Return absolute paths as they are
-  if (theFile[0] == '/' || theFile[0] == '\\') return theFile;
+  if (theFile[0] == '/' || theFile[0] == '\\')
+    return theFile;
 
   // Split the search path into individual paths
 
@@ -257,7 +261,8 @@ const string FileComplete(const string &theFile, const string &theSearchPath)
   while (pos1 < theSearchPath.size())
   {
     string::size_type pos2 = theSearchPath.find(':', pos1);
-    if (pos2 == std::string::npos) pos2 = theSearchPath.size();
+    if (pos2 == std::string::npos)
+      pos2 = theSearchPath.size();
     paths.push_back(theSearchPath.substr(pos1, pos2 - pos1));
     pos1 = pos2 + 1;
   }
@@ -268,11 +273,13 @@ const string FileComplete(const string &theFile, const string &theSearchPath)
   {
     string name = *it;
     const char lastchar = name[name.size() - 1];
-    if (lastchar != '/' && lastchar != '\\') name += '/';
+    if (lastchar != '/' && lastchar != '\\')
+      name += '/';
     name += theFile;
 
     // Return the completed name if the respective file exists
-    if (FileExists(name) || DirectoryExists(name)) return name;
+    if (FileExists(name) || DirectoryExists(name))
+      return name;
   }
 
   // Otherwise return the original name back
@@ -292,7 +299,8 @@ bool FileExists(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
   return (S_ISREG(st.st_mode) != 0);
 }
@@ -310,9 +318,11 @@ bool FileReadable(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISREG(st.st_mode)) return false;
+  if (!S_ISREG(st.st_mode))
+    return false;
 
 #ifdef UNIX
   int rmask;
@@ -341,9 +351,11 @@ bool FileWritable(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISREG(st.st_mode)) return false;
+  if (!S_ISREG(st.st_mode))
+    return false;
 
 #ifdef UNIX
   int wmask;
@@ -372,9 +384,11 @@ bool FileExecutable(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISREG(st.st_mode)) return false;
+  if (!S_ISREG(st.st_mode))
+    return false;
 
 #ifdef UNIX
   int xmask;
@@ -424,7 +438,8 @@ size_t FileSize(const string &theFile)
 bool FileEmpty(const string &theFile)
 {
   FMI_stat st;
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return true;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return true;
   return (st.st_size == 0);
 }
 
@@ -495,7 +510,8 @@ time_t FileChangedTime(const string &theFile)
 long FileAge(const string &theFile)
 {
   FMI_stat st;
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return -1;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return -1;
   time_t modtime = st.st_mtime;
 
   time_t nowtime = time(nullptr);
@@ -514,7 +530,8 @@ long FileAge(const string &theFile)
 
 bool DirectoryExists(const string &theFile)
 {
-  if (theFile.empty() == true) return false;
+  if (theFile.empty() == true)
+    return false;
   FMI_stat st;
 
   char ch = theFile[theFile.size() - 1];
@@ -525,9 +542,11 @@ bool DirectoryExists(const string &theFile)
     return DirectoryExists(file2);
   }
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISDIR(st.st_mode)) return false;
+  if (!S_ISDIR(st.st_mode))
+    return false;
 
   return true;
 }
@@ -545,9 +564,11 @@ bool DirectoryReadable(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISDIR(st.st_mode)) return false;
+  if (!S_ISDIR(st.st_mode))
+    return false;
 
 #ifdef UNIX
   int rmask;
@@ -576,9 +597,11 @@ bool DirectoryWritable(const string &theFile)
 {
   FMI_stat st;
 
-  if (FMI_stat_func(theFile.c_str(), &st) != 0) return false;
+  if (FMI_stat_func(theFile.c_str(), &st) != 0)
+    return false;
 
-  if (!S_ISDIR(st.st_mode)) return false;
+  if (!S_ISDIR(st.st_mode))
+    return false;
 
 #ifdef UNIX
   int wmask;
@@ -627,11 +650,13 @@ bool CreateDirectory(const string &thePath)
   {
     string path = tmpPath.substr(0, pos);
     // "." has been optimized here for speed
-    if ((path != ".") && !DirectoryExists(path)) MKDIR(path.c_str());
+    if ((path != ".") && !DirectoryExists(path))
+      MKDIR(path.c_str());
     pos += 2;
   }
 
-  if (!DirectoryExists(tmpPath)) MKDIR(tmpPath.c_str());
+  if (!DirectoryExists(tmpPath))
+    MKDIR(tmpPath.c_str());
 
   return DirectoryExists(tmpPath);
 }
@@ -647,10 +672,12 @@ bool CreateDirectory(const string &thePath)
 
 const string NewestFile(const string &thePath)
 {
-  if (!DirectoryExists(thePath)) return "";
+  if (!DirectoryExists(thePath))
+    return "";
 
   list<string> files = DirectoryFiles(thePath);
-  if (files.empty()) return "";
+  if (files.empty())
+    return "";
 
   string newestfile;
   time_t newesttime = 0;
@@ -674,7 +701,8 @@ const string NewestFile(const string &thePath)
 
 std::time_t NewestFileTime(const std::string &thePath)
 {
-  if (!DirectoryExists(thePath)) return 0;
+  if (!DirectoryExists(thePath))
+    return 0;
 
   list<string> files = DirectoryFiles(thePath);
   return NewestFileTime(files, thePath);
@@ -684,7 +712,8 @@ std::time_t NewestFileTime(const std::string &thePath)
 // parametrina
 std::time_t NewestFileTime(const std::list<std::string> &theFileList, const std::string &thePath)
 {
-  if (theFileList.empty()) return 0;
+  if (theFileList.empty())
+    return 0;
 
   time_t newesttime = 0;
   for (const auto &f : theFileList)
@@ -693,7 +722,8 @@ std::time_t NewestFileTime(const std::list<std::string> &theFileList, const std:
     if (FileReadable(filename))
     {
       time_t modtime = FileModificationTime(filename);
-      if (modtime > newesttime) newesttime = modtime;
+      if (modtime > newesttime)
+        newesttime = modtime;
     }
   }
   return newesttime;
@@ -701,7 +731,8 @@ std::time_t NewestFileTime(const std::list<std::string> &theFileList, const std:
 
 std::string NewestFileName(const std::list<std::string> &theFileList, const std::string &thePath)
 {
-  if (theFileList.empty()) return "";
+  if (theFileList.empty())
+    return "";
 
   std::string newestFileName;
   time_t newesttime = 0;
@@ -789,15 +820,18 @@ const list<string> DirectoryFiles(const string &thePath)
 
   fs::path p = thePath;
 
-  if (!fs::exists(p)) return out;
+  if (!fs::exists(p))
+    return out;
 
-  if (!fs::is_directory(p)) return out;
+  if (!fs::is_directory(p))
+    return out;
 
   for (fs::directory_iterator end, dir(thePath); dir != end; ++dir)
   {
     if (fs::is_regular_file(*dir))
     {
-      if (dir->path().filename().c_str()[0] != '.') out.push_back(dir->path().filename().string());
+      if (dir->path().filename().c_str()[0] != '.')
+        out.push_back(dir->path().filename().string());
     }
   }
   return out;
@@ -831,8 +865,10 @@ const std::list<std::string> PatternFiles(const std::string &thePattern)
 
   // Safety checks
 
-  if (!fs::exists(path)) return out;
-  if (!fs::is_directory(path)) return out;
+  if (!fs::exists(path))
+    return out;
+  if (!fs::is_directory(path))
+    return out;
 
   // Search matching files
 
@@ -875,7 +911,8 @@ std::string PathFromPattern(const std::string &thePattern)
   NFmiFileString fileString(thePattern);
   fileString.NormalizeDelimiter();  // varmistetaan että kenoviivat on oikein päin
   std::string pathStr;
-  if (fileString.IsAbsolutePath()) pathStr += fileString.Device();
+  if (fileString.IsAbsolutePath())
+    pathStr += fileString.Device();
   pathStr += fileString.Path();
   return pathStr;
 }
@@ -913,7 +950,8 @@ const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::st
 
   NFmiFileString fileString(thePattern);
   std::string pathStr;
-  if (fileString.IsAbsolutePath()) pathStr += fileString.Device();
+  if (fileString.IsAbsolutePath())
+    pathStr += fileString.Device();
   pathStr += fileString.Path();
 
   struct _finddata_t fileinfo;
@@ -959,8 +997,10 @@ const std::list<std::string> Directories(const std::string &thePath)
 
   // Safety checks
 
-  if (!fs::exists(thePath)) return out;
-  if (!fs::is_directory(thePath)) return out;
+  if (!fs::exists(thePath))
+    return out;
+  if (!fs::is_directory(thePath))
+    return out;
 
   // Search matching files
 
@@ -1036,8 +1076,10 @@ time_t FindFile(const string &theFileFilter,
 
   // Safety checks
 
-  if (!fs::exists(path)) return 0;
-  if (!fs::is_directory(path)) return 0;
+  if (!fs::exists(path))
+    return 0;
+  if (!fs::is_directory(path))
+    return 0;
 
   // Search matching files
 
@@ -1059,7 +1101,8 @@ time_t FindFile(const string &theFileFilter,
   else
   {
     Matches::const_iterator it = (fSearchNewest ? --matches.end() : matches.begin());
-    if (theFoundFileName != nullptr) *theFoundFileName = it->second;
+    if (theFoundFileName != nullptr)
+      *theFoundFileName = it->second;
     return it->first;
   }
 #else
@@ -1113,7 +1156,10 @@ time_t FindFile(const string &theFileFilter,
  */
 // ----------------------------------------------------------------------
 
-bool RemoveFile(const string &theFile) { return ::remove(theFile.c_str()) == 0; }
+bool RemoveFile(const string &theFile)
+{
+  return ::remove(theFile.c_str()) == 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * Rename the given file.
@@ -1132,12 +1178,14 @@ bool RenameFile(const string &theOldFileName, const string &theNewFileName)
 {
 #ifdef UNIX
   int err = ::rename(theOldFileName.c_str(), theNewFileName.c_str());
-  if (err == 0) return true;
+  if (err == 0)
+    return true;
 
   // Try to copy across file systems
   if (errno == EXDEV)
   {
-    if (!CopyFile(theOldFileName, theNewFileName)) return false;
+    if (!CopyFile(theOldFileName, theNewFileName))
+      return false;
     RemoveFile(theOldFileName);
     return true;
   }
@@ -1147,7 +1195,8 @@ bool RenameFile(const string &theOldFileName, const string &theNewFileName)
   // MSVC rename ei suostu toimimaan jos on jo olemassa theNewFileName-tiedosto
   // Siksi että saadaan homma toimimaan kuten linuxissa, pitää deletoida mahd.
   // olemassa oleva tiedosto.
-  if (NFmiFileSystem::FileExists(theNewFileName)) NFmiFileSystem::RemoveFile(theNewFileName);
+  if (NFmiFileSystem::FileExists(theNewFileName))
+    NFmiFileSystem::RemoveFile(theNewFileName);
   return ::rename(theOldFileName.c_str(), theNewFileName.c_str()) == 0;
 #endif  // UNIX
 }
@@ -1270,7 +1319,7 @@ bool CopyFile(const std::string &theSrcFileName, const std::string &theDstFileNa
 const std::string TemporaryFile(const std::string &thePath)
 {
   if (!DirectoryReadable(thePath))
-    throw Fmi::Exception(BCP,"Directory '" + thePath + "' does not exist or is not readable");
+    throw Fmi::Exception(BCP, "Directory '" + thePath + "' does not exist or is not readable");
 
   static unsigned long counter = 0;
 
@@ -1286,10 +1335,11 @@ const std::string TemporaryFile(const std::string &thePath)
 #endif
          << '_' << ++counter;
 
-    if (!FileExists(name.str())) return name.str();
+    if (!FileExists(name.str()))
+      return name.str();
   }
 
-  throw Fmi::Exception(BCP,"Failed to create a temporary filename in directory '" + thePath + "'");
+  throw Fmi::Exception(BCP, "Failed to create a temporary filename in directory '" + thePath + "'");
 }
 
 // ----------------------------------------------------------------------
@@ -1321,9 +1371,11 @@ const std::string TemporaryFile(const std::string &thePath)
 
 const std::string DirName(const std::string &theName)
 {
-  if (theName.empty()) return ".";
+  if (theName.empty())
+    return ".";
 
-  if (theName == "/") return theName;
+  if (theName == "/")
+    return theName;
 
   string name;
   if (theName[theName.size() - 1] == '/')
@@ -1333,9 +1385,11 @@ const std::string DirName(const std::string &theName)
 
   const string::size_type pos = name.rfind('/');
 
-  if (pos == string::npos) return ".";
+  if (pos == string::npos)
+    return ".";
 
-  if (pos == 0) return "/";
+  if (pos == 0)
+    return "/";
 
   return name.substr(0, pos);
 }
@@ -1370,9 +1424,11 @@ const std::string DirName(const std::string &theName)
 
 const std::string BaseName(const std::string &theName)
 {
-  if (theName.empty()) return theName;
+  if (theName.empty())
+    return theName;
 
-  if (theName.size() == 1) return theName;
+  if (theName.size() == 1)
+    return theName;
 
   string name;
   if (theName[theName.size() - 1] == '/')
@@ -1382,7 +1438,8 @@ const std::string BaseName(const std::string &theName)
 
   const string::size_type pos = name.rfind('/');
 
-  if (pos == string::npos) return name;
+  if (pos == string::npos)
+    return name;
 
   return name.substr(pos + 1);
 }
@@ -1404,13 +1461,15 @@ void CleanDirectory(const std::string &thePath,
                     double theMaxFileAgeInHours,
                     std::list<std::string> *theDeletedFilesOut)
 {
-  if (theMaxFileAgeInHours < 0) return;
+  if (theMaxFileAgeInHours < 0)
+    return;
   if (!DirectoryExists(thePath))
-    throw Fmi::Exception(BCP,"NFmiFileSystem::CleanDirectory - directory doesn't exist: " +
-                             thePath);
+    throw Fmi::Exception(BCP,
+                         "NFmiFileSystem::CleanDirectory - directory doesn't exist: " + thePath);
 
   list<string> files = DirectoryFiles(thePath);
-  if (files.empty()) return;
+  if (files.empty())
+    return;
 
   time_t currentTime;
   static_cast<void>(::time(&currentTime));
@@ -1422,7 +1481,8 @@ void CleanDirectory(const std::string &thePath,
     if (currentTime - modtime > theMaxFileAgeInHours * 3600)
     {
       bool status = RemoveFile(filename);
-      if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
+      if (theDeletedFilesOut && status)
+        theDeletedFilesOut->push_back(filename);
     }
   }
 }
@@ -1444,12 +1504,14 @@ void CleanFilePattern(const std::string &theFilePattern,
                       int theKeepFileCount,
                       std::list<std::string> *theDeletedFilesOut)
 {
-  if (theKeepFileCount < 0) return;
+  if (theKeepFileCount < 0)
+    return;
   NFmiFileString fileString(theFilePattern);
   std::string path = fileString.Device().CharPtr();
   path += fileString.Path().CharPtr();
   if (!DirectoryExists(path))
-    throw Fmi::Exception(BCP,"NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
+    throw Fmi::Exception(BCP,
+                         "NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
   list<string> files = PatternFiles(theFilePattern);
   std::map<time_t, std::string> fileMap;
   for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
@@ -1468,7 +1530,8 @@ void CleanFilePattern(const std::string &theFilePattern,
     {
       std::string &filename = (*mapIt).second;
       bool status = RemoveFile(filename);
-      if (theDeletedFilesOut && status) theDeletedFilesOut->push_back(filename);
+      if (theDeletedFilesOut && status)
+        theDeletedFilesOut->push_back(filename);
     }
   }
 }
@@ -1488,7 +1551,8 @@ string FindQueryData(const string &thePath)
 {
   if (!DirectoryExists(thePath))
   {
-    if (!FileReadable(thePath)) throw Fmi::Exception(BCP,"File '" + thePath + "' is not readable");
+    if (!FileReadable(thePath))
+      throw Fmi::Exception(BCP, "File '" + thePath + "' is not readable");
     return thePath;
   }
 
@@ -1502,7 +1566,8 @@ string FindQueryData(const string &thePath)
   {
     const string &name = *f;
 
-    if (!name.empty() && name[0] == '.') continue;
+    if (!name.empty() && name[0] == '.')
+      continue;
 #ifdef BOOST
     bool ok = (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd"));
 #else
@@ -1530,7 +1595,8 @@ string FindQueryData(const string &thePath)
     }
   }
 
-  if (newesttime == 0) throw Fmi::Exception(BCP,"No querydata found from '" + thePath + "'");
+  if (newesttime == 0)
+    throw Fmi::Exception(BCP, "No querydata found from '" + thePath + "'");
 
   return newestfile;
 }
@@ -1585,7 +1651,8 @@ bool IsAbsolutePath(const std::string &thePath)
 {
   if (thePath.size())
   {
-    if (thePath[0] == '/' || thePath[0] == '\\') return true;
+    if (thePath[0] == '/' || thePath[0] == '\\')
+      return true;
 
     if (thePath.size() >= 3)
     {
@@ -1606,16 +1673,18 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   std::string tmpFileName = theFileName + tmpHelpStr;
   std::ofstream out(tmpFileName.c_str(), std::ios::binary);
   if (!out)
-    throw Fmi::Exception(BCP,"Failed to open temporary file '" + tmpFileName +
-                        "' for writing. No changes to original file '" + theFileName +
-                        "' was made.");
+    throw Fmi::Exception(BCP,
+                         "Failed to open temporary file '" + tmpFileName +
+                             "' for writing. No changes to original file '" + theFileName +
+                             "' was made.");
   out << theContents;
   if (!out)
   {
     out.close();  // pitää sulkea, muuten ei voi poistaa
     RemoveFile(tmpFileName);
-    throw Fmi::Exception(BCP,"Error while writing to temporary file: '" + tmpFileName +
-                        "'. No changes to original file '" + theFileName + "' was made.");
+    throw Fmi::Exception(BCP,
+                         "Error while writing to temporary file: '" + tmpFileName +
+                             "'. No changes to original file '" + theFileName + "' was made.");
   }
   out.close();
 
@@ -1627,15 +1696,17 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   // are operating with ascii file paths.
   if (!::MoveFileExA(tmpFileName.c_str(), theFileName.c_str(), MOVEFILE_REPLACE_EXISTING))
   {
-    throw Fmi::Exception(BCP,"Error while moving temporary file: '" + tmpFileName +
+    throw Fmi::Exception(BCP,
+                         "Error while moving temporary file: '" + tmpFileName +
                              "' to replace the original file '" + theFileName + "' was made.");
   }
 #else
   // RenameFile -funktio tuhoaa vanhan tiedoston uuden tieltä. En tiedä mitä pitäisi tehdä,
   // jos tämä epäonnistuu (vanha tiedosto on ehkä tuhoutunut ja uusi on ehkä tmp-tiedostona).
   if (!RenameFile(tmpFileName, theFileName))
-    throw Fmi::Exception(BCP,"Error while renaming temporary file: '" + tmpFileName +
-                        "' to final file: '" + theFileName + "'. Results unknown.");
+    throw Fmi::Exception(BCP,
+                         "Error while renaming temporary file: '" + tmpFileName +
+                             "' to final file: '" + theFileName + "'. Results unknown.");
 #endif
 }
 

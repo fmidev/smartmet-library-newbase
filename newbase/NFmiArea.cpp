@@ -32,8 +32,8 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
 
-#include <macgyver/Exception.h>
 #include <gis/CoordinateMatrix.h>
+#include <macgyver/Exception.h>
 
 #include <iostream>
 
@@ -394,8 +394,8 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
       return nullptr;
 
     // Create a new area with the new aspect ratio
-    NFmiArea *newArea =
-        NewArea(WorldXYToLatLon(newWorldRect.TopLeft()), WorldXYToLatLon(newWorldRect.BottomRight()));
+    NFmiArea *newArea = NewArea(WorldXYToLatLon(newWorldRect.TopLeft()),
+                                WorldXYToLatLon(newWorldRect.BottomRight()));
 
     // Return the re-dimensioned copy of the original area
     return newArea;
@@ -514,8 +514,8 @@ const NFmiAngle NFmiArea::TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
     if (xyDistanceAlongMeridian.Y() == 0.)
       return xyDistanceAlongMeridian.X() > 0.
                  ? NFmiAngle(90.)
-                 : NFmiAngle(
-                       270.);  // Azimuth is exactly east 90 degrees or west 270 degrees, respectively
+                 : NFmiAngle(270.);  // Azimuth is exactly east 90 degrees or west 270 degrees,
+                                     // respectively
 
     return NFmiAngle(FmiDeg(atan2(xyDistanceAlongMeridian.X(), xyDistanceAlongMeridian.Y())));
   }
@@ -787,7 +787,8 @@ const Fmi::SpatialReference &NFmiArea::SpatialReference() const
     if (itsSpatialReference)
       return *itsSpatialReference;
 
-    throw Fmi::Exception(BCP,std::string("Spatial reference for ") + ClassName() +
+    throw Fmi::Exception(BCP,
+                         std::string("Spatial reference for ") + ClassName() +
                              " not available, PROJ.4 = '" + itsProjStr + "'");
   }
   catch (...)

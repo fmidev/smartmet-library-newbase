@@ -43,7 +43,10 @@ class NFmiDataModifierWithModifier : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier(void) { delete itsModifier; }
+inline NFmiDataModifierWithModifier::~NFmiDataModifierWithModifier(void)
+{
+  delete itsModifier;
+}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -72,7 +75,10 @@ inline NFmiDataModifierWithModifier::NFmiDataModifierWithModifier(NFmiQueryInfo*
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifierWithModifier::Clear(void) { itsModifier->Clear(); }
+inline void NFmiDataModifierWithModifier::Clear(void)
+{
+  itsModifier->Clear();
+}
 // ----------------------------------------------------------------------
 /*
  * \return Undocumented

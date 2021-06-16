@@ -173,7 +173,8 @@ class NFmiPtrList
         Node *nextNode = itsCurrent->itsNext;
         previousNode->itsNext = nextNode;
         nextNode->itsPrevious = previousNode;
-        if (fDeleteData) delete itsCurrent->itsData;
+        if (fDeleteData)
+          delete itsCurrent->itsData;
         delete itsCurrent;
         itsCurrent = previousNode;
         itsList->itsCounter--;  // Lisäsin 8.9.99 Mikael
@@ -261,7 +262,8 @@ void NFmiPtrList<Type>::Clear(bool fDeleteItem)
   while (temp->itsNext)            // if temp was the end node, the next loop will be skipped
   {
     temp = temp->itsNext;
-    if (fDeleteItem) delete temp->itsPrevious->itsData;
+    if (fDeleteItem)
+      delete temp->itsPrevious->itsData;
     delete temp->itsPrevious;
   }
   itsStart->itsNext = itsEnd;
@@ -288,7 +290,8 @@ bool NFmiPtrList<Type>::AddStart(Type *theItem)
     return false;
   Node *firstRealNode = itsStart->itsNext;
   Node *newNode = new Node(theItem, itsStart, firstRealNode);
-  if (!newNode) return false;
+  if (!newNode)
+    return false;
   itsStart->itsNext = newNode;
   firstRealNode->itsPrevious = newNode;
   itsCounter++;
@@ -302,7 +305,8 @@ bool NFmiPtrList<Type>::AddEnd(Type *theItem)
     return false;
   Node *lastRealNode = itsEnd->itsPrevious;
   Node *newNode = new Node(theItem, lastRealNode, itsEnd);
-  if (!newNode) return false;
+  if (!newNode)
+    return false;
   itsEnd->itsPrevious = newNode;
   lastRealNode->itsNext = newNode;
   itsCounter++;
@@ -314,7 +318,8 @@ bool NFmiPtrList<Type>::Swap(Iterator &iter1, Iterator &iter2)
 {
   // the begin and end nodes can't be swapped
   // third check perhaps needless - a list including same nodes perhaps never exist??
-  if (!iter1.itsCurrent || !iter2.itsCurrent) return false;
+  if (!iter1.itsCurrent || !iter2.itsCurrent)
+    return false;
   // first creating and setting iterators pointing
   // to the both sides of the items to be swapped
   Iterator iter1previous(iter1);
@@ -394,7 +399,8 @@ bool NFmiPtrList<Type>::RemoveStart(bool fDeleteItem)
   // Iterator::Remove() deals the checking that end and star nodes
   // will never be removed
   Iterator iter = Start();
-  if (iter.Next()) return iter.Remove(fDeleteItem);
+  if (iter.Next())
+    return iter.Remove(fDeleteItem);
   return false;
 }
 
@@ -404,7 +410,8 @@ bool NFmiPtrList<Type>::RemoveEnd(bool fDeleteItem)
   // Iterator::Remove() deals the checking that end and star nodes
   // will never be removed
   Iterator iter = End();
-  if (iter.Previous()) return iter.Remove(fDeleteItem);
+  if (iter.Previous())
+    return iter.Remove(fDeleteItem);
   return false;
 }
 
@@ -419,7 +426,8 @@ bool NFmiPtrList<Type>::Remove(unsigned long theIndex, bool fDeleteItem)
   unsigned long counter;
   for (counter = 0; counter < theIndex && iter.Next(); counter++)
     ;
-  if (counter == theIndex) return iter.Remove(fDeleteItem);
+  if (counter == theIndex)
+    return iter.Remove(fDeleteItem);
   return false;
 }
 
@@ -443,7 +451,8 @@ typename NFmiPtrList<Type>::Iterator NFmiPtrList<Type>::Index(unsigned long theI
   {
     for (unsigned long ind = 0; iter.Next(); ind++)
     {
-      if (ind + 1 == theIndex) return iter;
+      if (ind + 1 == theIndex)
+        return iter;
     }
   }
   return iter;
@@ -460,7 +469,8 @@ bool NFmiPtrList<Type>::Add(Type *theItem, unsigned long theIndex)
   unsigned long ind = 0;
   do
   {
-    if (++ind == theIndex) return iter.AddAfter(theItem);
+    if (++ind == theIndex)
+      return iter.AddAfter(theItem);
   } while (iter.Next());
   return false;
 }

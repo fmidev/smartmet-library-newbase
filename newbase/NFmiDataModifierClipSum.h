@@ -20,7 +20,8 @@ class NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
     if (CheckMissingValues(value))
     {
       halfValue = value * .5;
-      if (itsCounter == 0) fCalculationResultOk = true;
+      if (itsCounter == 0)
+        fCalculationResultOk = true;
       itsSum += halfValue + itsHalfValue;
     }
     else

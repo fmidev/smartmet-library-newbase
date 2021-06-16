@@ -82,35 +82,50 @@ bool NFmiSize::First()
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiSize::GetSize() const { return itsSize; }
+unsigned long NFmiSize::GetSize() const
+{
+  return itsSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-long NFmiSize::CurrentIndex() const { return itsIndex; }
+long NFmiSize::CurrentIndex() const
+{
+  return itsIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiSize::Previous() { return --itsIndex >= 0; }
+bool NFmiSize::Previous()
+{
+  return --itsIndex >= 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiSize::SetSize(unsigned long newSize) { itsSize = newSize; }
+void NFmiSize::SetSize(unsigned long newSize)
+{
+  itsSize = newSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const char* NFmiSize::ClassName() const { return "NFmiSize"; }
+const char* NFmiSize::ClassName() const
+{
+  return "NFmiSize";
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

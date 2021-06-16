@@ -54,21 +54,30 @@ class NFmiRadarStation : public NFmiStation
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::Resolution(void) const { return itsResolution; }
+inline unsigned long NFmiRadarStation::Resolution(void) const
+{
+  return itsResolution;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::XNumber(void) const { return itsXNumber; }
+inline unsigned long NFmiRadarStation::XNumber(void) const
+{
+  return itsXNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::YNumber(void) const { return itsYNumber; }
+inline unsigned long NFmiRadarStation::YNumber(void) const
+{
+  return itsYNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theResolution Undocumented
@@ -86,14 +95,20 @@ inline void NFmiRadarStation::Resolution(unsigned long theResolution)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRadarStation::XNumber(unsigned long theXNumber) { itsXNumber = theXNumber; }
+inline void NFmiRadarStation::XNumber(unsigned long theXNumber)
+{
+  itsXNumber = theXNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theYNumber Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRadarStation::YNumber(unsigned long theYNumber) { itsYNumber = theYNumber; }
+inline void NFmiRadarStation::YNumber(unsigned long theYNumber)
+{
+  itsYNumber = theYNumber;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -101,13 +116,19 @@ inline void NFmiRadarStation::YNumber(unsigned long theYNumber) { itsYNumber = t
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocation* NFmiRadarStation::Clone(void) const { return new NFmiRadarStation(*this); }
+inline NFmiLocation* NFmiRadarStation::Clone(void) const
+{
+  return new NFmiRadarStation(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiRadarStation::ClassId(void) const { return kNFmiRadarStation; }
+inline unsigned long NFmiRadarStation::ClassId(void) const
+{
+  return kNFmiRadarStation;
+}
 
 // ======================================================================

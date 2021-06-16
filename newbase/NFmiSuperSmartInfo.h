@@ -301,14 +301,20 @@ inline bool NFmiSuperSmartInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSuperSmartInfo::ClassId(void) const { return kNFmiQueryInfo; }
+inline unsigned long NFmiSuperSmartInfo::ClassId(void) const
+{
+  return kNFmiQueryInfo;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiSuperSmartInfo::ClassName(void) const { return "NFmiSuperSmartInfo"; }
+inline const char* NFmiSuperSmartInfo::ClassName(void) const
+{
+  return "NFmiSuperSmartInfo";
+}
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -337,21 +343,30 @@ inline NFmiSuperSmartInfo::DataAccessLevel NFmiSuperSmartInfo::FloatValueAccessL
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::UseCalculator(bool value) { fUseCalculator = value; }
+inline void NFmiSuperSmartInfo::UseCalculator(bool value)
+{
+  fUseCalculator = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseCalculator(void) const { return fUseCalculator; }
+inline bool NFmiSuperSmartInfo::UseCalculator(void) const
+{
+  return fUseCalculator;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseVarianceCalculator(void) const { return fUseVarianceCalculator; }
+inline bool NFmiSuperSmartInfo::UseVarianceCalculator(void) const
+{
+  return fUseVarianceCalculator;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -413,7 +428,10 @@ inline NFmiDataModifierDescriptor* NFmiSuperSmartInfo::DataModifierDescriptor(vo
  */
 // ----------------------------------------------------------------------
 
-inline NFmiCalculator* NFmiSuperSmartInfo::Calculator(void) const { return itsCalculator; }
+inline NFmiCalculator* NFmiSuperSmartInfo::Calculator(void) const
+{
+  return itsCalculator;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -432,35 +450,50 @@ inline NFmiCalculator* NFmiSuperSmartInfo::CurrentVarianceCalculator(void) const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::AreaMask(NFmiAreaMask* value) { itsAreaMask = value; }
+inline void NFmiSuperSmartInfo::AreaMask(NFmiAreaMask* value)
+{
+  itsAreaMask = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMask* NFmiSuperSmartInfo::AreaMask(void) const { return itsAreaMask; }
+inline NFmiAreaMask* NFmiSuperSmartInfo::AreaMask(void) const
+{
+  return itsAreaMask;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::UseAreaMask(bool value) { fUseAreaMask = value; }
+inline void NFmiSuperSmartInfo::UseAreaMask(bool value)
+{
+  fUseAreaMask = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseAreaMask(void) const { return fUseAreaMask; }
+inline bool NFmiSuperSmartInfo::UseAreaMask(void) const
+{
+  return fUseAreaMask;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseHelperBinaryMasks(void) const { return fUseHelperBinaryMasks; }
+inline bool NFmiSuperSmartInfo::UseHelperBinaryMasks(void) const
+{
+  return fUseHelperBinaryMasks;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

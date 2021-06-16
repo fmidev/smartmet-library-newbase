@@ -104,20 +104,29 @@ inline NFmiLambertEqualArea::~NFmiLambertEqualArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiLambertEqualArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiLambertEqualArea::WorldRect(void) const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiLambertEqualArea::ClassId(void) const { return kNFmiLambertEqualArea; }
+inline unsigned long NFmiLambertEqualArea::ClassId(void) const
+{
+  return kNFmiLambertEqualArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiLambertEqualArea::ClassName(void) const { return "kNFmiLambertEqualArea"; }
+inline const char* NFmiLambertEqualArea::ClassName(void) const
+{
+  return "kNFmiLambertEqualArea";
+}
 
 // ======================================================================

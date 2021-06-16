@@ -32,7 +32,7 @@ NFmiMultiValuedGrid::~NFmiMultiValuedGrid()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -124,13 +124,16 @@ bool NFmiMultiValuedGrid::Save()
   {
     float *sourceAddress = nullptr;
 
-    if (!itsMultiData) return false;
+    if (!itsMultiData)
+      return false;
 
     // Mika: unsigned int
     // if(NFmiQueryInfo::Index() < 0 || NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
 
-    if (NFmiQueryInfo::Index() >= NFmiQueryInfo::Size()) return false;
-    if (!itsData->FloatValueAddress(0, &sourceAddress)) return false;
+    if (NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
+      return false;
+    if (!itsData->FloatValueAddress(0, &sourceAddress))
+      return false;
 
     itsMultiData->Index(itsCurrentDataStatus);
     return itsMultiData->MemCopy(NFmiGridBase::Size(), sourceAddress);
@@ -153,11 +156,13 @@ bool NFmiMultiValuedGrid::Edit()
   {
     float *sourceAddress = nullptr;
 
-    if (!itsMultiData) return false;
+    if (!itsMultiData)
+      return false;
     // Mika: Index() is unsigned int
     // if(NFmiQueryInfo::Index() < 0 || NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
 
-    if (NFmiQueryInfo::Index() >= NFmiQueryInfo::Size()) return false;
+    if (NFmiQueryInfo::Index() >= NFmiQueryInfo::Size())
+      return false;
     if (!itsMultiData->FloatValueAddress(NFmiQueryInfo::Index() * NFmiGridBase::Size(),
                                          &sourceAddress))
       return false;

@@ -21,7 +21,10 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierCombinedParam::~NFmiDataModifierCombinedParam() { delete itsCombinedParam; }
+NFmiDataModifierCombinedParam::~NFmiDataModifierCombinedParam()
+{
+  delete itsCombinedParam;
+}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -80,5 +83,8 @@ NFmiCombinedParam* NFmiDataModifierCombinedParam::CombinedCalculationResult()
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierCombinedParam::Clear() { itsCombinedParam->ClearIntegration(); }
+void NFmiDataModifierCombinedParam::Clear()
+{
+  itsCombinedParam->ClearIntegration();
+}
 // ======================================================================

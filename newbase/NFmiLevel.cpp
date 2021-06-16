@@ -133,9 +133,7 @@ const char* NFmiLevel::ClassName() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLevel::NFmiLevel() : NFmiIndividual(), itsLevelValue(kFloatMissing)
-{
-}
+NFmiLevel::NFmiLevel() : NFmiIndividual(), itsLevelValue(kFloatMissing) {}
 
 // ----------------------------------------------------------------------
 /*!

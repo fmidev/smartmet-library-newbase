@@ -240,13 +240,14 @@ const NFmiString NFmiFileString::Device() const
   {
 #ifdef UNIX
     return NFmiString();  // linux/unix/mac ei ole devicea, joten palautetaan tyhjä
-#else                   // windowsissa on device
+#else                     // windowsissa on device
     unsigned long last;
     unsigned char find[2] = ":";
 
     last = Search(find);
 
-    if (last) return GetChars(1, last);
+    if (last)
+      return GetChars(1, last);
 
     return NFmiString();
 #endif

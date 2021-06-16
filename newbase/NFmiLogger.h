@@ -180,56 +180,80 @@ class NFmiLogger
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiLogger::UsedLoggingLevels(int value) { itsUsedLoggingLevels = value; }
+inline void NFmiLogger::UsedLoggingLevels(int value)
+{
+  itsUsedLoggingLevels = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiLogger::UsedLoggingLevels(void) const { return itsUsedLoggingLevels; }
+inline int NFmiLogger::UsedLoggingLevels(void) const
+{
+  return itsUsedLoggingLevels;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const std::string &NFmiLogger::LogFilePath(void) const { return itsLogFilePath; }
+inline const std::string &NFmiLogger::LogFilePath(void) const
+{
+  return itsLogFilePath;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const std::string &NFmiLogger::LogFileBaseName(void) const { return itsLogFileBaseName; }
+inline const std::string &NFmiLogger::LogFileBaseName(void) const
+{
+  return itsLogFileBaseName;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiLogger::Operational(bool value) { fOperational = value; }
+inline void NFmiLogger::Operational(bool value)
+{
+  fOperational = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLogger::Operational(void) const { return fOperational; }
+inline bool NFmiLogger::Operational(void) const
+{
+  return fOperational;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLogger::UseLocalTime(void) const { return fUseLocalTime; }
+inline bool NFmiLogger::UseLocalTime(void) const
+{
+  return fUseLocalTime;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiLogger::UseLocalTime(bool newValue) { fUseLocalTime = newValue; }
+inline void NFmiLogger::UseLocalTime(bool newValue)
+{
+  fUseLocalTime = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -258,14 +282,20 @@ inline NFmiLogger::Period NFmiLogger::LogFileBackupTimePeriod(void) const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiLogger::UsedLoggingDevices(int value) { itsUsedLoggingDevices = value; }
+inline void NFmiLogger::UsedLoggingDevices(int value)
+{
+  itsUsedLoggingDevices = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiLogger::UsedLoggingDevices(void) const { return itsUsedLoggingDevices; }
+inline int NFmiLogger::UsedLoggingDevices(void) const
+{
+  return itsUsedLoggingDevices;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

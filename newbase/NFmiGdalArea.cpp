@@ -10,12 +10,12 @@
 #include "NFmiGdalArea.h"
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <iomanip>
 #include <ogr_spatialref.h>
@@ -189,7 +189,7 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
       err = datum->SetFromUserInput(itsDatum.c_str());
 
     if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP,"Failed to set datum: '" + itsDatum + "'");
+      throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
 
     // The needed coordinate transformations
 
@@ -338,8 +338,9 @@ bool NFmiGdalArea::operator==(const NFmiGdalArea &theArea) const
   try
   {
     return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon &&
-            itsTopRightLatLon == theArea.itsTopRightLatLon && itsWorldRect == theArea.itsWorldRect &&
-            itsDescription == theArea.itsDescription && itsDatum == theArea.itsDatum);
+            itsTopRightLatLon == theArea.itsTopRightLatLon &&
+            itsWorldRect == theArea.itsWorldRect && itsDescription == theArea.itsDescription &&
+            itsDatum == theArea.itsDatum);
   }
   catch (...)
   {
@@ -564,7 +565,7 @@ const NFmiPoint NFmiGdalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
   try
   {
     if (!itsWorldXYToLatLonTransformation)
-      throw Fmi::Exception(BCP,"Trying to use an uninitialized GDAL area");
+      throw Fmi::Exception(BCP, "Trying to use an uninitialized GDAL area");
 
     double x = theXYPoint.X();
     double y = theXYPoint.Y();
@@ -590,7 +591,7 @@ const NFmiPoint NFmiGdalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) c
   try
   {
     if (!itsLatLonToWorldXYTransformation)
-      throw Fmi::Exception(BCP,"Trying to use an uninitialized GDAL area");
+      throw Fmi::Exception(BCP, "Trying to use an uninitialized GDAL area");
 
     double x = theLatLonPoint.X();
     double y = theLatLonPoint.Y();
@@ -637,7 +638,8 @@ NFmiArea *NFmiGdalArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
   {
     if (allowPacificFix)
     {
-      PacificPointFixerData fix = NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
+      PacificPointFixerData fix =
+          NFmiArea::PacificPointFixer(theBottomLeftLatLon, theTopRightLatLon);
       return new NFmiGdalArea(itsDatum,
                               itsDescription,
                               fix.itsBottomLeftLatlon,
@@ -651,7 +653,7 @@ NFmiArea *NFmiGdalArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                             itsDescription,
                             theBottomLeftLatLon,
                             theTopRightLatLon,
-                             TopLeft(),
+                            TopLeft(),
                             BottomRight(),
                             PacificView());
   }
@@ -687,7 +689,7 @@ void NFmiGdalArea::init()
       err = datum->SetFromUserInput(itsDatum.c_str());
 
     if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP,"Failed to set datum: '" + itsDatum + "'");
+      throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
 
     // The needed coordinate transformations
 
@@ -698,7 +700,8 @@ void NFmiGdalArea::init()
 
     // The needed world XY rectangle
 
-    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    itsWorldRect =
+        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     // Initialize itsWKT
     itsWKT = Fmi::OGR::exportToWkt(*itsSpatialReference);

@@ -113,7 +113,8 @@ class MyGrid
         else if (itsArea && theGrid.itsArea)
         {
           if (itsArea->ClassId() == theGrid.itsArea->ClassId())
-            if (*itsArea == *(theGrid.itsArea)) return true;
+            if (*itsArea == *(theGrid.itsArea))
+              return true;
         }
       }
     return false;
@@ -354,7 +355,8 @@ class NFmiQueryDataUtil
   template <typename T>
   static bool IsEqualEnough(T value1, T value2, T usedEpsilon)
   {
-    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon) return true;
+    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon)
+      return true;
     return false;
   }
 
@@ -387,7 +389,7 @@ class NFmiQueryDataUtil
                                               const NFmiGrid *theWantedGrid,
                                               NFmiLogger *theLogger,
                                               int theMaxThreadCount);
-  
+
   static void FillGridData(NFmiQueryData *theSource,
                            NFmiQueryData *theTarget,
                            unsigned long theStartTimeIndex = gMissingIndex,
@@ -559,7 +561,6 @@ class NFmiQueryDataUtil
       boost::shared_ptr<NFmiQueryData> &theBaseQData,
       bool fDoRebuild);
 
-  
 };  // class NFmiQueryDataUtil
 
 // ======================================================================

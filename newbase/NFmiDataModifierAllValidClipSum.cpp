@@ -51,7 +51,8 @@ void NFmiDataModifierAllValidClipSum::Calculate(NFmiQueryInfo* theQI)
   if (CheckMissingValues(value))
   {
     halfValue = static_cast<float>(value * .5);
-    if (itsCounter == 0) fCalculationResultOk = true;
+    if (itsCounter == 0)
+      fCalculationResultOk = true;
     itsSum += halfValue + itsHalfValue;
   }
   else

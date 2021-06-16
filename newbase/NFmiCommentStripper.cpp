@@ -130,8 +130,10 @@ bool NFmiCommentStripper::ReadFile(const string& theFileName)
       {
         if (!rowbuffer.empty())
         {
-          if (fStripPound && rowbuffer[0] == '#') continue;
-          if (rowbuffer[rowbuffer.size() - 1] == '\r') rowbuffer.resize(rowbuffer.size() - 1);
+          if (fStripPound && rowbuffer[0] == '#')
+            continue;
+          if (rowbuffer[rowbuffer.size() - 1] == '\r')
+            rowbuffer.resize(rowbuffer.size() - 1);
         }
         bigstring += rowbuffer + "\n";
       }
@@ -206,8 +208,10 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
             string option = rowbuffer.substr(pos, lastPos - pos);
             theOptionTexts.insert(option);
           }
-          if (fStripPound && rowbuffer[0] == '#') continue;
-          if (rowbuffer[rowbuffer.size() - 1] == '\r') rowbuffer.resize(rowbuffer.size() - 1);
+          if (fStripPound && rowbuffer[0] == '#')
+            continue;
+          if (rowbuffer[rowbuffer.size() - 1] == '\r')
+            rowbuffer.resize(rowbuffer.size() - 1);
         }
         bigstring += rowbuffer + "\n";
       }
@@ -324,8 +328,8 @@ void NFmiCommentStripper::StripBomMarkersFromStart()
   try
   {
     const std::string bomMarkers =
-        "\xEF\xBB\xBF";  // BOM characters ï»¿ must be given with hexa escape format because this cpp
-                         // file is Utf-8 encoded
+        "\xEF\xBB\xBF";  // BOM characters ï»¿ must be given with hexa escape format because this
+                         // cpp file is Utf-8 encoded
     auto pos = itsString.find(bomMarkers);
     if (pos == 0)
       itsString = std::string(itsString.begin() + bomMarkers.size(), itsString.end());
@@ -471,11 +475,11 @@ bool NFmiCommentStripper::StripPounds()  // from pound to end of line
 }
 
 // ----------------------------------------------------------------------
-   /*!
-    * \param theBeginDirective Undocumented
-    * \param theEndDirective Undocumented
-    * \return Undocumented
-    */
+/*!
+ * \param theBeginDirective Undocumented
+ * \param theEndDirective Undocumented
+ * \return Undocumented
+ */
 // ----------------------------------------------------------------------
 
 bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
@@ -508,7 +512,8 @@ bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
           return false;
         }
         newString += oldString.substr(0, posbigalku);
-        if (posbigloppu != string::npos) oldString = oldString.substr(posbigloppu + len);
+        if (posbigloppu != string::npos)
+          oldString = oldString.substr(posbigloppu + len);
       }
       itsString = newString;
     }
@@ -586,7 +591,8 @@ bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositio
       if (posStart < posEnd)
       {
         level++;
-        if (level == 1) startOfErase = posStart;
+        if (level == 1)
+          startOfErase = posStart;
         startFiltsInd++;
       }
       else
@@ -636,7 +642,8 @@ bool NFmiCommentStripper::CollectStringPositions(const string& theSearchString,
     string aString(itsString);
     string::size_type filtLen = theSearchString.length();
     string::size_type pos = aString.find(theSearchString);
-    if (pos == string::npos) return true;
+    if (pos == string::npos)
+      return true;
 
     string::size_type sum = 0;
     while (pos != string::npos)

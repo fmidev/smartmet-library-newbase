@@ -531,7 +531,7 @@ const std::string NFmiPKJArea::WKT() const
 {
   try
   {
-    throw Fmi::Exception(BCP,"WKT not available for generic PKJ projections");
+    throw Fmi::Exception(BCP, "WKT not available for generic PKJ projections");
   }
   catch (...)
   {

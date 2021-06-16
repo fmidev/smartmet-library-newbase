@@ -60,7 +60,6 @@ double Linear(double theX, double theX1, double theX2, double theY1, double theY
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
 }
 
 // ----------------------------------------------------------------------
@@ -427,7 +426,8 @@ double NearestNonMissing(double theX,
     sortedPointValues.insert(
         CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
     sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
-    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
     sortedPointValues.insert(
         CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
     for (const auto &pointData : sortedPointValues)
@@ -474,7 +474,8 @@ double NearestPoint(double theX,
     sortedPointValues.insert(
         CalcPointData(referencePoint, NFmiPoint(0, 0), kBottomLeft, theBottomLeft));
     sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(0, 1), kTopLeft, theTopLeft));
-    sortedPointValues.insert(CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
+    sortedPointValues.insert(
+        CalcPointData(referencePoint, NFmiPoint(1, 1), kTopRight, theTopRight));
     sortedPointValues.insert(
         CalcPointData(referencePoint, NFmiPoint(1, 0), kBottomRight, theBottomRight));
     return sortedPointValues.begin()->value_;

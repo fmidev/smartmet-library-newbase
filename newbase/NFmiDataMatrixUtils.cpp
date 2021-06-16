@@ -5,7 +5,6 @@
 
 namespace
 {
-
 double FixIndexOnEdges(double index, size_t matrixSize)
 {
   try
@@ -118,7 +117,8 @@ void PrettyPrint(std::ostream& s,
     {  // tulostus käänteisessä rivi-järjestyksessä
       for (long j = rows - 1; j >= 0; j--)
       {
-        if (printIndexAxies) s << j << "\t";
+        if (printIndexAxies)
+          s << j << "\t";
         for (sz_type i = 0; i < columns; i++)
           s << m[i][j] << " ";
         s << std::endl;

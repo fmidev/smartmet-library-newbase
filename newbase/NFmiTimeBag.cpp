@@ -50,7 +50,8 @@ unsigned long NFmiTimeBag::GetSize() const
         return itsLastTime.DifferenceInDays(itsFirstTime) / itsResolution.Day() + 1;
     }
 
-    if (!itsResolution) return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
+    if (!itsResolution)
+      return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
     // throw Fmi::Exception(BCP,"NFmiTimeBag::GetSize() itsResolution = 0 ");
 
     if (itsFirstTime <= itsLastTime)
@@ -329,7 +330,7 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
           itsCurrentTime.SetYear(
               static_cast<short>(itsCurrentTime.GetYear() + (theIndex * itsResolution.Year())));
         if (itsResolution.Month())
-          throw Fmi::Exception(BCP,"NFmiTimeBag::SetTime: Kuukausi resoluutiossa ei toimi vielä.");
+          throw Fmi::Exception(BCP, "NFmiTimeBag::SetTime: Kuukausi resoluutiossa ei toimi vielä.");
         //	itsCurrentTime.ChangeByMonth(theIndex * itsResolution.Month()); // TEE
         // ChangeByMonth-metodi!!!!
         if (itsResolution.Day())
@@ -424,7 +425,8 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
     {
       while (Next())
       {
-        if (CurrentTime() == theTime) return true;
+        if (CurrentTime() == theTime)
+          return true;
         if (CurrentTime() > theTime)
         {
           if (theDirection == kForward)
@@ -479,8 +481,8 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
       else       // if(timeIsLeftFromTimeBag)
         Next();  // the first time of this timebag
     }
-    if (noTimeRange ||
-        labs(theTime.DifferenceInMinutes(CurrentTime())) <= static_cast<long>(theTimeRangeInMinutes))
+    if (noTimeRange || labs(theTime.DifferenceInMinutes(CurrentTime())) <=
+                           static_cast<long>(theTimeRangeInMinutes))
       return true;
 
     return false;
@@ -556,8 +558,8 @@ std::ostream &NFmiTimeBag::Write(std::ostream &file) const
          << itsFirstTime.GetSec() << std::endl;
 
     file << itsLastTime.GetYear() << " " << itsLastTime.GetMonth() << " " << itsLastTime.GetDay()
-         << " " << itsLastTime.GetHour() << " " << itsLastTime.GetMin() << " " << itsLastTime.GetSec()
-         << std::endl;
+         << " " << itsLastTime.GetHour() << " " << itsLastTime.GetMin() << " "
+         << itsLastTime.GetSec() << std::endl;
 
     // We trust all data to be at least version 6 by now
     if (DefaultFmiInfoVersion >= 4)
@@ -611,7 +613,7 @@ std::istream &NFmiTimeBag::Read(std::istream &file)
     long periodlength = itsLastTime.DifferenceInMinutes(itsFirstTime);
 
     if (periodlength != 0 && periodlength % mins != 0)
-      throw Fmi::Exception(BCP,"Invalid time resolution in NFmiTimeBag");
+      throw Fmi::Exception(BCP, "Invalid time resolution in NFmiTimeBag");
 
     Reset();
     return file;

@@ -16,9 +16,9 @@
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -57,8 +57,8 @@ void NFmiLocationCache::CalcIsInterpolationNeeded(int theGridSizeX, int theGridS
     if (yDiff < gGridPointEpsilon)
       itsGridPoint.Y(::round(itsGridPoint.Y()));
 
-    // Jos indeksit menevät laskenta tarkkuuden takia halutun hila koon alle/yli vähäsen, pyöristetään
-    // rajalle
+    // Jos indeksit menevät laskenta tarkkuuden takia halutun hila koon alle/yli vähäsen,
+    // pyöristetään rajalle
     if (itsGridPoint.X() < 0 && ::fabs(itsGridPoint.X()) < gOutlineGridPointEpsilon)
       itsGridPoint.X(0);
     if (itsGridPoint.Y() < 0 && ::fabs(itsGridPoint.Y()) < gOutlineGridPointEpsilon)
@@ -760,7 +760,8 @@ bool NFmiGrid::Init(const std::string &theFileName,
   {
     assert(walkXDimFirst);  // Juoksutusta ensin y-dimensio suuntaan ei ole vielä toteutettu!
     assert(theElementSizeInBytes > 0);  // DataElementin tavukoon pitää olla suurempi kuin 0!
-    assert(theElementSizeInBytes < 5);  // Ei ole vielä toteutettu yli 4 tavun integerien käsittelyä!
+    assert(theElementSizeInBytes <
+           5);  // Ei ole vielä toteutettu yli 4 tavun integerien käsittelyä!
     assert(theDataStartsAfterString.size() <=
            2);  // Ei ole vielä toteutettu yli 2 merkin mittaisia datan alku merkkijonoja!
 
@@ -775,7 +776,8 @@ bool NFmiGrid::Init(const std::string &theFileName,
       {
         for (unsigned long i = 0; i < ny; i++)
         {
-          in.read(&buffer[0], rowByteSize);  // HUOM! read ei suostu ottamaan unsigned char-pointteria
+          in.read(&buffer[0],
+                  rowByteSize);  // HUOM! read ei suostu ottamaan unsigned char-pointteria
           if (in.fail())
           {
             status = false;
@@ -909,7 +911,8 @@ std::vector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation & 
 
       if (theMaxWantedLocations != -1)
       {
-        std::vector<IndDistPari>::iterator maxWantedPos = tempValues.begin() + theMaxWantedLocations;
+        std::vector<IndDistPari>::iterator maxWantedPos =
+            tempValues.begin() + theMaxWantedLocations;
         if (pos > maxWantedPos)
           pos = maxWantedPos;
       }

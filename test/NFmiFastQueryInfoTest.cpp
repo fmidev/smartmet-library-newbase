@@ -31,11 +31,13 @@ void reading()
 {
   string filename = "data/hiladata.sqd";
   ifstream input(filename.c_str());
-  if (!input) TEST_FAILED("Failed to open " + filename + " for reading");
+  if (!input)
+    TEST_FAILED("Failed to open " + filename + " for reading");
 
   input >> *qd;
 
-  if (input.bad()) TEST_FAILED("Input stream " + filename + " was left in bad state");
+  if (input.bad())
+    TEST_FAILED("Input stream " + filename + " was left in bad state");
 
   qi.reset(new NFmiFastQueryInfo(qd.get()));
 
@@ -55,18 +57,54 @@ void constructing()
   TEST_PASSED();
 }
 
-void reset() { TEST_NOT_IMPLEMENTED(); }
-void resetparam() { TEST_NOT_IMPLEMENTED(); }
-void resetlocation() { TEST_NOT_IMPLEMENTED(); }
-void resetlevel() { TEST_NOT_IMPLEMENTED(); }
-void resettime() { TEST_NOT_IMPLEMENTED(); }
-void resetheader() { TEST_NOT_IMPLEMENTED(); }
-void first() { TEST_NOT_IMPLEMENTED(); }
-void firstparam() { TEST_NOT_IMPLEMENTED(); }
-void firstlocation() { TEST_NOT_IMPLEMENTED(); }
-void firstlevel() { TEST_NOT_IMPLEMENTED(); }
-void firsttime() { TEST_NOT_IMPLEMENTED(); }
-void firstheader() { TEST_NOT_IMPLEMENTED(); }
+void reset()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resetparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resetlocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resetlevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resettime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resetheader()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void first()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void firstparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void firstlocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void firstlevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void firsttime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void firstheader()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void nextparam()
 {
   using NFmiStringTools::Convert;
@@ -78,33 +116,44 @@ void nextparam()
   if ((id = qi->Param().GetParamIdent()) != kFmiTemperature)
     TEST_FAILED("Param after reset should be Temperature, not " + Convert(id));
 
-  if (!qi->NextParam()) TEST_FAILED("Expecting next parameter to be Temperature");
+  if (!qi->NextParam())
+    TEST_FAILED("Expecting next parameter to be Temperature");
 
   if ((id = qi->Param().GetParamIdent()) != kFmiTemperature)
     TEST_FAILED("First param should be Temperature, not " + Convert(id));
 
-  if (!qi->NextParam()) TEST_FAILED("Expecting next parameter to be DewPoint");
+  if (!qi->NextParam())
+    TEST_FAILED("Expecting next parameter to be DewPoint");
 
   if ((id = qi->Param().GetParamIdent()) != kFmiDewPoint)
     TEST_FAILED("Second param should be DewPoint, not " + Convert(id));
 
-  if (!qi->NextParam()) TEST_FAILED("Expecting next parameter to be DewPoint");
+  if (!qi->NextParam())
+    TEST_FAILED("Expecting next parameter to be DewPoint");
 
   if ((id = qi->Param().GetParamIdent()) != kFmiTotalWindMS)
     TEST_FAILED("Third param should be TotalWindMS, not " + Convert(id));
 
-  if (!qi->NextParam()) TEST_FAILED("Expecting next parameter to be WeatherAndCloudiness");
+  if (!qi->NextParam())
+    TEST_FAILED("Expecting next parameter to be WeatherAndCloudiness");
 
   if ((id = qi->Param().GetParamIdent()) != kFmiWeatherAndCloudiness)
     TEST_FAILED("Fourth param should be WeatherAndCloudiness, not " + Convert(id));
 
-  if (qi->NextParam()) TEST_FAILED("Not expecting more parameters after WeatherAndCloudiness");
+  if (qi->NextParam())
+    TEST_FAILED("Not expecting more parameters after WeatherAndCloudiness");
 
   TEST_PASSED();
 }
 
-void nextlocation() { TEST_NOT_IMPLEMENTED(); }
-void nextlevel() { TEST_NOT_IMPLEMENTED(); }
+void nextlocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextlevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void nexttime()
 {
   using NFmiStringTools::Convert;
@@ -116,12 +165,14 @@ void nexttime()
   if ((t = qi->ValidTime()) != NFmiMetTime(1900, 1, 1, 1, 0, 0))
     TEST_FAILED("ValidTime after reset should be 1900 1 1 1 0 0, not " + Convert(t));
 
-  if (!qi->NextTime()) TEST_FAILED("Expecting more than 1 timestep in test data");
+  if (!qi->NextTime())
+    TEST_FAILED("Expecting more than 1 timestep in test data");
 
   if ((t = qi->ValidTime()) != NFmiMetTime(2002, 10, 9, 6, 0, 0))
     TEST_FAILED("ValidTime after 1 nexttime should be 2002 10 9 6 0 0, not " + Convert(t));
 
-  if (!qi->NextTime()) TEST_FAILED("Expecting more than 2 timesteps in test data");
+  if (!qi->NextTime())
+    TEST_FAILED("Expecting more than 2 timesteps in test data");
 
   if ((t = qi->ValidTime()) != NFmiMetTime(2002, 10, 9, 7, 0, 0))
     TEST_FAILED("ValidTime after 2 nexttimes should be 2002 10 9 7 0 0, not " + Convert(t));
@@ -129,67 +180,130 @@ void nexttime()
   TEST_PASSED();
 }
 
-void nextheader() { TEST_NOT_IMPLEMENTED(); }
-void previousparam() { TEST_NOT_IMPLEMENTED(); }
-void previoustime() { TEST_NOT_IMPLEMENTED(); }
-void previouslocation() { TEST_NOT_IMPLEMENTED(); }
-void previouslevel() { TEST_NOT_IMPLEMENTED(); }
-void nextactiveparam() { TEST_NOT_IMPLEMENTED(); }
-void nextactivelocation() { TEST_NOT_IMPLEMENTED(); }
-void nextactivelevel() { TEST_NOT_IMPLEMENTED(); }
-void nextactivetime() { TEST_NOT_IMPLEMENTED(); }
-void previousactivelevel() { TEST_NOT_IMPLEMENTED(); }
-void previousactivetime() { TEST_NOT_IMPLEMENTED(); }
-void isactiveparam() { TEST_NOT_IMPLEMENTED(); }
-void activateparam() { TEST_NOT_IMPLEMENTED(); }
-void activatelocation() { TEST_NOT_IMPLEMENTED(); }
-void activatelevel() { TEST_NOT_IMPLEMENTED(); }
-void activatetime() { TEST_NOT_IMPLEMENTED(); }
-void activatetimeperiod() { TEST_NOT_IMPLEMENTED(); }
-void getactivetimeperiod() { TEST_NOT_IMPLEMENTED(); }
+void nextheader()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previousparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previoustime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previouslocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previouslevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextactiveparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextactivelocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextactivelevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextactivetime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previousactivelevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void previousactivetime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void isactiveparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void activateparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void activatelocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void activatelevel()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void activatetime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void activatetimeperiod()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void getactivetimeperiod()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void islocation()
 {
-  if (qi->IsLocation()) TEST_FAILED("Should return false for gridded data");
+  if (qi->IsLocation())
+    TEST_FAILED("Should return false for gridded data");
 
   TEST_PASSED();
 }
 
 void islevel()
 {
-  if (!qi->IsLevel()) TEST_FAILED("Should return true for the test data");
+  if (!qi->IsLevel())
+    TEST_FAILED("Should return true for the test data");
 
   TEST_PASSED();
 }
 
 void isarea()
 {
-  if (qi->IsArea()) TEST_FAILED("Should return false for gridded data");
+  if (qi->IsArea())
+    TEST_FAILED("Should return false for gridded data");
 
   TEST_PASSED();
 }
 
 void isgrid()
 {
-  if (!qi->IsGrid()) TEST_FAILED("Should return true for gridded data");
+  if (!qi->IsGrid())
+    TEST_FAILED("Should return true for gridded data");
 
   TEST_PASSED();
 }
 
 void isvalidtime()
 {
-  if (!qi->IsValidTime()) TEST_FAILED("Should return true for the test data");
+  if (!qi->IsValidTime())
+    TEST_FAILED("Should return true for the test data");
 
   TEST_PASSED();
 }
 
 void isorigintime()
 {
-  if (qi->IsOriginTime()) TEST_FAILED("Should return false for the test data");
+  if (qi->IsOriginTime())
+    TEST_FAILED("Should return false for the test data");
 
   TEST_PASSED();
 }
 
-void isheader() { TEST_NOT_IMPLEMENTED(); }
+void isheader()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void param()
 {
   if (!qi->Param(NFmiDataIdent(NFmiParam(kFmiTemperature), NFmiProducer(kFmiMETEOR))))
@@ -213,13 +327,34 @@ void param()
   TEST_PASSED();
 }
 
-void location() { TEST_NOT_IMPLEMENTED(); }
-void usestaticmask() { TEST_NOT_IMPLEMENTED(); }
-void staticdatamask() { TEST_NOT_IMPLEMENTED(); }
-void validtimewindow() { TEST_NOT_IMPLEMENTED(); }
-void nearestlocation() { TEST_NOT_IMPLEMENTED(); }
-void nearestpoint() { TEST_NOT_IMPLEMENTED(); }
-void nearestlocations() { TEST_NOT_IMPLEMENTED(); }
+void location()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void usestaticmask()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void staticdatamask()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void validtimewindow()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nearestlocation()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nearestpoint()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nearestlocations()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void level()
 {
   using NFmiStringTools::Convert;
@@ -232,7 +367,8 @@ void level()
   if ((l = lev.LevelTypeId()) != kFmiAnyLevelType)
     TEST_FAILED("Level typeid should be kFmiAnyLevelType, not " + Convert(l));
 
-  if ((l = lev.LevelValue()) != 0) TEST_FAILED("Level value should be 0, not " + Convert(l));
+  if ((l = lev.LevelValue()) != 0)
+    TEST_FAILED("Level value should be 0, not " + Convert(l));
 
   TEST_PASSED();
 }
@@ -248,7 +384,8 @@ void time()
   if ((t = qi->Time()) != NFmiMetTime(1900, 1, 1, 1))
     TEST_FAILED("First time should be 1.1.1900 01:00, not " + Convert(t));
 
-  if (!qi->NextTime()) TEST_FAILED("Data should have more than 1 timestep");
+  if (!qi->NextTime())
+    TEST_FAILED("Data should have more than 1 timestep");
 
   if ((t = qi->Time()) != NFmiMetTime(2002, 10, 9, 6))
     TEST_FAILED("Second time should be 9.10.2002 06:00, not " + Convert(t));
@@ -256,13 +393,34 @@ void time()
   TEST_PASSED();
 }
 
-void timetoneareststep() { TEST_NOT_IMPLEMENTED(); }
-void area() { TEST_NOT_IMPLEMENTED(); }
-void grid() { TEST_NOT_IMPLEMENTED(); }
-void latlon() { TEST_NOT_IMPLEMENTED(); }
-void relativepoint() { TEST_NOT_IMPLEMENTED(); }
-void producer() { TEST_NOT_IMPLEMENTED(); }
-void setproducer() { TEST_NOT_IMPLEMENTED(); }
+void timetoneareststep()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void area()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void grid()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void latlon()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void relativepoint()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void producer()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void setproducer()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void validtime()
 {
   using NFmiStringTools::Convert;
@@ -274,7 +432,8 @@ void validtime()
   if ((t = qi->ValidTime()) != NFmiMetTime(1900, 1, 1, 1))
     TEST_FAILED("First time should be 1.1.1900 01:00, not " + Convert(t));
 
-  if (!qi->NextTime()) TEST_FAILED("Data should have more than 1 timestep");
+  if (!qi->NextTime())
+    TEST_FAILED("Data should have more than 1 timestep");
 
   if ((t = qi->ValidTime()) != NFmiMetTime(2002, 10, 9, 6))
     TEST_FAILED("First time should be 9.10.2002 06:00, not " + Convert(t));
@@ -294,44 +453,126 @@ void origintime()
   TEST_PASSED();
 }
 
-void validtimes() { TEST_NOT_IMPLEMENTED(); }
-void parambag() { TEST_NOT_IMPLEMENTED(); }
-void hplacedescriptor() { TEST_NOT_IMPLEMENTED(); }
-void vplacedescriptor() { TEST_NOT_IMPLEMENTED(); }
-void timedescriptor() { TEST_NOT_IMPLEMENTED(); }
-void paramdescriptor() { TEST_NOT_IMPLEMENTED(); }
-void setlocaltimes() { TEST_NOT_IMPLEMENTED(); }
-void islocaltime() { TEST_NOT_IMPLEMENTED(); }
+void validtimes()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void parambag()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void hplacedescriptor()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void vplacedescriptor()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timedescriptor()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void paramdescriptor()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void setlocaltimes()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void islocaltime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void forecastperiod()
 {
   using NFmiStringTools::Convert;
 
   unsigned long p;
 
-  if ((p = qi->ForecastPeriod()) != 0) TEST_FAILED("Forecast period should be 0, not " + Convert(p));
+  if ((p = qi->ForecastPeriod()) != 0)
+    TEST_FAILED("Forecast period should be 0, not " + Convert(p));
 
   TEST_PASSED();
 }
 
-void owner() { TEST_NOT_IMPLEMENTED(); }
-void timestamp() { TEST_NOT_IMPLEMENTED(); }
-void leader() { TEST_NOT_IMPLEMENTED(); }
-void header() { TEST_NOT_IMPLEMENTED(); }
-void resettext() { TEST_NOT_IMPLEMENTED(); }
-void nexttext() { TEST_NOT_IMPLEMENTED(); }
-void text() { TEST_NOT_IMPLEMENTED(); }
-void resetpostproc() { TEST_NOT_IMPLEMENTED(); }
-void nextpostproc() { TEST_NOT_IMPLEMENTED(); }
-void postproc() { TEST_NOT_IMPLEMENTED(); }
-void size() { TEST_NOT_IMPLEMENTED(); }
-void sizeparams() { TEST_NOT_IMPLEMENTED(); }
-void sizelocations() { TEST_NOT_IMPLEMENTED(); }
-void sizelevels() { TEST_NOT_IMPLEMENTED(); }
-void sizetimes() { TEST_NOT_IMPLEMENTED(); }
-void sizeactiveparams() { TEST_NOT_IMPLEMENTED(); }
-void sizeactivelocations() { TEST_NOT_IMPLEMENTED(); }
-void sizeactivelevels() { TEST_NOT_IMPLEMENTED(); }
-void sizeactivetimes() { TEST_NOT_IMPLEMENTED(); }
+void owner()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timestamp()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void leader()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void header()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resettext()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nexttext()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void text()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void resetpostproc()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void nextpostproc()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void postproc()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void size()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizeparams()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizelocations()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizelevels()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizetimes()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizeactiveparams()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizeactivelocations()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizeactivelevels()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void sizeactivetimes()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void floatvalue()
 {
   using NFmiStringTools::Convert;
@@ -436,14 +677,38 @@ void interpolatedvalue()
   TEST_PASSED();
 }
 
-void peeklocationvalue() { TEST_NOT_IMPLEMENTED(); }
-void peeklocationlatlon() { TEST_NOT_IMPLEMENTED(); }
-void peektimevalue() { TEST_NOT_IMPLEMENTED(); }
-void peekvalue() { TEST_NOT_IMPLEMENTED(); }
-void gridvalue() { TEST_NOT_IMPLEMENTED(); }
-void heightvalue() { TEST_NOT_IMPLEMENTED(); }
-void pressurelevelvalue() { TEST_NOT_IMPLEMENTED(); }
-void findnearesttime() { TEST_NOT_IMPLEMENTED(); }
+void peeklocationvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void peeklocationlatlon()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void peektimevalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void peekvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void gridvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void heightvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void pressurelevelvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void findnearesttime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void classid()
 {
   using NFmiStringTools::Convert;
@@ -456,56 +721,177 @@ void classid()
   TEST_PASSED();
 }
 
-void classname() { TEST_NOT_IMPLEMENTED(); }
-void refdatapool() { TEST_NOT_IMPLEMENTED(); }
-void refquerydata() { TEST_NOT_IMPLEMENTED(); }
-void usesubparam() { TEST_NOT_IMPLEMENTED(); }
-void timeperiodfloatvalue() { TEST_NOT_IMPLEMENTED(); }
-void interpolatedtimeperiodfloatvalue() { TEST_NOT_IMPLEMENTED(); }
-void calcleveldata() { TEST_NOT_IMPLEMENTED(); }
-void calclocationdata() { TEST_NOT_IMPLEMENTED(); }
-void calclocationdatawithextremeplace() { TEST_NOT_IMPLEMENTED(); }
-void calctimedata() { TEST_NOT_IMPLEMENTED(); }
-void calctimedatawithextremetime() { TEST_NOT_IMPLEMENTED(); }
-void calinterpolatedtimedata() { TEST_NOT_IMPLEMENTED(); }
-void modifylocationdata() { TEST_NOT_IMPLEMENTED(); }
-void modifyleveldata() { TEST_NOT_IMPLEMENTED(); }
-void modifytimeslocationdata() { TEST_NOT_IMPLEMENTED(); }
-void timeresolution() { TEST_NOT_IMPLEMENTED(); }
-void paramindex() { TEST_NOT_IMPLEMENTED(); }
-void locationindex() { TEST_NOT_IMPLEMENTED(); }
-void levelindex() { TEST_NOT_IMPLEMENTED(); }
-void timeindex() { TEST_NOT_IMPLEMENTED(); }
-void calctimeuncertainty() { TEST_NOT_IMPLEMENTED(); }
-void calcareauncertainy() { TEST_NOT_IMPLEMENTED(); }
-void timeuncertaintystart() { TEST_NOT_IMPLEMENTED(); }
-void timeuncertaintyend() { TEST_NOT_IMPLEMENTED(); }
-void areauncertaintystart() { TEST_NOT_IMPLEMENTED(); }
-void areauncertaintyend() { TEST_NOT_IMPLEMENTED(); }
-void top() { TEST_NOT_IMPLEMENTED(); }
-void bottom() { TEST_NOT_IMPLEMENTED(); }
-void left() { TEST_NOT_IMPLEMENTED(); }
-void right() { TEST_NOT_IMPLEMENTED(); }
-void findfirstkey() { TEST_NOT_IMPLEMENTED(); }
-void findnextkey() { TEST_NOT_IMPLEMENTED(); }
-void addkey() { TEST_NOT_IMPLEMENTED(); }
-void getallkeys() { TEST_NOT_IMPLEMENTED(); }
-void getcurrentkey() { TEST_NOT_IMPLEMENTED(); }
-void setcurrentkeyvalue() { TEST_NOT_IMPLEMENTED(); }
-void removecurrentkey() { TEST_NOT_IMPLEMENTED(); }
-void removeallkeys() { TEST_NOT_IMPLEMENTED(); }
-void doendianbyteswap() { TEST_NOT_IMPLEMENTED(); }
+void classname()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void refdatapool()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void refquerydata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void usesubparam()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timeperiodfloatvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void interpolatedtimeperiodfloatvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calcleveldata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calclocationdata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calclocationdatawithextremeplace()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calctimedata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calctimedatawithextremetime()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calinterpolatedtimedata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void modifylocationdata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void modifyleveldata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void modifytimeslocationdata()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timeresolution()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void paramindex()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void locationindex()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void levelindex()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timeindex()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calctimeuncertainty()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void calcareauncertainy()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timeuncertaintystart()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void timeuncertaintyend()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void areauncertaintystart()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void areauncertaintyend()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void top()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void bottom()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void left()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void right()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void findfirstkey()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void findnextkey()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void addkey()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void getallkeys()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void getcurrentkey()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void setcurrentkeyvalue()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void removecurrentkey()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void removeallkeys()
+{
+  TEST_NOT_IMPLEMENTED();
+}
+void doendianbyteswap()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 void infoversion()
 {
   using NFmiStringTools::Convert;
 
   double version = qi->InfoVersion();
-  if (version != 6) TEST_FAILED("Info Version should be 6, not " + Convert(version));
+  if (version != 6)
+    TEST_FAILED("Info Version should be 6, not " + Convert(version));
 
   TEST_PASSED();
 }
 
-void masktype() { TEST_NOT_IMPLEMENTED(); }
+void masktype()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 /*!
  * The actual test suite
@@ -514,7 +900,7 @@ void masktype() { TEST_NOT_IMPLEMENTED(); }
 
 class tests : public tframe::tests
 {
-public:
+ public:
   tests()
   {
     qd.reset(new NFmiQueryData);
@@ -527,7 +913,7 @@ public:
     qi.reset();
   }
 
-private:  
+ private:
   virtual const char* error_message_prefix() const { return "\n\t"; }
   void test(void)
   {

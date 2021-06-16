@@ -62,7 +62,8 @@ class NFmiTimeZoneEdge
   NFmiTimeZoneEdge(double theX1, double theY1, double theX2, double theY2)
       : itsPoint1(NFmiPoint(theX1, theY1)), itsPoint2(NFmiPoint(theX2, theY2))
   {
-    if (itsPoint1.Y() > itsPoint2.Y()) swap(itsPoint1, itsPoint2);
+    if (itsPoint1.Y() > itsPoint2.Y())
+      swap(itsPoint1, itsPoint2);
   }
 
   double X1() const { return itsPoint1.X(); }
@@ -98,9 +99,12 @@ bool NFmiTimeZoneEdge::operator==(const NFmiTimeZoneEdge& theOther) const
 
 bool NFmiTimeZoneEdge::operator<(const NFmiTimeZoneEdge& theOther) const
 {
-  if (Y1() != theOther.Y1()) return (Y1() < theOther.Y1());
-  if (Y2() != theOther.Y2()) return (Y2() < theOther.Y2());
-  if (X1() != theOther.X1()) return (X1() < theOther.X1());
+  if (Y1() != theOther.Y1())
+    return (Y1() < theOther.Y1());
+  if (Y2() != theOther.Y2())
+    return (Y2() < theOther.Y2());
+  if (X1() != theOther.X1())
+    return (X1() < theOther.X1());
   return (X2() < theOther.X2());
 }
 
@@ -155,10 +159,14 @@ void NFmiTimeZoneRing::Add(const NFmiPoint& thePoint)
 {
   try
   {
-    if (!itsStarted || thePoint.X() < itsMinX) itsMinX = thePoint.X();
-    if (!itsStarted || thePoint.X() > itsMaxX) itsMaxX = thePoint.X();
-    if (!itsStarted || thePoint.Y() < itsMinY) itsMinY = thePoint.Y();
-    if (!itsStarted || thePoint.Y() > itsMaxY) itsMaxY = thePoint.Y();
+    if (!itsStarted || thePoint.X() < itsMinX)
+      itsMinX = thePoint.X();
+    if (!itsStarted || thePoint.X() > itsMaxX)
+      itsMaxX = thePoint.X();
+    if (!itsStarted || thePoint.Y() < itsMinY)
+      itsMinY = thePoint.Y();
+    if (!itsStarted || thePoint.Y() > itsMaxY)
+      itsMaxY = thePoint.Y();
 
     if (itsStarted)
     {
@@ -219,7 +227,7 @@ void NFmiTimeZoneRing::CheckClosed() const
   try
   {
     if (itsFirstPoint != itsLastPoint)
-      throw Fmi::Exception(BCP,"NFmiTimeZoneRing is not closed!");
+      throw Fmi::Exception(BCP, "NFmiTimeZoneRing is not closed!");
   }
   catch (...)
   {
@@ -384,7 +392,8 @@ bool NFmiTimeZonePolygon::Inside(const NFmiPoint& thePoint) const
     int i = 0;
     for (const auto& itsRing : itsRings)
     {
-      if (itsRing.Inside(thePoint)) return itsRing.Clockwise();
+      if (itsRing.Inside(thePoint))
+        return itsRing.Clockwise();
       i++;
     }
     return false;
@@ -709,7 +718,8 @@ void NFmiTimeZoneFinder::Check(const NFmiPoint& theLatLon) const
         count++;
         poly = p;
         tz = it->TimeZone();
-        if (count > 1) cout << "match " << count << '\t' << p << '\t' << tz << endl;
+        if (count > 1)
+          cout << "match " << count << '\t' << p << '\t' << tz << endl;
       }
       p++;
     }

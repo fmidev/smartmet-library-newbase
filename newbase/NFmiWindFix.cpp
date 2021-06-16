@@ -1,15 +1,16 @@
 #include "NFmiWindFix.h"
-#include "NFmiQueryData.h"
-#include "NFmiFastQueryInfo.h"
 #include "NFmiFastInfoUtils.h"
+#include "NFmiFastQueryInfo.h"
+#include "NFmiQueryData.h"
 #include <macgyver/Exception.h>
 
 using namespace std;
 
 namespace
 {
-
-bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo, NFmiFastQueryInfo& destInfo, const NFmiFastInfoUtils::MetaWindParamUsage& metaWindParamUsage)
+bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo,
+                               NFmiFastQueryInfo& destInfo,
+                               const NFmiFastInfoUtils::MetaWindParamUsage& metaWindParamUsage)
 {
   try
   {
@@ -23,11 +24,14 @@ bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo, NFmiFastQueryInfo&
     auto vParamIndex = sourceInfo.ParamIndex();
     sourceInfo.Param(kFmiWindVectorMS);
     auto windVectorParamIndex = sourceInfo.ParamIndex();
-    for (sourceInfo.ResetLevel(), destInfo.ResetLevel(); sourceInfo.NextLevel() && destInfo.NextLevel(); )
+    for (sourceInfo.ResetLevel(), destInfo.ResetLevel();
+         sourceInfo.NextLevel() && destInfo.NextLevel();)
     {
-      for (sourceInfo.ResetLocation(), destInfo.ResetLocation(); sourceInfo.NextLocation() && destInfo.NextLocation(); )
+      for (sourceInfo.ResetLocation(), destInfo.ResetLocation();
+           sourceInfo.NextLocation() && destInfo.NextLocation();)
       {
-        for (sourceInfo.ResetTime(), destInfo.ResetTime(); sourceInfo.NextTime() && destInfo.NextTime(); )
+        for (sourceInfo.ResetTime(), destInfo.ResetTime();
+             sourceInfo.NextTime() && destInfo.NextTime();)
         {
           sourceInfo.ParamIndex(wsParamIndex);
           auto WS = sourceInfo.FloatValue();
@@ -50,12 +54,10 @@ bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo, NFmiFastQueryInfo&
   }
 }
 
-}
-
+}  // namespace
 
 namespace NFmiWindFix
 {
-
 bool FixWinds(NFmiQueryData& sourceData)
 {
   try
@@ -73,7 +75,8 @@ bool FixWinds(NFmiFastQueryInfo& sourceInfo)
 {
   try
   {
-    NFmiFastInfoUtils::MetaWindParamUsage metaWindParamUsage = NFmiFastInfoUtils::CheckMetaWindParamUsage(sourceInfo);
+    NFmiFastInfoUtils::MetaWindParamUsage metaWindParamUsage =
+        NFmiFastInfoUtils::CheckMetaWindParamUsage(sourceInfo);
     if (metaWindParamUsage.HasTotalWind())
       return false;
     if (!metaWindParamUsage.HasWsAndWd())
@@ -92,4 +95,4 @@ bool FixWinds(NFmiFastQueryInfo& sourceInfo)
   }
 }
 
-} // NFmiWindFix
+}  // namespace NFmiWindFix

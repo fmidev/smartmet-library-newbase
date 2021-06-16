@@ -105,56 +105,80 @@ inline bool NFmiParam::operator<(const NFmiParam &theParam) const
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiParam::MaxValue(void) const { return itsMaxValue; }
+inline double NFmiParam::MaxValue(void) const
+{
+  return itsMaxValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiParam::MinValue(void) const { return itsMinValue; }
+inline double NFmiParam::MinValue(void) const
+{
+  return itsMinValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParam::MaxValue(double newValue) { itsMaxValue = newValue; }
+inline void NFmiParam::MaxValue(double newValue)
+{
+  itsMaxValue = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParam::MinValue(double newValue) { itsMinValue = newValue; }
+inline void NFmiParam::MinValue(double newValue)
+{
+  itsMinValue = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString &NFmiParam::Precision(void) const { return itsPrecision; }
+inline const NFmiString &NFmiParam::Precision(void) const
+{
+  return itsPrecision;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParam::Scale(float newValue) { itsScale = newValue; }
+inline void NFmiParam::Scale(float newValue)
+{
+  itsScale = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParam::Base(float newValue) { itsBase = newValue; }
+inline void NFmiParam::Base(float newValue)
+{
+  itsBase = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParam::Precision(const NFmiString &newValue) { itsPrecision = newValue; }
+inline void NFmiParam::Precision(const NFmiString &newValue)
+{
+  itsPrecision = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -197,14 +221,20 @@ inline void NFmiParam::InterpolationMethod(FmiInterpolationMethod theInterpolati
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParam *NFmiParam::Clone(void) const { return new NFmiParam(*this); }
+inline NFmiParam *NFmiParam::Clone(void) const
+{
+  return new NFmiParam(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiParam::ClassName(void) const { return "NFmiParam"; }
+inline const char *NFmiParam::ClassName(void) const
+{
+  return "NFmiParam";
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiParam
@@ -215,7 +245,10 @@ inline const char *NFmiParam::ClassName(void) const { return "NFmiParam"; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiParam &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiParam &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiParam
@@ -226,4 +259,7 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiParam &ob) { retur
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiParam &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiParam &ob)
+{
+  return ob.Read(file);
+}

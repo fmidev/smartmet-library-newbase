@@ -28,9 +28,7 @@ NFmiAreaMaskList::~NFmiAreaMaskList() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMaskInUse(false)
-{
-}
+NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMaskInUse(false) {}
 
 NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther) = default;
 

@@ -162,12 +162,14 @@ bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString
     in >> vSize;
     int timeDescType = 0;  // 0=timebag ja 1=timelist
     in >> timeDescType;
-    if (in.fail()) return false;
+    if (in.fail())
+      return false;
     if (timeDescType == 0)
     {
       int timeResolutionInMinutes = 0;
       in >> timeResolutionInMinutes;
-      if (in.fail()) return false;
+      if (in.fail())
+        return false;
       NFmiMetTime lastTime(firstTime);
       lastTime.ChangeByMinutes(timeResolutionInMinutes * (vSize - 1));
       NFmiTimeBag times(firstTime, lastTime, timeResolutionInMinutes);
@@ -184,10 +186,11 @@ bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString
            i++)  // tama menee yhta vajaa loppuun asti, koska viimeinen aika ero ei merkitse mitaan
       {
         if (i == 0)
-          in >>
-              timeResolutionInMinutes;  // 1. aikaresoluutio on turha ja se luetaan vain alta pois!!!
+          in >> timeResolutionInMinutes;  // 1. aikaresoluutio on turha ja se luetaan vain alta
+                                          // pois!!!
         in >> timeResolutionInMinutes;
-        if (in.fail()) return false;
+        if (in.fail())
+          return false;
         currentTime.ChangeByMinutes(timeResolutionInMinutes);
         timeList.Add(new NFmiMetTime(currentTime));
       }
@@ -208,7 +211,8 @@ bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString
     for (i = 0; i < vSize; i++)
     {
       in >> orgTime;
-      if (in.fail()) break;  // pieleen meni ei jatketa
+      if (in.fail())
+        break;  // pieleen meni ei jatketa
       originTimes[i] = orgTime;
     }
 

@@ -64,7 +64,10 @@ inline bool NFmiMap::operator==(const NFmiMap &theMap) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiMap::operator!=(const NFmiMap &theMap) const { return !operator==(theMap); }
+inline bool NFmiMap::operator!=(const NFmiMap &theMap) const
+{
+  return !operator==(theMap);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param thePoint Undocumented

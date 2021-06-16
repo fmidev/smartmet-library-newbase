@@ -41,7 +41,8 @@ NFmiDataModifierMask::NFmiDataModifierMask(FmiMaskOperation theCondition,
 
 bool NFmiDataModifierMask::BoolOperation(float theValue)
 {
-  if (theValue == kFloatMissing) return false;
+  if (theValue == kFloatMissing)
+    return false;
 
   switch (itsMaskOperation)
   {

@@ -74,7 +74,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiLevelBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiLevelBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiLevelBag &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -93,14 +96,20 @@ inline bool NFmiLevelBag::IsStep(void)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel *NFmiLevelBag::LevelMinValue(void) { return &itsLevels[0]; }
+inline NFmiLevel *NFmiLevelBag::LevelMinValue(void)
+{
+  return &itsLevels[0];
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel *NFmiLevelBag::LevelMaxValue(void) { return &itsLevels[itsSize - 1]; }
+inline NFmiLevel *NFmiLevelBag::LevelMaxValue(void)
+{
+  return &itsLevels[itsSize - 1];
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -137,6 +146,9 @@ inline NFmiLevel *NFmiLevelBag::Level(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiLevelBag::ClassName(void) const { return "NFmiLevelBag"; }
+inline const char *NFmiLevelBag::ClassName(void) const
+{
+  return "NFmiLevelBag";
+}
 
 // ======================================================================

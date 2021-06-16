@@ -104,20 +104,29 @@ inline NFmiStereographicArea::~NFmiStereographicArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiStereographicArea::WorldRect(void) const { return itsWorldRect; }
+inline const NFmiRect NFmiStereographicArea::WorldRect(void) const
+{
+  return itsWorldRect;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiStereographicArea::ClassId(void) const { return kNFmiStereographicArea; }
+inline unsigned long NFmiStereographicArea::ClassId(void) const
+{
+  return kNFmiStereographicArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiStereographicArea::ClassName(void) const { return "kNFmiStereographicArea"; }
+inline const char* NFmiStereographicArea::ClassName(void) const
+{
+  return "kNFmiStereographicArea";
+}
 
 // ======================================================================

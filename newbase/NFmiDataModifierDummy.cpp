@@ -34,26 +34,38 @@ NFmiDataModifierDummy::NFmiDataModifierDummy() : NFmiDataModifier(), itsValue(kF
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierDummy::Calculate(float theValue) { itsValue = theValue; }
+void NFmiDataModifierDummy::Calculate(float theValue)
+{
+  itsValue = theValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theQI Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierDummy::Calculate(NFmiQueryInfo* theQI) { itsValue = theQI->FloatValue(); }
+void NFmiDataModifierDummy::Calculate(NFmiQueryInfo* theQI)
+{
+  itsValue = theQI->FloatValue();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierDummy::CalculationResult() { return itsValue; }
+float NFmiDataModifierDummy::CalculationResult()
+{
+  return itsValue;
+}
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierDummy::Clear() { itsValue = kFloatMissing; }
+void NFmiDataModifierDummy::Clear()
+{
+  itsValue = kFloatMissing;
+}
 // ======================================================================

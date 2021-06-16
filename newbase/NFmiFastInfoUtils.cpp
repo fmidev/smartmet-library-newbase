@@ -229,9 +229,10 @@ float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo
 {
   try
   {
-    return ::CalcMetaWindVectorValue(theInfo, metaWindParamUsage, [&]() {
-      return theInfo->InterpolatedValue(theLatlon, theTime);
-    });
+    return ::CalcMetaWindVectorValue(theInfo,
+                                     metaWindParamUsage,
+                                     [&]()
+                                     { return theInfo->InterpolatedValue(theLatlon, theTime); });
   }
   catch (...)
   {
@@ -245,7 +246,8 @@ std::pair<float, float> GetMetaWsWdValues(
 {
   try
   {
-    return ::GetMetaWsWdValues(theInfo, metaWindParamUsage, [&]() { return theInfo->FloatValue(); });
+    return ::GetMetaWsWdValues(
+        theInfo, metaWindParamUsage, [&]() { return theInfo->FloatValue(); });
   }
   catch (...)
   {
@@ -293,9 +295,9 @@ std::pair<float, float> GetMetaWsWdValues(
 {
   try
   {
-    return ::GetMetaWsWdValues(theInfo, metaWindParamUsage, [&]() {
-      return theInfo->InterpolatedValue(theLatlon, theTime);
-    });
+    return ::GetMetaWsWdValues(theInfo,
+                               metaWindParamUsage,
+                               [&]() { return theInfo->InterpolatedValue(theLatlon, theTime); });
   }
   catch (...)
   {
@@ -358,9 +360,10 @@ std::pair<float, float> GetMetaWindComponentsValues(
 {
   try
   {
-    return ::CalcMetaWindComponentsValues(theInfo, metaWindParamUsage, [&]() {
-      return theInfo->InterpolatedValue(theLatlon, theTime);
-    });
+    return ::CalcMetaWindComponentsValues(
+        theInfo,
+        metaWindParamUsage,
+        [&]() { return theInfo->InterpolatedValue(theLatlon, theTime); });
   }
   catch (...)
   {
@@ -372,7 +375,6 @@ std::pair<float, float> GetMetaWindComponentsValues(
 
 namespace NFmiFastInfoUtils
 {
-
 bool IsInfoShipTypeData(NFmiFastQueryInfo &theInfo)
 {
   try
@@ -380,7 +382,8 @@ bool IsInfoShipTypeData(NFmiFastQueryInfo &theInfo)
     if (theInfo.IsGrid() == false)
     {
       FmiProducerName prodId = static_cast<FmiProducerName>(theInfo.Producer()->GetIdent());
-      if (prodId == kFmiSHIP || prodId == kFmiBUOY) return true;
+      if (prodId == kFmiSHIP || prodId == kFmiBUOY)
+        return true;
     }
     return false;
   }
@@ -405,7 +408,8 @@ void SetSoundingDataLevel(const NFmiLevel &theWantedSoundingPressureLevel, NFmiF
       if (info.Param(kFmiPressure))
       {
         for (info.ResetLevel(); info.NextLevel();)
-          if (info.FloatValue() == levelValue) break;
+          if (info.FloatValue() == levelValue)
+            break;
       }
       if (subParaUsed)
         info.Param(parName);  // pakko vet�� t�m� hitaalla tavalla jostain syyst�
@@ -529,8 +533,8 @@ bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo>
     {
       theInfo->TimeIndex(timeIndex1);
       NFmiMetTime foundTime(theInfo->Time());
-      if (foundTime > endTime || foundTime < theStartTime)  // jos l�ydetty aika on alku ja loppu ajan
-                                                            // ulkopuolella ei piirret� salamaa
+      if (foundTime > endTime || foundTime < theStartTime)  // jos l�ydetty aika on alku ja loppu
+                                                            // ajan ulkopuolella ei piirret� salamaa
         return false;
     }
     return true;
@@ -547,7 +551,8 @@ bool FindMovingSoundingDataTime(const boost::shared_ptr<NFmiFastQueryInfo> &theI
 {
   try
   {
-    theInfo->FirstLocation();  // liikkuvissa luotauksissa vain yksi dummy paikka, laitetaan se p��lle
+    theInfo
+        ->FirstLocation();  // liikkuvissa luotauksissa vain yksi dummy paikka, laitetaan se p��lle
     NFmiMetTime timeStart(theTime);
     timeStart.ChangeByMinutes(-30);
     unsigned long timeIndex1 = 0;
@@ -626,7 +631,7 @@ QueryInfoParamStateRestorer::~QueryInfoParamStateRestorer()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -739,9 +744,11 @@ MetaWindParamUsage CheckMetaWindParamUsage(NFmiQueryInfo &theInfo)
   {
     QueryInfoParamStateRestorer restorer(theInfo);
     MetaWindParamUsage metaWindParamUsage;
-    if (theInfo.Param(kFmiTotalWindMS)) metaWindParamUsage.fHasTotalWind = true;
+    if (theInfo.Param(kFmiTotalWindMS))
+      metaWindParamUsage.fHasTotalWind = true;
 
-    if (theInfo.Param(kFmiWindVectorMS)) metaWindParamUsage.fHasWindVectorParam = true;
+    if (theInfo.Param(kFmiWindVectorMS))
+      metaWindParamUsage.fHasWindVectorParam = true;
 
     if (theInfo.Param(kFmiWindDirection) && theInfo.Param(kFmiWindSpeedMS))
       metaWindParamUsage.fHasWsAndWd = true;
@@ -966,7 +973,8 @@ float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
       case kFmiWindUMS:
         return ::GetMetaWindComponentsValues(theInfo, theTime, theLatlon, metaWindParamUsage).first;
       case kFmiWindVMS:
-        return ::GetMetaWindComponentsValues(theInfo, theTime, theLatlon, metaWindParamUsage).second;
+        return ::GetMetaWindComponentsValues(theInfo, theTime, theLatlon, metaWindParamUsage)
+            .second;
       default:
         return kFloatMissing;
     }
@@ -1062,7 +1070,8 @@ void CalcMatrixWindVectorFromWindComponents(const NFmiDataMatrix<float> &u,
 {
   try
   {
-    windVectorOut = ::MatrixCalculations(u, v, theStartColumnIndex, CalcWindVectorFromWindComponents);
+    windVectorOut =
+        ::MatrixCalculations(u, v, theStartColumnIndex, CalcWindVectorFromWindComponents);
   }
   catch (...)
   {
@@ -1136,9 +1145,10 @@ bool SetInfoToGridPoint(boost::shared_ptr<NFmiFastQueryInfo> &info,
 {
   try
   {
-    // Pit�� tarkistaa erikseen ett� hilaindeksit eiv�t ole hilakoon ulkopuolella, koska unsigned long
-    // yli/alivuotojen (tuplana) takia voikin tulla hyv�ksytt�vi� indekseja
-    if (gridPointX >= info->GridXNumber() || gridPointY >= info->GridYNumber()) return false;
+    // Pit�� tarkistaa erikseen ett� hilaindeksit eiv�t ole hilakoon ulkopuolella, koska unsigned
+    // long yli/alivuotojen (tuplana) takia voikin tulla hyv�ksytt�vi� indekseja
+    if (gridPointX >= info->GridXNumber() || gridPointY >= info->GridYNumber())
+      return false;
     auto locationIndex = info->Grid()->DataIndex(gridPointX, gridPointY);
     return info->LocationIndex(locationIndex);
   }
@@ -1152,7 +1162,8 @@ float CalcWS(float u, float v)
 {
   try
   {
-    if (!AreWindComponentsOk(u, v)) return kFloatMissing;
+    if (!AreWindComponentsOk(u, v))
+      return kFloatMissing;
     float WS = std::sqrt(u * u + v * v);
     WS = ::DoWindSpeedFromWindComponentsRoundingFix(WS);
     return WS;
@@ -1180,9 +1191,11 @@ float CalcU(float WS, float WD)
 {
   try
   {
-    if (!AreWindComponentsOk(WS, WD)) return kFloatMissing;
+    if (!AreWindComponentsOk(WS, WD))
+      return kFloatMissing;
     // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla my�s puuttuvaa)
-    if (WD == 999) return 0;
+    if (WD == 999)
+      return 0;
     // huom! tuulen suunta pit�� ensin k��nt�� 180 astetta ja sitten
     // muuttaa radiaaneiksi kulma/360 * 2*pii
     float value = WS * sin(((fmod(180.f + WD, 360.f) / 360.f) * (2.f * static_cast<float>(kPii))));
@@ -1198,9 +1211,11 @@ float CalcV(float WS, float WD)
 {
   try
   {
-    if (!AreWindComponentsOk(WS, WD)) return kFloatMissing;
+    if (!AreWindComponentsOk(WS, WD))
+      return kFloatMissing;
     // jos tuulensuunta on vaihtelevaa (999), palautetaan 0 arvo (voisi olla my�s puuttuvaa)
-    if (WD == 999) return 0;
+    if (WD == 999)
+      return 0;
     // Huom! tuulen suunta pit�� ensin k��nt�� 180 astetta ja sitten
     // muuttaa radiaaneiksi kulma/360 * 2*pii
     float value = WS * cos(((fmod(180.f + WD, 360.f) / 360.f) * (2.f * static_cast<float>(kPii))));

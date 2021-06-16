@@ -173,19 +173,22 @@ double NFmiCalculationCondition::MaskValue(double theValue) const
         case kFmiMaskLessThanOrGreaterOrEqual:
           return (theValue < itsLowerLimit || theValue >= itsUpperLimit ? 1 : 0);
         case kFmiMaskRisingRamp:
-          if (theValue <= itsLowerLimit) return 0.;
+          if (theValue <= itsLowerLimit)
+            return 0.;
           if (theValue > itsLowerLimit && theValue <= itsUpperLimit)
             return (theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit);
           return 1.;
         case kFmiMaskLoweringRamp:
-          if (theValue <= itsLowerLimit) return 1.;
+          if (theValue <= itsLowerLimit)
+            return 1.;
           if (theValue > itsLowerLimit && theValue <= itsUpperLimit)
             return 1. - (theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit);
           return 0.;
         case kFmiMaskEqualOrEqual:
           return (round(theValue) == itsLowerLimit || round(theValue) == itsUpperLimit ? 1 : 0);
         case kFmiMaskDoubleRamp:
-          if (theValue <= itsLowerLimit) return -1.;
+          if (theValue <= itsLowerLimit)
+            return -1.;
           if (theValue > itsLowerLimit && theValue < itsUpperLimit)
             return 2 * ((theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit)) - 1;
           return 1.;
@@ -322,7 +325,8 @@ void NFmiCalculationCondition::Write(std::ostream& os) const
 {
   try
   {
-    os << static_cast<int>(itsCondition) << ' ' << itsLowerLimit << ' ' << itsUpperLimit << std::endl;
+    os << static_cast<int>(itsCondition) << ' ' << itsLowerLimit << ' ' << itsUpperLimit
+       << std::endl;
   }
   catch (...)
   {

@@ -9,9 +9,9 @@
 
 #include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
+#include <gdal_version.h>
 #include <stdexcept>
 #include <string>
-#include <gdal_version.h>
 
 std::string tostr(const NFmiPoint& p)
 {
@@ -49,7 +49,8 @@ void areastr()
   std::string expected = "FMI:EPSG:2393|20,60,40,70";
 
   std::string result = area.AreaStr();
-  if (result != expected) TEST_FAILED("Expected " + expected + ", got " + result + " instead");
+  if (result != expected)
+    TEST_FAILED("Expected " + expected + ", got " + result + " instead");
 
   TEST_PASSED();
 }
@@ -73,7 +74,8 @@ void wkt()
       "\"9001\"]],AUTHORITY[\"EPSG\",\"2393\"]]";
 
   std::string result = area.WKT();
-  if (result != expected) TEST_FAILED("Expected " + expected + ", got " + result + " instead");
+  if (result != expected)
+    TEST_FAILED("Expected " + expected + ", got " + result + " instead");
 
   TEST_PASSED();
 }

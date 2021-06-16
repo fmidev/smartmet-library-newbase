@@ -65,9 +65,9 @@
 // ======================================================================
 
 #include "NFmiOrthographicArea.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 

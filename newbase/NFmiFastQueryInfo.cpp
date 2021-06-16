@@ -30,8 +30,8 @@
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
-#include <stdexcept>
 #include <macgyver/Exception.h>
+#include <stdexcept>
 
 // ----------------------------------------------------------------------
 /*!
@@ -383,7 +383,7 @@ NFmiFastQueryInfo::~NFmiFastQueryInfo()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -531,7 +531,8 @@ bool NFmiFastQueryInfo::PreviousParam(bool fIgnoreSubParam)
       }
       else
       {
-        itsParamIndex = static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+        itsParamIndex =
+            static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
         return false;
       }
     }
@@ -561,15 +562,15 @@ bool NFmiFastQueryInfo::PreviousLocation()
   {
     if (itsLocationIndex > 0 &&
         itsLocationIndex !=
-            static_cast<unsigned long>(
-                -1))  // != -1 pakko tarkistaa, koska se on todellisuudessa yli 4 miljardia ulong:ina
+            static_cast<unsigned long>(-1))  // != -1 pakko tarkistaa, koska se on todellisuudessa
+                                             // yli 4 miljardia ulong:ina
     {
       itsLocationIndex--;
       return true;
     }
 
     itsLocationIndex =
-          static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
     return false;
   }
   catch (...)
@@ -588,10 +589,9 @@ bool NFmiFastQueryInfo::PreviousLevel()
 {
   try
   {
-    if (itsLevelIndex > 0 &&
-        itsLevelIndex !=
-            static_cast<unsigned long>(
-                -1))  // != -1 pakko tarkistaa, koska se on todellisuudessa yli 4 miljardia ulong:ina
+    if (itsLevelIndex > 0 && itsLevelIndex != static_cast<unsigned long>(
+                                                  -1))  // != -1 pakko tarkistaa, koska se on
+                                                        // todellisuudessa yli 4 miljardia ulong:ina
     {
       itsLevelIndex--;
       return true;
@@ -616,10 +616,9 @@ bool NFmiFastQueryInfo::PreviousTime()
 {
   try
   {
-    if (itsTimeIndex > 0 &&
-        itsTimeIndex !=
-            static_cast<unsigned long>(
-                -1))  // != -1 pakko tarkistaa, koska se on todellisuudessa yli 4 miljardia ulong:ina
+    if (itsTimeIndex > 0 && itsTimeIndex != static_cast<unsigned long>(
+                                                -1))  // != -1 pakko tarkistaa, koska se on
+                                                      // todellisuudessa yli 4 miljardia ulong:ina
     {
       itsTimeIndex--;
       return true;
@@ -742,8 +741,8 @@ bool NFmiFastQueryInfo::Location(const NFmiLocation &theLocation)
     }
 
     itsLocationIndex =
-          static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-      return false;
+        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+    return false;
   }
   catch (...)
   {
@@ -860,9 +859,9 @@ bool NFmiFastQueryInfo::NearestLocation(const NFmiLocation &theLocation, double 
       itsLocationIndex = NFmiQueryInfo::LocationIndex();
       return true;
     }
-      itsLocationIndex =
-          static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-      return false;
+    itsLocationIndex =
+        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+    return false;
   }
   catch (...)
   {
@@ -883,7 +882,7 @@ bool NFmiFastQueryInfo::NearestLocation(const NFmiLocation &theLocation,
     }
 
     itsLocationIndex =
-          static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
     return false;
   }
   catch (...)
@@ -910,8 +909,8 @@ bool NFmiFastQueryInfo::NearestPoint(const NFmiPoint &theLatLonPoint)
     }
 
     itsLocationIndex =
-          static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
-      return false;
+        static_cast<unsigned long>(-1);  // resetoidaan, kun yritetään mennä rajan yli
+    return false;
   }
   catch (...)
   {
@@ -1033,8 +1032,8 @@ NFmiProducer *NFmiFastQueryInfo::Producer()
   try
   {
     if (itsParamSize == 0)
-      throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::Producer: Ei ole parametrejä, miltä voisi pyytää tuottajaa.");
+      throw Fmi::Exception(
+          BCP, "NFmiFastQueryInfo::Producer: Ei ole parametrejä, miltä voisi pyytää tuottajaa.");
     else if (itsParamIndex >= itsParamSize)
       return itsParamDescriptor->Param(0, !fUseSubParam)
           .GetProducer();  // palautetaan reset-tilassa 1. parametrin tuottaja
@@ -1170,7 +1169,7 @@ FmiLevelType NFmiFastQueryInfo::LevelType() const
       return itsVPlaceDescriptor->Level(itsLevelIndex)->LevelType();
 
     return itsVPlaceDescriptor->Level(0)
-          ->LevelType();  // Jos levelIndex ei ollut minkään levelin kohdalla,
+        ->LevelType();  // Jos levelIndex ei ollut minkään levelin kohdalla,
     // 1. level type pitäisi aina löytyä ja sen pitäisi olla sama kuin kaikki muutkin
   }
   catch (...)
@@ -1443,9 +1442,8 @@ static std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
           2);  // laitetaan ensimmäiseksi puoliväli, koska alusta ja lopusta puuttuu helposti dataa
       if (timeSize > 4)
       {
-        timeIndexies.push_back(
-            timeSize /
-            4);  // laitetaan sitten neljäsosan kohta, koska alusta ja lopusta puuttuu helposti dataa
+        timeIndexies.push_back(timeSize / 4);  // laitetaan sitten neljäsosan kohta, koska alusta ja
+                                               // lopusta puuttuu helposti dataa
         timeIndexies.push_back(3 * timeSize / 4);  // laitetaan sitten kolmannen neljäsosan kohta,
                                                    // koska alusta ja lopusta puuttuu helposti dataa
       }
@@ -1879,9 +1877,9 @@ NFmiQueryInfo *NFmiFastQueryInfo::CreateCombinedInfo(NFmiQueryInfo *theOtherInfo
   try
   {
     return new NFmiFastQueryInfo(itsParamDescriptor->Combine(theOtherInfo->ParamDescriptor()),
-                               itsTimeDescriptor->Combine(theOtherInfo->TimeDescriptor()),
-                               itsHPlaceDescriptor->Combine(theOtherInfo->HPlaceDescriptor()),
-                               *itsVPlaceDescriptor);
+                                 itsTimeDescriptor->Combine(theOtherInfo->TimeDescriptor()),
+                                 itsHPlaceDescriptor->Combine(theOtherInfo->HPlaceDescriptor()),
+                                 *itsVPlaceDescriptor);
   }
   catch (...)
   {
@@ -1910,11 +1908,9 @@ const NFmiPoint NFmiFastQueryInfo::PeekLocationLatLon(int theXOffset, int theYOf
 
       int peekXIndex = (index % itsGridXNumber) + theXOffset;
       int peekYIndex = (index / itsGridXNumber) + theYOffset;
-      if (peekXIndex < 0 ||
-          peekXIndex >=
-              int(itsGridXNumber) ||  // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
-          peekYIndex < 0 ||
-          peekYIndex >= int(itsGridYNumber))
+      if (peekXIndex < 0 || peekXIndex >= int(itsGridXNumber) ||  // x- ja y-indeksien pitää pysyä
+                                                                  // gridin sisällä offsettien kera!
+          peekYIndex < 0 || peekYIndex >= int(itsGridYNumber))
       {
         return NFmiPoint::gMissingLatlon;
       }
@@ -2081,10 +2077,9 @@ float NFmiFastQueryInfo::PeekValue(int theTimeOffset, int theXOffset, int theYOf
       // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi tarkistetaan kuitenkin
       // Index-metodissa??
       if (currentXIndex >= 0 &&
-          currentXIndex <
-              int(itsGridXNumber) &&  // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
-          currentYIndex >= 0 &&
-          currentYIndex < int(itsGridYNumber))
+          currentXIndex < int(itsGridXNumber) &&  // x- ja y-indeksien pitää pysyä gridin sisällä
+                                                  // offsettien kera!
+          currentYIndex >= 0 && currentYIndex < int(itsGridYNumber))
         locationIndex = locationIndex + theYOffset * itsGridXNumber + theXOffset;
       else
         locationIndex = static_cast<unsigned long>(-1);
@@ -2524,9 +2519,9 @@ static float InterpolationHelper(float theValue1, float theValue2, float theFact
       return kFloatMissing;
     else if (theValue1 == kFloatMissing || theValue2 == kFloatMissing)
     {
-      // Jos toinen arvoista puuttuva, palautetaan suoraan se arvo, jota lähempänä theFactor1 on, oli
-      // se puuttuva tai ei Jos theFactor1 on 1, ollaan theValue1:n ajassa kiinni ja jos se on 0,
-      // ollaan theValue2:n ajassa kiinni
+      // Jos toinen arvoista puuttuva, palautetaan suoraan se arvo, jota lähempänä theFactor1 on,
+      // oli se puuttuva tai ei Jos theFactor1 on 1, ollaan theValue1:n ajassa kiinni ja jos se on
+      // 0, ollaan theValue2:n ajassa kiinni
       if (theFactor1 <= 0.5)
         return theValue2;
       else
@@ -2850,12 +2845,13 @@ bool NFmiFastQueryInfo::GetLevelToVec(std::vector<float> &values)
     {
       if (itsCombinedParamParser)
       {
-        std::transform(begin(values), end(values), begin(values), [this](const float &fVal) {
-          return SubValueFromFloat(fVal);
-        });
+        std::transform(begin(values),
+                       end(values),
+                       begin(values),
+                       [this](const float &fVal) { return SubValueFromFloat(fVal); });
       }
       else
-        throw Fmi::Exception(BCP,"CombinedParamParser missing!");
+        throw Fmi::Exception(BCP, "CombinedParamParser missing!");
     }
 
     return true;
@@ -2873,7 +2869,7 @@ bool NFmiFastQueryInfo::GetLevelToVecPartial(
   {
     size_t columnCount = x2 - x1 + 1;
     if (columnCount <= 0 || columnCount > itsGridXNumber)
-      throw Fmi::Exception(BCP,"Degenerate X axis");
+      throw Fmi::Exception(BCP, "Degenerate X axis");
     size_t columnStep = SizeTimes() * SizeLevels();
 
     FirstLocation();
@@ -2881,7 +2877,7 @@ bool NFmiFastQueryInfo::GetLevelToVecPartial(
 
     size_t rowCount = y2 - y1 + 1;
     if (rowCount <= 0 || rowCount > itsGridYNumber)
-      throw Fmi::Exception(BCP,"Degenerate Y axis");
+      throw Fmi::Exception(BCP, "Degenerate Y axis");
     size_t rowStep = (itsGridXNumber - columnCount) * columnStep;
 
     if (!GetValuesPartial(startIndex, rowCount, rowStep, columnCount, columnStep, values))
@@ -2893,12 +2889,13 @@ bool NFmiFastQueryInfo::GetLevelToVecPartial(
     {
       if (itsCombinedParamParser)
       {
-        std::transform(begin(values), end(values), begin(values), [this](const float &fVal) {
-          return SubValueFromFloat(fVal);
-        });
+        std::transform(begin(values),
+                       end(values),
+                       begin(values),
+                       [this](const float &fVal) { return SubValueFromFloat(fVal); });
       }
       else
-        throw Fmi::Exception(BCP,"CombinedParamParser missing!");
+        throw Fmi::Exception(BCP, "CombinedParamParser missing!");
     }
 
     return true;
@@ -2933,12 +2930,13 @@ bool NFmiFastQueryInfo::GetCube(std::vector<float> &values)
     {
       if (itsCombinedParamParser)
       {
-        std::transform(values.rbegin(), values.rend(), values.rbegin(), [this](const float &fVal) {
-          return SubValueFromFloat(fVal);
-        });
+        std::transform(values.rbegin(),
+                       values.rend(),
+                       values.rbegin(),
+                       [this](const float &fVal) { return SubValueFromFloat(fVal); });
       }
       else
-        throw Fmi::Exception(BCP,"CombinedParamParser is null!");
+        throw Fmi::Exception(BCP, "CombinedParamParser is null!");
     }
 
     return true;
@@ -2975,9 +2973,8 @@ bool NFmiFastQueryInfo::GetInterpolatedLevel(std::vector<float> &values, const N
                    values.end(),
                    nextValues.begin(),
                    values.begin(),
-                   [&](const float &a, const float &b) {
-                     return CachedTimeInterpolatedValue(a, b, timeCache, interp, parId);
-                   });
+                   [&](const float &a, const float &b)
+                   { return CachedTimeInterpolatedValue(a, b, timeCache, interp, parId); });
 
     TimeIndex(oldTime);
 
@@ -3026,9 +3023,8 @@ bool NFmiFastQueryInfo::GetInterpolatedCube(std::vector<float> &values, const NF
                      values.end(),
                      nextValues.begin(),
                      values.begin(),
-                     [&](const float &a, const float &b) {
-                       return CachedTimeInterpolatedValue(a, b, timeCache, interp, parId);
-                     });
+                     [&](const float &a, const float &b)
+                     { return CachedTimeInterpolatedValue(a, b, timeCache, interp, parId); });
     }
 
     TimeIndex(oldTime);
@@ -3250,7 +3246,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::Values(NFmiDataModifier *theFunction,
           theFunction->Clear();  // nollataan datamodifier laskujen välillä
           CalcTimeData(theFunction, &calculatedTimes);
           float tmp =
-              theFunction->CalculationResult();  // otetaan arvo talteen tähän vain debuggausta varten
+              theFunction
+                  ->CalculationResult();  // otetaan arvo talteen tähän vain debuggausta varten
           values[i][j] = tmp;
         }
       }
@@ -3357,7 +3354,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const Fmi::CoordinateMatrix &the
       {
         const NFmiPoint &latlon = theLatlonMatrix(i, j);
         if (doNormalInterpolation)
-          values[i][j] = InterpolatedValue(latlon, theTime, static_cast<int>(theTimeRangeInMinutes));
+          values[i][j] =
+              InterpolatedValue(latlon, theTime, static_cast<int>(theTimeRangeInMinutes));
         else if (H != kFloatMissing)
           values[i][j] =
               HeightValue(H, latlon, theTime, static_cast<unsigned long>(theTimeRangeInMinutes));
@@ -3641,8 +3639,8 @@ bool NFmiFastQueryInfo::GetTimeIndex(const NFmiMetTime &theTime, double &tInd)
     }
     else if (IsInside(theTime))
     {
-      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
-                                                // kokeiltu, löytyykö theTime jo suoraan
+      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä
+                                                // on kokeiltu, löytyykö theTime jo suoraan
       {
         NFmiMetTime time1(Time());
         unsigned long timeIndex = TimeIndex();
@@ -3683,8 +3681,8 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
       // huom! isUnder on true myös jos P == 1. painearvo
       bool isUnder = (firstPressureValue != kFloatMissing)
                          ? (pressure <= firstPressureValue)
-                         : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan sellainen
-                                                    // arvo että voidaan jatkaa etsintöjä
+                         : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
+                                                    // sellainen arvo että voidaan jatkaa etsintöjä
       if (fPressureParamIsRising ^ isUnder)
       {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
          // haluttu korkeus voi vielä löytyä
@@ -3701,7 +3699,8 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
           if (pressureValue != kFloatMissing)
             isUnderNow = (pressure - P_epsilon) <
                          pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
-          if (isUnderNow != isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+          if (isUnderNow !=
+              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
           {
             foundWantedLevels = true;
             break;
@@ -3733,8 +3732,8 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
       // huom! isUnder on true myös jos P == 1. painearvo
       bool isUnder = (firstPressureValue != kFloatMissing)
                          ? (pressure <= firstPressureValue)
-                         : !fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan sellainen
-                                                     // arvo että voidaan jatkaa etsintöjä
+                         : !fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
+                                                     // sellainen arvo että voidaan jatkaa etsintöjä
       if (fPressureParamIsRising ^ isUnder)
       {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
          // haluttu korkeus voi vielä löytyä
@@ -3750,7 +3749,8 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
           if (pressureValue != kFloatMissing)
             isUnderNow = (pressure - P_epsilon) <
                          pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
-          if (isUnderNow != isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+          if (isUnderNow !=
+              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
           {
             foundWantedLevels = true;
             break;
@@ -4103,7 +4103,8 @@ float NFmiFastQueryInfo::FindFirstPressureValue()
       fUseSubParam = oldFSubParamUsed;
     }
     else if (fPressureLevelDataAvailable)
-    {  // painepinta data tapauksessa plautetaan vain 1. painpinnan arvo (se ei saisi olla puuttuvaa)
+    {  // painepinta data tapauksessa plautetaan vain 1. painpinnan arvo (se ei saisi olla
+       // puuttuvaa)
       firstPressureValue = itsPressureLevelDataPressures[0];
     }
     return firstPressureValue;
@@ -4130,7 +4131,8 @@ float NFmiFastQueryInfo::FindFirstHeightValue()
       } while (NextLevel());
     }
     else if (fHeightLevelDataAvailable)
-    {  // painepinta data tapauksessa plautetaan vain 1. painpinnan arvo (se ei saisi olla puuttuvaa)
+    {  // painepinta data tapauksessa plautetaan vain 1. painpinnan arvo (se ei saisi olla
+       // puuttuvaa)
       firstHeightValue = itsHeightLevelDataHeights[0];
     }
     return firstHeightValue;
@@ -4160,11 +4162,11 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
       // huom! isUnder on true myös jos P == 1. painearvo
       bool isUnder = (firstPressureValue != kFloatMissing)
                          ? (P <= firstPressureValue)
-                         : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan sellainen
-                                                    // arvo että voidaan jatkaa etsintöjä
+                         : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
+                                                    // sellainen arvo että voidaan jatkaa etsintöjä
       if (fPressureParamIsRising ^ isUnder)
-      {  // jos fPressureParamIsRising on true ja isUnder on false (tai toisin päin), voidaan jatkaa,
-         // koska haluttu korkeus voi vielä löytyä
+      {  // jos fPressureParamIsRising on true ja isUnder on false (tai toisin päin), voidaan
+         // jatkaa, koska haluttu korkeus voi vielä löytyä
         bool isUnderNow = isUnder;
         float lastPressure = firstPressureValue;
         float pressureValue = kFloatMissing;
@@ -4176,7 +4178,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
           pressureValue = GetCurrentLevelPressure();
           if (pressureValue != kFloatMissing)
             isUnderNow = P < pressureValue;
-          if (isUnderNow != isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+          if (isUnderNow !=
+              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
           {
             foundWantedLevels = true;
             break;
@@ -4320,9 +4323,9 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
         rangeEndTime = Time().PosixTime();
       }
 
-      for (;
-           ((value1 == kFloatMissing) && FindNearestTime(refTime, kBackward, theTimeRangeInMinutes) &&
-            (Time().PosixTime() >= rangeStartTime));)
+      for (; ((value1 == kFloatMissing) &&
+              FindNearestTime(refTime, kBackward, theTimeRangeInMinutes) &&
+              (Time().PosixTime() >= rangeStartTime));)
       {
         value1 = PressureLevelValue(P, theLatlon);
         refTime = Time().PosixTime() - boost::posix_time::seconds(1);
@@ -4331,9 +4334,9 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
       auto time1 = Time();
       float value2 = kFloatMissing;
 
-      for (refTime = theTime;
-           ((value2 == kFloatMissing) && FindNearestTime(refTime, kForward, theTimeRangeInMinutes) &&
-            (Time().PosixTime() <= rangeEndTime));)
+      for (refTime = theTime; ((value2 == kFloatMissing) &&
+                               FindNearestTime(refTime, kForward, theTimeRangeInMinutes) &&
+                               (Time().PosixTime() <= rangeEndTime));)
       {
         // Using minute step forwards because seconds get zeroed when constructing NFmiMetTime
 
@@ -4345,8 +4348,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
     }
     else if (isTimeInside)
     {
-      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
-                                                // kokeiltu, löytyykö theTime jo suoraan
+      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä
+                                                // on kokeiltu, löytyykö theTime jo suoraan
       {
         NFmiMetTime time1(Time());
         float value1 = PressureLevelValue(P, theLatlon);
@@ -4388,8 +4391,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P, const NFmiMetTime &theTime)
       return PressureLevelValue(P);
     else if (IsInside(theTime))
     {
-      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
-                                                // kokeiltu, löytyykö theTime jo suoraan
+      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä
+                                                // on kokeiltu, löytyykö theTime jo suoraan
       {
         NFmiMetTime time1(Time());
         float value1 = PressureLevelValue(P);
@@ -4428,7 +4431,8 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
       float firstHeightValue = FindFirstHeightValue();
       // huom! isUnder on true myös jos P == 1. painearvo
       bool isUnder = theHeight <= firstHeightValue;
-      //		if((fHeightParamIsRising && isUnder) || (!(fHeightParamIsRising || isUnder)))
+      //		if((fHeightParamIsRising && isUnder) || (!(fHeightParamIsRising ||
+      //isUnder)))
       if (fHeightParamIsRising ^ isUnder)
       {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
          // haluttu korkeus voi vielä löytyä
@@ -4441,8 +4445,9 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
           float heightValue = fHeightValueAvailable ? FloatValue() : itsHeightLevelDataHeights[i];
           if (heightValue != kFloatMissing)
             isUnderNow = theHeight < heightValue;
-          if (isUnderNow != isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
-          {                           // tee korkeus interpolointi nyt kun tiedetään halutut levelit
+          if (isUnderNow !=
+              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+          {             // tee korkeus interpolointi nyt kun tiedetään halutut levelit
             ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
             fUseSubParam = oldFSubParamUsed;
             float value1 = FloatValue();
@@ -4455,13 +4460,14 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
               float factor = ::fabs(theHeight - lastHeight) / ::fabs(lastHeight - heightValue);
               auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
               if (param == kFmiWindVectorMS)
-                value =
-                    static_cast<float>(NFmiInterpolation::WindVector((1. - factor), value1, value2));
+                value = static_cast<float>(
+                    NFmiInterpolation::WindVector((1. - factor), value1, value2));
               else if (param == kFmiWindDirection || param == kFmiWaveDirection)
                 value = static_cast<float>(
                     NFmiInterpolation::ModLinear((1. - factor), value1, value2, 360));
               else
-                value = static_cast<float>(NFmiInterpolation::Linear((1. - factor), value1, value2));
+                value =
+                    static_cast<float>(NFmiInterpolation::Linear((1. - factor), value1, value2));
             }
             else
             {  // muut tapaukset eli nearest interpolointi
@@ -4572,9 +4578,9 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
         rangeEndTime = Time().PosixTime();
       }
 
-      for (;
-           ((value1 == kFloatMissing) && FindNearestTime(refTime, kBackward, theTimeRangeInMinutes) &&
-            (Time().PosixTime() >= rangeStartTime));)
+      for (; ((value1 == kFloatMissing) &&
+              FindNearestTime(refTime, kBackward, theTimeRangeInMinutes) &&
+              (Time().PosixTime() >= rangeStartTime));)
       {
         value1 = HeightValue(theHeight, theLatlon);
         refTime = Time().PosixTime() - boost::posix_time::seconds(1);
@@ -4583,9 +4589,9 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
       auto time1 = Time();
       float value2 = kFloatMissing;
 
-      for (refTime = theTime;
-           ((value2 == kFloatMissing) && FindNearestTime(refTime, kForward, theTimeRangeInMinutes) &&
-            (Time().PosixTime() <= rangeEndTime));)
+      for (refTime = theTime; ((value2 == kFloatMissing) &&
+                               FindNearestTime(refTime, kForward, theTimeRangeInMinutes) &&
+                               (Time().PosixTime() <= rangeEndTime));)
       {
         // Using minute step forwards because seconds get zeroed when constructing NFmiMetTime
 
@@ -4597,8 +4603,8 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
     }
     else if (isTimeInside)
     {
-      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
-                                                // kokeiltu, löytyykö theTime jo suoraan
+      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä
+                                                // on kokeiltu, löytyykö theTime jo suoraan
       {
         NFmiMetTime time1(Time());
         float value1 = HeightValue(theHeight, theLatlon);
@@ -4640,8 +4646,8 @@ float NFmiFastQueryInfo::HeightValue(float theHeight, const NFmiMetTime &theTime
       return HeightValue(theHeight);
     else if (IsInside(theTime))
     {
-      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä on
-                                                // kokeiltu, löytyykö theTime jo suoraan
+      if (FindNearestTime(theTime, kBackward))  // pitäisi löytyä, eikä ole reunalla, koska edellä
+                                                // on kokeiltu, löytyykö theTime jo suoraan
       {
         NFmiMetTime time1(Time());
         float value1 = HeightValue(theHeight);
@@ -4787,11 +4793,10 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
     std::vector<float> &tmpVec = thePValues[theColumn];
     // haetaan 1. theP:a pienemmn arvon sijainti, HUOM! lower_bound-funktioon pit antaa knteiset
     // iteraattorit, koska paine vektori on laskevassa jrjestyksess.
-    // HUOM2! lower_bound-funktion palauttaa 1. theP:tä suuremman arvon sijainnin, toisin kuin edellä
-    // sanotaan, en tiedä mitä
-    // tässä funktiossa loppujen lopuksi pitäisi tehdä, se pitäisi joskus tarkistaa... (teen kuitenkin
-    // theP:lle range-checkin ensin
-    // ja jos ollaan ala ja ylä arvojen ulkopuolella, palautetaan missing arvo.)
+    // HUOM2! lower_bound-funktion palauttaa 1. theP:tä suuremman arvon sijainnin, toisin kuin
+    // edellä sanotaan, en tiedä mitä tässä funktiossa loppujen lopuksi pitäisi tehdä, se pitäisi
+    // joskus tarkistaa... (teen kuitenkin theP:lle range-checkin ensin ja jos ollaan ala ja ylä
+    // arvojen ulkopuolella, palautetaan missing arvo.)
     if (::IsInsideRange(tmpVec, theP) == false)
       return kFloatMissing;
 
@@ -4864,8 +4869,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
           }
         }
       }
-      else  // yleensä esim. hybridi datassa on levelit ylhäältä als, joten data pitää täyttää toisin
-            // päin
+      else  // yleensä esim. hybridi datassa on levelit ylhäältä als, joten data pitää täyttää
+            // toisin päin
       {
         theInfo.LastLevel();  // huom! ei ole ResetLastLevel-metodia, vään tämä on FirstLevel:in
         // vastin pari
@@ -4992,8 +4997,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CrossSectionValues(
       NFmiDataMatrix<float> paramValues =
           CalcCrossSectionLeveldata(*this, theLatlonPoints, theInterpolatedTime);
 
-      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen) väliaikaiseen
-      // matriisiin
+      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen)
+      // väliaikaiseen matriisiin
       NFmiDataMatrix<float> heightValues;
       if (fHeightValueAvailable)
       {
@@ -5060,8 +5065,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CrossSectionValuesLogP(
   try
   {
     if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan löytyykö
-                                                                    // siitä korkeus dataa
+                                                                    // paine-dataa, katsotaan
+                                                                    // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5167,8 +5172,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcTimeCrossSectionLeveldata(NFmiFastQ
     else  // esim. hybridi datassa on levelit usein ylhäältä alas, joten data pitää täyttää toisin
           // päin
     {
-      theInfo.LastLevel();  // huom! ei ole ResetLastLevel-metodia, vään tämä on FirstLevel:in vastin
-                            // pari
+      theInfo.LastLevel();  // huom! ei ole ResetLastLevel-metodia, vään tämä on FirstLevel:in
+                            // vastin pari
       for (unsigned int j = 0; j < values.NY(); j++)
       {
         theTimes.Reset();
@@ -5252,8 +5257,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValues(std::vector<floa
       NFmiDataMatrix<float> paramValues =
           CalcTimeCrossSectionLeveldata(*this, thePoint, theWantedTimes);
 
-      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen) väliaikaiseen
-      // matriisiin
+      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen)
+      // väliaikaiseen matriisiin
       NFmiDataMatrix<float> heightValues;
       if (fHeightValueAvailable)
       {
@@ -5303,8 +5308,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValuesLogP(
     // x-akseli täytetään timebagistä tulevilla ajoilla
 
     if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan löytyykö
-                                                                    // siitä korkeus dataa
+                                                                    // paine-dataa, katsotaan
+                                                                    // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5312,9 +5317,10 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValuesLogP(
       return TimeCrossSectionValues(heightVector, thePoint, theWantedTimes);
     }
 
-    NFmiDataMatrix<float> values(theWantedTimes.GetSize(),
-                                 thePressures.size(),
-                                 kFloatMissing);  // xnumberissa pitäisi olla poikkileikkaus pisteiden
+    NFmiDataMatrix<float> values(
+        theWantedTimes.GetSize(),
+        thePressures.size(),
+        kFloatMissing);  // xnumberissa pitäisi olla poikkileikkaus pisteiden
     // määrä ja ynumberissa haluttujen korkeuksien määrä
 
     if (!PressureDataAvailable())
@@ -5408,7 +5414,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcRouteCrossSectionLeveldata(
     else  // esim. hybridi datassa on levelit usein ylhäältä alas, joten data pitää täyttää toisin
           // päin
     {
-      theInfo.LastLevel();  // huom! ei ole ResetLastLevel-metodia, vään tämä on FirstLevel:in vastin
+      theInfo
+          .LastLevel();  // huom! ei ole ResetLastLevel-metodia, vään tämä on FirstLevel:in vastin
       // pari
       for (unsigned int j = 0; j < values.NY(); j++)
       {
@@ -5559,8 +5566,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::RouteCrossSectionValues(
       NFmiDataMatrix<float> paramValues =
           CalcRouteCrossSectionLeveldata(*this, theLatlonPoints, thePointTimes);
 
-      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen) väliaikaiseen
-      // matriisiin
+      // 2. Kerää sitten level data korkeus parametrille (paikka+aika intepolointeineen)
+      // väliaikaiseen matriisiin
       NFmiDataMatrix<float> heightValues;
       if (fHeightValueAvailable)
       {
@@ -5691,8 +5698,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::RouteCrossSectionValuesLogP(
     // määrä ja ynumberissa
     // haluttujen korkeuksien määrä
     if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan löytyykö
-                                                                    // siitä korkeus dataa
+                                                                    // paine-dataa, katsotaan
+                                                                    // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5897,7 +5904,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiMetTime &theIn
   try
   {
     if (PressureDataAvailable() == false)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
     NFmiDataMatrix<float> values(GridXNumber(), GridYNumber(), kFloatMissing);
@@ -5965,7 +5973,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
   try
   {
     if (PressureDataAvailable() == false)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
     NFmiGrid usedGrid(theWantedGrid);
@@ -5985,9 +5994,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -6004,7 +6013,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -6022,7 +6031,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6033,8 +6043,10 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
 
       for (usedGrid.Reset(); usedGrid.Next();)
       {
-        float value = PressureLevelValue(wantedPressureLevel, usedGrid.LatLon(), theInterpolatedTime);
-        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
+        float value =
+            PressureLevelValue(wantedPressureLevel, usedGrid.LatLon(), theInterpolatedTime);
+        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
+            value;
       }
     }
 
@@ -6057,7 +6069,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       return PressureValues(theWantedGrid, theInterpolatedTime, wantedPressureLevel);
 
     if (PressureDataAvailable() == false)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
 
@@ -6101,9 +6114,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -6122,7 +6135,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -6142,7 +6155,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6156,7 +6170,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
         float value = timeInterpolationNeeded
                           ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
                           : InterpolatedValue(usedGrid.LatLon());
-        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
+        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
+            value;
       }
     }
     return values;
@@ -6205,7 +6220,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiMetTime &theInte
   {
     if (HeightDataAvailable() == false)
       throw Fmi::Exception(BCP,
-          "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
+                           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
+                           "values, data unsuitable.");
 
     NFmiDataMatrix<float> values(GridXNumber(), GridYNumber(), kFloatMissing);
 
@@ -6231,7 +6247,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
   {
     if (HeightDataAvailable() == false)
       throw Fmi::Exception(BCP,
-          "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
+                           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
+                           "values, data unsuitable.");
     NFmiGrid usedGrid(theWantedGrid);
     NFmiDataMatrix<float> values(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
 
@@ -6248,9 +6265,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw Fmi::Exception(BCP,"Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -6267,7 +6284,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -6285,7 +6302,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw Fmi::Exception(BCP,"Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6297,7 +6315,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       for (usedGrid.Reset(); usedGrid.Next();)
       {
         float value = HeightValue(wantedHeightLevel, usedGrid.LatLon(), theInterpolatedTime);
-        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
+        values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
+            value;
       }
     }
     return values;
@@ -6320,7 +6339,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
 
     if (HeightDataAvailable() == false)
       throw Fmi::Exception(BCP,
-          "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data unsuitable.");
+                           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
+                           "values, data unsuitable.");
 
     NFmiGrid usedGrid(theWantedGrid);
     NFmiDataMatrix<float> values(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
@@ -6841,7 +6861,8 @@ float NFmiFastQueryInfo::LandscapeInterpolatedValueDewPoint(float theHeight,
       ParamIndex(tdewindex);
       return InterpolatedValue(theLatLon, theTime, theMaxMinuteRange);
     }
-    t2m = LandscapeInterpolatedValue(theHeight, theWaterFlag, theLatLon, theTime, theMaxMinuteRange);
+    t2m =
+        LandscapeInterpolatedValue(theHeight, theWaterFlag, theLatLon, theTime, theMaxMinuteRange);
     ParamIndex(tdewindex);
 
     if (rh == kFloatMissing || t2m == kFloatMissing)
@@ -6892,8 +6913,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
     {
       if ((theLocationCache.NX() != nx) || (theLocationCache.NY() != ny))
         throw Fmi::Exception(BCP,
-            "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Location and temperature matrix "
-            "dimensions are not equal");
+                             "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Location and "
+                             "temperature matrix "
+                             "dimensions are not equal");
 
       auto oldParamIndex = ParamIndex();
       bool hasHumidity = Param(kFmiHumidity);
@@ -6919,12 +6941,14 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint(
         return values;
     }
     else if ((tdewMatrix.NX() != nx) || (tdewMatrix.NY() != ny))
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Dewpoint and temperature matrix "
           "dimensions are not equal");
 
     if ((nx == 0) || (ny == 0) || (humidityMatrix.NX() != nx) || (humidityMatrix.NY() != ny))
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeInterpolatedValuesDewPoint: Humidity and temperature matrix "
           "dimensions are not equal");
 
@@ -6984,15 +7008,17 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
          ((lapseRateMatrix.NX() != nx) || (lapseRateMatrix.NY() != ny))) ||
         ((maskMatrix.NX() > 0) && ((maskMatrix.NX() != nx) || (maskMatrix.NY() != ny))))
       throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapeInterpolatedValues: Input parameter matrix dimensions are not "
-          "equal");
+                           "NFmiFastQueryInfo::LandscapeInterpolatedValues: Input parameter matrix "
+                           "dimensions are not "
+                           "equal");
 
     auto ngx = gridPointMatrix.width();
     auto ngy = gridPointMatrix.height();
 
     if (ngx == 0 || ngy == 0 || demMatrix.NX() != ngx || demMatrix.NY() != ngy ||
         waterFlagMatrix.NX() != ngx || waterFlagMatrix.NY() != ngy)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeInterpolatedValues: Gridpoint, dem and waterflag matrix "
           "dimensions are not equal");
 
@@ -7002,7 +7028,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeInterpolatedValues(
     {
       for (std::size_t j = 0; j < ngy; j++)
       {
-        // Get the values from which to interpolate. Don't correct if any value is unavailable/missing
+        // Get the values from which to interpolate. Don't correct if any value is
+        // unavailable/missing
         //
         const auto xy = gridPointMatrix(i, j);
         int dx = static_cast<int>(floor(xy.first));
@@ -7160,14 +7187,14 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeValues(
   try
   {
     if (!IsGrid())
-      throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapedValues: Can only be used for gridded data");
+      throw Fmi::Exception(
+          BCP, "NFmiFastQueryInfo::LandscapedValues: Can only be used for gridded data");
 
     auto ident = Param().GetParam()->GetIdent();
 
     if ((ident != kFmiTemperature) && (ident != kFmiDewPoint))
-      throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapeValues: Can only be used for temperature or dewpoint");
+      throw Fmi::Exception(
+          BCP, "NFmiFastQueryInfo::LandscapeValues: Can only be used for temperature or dewpoint");
 
     unsigned long nx = itsGridXNumber;
     unsigned long ny = itsGridYNumber;
@@ -7175,8 +7202,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeValues(
     if ((theDEMMatrix.NX() != nx) || (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
         (theDEMMatrix.NY() != ny) || (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
       throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapeValues: Dem and waterflag matrix dimensions must equal native "
-          "grid size");
+                           "NFmiFastQueryInfo::LandscapeValues: Dem and waterflag matrix "
+                           "dimensions must equal native "
+                           "grid size");
 
     auto values = Values();
 
@@ -7281,7 +7309,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeValues(
     if (!IsInside(theInterpolatedTime))
     {
       TimeIndex(oldTimeIndex);
-      throw Fmi::Exception(BCP,std::string("Requested time ") +
+      throw Fmi::Exception(BCP,
+                           std::string("Requested time ") +
                                theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
                                " outside the data time range");
     }
@@ -7342,14 +7371,15 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
   try
   {
     if (!IsGrid())
-      throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapeCroppedValues: Can only be used for gridded data");
+      throw Fmi::Exception(
+          BCP, "NFmiFastQueryInfo::LandscapeCroppedValues: Can only be used for gridded data");
 
     auto ident = Param().GetParam()->GetIdent();
 
     if ((ident != kFmiTemperature) && (ident != kFmiDewPoint))
       throw Fmi::Exception(BCP,
-          "NFmiFastQueryInfo::LandscapeCroppedValues: Can only be used for temperature or dewpoint");
+                           "NFmiFastQueryInfo::LandscapeCroppedValues: Can only be used for "
+                           "temperature or dewpoint");
 
     bool cropNativeGrid = (theLocationCache.NX() == 0);
     bool hasCroppedDEM = false;
@@ -7363,7 +7393,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
       // When possible, extend the subgrid dimensions by 1 to interpolate values for the last column
       // and row
       //
-      // theDEMMatrix and theWaterFlagMatrix can cover either the hole grid or the (extended) subgrid
+      // theDEMMatrix and theWaterFlagMatrix can cover either the hole grid or the (extended)
+      // subgrid
 
       nx = x2 - x1 + 1;
       ny = y2 - y1 + 1;
@@ -7386,7 +7417,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
            ((theDEMMatrix.NX() != itsGridXNumber) || (theDEMMatrix.NY() != itsGridYNumber))) ||
           (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
           (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             "NFmiFastQueryInfo::LandscapeCroppedValues: Dem and waterflag matrix dimensions must "
             "equal native or cropped grid size");
     }
@@ -7397,7 +7429,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
 
       if (((int)theDEMMatrix.NX() != nx) || (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
           ((int)theDEMMatrix.NY() != ny) || (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             "NFmiFastQueryInfo::LandscapeCachedInterpolation: Location, dem and waterflag matrix "
             "dimensions must be equal");
 
@@ -7556,7 +7589,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
           //               cropped data at indexes [0..nx-1][0..ny-1]
           //
           auto const &loc = theLocationCache[i][j];
-          gridPointMatrix.set(i, j, NFmiPoint(loc.itsGridPoint.X() - x1, loc.itsGridPoint.Y() - y1));
+          gridPointMatrix.set(
+              i, j, NFmiPoint(loc.itsGridPoint.X() - x1, loc.itsGridPoint.Y() - y1));
         }
     }
 
@@ -7623,8 +7657,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
     // Handle exact existing time
     if (Time(theInterpolatedTime))
     {
-      auto values =
-          LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+      auto values = LandscapeCroppedValues(
+          x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
       TimeIndex(oldTimeIndex);
       return values;
     }
@@ -7633,7 +7667,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
     if (!IsInside(theInterpolatedTime))
     {
       TimeIndex(oldTimeIndex);
-      throw Fmi::Exception(BCP,std::string("Requested time ") +
+      throw Fmi::Exception(BCP,
+                           std::string("Requested time ") +
                                theInterpolatedTime.ToStr(kYYYYMMDDHHMM).CharPtr() +
                                " outside the data time range");
     }
@@ -7650,14 +7685,14 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCroppedValues(
 
     // pitää löytyä, koska isinside on tarkastettu edellä!!
     if (TimeToNearestStep(theInterpolatedTime, kBackward))
-      values1 =
-          LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+      values1 = LandscapeCroppedValues(
+          x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
     NFmiMetTime time1(Time());
 
     // pitää löytyä, koska isinside on tarkastettu edellä!!
     if (TimeToNearestStep(theInterpolatedTime, kForward))
-      values2 =
-          LandscapeCroppedValues(x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
+      values2 = LandscapeCroppedValues(
+          x1, y1, x2, y2, theDEMMatrix, theWaterFlagMatrix, theLocationCache);
     NFmiMetTime time2(Time());
 
     auto diff1 = static_cast<float>(theInterpolatedTime.DifferenceInMinutes(time1));
@@ -7708,13 +7743,15 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
   try
   {
     if (!IsGrid())
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeCachedInterpolation: Can only be used for gridded data");
 
     auto ident = Param().GetParam()->GetIdent();
 
     if ((ident != kFmiTemperature) && (ident != kFmiDewPoint))
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeCachedInterpolation: Can only be used for temperature or "
           "dewpoint");
 
@@ -7723,7 +7760,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::LandscapeCachedInterpolation(
 
     if (((int)theDEMMatrix.NX() != nx) || (theDEMMatrix.NX() != theWaterFlagMatrix.NX()) ||
         ((int)theDEMMatrix.NY() != ny) || (theDEMMatrix.NY() != theWaterFlagMatrix.NY()))
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "NFmiFastQueryInfo::LandscapeCachedInterpolation: Location, dem and waterflag matrix "
           "dimensions must be equal");
 

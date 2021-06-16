@@ -15,8 +15,8 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
-#include <macgyver/Exception.h>
 #include <boost/shared_ptr.hpp>
+#include <macgyver/Exception.h>
 #include <regression/tframe.h>
 
 #include <stdexcept>
@@ -37,21 +37,24 @@ void create_latlon()
     const std::string def = "latlon:10,20,30,40";
     NFmiLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "latlon:10,20,30,40:2,3";
     NFmiLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40), NFmiPoint(0, 0), NFmiPoint(2, 3));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "latlon:10,20,30,40:0,1,2,3";
     NFmiLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40), NFmiPoint(0, 1), NFmiPoint(2, 3));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -71,21 +74,24 @@ void create_rotlatlon()
     const std::string def = "rotlatlon:10,20,30,40";
     NFmiRotatedLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40), NFmiPoint(0, -90));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "rotlatlon,-30:10,20,30,40";
     NFmiRotatedLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40), NFmiPoint(0, -30));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "rotlatlon,-50,30:10,20,30,40";
     NFmiRotatedLatLonArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40), NFmiPoint(30, -50));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -105,7 +111,8 @@ void create_ykj()
     const std::string def = "ykj:10,20,30,40";
     NFmiYKJArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -125,7 +132,8 @@ void create_mercator()
     const std::string def = "mercator:10,20,30,40";
     NFmiMercatorArea expected(NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -146,7 +154,8 @@ void create_stereographic()
     NFmiStereographicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 0, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 60);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -154,7 +163,8 @@ void create_stereographic()
     NFmiStereographicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 60);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -162,7 +172,8 @@ void create_stereographic()
     NFmiStereographicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 50);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -183,7 +194,8 @@ void create_gnomonic()
     NFmiGnomonicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 0, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 60);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -191,7 +203,8 @@ void create_gnomonic()
     NFmiGnomonicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 60);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -199,7 +212,8 @@ void create_gnomonic()
     NFmiGnomonicArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 90, 50);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -220,7 +234,8 @@ void create_equidist()
     NFmiEquidistArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 0, NFmiPoint(0, 0), NFmiPoint(1, 1), 90);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -228,7 +243,8 @@ void create_equidist()
     NFmiEquidistArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 90);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -236,7 +252,8 @@ void create_equidist()
     NFmiEquidistArea expected(
         NFmiPoint(10, 20), NFmiPoint(30, 40), 20, NFmiPoint(0, 0), NFmiPoint(1, 1), 70);
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -256,21 +273,24 @@ void create_gdal()
     const std::string def = "EPSG:2393|10,20,30,40";
     NFmiGdalArea expected("WGS84", "EPSG:2393", NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "WGS84:EPSG:2393|10,20,30,40";
     NFmiGdalArea expected("WGS84", "EPSG:2393", NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
     const std::string def = "FMI:EPSG:2393|10,20,30,40";
     NFmiGdalArea expected("FMI", "EPSG:2393", NFmiPoint(10, 20), NFmiPoint(30, 40));
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -290,7 +310,8 @@ void create_desired_resolution()
 
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
 
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   {
@@ -301,7 +322,8 @@ void create_desired_resolution()
 
     boost::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
 
-    if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
   }
 
   TEST_PASSED();
@@ -317,7 +339,8 @@ void create_latvia_stereographic_proj()
       BottomLeftLatLon, TopRightLatLon, 14, TopLeftXY, BottomRightXY, 90, 60);
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -334,7 +357,8 @@ void create_FMI_stereographic_proj()
       BottomLeftLatLon, TopRightLatLon, 20, TopLeftXY, BottomRightXY, 90, 60);
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -348,7 +372,8 @@ void create_orthographic_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -363,7 +388,8 @@ void create_gnomonic_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -378,7 +404,8 @@ void create_latvia_equidist_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -392,7 +419,8 @@ void create_latlon_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -406,7 +434,8 @@ void create_mercator_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -421,7 +450,8 @@ void create_ykj_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }
@@ -437,7 +467,8 @@ void test_negative_params_proj()
 
   boost::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
-  if (!(expected == *area)) TEST_FAILED("Failed to create " + def);
+  if (!(expected == *area))
+    TEST_FAILED("Failed to create " + def);
 
   TEST_PASSED();
 }

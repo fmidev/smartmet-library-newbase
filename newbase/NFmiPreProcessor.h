@@ -109,7 +109,10 @@ class NFmiPreProcessor : public NFmiCommentStripper
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiPreProcessor::NumOfReplacesDone(void) const { return itsNumOfReplacesDone; }
+inline int NFmiPreProcessor::NumOfReplacesDone(void) const
+{
+  return itsNumOfReplacesDone;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -117,14 +120,20 @@ inline int NFmiPreProcessor::NumOfReplacesDone(void) const { return itsNumOfRepl
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::NoFilesIncluded(void) { return fNoFilesIncluded; }
+inline bool NFmiPreProcessor::NoFilesIncluded(void)
+{
+  return fNoFilesIncluded;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return True, if a #define directive has been defined
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsDefine(void) const { return !itsDefineDirective.empty(); }
+inline bool NFmiPreProcessor::IsDefine(void) const
+{
+  return !itsDefineDirective.empty();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -142,13 +151,19 @@ inline bool NFmiPreProcessor::IsConditional(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsReplace(void) const { return !itsReplaceMap.empty(); }
+inline bool NFmiPreProcessor::IsReplace(void) const
+{
+  return !itsReplaceMap.empty();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::IsInclude(void) const { return !itsIncludeDirective.empty(); }
+inline bool NFmiPreProcessor::IsInclude(void) const
+{
+  return !itsIncludeDirective.empty();
+}
 
 // ======================================================================

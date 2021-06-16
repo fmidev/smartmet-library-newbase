@@ -243,23 +243,27 @@ void NFmiNearTreeImpl<T, F>::Insert(const T& theObject)
 
   else if (dist_left > dist_right)
   {
-    if (itsRightBranch == 0) itsRightBranch = new NFmiNearTreeImpl();
+    if (itsRightBranch == 0)
+      itsRightBranch = new NFmiNearTreeImpl();
 
     // note that the next line assumes that itsMaxRight is
     // negative for a new node
 
-    if (itsMaxRight < dist_right) itsMaxRight = dist_right;
+    if (itsMaxRight < dist_right)
+      itsMaxRight = dist_right;
     itsRightBranch->Insert(theObject);
   }
 
   else
   {
-    if (itsLeftBranch == 0) itsLeftBranch = new NFmiNearTreeImpl();
+    if (itsLeftBranch == 0)
+      itsLeftBranch = new NFmiNearTreeImpl();
 
     // note that the next line assumes that itsMaxLeft is
     // negative for a new node
 
-    if (itsMaxLeft < dist_left) itsMaxLeft = dist_left;
+    if (itsMaxLeft < dist_left)
+      itsMaxLeft = dist_left;
 
     itsLeftBranch->Insert(theObject);
   }
@@ -450,7 +454,8 @@ bool NFmiNearTreeImpl<T, F>::Nearest(value_type& theClosest,
 
   // If theRadius is negative at this point, the tree is empty
 
-  if (theRadius < 0) return false;
+  if (theRadius < 0)
+    return false;
 
   // Now we test to see if the branches below might hold an object
   // nearer than the best so far found. The triangle rule is used

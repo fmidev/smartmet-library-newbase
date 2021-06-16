@@ -89,11 +89,15 @@ inline std::string Convert(const T &theThing)
 template <>
 inline bool Convert<bool>(const char *theThing)
 {
-  if (strcmp(theThing, "true") == 0) return true;
-  if (strcmp(theThing, "false") == 0) return false;
-  if (strcmp(theThing, "1") == 0) return true;
-  if (strcmp(theThing, "0") == 0) return false;
-  throw Fmi::Exception(BCP,"Failed to convert " + std::string(theThing) + " to boolean");
+  if (strcmp(theThing, "true") == 0)
+    return true;
+  if (strcmp(theThing, "false") == 0)
+    return false;
+  if (strcmp(theThing, "1") == 0)
+    return true;
+  if (strcmp(theThing, "0") == 0)
+    return false;
+  throw Fmi::Exception(BCP, "Failed to convert " + std::string(theThing) + " to boolean");
 }
 
 // This is requred so that "a b c" remains "a b c"
@@ -112,13 +116,15 @@ inline T Convert(const char *theThing)
   std::istringstream parser(theThing);
   parser >> result;
   if (parser.fail())
-    throw Fmi::Exception(BCP,"Failed to convert " + std::string(theThing) + " to type " +
-                             NFmiTypeNameTraits::Name<T>());
+    throw Fmi::Exception(
+        BCP,
+        "Failed to convert " + std::string(theThing) + " to type " + NFmiTypeNameTraits::Name<T>());
 
   long parserpos = static_cast<long>(parser.tellg());
   long strpos = static_cast<long>(strlen(theThing));
   if (parserpos != strpos && parserpos != -1)
-    throw Fmi::Exception(BCP,"Failed to fully convert " + std::string(theThing) + " to type " +
+    throw Fmi::Exception(BCP,
+                         "Failed to fully convert " + std::string(theThing) + " to type " +
                              NFmiTypeNameTraits::Name<T>());
   return result;
 }
@@ -135,17 +141,19 @@ template <typename T>
 inline const T Split(const std::string &theString, const std::string &theSeparator)
 {
   if (theSeparator.empty())
-    throw Fmi::Exception(BCP,"Cannot split based on empty separator string");
+    throw Fmi::Exception(BCP, "Cannot split based on empty separator string");
 
   T ret;
 
-  if (theString.empty()) return ret;
+  if (theString.empty())
+    return ret;
 
   std::string::size_type pos1 = 0;
   while (pos1 <= theString.size())
   {
     std::string::size_type pos2 = theString.find(theSeparator, pos1);
-    if (pos2 == std::string::npos) pos2 = theString.size();
+    if (pos2 == std::string::npos)
+      pos2 = theString.size();
     std::inserter(ret, ret.end()) =
         Convert<typename T::value_type>(theString.substr(pos1, pos2 - pos1));
     pos1 = pos2 + theSeparator.size();
@@ -161,7 +169,8 @@ inline const std::string Join(const T &theWords, const std::string &theSeparator
   std::string ret;
   for (typename T::const_iterator it = theWords.begin(); it != theWords.end(); ++it)
   {
-    if (!ret.empty()) ret += theSeparator;
+    if (!ret.empty())
+      ret += theSeparator;
     ret += *it;
   }
   return ret;

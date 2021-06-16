@@ -419,7 +419,8 @@ bool NFmiValueString::IsNumeric(int theStart, int theSize) const
     for (unsigned int idx = theStart; idx < (theSize ? theSize : GetLen()); idx++)
       if (!isdigit(fChar[idx]))
       {
-        if ((fChar[idx] != ' ') && (fChar[idx] != '.') && (fChar[idx] != '+') && (fChar[idx] != '-'))
+        if ((fChar[idx] != ' ') && (fChar[idx] != '.') && (fChar[idx] != '+') &&
+            (fChar[idx] != '-'))
           return false;
       }
       else
@@ -452,7 +453,8 @@ unsigned long NFmiValueString::SearchNumeric(unsigned long start) const
     int len = GetLen();
     while (static_cast<int>(index) < len)
     {
-      if (isdigit(fChar[index])) return index + 1;
+      if (isdigit(fChar[index]))
+        return index + 1;
       index++;
     }
     return 0;

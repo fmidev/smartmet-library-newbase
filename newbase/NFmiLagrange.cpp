@@ -297,7 +297,8 @@ void NFmiLagrange::Denominator(const std::vector<double> &xi,
 
       for (int j = 0; j < n; j++)
       {
-        if (j != i) denominator[i] *= (xi[i] - xi[j]);
+        if (j != i)
+          denominator[i] *= (xi[i] - xi[j]);
       }
     }
   }
@@ -373,9 +374,11 @@ double NFmiLagrange::L(
 
     for (int j = 0; j < n; j++)
     {
-      if (x == xi[j]) return 0.0;  // Trying to interpolate at control (or "observed") point!
+      if (x == xi[j])
+        return 0.0;  // Trying to interpolate at control (or "observed") point!
 
-      if (j != i) fraction *= (x - xi[j]);
+      if (j != i)
+        fraction *= (x - xi[j]);
     }
 
     fraction /= denominator[i];
@@ -697,7 +700,8 @@ int main(int argc, char *argv[])
 
 #if BINARY_OUTPUT
   ofstream inout("LagrangeInput.raw", ios::binary);
-  if (!inout) return false;
+  if (!inout)
+    return false;
 
   unsigned char gray;
 
@@ -714,11 +718,13 @@ int main(int argc, char *argv[])
   // Open an output file for the interpolated (numberOfInterpolatedPoints x
   // numberOfInterpolatedPoints) data - output as a RGB image
   ofstream out("LagrangeOutput.raw", ios::binary);
-  if (!out) return false;
+  if (!out)
+    return false;
 
 #else
   ofstream out("Lagrange.txt");
-  if (!out) return false;
+  if (!out)
+    return false;
 
 #endif
 

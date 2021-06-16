@@ -74,12 +74,12 @@ static void ForceBinaryFormatWrite(const NFmiQueryData &queryData)
 {
   try
   {
-    // binaryformat tarkoittaa queryDatan talletus formaattia, käytä aina binääri formaattia tehokkuus
-    // syistä, jos mahdollista.
+    // binaryformat tarkoittaa queryDatan talletus formaattia, käytä aina binääri formaattia
+    // tehokkuus syistä, jos mahdollista.
     queryData.UseBinaryStorage(true);
     if (queryData.InfoVersion() < 6.)  // jos datan infoversio on alle 6, pitää muuttaa 6:ksi
-      queryData.InfoVersion(6.);       // Huom! ei voi muuttaa 7:ksi tai ylemmäksi, koska se saattaa
-                                       // sekoittaaa yhdistelmäparametrien (W&C ja TotWind) arvot
+      queryData.InfoVersion(6.);  // Huom! ei voi muuttaa 7:ksi tai ylemmäksi, koska se saattaa
+                                  // sekoittaaa yhdistelmäparametrien (W&C ja TotWind) arvot
   }
   catch (...)
   {
@@ -91,17 +91,17 @@ void NFmiQueryData::Read()
 {
   try
   {
-  // Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
+    // Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
 #ifdef _MSC_VER
     int result = ::_setmode(_fileno(stdin), _O_BINARY);
     if (result == -1)
-      throw Fmi::Exception(BCP,
-          "Error in NFmiQueryData::Read: Could not set standard input into binary mode.");
+      throw Fmi::Exception(
+          BCP, "Error in NFmiQueryData::Read: Could not set standard input into binary mode.");
 #endif
     cin >> *this;
 
     if (!cin.good())
-      throw Fmi::Exception(BCP,"Error in NFmiQueryData::Read, while reading standard input.");
+      throw Fmi::Exception(BCP, "Error in NFmiQueryData::Read, while reading standard input.");
   }
   catch (...)
   {
@@ -116,18 +116,19 @@ void NFmiQueryData::Write(bool forceBinaryFormat) const
     if (forceBinaryFormat)
       ::ForceBinaryFormatWrite(*this);
 
-  // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
+      // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
 #ifdef _MSC_VER
     int result = ::_setmode(_fileno(stdout), _O_BINARY);
     if (result == -1)
-      throw Fmi::Exception(BCP,
-          "Error in NFmiQueryData::WriteCout: Could not set standard input into binary mode.");
+      throw Fmi::Exception(
+          BCP, "Error in NFmiQueryData::WriteCout: Could not set standard input into binary mode.");
 #endif
 
     cout << *this;
 
     if (!cout.good())
-      throw Fmi::Exception(BCP,"Error in NFmiQueryData::Write,while writing to the standard output.");
+      throw Fmi::Exception(BCP,
+                           "Error in NFmiQueryData::Write,while writing to the standard output.");
   }
   catch (...)
   {
@@ -155,13 +156,15 @@ void NFmiQueryData::Write(const std::string &filename, bool forceBinaryFormat) c
       if (dataFile)
         dataFile << *this;
       else
-        throw Fmi::Exception(BCP,
+        throw Fmi::Exception(
+            BCP,
             std::string("Error in NFmiQueryData::Write: Could not write in file '") + filename +
-            "'.");
+                "'.");
 
       if (!dataFile.good())
         throw Fmi::Exception(BCP,
-            std::string("Error in NFmiQueryData::Write, while writing to file '") + filename + "'.");
+                             std::string("Error in NFmiQueryData::Write, while writing to file '") +
+                                 filename + "'.");
     }
   }
   catch (...)
@@ -184,7 +187,7 @@ NFmiQueryData::~NFmiQueryData()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -269,7 +272,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
       {
         ifstream file(filename.c_str(), ios::in | ios::binary);
         if (!file)
-          throw Fmi::Exception(BCP,"Could not open '" + filename + "' for reading");
+          throw Fmi::Exception(BCP, "Could not open '" + filename + "' for reading");
 
 #ifdef WIN32
         auto bg = BufferGuard(file);
@@ -291,7 +294,8 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
           filter >> *itsQueryInfo;
           itsRawData =
               new NFmiRawData(filter, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
-          if (!filter.good()) throw Fmi::Exception(BCP,"Error while reading '" + filename + "'");
+          if (!filter.good())
+            throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
         }
         else
 #endif
@@ -302,9 +306,11 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
 
           bool use_mmap = theMemoryMapFlag;
 
-          if (itsQueryInfo->InfoVersion() < 6) use_mmap = false;
+          if (itsQueryInfo->InfoVersion() < 6)
+            use_mmap = false;
 
-          if (itsQueryInfo->DoEndianByteSwap()) use_mmap = false;
+          if (itsQueryInfo->DoEndianByteSwap())
+            use_mmap = false;
 
           if (use_mmap)
           {
@@ -317,7 +323,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
           }
 
           if (!file.good())
-            throw Fmi::Exception(BCP,"Error while reading '" + filename + "'");
+            throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
 
           file.close();
         }
@@ -795,7 +801,8 @@ std::ostream &NFmiQueryData::Write(std::ostream &file) const
 {
   try
   {
-    if (InfoVersion() >= 6) UseBinaryStorage(true);
+    if (InfoVersion() >= 6)
+      UseBinaryStorage(true);
 
     file << *itsQueryInfo;
     itsRawData->Write(file);

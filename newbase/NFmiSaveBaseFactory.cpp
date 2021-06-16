@@ -21,9 +21,9 @@
 #include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-#include <macgyver/Exception.h>
 #include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -84,8 +84,9 @@ void *CreateSaveBase(unsigned int classId)
 #endif
 
       default:
-        throw Fmi::Exception(BCP,"Newbase: unable to create unknown class " +
-                                 boost::lexical_cast<std::string>(classId));
+        throw Fmi::Exception(
+            BCP,
+            "Newbase: unable to create unknown class " + boost::lexical_cast<std::string>(classId));
     }
   }
   catch (...)

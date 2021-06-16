@@ -139,7 +139,10 @@ inline const NFmiDataIdent *NFmiParamBag::GetLast(void) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParamBag::IsSubParamUsed(void) const { return fIsSubParamUsed; }
+inline bool NFmiParamBag::IsSubParamUsed(void) const
+{
+  return fIsSubParamUsed;
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiParamBag
@@ -165,7 +168,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiParamBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiParamBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiParamBag &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

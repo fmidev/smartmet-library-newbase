@@ -96,13 +96,19 @@ inline NFmiGnomonicArea::~NFmiGnomonicArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGnomonicArea::ClassId(void) const { return kNFmiGnomonicArea; }
+inline unsigned long NFmiGnomonicArea::ClassId(void) const
+{
+  return kNFmiGnomonicArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiGnomonicArea::ClassName(void) const { return "kNFmiGnomonicArea"; }
+inline const char* NFmiGnomonicArea::ClassName(void) const
+{
+  return "kNFmiGnomonicArea";
+}
 
 // ======================================================================

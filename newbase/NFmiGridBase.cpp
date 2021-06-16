@@ -13,8 +13,8 @@
 // ======================================================================
 
 #include "NFmiGridBase.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cstring>
 #include <iostream>
@@ -332,7 +332,8 @@ bool NFmiGridBase::Next(unsigned long numberOfSteps)
     if (!(fWaitX && fWaitY))
     {
       //	  if(Index() - itsBase + numberOfSteps > (Size()-1))
-      if (Index() + numberOfSteps > (Size() - 1)) return false;
+      if (Index() + numberOfSteps > (Size() - 1))
+        return false;
       long index = Index();
       CalcX(index + numberOfSteps);
       CalcY(index + numberOfSteps);
@@ -768,7 +769,7 @@ bool NFmiGridBase::FloatValue(double data, const NFmiPoint &gridPoint)
 
     return itsData->FloatValue(DataIndex(static_cast<unsigned long>(gridPoint.X()),
                                          static_cast<unsigned long>(gridPoint.Y())),
-                                         static_cast<float>(data));
+                               static_cast<float>(data));
   }
   catch (...)
   {
@@ -1099,9 +1100,11 @@ bool NFmiGridBase::FastBiVariateInterpolation(double x, double y, double &theVal
       int x1 = x0;
       int y1 = y0;
 
-      if (x0 + 1 < static_cast<int>(XNumber())) x1++;
+      if (x0 + 1 < static_cast<int>(XNumber()))
+        x1++;
 
-      if (y0 + 1 < static_cast<int>(YNumber())) y1++;
+      if (y0 + 1 < static_cast<int>(YNumber()))
+        y1++;
 
       topLeftValue = DataValue(x0, y1);
       topRightValue = DataValue(x1, y1);
@@ -1144,12 +1147,14 @@ bool NFmiGridBase::FastBiVariateInterpolation(double x, double y, double &theVal
 
     if (dx >= 0.5)
     {
-      if (xi + 1 < static_cast<int>(XNumber())) xi++;
+      if (xi + 1 < static_cast<int>(XNumber()))
+        xi++;
     }
 
     if (dy >= 0.5)
     {
-      if (yi + 1 < static_cast<int>(YNumber())) yi++;
+      if (yi + 1 < static_cast<int>(YNumber()))
+        yi++;
     }
 
     theValue = DataValue(xi, yi);

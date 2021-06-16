@@ -53,7 +53,10 @@ NFmiDataModifierBase::NFmiDataModifierBase(const NFmiDataModifierBase &other)
  */
 // ----------------------------------------------------------------------
 
-FmiJoinOperator NFmiDataModifierBase::JoinOperator() { return itsJoinOperator; }
+FmiJoinOperator NFmiDataModifierBase::JoinOperator()
+{
+  return itsJoinOperator;
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream

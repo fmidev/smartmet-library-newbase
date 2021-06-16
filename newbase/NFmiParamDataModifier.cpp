@@ -34,7 +34,7 @@ NFmiParamDataModifier::~NFmiParamDataModifier()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -108,7 +108,7 @@ bool NFmiParamDataModifier::AddSubModifier(NFmiDataModifier* /* theModifier */)
 {
   try
   {
-    throw Fmi::Exception(BCP,"NFmiParamDataModifier::AddSubModifier not implemented yet!");
+    throw Fmi::Exception(BCP, "NFmiParamDataModifier::AddSubModifier not implemented yet!");
   }
   catch (...)
   {
@@ -175,9 +175,7 @@ float NFmiParamDataModifier::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamDataModifier::Calculate(float /* theValue */)
-{
-}
+void NFmiParamDataModifier::Calculate(float /* theValue */) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -185,9 +183,7 @@ void NFmiParamDataModifier::Calculate(float /* theValue */)
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamDataModifier::Clear()
-{
-}
+void NFmiParamDataModifier::Clear() {}
 
 // ----------------------------------------------------------------------
 /*!

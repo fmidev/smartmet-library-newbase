@@ -564,7 +564,8 @@ void NFmiDataPool::Normalize(double theInputMinValue,
     double inputRange = theInputMaxValue - theInputMinValue;
     double inputOutputRatio = 0.0;
 
-    if (inputRange != 0.) inputOutputRatio = outputRange / inputRange;
+    if (inputRange != 0.)
+      inputOutputRatio = outputRange / inputRange;
 
     Reset();
     while (Next())
@@ -577,7 +578,8 @@ void NFmiDataPool::Normalize(double theInputMinValue,
                      std::max(currentValue, static_cast<float>(theInputMinValue)));  // Clamp
 
         if (inputRange != 0.)
-          transformedValue = theOutputMinValue + (currentValue - theInputMinValue) * inputOutputRatio;
+          transformedValue =
+              theOutputMinValue + (currentValue - theInputMinValue) * inputOutputRatio;
         else
           transformedValue = theOutputMaxValue;
 
@@ -700,7 +702,8 @@ bool NFmiDataPool::ReadBinaryData(unsigned long theNumber, const char *theFileNa
     if (in.fail())
     {
       delete[] floatdata;
-      throw Fmi::Exception(BCP,"NFmiDataPool::ReadBinaryData - Failed to read binary querydata buffer");
+      throw Fmi::Exception(BCP,
+                           "NFmiDataPool::ReadBinaryData - Failed to read binary querydata buffer");
     }
 
 #ifdef IRIX
@@ -822,9 +825,11 @@ bool NFmiDataPool::WriteTextData(unsigned long theNumber, const char *theFileNam
   {
     std::ofstream out(theFileName);
 
-    if (!out) return false;
+    if (!out)
+      return false;
 
-    if (theNumber == 0) return false;
+    if (theNumber == 0)
+      return false;
 
     for (unsigned long i = 0; i < theNumber; i++)
       out << itsData[i];
@@ -1005,7 +1010,7 @@ std::istream &NFmiDataPool::Read(std::istream &file)
     int poolsize;
     file >> poolsize;
     if (poolsize % sizeof(float) != 0)
-      throw Fmi::Exception(BCP,"Datapool size must be multiple of sizeof(float)");
+      throw Fmi::Exception(BCP, "Datapool size must be multiple of sizeof(float)");
 
     itsSize = poolsize / sizeof(float);
 
@@ -1031,7 +1036,7 @@ std::istream &NFmiDataPool::Read(std::istream &file)
     }
 
     if (file.fail())
-      throw Fmi::Exception(BCP,"NFmiDataPool::Read - Failed to read querydata data buffer");
+      throw Fmi::Exception(BCP, "NFmiDataPool::Read - Failed to read querydata data buffer");
 
     return file;
   }

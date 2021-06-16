@@ -395,7 +395,8 @@ float Integrate(NFmiFastQueryInfo& theQI,
   try
   {
     // Safety against bad loop
-    if (theInterval < 0) return kFloatMissing;
+    if (theInterval < 0)
+      return kFloatMissing;
 
     // Don't create subintervals unless necessary
     if (theInterval == 0)

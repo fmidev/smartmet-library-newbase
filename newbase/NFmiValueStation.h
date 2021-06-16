@@ -98,14 +98,20 @@ inline NFmiValueStation::NFmiValueStation(double theValue,
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocation *NFmiValueStation::Clone(void) const { return new NFmiValueStation(*this); }
+inline NFmiLocation *NFmiValueStation::Clone(void) const
+{
+  return new NFmiValueStation(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiValueStation::GetValue(void) const { return itsValue; }
+inline double NFmiValueStation::GetValue(void) const
+{
+  return itsValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theLocation Undocumented

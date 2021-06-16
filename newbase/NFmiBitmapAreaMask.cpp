@@ -25,7 +25,7 @@ NFmiBitmapAreaMask::~NFmiBitmapAreaMask()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -132,7 +132,10 @@ NFmiBitmapAreaMask::NFmiBitmapAreaMask(const NFmiBitmapAreaMask& theMask)
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMask* NFmiBitmapAreaMask::Clone() const { return new NFmiBitmapAreaMask(*this); }
+NFmiAreaMask* NFmiBitmapAreaMask::Clone() const
+{
+  return new NFmiBitmapAreaMask(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Internal data destructuction utility

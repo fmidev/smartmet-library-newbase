@@ -22,7 +22,7 @@ NFmiVPlaceDescriptor::~NFmiVPlaceDescriptor()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -261,7 +261,8 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
     do
     {
       tempBoolean = itsLevelBag->Next();
-      if (!tempBoolean) break;
+      if (!tempBoolean)
+        break;
     } while (!(*itsLevelBag->Level() == theLevel));
 
     if (tempBoolean)
@@ -423,8 +424,9 @@ NFmiVPlaceDescriptor &NFmiVPlaceDescriptor::operator=(
   {
     Destroy();
 
-    itsLevelBag = theVPlaceDescriptor.itsLevelBag ? new NFmiLevelBag(*theVPlaceDescriptor.itsLevelBag)
-                                                  : nullptr;
+    itsLevelBag = theVPlaceDescriptor.itsLevelBag
+                      ? new NFmiLevelBag(*theVPlaceDescriptor.itsLevelBag)
+                      : nullptr;
 
     if (itsLevelBag)
     {

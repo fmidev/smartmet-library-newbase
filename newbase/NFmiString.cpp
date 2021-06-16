@@ -21,8 +21,8 @@
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
 
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 
 #include <cctype>
 #include <cstdio>
@@ -221,7 +221,7 @@ NFmiString::~NFmiString()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -238,7 +238,8 @@ bool NFmiString::IsEqual(const NFmiSortable &fFmi) const
   try
   {
     return strcmp(reinterpret_cast<char *>(fChar),
-                  reinterpret_cast<const char *>((static_cast<const NFmiString &>(fFmi)).fChar)) == 0;
+                  reinterpret_cast<const char *>((static_cast<const NFmiString &>(fFmi)).fChar)) ==
+           0;
   }
   catch (...)
   {
@@ -301,7 +302,8 @@ NFmiString &NFmiString::Add(const unsigned char *aChar)
 {
   try
   {
-    if (fReservedLength <= static_cast<long>(fLength + strlen(reinterpret_cast<const char *>(aChar))))
+    if (fReservedLength <=
+        static_cast<long>(fLength + strlen(reinterpret_cast<const char *>(aChar))))
     {
       fReservedLength = fLength + strlen(reinterpret_cast<const char *>(aChar)) + 1;
       auto *aHelp = new unsigned char[fReservedLength];
@@ -342,7 +344,8 @@ void NFmiString::TrimR(unsigned char theChar)
      * This happens only with 64bit MSVC 2008, release build.
      */
 
-    if (len == 0) return;
+    if (len == 0)
+      return;
 
     while (fChar[--len] == theChar)
       ;
@@ -467,7 +470,7 @@ void NFmiString::SizeCheck(unsigned long len) const
   {
     if ((len > GetLen()) || (len <= 0))
     {
-      throw Fmi::Exception(BCP,"NFmiString::SizeCheck - out-of-bounds");
+      throw Fmi::Exception(BCP, "NFmiString::SizeCheck - out-of-bounds");
     }
   }
   catch (...)
@@ -592,27 +595,32 @@ bool NFmiString::ReplaceChars2(const unsigned char *fromChars,
   try
   {
     NFmiString fromStr(fromChars), toStr(toChars);
-    if (fromStr.GetLen() == 0) return false;
+    if (fromStr.GetLen() == 0)
+      return false;
     unsigned long pos1 = 1, pos = 1, counter = 0;
-    if (replacementsMaxCount == 0) return true;
+    if (replacementsMaxCount == 0)
+      return true;
     counter++;
     bool returnBool = false;
     NFmiString str;
 
     for (pos = Search(fromChars, pos1); pos >= pos1; counter++)
     {
-      if (pos < 1) break;
+      if (pos < 1)
+        break;
       returnBool = true;
       str += GetChars(pos1, pos - pos1);
       str += toStr;
       pos1 = pos + fromStr.GetLen();
-      if (counter >= replacementsMaxCount) break;
+      if (counter >= replacementsMaxCount)
+        break;
       pos = Search(fromChars, pos1);
     }
 
     if (returnBool)
     {
-      if (pos1 <= GetLen()) str += GetChars(pos1, GetLen() - pos1 + 1);
+      if (pos1 <= GetLen())
+        str += GetChars(pos1, GetLen() - pos1 + 1);
       *this = str;
     }
     return returnBool;
@@ -639,8 +647,8 @@ unsigned long NFmiString::Search(const unsigned char *searChar, unsigned long fr
       return 0;
 
     unsigned char *findChar;
-    findChar = reinterpret_cast<unsigned char *>(strstr(reinterpret_cast<char *>(fChar + fromPos - 1),
-                                                        reinterpret_cast<const char *>(searChar)));
+    findChar = reinterpret_cast<unsigned char *>(strstr(
+        reinterpret_cast<char *>(fChar + fromPos - 1), reinterpret_cast<const char *>(searChar)));
 
     if (findChar == nullptr)
       return 0;
@@ -832,7 +840,8 @@ std::istream &NFmiString::Read(std::istream &file)
     file >> theLength;
     // Safety against an obsene string size
     if (file.fail())
-      throw Fmi::Exception(BCP,"NFmiString::Read string-length read failed, don't read the string");
+      throw Fmi::Exception(BCP,
+                           "NFmiString::Read string-length read failed, don't read the string");
     file.get(space);
 
     Set(reinterpret_cast<const unsigned char *>(""), theLength);
@@ -1063,7 +1072,8 @@ void NFmiString::RemoveExtraSpaces()
     for (unsigned long i = 0; i < fLength; i++)
     {
       fChar[i] == ' ' ? num++ : num = 0;
-      if (num < 2) tmpStr += GetChars(i + 1, 1);
+      if (num < 2)
+        tmpStr += GetChars(i + 1, 1);
     }
     *this = tmpStr;
   }
@@ -1073,7 +1083,7 @@ void NFmiString::RemoveExtraSpaces()
   }
 }
 
-  // ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
 /*!
  * \return void
  */
@@ -1087,7 +1097,8 @@ void NFmiString::FirstInWordToUpper()
     FirstCharToUpper();
     for (unsigned long i = 2; i < fLength; i++)
     {
-      if (fChar[i - 1] == ' ' && fChar[i] >= 'a') FirstCharToUpper(i);
+      if (fChar[i - 1] == ' ' && fChar[i] >= 'a')
+        FirstCharToUpper(i);
     }
   }
   catch (...)

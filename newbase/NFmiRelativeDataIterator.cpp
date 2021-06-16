@@ -90,10 +90,11 @@ void NFmiRelativeDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
   try
   {
-    if (!theDataModifier) return;
+    if (!theDataModifier)
+      return;
 
-    CheckIfMaskIsUsed();  // käy asettamassa fMaskInUse-flagin päälle (optimointia, jos ei ole maskia
-                          // käytössä)
+    CheckIfMaskIsUsed();  // käy asettamassa fMaskInUse-flagin päälle (optimointia, jos ei ole
+                          // maskia käytössä)
     theDataModifier->Clear();
 
     for (long t = itsDtStart; t <= itsDtEnd; t++)

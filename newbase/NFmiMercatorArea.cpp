@@ -88,9 +88,9 @@
 // ======================================================================
 
 #include "NFmiMercatorArea.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <limits>
 
 using namespace std;
@@ -230,7 +230,8 @@ const NFmiPoint NFmiMercatorArea::LatLonToWorldXY(const NFmiPoint& theLatLonPoin
 
     double y = std::max(std::min(theLatLonPoint.Y(), 89.9999), -89.9999);
 
-    return NFmiPoint(kRearth * FmiRad(theLatLonPoint.X()), kRearth * log(tan(FmiRad(45. + 0.5 * y))));
+    return NFmiPoint(kRearth * FmiRad(theLatLonPoint.X()),
+                     kRearth * log(tan(FmiRad(45. + 0.5 * y))));
   }
   catch (...)
   {
@@ -483,7 +484,8 @@ std::istream& NFmiMercatorArea::Read(std::istream& file)
     file >> itsXScaleFactor;
     file >> itsYScaleFactor;
 
-    itsWorldRect = NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
+    itsWorldRect =
+        NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     Init();
 

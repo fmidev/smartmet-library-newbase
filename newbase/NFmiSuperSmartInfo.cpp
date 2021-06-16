@@ -233,7 +233,7 @@ NFmiSuperSmartInfo::~NFmiSuperSmartInfo()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -253,7 +253,8 @@ void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& 
     fUseHelperBinaryMasks = theSSInfo.fUseHelperBinaryMasks;
     itsXYMaskBoundingBox = theSSInfo.itsXYMaskBoundingBox;
 
-    const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList = theSSInfo.itsHelperBinaryMaskList;
+    const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList =
+        theSSInfo.itsHelperBinaryMaskList;
     size_t size = helperBinaryMaskList.size();
     itsHelperBinaryMaskList.resize(size);
 
@@ -447,19 +448,24 @@ float NFmiSuperSmartInfo::FloatValue() const
     // eniten päädytään kuitenkin normalaccessiin!!!
 
     // 'normal' == raw-access eli FastInfo:n vastaava
-    if (itsFloatValueAccessLevel == kNormalAccess) return RawFloatValue();
+    if (itsFloatValueAccessLevel == kNormalAccess)
+      return RawFloatValue();
 
     // pyydetään varianssia
-    if (itsFloatValueAccessLevel == kVarianceAccess) return VarianceFloatValue();
+    if (itsFloatValueAccessLevel == kVarianceAccess)
+      return VarianceFloatValue();
 
     // pyydetään aikaintegraatiota
-    if (itsFloatValueAccessLevel == kTimeIntegrationAccess) return TimeIntegrationFloatValue();
+    if (itsFloatValueAccessLevel == kTimeIntegrationAccess)
+      return TimeIntegrationFloatValue();
 
     // epävarmuus laatikko laskut
-    if (itsFloatValueAccessLevel == kVariationAccess) return VariationFloatValue();
+    if (itsFloatValueAccessLevel == kVariationAccess)
+      return VariationFloatValue();
 
     // 'integraattori'/calculaattori (korkeimman tason kutsu)
-    if (itsFloatValueAccessLevel == kCalculatorAccess) return CalculationFloatValue();
+    if (itsFloatValueAccessLevel == kCalculatorAccess)
+      return CalculationFloatValue();
 
     return kFloatMissing;
   }
@@ -494,8 +500,10 @@ NFmiCombinedParam* NFmiSuperSmartInfo::CombinedValue()
     return 0;//TimeIntegrationCombinedValue();
 #endif
 
-    if (itsFloatValueAccessLevel == kVariationAccess) return VariationCombinedValue();
-    if (itsFloatValueAccessLevel == kCalculatorAccess) return CalculationCombinedValue();
+    if (itsFloatValueAccessLevel == kVariationAccess)
+      return VariationCombinedValue();
+    if (itsFloatValueAccessLevel == kCalculatorAccess)
+      return CalculationCombinedValue();
     return nullptr;
 
 #if 0
@@ -627,7 +635,8 @@ float NFmiSuperSmartInfo::PeekLocationValue(int theXOffset, int theYOffset) cons
 
     unsigned long oldLocationIndex = LocationIndex();
     int wantedIndex = CalcPeekLocationIndex(oldLocationIndex, theXOffset, theYOffset);
-    if (!const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(wantedIndex)) return kFloatMissing;
+    if (!const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(wantedIndex))
+      return kFloatMissing;
 
     float value = FloatValue();  // FloatValue hoitaa nyt 'peekkauksen'
     const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(
@@ -701,8 +710,9 @@ float NFmiSuperSmartInfo::PeekValue(int theTimeOffset, int theXOffset, int theYO
     bool status2 = TimeIndex(oldTimeIndex + theTimeOffset);
     float value =
         (status1 && status2) ? FloatValue() : kFloatMissing;  // FloatValue hoitaa nyt 'peekkauksen'
-    LocationIndex(oldLocationIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
-    TimeIndex(oldTimeIndex);          // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
+    LocationIndex(
+        oldLocationIndex);    // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
+    TimeIndex(oldTimeIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
     return value;
   }
   catch (...)
@@ -726,7 +736,8 @@ unsigned long NFmiSuperSmartInfo::CalcPeekLocationIndex(unsigned long currentInd
 {
   try
   {
-    if (!IsGrid()) return (currentIndex + theXOffset);
+    if (!IsGrid())
+      return (currentIndex + theXOffset);
 
     int currentXIndex = (currentIndex % itsGridXNumber) + theXOffset;
     int currentYIndex = (currentIndex / itsGridXNumber) + theYOffset;
@@ -1474,7 +1485,8 @@ bool NFmiSuperSmartInfo::Time(const NFmiMetTime& theTime)
     unsigned long oldTimeIndex = itsTimeIndex;
     // TimeChanged metodia ei saa kutsua, jos asetus feilaa
     bool status = NFmiFastQueryInfo::Time(theTime);
-    if (status) TimeChanged(oldTimeIndex);
+    if (status)
+      TimeChanged(oldTimeIndex);
     return status;
   }
   catch (...)
@@ -1653,11 +1665,13 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateHelperBinaryMask(int theUsedVariat
 {
   try
   {
-    if (theUsedVariationFactor == 0) return CreateZeroVariationHelperBinaryMask();
+    if (theUsedVariationFactor == 0)
+      return CreateZeroVariationHelperBinaryMask();
 
     auto* helperMask = new NFmiBitmapAreaMask(
         itsGridXNumber, itsGridYNumber, Area(), &Param(), Level(), NFmiAreaMask::kNoValue);
-    if (!helperMask) return nullptr;
+    if (!helperMask)
+      return nullptr;
 
     int moveByX = theUsedVariationFactor * 2 + 1;
     int moveByY = theUsedVariationFactor * 2 + 1;
@@ -1980,7 +1994,8 @@ bool NFmiSuperSmartInfo::SetNearestPointMask(const NFmiPoint& theLatLonPoint,
       bool status = Location(theLatLonPoint);
       if (status)
       {
-        if (fClearFirst) itsAreaMask->SetAll(false);
+        if (fClearFirst)
+          itsAreaMask->SetAll(false);
         itsAreaMask->Mask(LocationIndex(), newValue);
       }
       LocationIndex(oldIndex);

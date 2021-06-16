@@ -87,13 +87,19 @@ inline NFmiPKJArea::~NFmiPKJArea(void) {}
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiPKJArea::ClassId(void) const { return kNFmiPKJArea; }
+inline unsigned long NFmiPKJArea::ClassId(void) const
+{
+  return kNFmiPKJArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiPKJArea::ClassName(void) const { return "NFmiPKJArea"; }
+inline const char* NFmiPKJArea::ClassName(void) const
+{
+  return "NFmiPKJArea";
+}
 
 // ======================================================================

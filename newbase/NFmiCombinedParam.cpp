@@ -40,7 +40,7 @@ NFmiCombinedParam::~NFmiCombinedParam()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -174,7 +174,8 @@ float NFmiCombinedParam::TransformedFloatValue()
 {
   try
   {
-    union converter {
+    union converter
+    {
       unsigned long ulongvalue;
       float floatvalue;
     };
@@ -207,9 +208,11 @@ unsigned long NFmiCombinedParam::ConvertFloatToLong(float theValue)
     // sama toimii oikein molemmissa kääntäjä versioissa (MSVC60 ja MSVC71).
 
     //  if(theValue == kFloatMissing)
-    if (theValue == 32700.0F) return kTCombinedWeatherMissing;
+    if (theValue == 32700.0F)
+      return kTCombinedWeatherMissing;
 
-    union converter {
+    union converter
+    {
       unsigned long ulongvalue;
       float floatvalue;
     };
@@ -366,9 +369,7 @@ void NFmiCombinedParam::Integrate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiCombinedParam::CreateIntegrators()
-{
-}
+void NFmiCombinedParam::CreateIntegrators() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -376,9 +377,7 @@ void NFmiCombinedParam::CreateIntegrators()
  */
 // ----------------------------------------------------------------------
 
-void NFmiCombinedParam::DeleteIntegrators()
-{
-}
+void NFmiCombinedParam::DeleteIntegrators() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -548,7 +547,5 @@ NFmiDataModifierCombi *NFmiCombinedParam::SubIntegrator(FmiParameterName theSubP
  */
 // ----------------------------------------------------------------------
 
-void NFmiCombinedParam::CrossCheck(FmiParameterName /* theParam */)
-{
-}
+void NFmiCombinedParam::CrossCheck(FmiParameterName /* theParam */) {}
 // ======================================================================

@@ -190,147 +190,210 @@ class NFmiQueryData
  */
 // ----------------------------------------------------------------------
 
-inline NFmiQueryInfo *NFmiQueryData::Info() const { return itsQueryInfo; }
+inline NFmiQueryInfo *NFmiQueryData::Info() const
+{
+  return itsQueryInfo;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryData::ResetParam() { itsQueryInfo->ResetParam(); }
+inline void NFmiQueryData::ResetParam()
+{
+  itsQueryInfo->ResetParam();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryData::ResetLocation() { itsQueryInfo->ResetLocation(); }
+inline void NFmiQueryData::ResetLocation()
+{
+  itsQueryInfo->ResetLocation();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryData::ResetTime() { itsQueryInfo->ResetTime(); }
+inline void NFmiQueryData::ResetTime()
+{
+  itsQueryInfo->ResetTime();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryData::ResetLevel() { itsQueryInfo->ResetLevel(); }
+inline void NFmiQueryData::ResetLevel()
+{
+  itsQueryInfo->ResetLevel();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsLocation() const { return (itsQueryInfo->IsLocation()); }
+inline bool NFmiQueryData::IsLocation() const
+{
+  return (itsQueryInfo->IsLocation());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsArea() const { return (itsQueryInfo->IsArea()); }
+inline bool NFmiQueryData::IsArea() const
+{
+  return (itsQueryInfo->IsArea());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsGrid() const { return (itsQueryInfo->IsGrid()); }
+inline bool NFmiQueryData::IsGrid() const
+{
+  return (itsQueryInfo->IsGrid());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsValidTime() const { return (itsQueryInfo->IsValidTime()); }
+inline bool NFmiQueryData::IsValidTime() const
+{
+  return (itsQueryInfo->IsValidTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsOriginTime() const { return (itsQueryInfo->IsOriginTime()); }
+inline bool NFmiQueryData::IsOriginTime() const
+{
+  return (itsQueryInfo->IsOriginTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsLevel() const { return (itsQueryInfo->IsLevel()); }
+inline bool NFmiQueryData::IsLevel() const
+{
+  return (itsQueryInfo->IsLevel());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextParam() { return (itsQueryInfo->NextParam()); }
+inline bool NFmiQueryData::NextParam()
+{
+  return (itsQueryInfo->NextParam());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextLocation() { return (itsQueryInfo->NextLocation()); }
+inline bool NFmiQueryData::NextLocation()
+{
+  return (itsQueryInfo->NextLocation());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextTime() { return (itsQueryInfo->NextTime()); }
+inline bool NFmiQueryData::NextTime()
+{
+  return (itsQueryInfo->NextTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextLevel() { return (itsQueryInfo->NextLevel()); }
+inline bool NFmiQueryData::NextLevel()
+{
+  return (itsQueryInfo->NextLevel());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::PreviousLevel() { return (itsQueryInfo->PreviousLevel()); }
+inline bool NFmiQueryData::PreviousLevel()
+{
+  return (itsQueryInfo->PreviousLevel());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextActiveParam() { return (itsQueryInfo->NextActiveParam()); }
+inline bool NFmiQueryData::NextActiveParam()
+{
+  return (itsQueryInfo->NextActiveParam());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextActiveLocation() { return (itsQueryInfo->NextActiveLocation()); }
+inline bool NFmiQueryData::NextActiveLocation()
+{
+  return (itsQueryInfo->NextActiveLocation());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::NextActiveTime() { return (itsQueryInfo->NextActiveTime()); }
+inline bool NFmiQueryData::NextActiveTime()
+{
+  return (itsQueryInfo->NextActiveTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiDataIdent NFmiQueryData::Param() const { return (itsQueryInfo->Param()); }
+inline const NFmiDataIdent NFmiQueryData::Param() const
+{
+  return (itsQueryInfo->Param());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLocation NFmiQueryData::Location() const { return (*(itsQueryInfo->Location())); }
+inline const NFmiLocation NFmiQueryData::Location() const
+{
+  return (*(itsQueryInfo->Location()));
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -348,14 +411,20 @@ inline const NFmiStation NFmiQueryData::Station() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime NFmiQueryData::ValidTime() const { return (itsQueryInfo->ValidTime()); }
+inline const NFmiMetTime NFmiQueryData::ValidTime() const
+{
+  return (itsQueryInfo->ValidTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime NFmiQueryData::OriginTime() const { return (itsQueryInfo->OriginTime()); }
+inline const NFmiMetTime NFmiQueryData::OriginTime() const
+{
+  return (itsQueryInfo->OriginTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -373,7 +442,10 @@ inline unsigned long NFmiQueryData::ForecastPeriod() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLevel NFmiQueryData::Level() const { return (*(itsQueryInfo->Level())); }
+inline const NFmiLevel NFmiQueryData::Level() const
+{
+  return (*(itsQueryInfo->Level()));
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -452,7 +524,10 @@ inline bool NFmiQueryData::Time(NFmiMetTime theValidTime)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Level(NFmiLevel theLevel) { return (itsQueryInfo->Level(theLevel)); }
+inline bool NFmiQueryData::Level(NFmiLevel theLevel)
+{
+  return (itsQueryInfo->Level(theLevel));
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newState Undocumented
@@ -470,14 +545,20 @@ inline void NFmiQueryData::UseBinaryStorage(bool newState) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::IsBinaryStorageUsed() const { return itsRawData->IsBinaryStorageUsed(); }
+inline bool NFmiQueryData::IsBinaryStorageUsed() const
+{
+  return itsRawData->IsBinaryStorageUsed();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryData::ClassId() const { return kNFmiQueryData; }
+inline unsigned long NFmiQueryData::ClassId() const
+{
+  return kNFmiQueryData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theKey Undocumented
@@ -547,14 +628,20 @@ inline const NFmiString NFmiQueryData::GetCurrentKeyValue()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::RemoveCurrentKey() { return itsQueryInfo->RemoveCurrentKey(); }
+inline bool NFmiQueryData::RemoveCurrentKey()
+{
+  return itsQueryInfo->RemoveCurrentKey();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::RemoveAllKeys() { return itsQueryInfo->RemoveAllKeys(); }
+inline bool NFmiQueryData::RemoveAllKeys()
+{
+  return itsQueryInfo->RemoveAllKeys();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theKey Undocumented
@@ -585,14 +672,20 @@ inline const NFmiStringList NFmiQueryData::GetAllKeys(bool fRemoveDuplicates)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiQueryData::GetCurrentKey() { return itsQueryInfo->GetCurrentKey(); }
+inline const NFmiString NFmiQueryData::GetCurrentKey()
+{
+  return itsQueryInfo->GetCurrentKey();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiQueryData::InfoVersion() const { return itsQueryInfo->InfoVersion(); }
+inline double NFmiQueryData::InfoVersion() const
+{
+  return itsQueryInfo->InfoVersion();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
@@ -673,6 +766,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiQueryData &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiQueryData &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiQueryData &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

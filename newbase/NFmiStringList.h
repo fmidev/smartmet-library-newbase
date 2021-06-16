@@ -92,7 +92,10 @@ inline bool NFmiStringList::Index(int theIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiStringList::Index(void) const { return itsIndex; }
+inline int NFmiStringList::Index(void) const
+{
+  return itsIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns the number of items in the list itsList.
@@ -101,7 +104,10 @@ inline int NFmiStringList::Index(void) const { return itsIndex; }
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiStringList::NumberOfItems(void) const { return static_cast<int>(itsList.size()); }
+inline int NFmiStringList::NumberOfItems(void) const
+{
+  return static_cast<int>(itsList.size());
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiStringList
@@ -128,6 +134,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiStringList &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiStringList &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiStringList &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

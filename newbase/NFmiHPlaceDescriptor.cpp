@@ -19,9 +19,9 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
+#include <macgyver/Exception.h>
 
 using namespace std;
 
@@ -904,8 +904,9 @@ NFmiHPlaceDescriptor &NFmiHPlaceDescriptor::operator=(
     {
       Destroy();
 
-      itsLocationBag =
-          theHPlaceDescriptor.itsLocationBag ? theHPlaceDescriptor.itsLocationBag->Clone() : nullptr;
+      itsLocationBag = theHPlaceDescriptor.itsLocationBag
+                           ? theHPlaceDescriptor.itsLocationBag->Clone()
+                           : nullptr;
       itsArea = theHPlaceDescriptor.itsArea ? theHPlaceDescriptor.itsArea->Clone() : nullptr;
       itsGrid = theHPlaceDescriptor.itsGrid ? new NFmiGrid(*theHPlaceDescriptor.itsGrid) : nullptr;
 
@@ -973,8 +974,8 @@ const NFmiHPlaceDescriptor NFmiHPlaceDescriptor::Combine(const NFmiHPlaceDescrip
   {
     if (itsLocationBag && theCombine.itsLocationBag)
       return NFmiHPlaceDescriptor(itsLocationBag->Combine(*(theCombine).itsLocationBag));
-    // jos ei voi yhdistää locationbagejä, palauttaa this-descriptorin (voitaisiin ehkä laittaa jotain
-    // gridi yhdistelyjä?)
+    // jos ei voi yhdistää locationbagejä, palauttaa this-descriptorin (voitaisiin ehkä laittaa
+    // jotain gridi yhdistelyjä?)
     return *this;
   }
   catch (...)
@@ -1218,7 +1219,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 
       file >> classId >> className;
       if (classId >= KNFmiMaxClass)
-        throw Fmi::Exception(BCP,"NFmiHPlaceDescriptor::Read().classID(NFmiLocation) Error");
+        throw Fmi::Exception(BCP, "NFmiHPlaceDescriptor::Read().classID(NFmiLocation) Error");
 
       if (classId)
       {
@@ -1232,7 +1233,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 
       file >> classId;
       if (classId > KNFmiMaxClass)
-        throw Fmi::Exception(BCP,"NFmiHPlaceDescriptor::Read().classID(NFmiArea) Error");
+        throw Fmi::Exception(BCP, "NFmiHPlaceDescriptor::Read().classID(NFmiArea) Error");
       file >> className;  // NFmiArea
       if (classId)
       {
@@ -1242,7 +1243,7 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 
       file >> classId;
       if (classId > KNFmiMaxClass)
-        throw Fmi::Exception(BCP,"NFmiHPlaceDescriptor::Read().classID(NFmiGrid) Error");
+        throw Fmi::Exception(BCP, "NFmiHPlaceDescriptor::Read().classID(NFmiGrid) Error");
       file >> className;  // NFmiGrid
       if (classId)
       {

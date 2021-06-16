@@ -29,5 +29,8 @@ NFmiDataModifierGreaterThan::NFmiDataModifierGreaterThan(float theValue) : itsLi
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierGreaterThan::BoolOperation(float theValue) { return theValue > itsLimit; }
+bool NFmiDataModifierGreaterThan::BoolOperation(float theValue)
+{
+  return theValue > itsLimit;
+}
 // ======================================================================

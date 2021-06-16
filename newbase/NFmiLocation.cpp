@@ -366,7 +366,8 @@ NFmiMetTime NFmiLocation::UtcTimeFromSolarTime(const NFmiTime &theSolarTime)
   {
     NFmiMetTime t(theSolarTime, 1);
     t.ChangeBySeconds(long(-240 * itsLatlon.X()));
-    if (t.GetSec() > 29) t.ChangeByMinutes(1);
+    if (t.GetSec() > 29)
+      t.ChangeByMinutes(1);
     t.SetSec(0);  // NFmiMetTime does not have seconds
     return t;
   }
@@ -401,7 +402,8 @@ NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurr
   {
     bool isMidNightSun, isPolarNight;
     NFmiMetTime sunrise = LastTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
-    if (isPolarNight) sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
+    if (isPolarNight)
+      sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
     isCurrentDay = !isMidNightSun && !isPolarNight;
     return sunrise;
   }
@@ -436,7 +438,8 @@ NFmiMetTime NFmiLocation::TimeOfSunset(const NFmiMetTime &theTime, bool &isCurre
   {
     bool isMidNightSun, isPolarNight;
     NFmiMetTime sunset = NextTimeOfSunset(theTime, isMidNightSun, isPolarNight);
-    if (isPolarNight) sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);
+    if (isPolarNight)
+      sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);
     isCurrentDay = !isMidNightSun && !isPolarNight;
     return sunset;
   }
@@ -851,7 +854,8 @@ double NFmiLocation::Direction(const NFmiPoint &theLatLon) const
     if (dlon == 0.)
     {
       // Points along meridian
-      if (lat2 - lat1 > 0.) return 0.;  // Exact north
+      if (lat2 - lat1 > 0.)
+        return 0.;  // Exact north
 
       return 180.;  // Exact south
     }

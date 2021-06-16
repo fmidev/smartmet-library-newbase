@@ -18,12 +18,12 @@
 #include "NFmiRawData.h"
 #include "NFmiVersion.h"
 
-#include <macgyver/Exception.h>
 #include <boost/filesystem/operations.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
+#include <macgyver/Exception.h>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -115,7 +115,7 @@ NFmiRawData::Pimple::~Pimple()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -187,7 +187,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     file >> poolsize;
 
     if (poolsize != itsSize * sizeof(float))
-      throw Fmi::Exception(BCP,"Invalid datapool size in querydata");
+      throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
     // Skip last newline charater after poolsize
     char ch;
@@ -201,12 +201,14 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     itsOffset = file.tellg();
 
     if (itsOffset + poolsize > filesize)
-      throw Fmi::Exception(BCP,"Querydata file " +
+      throw Fmi::Exception(BCP,
+                           "Querydata file " +
                                boost::lexical_cast<std::string>(itsOffset + poolsize - filesize) +
                                " bytes too short: '" + filename + "'");
 
     else if (filesize - itsOffset - poolsize > 2)
-      throw Fmi::Exception(BCP,"Querydata file " +
+      throw Fmi::Exception(BCP,
+                           "Querydata file " +
                                boost::lexical_cast<std::string>(filesize - itsOffset - poolsize) +
                                " bytes too long: '" + filename + "'");
 
@@ -220,7 +222,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
       params.length = filesize;
       itsMappedFile.reset(new MappedFile(params));
       if (!itsMappedFile->is_open())
-        throw Fmi::Exception(BCP,"Failed to memory map '" + filename + "' in read only mode");
+        throw Fmi::Exception(BCP, "Failed to memory map '" + filename + "' in read only mode");
     }
     else
     {
@@ -279,7 +281,7 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
     else
     {
       if (poolsize != itsSize * sizeof(float))
-        throw Fmi::Exception(BCP,"Invalid datapool size in querydata");
+        throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
       // Skip last newline charater after poolsize
       char ch;
@@ -289,7 +291,8 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
       file.read(ptr, poolsize);
     }
 
-    if (file.fail()) throw Fmi::Exception(BCP,"Failed to read rawdata from input stream");
+    if (file.fail())
+      throw Fmi::Exception(BCP, "Failed to read rawdata from input stream");
 
     if (itsEndianSwapFlag)
     {
@@ -414,7 +417,10 @@ bool NFmiRawData::Pimple::Init(size_t size)
  */
 // ----------------------------------------------------------------------
 
-size_t NFmiRawData::Pimple::Size() const { return itsSize; }
+size_t NFmiRawData::Pimple::Size() const
+{
+  return itsSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Set storage mode to binary/ascii
@@ -464,7 +470,8 @@ void NFmiRawData::Pimple::Unmap() const
 {
   try
   {
-    if (itsData) return;  // oli jo alustettu
+    if (itsData)
+      return;  // oli jo alustettu
 
     itsData = new float[itsSize];
     char *dst = reinterpret_cast<char *>(itsData);
@@ -494,9 +501,11 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
   {
     ReadLock lock(itsMutex);
 
-    if (index >= itsSize) return kFloatMissing;
+    if (index >= itsSize)
+      return kFloatMissing;
 
-    if (itsData) return itsData[index];
+    if (itsData)
+      return itsData[index];
 
     auto *addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
     float value;
@@ -520,7 +529,8 @@ bool NFmiRawData::Pimple::GetValues(size_t startIndex,
 {
   try
   {
-    if (startIndex + step * (count - 1) >= itsSize) return false;
+    if (startIndex + step * (count - 1) >= itsSize)
+      return false;
 
     values.resize(count);
 
@@ -612,7 +622,8 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
   {
     WriteLock lock(itsMutex);
 
-    if (index >= itsSize) return false;
+    if (index >= itsSize)
+      return false;
 
     if (itsData)
     {
@@ -622,7 +633,7 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
     else if (itsOffset > 0)
     {
       if (itsMappedFile->flags() == boost::iostreams::mapped_file::readonly)
-        throw Fmi::Exception(BCP,"Can't modify read-only memory-mapped data");
+        throw Fmi::Exception(BCP, "Can't modify read-only memory-mapped data");
 
       // We have mmapped output data
       auto *ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
@@ -661,7 +672,8 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
     const int kFloat = 6;
     file << kFloat << endl;
 
-    if (DefaultFmiInfoVersion >= 6) file << itsSaveAsBinaryFlag << endl;
+    if (DefaultFmiInfoVersion >= 6)
+      file << itsSaveAsBinaryFlag << endl;
 
     file << itsSize * sizeof(float) << endl;
 
@@ -708,7 +720,7 @@ void NFmiRawData::Pimple::Backup(char *ptr) const
     {
       ReadLock lock(itsMutex);
 
-  // we assume data which is backed up is edited, so might as well unmap
+      // we assume data which is backed up is edited, so might as well unmap
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
       Unmap();
 #endif
@@ -779,7 +791,7 @@ NFmiRawData::~NFmiRawData()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }

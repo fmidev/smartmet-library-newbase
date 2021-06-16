@@ -21,7 +21,8 @@ void name(void)
 {
   using namespace std;
 
-  if (NFmiTypeNameTraits::Name<int>() != "int") TEST_FAILED("Failed to name int type");
+  if (NFmiTypeNameTraits::Name<int>() != "int")
+    TEST_FAILED("Failed to name int type");
 
   if (NFmiTypeNameTraits::Name<unsigned char>() != "unsigned char")
     TEST_FAILED("Failed to name unsigned char type");
@@ -35,19 +36,26 @@ void name(void)
   if (NFmiTypeNameTraits::Name<unsigned long>() != "unsigned long")
     TEST_FAILED("Failed to name unsigned long type");
 
-  if (NFmiTypeNameTraits::Name<char>() != "char") TEST_FAILED("Failed to name char type");
+  if (NFmiTypeNameTraits::Name<char>() != "char")
+    TEST_FAILED("Failed to name char type");
 
-  if (NFmiTypeNameTraits::Name<short>() != "short") TEST_FAILED("Failed to name short type");
+  if (NFmiTypeNameTraits::Name<short>() != "short")
+    TEST_FAILED("Failed to name short type");
 
-  if (NFmiTypeNameTraits::Name<int>() != "int") TEST_FAILED("Failed to name int type");
+  if (NFmiTypeNameTraits::Name<int>() != "int")
+    TEST_FAILED("Failed to name int type");
 
-  if (NFmiTypeNameTraits::Name<long>() != "long") TEST_FAILED("Failed to name long type");
+  if (NFmiTypeNameTraits::Name<long>() != "long")
+    TEST_FAILED("Failed to name long type");
 
-  if (NFmiTypeNameTraits::Name<bool>() != "bool") TEST_FAILED("Failed to name bool type");
+  if (NFmiTypeNameTraits::Name<bool>() != "bool")
+    TEST_FAILED("Failed to name bool type");
 
-  if (NFmiTypeNameTraits::Name<float>() != "float") TEST_FAILED("Failed to name float type");
+  if (NFmiTypeNameTraits::Name<float>() != "float")
+    TEST_FAILED("Failed to name float type");
 
-  if (NFmiTypeNameTraits::Name<double>() != "double") TEST_FAILED("Failed to name double type");
+  if (NFmiTypeNameTraits::Name<double>() != "double")
+    TEST_FAILED("Failed to name double type");
 
   TEST_PASSED();
 }

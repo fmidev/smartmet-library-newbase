@@ -13,8 +13,8 @@
 // ======================================================================
 
 #include "NFmiRect.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 
@@ -168,7 +168,8 @@ bool NFmiRect::AdjustAspectRatio(double theRatioXperY, bool fKeepX, FmiDirection
 {
   try
   {
-    if (theRatioXperY == 0.) return false;
+    if (theRatioXperY == 0.)
+      return false;
 
     NFmiRect originalRect(itsPlace, itsPlace + itsSize);  // 9.9.99/EL
 
@@ -465,8 +466,9 @@ NFmiRect operator+(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 {
   try
   {
-    return NFmiRect(NFmiPoint(leftPoint.X() + rightRect.Left(), leftPoint.Y() + rightRect.Top()),
-                    NFmiPoint(leftPoint.X() + rightRect.Right(), leftPoint.Y() + rightRect.Bottom()));
+    return NFmiRect(
+        NFmiPoint(leftPoint.X() + rightRect.Left(), leftPoint.Y() + rightRect.Top()),
+        NFmiPoint(leftPoint.X() + rightRect.Right(), leftPoint.Y() + rightRect.Bottom()));
   }
   catch (...)
   {
@@ -488,8 +490,9 @@ NFmiRect operator-(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 {
   try
   {
-    return NFmiRect(NFmiPoint(leftPoint.X() - rightRect.Left(), leftPoint.Y() - rightRect.Top()),
-                    NFmiPoint(leftPoint.X() - rightRect.Right(), leftPoint.Y() - rightRect.Bottom()));
+    return NFmiRect(
+        NFmiPoint(leftPoint.X() - rightRect.Left(), leftPoint.Y() - rightRect.Top()),
+        NFmiPoint(leftPoint.X() - rightRect.Right(), leftPoint.Y() - rightRect.Bottom()));
   }
   catch (...)
   {
@@ -511,8 +514,9 @@ NFmiRect operator+(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 {
   try
   {
-    return NFmiRect(NFmiPoint(rightPoint.X() + leftRect.Left(), rightPoint.Y() + leftRect.Top()),
-                    NFmiPoint(rightPoint.X() + leftRect.Right(), rightPoint.Y() + leftRect.Bottom()));
+    return NFmiRect(
+        NFmiPoint(rightPoint.X() + leftRect.Left(), rightPoint.Y() + leftRect.Top()),
+        NFmiPoint(rightPoint.X() + leftRect.Right(), rightPoint.Y() + leftRect.Bottom()));
   }
   catch (...)
   {
@@ -534,8 +538,9 @@ NFmiRect operator-(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 {
   try
   {
-    return NFmiRect(NFmiPoint(rightPoint.X() - leftRect.Left(), rightPoint.Y() - leftRect.Top()),
-                    NFmiPoint(rightPoint.X() - leftRect.Right(), rightPoint.Y() - leftRect.Bottom()));
+    return NFmiRect(
+        NFmiPoint(rightPoint.X() - leftRect.Left(), rightPoint.Y() - leftRect.Top()),
+        NFmiPoint(rightPoint.X() - leftRect.Right(), rightPoint.Y() - leftRect.Bottom()));
   }
   catch (...)
   {

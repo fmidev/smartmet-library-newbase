@@ -107,7 +107,8 @@ void NFmiModMeanCalculator::operator()(float theValue, float theWeight)
   {
     ++itsCount;
 
-    if (!itsValid) return;
+    if (!itsValid)
+      return;
 
     if (theValue == kFloatMissing || theWeight == kFloatMissing)
     {

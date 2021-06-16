@@ -595,7 +595,7 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
   {
     ifstream file(filename.c_str(), ios::in | ios::binary);
     if (!file)
-      throw Fmi::Exception(BCP,"Could not open '" + filename + "' for reading");
+      throw Fmi::Exception(BCP, "Could not open '" + filename + "' for reading");
 
 #ifdef FMI_COMPRESSION
     if (NFmiFileSystem::IsCompressed(filename))
@@ -610,18 +610,18 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
       filter.push(file);
       Read(filter);
       if (!filter.good())
-        throw Fmi::Exception(BCP,"Error while reading '" + filename + "'");
+        throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
     }
     else
     {
       Read(file);
       if (!file.good())
-        throw Fmi::Exception(BCP,"Error while reading '" + filename + "'");
+        throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
     }
 #else
     Read(file);
     if (!file.good())
-      throw Fmi::Exception(BCP,"Error while reading '" + filename + "'");
+      throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
 #endif
   }
   catch (...)
@@ -644,7 +644,7 @@ NFmiQueryInfo::~NFmiQueryInfo()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -720,8 +720,8 @@ bool NFmiQueryInfo::First()
   try
   {
     Reset();
-    return (itsTimeDescriptor->Next() && itsParamDescriptor->Next() && itsHPlaceDescriptor->Next() &&
-            itsVPlaceDescriptor->Next());
+    return (itsTimeDescriptor->Next() && itsParamDescriptor->Next() &&
+            itsHPlaceDescriptor->Next() && itsVPlaceDescriptor->Next());
   }
   catch (...)
   {
@@ -1396,8 +1396,8 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     // integer luku kirjoitetaan stringi muodossa ja big-endian koneissa
     // bytet ovat erilailla järjestyksessä kuin little-endian koneissa.
 
-    file << "@$\260\243Q";  // '°' => \260 ja '£' => \243, koska cpp tiedoston character set muutettu
-                            // Utf-8:ksi ja string literalien non-ascii koodaus muutettava.
+    file << "@$\260\243Q";  // '°' => \260 ja '£' => \243, koska cpp tiedoston character set
+                            // muutettu Utf-8:ksi ja string literalien non-ascii koodaus muutettava.
     char buffer[5];
     strncpy(buffer,
             reinterpret_cast<const char *>(&endianInfo),
@@ -1480,7 +1480,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 {
   try
   {
-    const int correctEndianInfo = 0x4f464e49;  //  == 'INFO' // little-endian systeemeissä mm. Windows
+    const int correctEndianInfo =
+        0x4f464e49;  //  == 'INFO' // little-endian systeemeissä mm. Windows
     const int swappedEndianInfo = 0x494e464f;  //  == 'OFNI' // big-endian systeemeissä mm. unix
 
     Destroy();
@@ -1492,7 +1493,7 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 
     // This is needed in case the stream is for example empty
     if (!file.good())
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::Read : Input stream does not contain querydata");
+      throw Fmi::Exception(BCP, "NFmiQueryInfo::Read : Input stream does not contain querydata");
 
     const int infoInt = *reinterpret_cast<int *>(buffer);
 
@@ -1501,7 +1502,7 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
     else if (infoInt == swappedEndianInfo)
       fDoEndianByteSwap = true;
     else
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::File does not contain endian-information bytes.");
+      throw Fmi::Exception(BCP, "NFmiQueryInfo::File does not contain endian-information bytes.");
 
     file.read(reinterpret_cast<char *>(buffer), 4);  // tämä on luettava "@$°£"
 
@@ -1523,17 +1524,17 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
         errorMessage += std::to_string(itsInfoVersion);
         errorMessage += " > ";
         errorMessage += std::to_string(DefaultFmiInfoVersion);
-        throw Fmi::Exception(BCP,errorMessage);
+        throw Fmi::Exception(BCP, errorMessage);
       }
     }
     else
     {
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::File is not QueryInfo-class");
+      throw Fmi::Exception(BCP, "NFmiQueryInfo::File is not QueryInfo-class");
     }
 
     if (itsInfoVersion < 6)
     {
-      throw Fmi::Exception(BCP,"Querydata versions below 6 are no longer supported");
+      throw Fmi::Exception(BCP, "Querydata versions below 6 are no longer supported");
     }
 
     // VERSIOHALLINTAA
@@ -1590,7 +1591,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
 
     // One final check on the validity of the input
     if (!file.good())
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::Read : Input stream does not contain valid querydata");
+      throw Fmi::Exception(BCP,
+                           "NFmiQueryInfo::Read : Input stream does not contain valid querydata");
 
     // FmiInfoVersion = OldFmiInfoVersion;
     return file;
@@ -1707,7 +1709,8 @@ float NFmiQueryInfo::InterpolatedValueForCombinedParam(const NFmiPoint &theGridP
                                               float((1. - dx) * dy),
                                               &topRightweather,
                                               float(dx * dy));
-    return float(itsCombinedParamParser->SubValue(FmiParameterName(Param().GetParam()->GetIdent())));
+    return float(
+        itsCombinedParamParser->SubValue(FmiParameterName(Param().GetParam()->GetIdent())));
   }
   catch (...)
   {
@@ -2215,8 +2218,8 @@ bool NFmiQueryInfo::Param(const NFmiDataIdent &theDataIdent)
   {
     if (itsParamDescriptor->Param(theDataIdent))
       return true;
-    else if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                          // aliparametrina
+    else if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä
+                                          // parametrin aliparametrina
     {
       return true;
     }
@@ -2285,8 +2288,8 @@ bool NFmiQueryInfo::Param(const NFmiParam &theParam, const NFmiParam &theSubPara
     if (!itsParamDescriptor->Param(theParam))
       return false;
 
-    else if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                         // aliparametrina
+    else if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä
+                                         // parametrin aliparametrina
     {
       return true;
     }
@@ -2402,7 +2405,8 @@ NFmiProducer *NFmiQueryInfo::Producer()
 {
   try
   {
-    return (itsParamDescriptor ? itsParamDescriptor->ParamBag()->Current()->GetProducer() : nullptr);
+    return (itsParamDescriptor ? itsParamDescriptor->ParamBag()->Current()->GetProducer()
+                               : nullptr);
   }
   catch (...)
   {
@@ -2693,8 +2697,8 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
         }
         else
         {
-          factor = (static_cast<float>(newInfo->Time().DifferenceInHours(middleTime))) / halfPeriod *
-                       (factor3 - factor2) +
+          factor = (static_cast<float>(newInfo->Time().DifferenceInHours(middleTime))) /
+                       halfPeriod * (factor3 - factor2) +
                    factor2;
         }
 
@@ -3254,8 +3258,8 @@ void NFmiQueryInfo::ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier
       return;  // ei voi edetä, koska this info ei ollutkaan oikeasti fastInfo
     for (unsigned int i = 0; i < usedThreadCount; i++)
     {
-      // HUOM! pakko tehdä fastQueryInfo copioita, että ei menetetä nopeutta, eikä saa tehdä Clone:ja,
-      // koska tällöin kopioituu myös data-osio!!!
+      // HUOM! pakko tehdä fastQueryInfo copioita, että ei menetetä nopeutta, eikä saa tehdä
+      // Clone:ja, koska tällöin kopioituu myös data-osio!!!
       modifiedInfoVector[i] =
           boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*thisFastInfo));
       dataModifierVector[i] = boost::shared_ptr<NFmiDataModifier>(theModifier->Clone());
@@ -3699,8 +3703,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
       float returnValue = kFloatMissing;
       NFmiMetTime firstTime(timeBag->FirstTime());
       int timeResolution = timeBag->Resolution();
-      // timeResolution voi olla 0, jos timeBagissa on vain yksi aika, tai jos alku ja loppu aika ovat
-      // samoja. Pitää estää 0:lla jako
+      // timeResolution voi olla 0, jos timeBagissa on vain yksi aika, tai jos alku ja loppu aika
+      // ovat samoja. Pitää estää 0:lla jako
       if (timeResolution == 0)
         return kFloatMissing;
       int minuteOffSetOfWantedTimeInTimeBag =
@@ -3729,7 +3733,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
           value1 = PeekTimeValue(i);
           if (!(value1 == kFloatMissing || value1 == kTCombinedWeatherFloatMissing))
           {
-            if (theMaxMinuteRange && theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
+            if (theMaxMinuteRange &&
+                theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
               value1 = kFloatMissing;
             break;
           }
@@ -3742,7 +3747,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
           value2 = PeekTimeValue(i);
           if (!(value2 == kFloatMissing || value2 == kTCombinedWeatherFloatMissing))
           {
-            if (theMaxMinuteRange && theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
+            if (theMaxMinuteRange &&
+                theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
               value2 = kFloatMissing;
             break;
           }
@@ -3753,7 +3759,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
           returnValue = kFloatMissing;
         else
         {
-          float offset1 = (forwardOffset - wantedTimeOffsetFloat) / (forwardOffset - backwardOffset);
+          float offset1 =
+              (forwardOffset - wantedTimeOffsetFloat) / (forwardOffset - backwardOffset);
 
           // 30.10.2000/Marko Muutin ottamaan huomioon combinedparam jutut ja epälineaariset
           // parametrit
@@ -3873,7 +3880,8 @@ float NFmiQueryInfo::FindNearestNonMissingValueFromTimeList(const NFmiMetTime &t
     float value = kFloatMissing;
     NFmiTimeList *timeList = itsTimeDescriptor->ValidTimeList();
     if (timeList == nullptr)
-      throw Fmi::Exception(BCP,
+      throw Fmi::Exception(
+          BCP,
           "Error: Programming error in NFmiQueryInfo::FindNearestNonMissingValueFromTimeList, no "
           "timelist found.");
     do
@@ -3882,7 +3890,8 @@ float NFmiQueryInfo::FindNearestNonMissingValueFromTimeList(const NFmiMetTime &t
       if (value != kFloatMissing)
       {
         if (timeList->Time(theTimeIndexInOut) == nullptr)
-          throw Fmi::Exception(BCP,
+          throw Fmi::Exception(
+              BCP,
               "Error: Programming error in NFmiQueryInfo::FindNearestNonMissingValueFromTimeList, "
               "time not found.");
         theFoundTime = *timeList->Time(theTimeIndexInOut);
@@ -4145,10 +4154,9 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
       if (theTime < timeList->FirstTime())
         return kFloatMissing;  // jos 1. aika oli jo suurempi kuin  haluttu, ei voida interpoloida.
       // Tämä tilanne pitää tarkistaa, koska jos theMaxMinuteRange on 0, interpolointi
-      // onnistuisi aina tälläisessä tapauksessa. Tämä korjaa reiän koodissa, ylemmille tasoille voisi
-      // laittaa
-      // varmaan suoraan tarkastuksen, että jos haluttu aika ei ole timeDescriptorin sisällä, ei
-      // interpolointi onnistu.
+      // onnistuisi aina tälläisessä tapauksessa. Tämä korjaa reiän koodissa, ylemmille tasoille
+      // voisi laittaa varmaan suoraan tarkastuksen, että jos haluttu aika ei ole timeDescriptorin
+      // sisällä, ei interpolointi onnistu.
 
       NFmiMetTime time1 = NFmiMetTime::gMissingTime;  // this avoids calling SetZoneDifferenceHour
                                                       // which may cause locks
@@ -4244,7 +4252,8 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
       }
     }
     else if (theValue1 == kFloatMissing || theValue2 == kFloatMissing)
-    {  // Jos toinen arvoista puuttuva, palautetaan suoraan se arvo, jota lähempänä offset1 on, oli se
+    {  // Jos toinen arvoista puuttuva, palautetaan suoraan se arvo, jota lähempänä offset1 on, oli
+       // se
       // puuttuva tai ei
       if (offset1 <= 0.5)
         return theValue2;
@@ -4488,14 +4497,14 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
         {
           unsigned long gridSizeX = Grid()->XNumber();
-          double xFraction =
-              theLocationCache.itsGridPoint.X() - static_cast<int>(theLocationCache.itsGridPoint.X());
+          double xFraction = theLocationCache.itsGridPoint.X() -
+                             static_cast<int>(theLocationCache.itsGridPoint.X());
           // xFraction:ista riippuen otetaan lähin hilapiste joko maailman oikeasta tai vasemmasta
           // reunasta
           int xInd = (xFraction > 0.5) ? 0 : gridSizeX - 1;
-          auto yInd =
-              static_cast<int>(round(theLocationCache.itsGridPoint
-                                         .Y()));  // y-indeksi vain pyöristetään lähimpään pisteeseen
+          auto yInd = static_cast<int>(
+              round(theLocationCache.itsGridPoint
+                        .Y()));  // y-indeksi vain pyöristetään lähimpään pisteeseen
           LocationIndex(yInd * gridSizeX + xInd);
           value = FloatValue();
         }
@@ -4678,12 +4687,13 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::array<float, 4> &theVa
     }
     else if (theInterpolationMethod == kNearestNonMissing)
     {
-      value = static_cast<float>(NFmiInterpolation::NearestNonMissing(gpoint.X() - floor(gpoint.X()),
-                                                                      gpoint.Y() - floor(gpoint.Y()),
-                                                                      theValues[3],
-                                                                      theValues[2],
-                                                                      theValues[0],
-                                                                      theValues[1]));
+      value =
+          static_cast<float>(NFmiInterpolation::NearestNonMissing(gpoint.X() - floor(gpoint.X()),
+                                                                  gpoint.Y() - floor(gpoint.Y()),
+                                                                  theValues[3],
+                                                                  theValues[2],
+                                                                  theValues[0],
+                                                                  theValues[1]));
     }
     else
     {
@@ -4821,7 +4831,8 @@ float NFmiQueryInfo::CachedTimeInterpolatedValue(float theValue1,
             NFmiInterpolation::WindInterpolator windInterpolator;
             windInterpolator.operator()(ws1, theValue1, offset);
             windInterpolator.operator()(ws2, theValue2, (1 - offset));
-            value = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain tuulen
+            value =
+                static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain tuulen
             // suunta (tämä pitää tehdä
             // jotenkin fiksummin)
           }
@@ -4894,7 +4905,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         }
       }
     }
-      // palautetaan indeksit lopuksi
+    // palautetaan indeksit lopuksi
     TimeIndex(oldTimeIndex);
     LocationIndex(oldLocationIndex);
     return value;
@@ -5271,7 +5282,8 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
             return InterpolatedValueForWeatherAndCloudiness(
                 theTime, theMaxMinuteRange, gpoint, xShift, yShift);
           else if (param == kFmiTotalWindMS)
-            return InterpolatedValueForTotalWind(theTime, theMaxMinuteRange, gpoint, xShift, yShift);
+            return InterpolatedValueForTotalWind(
+                theTime, theMaxMinuteRange, gpoint, xShift, yShift);
 
           return theValue;
         }
@@ -5291,8 +5303,8 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
           if (param == kFmiWindDirection)
           {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
             Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-            float tlWS = InterpolatedValue(theTime, theMaxMinuteRange);  // aloitetaan top-leftistä ja
-                                                                         // haetaan kaikki nurkat
+            float tlWS = InterpolatedValue(theTime, theMaxMinuteRange);  // aloitetaan top-leftistä
+                                                                         // ja haetaan kaikki nurkat
                                                                          // move-komennoilla
             MoveRight(1);
             float trWS = InterpolatedValue(theTime, theMaxMinuteRange);  // top-right
@@ -6412,7 +6424,8 @@ std::vector<std::pair<int, double> > NFmiQueryInfo::NearestLocations(
 {
   try
   {
-    return itsHPlaceDescriptor->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
+    return itsHPlaceDescriptor->NearestLocations(
+        theLocation, theMaxWantedLocations, theMaxDistance);
   }
   catch (...)
   {
@@ -6450,11 +6463,11 @@ void NFmiQueryInfo::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
   try
   {
     if (!itsHPlaceDescriptor)
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetHPlaceDescriptor - HPlaceDescriptoria ei oltu alustettu.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetHPlaceDescriptor - HPlaceDescriptoria ei oltu alustettu.");
     if (newDesc.Size() != Size())
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetHPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetHPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
     else
       *itsHPlaceDescriptor = newDesc;
 
@@ -6472,13 +6485,13 @@ void NFmiQueryInfo::SetVPlaceDescriptor(const NFmiVPlaceDescriptor &newDesc)
   try
   {
     if (!itsVPlaceDescriptor)
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetVPlaceDescriptor - VPlaceDescriptoria ei oltu alustettu.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetVPlaceDescriptor - VPlaceDescriptoria ei oltu alustettu.");
     if (newDesc.Size() == SizeLevels())
       *itsVPlaceDescriptor = newDesc;
     else
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetVPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetVPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
 
     if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
       itsRefQueryData->Info()->SetVPlaceDescriptor(newDesc);
@@ -6494,12 +6507,13 @@ void NFmiQueryInfo::SetTimeDescriptor(const NFmiTimeDescriptor &newDesc)
   try
   {
     if (!itsTimeDescriptor)
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::SetTimeDescriptor - TimeDescriptoria ei oltu alustettu.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetTimeDescriptor - TimeDescriptoria ei oltu alustettu.");
     if (newDesc.Size() == SizeTimes())
       *itsTimeDescriptor = newDesc;
     else
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetTimeDescriptor - ei voi asettaa erikokoista descriptoria.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetTimeDescriptor - ei voi asettaa erikokoista descriptoria.");
 
     if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
       itsRefQueryData->Info()->SetTimeDescriptor(newDesc);
@@ -6515,12 +6529,13 @@ void NFmiQueryInfo::SetParamDescriptor(const NFmiParamDescriptor &newDesc)
   try
   {
     if (!itsParamDescriptor)
-      throw Fmi::Exception(BCP,"NFmiQueryInfo::SetParamDescriptor - ParamDescriptoria ei oltu alustettu.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetParamDescriptor - ParamDescriptoria ei oltu alustettu.");
     if (newDesc.Size() == SizeParams())
       *itsParamDescriptor = newDesc;
     else
-      throw Fmi::Exception(BCP,
-          "NFmiQueryInfo::SetParamDescriptor - ei voi asettaa erikokoista descriptoria.");
+      throw Fmi::Exception(
+          BCP, "NFmiQueryInfo::SetParamDescriptor - ei voi asettaa erikokoista descriptoria.");
 
     if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
       itsRefQueryData->Info()->SetParamDescriptor(newDesc);
@@ -6595,7 +6610,7 @@ const NFmiTimeBag &NFmiQueryInfo::ValidTimes() const
     if (bag)
       return *bag;
 
-    throw Fmi::Exception(BCP,"Attempt to access timebag from querydata without one would crash");
+    throw Fmi::Exception(BCP, "Attempt to access timebag from querydata without one would crash");
   }
   catch (...)
   {
@@ -6617,7 +6632,7 @@ const NFmiParamBag &NFmiQueryInfo::ParamBag() const
     if (bag)
       return *bag;
 
-    throw Fmi::Exception(BCP,"Attempt to access parambag from querydata without one would crash");
+    throw Fmi::Exception(BCP, "Attempt to access parambag from querydata without one would crash");
   }
   catch (...)
   {

@@ -52,7 +52,10 @@ class NFmiDataModifierWindChill : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint& NFmiDataModifierWindChill::LatLon(void) const { return itsLatLonPoint; }
+inline const NFmiPoint& NFmiDataModifierWindChill::LatLon(void) const
+{
+  return itsLatLonPoint;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newLatLon Undocumented

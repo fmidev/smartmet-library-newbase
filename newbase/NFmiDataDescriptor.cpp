@@ -14,6 +14,12 @@
 
 #include "NFmiDataDescriptor.h"
 
-unsigned long NFmiDataDescriptor::Index() const { return 0; }
-unsigned long NFmiDataDescriptor::Size() const { return 0; }
+unsigned long NFmiDataDescriptor::Index() const
+{
+  return 0;
+}
+unsigned long NFmiDataDescriptor::Size() const
+{
+  return 0;
+}
 // ======================================================================

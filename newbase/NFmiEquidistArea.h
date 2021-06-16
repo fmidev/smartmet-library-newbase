@@ -100,13 +100,19 @@ inline NFmiEquidistArea::NFmiEquidistArea(void) : NFmiAzimuthalArea() {}
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiEquidistArea::ClassId(void) const { return kNFmiEquiDistArea; }
+inline unsigned long NFmiEquidistArea::ClassId(void) const
+{
+  return kNFmiEquiDistArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiEquidistArea::ClassName(void) const { return "NFmiEquiDistArea"; }
+inline const char* NFmiEquidistArea::ClassName(void) const
+{
+  return "NFmiEquiDistArea";
+}
 
 // ======================================================================

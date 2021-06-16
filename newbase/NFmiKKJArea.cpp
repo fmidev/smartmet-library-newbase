@@ -64,8 +64,8 @@
 // ======================================================================
 
 #include "NFmiKKJArea.h"
-#include <macgyver/Exception.h>
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <cstdlib>
 #include <stdexcept>
@@ -404,8 +404,8 @@ const NFmiPoint NFmiKKJArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xeast, ynorth, zone, xeastForCentralMeridian, ksi, eta, ksi1, eta1, lambda, q, temp, q2, d,
-        testv, lat, lon, dind;
+    double xeast, ynorth, zone, xeastForCentralMeridian, ksi, eta, ksi1, eta1, lambda, q, temp, q2,
+        d, testv, lat, lon, dind;
     int ind;
 
     // Transform world xy-coordinates into geodetic coordinates.
@@ -556,8 +556,8 @@ const NFmiPoint NFmiKKJArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) co
     // Transforms input geodetic coordinates (longitude,latitude) into world coordinates
     // (meters) for the Finnish National Grid Coordinate System (KKJ).
 
-    double lat, lon, fii, d, zone, xeastForCentralMeridian, lambda, xeast, ynorth, q, ksi, ksi1, eta,
-        eta1, dind;
+    double lat, lon, fii, d, zone, xeastForCentralMeridian, lambda, xeast, ynorth, q, ksi, ksi1,
+        eta, eta1, dind;
     int ind;
 
     lat = theLatLonPoint.Y();
@@ -859,7 +859,7 @@ const std::string NFmiKKJArea::WKT() const
 {
   try
   {
-    throw Fmi::Exception(BCP,"WKT not available for generic KKJ projections");
+    throw Fmi::Exception(BCP, "WKT not available for generic KKJ projections");
   }
   catch (...)
   {

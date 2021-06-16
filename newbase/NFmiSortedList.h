@@ -48,4 +48,7 @@ typedef NFmiSortedList* PNFmiSortedList;
  */
 // ----------------------------------------------------------------------
 
-inline FmiSortOrder NFmiSortedList::SortOrder(void) { return itsSortOrder; }
+inline FmiSortOrder NFmiSortedList::SortOrder(void)
+{
+  return itsSortOrder;
+}

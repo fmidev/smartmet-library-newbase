@@ -30,14 +30,15 @@ NFmiFindFile::~NFmiFindFile()
   try
   {
 #ifdef UNIX
-    if (itsGlobBuffer) globfree(itsGlobBuffer);
+    if (itsGlobBuffer)
+      globfree(itsGlobBuffer);
 #else
     _findclose(itsFileFile);
 #endif
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -140,7 +141,8 @@ bool NFmiFindFile::Find(const NFmiString& theFileMask)
 
 #ifdef UNIX
     itsGlobIndex = 0;
-    if (itsGlobBuffer) globfree(itsGlobBuffer);
+    if (itsGlobBuffer)
+      globfree(itsGlobBuffer);
     itsGlobBuffer = new glob_t;
     glob(theFindFileName, 0, nullptr, itsGlobBuffer);
     if (itsGlobBuffer->gl_pathc == 0)
@@ -197,7 +199,8 @@ bool NFmiFindFile::Next()
   try
   {
 #ifdef UNIX
-    if (!itsGlobBuffer) return false;
+    if (!itsGlobBuffer)
+      return false;
     if (++itsGlobIndex <= itsGlobBuffer->gl_pathc)
     {
       itsFileName = itsGlobBuffer->gl_pathv[itsGlobIndex];

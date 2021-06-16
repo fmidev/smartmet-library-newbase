@@ -171,7 +171,7 @@ NFmiTransformList::~NFmiTransformList()
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP,"Destructor failed",nullptr);
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
     exception.printError();
   }
 }
@@ -265,8 +265,9 @@ NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList
     else
       itsOutputInputRatio = new double[theList.itsMaxPairNumber];
 
-    memcpy(
-        itsOutputInputRatio, theList.itsOutputInputRatio, theList.itsMaxPairNumber * sizeof(double));
+    memcpy(itsOutputInputRatio,
+           theList.itsOutputInputRatio,
+           theList.itsMaxPairNumber * sizeof(double));
 
     // Copy the very first and last pairs from the input list
     itsVeryFirstPair = theList.itsVeryFirstPair;
@@ -322,8 +323,10 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
     {
       do
       {
-        if (!Equal(itsFirstPair[ind], theList.itsFirstPair[ind])) return false;
-        if (!Equal(itsLastPair[ind], theList.itsLastPair[ind])) return false;
+        if (!Equal(itsFirstPair[ind], theList.itsFirstPair[ind]))
+          return false;
+        if (!Equal(itsLastPair[ind], theList.itsLastPair[ind]))
+          return false;
       } while (++ind <= itsCurrentMaxIndex);
     }
     else
@@ -427,8 +430,7 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
       **/
 
       // Prevent crash in AddDataMapping since itsFirstPair is nullptr
-      throw Fmi::Exception(BCP,"Unable to allocate more memory for transform list");
-
+      throw Fmi::Exception(BCP, "Unable to allocate more memory for transform list");
     }
     else
     {
@@ -594,9 +596,9 @@ bool NFmiTransformList::Interpolate(const NFmiPoint& firstPair, const NFmiPoint&
     if ((firstInputValue < inputValue) && (inputValue < lastInputValue))
     {
       // Interpolate
-      itsOutputValue =
-          firstOutputValue + ((lastOutputValue - firstOutputValue) * (inputValue - firstInputValue)) /
-                                 (lastInputValue - firstInputValue);
+      itsOutputValue = firstOutputValue +
+                       ((lastOutputValue - firstOutputValue) * (inputValue - firstInputValue)) /
+                           (lastInputValue - firstInputValue);
       return true;
     }
 
@@ -681,7 +683,8 @@ int NFmiTransformList::RangeIndex(double theValue)
 
     itsInputValue = theValue;
 
-    // At first, try to transform the 'value' on the previous time range 'itsPreviousInputRangeIndex'
+    // At first, try to transform the 'value' on the previous time range
+    // 'itsPreviousInputRangeIndex'
     itsPreviousInputRangeIndex =
         std::min(itsCurrentMaxIndex, std::max(0, itsPreviousInputRangeIndex));
 

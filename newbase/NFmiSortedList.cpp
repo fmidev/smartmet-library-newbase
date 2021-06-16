@@ -95,7 +95,8 @@ bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
     it.Reset();
     while (it.Next(anItem))
     {
-      if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
+      if (!fAddDuplicates &&
+          (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
         return false;
 
       if (*theItem < (*static_cast<NFmiSortable *>(anItem)))  // 11.02.1998/Marko
@@ -138,7 +139,8 @@ bool NFmiSortedList::AddDescending(NFmiSortable *theItem, bool fAddDuplicates)
     it.Reset();
     while (it.Next(anItem))
     {
-      if (!fAddDuplicates && (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
+      if (!fAddDuplicates &&
+          (*static_cast<NFmiSortable *>(anItem) == *theItem))  // 25.02.1998/Marko
         return false;
 
       if (*static_cast<NFmiSortable *>(anItem) < *theItem)

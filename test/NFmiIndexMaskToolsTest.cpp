@@ -264,7 +264,8 @@ void maskexpandmany(void)
   std::vector<NFmiIndexMask> masks;
   masks = MaskExpand(*theGrid, theSuomi, distances);
 
-  if (masks.size() != 3) TEST_FAILED("MaskExpand failed to return vector of 3 masks");
+  if (masks.size() != 3)
+    TEST_FAILED("MaskExpand failed to return vector of 3 masks");
 
   string result1 = MaskString(masks[0], theGrid->XNumber(), theGrid->YNumber());
   string result2 = MaskString(masks[1], theGrid->XNumber(), theGrid->YNumber());

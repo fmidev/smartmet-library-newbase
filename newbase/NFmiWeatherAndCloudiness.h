@@ -353,7 +353,8 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   void SetThunderProbability(unsigned long theValue);
 
   //! Tämän structin avulla debuggaus on helpompaa (toimii ainoastaan little-endian koneissa)
-  union FmiWeatherUnion {
+  union FmiWeatherUnion
+  {
     uint32_t longType;
     float floatType;
 #ifndef UNIX
@@ -402,14 +403,20 @@ inline NFmiCombinedParam* NFmiWeatherAndCloudiness::Clone(void) const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiWeatherAndCloudiness::LongValue(void) const { return itsData.longType; }
+inline unsigned long NFmiWeatherAndCloudiness::LongValue(void) const
+{
+  return itsData.longType;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiWeatherAndCloudiness::CrossCheckIndex(void) const { return itsCrossCheckIndex; }
+inline int NFmiWeatherAndCloudiness::CrossCheckIndex(void) const
+{
+  return itsCrossCheckIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param tenProsents Undocumented
@@ -428,7 +435,10 @@ inline unsigned long NFmiWeatherAndCloudiness::CloudsToEighths(unsigned long ten
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiWeatherAndCloudiness::DataOk(void) const { return fDataOk; }
+inline bool NFmiWeatherAndCloudiness::DataOk(void) const
+{
+  return fDataOk;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theTemperature Undocumented
@@ -446,7 +456,10 @@ inline void NFmiWeatherAndCloudiness::Temperature(float theTemperature)
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiWeatherAndCloudiness::Temperature(void) const { return itsTemperature; }
+inline float NFmiWeatherAndCloudiness::Temperature(void) const
+{
+  return itsTemperature;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
