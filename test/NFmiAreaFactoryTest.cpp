@@ -15,7 +15,7 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
-
+#include <macgyver/Exception.h>
 #include <boost/shared_ptr.hpp>
 #include <regression/tframe.h>
 
@@ -456,7 +456,7 @@ void test_invalid_input_proj()
       TEST_FAILED("No exception thrown for missing lon_0");
     }
 
-    catch (std::runtime_error& e)
+    catch (Fmi::Exception& e)
     {
     }
     catch (...)
@@ -475,7 +475,7 @@ void test_invalid_input_proj()
       TEST_FAILED("No exception thrown for missing proj definition");
     }
 
-    catch (std::runtime_error& e)
+    catch (Fmi::Exception& e)
     {
     }
     catch (...)
@@ -494,7 +494,7 @@ void test_invalid_input_proj()
       TEST_FAILED("No exception thrown for missing + prefix");
     }
 
-    catch (std::runtime_error& e)
+    catch (Fmi::Exception& e)
     {
     }
     catch (...)
