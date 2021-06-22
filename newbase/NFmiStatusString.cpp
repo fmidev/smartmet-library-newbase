@@ -55,7 +55,10 @@ NFmiStatusString::NFmiStatusString(const NFmiStatusString &theStatusString)
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusString::Status() { return itsStatus; }
+long NFmiStatusString::Status()
+{
+  return itsStatus;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -63,7 +66,10 @@ long NFmiStatusString::Status() { return itsStatus; }
  */
 // ----------------------------------------------------------------------
 
-const NFmiString &NFmiStatusString::String() { return *static_cast<NFmiString *>(this); }
+const NFmiString &NFmiStatusString::String()
+{
+  return *static_cast<NFmiString *>(this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -72,7 +78,10 @@ const NFmiString &NFmiStatusString::String() { return *static_cast<NFmiString *>
  */
 // ----------------------------------------------------------------------
 
-NFmiString *NFmiStatusString::Clone() const { return new NFmiStatusString(*this); }
+NFmiString *NFmiStatusString::Clone() const
+{
+  return new NFmiStatusString(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator

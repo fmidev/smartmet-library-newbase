@@ -10,10 +10,8 @@
 #include "NFmiAngle.h"
 #include "NFmiDef.h"
 #include "NFmiRect.h"
-
 #include <boost/shared_ptr.hpp>
 #include <gis/SpatialReference.h>
-
 #include <memory>
 #include <string>
 
@@ -147,7 +145,8 @@ class NFmiArea
   static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
   {
     // Obvious case
-    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;
+    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
+      return true;
     // 0...360 coordinate system is used
     if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
       return true;
@@ -242,5 +241,11 @@ class NFmiArea
 #endif
 };  // class NFmiArea
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
-inline std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob)
+{
+  return ob.Write(file);
+}
+inline std::istream &operator>>(std::istream &file, NFmiArea &ob)
+{
+  return ob.Read(file);
+}

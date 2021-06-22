@@ -30,7 +30,8 @@ void optional_windows()
 {
   NFmiLocationFinder finder;
 
-  if (!finder.AddFile("data/name2longlat.win", true, true)) TEST_FAILED("Failed to read test data");
+  if (!finder.AddFile("data/name2longlat.win", true, true))
+    TEST_FAILED("Failed to read test data");
 
   NFmiPoint p;
 
@@ -39,7 +40,8 @@ void optional_windows()
     TEST_FAILED("Found wrong coordinates for Helsinki: " + tostr(p));
 
   p = finder.Find("Salla");
-  if (p != NFmiPoint(28.6, 66.8)) TEST_FAILED("Found wrong coordinates for Salla: " + tostr(p));
+  if (p != NFmiPoint(28.6, 66.8))
+    TEST_FAILED("Found wrong coordinates for Salla: " + tostr(p));
 
   TEST_PASSED();
 }
@@ -60,7 +62,8 @@ void optional_unix()
     TEST_FAILED("Found wrong coordinates for Helsinki: " + tostr(p));
 
   p = finder.Find("Salla");
-  if (p != NFmiPoint(28.6, 66.8)) TEST_FAILED("Found wrong coordinates for Salla: " + tostr(p));
+  if (p != NFmiPoint(28.6, 66.8))
+    TEST_FAILED("Found wrong coordinates for Salla: " + tostr(p));
 
   TEST_PASSED();
 }

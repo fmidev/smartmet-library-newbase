@@ -55,7 +55,10 @@ void NFmiDataModifierAvgAbs::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierAvgAbs::Calculate(NFmiQueryInfo* theQI) { Calculate(theQI->FloatValue()); }
+void NFmiDataModifierAvgAbs::Calculate(NFmiQueryInfo* theQI)
+{
+  Calculate(theQI->FloatValue());
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -89,5 +92,8 @@ float NFmiDataModifierAvgAbs::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-long NFmiDataModifierAvgAbs::Counter() { return itsCounter; }
+long NFmiDataModifierAvgAbs::Counter()
+{
+  return itsCounter;
+}
 // ======================================================================

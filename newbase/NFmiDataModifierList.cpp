@@ -44,7 +44,10 @@ NFmiDataModifierList::NFmiDataModifierList(NFmiCombinedParam* /* thePotentialCom
  * \return Undocumented, always false
  */
 // ----------------------------------------------------------------------
-bool NFmiDataModifierList::IsCombinedParam() { return false; }
+bool NFmiDataModifierList::IsCombinedParam()
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theModifier Undocumented
@@ -75,14 +78,20 @@ bool NFmiDataModifierList::Reset()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierList::Next() { return itsIter.Next() == true; }
+bool NFmiDataModifierList::Next()
+{
+  return itsIter.Next() == true;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifier* NFmiDataModifierList::Current() { return itsIter.CurrentPtr(); }
+NFmiDataModifier* NFmiDataModifierList::Current()
+{
+  return itsIter.CurrentPtr();
+}
 // ----------------------------------------------------------------------
 /*
  * \param fDeleteData Undocumented
@@ -92,7 +101,8 @@ NFmiDataModifier* NFmiDataModifierList::Current() { return itsIter.CurrentPtr();
 
 bool NFmiDataModifierList::Remove(bool fDeleteData)
 {
-  if (itsIter.Remove(fDeleteData)) return true;
+  if (itsIter.Remove(fDeleteData))
+    return true;
   return false;
 }
 
@@ -102,7 +112,10 @@ bool NFmiDataModifierList::Remove(bool fDeleteData)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierList::Clear(bool fDeleteData) { itsList.Clear(fDeleteData); }
+void NFmiDataModifierList::Clear(bool fDeleteData)
+{
+  itsList.Clear(fDeleteData);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented, unused
@@ -131,7 +144,8 @@ double NFmiDataModifierList::FloatValue()
   while (Next())
   {
     double itemValue = (*Current()).FloatValue();
-    if (itemValue == kFloatMissing) return kFloatMissing;
+    if (itemValue == kFloatMissing)
+      return kFloatMissing;
 
     switch (Current()->JoinOperator())
     {
@@ -171,7 +185,8 @@ std::ostream& NFmiDataModifierList::WriteExpressionBody(std::ostream& file)
   int i = 0;
   while (Next())
   {
-    if (i++ > 0) Current()->WriteOperator(file);
+    if (i++ > 0)
+      Current()->WriteOperator(file);
     Current()->WriteOperand(file);
   }
   return file;

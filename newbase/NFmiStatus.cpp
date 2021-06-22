@@ -32,84 +32,120 @@ NFmiStatus::NFmiStatus(const NFmiStatus& theStatus)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStatus::IsWarning() const { return itsWarningLog.IsValue(); }
+bool NFmiStatus::IsWarning() const
+{
+  return itsWarningLog.IsValue();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStatus::IsError() const { return itsErrorLog.IsValue(); }
+bool NFmiStatus::IsError() const
+{
+  return itsErrorLog.IsValue();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStatus::IsMessage() const { return itsMessageLog.IsValue(); }
+bool NFmiStatus::IsMessage() const
+{
+  return itsMessageLog.IsValue();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theErrorLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::ErrorLog(NFmiString& theErrorLog) { itsErrorLog = theErrorLog; }
+void NFmiStatus::ErrorLog(NFmiString& theErrorLog)
+{
+  itsErrorLog = theErrorLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theWarningLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::WarningLog(NFmiString& theWarningLog) { itsWarningLog = theWarningLog; }
+void NFmiStatus::WarningLog(NFmiString& theWarningLog)
+{
+  itsWarningLog = theWarningLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMessageLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::MessageLog(NFmiString& theMessageLog) { itsMessageLog = theMessageLog; }
+void NFmiStatus::MessageLog(NFmiString& theMessageLog)
+{
+  itsMessageLog = theMessageLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theErrorLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::ErrorLog(const char* theErrorLog) { itsErrorLog = theErrorLog; }
+void NFmiStatus::ErrorLog(const char* theErrorLog)
+{
+  itsErrorLog = theErrorLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theWarningLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::WarningLog(const char* theWarningLog) { itsWarningLog = theWarningLog; }
+void NFmiStatus::WarningLog(const char* theWarningLog)
+{
+  itsWarningLog = theWarningLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theMessageLog Undocumented
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::MessageLog(const char* theMessageLog) { itsMessageLog = theMessageLog; }
+void NFmiStatus::MessageLog(const char* theMessageLog)
+{
+  itsMessageLog = theMessageLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::ErrorLog() const { return itsErrorLog; }
+const NFmiString NFmiStatus::ErrorLog() const
+{
+  return itsErrorLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::WarningLog() const { return itsWarningLog; }
+const NFmiString NFmiStatus::WarningLog() const
+{
+  return itsWarningLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::MessageLog() const { return itsMessageLog; }
+const NFmiString NFmiStatus::MessageLog() const
+{
+  return itsMessageLog;
+}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator

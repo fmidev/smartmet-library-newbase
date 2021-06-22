@@ -191,13 +191,20 @@ class NFmiCombinedParam
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiCombinedParam::InfoVersion() const { return itsInfoVersion; }
+inline double NFmiCombinedParam::InfoVersion() const
+{
+  return itsInfoVersion;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiCombinedParam::InfoVersion(double newValue) { itsInfoVersion = newValue; }
+inline void NFmiCombinedParam::InfoVersion(double newValue)
+{
+  itsInfoVersion = newValue;
+}
 
 // ======================================================================

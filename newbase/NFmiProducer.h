@@ -97,6 +97,9 @@ inline NFmiProducer& NFmiProducer::operator=(const NFmiProducer& theProducer)
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiProducer::ClassName() const { return "NFmiProducer"; }
+inline const char* NFmiProducer::ClassName() const
+{
+  return "NFmiProducer";
+}
 
 // ======================================================================

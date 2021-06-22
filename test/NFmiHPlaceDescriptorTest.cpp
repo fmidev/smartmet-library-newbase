@@ -31,7 +31,8 @@ void nearestpoint()
   const NFmiHPlaceDescriptor& hdesc = qd.Info()->HPlaceDescriptor();
   NFmiHPlaceDescriptor h(hdesc);
 
-  if (!h.NearestPoint(NFmiPoint(25, 60))) TEST_FAILED("Failed to set Harmaja coordinates");
+  if (!h.NearestPoint(NFmiPoint(25, 60)))
+    TEST_FAILED("Failed to set Harmaja coordinates");
   if (h.Location()->GetName() != NFmiString("Harmaja"))
     TEST_FAILED("Wrong name for coordinates 25,60: " +
                 std::string(h.Location()->GetName().CharPtr()));
@@ -48,7 +49,8 @@ void nearestlocation()
   NFmiHPlaceDescriptor h(hdesc);
 
   NFmiLocation harmaja(25, 60);
-  if (!h.NearestLocation(harmaja)) TEST_FAILED("Failed to set Harmaja coordinates");
+  if (!h.NearestLocation(harmaja))
+    TEST_FAILED("Failed to set Harmaja coordinates");
   if (h.Location()->GetName() != NFmiString("Harmaja"))
     TEST_FAILED("Wrong name for coordinates 25,60: " +
                 std::string(h.Location()->GetName().CharPtr()));
@@ -75,16 +77,19 @@ void nearestlocations()
     if (res.size() != 10)
       TEST_FAILED("Should have found 10 locations since there was no search radius");
 
-    if (res[0].first != 142) TEST_FAILED("Should have found Harmaja (id=142) first");
+    if (res[0].first != 142)
+      TEST_FAILED("Should have found Harmaja (id=142) first");
   }
 
   {
     // Search max 10 locations with limited radius
     auto res = h.NearestLocations(harmaja, 10, 50 * 1000);
 
-    if (res.size() != 8) TEST_FAILED("Should have found 8 locations with search radius 50 km")
+    if (res.size() != 8)
+      TEST_FAILED("Should have found 8 locations with search radius 50 km")
 
-    if (res[0].first != 142) TEST_FAILED("Should have found Harmaja (id=142) first");
+    if (res[0].first != 142)
+      TEST_FAILED("Should have found Harmaja (id=142) first");
   }
 
   TEST_PASSED();

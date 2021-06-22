@@ -30,7 +30,8 @@ void require()
   try
   {
     string tmp = NFmiSettings::Require<string>("key a");
-    if (tmp != "value a") TEST_FAILED("Failed to retrieve 'value a' for 'key a'");
+    if (tmp != "value a")
+      TEST_FAILED("Failed to retrieve 'value a' for 'key a'");
   }
   catch (...)
   {
@@ -52,7 +53,8 @@ void require()
   try
   {
     int tmp = NFmiSettings::Require<int>("key b");
-    if (tmp != 123) TEST_FAILED("Failed to retrieve value 123 for 'key b'");
+    if (tmp != 123)
+      TEST_FAILED("Failed to retrieve value 123 for 'key b'");
   }
   catch (...)
   {
@@ -74,7 +76,8 @@ void require()
   try
   {
     double tmp = NFmiSettings::Require<double>("key b");
-    if (tmp != 123.0) TEST_FAILED("Failed to retrieve value 123.0 for 'key b'");
+    if (tmp != 123.0)
+      TEST_FAILED("Failed to retrieve value 123.0 for 'key b'");
   }
   catch (...)
   {
@@ -84,7 +87,8 @@ void require()
   try
   {
     double tmp = NFmiSettings::Require<double>("key c");
-    if (tmp != 123.456) TEST_FAILED("Failed to retrieve value 123.456 for 'key c'");
+    if (tmp != 123.456)
+      TEST_FAILED("Failed to retrieve value 123.456 for 'key c'");
   }
   catch (...)
   {
@@ -97,7 +101,8 @@ void require()
   try
   {
     bool tmp = NFmiSettings::Require<bool>("key d");
-    if (tmp != false) TEST_FAILED("Failed to retrieve value false for 'key d'");
+    if (tmp != false)
+      TEST_FAILED("Failed to retrieve value false for 'key d'");
   }
   catch (...)
   {
@@ -122,7 +127,8 @@ void require_range()
   try
   {
     int tmp = NFmiSettings::RequireRange<int>("key a", 0, 100);
-    if (tmp != 10) TEST_FAILED("Failed to obtain value 10 for 'key a'");
+    if (tmp != 10)
+      TEST_FAILED("Failed to obtain value 10 for 'key a'");
   }
   catch (...)
   {
@@ -159,10 +165,12 @@ void optional()
     NFmiSettings::Set("key a", "value a");
 
     string tmp = NFmiSettings::Optional<string>("key a", "optional a");
-    if (tmp != "value a") TEST_FAILED("Failed to retrieve 'value a' for 'key a'");
+    if (tmp != "value a")
+      TEST_FAILED("Failed to retrieve 'value a' for 'key a'");
 
     tmp = NFmiSettings::Optional<string>("key b", "optional b");
-    if (tmp != "optional b") TEST_FAILED("Failed to retrieve 'optional b' for 'key a'");
+    if (tmp != "optional b")
+      TEST_FAILED("Failed to retrieve 'optional b' for 'key a'");
   }
 
   // ints
@@ -171,10 +179,12 @@ void optional()
     NFmiSettings::Set("key b", "123");
 
     int tmp = NFmiSettings::Optional<int>("key b", 321);
-    if (tmp != 123) TEST_FAILED("Failed to retrieve value 123 for 'key b'");
+    if (tmp != 123)
+      TEST_FAILED("Failed to retrieve value 123 for 'key b'");
 
     tmp = NFmiSettings::Optional<int>("key c", 321);
-    if (tmp != 321) TEST_FAILED("Failed to retrieve value 321 for 'key c'");
+    if (tmp != 321)
+      TEST_FAILED("Failed to retrieve value 321 for 'key c'");
   }
 
   // doubles
@@ -182,15 +192,18 @@ void optional()
   {
     NFmiSettings::Set("key a", "123");
     double tmp = NFmiSettings::Optional<double>("key a", 0);
-    if (tmp != 123) TEST_FAILED("Failed to retrieve value 123 for 'key a'");
+    if (tmp != 123)
+      TEST_FAILED("Failed to retrieve value 123 for 'key a'");
 
     NFmiSettings::Set("key b", "123.456");
     tmp = NFmiSettings::Optional<double>("key b", 0);
-    if (tmp != 123.456) TEST_FAILED("Failed to retrieve value 123.456 for 'key b'");
+    if (tmp != 123.456)
+      TEST_FAILED("Failed to retrieve value 123.456 for 'key b'");
 
     NFmiSettings::Set("key c", "0.0123");
     tmp = NFmiSettings::Optional<double>("key c", 0);
-    if (tmp != 0.0123) TEST_FAILED("Failed to retrieve value 0.0123 for 'key c'");
+    if (tmp != 0.0123)
+      TEST_FAILED("Failed to retrieve value 0.0123 for 'key c'");
   }
 
   TEST_PASSED();
@@ -211,7 +224,8 @@ void optional_range()
   try
   {
     int tmp = NFmiSettings::OptionalRange<int>("key a", 50, 0, 100);
-    if (tmp != 10) TEST_FAILED("Failed to obtain value 10 for 'key a'");
+    if (tmp != 10)
+      TEST_FAILED("Failed to obtain value 10 for 'key a'");
   }
   catch (...)
   {
@@ -230,7 +244,8 @@ void optional_range()
   try
   {
     int tmp = NFmiSettings::OptionalRange<int>("key b", 50, 0, 100);
-    if (tmp != 50) TEST_FAILED("Failed to obtain value 50 for 'key b'");
+    if (tmp != 50)
+      TEST_FAILED("Failed to obtain value 50 for 'key b'");
   }
   catch (...)
   {

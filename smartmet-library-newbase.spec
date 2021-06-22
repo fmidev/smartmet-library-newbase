@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.2.1
+Version: 21.6.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -18,7 +18,10 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.6.16
+BuildRequires: smartmet-library-gis-devel >= 21.6.16
+Requires: smartmet-library-gis >= 21.6.16
+Requires: smartmet-library-macgyver >= 21.6.16
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -34,7 +37,10 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
+#TestRequires: smartmet-library-gis-devel >= 21.6.16
+#TestRequires: smartmet-library-macgyver-devel >= 21.6.16
+#TestRequires: smartmet-library-macgyver >= 21.6.16
+#TestRequires: smartmet-library-gis >= 21.6.16
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -91,6 +97,72 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Jun 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.16-1.fmi
+- Use Fmi::Exception
+
+* Mon Jun  7 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.7-1.fmi
+- Fixed self assignment issues
+
+* Thu May  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.6-1.fmi
+- Fixed azimuthal projections to handle negative central/true latitudes correctly
+
+* Thu Apr 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.4.22-1.fmi
+- Added NWCSAF parameters
+
+* Sat Mar 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.20-1.fmi
+- Faster and disk friendlier grid interpolations
+
+* Fri Mar 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.19-1.fmi
+- Fixed NFmiEquidistantArea to initialize the spatial reference for all constructor calls
+
+* Tue Mar  9 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.9-1.fmi
+- Added move assignment and constructor for NFmiDataMatrix
+
+* Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
+- Added parameter HardPackedSnowIndex (FIN: Polanne)
+
+* Mon Mar  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.1-1.fmi
+- Faster construction of newbase times from Boost.Date_time ones
+- Added numbers for metaparameters used by the SmartMet Server
+
+* Fri Feb 26 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.26-1.fmi
+- Added enumerations for metaparameters which are usually calculated on the fly
+
+* Mon Feb 22 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.2.22-1.fmi
+- Added new PrecipitationAccumulation parameter (QDTOOLS-92)
+
+* Sat Feb 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.20-1.fmi
+- Fixed NFmiRotatedLatLon PROJ.4 string after a copy paste error
+
+* Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
+- Added NFmiArea::SpatialReference()
+- Added NFmiFastQueryInfo::SpatialReference()
+
+* Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
+- Fixed NFmiRotatedLatLon WKT
+
+* Tue Feb 16 2021 Andris Pavēnis <andris.pavenis@fmi.fi> - 21.2.16-1.fmi
+- Fmi::NFmiQueryInfo: use std::unique_ptr instead of raw pointers
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-2.fmi
+- Updated NFmiSmoother to use Fmi::CoordinateMatrix
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-1.fmi
+- Merged more API changes from WGS84 branch: interpolation methods return a datamatrix
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-2.fmi
+- Fixed GIS-library dependencies
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-1.fmi
+- Fixed NFmiLatLonArea WKT to be equirectangular instead of longlat
+- Added NFmiArea::CoordinateMatrix
+- Added NFmiFastQueryInfo::WorldXY
+- Added NFmiFastQueryInfo::NeedsGlobeWrap
+- Added linkage to gis-library
+
+* Mon Feb  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.8-1.fmi
+- Added CoordinateMatrix access
+
 * Mon Feb  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.1-1.fmi
 - Removed broken +over option from ob_trans (rotated) projections
 

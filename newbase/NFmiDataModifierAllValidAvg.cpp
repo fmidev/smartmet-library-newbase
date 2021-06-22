@@ -78,7 +78,8 @@ void NFmiDataModifierAllValidAvg::Calculate(NFmiQueryInfo* theQI)
     float value = theQI->FloatValue();
     if (CheckMissingValues(value))
     {
-      if (itsCounter == 0) fCalculationResultOk = true;
+      if (itsCounter == 0)
+        fCalculationResultOk = true;
       itsCounter++;
       if ((theQI->Param().GetParam()->MinValue() != kFloatMissing &&
            value <= theQI->Param().GetParam()->MinValue()) ||

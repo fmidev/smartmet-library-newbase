@@ -16,11 +16,9 @@
 // ======================================================================
 
 #include "NFmiIndividual.h"
-
 #include "NFmiVersion.h"
-
 #include <boost/functional/hash.hpp>
-
+#include <macgyver/Exception.h>
 #include <fstream>
 
 // ----------------------------------------------------------------------
@@ -34,9 +32,16 @@
 
 NFmiIndividual& NFmiIndividual::operator=(const NFmiIndividual& theIndividual)
 {
-  itsName = theIndividual.itsName;
-  itsIdent = theIndividual.itsIdent;
-  return *this;
+  try
+  {
+    itsName = theIndividual.itsName;
+    itsIdent = theIndividual.itsIdent;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -50,17 +55,24 @@ NFmiIndividual& NFmiIndividual::operator=(const NFmiIndividual& theIndividual)
 
 std::ostream& NFmiIndividual::Write(std::ostream& file) const
 {
-  file << itsIdent << std::endl;
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 2)
+  try
   {
-    file << itsName;
+    file << itsIdent << std::endl;
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 2)
+    {
+      file << itsName;
+    }
+    else
+    {
+      file << itsIdent << " " << itsName.GetCharPtr() << " ";
+    }
+    return file;
   }
-  else
+  catch (...)
   {
-    file << itsIdent << " " << itsName.GetCharPtr() << " ";
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -75,28 +87,42 @@ std::ostream& NFmiIndividual::Write(std::ostream& file) const
 
 std::istream& NFmiIndividual::Read(std::istream& file)
 {
-  file >> itsIdent;
-
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 6)
+  try
   {
-    file >> itsName;
+    file >> itsIdent;
+
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 6)
+    {
+      file >> itsName;
+    }
+    else
+    {
+      char tmp[255];
+      file >> tmp;
+
+      itsName = tmp;
+    }
+
+    return file;
   }
-  else
+  catch (...)
   {
-    char tmp[255];
-    file >> tmp;
-
-    itsName = tmp;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return file;
 }
 
 void NFmiIndividual::SetContents(long ident, NFmiString name)
 {
-  itsIdent = ident;
-  itsName = name;
+  try
+  {
+    itsIdent = ident;
+    itsName = name;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -107,7 +133,14 @@ void NFmiIndividual::SetContents(long ident, NFmiString name)
 
 std::size_t NFmiIndividual::HashValue() const
 {
-  std::size_t hash = itsName.HashValue();
-  boost::hash_combine(hash, boost::hash_value(itsIdent));
-  return hash;
+  try
+  {
+    std::size_t hash = itsName.HashValue();
+    boost::hash_combine(hash, boost::hash_value(itsIdent));
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

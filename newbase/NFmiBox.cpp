@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiBox.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -20,7 +21,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiBox::~NFmiBox() { delete[] itsValues; }
+NFmiBox::~NFmiBox()
+{
+  try
+  {
+    delete[] itsValues;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
@@ -30,14 +43,24 @@ NFmiBox::~NFmiBox() { delete[] itsValues; }
 
 bool NFmiBox::Initialize(unsigned long newSize)
 {
-  itsSize = newSize;
-  if (itsValues)
+  try
   {
-    delete[] itsValues;
-    itsValues = nullptr;
+    itsSize = newSize;
+    if (itsValues)
+    {
+      delete[] itsValues;
+      itsValues = nullptr;
+    }
+
+    if (itsSize > 0)
+      itsValues = new float[itsSize];
+
+    return itsValues ? true : false;
   }
-  if (itsSize > 0) itsValues = new float[itsSize];
-  return itsValues ? true : false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -51,12 +74,19 @@ bool NFmiBox::Initialize(unsigned long newSize)
 
 std::ostream& NFmiBox::Write(std::ostream& file) const
 {
-  for (unsigned long i = 0; i < itsSize; i++)
-    file << itsValues[i] << " ";
+  try
+  {
+    for (unsigned long i = 0; i < itsSize; i++)
+      file << itsValues[i] << " ";
 
-  file << std::endl;
+    file << std::endl;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -70,10 +100,17 @@ std::ostream& NFmiBox::Write(std::ostream& file) const
 
 std::istream& NFmiBox::Read(std::istream& file)
 {
-  for (unsigned long i = 0; i < itsSize; i++)
-    file >> itsValues[i];
+  try
+  {
+    for (unsigned long i = 0; i < itsSize; i++)
+      file >> itsValues[i];
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -86,9 +123,16 @@ std::istream& NFmiBox::Read(std::istream& file)
 
 NFmiBox::NFmiBox(NFmiBox& theBox) : itsValues(new float[theBox.itsSize]), itsSize(theBox.itsSize)
 {
-  for (unsigned long i = 0; i < itsSize; i++)
+  try
   {
-    itsValues[i] = theBox.itsValues[i];
+    for (unsigned long i = 0; i < itsSize; i++)
+    {
+      itsValues[i] = theBox.itsValues[i];
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -102,7 +146,15 @@ NFmiBox::NFmiBox(NFmiBox& theBox) : itsValues(new float[theBox.itsSize]), itsSiz
 
 NFmiBox::NFmiBox(long theSize) : itsValues(nullptr), itsSize(theSize)
 {
-  if (itsSize) itsValues = new float[itsSize];
+  try
+  {
+    if (itsSize)
+      itsValues = new float[itsSize];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -111,7 +163,18 @@ NFmiBox::NFmiBox(long theSize) : itsValues(nullptr), itsSize(theSize)
  */
 // ----------------------------------------------------------------------
 
-long NFmiBox::GetSize() const { return itsSize; }
+long NFmiBox::GetSize() const
+{
+  try
+  {
+    return itsSize;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -119,14 +182,29 @@ long NFmiBox::GetSize() const { return itsSize; }
  */
 // ----------------------------------------------------------------------
 
-float& NFmiBox::operator[](long theIndex) { return itsValues[theIndex]; }
+float& NFmiBox::operator[](long theIndex)
+{
+  try
+  {
+    return itsValues[theIndex];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-long NFmiBox::CalcSize() { return 0; }
+long NFmiBox::CalcSize()
+{
+  return 0;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -134,7 +212,18 @@ long NFmiBox::CalcSize() { return 0; }
  */
 // ----------------------------------------------------------------------
 
-bool NFmiBox::IsInside(unsigned long theIndex) const { return (theIndex < itsSize); }
+bool NFmiBox::IsInside(unsigned long theIndex) const
+{
+  try
+  {
+    return (theIndex < itsSize);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -144,7 +233,14 @@ bool NFmiBox::IsInside(unsigned long theIndex) const { return (theIndex < itsSiz
 
 float NFmiBox::Value(unsigned long theIndex)
 {
-  return IsInside(theIndex) ? itsValues[theIndex] : kFloatMissing;
+  try
+  {
+    return IsInside(theIndex) ? itsValues[theIndex] : kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -156,8 +252,15 @@ float NFmiBox::Value(unsigned long theIndex)
 
 void NFmiBox::Fill(float theFillValue)
 {
-  for (unsigned long theIndex = 0; theIndex < itsSize; theIndex++)
-    itsValues[theIndex] = theFillValue;
+  try
+  {
+    for (unsigned long theIndex = 0; theIndex < itsSize; theIndex++)
+      itsValues[theIndex] = theFillValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

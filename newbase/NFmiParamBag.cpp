@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiParamBag.h"
-
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <fstream>
 
@@ -25,7 +25,19 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiParamBag::~NFmiParamBag() { Destroy(); }
+NFmiParamBag::~NFmiParamBag()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -52,13 +64,20 @@ NFmiParamBag::NFmiParamBag(FmiParameterName* theParamArray, unsigned long number
       fIsSubParamUsed(false),
       itsUsedSubParam(nullptr)
 {
-  if (GetSize())
+  try
   {
-    for (unsigned long i = 0; i < numberOfParams; i++)
+    if (GetSize())
     {
-      itsParamsVector[i] = NFmiDataIdent(NFmiParam(theParamArray[i]));
+      for (unsigned long i = 0; i < numberOfParams; i++)
+      {
+        itsParamsVector[i] = NFmiDataIdent(NFmiParam(theParamArray[i]));
+      }
+      Reset();
     }
-    Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -77,13 +96,20 @@ NFmiParamBag::NFmiParamBag(NFmiDataIdent* theParamArray, unsigned long numberOfP
       fIsSubParamUsed(false),
       itsUsedSubParam(nullptr)
 {
-  if (GetSize())
+  try
   {
-    for (unsigned long i = 0; i < numberOfParams; i++)
+    if (GetSize())
     {
-      itsParamsVector[i] = theParamArray[i];
+      for (unsigned long i = 0; i < numberOfParams; i++)
+      {
+        itsParamsVector[i] = theParamArray[i];
+      }
+      Reset();
     }
-    Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -101,13 +127,20 @@ NFmiParamBag::NFmiParamBag(const NFmiParamBag& theBag)
       fIsSubParamUsed(theBag.fIsSubParamUsed),
       itsUsedSubParam(theBag.itsUsedSubParam)
 {
-  if (GetSize())
+  try
   {
-    long currentIndex = theBag.CurrentIndex();
-    if (currentIndex >= 0 && currentIndex < long(GetSize()))
-      SetCurrentIndex(currentIndex);
-    else
-      Reset();
+    if (GetSize())
+    {
+      long currentIndex = theBag.CurrentIndex();
+      if (currentIndex >= 0 && currentIndex < long(GetSize()))
+        SetCurrentIndex(currentIndex);
+      else
+        Reset();
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -123,16 +156,23 @@ NFmiParamBag::NFmiParamBag(const NFmiParamBag& theBag)
 
 NFmiParamBag& NFmiParamBag::operator=(const NFmiParamBag& theBag)
 {
-  if (this != &theBag)
+  try
   {
-    Destroy();
-    itsSize = theBag.itsSize;
-    itsIndex = theBag.itsIndex;
-    itsParamsVector.resize(itsSize);
-    itsParamsVector = theBag.itsParamsVector;
-    fIsSubParamUsed = theBag.fIsSubParamUsed;
+    if (this != &theBag)
+    {
+      Destroy();
+      itsSize = theBag.itsSize;
+      itsIndex = theBag.itsIndex;
+      itsParamsVector.resize(itsSize);
+      itsParamsVector = theBag.itsParamsVector;
+      fIsSubParamUsed = theBag.fIsSubParamUsed;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -147,17 +187,25 @@ NFmiParamBag& NFmiParamBag::operator=(const NFmiParamBag& theBag)
 
 bool NFmiParamBag::operator==(const NFmiParamBag& theOtherParams) const
 {
-  bool retVal = false;
-  if (GetSize() != theOtherParams.GetSize()) return false;
-
-  for (unsigned long i = 0; i < GetSize(); i++)
+  try
   {
-    if (!(this->itsParamsVector[i] == theOtherParams.itsParamsVector[i]))
+    bool retVal = false;
+    if (GetSize() != theOtherParams.GetSize())
       return false;
-    else
-      retVal = true;
+
+    for (unsigned long i = 0; i < GetSize(); i++)
+    {
+      if (!(this->itsParamsVector[i] == theOtherParams.itsParamsVector[i]))
+        return false;
+      else
+        retVal = true;
+    }
+    return retVal;
   }
-  return retVal;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -167,7 +215,18 @@ bool NFmiParamBag::operator==(const NFmiParamBag& theOtherParams) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamBag::Destroy() { itsParamsVector.clear(); }
+void NFmiParamBag::Destroy()
+{
+  try
+  {
+    itsParamsVector.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theBag Undocumented
@@ -179,90 +238,98 @@ void NFmiParamBag::Destroy() { itsParamsVector.clear(); }
 
 const NFmiParamBag NFmiParamBag::Combine(const NFmiParamBag& theBag)
 {
-  NFmiParamBag combineBag(*this);  // täytetään ensin this-bagillä
-  NFmiParamBag otherBag(theBag);   // pakko tehdä kopio, että tätä voidaan loopata
-  for (otherBag.Reset(); otherBag.Next();)
-    combineBag.Add(*otherBag.Current(), true);
-  return combineBag;
+  try
+  {
+    NFmiParamBag combineBag(*this);  // täytetään ensin this-bagillä
+    NFmiParamBag otherBag(theBag);   // pakko tehdä kopio, että tätä voidaan loopata
+    for (otherBag.Reset(); otherBag.Next();)
+      combineBag.Add(*otherBag.Current(), true);
 
-  /* // tämä oli ihan kammottavaa koodia, yritän tehdä fiksumman ja nopeamman ja helpompi lukuisen
-    if(GetSize() == 0) // Marko, ei toiminut jos this oli tyhjä
-          return theBag;
+    return combineBag;
 
-    NFmiParamBag  theCombineBag(theBag);
-    NFmiDataIdent * theDataIdentGroup = new NFmiDataIdent[GetSize()+theCombineBag.GetSize()];
-    NFmiDataIdent * theDataIdent      = new NFmiDataIdent[GetSize()+theCombineBag.GetSize()];
-    bool	 theIsIdentExisting;
-    unsigned long theSizeCountGroup=0;
-    unsigned long theSizeCount=0;
+    /* // tämä oli ihan kammottavaa koodia, yritän tehdä fiksumman ja nopeamman ja helpompi lukuisen
+      if(GetSize() == 0) // Marko, ei toiminut jos this oli tyhjä
+            return theBag;
 
-    Reset();//Alkuperäiset parametrit
-    while(Next())
-          {
-            if(Current()->IsGroup())
-                  theDataIdentGroup[theSizeCountGroup++] = *Current();
-            else
-                  theDataIdent[theSizeCount++] = *Current();
-          }
+      NFmiParamBag  theCombineBag(theBag);
+      NFmiDataIdent * theDataIdentGroup = new NFmiDataIdent[GetSize()+theCombineBag.GetSize()];
+      NFmiDataIdent * theDataIdent      = new NFmiDataIdent[GetSize()+theCombineBag.GetSize()];
+      bool	 theIsIdentExisting;
+      unsigned long theSizeCountGroup=0;
+      unsigned long theSizeCount=0;
 
-    theCombineBag.Reset();//Lisä  Ryhmä Parametrit
-    while(theCombineBag.Next())
-          {
-            theIsIdentExisting = false;
-            if(theCombineBag.Current()->IsGroup())
-                  {
-                    for(unsigned long i=0; i<theSizeCountGroup && !theIsIdentExisting; i++)
-                          {
-                            if(theDataIdentGroup[i].GetParam()->GetIdent() ==
-    theCombineBag.Current()->GetParam()->GetIdent())
-                                  theIsIdentExisting=true;
-                          }
-                    if(!theIsIdentExisting)
-                          theDataIdentGroup[theSizeCountGroup++] = *theCombineBag.Current() ;
-                  }
-          }
+      Reset();//Alkuperäiset parametrit
+      while(Next())
+            {
+              if(Current()->IsGroup())
+                    theDataIdentGroup[theSizeCountGroup++] = *Current();
+              else
+                    theDataIdent[theSizeCount++] = *Current();
+            }
+
+      theCombineBag.Reset();//Lisä  Ryhmä Parametrit
+      while(theCombineBag.Next())
+            {
+              theIsIdentExisting = false;
+              if(theCombineBag.Current()->IsGroup())
+                    {
+                      for(unsigned long i=0; i<theSizeCountGroup && !theIsIdentExisting; i++)
+                            {
+                              if(theDataIdentGroup[i].GetParam()->GetIdent() ==
+      theCombineBag.Current()->GetParam()->GetIdent())
+                                    theIsIdentExisting=true;
+                            }
+                      if(!theIsIdentExisting)
+                            theDataIdentGroup[theSizeCountGroup++] = *theCombineBag.Current() ;
+                    }
+            }
 
 
-    theCombineBag.Reset();//Lisä  Parametrit
-    while(theCombineBag.Next())
-          {
-            theIsIdentExisting = false;
-            if(!theCombineBag.Current()->IsGroup())
-                  {
-                    for(unsigned long i=0; i<theSizeCount && !theIsIdentExisting; i++)
-                          {
-                            if(theDataIdent[i].GetParam()->GetIdent() ==
-    theCombineBag.Current()->GetParam()->GetIdent())
-                                  theIsIdentExisting=true;
-                          }
-                    if(!theIsIdentExisting)
-                          theDataIdent[theSizeCount++] = *theCombineBag.Current() ;
-                  }
-          }
+      theCombineBag.Reset();//Lisä  Parametrit
+      while(theCombineBag.Next())
+            {
+              theIsIdentExisting = false;
+              if(!theCombineBag.Current()->IsGroup())
+                    {
+                      for(unsigned long i=0; i<theSizeCount && !theIsIdentExisting; i++)
+                            {
+                              if(theDataIdent[i].GetParam()->GetIdent() ==
+      theCombineBag.Current()->GetParam()->GetIdent())
+                                    theIsIdentExisting=true;
+                            }
+                      if(!theIsIdentExisting)
+                            theDataIdent[theSizeCount++] = *theCombineBag.Current() ;
+                    }
+            }
 
-    //Muutin tästä eteenpäin olevaa koodia siten, että yhdistetyssä paramBagissä
-    //on kaikki parametrit yhteen kertaan, paitsi sama parametri on kahteen kertaan,
-    //jos toinen on ryhmäparametri ja toinen ei. Ennen paluuarvona olevassa param-
-    //bagissä oli ainoastaan yksi ryhmäparametri sellaisten parametrien lisäksi,
-    //jotka eivät ole ryhmäparametreja. Ryhmäparametrit ovat parambagissä ennen
-    //"ei-ryhmäparametreja". /Mikael 6.9.99
+      //Muutin tästä eteenpäin olevaa koodia siten, että yhdistetyssä paramBagissä
+      //on kaikki parametrit yhteen kertaan, paitsi sama parametri on kahteen kertaan,
+      //jos toinen on ryhmäparametri ja toinen ei. Ennen paluuarvona olevassa param-
+      //bagissä oli ainoastaan yksi ryhmäparametri sellaisten parametrien lisäksi,
+      //jotka eivät ole ryhmäparametreja. Ryhmäparametrit ovat parambagissä ennen
+      //"ei-ryhmäparametreja". /Mikael 6.9.99
 
-    if (theSizeCount)
-          {
-            for (unsigned long i = theSizeCountGroup, j=0;
-                     i<(theSizeCountGroup+theSizeCount); i++, j++)
-                  {
-                    theDataIdentGroup[i] = theDataIdent[j];
-                  }
-          }
+      if (theSizeCount)
+            {
+              for (unsigned long i = theSizeCountGroup, j=0;
+                       i<(theSizeCountGroup+theSizeCount); i++, j++)
+                    {
+                      theDataIdentGroup[i] = theDataIdent[j];
+                    }
+            }
 
-    NFmiParamBag theParamBag(theDataIdentGroup, theSizeCountGroup+theSizeCount);
+      NFmiParamBag theParamBag(theDataIdentGroup, theSizeCountGroup+theSizeCount);
 
-    delete [] theDataIdentGroup;
-    delete [] theDataIdent;
+      delete [] theDataIdentGroup;
+      delete [] theDataIdent;
 
-    return  theParamBag;
-  */
+      return  theParamBag;
+    */
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -275,23 +342,34 @@ const NFmiParamBag NFmiParamBag::Combine(const NFmiParamBag& theBag)
 
 bool NFmiParamBag::SetCurrent(FmiParameterName theParam, bool fIgnoreSubParam)
 {
-  Reset();
-  while (Next())
-  {
-    if (theParam == CurrentParam()) return true;
-  }
-  if (!fIgnoreSubParam)
+  try
   {
     Reset();
-    while (Next(false))
+    while (Next())
     {
-      if (fIsSubParamUsed)
-        if (theParam == static_cast<FmiParameterName>(itsUsedSubParam->GetParamIdent()))
-          return true;
+      if (theParam == CurrentParam())
+        return true;
     }
-  }
 
-  return false;
+    if (!fIgnoreSubParam)
+    {
+      Reset();
+      while (Next(false))
+      {
+        if (fIsSubParamUsed)
+        {
+          if (theParam == static_cast<FmiParameterName>(itsUsedSubParam->GetParamIdent()))
+            return true;
+        }
+      }
+    }
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -304,14 +382,23 @@ bool NFmiParamBag::SetCurrent(FmiParameterName theParam, bool fIgnoreSubParam)
 
 bool NFmiParamBag::Current(const NFmiDataIdent& theParam, bool fIgnoreSubParam)
 {
-  for (Reset(); Next();)
+  try
   {
-    NFmiDataIdent& id = *Current();
-    if (theParam == id)  // Current())
-      return true;
+    for (Reset(); Next();)
+    {
+      NFmiDataIdent& id = *Current();
+      if (theParam == id)  // Current())
+        return true;
+    }
+    if (!fIgnoreSubParam)
+      return FindSubParam(theParam);
+
+    return false;
   }
-  if (!fIgnoreSubParam) return FindSubParam(theParam);
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -324,16 +411,25 @@ bool NFmiParamBag::Current(const NFmiDataIdent& theParam, bool fIgnoreSubParam)
 
 bool NFmiParamBag::Current(const NFmiParam& theParam, bool fIgnoreSubParam)
 {
-  for (Reset(); Next();)
+  try
   {
-    NFmiParam* param = Current()->GetParam();
-    assert(param);
-    if (theParam == *param)  // Current())
-      return true;
-  }
-  if (!fIgnoreSubParam) return FindSubParam(theParam);
+    for (Reset(); Next();)
+    {
+      NFmiParam* param = Current()->GetParam();
+      assert(param);
+      if (theParam == *param)  // Current())
+        return true;
+    }
 
-  return false;
+    if (!fIgnoreSubParam)
+      return FindSubParam(theParam);
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -345,16 +441,24 @@ bool NFmiParamBag::Current(const NFmiParam& theParam, bool fIgnoreSubParam)
 
 NFmiDataIdent* NFmiParamBag::Current(bool fIgnoreSubParam) const
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam;
-  if (GetSize() > 0 && itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
-    return const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]);
-  else
+  try
   {
-    static NFmiDataIdent dummy;
-    return &dummy;
+    if (!fIgnoreSubParam)
+      if (fIsSubParamUsed)
+        return itsUsedSubParam;
+    if (GetSize() > 0 && itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
+      return const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]);
+    else
+    {
+      static NFmiDataIdent dummy;
+      return &dummy;
+    }
+    //  return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : 0;
   }
-  //  return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : 0;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -366,9 +470,19 @@ NFmiDataIdent* NFmiParamBag::Current(bool fIgnoreSubParam) const
 
 NFmiDataIdent* NFmiParamBag::EditParam(bool fIgnoreSubParam)
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam;
-  return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : nullptr;
+  try
+  {
+    if (!fIgnoreSubParam)
+    {
+      if (fIsSubParamUsed)
+        return itsUsedSubParam;
+    }
+    return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -380,10 +494,20 @@ NFmiDataIdent* NFmiParamBag::EditParam(bool fIgnoreSubParam)
 
 bool NFmiParamBag::NextActive(bool fIgnoreSubParam)
 {
-  while (Next(fIgnoreSubParam))
-    if (Current(fIgnoreSubParam)->IsActive()) return true;
+  try
+  {
+    while (Next(fIgnoreSubParam))
+    {
+      if (Current(fIgnoreSubParam)->IsActive())
+        return true;
+    }
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -394,10 +518,20 @@ bool NFmiParamBag::NextActive(bool fIgnoreSubParam)
 
 bool NFmiParamBag::NextData()
 {
-  while (Next())
-    if (Current()->IsDataParam()) return true;
+  try
+  {
+    while (Next())
+    {
+      if (Current()->IsDataParam())
+        return true;
+    }
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -411,13 +545,22 @@ bool NFmiParamBag::NextData()
 
 bool NFmiParamBag::SetActive(const NFmiParam& theParam, bool isActive, bool fIgnoreSubParam)
 {
-  for (Reset(); Next(fIgnoreSubParam);)
-    if (*Current(fIgnoreSubParam)->GetParam() == theParam)
+  try
+  {
+    for (Reset(); Next(fIgnoreSubParam);)
     {
-      Current(fIgnoreSubParam)->SetActive(isActive);
-      return true;
+      if (*Current(fIgnoreSubParam)->GetParam() == theParam)
+      {
+        Current(fIgnoreSubParam)->SetActive(isActive);
+        return true;
+      }
     }
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -431,21 +574,30 @@ bool NFmiParamBag::SetActive(const NFmiParam& theParam, bool isActive, bool fIgn
 
 bool NFmiParamBag::SetActive(unsigned long theIndex, bool isActive, bool fIgnoreSubParam)
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed)
+  try
+  {
+    if (!fIgnoreSubParam)
     {
-      itsUsedSubParam->SetActive(isActive);
-      return true;
+      if (fIsSubParamUsed)
+      {
+        itsUsedSubParam->SetActive(isActive);
+        return true;
+      }
     }
 
-  unsigned long oldIndex = itsIndex;
-  if (Param(theIndex))
-  {
-    Current()->SetActive(isActive);
-    Param(oldIndex);
-    return true;
+    unsigned long oldIndex = itsIndex;
+    if (Param(theIndex))
+    {
+      Current()->SetActive(isActive);
+      Param(oldIndex);
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -458,12 +610,19 @@ bool NFmiParamBag::SetActive(unsigned long theIndex, bool isActive, bool fIgnore
 
 bool NFmiParamBag::SetCurrentActive(bool isActive, bool fIgnoreSubParam)
 {
-  if (Current(fIgnoreSubParam))
+  try
   {
-    Current(fIgnoreSubParam)->SetActive(isActive);
-    return true;
+    if (Current(fIgnoreSubParam))
+    {
+      Current(fIgnoreSubParam)->SetActive(isActive);
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -474,14 +633,22 @@ bool NFmiParamBag::SetCurrentActive(bool isActive, bool fIgnoreSubParam)
 
 unsigned long NFmiParamBag::SizeOfActive()
 {
-  NFmiParamBag tmpBag(*this);
-  tmpBag.Reset();
-  unsigned long sizeOfActive = 0;
-  while (tmpBag.Next(false))
+  try
   {
-    if (tmpBag.Current(false)->IsActive()) sizeOfActive++;
+    NFmiParamBag tmpBag(*this);
+    tmpBag.Reset();
+    unsigned long sizeOfActive = 0;
+    while (tmpBag.Next(false))
+    {
+      if (tmpBag.Current(false)->IsActive())
+        sizeOfActive++;
+    }
+    return sizeOfActive;
   }
-  return sizeOfActive;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -495,12 +662,19 @@ unsigned long NFmiParamBag::SizeOfActive()
 
 ostream& NFmiParamBag::Write(ostream& file) const
 {
-  NFmiSize::Write(file);
+  try
+  {
+    NFmiSize::Write(file);
 
-  for (unsigned long i = 0; i < GetSize(); i++)
-    file << itsParamsVector[i];
+    for (unsigned long i = 0; i < GetSize(); i++)
+      file << itsParamsVector[i];
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -515,24 +689,31 @@ ostream& NFmiParamBag::Write(ostream& file) const
 
 istream& NFmiParamBag::Read(istream& file)
 {
-  Destroy();
-
-  NFmiSize::Read(file);
-
-  if (GetSize())
+  try
   {
-    itsParamsVector.resize(itsSize);
+    Destroy();
+
+    NFmiSize::Read(file);
 
     if (GetSize())
     {
-      for (unsigned long i = 0; i < GetSize(); i++)
+      itsParamsVector.resize(itsSize);
+
+      if (GetSize())
       {
-        file >> itsParamsVector[i];
+        for (unsigned long i = 0; i < GetSize(); i++)
+        {
+          file >> itsParamsVector[i];
+        }
+        Reset();
       }
-      Reset();
     }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 enum BinaryOperator
@@ -562,39 +743,46 @@ bool NFmiParamBag::SetActivities(NFmiParamBag& theParams,
                                  bool fUseDefaultActivity,
                                  int theBinaryOperation)
 {
-  if (fUseDefaultActivity)
-    SetActivities(fDefaultActivity);  // asetetaan aluksi aktiviteetit defaultin mukaisesti
-
-  for (theParams.Reset(); theParams.Next(false);)
+  try
   {
-    if (this->SetCurrent(theParams.Current(false)->GetParamIdent(), false))
+    if (fUseDefaultActivity)
+      SetActivities(fDefaultActivity);  // asetetaan aluksi aktiviteetit defaultin mukaisesti
+
+    for (theParams.Reset(); theParams.Next(false);)
     {
-      switch (theBinaryOperation)
+      if (this->SetCurrent(theParams.Current(false)->GetParamIdent(), false))
       {
-        case kNoValue:  // eli asetetaan this:in aktiviteetti niin kuin se on theParamsissa
-          this->Current(false)->SetActive(theParams.Current(false)->IsActive());
-          break;
-        case kAnd:  // eli jos molemmissa aktiviteetti oli true, laitetaan true, muuten false
-          this->Current(false)->SetActive(this->Current(false)->IsActive() &&
-                                          theParams.Current(false)->IsActive());
-          break;
-        case kOr:  // eli jos kummassa tahansa on true, laitetaan true, muuten false (itse haluan
-          // käyttää tätä siten, että theParams:issa on aktiivisina ne mitkä haluan lisäksi
-          // aktivoida, mutta muita en halua deaktivoida)
-          this->Current(false)->SetActive(this->Current(false)->IsActive() ||
-                                          theParams.Current(false)->IsActive());
-          break;
-        case kXor:  // jos toinen on false ja toinen true, tulkee true, muuten false
-          this->Current(false)->SetActive(this->Current(false)->IsActive() ^
-                                          theParams.Current(false)->IsActive());
-          break;
-        case kNot:  // eli asetetaan this:in aktiviteetti päinvastoin kuin se on theParamsissa
-          this->Current(false)->SetActive(!theParams.Current(false)->IsActive());
-          break;
+        switch (theBinaryOperation)
+        {
+          case kNoValue:  // eli asetetaan this:in aktiviteetti niin kuin se on theParamsissa
+            this->Current(false)->SetActive(theParams.Current(false)->IsActive());
+            break;
+          case kAnd:  // eli jos molemmissa aktiviteetti oli true, laitetaan true, muuten false
+            this->Current(false)->SetActive(this->Current(false)->IsActive() &&
+                                            theParams.Current(false)->IsActive());
+            break;
+          case kOr:  // eli jos kummassa tahansa on true, laitetaan true, muuten false (itse haluan
+            // käyttää tätä siten, että theParams:issa on aktiivisina ne mitkä haluan lisäksi
+            // aktivoida, mutta muita en halua deaktivoida)
+            this->Current(false)->SetActive(this->Current(false)->IsActive() ||
+                                            theParams.Current(false)->IsActive());
+            break;
+          case kXor:  // jos toinen on false ja toinen true, tulkee true, muuten false
+            this->Current(false)->SetActive(this->Current(false)->IsActive() ^
+                                            theParams.Current(false)->IsActive());
+            break;
+          case kNot:  // eli asetetaan this:in aktiviteetti päinvastoin kuin se on theParamsissa
+            this->Current(false)->SetActive(!theParams.Current(false)->IsActive());
+            break;
+        }
       }
     }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -608,9 +796,16 @@ bool NFmiParamBag::SetActivities(NFmiParamBag& theParams,
 
 void NFmiParamBag::SetActivities(bool newState)
 {
-  for (Reset(); Next(false);)
+  try
   {
-    Current(false)->SetActive(newState);
+    for (Reset(); Next(false);)
+    {
+      Current(false)->SetActive(newState);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -624,8 +819,15 @@ void NFmiParamBag::SetActivities(bool newState)
 
 void NFmiParamBag::SetProducer(const NFmiProducer& newProducer)
 {
-  for (Reset(); Next();)
-    Current()->SetProducer(newProducer);  // asettaa myös aliparametrit!
+  try
+  {
+    for (Reset(); Next();)
+      Current()->SetProducer(newProducer);  // asettaa myös aliparametrit!
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -638,12 +840,24 @@ void NFmiParamBag::SetProducer(const NFmiProducer& newProducer)
 
 NFmiDataIdent* NFmiParamBag::Param(unsigned long theIndex, bool fIgnoreSubParam) const
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam;
+  try
+  {
+    if (!fIgnoreSubParam)
+    {
+      if (fIsSubParamUsed)
+        return itsUsedSubParam;
+    }
 
-  unsigned long size = GetSize();
-  if (size && theIndex < size) return const_cast<NFmiDataIdent*>(&itsParamsVector[theIndex]);
-  return nullptr;
+    unsigned long size = GetSize();
+    if (size && theIndex < size)
+      return const_cast<NFmiDataIdent*>(&itsParamsVector[theIndex]);
+
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -656,12 +870,24 @@ NFmiDataIdent* NFmiParamBag::Param(unsigned long theIndex, bool fIgnoreSubParam)
 
 NFmiDataIdent* NFmiParamBag::EditParam(unsigned long theIndex, bool fIgnoreSubParam)
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam;
+  try
+  {
+    if (!fIgnoreSubParam)
+    {
+      if (fIsSubParamUsed)
+        return itsUsedSubParam;
+    }
 
-  unsigned long size = GetSize();
-  if (size && theIndex < size) return const_cast<NFmiDataIdent*>(&itsParamsVector[theIndex]);
-  return nullptr;
+    unsigned long size = GetSize();
+    if (size && theIndex < size)
+      return const_cast<NFmiDataIdent*>(&itsParamsVector[theIndex]);
+
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -670,7 +896,18 @@ NFmiDataIdent* NFmiParamBag::EditParam(unsigned long theIndex, bool fIgnoreSubPa
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamBag::Next() { return Next(true); }
+bool NFmiParamBag::Next()
+{
+  try
+  {
+    return Next(true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fIgnoreSubParam Undocumented
@@ -682,19 +919,22 @@ bool NFmiParamBag::Next() { return Next(true); }
 
 bool NFmiParamBag::Next(bool fIgnoreSubParam)
 {
-  if (fIgnoreSubParam)
-    return NFmiSize::Next();
-  else
+  try
   {
+    if (fIgnoreSubParam)
+      return NFmiSize::Next();
+
     if (itsIndex != -1)
     {
       if (Current()->HasDataParams())
+      {
         if (Current()->NextDataParam())
         {
           itsUsedSubParam = &Current()->CurrentDataParam();
           fIsSubParamUsed = true;
           return true;
         }
+      }
     }
 
     if (NFmiSize::Next())
@@ -716,8 +956,13 @@ bool NFmiParamBag::Next(bool fIgnoreSubParam)
         return true;
       }
     }
+
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -726,7 +971,18 @@ bool NFmiParamBag::Next(bool fIgnoreSubParam)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamBag::Previous() { return Previous(true); }
+bool NFmiParamBag::Previous()
+{
+  try
+  {
+    return Previous(true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fIgnoreSubParam Undocumented
@@ -738,17 +994,20 @@ bool NFmiParamBag::Previous() { return Previous(true); }
 
 bool NFmiParamBag::Previous(bool fIgnoreSubParam)
 {
-  if (fIgnoreSubParam)
-    return NFmiSize::Previous();
-  else
+  try
   {
+    if (fIgnoreSubParam)
+      return NFmiSize::Previous();
+
     if (Current()->HasDataParams())
+    {
       if (Current()->PreviousDataParam())
       {
         itsUsedSubParam = &Current()->CurrentDataParam();
         fIsSubParamUsed = true;
         return true;
       }
+    }
 
     if (NFmiSize::Previous())
     {
@@ -765,8 +1024,12 @@ bool NFmiParamBag::Previous(bool fIgnoreSubParam)
         return true;
       }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -778,13 +1041,24 @@ bool NFmiParamBag::Previous(bool fIgnoreSubParam)
 
 bool NFmiParamBag::IsActive(bool fIgnoreSubParam) const
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam->IsActive();
+  try
+  {
+    if (!fIgnoreSubParam)
+    {
+      if (fIsSubParamUsed)
+        return itsUsedSubParam->IsActive();
+    }
 
-  unsigned long size = GetSize();
-  if (size > 0 && CurrentIndex() < static_cast<long>(size))
-    return itsParamsVector[CurrentIndex()].IsActive();
-  return false;
+    unsigned long size = GetSize();
+    if (size > 0 && CurrentIndex() < static_cast<long>(size))
+      return itsParamsVector[CurrentIndex()].IsActive();
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -797,12 +1071,24 @@ bool NFmiParamBag::IsActive(bool fIgnoreSubParam) const
 
 bool NFmiParamBag::IsActive(unsigned long index, bool fIgnoreSubParam) const
 {
-  if (!fIgnoreSubParam)
-    if (fIsSubParamUsed) return itsUsedSubParam->IsActive();
+  try
+  {
+    if (!fIgnoreSubParam)
+    {
+      if (fIsSubParamUsed)
+        return itsUsedSubParam->IsActive();
+    }
 
-  unsigned long size = GetSize();
-  if (size && index < size) return itsParamsVector[index].IsActive();
-  return false;
+    unsigned long size = GetSize();
+    if (size && index < size)
+      return itsParamsVector[index].IsActive();
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -817,18 +1103,25 @@ bool NFmiParamBag::IsActive(unsigned long index, bool fIgnoreSubParam) const
 
 bool NFmiParamBag::FindSubParam(const NFmiParam& theParam)
 {
-  fIsSubParamUsed = false;
-  for (Reset(); Next();)
+  try
   {
-    NFmiDataIdent* param = Current();
-    if (param->IsDataParam(FmiParameterName(theParam.GetIdent())))
+    fIsSubParamUsed = false;
+    for (Reset(); Next();)
     {
-      itsUsedSubParam = &Current()->CurrentDataParam();
-      fIsSubParamUsed = true;
-      return true;
+      NFmiDataIdent* param = Current();
+      if (param->IsDataParam(FmiParameterName(theParam.GetIdent())))
+      {
+        itsUsedSubParam = &Current()->CurrentDataParam();
+        fIsSubParamUsed = true;
+        return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -840,18 +1133,25 @@ bool NFmiParamBag::FindSubParam(const NFmiParam& theParam)
 
 bool NFmiParamBag::FindSubParam(const NFmiDataIdent& theDataIdent)
 {
-  fIsSubParamUsed = false;
-  for (Reset(); Next();)
+  try
   {
-    NFmiDataIdent* param = Current();
-    if (param->IsDataParam(theDataIdent))
+    fIsSubParamUsed = false;
+    for (Reset(); Next();)
     {
-      itsUsedSubParam = &Current()->CurrentDataParam();
-      fIsSubParamUsed = true;
-      return true;
+      NFmiDataIdent* param = Current();
+      if (param->IsDataParam(theDataIdent))
+      {
+        itsUsedSubParam = &Current()->CurrentDataParam();
+        fIsSubParamUsed = true;
+        return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -862,9 +1162,16 @@ bool NFmiParamBag::FindSubParam(const NFmiDataIdent& theDataIdent)
 
 void NFmiParamBag::Reset(FmiDirection directionToIter)
 {
-  NFmiSize::Reset(directionToIter);
-  itsUsedSubParam = nullptr;
-  fIsSubParamUsed = false;
+  try
+  {
+    NFmiSize::Reset(directionToIter);
+    itsUsedSubParam = nullptr;
+    fIsSubParamUsed = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -876,16 +1183,23 @@ void NFmiParamBag::Reset(FmiDirection directionToIter)
 
 bool NFmiParamBag::Add(const NFmiDataIdent& theParam, bool fCheckNoDuplicateParams)
 {
-  if (fCheckNoDuplicateParams)
+  try
   {
-    if (Current(*theParam.GetParam()))  // huom! tarkistaa vain NFmiParam-osion, ei tuottajaa
-      return false;
-  }
-  int size = GetSize() + 1;
-  SetSize(size);
-  itsParamsVector.push_back(theParam);
+    if (fCheckNoDuplicateParams)
+    {
+      if (Current(*theParam.GetParam()))  // huom! tarkistaa vain NFmiParam-osion, ei tuottajaa
+        return false;
+    }
+    int size = GetSize() + 1;
+    SetSize(size);
+    itsParamsVector.push_back(theParam);
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 /*!
@@ -896,16 +1210,21 @@ bool NFmiParamBag::Add(const NFmiDataIdent& theParam, bool fCheckNoDuplicatePara
 
 bool NFmiParamBag::Remove()
 {
-  if (itsIndex < 0 || static_cast<unsigned long>(itsIndex) >= itsSize)
-    return false;
-  else
+  try
   {
+    if (itsIndex < 0 || static_cast<unsigned long>(itsIndex) >= itsSize)
+      return false;
+
     auto it = itsParamsVector.begin();
     it += itsIndex;
     itsParamsVector.erase(it);
     SetSize(itsParamsVector.size());
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -154,7 +154,8 @@ class NFmiTotalWind : public NFmiCombinedParam
   void SetWindGustV7(unsigned long theValue);
 
   //! Undocumented
-  union FmiWindUnion {
+  union FmiWindUnion
+  {
     uint32_t longType;
     float floatType;
 #ifndef UNIX
@@ -176,14 +177,22 @@ class NFmiTotalWind : public NFmiCombinedParam
  */
 // ----------------------------------------------------------------------
 
-inline NFmiCombinedParam* NFmiTotalWind::Clone() const { return new NFmiTotalWind(*this); }
+inline NFmiCombinedParam* NFmiTotalWind::Clone() const
+{
+  return new NFmiTotalWind(*this);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::LongValue() const { return itsData.longType; }
+inline unsigned long NFmiTotalWind::LongValue() const
+{
+  return itsData.longType;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -252,14 +261,10 @@ inline unsigned long NFmiTotalWind::WindGustVx(double theValue)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindDirection() const { return itsData.longType & 0x3F; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiTotalWind::WindSpeedV6() const { return (itsData.longType >> 6) & 0x01FF; }
+inline unsigned long NFmiTotalWind::WindDirection() const
+{
+  return itsData.longType & 0x3F;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -267,7 +272,21 @@ inline unsigned long NFmiTotalWind::WindSpeedV6() const { return (itsData.longTy
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindSpeedV7() const { return (itsData.longType >> 6) & 0x0FFF; }
+inline unsigned long NFmiTotalWind::WindSpeedV6() const
+{
+  return (itsData.longType >> 6) & 0x01FF;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline unsigned long NFmiTotalWind::WindSpeedV7() const
+{
+  return (itsData.longType >> 6) & 0x0FFF;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -289,7 +308,10 @@ inline unsigned long NFmiTotalWind::WindSpeed() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindGustV6() const { return (itsData.longType >> 15) & 0xF; }
+inline unsigned long NFmiTotalWind::WindGustV6() const
+{
+  return (itsData.longType >> 15) & 0xF;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -297,7 +319,10 @@ inline unsigned long NFmiTotalWind::WindGustV6() const { return (itsData.longTyp
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTotalWind::WindGustV7() const { return (itsData.longType >> 18) & 0xFFF; }
+inline unsigned long NFmiTotalWind::WindGustV7() const
+{
+  return (itsData.longType >> 18) & 0xFFF;
+}
 
 // ----------------------------------------------------------------------
 /*!

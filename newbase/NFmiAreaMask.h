@@ -12,9 +12,7 @@
 #include "NFmiMetTime.h"
 #include "NFmiPoint.h"
 #include "NFmiString.h"
-
 #include <boost/shared_ptr.hpp>
-
 #include <vector>
 
 class NFmiCalculationCondition;
@@ -24,7 +22,7 @@ class NFmiParam;
 class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
 class NFmiCalculationParams;
-class NFmiMacroParamValue;
+class NFMiMacroParamValue;
 
 //! Undocumented class
 class NFmiAreaMask

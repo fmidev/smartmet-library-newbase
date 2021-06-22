@@ -20,12 +20,18 @@ NFmiDataModifierMax::~NFmiDataModifierMax() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierMax::NFmiDataModifierMax() { itsExtremeValue = -3.4E+38f; }
+NFmiDataModifierMax::NFmiDataModifierMax()
+{
+  itsExtremeValue = -3.4E+38f;
+}
 NFmiDataModifierMax::NFmiDataModifierMax(const NFmiDataModifierMax& theOther)
 
     = default;
 
-NFmiDataModifier* NFmiDataModifierMax::Clone() const { return new NFmiDataModifierMax(*this); }
+NFmiDataModifier* NFmiDataModifierMax::Clone() const
+{
+  return new NFmiDataModifierMax(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -45,7 +51,10 @@ void NFmiDataModifierMax::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierMax::Clear() { itsExtremeValue = -3.4E+38f; }
+void NFmiDataModifierMax::Clear()
+{
+  itsExtremeValue = -3.4E+38f;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -66,5 +75,8 @@ float NFmiDataModifierMax::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierMax::IsNewExtreme(float value) { return value > itsExtremeValue; }
+bool NFmiDataModifierMax::IsNewExtreme(float value)
+{
+  return value > itsExtremeValue;
+}
 // ======================================================================

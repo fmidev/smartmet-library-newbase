@@ -12,6 +12,7 @@
 #include <gis/OGR.h>
 #include <gis/ProjInfo.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
@@ -70,7 +71,7 @@ std::string class_name_from_id(int id)
     case kNFmiLambertConformalConicArea:
       return "kNFmiLambertConformalConicArea";  // legacy "k"
     default:
-      throw std::runtime_error("Unknown projection class id " + std::to_string(id));
+      throw Fmi::Exception(BCP, "Unknown projection class id " + std::to_string(id));
   }
 }
 
@@ -656,9 +657,9 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       auto plon = ProjInfo().getDouble("o_lon_p");
       auto lon0 = ProjInfo().getDouble("lon_0");
       if (!plon || !plat || !lon0)
-        throw std::runtime_error("Internal error in writing rotated latlon area");
+        throw Fmi::Exception(BCP, "Internal error in writing rotated latlon area");
       if (*plon != 0)
-        throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
+        throw Fmi::Exception(BCP, "Legacy rotated latlon with pole longitude != 0 not supported");
 
       // Legacy scale factors for old newbase programs, new programs ignore the values:
       auto xscalefactor =
@@ -688,7 +689,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       auto tlat = ProjInfo().getDouble("lat_ts");
 
       if (!clon || !clat || !tlat)
-        throw std::runtime_error("Internal error in writing stereographic area");
+        throw Fmi::Exception(BCP, "Internal error in writing stereographic area");
 
       file << kNFmiStereographicArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << '\n'
@@ -711,7 +712,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       auto clat = ProjInfo().getDouble("lat_0");
 
       if (!clon || !clat)
-        throw std::runtime_error("Internal error writing aeqd area");
+        throw Fmi::Exception(BCP, "Internal error writing aeqd area");
 
       // legacy tlat = 90
       file << kNFmiEquiDistArea << ' ' << impl->itsClassName << '\n'
@@ -735,7 +736,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       auto lat1 = ProjInfo().getDouble("lat_1");
       auto lat2 = ProjInfo().getDouble("lat_2");
       if (!clon || !clat || !lat1 || !lat2)
-        throw std::runtime_error("Internal error writing lcc area");
+        throw Fmi::Exception(BCP, "Internal error writing lcc area");
 
       file << kNFmiLambertConformalConicArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << ' '
@@ -759,7 +760,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
 
     default:
     {
-      throw std::runtime_error("Internal error writing unknown area");
+      throw Fmi::Exception(BCP, "Internal error writing unknown area");
     }
   }
 }
@@ -880,13 +881,13 @@ std::istream &NFmiArea::Read(std::istream &file)
       break;
     }
     case kNFmiPKJArea:
-      throw std::runtime_error("PKJ projection is no longer supported in Finland");
+      throw Fmi::Exception(BCP, "PKJ projection is no longer supported in Finland");
     case kNFmiKKJArea:
-      throw std::runtime_error("KKJ projection is no longer supported in Finland");
+      throw Fmi::Exception(BCP, "KKJ projection is no longer supported in Finland");
     default:
       // kFmiPolSetArea, perhaps some other legacy classes too
-      throw std::runtime_error("Projection number " + std::to_string(impl->itsClassId) +
-                               " is no longer supported");
+      throw Fmi::Exception(
+          BCP, "Projection number " + std::to_string(impl->itsClassId) + " is no longer supported");
   }
 
   return file;
@@ -1191,7 +1192,7 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
   }
 
   if (!impl->itsToWorldXYConverter)
-    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for WGS84 conversions");
 
   return transform(*impl->itsToWorldXYConverter, theWgs84);
 }
@@ -1213,7 +1214,7 @@ NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
   }
 
   if (!impl->itsToLatLonConverter)
-    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for WGS84 conversions");
 
   return transform(*impl->itsToLatLonConverter, theWorldXY);
 }
@@ -1344,7 +1345,7 @@ void NFmiArea::InitProj()
       new Fmi::CoordinateTransformation(*impl->itsSpatialReference, wgs84));
 
   if (impl->itsToLatLonConverter == nullptr)
-    throw std::runtime_error("Failed to create coordinate transformation to WGS84");
+    throw Fmi::Exception(BCP, "Failed to create coordinate transformation to WGS84");
 
   // Init geographic coordinate conversions in native datum
 
@@ -1404,7 +1405,7 @@ int NFmiArea::DetectClassId() const
 
   auto name = proj.getString("proj");
   if (!name)
-    throw std::runtime_error("Projection name not set, should be impossible");
+    throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
 
   if (*name == "eqc" && proj.getString("datum") == std::string("WGS84"))
     return kNFmiLatLonArea;
@@ -1662,9 +1663,9 @@ std::string NFmiArea::AreaFactoryStr() const
       auto plon = ProjInfo().getDouble("o_lon_p");
       auto lon0 = ProjInfo().getDouble("lon_0");
       if (!plon || !plat || !lon0)
-        throw std::runtime_error("Internal error in writing rotated latlon area");
+        throw Fmi::Exception(BCP, "Internal error in writing rotated latlon area");
       if (*plon != 0)
-        throw std::runtime_error("Legacy rotated latlon with pole longitude != 0 not supported");
+        throw Fmi::Exception(BCP, "Legacy rotated latlon with pole longitude != 0 not supported");
       return fmt::format("invrotlatlon,{},{}:{}", -(*plat), *lon0, corners);
     }
     case kNFmiMercatorArea:
@@ -1678,7 +1679,7 @@ std::string NFmiArea::AreaFactoryStr() const
       auto tlat = ProjInfo().getDouble("lat_ts");
 
       if (!clon || !clat || !tlat)
-        throw std::runtime_error("Internal error in writing stereographic area");
+        throw Fmi::Exception(BCP, "Internal error in writing stereographic area");
 
       return fmt::format("stereographic,{},{},{}:{}", *clon, *clat, *tlat, corners);
     }
@@ -1688,7 +1689,7 @@ std::string NFmiArea::AreaFactoryStr() const
       auto clat = ProjInfo().getDouble("lat_0");
 
       if (!clon || !clat)
-        throw std::runtime_error("Internal error writing aeqd area");
+        throw Fmi::Exception(BCP, "Internal error writing aeqd area");
 
       return fmt::format("equidist,{},{}:{}", *clon, *clat, corners);
     }
@@ -1699,7 +1700,7 @@ std::string NFmiArea::AreaFactoryStr() const
       auto lat1 = ProjInfo().getDouble("lat_1");
       auto lat2 = ProjInfo().getDouble("lat_2");
       if (!clon || !clat || !lat1 || !lat2)
-        throw std::runtime_error("Internal error writing lcc area");
+        throw Fmi::Exception(BCP, "Internal error writing lcc area");
 
       if (*lat1 == *lat2)
         return fmt::format("lcc,{},{},{}:{}", *clon, *clat, *lat1, corners);
@@ -1934,7 +1935,7 @@ void NFmiArea::WorldXYToXY(Fmi::CoordinateMatrix &theMatrix) const
 void NFmiArea::WorldXYToLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsToLatLonConverter)
-    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for WGS84 conversions");
 
   theMatrix.transform(*impl->itsToLatLonConverter);
 }
@@ -1942,7 +1943,7 @@ void NFmiArea::WorldXYToLatLon(Fmi::CoordinateMatrix &theMatrix) const
 void NFmiArea::LatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsToWorldXYConverter)
-    throw std::runtime_error("Spatial reference not set for WGS84 conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for WGS84 conversions");
 
   theMatrix.transform(*impl->itsToWorldXYConverter);
 }
@@ -1956,7 +1957,7 @@ void NFmiArea::ToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const
 void NFmiArea::WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsNativeToLatLonConverter)
-    throw std::runtime_error("Spatial reference not set for native latlon conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for native latlon conversions");
 
   theMatrix.transform(*impl->itsNativeToLatLonConverter);
 }
@@ -1964,7 +1965,7 @@ void NFmiArea::WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const
 void NFmiArea::NativeLatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const
 {
   if (!impl->itsNativeToWorldXYConverter)
-    throw std::runtime_error("Spatial reference not set for native latlon conversions");
+    throw Fmi::Exception(BCP, "Spatial reference not set for native latlon conversions");
 
   theMatrix.transform(*impl->itsNativeToWorldXYConverter);
 }
@@ -1978,7 +1979,7 @@ void NFmiArea::NativeToXY(Fmi::CoordinateMatrix &theMatrix) const
 void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
 {
   if (theWidth < 2 || theHeight < 2)
-    throw std::runtime_error("NFmiArea SetGridSize arguments must be at least 2");
+    throw Fmi::Exception(BCP, "NFmiArea SetGridSize arguments must be at least 2");
 
   // Establish WorldXY to LatLon bilinear conversion
   double x1 = impl->itsWorldRect.Left();

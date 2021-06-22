@@ -13,9 +13,8 @@
 // ======================================================================
 
 #include "NFmiRadarStation.h"
-
 #include "NFmiVersion.h"
-
+#include <macgyver/Exception.h>
 #include <fstream>
 
 // ----------------------------------------------------------------------
@@ -87,12 +86,19 @@ NFmiRadarStation::NFmiRadarStation(NFmiStation &station,
 
 NFmiRadarStation &NFmiRadarStation::operator=(const NFmiRadarStation &theStation)
 {
-  NFmiStation::operator=(*static_cast<const NFmiStation *>(&theStation));
-  itsResolution = theStation.itsResolution;
-  itsXNumber = theStation.itsXNumber;
-  itsYNumber = theStation.itsYNumber;
+  try
+  {
+    NFmiStation::operator=(*static_cast<const NFmiStation *>(&theStation));
+    itsResolution = theStation.itsResolution;
+    itsXNumber = theStation.itsXNumber;
+    itsYNumber = theStation.itsYNumber;
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -105,16 +111,23 @@ NFmiRadarStation &NFmiRadarStation::operator=(const NFmiRadarStation &theStation
 
 bool NFmiRadarStation::IsEqual(const NFmiSortable &theLocation) const
 {
-  return (NFmiStation::IsEqual(theLocation) &&
-          (Resolution() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->Resolution())) &&
-          (XNumber() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->XNumber())) &&
-          (YNumber() ==
-           (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->YNumber())));
+  try
+  {
+    return (NFmiStation::IsEqual(theLocation) &&
+            (Resolution() ==
+             (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->Resolution())) &&
+            (XNumber() ==
+             (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->XNumber())) &&
+            (YNumber() ==
+             (static_cast<const NFmiRadarStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->YNumber())));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -129,17 +142,24 @@ bool NFmiRadarStation::IsEqual(const NFmiSortable &theLocation) const
 
 std::ostream &NFmiRadarStation::Write(std::ostream &file) const
 {
-  NFmiStation::Write(file);
-
-  // We trust everything to be version 6 or 7 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file << itsResolution << " ";
-    file << static_cast<unsigned int>(itsXNumber) << " " << static_cast<unsigned int>(itsYNumber)
-         << " ";
-  }
+    NFmiStation::Write(file);
 
-  return file;
+    // We trust everything to be version 6 or 7 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file << itsResolution << " ";
+      file << static_cast<unsigned int>(itsXNumber) << " " << static_cast<unsigned int>(itsYNumber)
+           << " ";
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -154,21 +174,28 @@ std::ostream &NFmiRadarStation::Write(std::ostream &file) const
 
 std::istream &NFmiRadarStation::Read(std::istream &file)
 {
-  NFmiStation::Read(file);
-
-  itsResolution = static_cast<unsigned long>(kFloatMissing);
-  itsXNumber = static_cast<unsigned long>(kFloatMissing);
-  itsYNumber = static_cast<unsigned long>(kFloatMissing);
-
-  // We trust everything to be version 6 or 7 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file >> itsResolution;
-    file >> itsXNumber;
-    file >> itsYNumber;
-  }
+    NFmiStation::Read(file);
 
-  return file;
+    itsResolution = static_cast<unsigned long>(kFloatMissing);
+    itsXNumber = static_cast<unsigned long>(kFloatMissing);
+    itsYNumber = static_cast<unsigned long>(kFloatMissing);
+
+    // We trust everything to be version 6 or 7 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file >> itsResolution;
+      file >> itsXNumber;
+      file >> itsYNumber;
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

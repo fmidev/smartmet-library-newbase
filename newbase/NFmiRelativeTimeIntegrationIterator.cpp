@@ -16,6 +16,7 @@
 
 #include "NFmiDataModifier.h"
 #include "NFmiQueryInfo.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -49,13 +50,21 @@ NFmiRelativeTimeIntegrationIterator::NFmiRelativeTimeIntegrationIterator(NFmiQue
 
 void NFmiRelativeTimeIntegrationIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
-
-  theDataModifier->Clear();
-
-  for (int step = itsStartShift; step < itsStepnumber + itsStartShift; step++)
+  try
   {
-    theDataModifier->Calculate(itsData->PeekTimeValue(-step));
+    if (!theDataModifier)
+      return;
+
+    theDataModifier->Clear();
+
+    for (int step = itsStartShift; step < itsStepnumber + itsStartShift; step++)
+    {
+      theDataModifier->Calculate(itsData->PeekTimeValue(-step));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -93,12 +102,20 @@ NFmiRelativeTimeIntegrationIterator2::NFmiRelativeTimeIntegrationIterator2(NFmiQ
 
 void NFmiRelativeTimeIntegrationIterator2::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
-
-  theDataModifier->Clear();
-
-  for (int i = itsStartShift; i < itsStepnumber + itsStartShift; i++)
+  try
   {
-    theDataModifier->Calculate(itsData->PeekTimeValue(i));
+    if (!theDataModifier)
+      return;
+
+    theDataModifier->Clear();
+
+    for (int i = itsStartShift; i < itsStepnumber + itsStartShift; i++)
+    {
+      theDataModifier->Calculate(itsData->PeekTimeValue(i));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }

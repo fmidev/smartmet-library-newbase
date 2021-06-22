@@ -6,7 +6,7 @@
 // ======================================================================
 
 #include "NFmiTimeBag.h"
-
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -24,39 +24,59 @@ using namespace std;
 
 unsigned long NFmiTimeBag::GetSize() const
 {
-  if (itsResolution.IsDate())
+  try
   {
-    if (itsResolution.Year())
-      return (itsLastTime.GetYear() - itsFirstTime.GetYear()) / itsResolution.Year() + 1;
-    // Esim (1997 - 1927) / 5 = 4
-
-    if (itsResolution.Month())
+    if (itsResolution.IsDate())
     {
-      return (itsLastTime.GetYear() - itsFirstTime.GetYear()) * 12 +
-                         ((itsLastTime.GetMonth() - itsFirstTime.GetMonth())) <
-                     0
-                 ? (12 - (itsLastTime.GetMonth() - itsFirstTime.GetMonth())) /
-                           itsResolution.Month() +
-                       1
-                 : (itsLastTime.GetMonth() - itsFirstTime.GetMonth()) / itsResolution.Month() + 1;
+      if (itsResolution.Year())
+        return (itsLastTime.GetYear() - itsFirstTime.GetYear()) / itsResolution.Year() + 1;
+      // Esim (1997 - 1927) / 5 = 4
+
+      if (itsResolution.Month())
+      {
+        return (itsLastTime.GetYear() - itsFirstTime.GetYear()) * 12 +
+                           ((itsLastTime.GetMonth() - itsFirstTime.GetMonth())) <
+                       0
+                   ? (12 - (itsLastTime.GetMonth() - itsFirstTime.GetMonth())) /
+                             itsResolution.Month() +
+                         1
+                   : (itsLastTime.GetMonth() - itsFirstTime.GetMonth()) / itsResolution.Month() + 1;
+      }
+      // Esim (1997 - 1995) * 12 + (10 - 2 < 0) ? 12-(10-2) : 10-2
+      //
+      //		last   first         l    f
+
+      if (itsResolution.Day())
+        return itsLastTime.DifferenceInDays(itsFirstTime) / itsResolution.Day() + 1;
     }
-    // Esim (1997 - 1995) * 12 + (10 - 2 < 0) ? 12-(10-2) : 10-2
-    //
-    //		last   first         l    f
 
-    if (itsResolution.Day())
-      return itsLastTime.DifferenceInDays(itsFirstTime) / itsResolution.Day() + 1;
+    if (!itsResolution)
+      return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
+    // throw Fmi::Exception(BCP,"NFmiTimeBag::GetSize() itsResolution = 0 ");
+
+    if (itsFirstTime <= itsLastTime)
+      return (itsLastTime.DifferenceInMinutes(itsFirstTime) / itsResolution) + 1;
+
+    return 0;
   }
-
-  if (!itsResolution) return 1;  // 28.5.1998/Vili, oli 0 mutta muutin 1, oletuskoko on aina 1
-  // throw runtime_error("NFmiTimeBag::GetSize() itsResolution = 0 ");
-
-  if (itsFirstTime <= itsLastTime)
-    return (itsLastTime.DifferenceInMinutes(itsFirstTime) / itsResolution) + 1;
-  return 0;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-bool NFmiTimeBag::IsEmpty() const { return NFmiSize::GetSize() == 0; }
+bool NFmiTimeBag::IsEmpty() const
+{
+  try
+  {
+    return NFmiSize::GetSize() == 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theBag This-otus ja theBag yhdistetään halutulla tavalla.
@@ -74,25 +94,32 @@ const NFmiTimeBag NFmiTimeBag::Combine(const NFmiTimeBag &theBag,
                                        int theStartTimeFunction,
                                        int theEndTimeFunction)
 {
-  NFmiMetTime startTime;
-  if (theStartTimeFunction == 0)
-    startTime = itsFirstTime < theBag.itsFirstTime ? itsFirstTime : theBag.itsFirstTime;
-  else if (theStartTimeFunction == 1)
-    startTime = itsFirstTime;
-  else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
-    startTime = theBag.itsFirstTime;
+  try
+  {
+    NFmiMetTime startTime;
+    if (theStartTimeFunction == 0)
+      startTime = itsFirstTime < theBag.itsFirstTime ? itsFirstTime : theBag.itsFirstTime;
+    else if (theStartTimeFunction == 1)
+      startTime = itsFirstTime;
+    else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
+      startTime = theBag.itsFirstTime;
 
-  NFmiMetTime endTime;
-  if (theEndTimeFunction == 0)
-    endTime = itsLastTime > theBag.itsLastTime ? itsLastTime : theBag.itsLastTime;
-  else if (theEndTimeFunction == 1)
-    endTime = itsLastTime;
-  else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
-    endTime = theBag.itsLastTime;
+    NFmiMetTime endTime;
+    if (theEndTimeFunction == 0)
+      endTime = itsLastTime > theBag.itsLastTime ? itsLastTime : theBag.itsLastTime;
+    else if (theEndTimeFunction == 1)
+      endTime = itsLastTime;
+    else  // tässä pitäisi olla 2, mutta en jaksa tarkistaa, ettei tarvitse tehdä virhe käsittelyä
+      endTime = theBag.itsLastTime;
 
-  return NFmiTimeBag(startTime,
-                     endTime,
-                     itsResolution < theBag.itsResolution ? itsResolution : theBag.itsResolution);
+    return NFmiTimeBag(startTime,
+                       endTime,
+                       itsResolution < theBag.itsResolution ? itsResolution : theBag.itsResolution);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -103,9 +130,16 @@ const NFmiTimeBag NFmiTimeBag::Combine(const NFmiTimeBag &theBag,
 
 bool NFmiTimeBag::Next()
 {
-  itsCurrentTime.NextMetTime(itsResolution);
-  itsIndex++;
-  return itsCurrentTime <= itsLastTime;
+  try
+  {
+    itsCurrentTime.NextMetTime(itsResolution);
+    itsIndex++;
+    return itsCurrentTime <= itsLastTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -116,9 +150,16 @@ bool NFmiTimeBag::Next()
 
 bool NFmiTimeBag::Previous()
 {
-  itsCurrentTime.PreviousMetTime(itsResolution);
-  itsIndex--;
-  return itsCurrentTime >= itsFirstTime;
+  try
+  {
+    itsCurrentTime.PreviousMetTime(itsResolution);
+    itsIndex--;
+    return itsCurrentTime >= itsFirstTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -129,23 +170,30 @@ bool NFmiTimeBag::Previous()
 
 void NFmiTimeBag::Reset(FmiDirection directionToIter)
 {
-  if (directionToIter == kForward)
+  try
   {
-    itsCurrentTime = itsFirstTime;
-    itsCurrentTime.PreviousMetTime(itsResolution);
-    itsIndex = -1;
-  }
-  else
-  {
-    itsCurrentTime = itsLastTime;
-    itsCurrentTime.NextMetTime(itsResolution);
-    itsIndex = GetSize();
-  }
+    if (directionToIter == kForward)
+    {
+      itsCurrentTime = itsFirstTime;
+      itsCurrentTime.PreviousMetTime(itsResolution);
+      itsIndex = -1;
+    }
+    else
+    {
+      itsCurrentTime = itsLastTime;
+      itsCurrentTime.NextMetTime(itsResolution);
+      itsIndex = GetSize();
+    }
 
-  if (itsResolution != 0)
-    itsSize = GetSize();
-  else
-    itsSize = 0;
+    if (itsResolution != 0)
+      itsSize = GetSize();
+    else
+      itsSize = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -157,23 +205,33 @@ void NFmiTimeBag::Reset(FmiDirection directionToIter)
 
 bool NFmiTimeBag::SetCurrent(const NFmiMetTime &theTime)
 {
-  auto resolutionInMinutes = static_cast<long>(itsResolution);
-  assert(resolutionInMinutes);
-  int diffFromFirstTimeInMinutes = theTime.DifferenceInMinutes(itsFirstTime);
-  if (diffFromFirstTimeInMinutes >= 0 && (diffFromFirstTimeInMinutes % resolutionInMinutes == 0))
-    if (diffFromFirstTimeInMinutes <
-        resolutionInMinutes *
-            static_cast<long>(itsSize))  // tarkistetaan vielä, ettei mene yli lastTimen
+  try
+  {
+    auto resolutionInMinutes = static_cast<long>(itsResolution);
+    assert(resolutionInMinutes);
+    int diffFromFirstTimeInMinutes = theTime.DifferenceInMinutes(itsFirstTime);
+    if (diffFromFirstTimeInMinutes >= 0 && (diffFromFirstTimeInMinutes % resolutionInMinutes == 0))
     {
-      itsCurrentTime = itsFirstTime;
-      if (diffFromFirstTimeInMinutes)  // pientä optimointia, pitäisi tehdä NFmiTime-luokan
-                                       // ChangeBy???-metodeissa!!!!
-        itsCurrentTime.ChangeByMinutes(diffFromFirstTimeInMinutes);
-      itsIndex = diffFromFirstTimeInMinutes / resolutionInMinutes;
-      return true;
+      if (diffFromFirstTimeInMinutes <
+          resolutionInMinutes *
+              static_cast<long>(itsSize))  // tarkistetaan vielä, ettei mene yli lastTimen
+      {
+        itsCurrentTime = itsFirstTime;
+        if (diffFromFirstTimeInMinutes)  // pientä optimointia, pitäisi tehdä NFmiTime-luokan
+                                         // ChangeBy???-metodeissa!!!!
+          itsCurrentTime.ChangeByMinutes(diffFromFirstTimeInMinutes);
+
+        itsIndex = diffFromFirstTimeInMinutes / resolutionInMinutes;
+        return true;
+      }
     }
-  itsIndex = -1;
-  return false;
+    itsIndex = -1;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -194,16 +252,25 @@ bool NFmiTimeBag::CalcIntersection(const NFmiTimeBag &theBag2,
                                    NFmiTimeBag &refBag,
                                    bool resolOfBag2)
 {
-  NFmiMetTime begTime(itsFirstTime > theBag2.itsFirstTime ? itsFirstTime : theBag2.itsFirstTime);
-  NFmiMetTime endTime(itsLastTime < theBag2.itsLastTime ? itsLastTime : theBag2.itsLastTime);
+  try
+  {
+    NFmiMetTime begTime(itsFirstTime > theBag2.itsFirstTime ? itsFirstTime : theBag2.itsFirstTime);
+    NFmiMetTime endTime(itsLastTime < theBag2.itsLastTime ? itsLastTime : theBag2.itsLastTime);
 
-  if (begTime > endTime) return false;
+    if (begTime > endTime)
+      return false;
 
-  if (resolOfBag2)
-    refBag = NFmiTimeBag(begTime, endTime, theBag2.Resolution());
-  else
-    refBag = NFmiTimeBag(begTime, endTime, itsResolution);
-  return true;
+    if (resolOfBag2)
+      refBag = NFmiTimeBag(begTime, endTime, theBag2.Resolution());
+    else
+      refBag = NFmiTimeBag(begTime, endTime, itsResolution);
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -223,16 +290,23 @@ bool NFmiTimeBag::CalcIntersection(const NFmiTimeBag &theBag2,
 const NFmiTimeBag NFmiTimeBag::GetIntersection(const NFmiMetTime &theStartLimit,
                                                const NFmiMetTime &theEndLimit)
 {
-  if (FindNearestTime(theStartLimit, kForward))
+  try
   {
-    NFmiMetTime startTime(CurrentTime());
-    if (FindNearestTime(theEndLimit, kBackward))
+    if (FindNearestTime(theStartLimit, kForward))
     {
-      NFmiMetTime endTime(CurrentTime());
-      return NFmiTimeBag(startTime, endTime, Resolution());
+      NFmiMetTime startTime(CurrentTime());
+      if (FindNearestTime(theEndLimit, kBackward))
+      {
+        NFmiMetTime endTime(CurrentTime());
+        return NFmiTimeBag(startTime, endTime, Resolution());
+      }
     }
+    return NFmiTimeBag();
   }
-  return NFmiTimeBag();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -244,29 +318,38 @@ const NFmiTimeBag NFmiTimeBag::GetIntersection(const NFmiMetTime &theStartLimit,
 
 bool NFmiTimeBag::SetTime(unsigned long theIndex)
 {
-  if (theIndex < GetSize())
+  try
   {
-    SetCurrentIndex(theIndex);  // NFmiSize asetetaan tällä
-    itsCurrentTime = itsFirstTime;
-    if (theIndex > 0 && itsResolution.IsDate())
+    if (theIndex < GetSize())
     {
-      if (itsResolution.Year())
-        itsCurrentTime.SetYear(
-            static_cast<short>(itsCurrentTime.GetYear() + (theIndex * itsResolution.Year())));
-      if (itsResolution.Month())
-        throw runtime_error("NFmiTimeBag::SetTime: Kuukausi resoluutiossa ei toimi vielä.");
-      //	itsCurrentTime.ChangeByMonth(theIndex * itsResolution.Month()); // TEE
-      // ChangeByMonth-metodi!!!!
-      if (itsResolution.Day()) itsCurrentTime.ChangeByDays(theIndex * itsResolution.Day());
-      return true;
+      SetCurrentIndex(theIndex);  // NFmiSize asetetaan tällä
+      itsCurrentTime = itsFirstTime;
+      if (theIndex > 0 && itsResolution.IsDate())
+      {
+        if (itsResolution.Year())
+          itsCurrentTime.SetYear(
+              static_cast<short>(itsCurrentTime.GetYear() + (theIndex * itsResolution.Year())));
+        if (itsResolution.Month())
+          throw Fmi::Exception(BCP, "NFmiTimeBag::SetTime: Kuukausi resoluutiossa ei toimi vielä.");
+        //	itsCurrentTime.ChangeByMonth(theIndex * itsResolution.Month()); // TEE
+        // ChangeByMonth-metodi!!!!
+        if (itsResolution.Day())
+          itsCurrentTime.ChangeByDays(theIndex * itsResolution.Day());
+
+        return true;
+      }
+      else
+      {
+        itsCurrentTime.ChangeByMinutes(theIndex * itsResolution);
+        return true;
+      }
     }
-    else
-    {
-      itsCurrentTime.ChangeByMinutes(theIndex * itsResolution);
-      return true;
-    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -278,10 +361,17 @@ bool NFmiTimeBag::SetTime(unsigned long theIndex)
 
 bool NFmiTimeBag::IsInside(const NFmiMetTime &theTime) const
 {
-  if (theTime >= itsFirstTime && theTime <= itsLastTime)
-    return true;
-  else
+  try
+  {
+    if (theTime >= itsFirstTime && theTime <= itsLastTime)
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -292,8 +382,15 @@ bool NFmiTimeBag::IsInside(const NFmiMetTime &theTime) const
 
 void NFmiTimeBag::MoveByMinutes(long minutes)
 {
-  itsFirstTime.ChangeByMinutes(minutes);
-  itsLastTime.ChangeByMinutes(minutes);
+  try
+  {
+    itsFirstTime.ChangeByMinutes(minutes);
+    itsLastTime.ChangeByMinutes(minutes);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -320,71 +417,80 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
                                   FmiDirection theDirection,
                                   unsigned long theTimeRangeInMinutes)
 {
-  bool noTimeRange = (theTimeRangeInMinutes == kUnsignedLongMissing);
-  Reset();
-  if (IsInside(theTime))
+  try
   {
-    while (Next())
+    bool noTimeRange = (theTimeRangeInMinutes == kUnsignedLongMissing);
+    Reset();
+    if (IsInside(theTime))
     {
-      if (CurrentTime() == theTime) return true;
-      if (CurrentTime() > theTime)
+      while (Next())
       {
-        if (theDirection == kForward)
-          return (noTimeRange || CurrentTime().DifferenceInMinutes(theTime) <=
-                                     static_cast<long>(theTimeRangeInMinutes));
-        if (theDirection == kBackward)
+        if (CurrentTime() == theTime)
+          return true;
+        if (CurrentTime() > theTime)
         {
+          if (theDirection == kForward)
+            return (noTimeRange || CurrentTime().DifferenceInMinutes(theTime) <=
+                                       static_cast<long>(theTimeRangeInMinutes));
+          if (theDirection == kBackward)
+          {
+            Previous();
+            return (noTimeRange || theTime.DifferenceInMinutes(CurrentTime()) <=
+                                       static_cast<long>(theTimeRangeInMinutes));
+          }
+          // finds the nearest time to theTime (e.g. theDirection == kCenter)
+          long deltaT2 = CurrentTime().DifferenceInMinutes(theTime);
           Previous();
-          return (noTimeRange || theTime.DifferenceInMinutes(CurrentTime()) <=
-                                     static_cast<long>(theTimeRangeInMinutes));
+          long deltaT1 = theTime.DifferenceInMinutes(CurrentTime());
+          if (deltaT1 <= deltaT2)
+            return (noTimeRange || deltaT1 <= static_cast<long>(theTimeRangeInMinutes));
+          Next();
+          return (noTimeRange || deltaT2 <= static_cast<long>(theTimeRangeInMinutes));
         }
-        // finds the nearest time to theTime (e.g. theDirection == kCenter)
-        long deltaT2 = CurrentTime().DifferenceInMinutes(theTime);
-        Previous();
-        long deltaT1 = theTime.DifferenceInMinutes(CurrentTime());
-        if (deltaT1 <= deltaT2)
-          return (noTimeRange || deltaT1 <= static_cast<long>(theTimeRangeInMinutes));
-        Next();
-        return (noTimeRange || deltaT2 <= static_cast<long>(theTimeRangeInMinutes));
       }
     }
-  }
 
-  // theTime wasn't inside of this timebag
+    // theTime wasn't inside of this timebag
 
-  bool timeIsLeftFromTimeBag = (theTime < FirstTime());
-  Reset();
-  if (theDirection == kBackward)
-  {
-    if (!timeIsLeftFromTimeBag)
+    bool timeIsLeftFromTimeBag = (theTime < FirstTime());
+    Reset();
+    if (theDirection == kBackward)
     {
-      Reset(kBackward);
-      Previous();
+      if (!timeIsLeftFromTimeBag)
+      {
+        Reset(kBackward);
+        Previous();
+      }
+      else
+        return false;
     }
-    else
-      return false;
-  }
-  else if (theDirection == kForward)
-  {
-    if (timeIsLeftFromTimeBag)
-      Next();
-    else
-      return false;
-  }
-  else  // if(theDirection == kCenter) // seeks the nearest time to theTime
-  {
-    if (!timeIsLeftFromTimeBag)
+    else if (theDirection == kForward)
     {
-      Reset(kBackward);
-      Previous();
+      if (timeIsLeftFromTimeBag)
+        Next();
+      else
+        return false;
     }
-    else       // if(timeIsLeftFromTimeBag)
-      Next();  // the first time of this timebag
+    else  // if(theDirection == kCenter) // seeks the nearest time to theTime
+    {
+      if (!timeIsLeftFromTimeBag)
+      {
+        Reset(kBackward);
+        Previous();
+      }
+      else       // if(timeIsLeftFromTimeBag)
+        Next();  // the first time of this timebag
+    }
+    if (noTimeRange || labs(theTime.DifferenceInMinutes(CurrentTime())) <=
+                           static_cast<long>(theTimeRangeInMinutes))
+      return true;
+
+    return false;
   }
-  if (noTimeRange ||
-      labs(theTime.DifferenceInMinutes(CurrentTime())) <= static_cast<long>(theTimeRangeInMinutes))
-    return true;
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -396,14 +502,21 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
 
 NFmiTimeBag &NFmiTimeBag::operator=(const NFmiTimeBag &theBag)
 {
-  NFmiSize::operator=(*(static_cast<const NFmiSize *>(&theBag)));
+  try
+  {
+    NFmiSize::operator=(*(static_cast<const NFmiSize *>(&theBag)));
 
-  itsFirstTime = theBag.itsFirstTime;
-  itsCurrentTime = theBag.itsCurrentTime;
-  itsLastTime = theBag.itsLastTime;
-  itsResolution = theBag.itsResolution;
+    itsFirstTime = theBag.itsFirstTime;
+    itsCurrentTime = theBag.itsCurrentTime;
+    itsLastTime = theBag.itsLastTime;
+    itsResolution = theBag.itsResolution;
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -415,11 +528,18 @@ NFmiTimeBag &NFmiTimeBag::operator=(const NFmiTimeBag &theBag)
 
 bool NFmiTimeBag::operator==(const NFmiTimeBag &theTimeBag) const
 {
-  if (itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
-      itsResolution == theTimeBag.itsResolution)
-    return true;
-  else
+  try
+  {
+    if (itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
+        itsResolution == theTimeBag.itsResolution)
+      return true;
+
     return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -431,21 +551,28 @@ bool NFmiTimeBag::operator==(const NFmiTimeBag &theTimeBag) const
 
 std::ostream &NFmiTimeBag::Write(std::ostream &file) const
 {
-  file << itsFirstTime.GetYear() << " " << itsFirstTime.GetMonth() << " " << itsFirstTime.GetDay()
-       << " " << itsFirstTime.GetHour() << " " << itsFirstTime.GetMin() << " "
-       << itsFirstTime.GetSec() << std::endl;
+  try
+  {
+    file << itsFirstTime.GetYear() << " " << itsFirstTime.GetMonth() << " " << itsFirstTime.GetDay()
+         << " " << itsFirstTime.GetHour() << " " << itsFirstTime.GetMin() << " "
+         << itsFirstTime.GetSec() << std::endl;
 
-  file << itsLastTime.GetYear() << " " << itsLastTime.GetMonth() << " " << itsLastTime.GetDay()
-       << " " << itsLastTime.GetHour() << " " << itsLastTime.GetMin() << " " << itsLastTime.GetSec()
-       << std::endl;
+    file << itsLastTime.GetYear() << " " << itsLastTime.GetMonth() << " " << itsLastTime.GetDay()
+         << " " << itsLastTime.GetHour() << " " << itsLastTime.GetMin() << " "
+         << itsLastTime.GetSec() << std::endl;
 
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
-    file << itsResolution;
-  else
-    file << static_cast<long>(itsResolution) << std::endl;
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+      file << itsResolution;
+    else
+      file << static_cast<long>(itsResolution) << std::endl;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -457,37 +584,44 @@ std::ostream &NFmiTimeBag::Write(std::ostream &file) const
 
 std::istream &NFmiTimeBag::Read(std::istream &file)
 {
-  short year, month, day, hour, min, sec;
-
-  file >> year >> month >> day >> hour >> min >> sec;
-  itsFirstTime = NFmiMetTime(year, month, day, hour, min, sec, 1);
-
-  file >> year >> month >> day >> hour >> min >> sec;
-  itsLastTime = NFmiMetTime(year, month, day, hour, min, sec, 1);
-
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file >> itsResolution;
+    short year, month, day, hour, min, sec;
+
+    file >> year >> month >> day >> hour >> min >> sec;
+    itsFirstTime = NFmiMetTime(year, month, day, hour, min, sec, 1);
+
+    file >> year >> month >> day >> hour >> min >> sec;
+    itsLastTime = NFmiMetTime(year, month, day, hour, min, sec, 1);
+
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file >> itsResolution;
+    }
+    else
+    {
+      long theResolution;
+      file >> theResolution;
+      itsResolution = theResolution;
+    }
+
+    // Safety checks against bad resolutions since they may cause segmentation faults
+    // in other places where the resolution is assumed to be correct.
+
+    long mins = itsResolution;
+    long periodlength = itsLastTime.DifferenceInMinutes(itsFirstTime);
+
+    if (periodlength != 0 && periodlength % mins != 0)
+      throw Fmi::Exception(BCP, "Invalid time resolution in NFmiTimeBag");
+
+    Reset();
+    return file;
   }
-  else
+  catch (...)
   {
-    long theResolution;
-    file >> theResolution;
-    itsResolution = theResolution;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // Safety checks against bad resolutions since they may cause segmentation faults
-  // in other places where the resolution is assumed to be correct.
-
-  long mins = itsResolution;
-  long periodlength = itsLastTime.DifferenceInMinutes(itsFirstTime);
-
-  if (periodlength != 0 && periodlength % mins != 0)
-    throw std::runtime_error("Invalid time resolution in NFmiTimeBag");
-
-  Reset();
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -500,20 +634,27 @@ std::istream &NFmiTimeBag::Read(std::istream &file)
 
 void NFmiTimeBag::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 {
-  if (static_cast<int>(GetSize()) > theMaxTimeCount)
+  try
   {
-    if (fFromEnd)
+    if (static_cast<int>(GetSize()) > theMaxTimeCount)
     {
-      NFmiMetTime tmpTime(itsFirstTime);
-      tmpTime.ChangeByMinutes(itsResolution * (theMaxTimeCount - 1));
-      itsLastTime = tmpTime;
+      if (fFromEnd)
+      {
+        NFmiMetTime tmpTime(itsFirstTime);
+        tmpTime.ChangeByMinutes(itsResolution * (theMaxTimeCount - 1));
+        itsLastTime = tmpTime;
+      }
+      else
+      {
+        NFmiMetTime tmpTime(itsLastTime);
+        tmpTime.ChangeByMinutes(-itsResolution * (theMaxTimeCount - 1));
+        itsFirstTime = tmpTime;
+      }
     }
-    else
-    {
-      NFmiMetTime tmpTime(itsLastTime);
-      tmpTime.ChangeByMinutes(-itsResolution * (theMaxTimeCount - 1));
-      itsFirstTime = tmpTime;
-    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -529,7 +670,14 @@ void NFmiTimeBag::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 
 void NFmiTimeBag::SetNewStartTime(const NFmiMetTime &theTime)
 {
-  long moveInMinutes = theTime.DifferenceInMinutes(itsFirstTime);
-  MoveByMinutes(moveInMinutes);
-  SetCurrent(theTime);
+  try
+  {
+    long moveInMinutes = theTime.DifferenceInMinutes(itsFirstTime);
+    MoveByMinutes(moveInMinutes);
+    SetCurrent(theTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

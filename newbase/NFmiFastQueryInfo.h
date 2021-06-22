@@ -9,7 +9,6 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
-
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 #include <gis/CoordinateMatrix.h>
@@ -111,6 +110,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiPoint LatLon(unsigned long index) const;
 
   NFmiPoint RelativePoint() const;
+
   const NFmiLevel *Level() const;
   FmiLevelType LevelType() const;
   NFmiProducer *Producer();
@@ -310,6 +310,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   float FastPressureLevelValue(double xInd, double yInd, double tInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd);
+
   static NFmiDataMatrix<float> CalcCrossSectionLeveldata(NFmiFastQueryInfo &theInfo,
                                                          const std::vector<NFmiPoint> &thePoints,
                                                          const NFmiMetTime &theTime);
@@ -543,6 +544,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                                                     const NFmiDataMatrix<float> &heightMatrix,
                                                     const NFmiDataMatrix<float> &lapseRateMatrix,
                                                     const NFmiDataMatrix<float> &maskMatrix);
+
   float GetCurrentLevelPressure();
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon);
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon, const NFmiMetTime &theTime);
@@ -712,7 +714,11 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsSubParamUsed() const { return fUseSubParam; }
+inline bool NFmiFastQueryInfo::IsSubParamUsed() const
+{
+  return fUseSubParam;
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
@@ -742,14 +748,22 @@ inline void NFmiFastQueryInfo::ResetLocation()
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetLevel() { itsLevelIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetLevel()
+{
+  itsLevelIndex = static_cast<unsigned long>(-1);
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiFastQueryInfo::ResetTime() { itsTimeIndex = static_cast<unsigned long>(-1); }
+inline void NFmiFastQueryInfo::ResetTime()
+{
+  itsTimeIndex = static_cast<unsigned long>(-1);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -955,63 +969,99 @@ inline bool NFmiFastQueryInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::ParamIndex() const { return itsParamIndex; }
+inline unsigned long NFmiFastQueryInfo::ParamIndex() const
+{
+  return itsParamIndex;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LocationIndex() const { return itsLocationIndex; }
+inline unsigned long NFmiFastQueryInfo::LocationIndex() const
+{
+  return itsLocationIndex;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::LevelIndex() const { return itsLevelIndex; }
+inline unsigned long NFmiFastQueryInfo::LevelIndex() const
+{
+  return itsLevelIndex;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::TimeIndex() const { return itsTimeIndex; }
+inline unsigned long NFmiFastQueryInfo::TimeIndex() const
+{
+  return itsTimeIndex;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeParams() const { return itsParamSize; }
+inline unsigned long NFmiFastQueryInfo::SizeParams() const
+{
+  return itsParamSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLocations() const { return itsLocationSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLocations() const
+{
+  return itsLocationSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeLevels() const { return itsLevelSize; }
+inline unsigned long NFmiFastQueryInfo::SizeLevels() const
+{
+  return itsLevelSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiFastQueryInfo::SizeTimes() const { return itsTimeSize; }
+inline unsigned long NFmiFastQueryInfo::SizeTimes() const
+{
+  return itsTimeSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsParamUsable() const { return itsParamIndex < itsParamSize; }
+inline bool NFmiFastQueryInfo::IsParamUsable() const
+{
+  return itsParamIndex < itsParamSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1029,14 +1079,22 @@ inline bool NFmiFastQueryInfo::IsLocationUsable() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsLevelUsable() const { return itsLevelIndex < itsLevelSize; }
+inline bool NFmiFastQueryInfo::IsLevelUsable() const
+{
+  return itsLevelIndex < itsLevelSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiFastQueryInfo::IsTimeUsable() const { return itsTimeIndex < itsTimeSize; }
+inline bool NFmiFastQueryInfo::IsTimeUsable() const
+{
+  return itsTimeIndex < itsTimeSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1057,18 +1115,21 @@ inline unsigned long NFmiFastQueryInfo::TimeResolution()
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiFastQueryInfo::WorldXY() const { return WorldXY(itsLocationIndex); }
+inline NFmiPoint NFmiFastQueryInfo::WorldXY() const
+{
+  return WorldXY(itsLocationIndex);
+}
 
 // ----------------------------------------------------------------------
 /*!
- * Palauttaa nykyisen indeksin koordinaatit. Koordinaatticache sijaitsee
- * QueryData-luokan cachessa
- *
- * \return Nykyisen pisteen koordinaatit
+ * \brief Return current Latlon coordinate
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiFastQueryInfo::LatLon() const { return LatLon(itsLocationIndex); }
+inline NFmiPoint NFmiFastQueryInfo::LatLon() const
+{
+  return LatLon(itsLocationIndex);
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -1078,28 +1139,19 @@ inline NFmiPoint NFmiFastQueryInfo::LatLon() const { return LatLon(itsLocationIn
 
 inline unsigned long NFmiFastQueryInfo::PeekLocationIndex(int theXOffset, int theYOffset) const
 {
-  unsigned long theHPlaceIndex = itsLocationIndex;
+  if (!IsGrid())
+    return itsLocationIndex + theXOffset;
 
-  if (IsGrid())
-  {
-    long currentXIndex = (theHPlaceIndex % itsGridXNumber) + theXOffset;
-    long currentYIndex = (theHPlaceIndex / itsGridXNumber) + theYOffset;
+  long currentXIndex = (itsLocationIndex % itsGridXNumber) + theXOffset;
+  long currentYIndex = (itsLocationIndex / itsGridXNumber) + theYOffset;
 
-    // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi tarkistetaan kuitenkin
-    // Index-metodissa??
-    if (currentXIndex >= 0 &&
-        currentXIndex <
-            int(itsGridXNumber) &&  // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
-        currentYIndex >= 0 &&
-        currentYIndex < int(itsGridYNumber))
-      theHPlaceIndex = theHPlaceIndex + theYOffset * itsGridXNumber + theXOffset;
-    else
-      theHPlaceIndex = static_cast<unsigned long>(-1);
-  }
-  else
-    theHPlaceIndex = theHPlaceIndex + theXOffset;
+  // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi tarkistetaan kuitenkin
+  // Index-metodissa?? x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
+  if (currentXIndex >= 0 && currentXIndex < static_cast<long>(itsGridXNumber) &&
+      currentYIndex >= 0 && currentYIndex < static_cast<long>(itsGridYNumber))
+    return itsLocationIndex + theYOffset * itsGridXNumber + theXOffset;
 
-  return theHPlaceIndex;
+  return static_cast<unsigned long>(-1);
 }
 
 // ----------------------------------------------------------------------
@@ -1111,5 +1163,3 @@ inline const Fmi::SpatialReference &NFmiFastQueryInfo::SpatialReference() const
 {
   return itsHPlaceDescriptor->SpatialReference();
 }
-
-// ======================================================================

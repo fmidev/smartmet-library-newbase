@@ -18,6 +18,7 @@
 #include "NFmiTimeBag.h"
 #include "NFmiTimeList.h"
 #include "NFmiVersion.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -25,7 +26,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiTimeDescriptor::~NFmiTimeDescriptor() { Destroy(); }
+NFmiTimeDescriptor::~NFmiTimeDescriptor()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -43,12 +56,19 @@ NFmiTimeDescriptor::NFmiTimeDescriptor()
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
-  NFmiMetTime timeNow;
-  itsOriginTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
-  itsValidTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
-  itsActivity = new bool[Size()];
-  for (int i = 0; i < static_cast<int>(Size()); i++)
-    itsActivity[i] = true;
+  try
+  {
+    NFmiMetTime timeNow;
+    itsOriginTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
+    itsValidTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
+    itsActivity = new bool[Size()];
+    for (int i = 0; i < static_cast<int>(Size()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -77,10 +97,17 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsActivity(
           new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()])
 {
-  for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
-                                                       : itsTimeList->NumberOfItems());
-       i++)
-    itsActivity[i] = true;
+  try
+  {
+    for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
+                                                         : itsTimeList->NumberOfItems());
+         i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -108,20 +135,27 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
-  if (itsValidTimeBag)
+  try
   {
-    itsActivity =
-        new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()];
-    for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
-                                                         : itsTimeList->NumberOfItems());
-         i++)
-      itsActivity[i] = true;
+    if (itsValidTimeBag)
+    {
+      itsActivity =
+          new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()];
+      for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
+                                                           : itsTimeList->NumberOfItems());
+           i++)
+        itsActivity[i] = true;
+    }
+    else if (itsTimeList)
+    {
+      itsActivity = new bool[itsTimeList->NumberOfItems()];
+      for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
+        itsActivity[i] = true;
+    }
   }
-  else if (itsTimeList)
+  catch (...)
   {
-    itsActivity = new bool[itsTimeList->NumberOfItems()];
-    for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
-      itsActivity[i] = true;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -146,8 +180,15 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag,
       itsLocalTimeStep(0),
       itsActivity(new bool[itsOriginTimeBag->GetSize()])
 {
-  for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
-    itsActivity[i] = true;
+  try
+  {
+    for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -169,11 +210,18 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag,
       itsLocalTimeStep(0),
       itsActivity(new bool[itsOriginTimeBag->GetSize()])
 {
-  NFmiMetTime firstTime = itsOriginTimeBag->FirstTime();
-  firstTime.NextMetTime(static_cast<short>(theForecastPeriod * 60));
-  itsValidTimeBag = new NFmiTimeBag(firstTime, firstTime, 0);
-  for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
-    itsActivity[i] = true;
+  try
+  {
+    NFmiMetTime firstTime = itsOriginTimeBag->FirstTime();
+    firstTime.NextMetTime(static_cast<short>(theForecastPeriod * 60));
+    itsValidTimeBag = new NFmiTimeBag(firstTime, firstTime, 0);
+    for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -199,20 +247,27 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
-  NFmiMetTime theStartTime(theOriginTime);
-  theStartTime.ChangeByHours(static_cast<short>(theForecastPeriodMin));
-  theStartTime.SetTimeStep(30);
-  NFmiMetTime theEndTime(theStartTime);
-  theEndTime.ChangeByHours(static_cast<short>(theForecastPeriodMax));
+  try
+  {
+    NFmiMetTime theStartTime(theOriginTime);
+    theStartTime.ChangeByHours(static_cast<short>(theForecastPeriodMin));
+    theStartTime.SetTimeStep(30);
+    NFmiMetTime theEndTime(theStartTime);
+    theEndTime.ChangeByHours(static_cast<short>(theForecastPeriodMax));
 
-  itsValidTimeBag = new NFmiTimeBag(theStartTime, theEndTime, 30);
+    itsValidTimeBag = new NFmiTimeBag(theStartTime, theEndTime, 30);
 
-  itsActivity =
-      new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()];
-  for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
-                                                       : itsTimeList->NumberOfItems());
-       i++)
-    itsActivity[i] = true;
+    itsActivity =
+        new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()];
+    for (int i = 0; i < static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
+                                                         : itsTimeList->NumberOfItems());
+         i++)
+      itsActivity[i] = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -240,15 +295,22 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor &theTimeDescript
       itsLocalTimeStep(theTimeDescriptor.itsLocalTimeStep),
       itsActivity(nullptr)
 {
-  unsigned long theSize = 0;
-  if (itsValidTimeBag != nullptr)
-    theSize = itsValidTimeBag->GetSize();
-  else if (itsTimeList != nullptr)
-    theSize = itsTimeList->NumberOfItems();
+  try
+  {
+    unsigned long theSize = 0;
+    if (itsValidTimeBag != nullptr)
+      theSize = itsValidTimeBag->GetSize();
+    else if (itsTimeList != nullptr)
+      theSize = itsTimeList->NumberOfItems();
 
-  itsActivity = new bool[theSize];
-  for (int i = 0; i < static_cast<int>(theSize); i++)
-    itsActivity[i] = theTimeDescriptor.itsActivity[i];
+    itsActivity = new bool[theSize];
+    for (int i = 0; i < static_cast<int>(theSize); i++)
+      itsActivity[i] = theTimeDescriptor.itsActivity[i];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -259,25 +321,32 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor &theTimeDescript
 
 void NFmiTimeDescriptor::Destroy()
 {
-  if (itsValidTimeBag)
+  try
   {
-    delete itsValidTimeBag;
-    itsValidTimeBag = nullptr;
+    if (itsValidTimeBag)
+    {
+      delete itsValidTimeBag;
+      itsValidTimeBag = nullptr;
+    }
+    if (itsTimeList)
+    {
+      delete itsTimeList;
+      itsTimeList = nullptr;
+    }
+    if (itsOriginTimeBag)
+    {
+      delete itsOriginTimeBag;
+      itsOriginTimeBag = nullptr;
+    }
+    if (itsActivity)
+    {
+      delete[] itsActivity;
+      itsActivity = nullptr;
+    }
   }
-  if (itsTimeList)
+  catch (...)
   {
-    delete itsTimeList;
-    itsTimeList = nullptr;
-  }
-  if (itsOriginTimeBag)
-  {
-    delete itsOriginTimeBag;
-    itsOriginTimeBag = nullptr;
-  }
-  if (itsActivity)
-  {
-    delete[] itsActivity;
-    itsActivity = nullptr;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -289,39 +358,46 @@ void NFmiTimeDescriptor::Destroy()
 
 void NFmiTimeDescriptor::ExtendTimeBag()
 {
-  NFmiMetTime theFirstTime(itsValidTimeBag->FirstTime());
-  NFmiMetTime theLastTime(itsValidTimeBag->LastTime());
-  unsigned long theResolution = !itsLocalTimeStep
-                                    ? static_cast<unsigned long>(itsValidTimeBag->Resolution())
-                                    : itsLocalTimeStep;
-  ;
+  try
+  {
+    NFmiMetTime theFirstTime(itsValidTimeBag->FirstTime());
+    NFmiMetTime theLastTime(itsValidTimeBag->LastTime());
+    unsigned long theResolution = !itsLocalTimeStep
+                                      ? static_cast<unsigned long>(itsValidTimeBag->Resolution())
+                                      : itsLocalTimeStep;
+    ;
 
-  theFirstTime.ChangeByHours(-12);
-  theFirstTime.SetTimeStep(
-      static_cast<short>(theResolution));  // Siirtää ajan lähimmäksi UTC-lokeroksi
-  theLastTime.ChangeByHours(12);
-  theLastTime.SetTimeStep(static_cast<short>(theResolution));
+    theFirstTime.ChangeByHours(-12);
+    theFirstTime.SetTimeStep(
+        static_cast<short>(theResolution));  // Siirtää ajan lähimmäksi UTC-lokeroksi
+    theLastTime.ChangeByHours(12);
+    theLastTime.SetTimeStep(static_cast<short>(theResolution));
 
-  delete itsValidTimeBag;
-  itsValidTimeBag = new NFmiTimeBag(theFirstTime, theLastTime, theResolution);
+    delete itsValidTimeBag;
+    itsValidTimeBag = new NFmiTimeBag(theFirstTime, theLastTime, theResolution);
 
-  delete[] itsActivity;
-  itsActivity = new bool[itsValidTimeBag->GetSize()];
+    delete[] itsActivity;
+    itsActivity = new bool[itsValidTimeBag->GetSize()];
 
-  int i;
-  // All
-  for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
-    itsActivity[i] = true;
+    int i;
+    // All
+    for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+      itsActivity[i] = true;
 
-  // Start
-  for (i = 0; i < static_cast<int>((12 * 60) / theResolution); i++)
-    itsActivity[i] = false;
+    // Start
+    for (i = 0; i < static_cast<int>((12 * 60) / theResolution); i++)
+      itsActivity[i] = false;
 
-  // End
-  for (i = itsValidTimeBag->GetSize() - (12 * 60) / theResolution;
-       i < static_cast<int>(itsValidTimeBag->GetSize());
-       i++)
-    itsActivity[i] = false;
+    // End
+    for (i = itsValidTimeBag->GetSize() - (12 * 60) / theResolution;
+         i < static_cast<int>(itsValidTimeBag->GetSize());
+         i++)
+      itsActivity[i] = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -332,33 +408,40 @@ void NFmiTimeDescriptor::ExtendTimeBag()
 
 void NFmiTimeDescriptor::ReduseTimeBag()
 {
-  NFmiMetTime theFirstTime(itsValidTimeBag->FirstTime());
-  NFmiMetTime theLastTime(itsValidTimeBag->LastTime());
-  unsigned long theResolution = itsValidTimeBag->Resolution();
+  try
+  {
+    NFmiMetTime theFirstTime(itsValidTimeBag->FirstTime());
+    NFmiMetTime theLastTime(itsValidTimeBag->LastTime());
+    unsigned long theResolution = itsValidTimeBag->Resolution();
 
-  theFirstTime.ChangeByHours(+12);
-  theLastTime.ChangeByHours(-12);
+    theFirstTime.ChangeByHours(+12);
+    theLastTime.ChangeByHours(-12);
 
-  delete itsValidTimeBag;
-  itsValidTimeBag = new NFmiTimeBag(theFirstTime, theLastTime, theResolution);
+    delete itsValidTimeBag;
+    itsValidTimeBag = new NFmiTimeBag(theFirstTime, theLastTime, theResolution);
 
-  delete[] itsActivity;
-  itsActivity = new bool[itsValidTimeBag->GetSize()];
+    delete[] itsActivity;
+    itsActivity = new bool[itsValidTimeBag->GetSize()];
 
-  int i;
-  // All
-  for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
-    itsActivity[i] = true;
+    int i;
+    // All
+    for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+      itsActivity[i] = true;
 
-  // Start
-  for (i = 0; i < static_cast<int>((12 * 60) / theResolution); i++)
-    itsActivity[i] = false;
+    // Start
+    for (i = 0; i < static_cast<int>((12 * 60) / theResolution); i++)
+      itsActivity[i] = false;
 
-  // End
-  for (i = itsValidTimeBag->GetSize() - (12 * 60) / theResolution;
-       i < static_cast<int>(itsValidTimeBag->GetSize());
-       i++)
-    itsActivity[i] = false;
+    // End
+    for (i = itsValidTimeBag->GetSize() - (12 * 60) / theResolution;
+         i < static_cast<int>(itsValidTimeBag->GetSize());
+         i++)
+      itsActivity[i] = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -369,19 +452,27 @@ void NFmiTimeDescriptor::ReduseTimeBag()
 
 void NFmiTimeDescriptor::Reset()
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
+    if (itsTimeBagIdent)
     {
-      if (itsTimeList)
-        itsTimeList->Reset();
-      else
-        itsValidTimeBag->Reset();
+      if (IsValidTime())
+      {
+        if (itsTimeList)
+          itsTimeList->Reset();
+        else
+          itsValidTimeBag->Reset();
+      }
+    }
+    else
+    {
+      if (IsOriginTime())
+        itsOriginTimeBag->Reset();
     }
   }
-  else
+  catch (...)
   {
-    if (IsOriginTime()) itsOriginTimeBag->Reset();
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -393,19 +484,24 @@ void NFmiTimeDescriptor::Reset()
 
 bool NFmiTimeDescriptor::Next()
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return itsTimeList ? itsTimeList->Next() : itsValidTimeBag->Next();
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return itsTimeList ? itsTimeList->Next() : itsValidTimeBag->Next();
+
       return false;
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return (itsOriginTimeBag->Next());
-    else
-      return false;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -417,20 +513,24 @@ bool NFmiTimeDescriptor::Next()
 
 bool NFmiTimeDescriptor::Previous()
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return itsTimeList ? itsTimeList->Previous()
-                         : itsValidTimeBag->Previous();  // Huom TimeList->false
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return itsTimeList ? itsTimeList->Previous()
+                           : itsValidTimeBag->Previous();  // Huom TimeList->false
       return false;
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return (itsOriginTimeBag->Previous());
-    else
-      return false;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -443,16 +543,27 @@ bool NFmiTimeDescriptor::Previous()
 
 bool NFmiTimeDescriptor::Time(const NFmiMetTime &theTime)
 {
-  if (IsValidTime())
+  try
   {
-    if (itsValidTimeBag) return itsValidTimeBag->SetCurrent(theTime);
-    if (itsTimeList) return itsTimeList->Find(theTime);
+    if (IsValidTime())
+    {
+      if (itsValidTimeBag)
+        return itsValidTimeBag->SetCurrent(theTime);
+
+      if (itsTimeList)
+        return itsTimeList->Find(theTime);
+    }
+    else
+    {
+      if (itsOriginTimeBag)
+        return itsOriginTimeBag->SetCurrent(theTime);
+    }
+    return false;  // assert:in paikka, ei saisi mennä tähän ????
   }
-  else
+  catch (...)
   {
-    if (itsOriginTimeBag) return itsOriginTimeBag->SetCurrent(theTime);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return false;  // assert:in paikka, ei saisi mennä tähän ????
 }
 
 // ----------------------------------------------------------------------
@@ -468,12 +579,19 @@ bool NFmiTimeDescriptor::TimeToNearestStep(const NFmiMetTime &theTime,
                                            FmiDirection theDirection,
                                            unsigned long theTimeRangeInMinutes)
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList
-                ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
-                : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
-  else
+  try
+  {
+    if (itsTimeBagIdent)
+      return (itsTimeList
+                  ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
+                  : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
+
     return (itsOriginTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -484,26 +602,47 @@ bool NFmiTimeDescriptor::TimeToNearestStep(const NFmiMetTime &theTime,
 
 const NFmiMetTime &NFmiTimeDescriptor::Time() const
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
-  else
+  try
+  {
+    if (itsTimeBagIdent)
+      return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
+
     return (itsOriginTimeBag->CurrentTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime &NFmiTimeDescriptor::FirstTime() const
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList ? itsTimeList->FirstTime() : itsValidTimeBag->FirstTime());
-  else
+  try
+  {
+    if (itsTimeBagIdent)
+      return (itsTimeList ? itsTimeList->FirstTime() : itsValidTimeBag->FirstTime());
+
     return (itsOriginTimeBag->FirstTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime &NFmiTimeDescriptor::LastTime() const
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList ? itsTimeList->LastTime() : itsValidTimeBag->LastTime());
-  else
+  try
+  {
+    if (itsTimeBagIdent)
+      return (itsTimeList ? itsTimeList->LastTime() : itsValidTimeBag->LastTime());
+
     return (itsOriginTimeBag->LastTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -514,30 +653,44 @@ const NFmiMetTime &NFmiTimeDescriptor::LastTime() const
 
 const NFmiMetTime &NFmiTimeDescriptor::OriginTime() const
 {
-  if (!itsTimeBagIdent)
-    return (itsOriginTimeBag->CurrentTime());
-  else
+  try
+  {
+    if (!itsTimeBagIdent)
+      return (itsOriginTimeBag->CurrentTime());
+
     return (itsOriginTimeBag->FirstTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiTimeDescriptor::OriginTime(const NFmiMetTime &newTime)
 {
-  if (!itsTimeBagIdent)
+  try
   {
-    // en tiedä miten tämä pitäisi oikeasti hoitaa, tätä 'origintimebag' featurea ei ole oikeasti
-    // käytetty.
-    // siirrän kuitenkin koko origintimebagia niin että se alkaa annetusta origintimesta
-    NFmiMetTime lastTime(newTime);
-    lastTime.ChangeByMinutes(
-        itsOriginTimeBag->LastTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime()));
-    *itsOriginTimeBag = NFmiTimeBag(newTime, lastTime, itsOriginTimeBag->Resolution());
-  }
-  else
-  {
-    if (itsOriginTimeBag)
-      *itsOriginTimeBag = NFmiTimeBag(newTime, newTime, newTime.GetTimeStep());
+    if (!itsTimeBagIdent)
+    {
+      // en tiedä miten tämä pitäisi oikeasti hoitaa, tätä 'origintimebag' featurea ei ole oikeasti
+      // käytetty.
+      // siirrän kuitenkin koko origintimebagia niin että se alkaa annetusta origintimesta
+      NFmiMetTime lastTime(newTime);
+      lastTime.ChangeByMinutes(
+          itsOriginTimeBag->LastTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime()));
+      *itsOriginTimeBag = NFmiTimeBag(newTime, lastTime, itsOriginTimeBag->Resolution());
+    }
     else
-      itsOriginTimeBag = new NFmiTimeBag(newTime, newTime, newTime.GetTimeStep());
+    {
+      if (itsOriginTimeBag)
+        *itsOriginTimeBag = NFmiTimeBag(newTime, newTime, newTime.GetTimeStep());
+      else
+        itsOriginTimeBag = new NFmiTimeBag(newTime, newTime, newTime.GetTimeStep());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -553,26 +706,29 @@ void NFmiTimeDescriptor::OriginTime(const NFmiMetTime &newTime)
 
 const NFmiMetTime &NFmiTimeDescriptor::ValidTime() const
 {
-  if (itsTimeBagIdent)
-    return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
-  else
+  try
   {
+    if (itsTimeBagIdent)
+      return (itsTimeList ? *itsTimeList->Current() : itsValidTimeBag->CurrentTime());
+
     if (itsTimeList)
     {
       itsTimeList->Reset();
       itsTimeList->Next();
       return *itsTimeList->Current();
     }
-    else
-    {
-      // Origintimebag systeemejä ei tietääkseni käytetä missään, joten tätä ei ole testattu.
-      // TÄMÄ ei ole thread safetya koodia!!!!
-      static NFmiMetTime dummyTime;
-      dummyTime = itsOriginTimeBag->CurrentTime();
-      dummyTime.NextMetTime(static_cast<short int>(
-          itsValidTimeBag->FirstTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime())));
-      return dummyTime;
-    }
+
+    // Origintimebag systeemejä ei tietääkseni käytetä missään, joten tätä ei ole testattu.
+    // TÄMÄ ei ole thread safetya koodia!!!!
+    static NFmiMetTime dummyTime;
+    dummyTime = itsOriginTimeBag->CurrentTime();
+    dummyTime.NextMetTime(static_cast<short int>(
+        itsValidTimeBag->FirstTime().DifferenceInMinutes(itsOriginTimeBag->FirstTime())));
+    return dummyTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -584,19 +740,24 @@ const NFmiMetTime &NFmiTimeDescriptor::ValidTime() const
 
 unsigned long NFmiTimeDescriptor::Index() const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return (itsTimeList ? itsTimeList->Index() : itsValidTimeBag->CurrentIndex());
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return (itsTimeList ? itsTimeList->Index() : itsValidTimeBag->CurrentIndex());
+
       return static_cast<unsigned long>(-1);
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return (itsOriginTimeBag->CurrentIndex());
-    else
-      return static_cast<unsigned long>(-1);
+
+    return static_cast<unsigned long>(-1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -608,41 +769,57 @@ unsigned long NFmiTimeDescriptor::Index() const
 
 unsigned long NFmiTimeDescriptor::Size() const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
+    if (itsTimeBagIdent)
     {
-      if (itsTimeList != nullptr) return itsTimeList->NumberOfItems();
-      if (itsValidTimeBag != nullptr) return itsValidTimeBag->GetSize();
+      if (IsValidTime())
+      {
+        if (itsTimeList != nullptr)
+          return itsTimeList->NumberOfItems();
+
+        if (itsValidTimeBag != nullptr)
+          return itsValidTimeBag->GetSize();
+      }
+      return static_cast<unsigned long>(0);
     }
-    return static_cast<unsigned long>(0);
-  }
-  else
-  {
+
     if (itsOriginTimeBag && IsOriginTime())
       return (itsOriginTimeBag->GetSize());
-    else
-      return static_cast<unsigned long>(0);
+
+    return static_cast<unsigned long>(0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiTimeDescriptor::IsEmpty() const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
+    if (itsTimeBagIdent)
     {
-      if (itsTimeList)
-        return itsTimeList->NumberOfItems() == 0;
-      else
+      if (IsValidTime())
+      {
+        if (itsTimeList)
+          return itsTimeList->NumberOfItems() == 0;
+
         return itsValidTimeBag->IsEmpty();
+      }
     }
+    else
+    {
+      if (itsOriginTimeBag && IsOriginTime())
+        return itsOriginTimeBag->IsEmpty();
+    }
+    return true;  // Jos ei kerran ole mitään aikarakennetta, niin on tämä kait sitten tyhjä
   }
-  else
+  catch (...)
   {
-    if (itsOriginTimeBag && IsOriginTime()) return itsOriginTimeBag->IsEmpty();
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return true;  // Jos ei kerran ole mitään aikarakennetta, niin on tämä kait sitten tyhjä
 }
 
 // ----------------------------------------------------------------------
@@ -653,17 +830,25 @@ bool NFmiTimeDescriptor::IsEmpty() const
 
 unsigned long NFmiTimeDescriptor::SizeActive() const
 {
-  if (itsTimeBagIdent && IsValidTime())
+  try
   {
-    unsigned long num = 0;
-    for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+    if (itsTimeBagIdent && IsValidTime())
     {
-      if (itsActivity[i]) num++;
+      unsigned long num = 0;
+      for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+      {
+        if (itsActivity[i])
+          num++;
+      }
+      return num;
     }
-    return num;
-  }
-  else
+
     return static_cast<unsigned long>(0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -674,24 +859,31 @@ unsigned long NFmiTimeDescriptor::SizeActive() const
 
 NFmiTimeBag NFmiTimeDescriptor::GetActivePeriod()
 {
-  NFmiTime saveTime(Time());
-
-  NFmiTime firstTime, lastTime;
-
-  if (FirstActive())
+  try
   {
-    firstTime = Time();
-    if (LastActive())
+    NFmiTime saveTime(Time());
+
+    NFmiTime firstTime, lastTime;
+
+    if (FirstActive())
     {
-      lastTime = Time();
-      NFmiTimeBag bag(firstTime, lastTime, ActiveResolution());
-      Time(saveTime);
-      return bag;
+      firstTime = Time();
+      if (LastActive())
+      {
+        lastTime = Time();
+        NFmiTimeBag bag(firstTime, lastTime, ActiveResolution());
+        Time(saveTime);
+        return bag;
+      }
     }
+    NFmiTimeBag bag;
+    Time(saveTime);
+    return bag;
   }
-  NFmiTimeBag bag;
-  Time(saveTime);
-  return bag;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -704,27 +896,34 @@ NFmiTimeBag NFmiTimeDescriptor::GetActivePeriod()
 
 bool NFmiTimeDescriptor::SetActivePeriod(bool theActivityState, const NFmiTimeBag &thePeriod)
 {
-  bool tempBoolean = false;
-
-  NFmiTime saveTime = Time();
-
-  for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
-    itsActivity[i] = false;
-
-  NFmiTimeBag tempBag(thePeriod);
-  tempBag.Reset();
-
-  while (tempBag.Next())
+  try
   {
-    if (Time(tempBag.CurrentTime()))
-    {
-      SetActivity(theActivityState);
-      tempBoolean = true;
-    }
-  }
+    bool tempBoolean = false;
 
-  Time(saveTime);
-  return tempBoolean;
+    NFmiTime saveTime = Time();
+
+    for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+      itsActivity[i] = false;
+
+    NFmiTimeBag tempBag(thePeriod);
+    tempBag.Reset();
+
+    while (tempBag.Next())
+    {
+      if (Time(tempBag.CurrentTime()))
+      {
+        SetActivity(theActivityState);
+        tempBoolean = true;
+      }
+    }
+
+    Time(saveTime);
+    return tempBoolean;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -736,9 +935,16 @@ bool NFmiTimeDescriptor::SetActivePeriod(bool theActivityState, const NFmiTimeBa
 
 bool NFmiTimeDescriptor::SetActivity(bool theActivityState)
 {
-  bool temp = itsActivity[Index()];
-  itsActivity[Index()] = theActivityState;
-  return temp;
+  try
+  {
+    bool temp = itsActivity[Index()];
+    itsActivity[Index()] = theActivityState;
+    return temp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -749,8 +955,15 @@ bool NFmiTimeDescriptor::SetActivity(bool theActivityState)
 
 bool NFmiTimeDescriptor::FirstActive()
 {
-  Reset();
-  return NextActive();
+  try
+  {
+    Reset();
+    return NextActive();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -761,19 +974,26 @@ bool NFmiTimeDescriptor::FirstActive()
 
 bool NFmiTimeDescriptor::LastActive()
 {
-  TFmiTime lastActive(Time());
-  Reset();
-  bool tempBoolean = false;
-  while (Next())
+  try
   {
-    if (IsActive())
+    TFmiTime lastActive(Time());
+    Reset();
+    bool tempBoolean = false;
+    while (Next())
     {
-      tempBoolean = true;
-      lastActive = Time();
+      if (IsActive())
+      {
+        tempBoolean = true;
+        lastActive = Time();
+      }
     }
+    Time(lastActive);
+    return tempBoolean;
   }
-  Time(lastActive);
-  return tempBoolean;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -784,10 +1004,18 @@ bool NFmiTimeDescriptor::LastActive()
 
 bool NFmiTimeDescriptor::PreviousActive()
 {
-  while (Previous())
-    if (IsActive()) return true;
+  try
+  {
+    while (Previous())
+      if (IsActive())
+        return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -798,10 +1026,18 @@ bool NFmiTimeDescriptor::PreviousActive()
 
 bool NFmiTimeDescriptor::NextActive()
 {
-  while (Next())
-    if (IsActive()) return true;
+  try
+  {
+    while (Next())
+      if (IsActive())
+        return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -812,25 +1048,32 @@ bool NFmiTimeDescriptor::NextActive()
 
 const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
 {
-  if (itsValidTimeBag)
+  try
   {
-    NFmiTime saveTime = Time();
-    NFmiTime startTime, endTime;
-
-    if (FirstActive())
+    if (itsValidTimeBag)
     {
-      startTime = Time();
-      if (NextActive())
+      NFmiTime saveTime = Time();
+      NFmiTime startTime, endTime;
+
+      if (FirstActive())
       {
-        endTime = Time();
+        startTime = Time();
+        if (NextActive())
+        {
+          endTime = Time();
+        }
       }
+      Time(saveTime);
+      NFmiTimePerioid period(endTime.DifferenceInMinutes(startTime));
+      return period;
     }
-    Time(saveTime);
-    NFmiTimePerioid period(endTime.DifferenceInMinutes(startTime));
-    return period;
-  }
-  else
+
     return 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -841,20 +1084,24 @@ const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
 
 const NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return itsTimeList ? NFmiTimePerioid(itsTimeList->CurrentResolution())
-                         : itsValidTimeBag->Resolution();
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return itsTimeList ? NFmiTimePerioid(itsTimeList->CurrentResolution())
+                           : itsValidTimeBag->Resolution();
       return 0;
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return (itsOriginTimeBag->Resolution());
-    else
-      return 0;
+
+    return 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -869,23 +1116,30 @@ const NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
 
 NFmiTimeDescriptor &NFmiTimeDescriptor::operator=(const NFmiTimeDescriptor &theTimeDescriptor)
 {
-  Destroy();
+  try
+  {
+    Destroy();
 
-  itsOriginTimeBag = theTimeDescriptor.itsOriginTimeBag
-                         ? new NFmiTimeBag(*theTimeDescriptor.itsOriginTimeBag)
-                         : nullptr;
-  itsValidTimeBag = theTimeDescriptor.itsValidTimeBag
-                        ? new NFmiTimeBag(*theTimeDescriptor.itsValidTimeBag)
-                        : nullptr;
-  itsTimeList =
-      theTimeDescriptor.itsTimeList ? new NFmiTimeList(*theTimeDescriptor.itsTimeList) : nullptr;
-  itsTimeBagIdent = theTimeDescriptor.itsTimeBagIdent;
+    itsOriginTimeBag = theTimeDescriptor.itsOriginTimeBag
+                           ? new NFmiTimeBag(*theTimeDescriptor.itsOriginTimeBag)
+                           : nullptr;
+    itsValidTimeBag = theTimeDescriptor.itsValidTimeBag
+                          ? new NFmiTimeBag(*theTimeDescriptor.itsValidTimeBag)
+                          : nullptr;
+    itsTimeList =
+        theTimeDescriptor.itsTimeList ? new NFmiTimeList(*theTimeDescriptor.itsTimeList) : nullptr;
+    itsTimeBagIdent = theTimeDescriptor.itsTimeBagIdent;
 
-  itsActivity = new bool[theTimeDescriptor.Size()];
-  for (int i = 0; i < static_cast<int>(theTimeDescriptor.Size()); i++)
-    itsActivity[i] = theTimeDescriptor.itsActivity[i];
+    itsActivity = new bool[theTimeDescriptor.Size()];
+    for (int i = 0; i < static_cast<int>(theTimeDescriptor.Size()); i++)
+      itsActivity[i] = theTimeDescriptor.itsActivity[i];
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -899,38 +1153,51 @@ NFmiTimeDescriptor &NFmiTimeDescriptor::operator=(const NFmiTimeDescriptor &theT
 
 bool NFmiTimeDescriptor::operator==(const NFmiTimeDescriptor &theTimeDescriptor) const
 {
-  bool retVal = true;
-  if (this->itsTimeBagIdent && theTimeDescriptor.itsTimeBagIdent)
+  try
   {
-    if (!(this->itsTimeBagIdent == theTimeDescriptor.itsTimeBagIdent)) return false;
+    bool retVal = true;
+    if (this->itsTimeBagIdent && theTimeDescriptor.itsTimeBagIdent)
+    {
+      if (!(this->itsTimeBagIdent == theTimeDescriptor.itsTimeBagIdent))
+        return false;
+    }
+    if (this->itsIsInterpolation && theTimeDescriptor.itsIsInterpolation)
+    {
+      if (!(this->itsIsInterpolation == theTimeDescriptor.itsIsInterpolation))
+        return false;
+    }
+    if (this->itsIsOriginLastest && theTimeDescriptor.itsIsOriginLastest)
+    {
+      if (!(this->itsIsOriginLastest == theTimeDescriptor.itsIsOriginLastest))
+        return false;
+    }
+    if (this->itsLocalTimeStep && theTimeDescriptor.itsLocalTimeStep)
+    {
+      if (!(this->itsLocalTimeStep == theTimeDescriptor.itsLocalTimeStep))
+        return false;
+    }
+    if (this->itsIsLocalTime && theTimeDescriptor.itsIsLocalTime)
+    {
+      if (!(this->itsIsLocalTime == theTimeDescriptor.itsIsLocalTime))
+        return false;
+    }
+    if (this->itsValidTimeBag && theTimeDescriptor.itsValidTimeBag)
+    {
+      if (!(*(this->itsOriginTimeBag) == *(theTimeDescriptor.itsOriginTimeBag) &&
+            *(this->itsValidTimeBag) == *(theTimeDescriptor.itsValidTimeBag)))
+        return false;
+    }
+    else if (this->itsTimeList && theTimeDescriptor.itsTimeList)
+    {
+      if (!(*(this->itsTimeList) == *(theTimeDescriptor.itsTimeList)))
+        return false;
+    }
+    return retVal;
   }
-  if (this->itsIsInterpolation && theTimeDescriptor.itsIsInterpolation)
+  catch (...)
   {
-    if (!(this->itsIsInterpolation == theTimeDescriptor.itsIsInterpolation)) return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  if (this->itsIsOriginLastest && theTimeDescriptor.itsIsOriginLastest)
-  {
-    if (!(this->itsIsOriginLastest == theTimeDescriptor.itsIsOriginLastest)) return false;
-  }
-  if (this->itsLocalTimeStep && theTimeDescriptor.itsLocalTimeStep)
-  {
-    if (!(this->itsLocalTimeStep == theTimeDescriptor.itsLocalTimeStep)) return false;
-  }
-  if (this->itsIsLocalTime && theTimeDescriptor.itsIsLocalTime)
-  {
-    if (!(this->itsIsLocalTime == theTimeDescriptor.itsIsLocalTime)) return false;
-  }
-  if (this->itsValidTimeBag && theTimeDescriptor.itsValidTimeBag)
-  {
-    if (!(*(this->itsOriginTimeBag) == *(theTimeDescriptor.itsOriginTimeBag) &&
-          *(this->itsValidTimeBag) == *(theTimeDescriptor.itsValidTimeBag)))
-      return false;
-  }
-  else if (this->itsTimeList && theTimeDescriptor.itsTimeList)
-  {
-    if (!(*(this->itsTimeList) == *(theTimeDescriptor.itsTimeList))) return false;
-  }
-  return retVal;
 }
 
 // ----------------------------------------------------------------------
@@ -948,32 +1215,39 @@ NFmiTimeDescriptor NFmiTimeDescriptor::Combine(const NFmiTimeDescriptor &theComb
                                                int theStartTimeFunction,
                                                int theEndTimeFunction) const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (itsValidTimeBag && theCombine.ValidTimeBag())
+    if (itsTimeBagIdent)
     {
-      return NFmiTimeDescriptor(
-          itsOriginTimeBag->FirstTime(),
-          itsValidTimeBag->Combine(
-              *(theCombine).itsValidTimeBag, theStartTimeFunction, theEndTimeFunction),
-          itsIsLocalTime,
-          itsIsInterpolation);
+      if (itsValidTimeBag && theCombine.ValidTimeBag())
+      {
+        return NFmiTimeDescriptor(
+            itsOriginTimeBag->FirstTime(),
+            itsValidTimeBag->Combine(
+                *(theCombine).itsValidTimeBag, theStartTimeFunction, theEndTimeFunction),
+            itsIsLocalTime,
+            itsIsInterpolation);
+      }
+      else if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
+      {
+        NFmiTimeList timeList = itsTimeList->Combine(
+            *(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);
+        return NFmiTimeDescriptor(
+            itsOriginTimeBag->FirstTime(), timeList, itsIsLocalTime, itsIsInterpolation);
+      }
+      else             // timebagi ja timelist sekaisin, ei voi yhdistää
+        return *this;  // hätä ratkaisu, palautetaan this:in kopio kun ei voi yhdistää
     }
-    else if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
-    {
-      NFmiTimeList timeList =
-          itsTimeList->Combine(*(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);
-      return NFmiTimeDescriptor(
-          itsOriginTimeBag->FirstTime(), timeList, itsIsLocalTime, itsIsInterpolation);
-    }
-    else             // timebagi ja timelist sekaisin, ei voi yhdistää
-      return *this;  // hätä ratkaisu, palautetaan this:in kopio kun ei voi yhdistää
-  }
 
-  return NFmiTimeDescriptor(
-      itsOriginTimeBag->Combine(
-          *(theCombine).itsOriginTimeBag, theStartTimeFunction, theEndTimeFunction),
-      itsValidTimeBag->FirstTime());
+    return NFmiTimeDescriptor(
+        itsOriginTimeBag->Combine(
+            *(theCombine).itsOriginTimeBag, theStartTimeFunction, theEndTimeFunction),
+        itsValidTimeBag->FirstTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -991,44 +1265,51 @@ NFmiTimeDescriptor NFmiTimeDescriptor::Combine(const NFmiTimeDescriptor &theComb
 
 std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 {
-  // Jos aikaa kasitellää listatyyppisenä, kirjoitetaan aikalista
-  // Muussa tapauksessa kirjoitetaan TimeBag
-
-  if (itsTimeList)
+  try
   {
-    file << "1 " << ClassName() << std::endl;  // 1 NFmiTimeDescriptor
-    file << *itsTimeList;
+    // Jos aikaa kasitellää listatyyppisenä, kirjoitetaan aikalista
+    // Muussa tapauksessa kirjoitetaan TimeBag
+
+    if (itsTimeList)
+    {
+      file << "1 " << ClassName() << std::endl;  // 1 NFmiTimeDescriptor
+      file << *itsTimeList;
+    }
+    else
+    {
+      file << "0 " << ClassName() << std::endl;  // 0 NFmiTimeDescriptor
+      file << *itsValidTimeBag;
+    }
+
+    file << *itsOriginTimeBag;
+
+    file << static_cast<unsigned long>(itsIsLocalTime) << " "  // Onko paikallista aikaa
+         << itsIsInterpolation << " "                          // Interpoloidaanko
+         << itsIsOriginLastest << " "  // Haetaanko viimeisimmän tuotteen perusteella
+         << itsTimeBagIdent << " "     // Hakutapa
+         << itsLocalTimeStep << " "    // Varalla
+         << 0 << " "                   // Varalla
+         << 0 << std::endl;            // Varalla
+
+    if (itsValidTimeBag)
+    {
+      for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
+        file << itsActivity[i] << " ";
+    }
+    else if (itsTimeList)
+    {
+      for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
+        file << itsActivity[i] << " ";
+    }
+
+    file << std::endl;
+
+    return file;
   }
-  else
+  catch (...)
   {
-    file << "0 " << ClassName() << std::endl;  // 0 NFmiTimeDescriptor
-    file << *itsValidTimeBag;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  file << *itsOriginTimeBag;
-
-  file << static_cast<unsigned long>(itsIsLocalTime) << " "  // Onko paikallista aikaa
-       << itsIsInterpolation << " "                          // Interpoloidaanko
-       << itsIsOriginLastest << " "  // Haetaanko viimeisimmän tuotteen perusteella
-       << itsTimeBagIdent << " "     // Hakutapa
-       << itsLocalTimeStep << " "    // Varalla
-       << 0 << " "                   // Varalla
-       << 0 << std::endl;            // Varalla
-
-  if (itsValidTimeBag)
-  {
-    for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
-      file << itsActivity[i] << " ";
-  }
-  else if (itsTimeList)
-  {
-    for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
-      file << itsActivity[i] << " ";
-  }
-
-  file << std::endl;
-
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -1042,74 +1323,82 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 
 std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 {
-  unsigned short theTimeListIdent;
-  std::string dummyStr;
-
-  Destroy();
-
-  itsOriginTimeBag = new NFmiTimeBag;
-
-  file >> theTimeListIdent >> dummyStr;  // 0->TimeBag,	1->TimeList
-
-  if (theTimeListIdent)  // 1
+  try
   {
-    itsTimeList = new NFmiTimeList;
-    file >> *itsTimeList;
-  }
-  else  // 0
-  {
-    itsValidTimeBag = new NFmiTimeBag;
-    file >> *itsValidTimeBag;
-  }
+    unsigned short theTimeListIdent;
+    std::string dummyStr;
 
-  file >> *itsOriginTimeBag;
+    Destroy();
 
-  unsigned long theIsLocalTime;
-  unsigned long dummy;
+    itsOriginTimeBag = new NFmiTimeBag;
 
-  file >> theIsLocalTime >> itsIsInterpolation >> itsIsOriginLastest >> itsTimeBagIdent >>
-      itsLocalTimeStep >> dummy >> dummy;
+    file >> theTimeListIdent >> dummyStr;  // 0->TimeBag,	1->TimeList
 
-  itsIsLocalTime = FmiTimeLocalzation(theIsLocalTime);
-
-  if (itsTimeBagIdent == true)
-  {
+    if (theTimeListIdent)  // 1
     {
-      auto theSize = static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
-                                                      : itsTimeList->NumberOfItems());
-      itsActivity = new bool[theSize];
-      // We trust everything to be at least version 6 by now
-      for (int i = 0; i < theSize; i++)
-        if (DefaultFmiInfoVersion >= 3)
-          file >> itsActivity[i];
-        else
-          itsActivity[i] = true;
+      itsTimeList = new NFmiTimeList;
+      file >> *itsTimeList;
     }
-  }
-  else
-  {
-    if (itsOriginTimeBag != nullptr)
+    else  // 0
     {
-      itsActivity = new bool[static_cast<int>(itsOriginTimeBag->GetSize())];
-      // We trust everything to be at least version 6 by now
-      for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
-        if (DefaultFmiInfoVersion >= 3)
-          file >> itsActivity[i];
-        else
-          itsActivity[i] = true;
+      itsValidTimeBag = new NFmiTimeBag;
+      file >> *itsValidTimeBag;
+    }
+
+    file >> *itsOriginTimeBag;
+
+    unsigned long theIsLocalTime;
+    unsigned long dummy;
+
+    file >> theIsLocalTime >> itsIsInterpolation >> itsIsOriginLastest >> itsTimeBagIdent >>
+        itsLocalTimeStep >> dummy >> dummy;
+
+    itsIsLocalTime = FmiTimeLocalzation(theIsLocalTime);
+
+    if (itsTimeBagIdent == true)
+    {
+      {
+        auto theSize = static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
+                                                        : itsTimeList->NumberOfItems());
+        itsActivity = new bool[theSize];
+        // We trust everything to be at least version 6 by now
+        for (int i = 0; i < theSize; i++)
+          if (DefaultFmiInfoVersion >= 3)
+            file >> itsActivity[i];
+          else
+            itsActivity[i] = true;
+      }
     }
     else
-      itsActivity = nullptr;
+    {
+      if (itsOriginTimeBag != nullptr)
+      {
+        itsActivity = new bool[static_cast<int>(itsOriginTimeBag->GetSize())];
+        // We trust everything to be at least version 6 by now
+        for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
+          if (DefaultFmiInfoVersion >= 3)
+            file >> itsActivity[i];
+          else
+            itsActivity[i] = true;
+      }
+      else
+        itsActivity = nullptr;
+    }
+
+    if (itsValidTimeBag != nullptr)
+      itsValidTimeBag->Reset();
+    else if (itsTimeList != nullptr)
+      itsTimeList->Reset();
+
+    if (itsOriginTimeBag != nullptr)
+      itsOriginTimeBag->Reset();
+
+    return file;
   }
-
-  if (itsValidTimeBag != nullptr)
-    itsValidTimeBag->Reset();
-  else if (itsTimeList != nullptr)
-    itsTimeList->Reset();
-
-  if (itsOriginTimeBag != nullptr) itsOriginTimeBag->Reset();
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1121,28 +1410,29 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 
 bool NFmiTimeDescriptor::Time(const unsigned long &theIndex)
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
+    if (itsTimeBagIdent)
     {
-      if (itsTimeList)
+      if (IsValidTime())
       {
-        return itsTimeList->Index(theIndex);
-      }
-      else
-      {
+        if (itsTimeList)
+          return itsTimeList->Index(theIndex);
+
         return itsValidTimeBag->SetTime(theIndex);
       }
     }
-  }
-  else
-  {
-    if (IsOriginTime())
+    else
     {
-      itsOriginTimeBag->SetTime(theIndex);
+      if (IsOriginTime())
+        itsOriginTimeBag->SetTime(theIndex);
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1153,18 +1443,25 @@ bool NFmiTimeDescriptor::Time(const unsigned long &theIndex)
 
 void NFmiTimeDescriptor::SetLocalTimes(const float theLongitude)
 {
-  if (TimeLocalzation() == kUTC)
+  try
   {
-    itsIsLocalTime = kLongitude;
+    if (TimeLocalzation() == kUTC)
+    {
+      itsIsLocalTime = kLongitude;
 
-    NFmiTimeBag *theLocalTimeBag =
-        new NFmiTimeBag(itsValidTimeBag->FirstTime().LocalTime(theLongitude),
-                        itsValidTimeBag->LastTime().LocalTime(theLongitude),
-                        itsValidTimeBag->Resolution());
+      NFmiTimeBag *theLocalTimeBag =
+          new NFmiTimeBag(itsValidTimeBag->FirstTime().LocalTime(theLongitude),
+                          itsValidTimeBag->LastTime().LocalTime(theLongitude),
+                          itsValidTimeBag->Resolution());
 
-    delete itsValidTimeBag;
+      delete itsValidTimeBag;
 
-    itsValidTimeBag = theLocalTimeBag;
+      itsValidTimeBag = theLocalTimeBag;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1185,46 +1482,58 @@ void NFmiTimeDescriptor::SetLocalTimes(const float theLongitude)
 NFmiTimeDescriptor NFmiTimeDescriptor::GetIntersection(const NFmiMetTime &theStartLimit,
                                                        const NFmiMetTime &theEndLimit) const
 {
-  NFmiTimeDescriptor timedesc(*this);
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
+    NFmiTimeDescriptor timedesc(*this);
+    if (itsTimeBagIdent)
     {
-      if (itsTimeList)
+      if (IsValidTime())
       {
-        *(timedesc.ValidTimeList()) = itsTimeList->GetIntersection(theStartLimit, theEndLimit);
-      }
-      else
-      {
-        *(timedesc.ValidTimeBag()) = itsValidTimeBag->GetIntersection(theStartLimit, theEndLimit);
+        if (itsTimeList)
+        {
+          *(timedesc.ValidTimeList()) = itsTimeList->GetIntersection(theStartLimit, theEndLimit);
+        }
+        else
+        {
+          *(timedesc.ValidTimeBag()) = itsValidTimeBag->GetIntersection(theStartLimit, theEndLimit);
+        }
       }
     }
-  }
-  else
-  {
-    if (IsOriginTime())
+    else
     {
-      *(timedesc.OriginTimeBag()) = itsOriginTimeBag->GetIntersection(theStartLimit, theEndLimit);
+      if (IsOriginTime())
+      {
+        *(timedesc.OriginTimeBag()) = itsOriginTimeBag->GetIntersection(theStartLimit, theEndLimit);
+      }
     }
+    return timedesc;
   }
-  return timedesc;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiTimeDescriptor::IsInside(const NFmiMetTime &theTime) const
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return itsTimeList ? itsTimeList->IsInside(theTime) : itsValidTimeBag->IsInside(theTime);
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return itsTimeList ? itsTimeList->IsInside(theTime) : itsValidTimeBag->IsInside(theTime);
+
       return false;
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return itsOriginTimeBag->IsInside(theTime);
-    else
-      return false;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1232,21 +1541,26 @@ bool NFmiTimeDescriptor::FindNearestTime(const NFmiMetTime &theTime,
                                          FmiDirection theDirection,
                                          unsigned long theTimeRangeInMinutes)
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      return itsTimeList
-                 ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
-                 : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes);
-    else
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        return itsTimeList
+                   ? itsTimeList->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes)
+                   : itsValidTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes);
+
       return false;
-  }
-  else
-  {
+    }
+
     if (IsOriginTime())
       return itsOriginTimeBag->FindNearestTime(theTime, theDirection, theTimeRangeInMinutes);
-    else
-      return false;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1259,15 +1573,23 @@ bool NFmiTimeDescriptor::FindNearestTime(const NFmiMetTime &theTime,
 // ----------------------------------------------------------------------
 void NFmiTimeDescriptor::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 {
-  if (itsTimeBagIdent)
+  try
   {
-    if (IsValidTime())
-      itsTimeList ? itsTimeList->PruneTimes(theMaxTimeCount, fFromEnd)
-                  : itsValidTimeBag->PruneTimes(theMaxTimeCount, fFromEnd);
+    if (itsTimeBagIdent)
+    {
+      if (IsValidTime())
+        itsTimeList ? itsTimeList->PruneTimes(theMaxTimeCount, fFromEnd)
+                    : itsValidTimeBag->PruneTimes(theMaxTimeCount, fFromEnd);
+    }
+    else
+    {
+      if (IsOriginTime())
+        itsOriginTimeBag->PruneTimes(theMaxTimeCount, fFromEnd);
+    }
   }
-  else
+  catch (...)
   {
-    if (IsOriginTime()) itsOriginTimeBag->PruneTimes(theMaxTimeCount, fFromEnd);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1285,17 +1607,24 @@ void NFmiTimeDescriptor::PruneTimes(int theMaxTimeCount, bool fFromEnd)
 
 void NFmiTimeDescriptor::SetNewStartTime(const NFmiMetTime &theTime)
 {
-  if (ValidTimeBag())
+  try
   {
-    NFmiTimeBag newTimeBag = *(ValidTimeBag());
-    newTimeBag.SetNewStartTime(theTime);
-    *this = NFmiTimeDescriptor(theTime, newTimeBag);
+    if (ValidTimeBag())
+    {
+      NFmiTimeBag newTimeBag = *(ValidTimeBag());
+      newTimeBag.SetNewStartTime(theTime);
+      *this = NFmiTimeDescriptor(theTime, newTimeBag);
+    }
+    else if (ValidTimeList())
+    {
+      NFmiTimeList newTimeList = *ValidTimeList();
+      newTimeList.SetNewStartTime(theTime);
+      *this = NFmiTimeDescriptor(theTime, newTimeList);
+    }
+    Time(theTime);
   }
-  else if (ValidTimeList())
+  catch (...)
   {
-    NFmiTimeList newTimeList = *ValidTimeList();
-    newTimeList.SetNewStartTime(theTime);
-    *this = NFmiTimeDescriptor(theTime, newTimeList);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  Time(theTime);
 }

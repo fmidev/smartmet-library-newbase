@@ -18,6 +18,7 @@
 #include "NFmiDataModifierCombi.h"
 #include "NFmiParamBag.h"
 #include "NFmiParamDataModifierList.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -27,14 +28,22 @@
 
 NFmiCombinedParam::~NFmiCombinedParam()
 {
-  if (itsSubParams)
+  try
   {
-    int size = itsSubParams->GetSize();
-    for (int i = 0; i < size; i++)
-      delete itsIntegrators[i];
+    if (itsSubParams)
+    {
+      int size = itsSubParams->GetSize();
+      for (int i = 0; i < size; i++)
+        delete itsIntegrators[i];
+    }
+    delete[] itsIntegrators;
+    delete itsSubParams;
   }
-  delete[] itsIntegrators;
-  delete itsSubParams;
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -77,15 +86,22 @@ NFmiCombinedParam::NFmiCombinedParam(const NFmiCombinedParam &theParam)
       fAutoUpdate(theParam.fAutoUpdate),
       itsInfoVersion(theParam.InfoVersion())
 {
-  int size = itsSubParams ? itsSubParams->GetSize() : 0;
-  if (size)
+  try
   {
-    itsIntegrators = new NFmiDataModifierCombi *[size];
-    for (int i = 0; i < size; i++)
-      itsIntegrators[i] = new NFmiDataModifierCombi(*theParam.itsIntegrators[i]);
+    int size = itsSubParams ? itsSubParams->GetSize() : 0;
+    if (size)
+    {
+      itsIntegrators = new NFmiDataModifierCombi *[size];
+      for (int i = 0; i < size; i++)
+        itsIntegrators[i] = new NFmiDataModifierCombi(*theParam.itsIntegrators[i]);
+    }
+    //	InitIntegration();//Tämä pitäisi tehdä kopioimalla
+    //	CreateIntegrators();
   }
-  //	InitIntegration();//Tämä pitäisi tehdä kopioimalla
-  //	CreateIntegrators();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -98,29 +114,36 @@ NFmiCombinedParam::NFmiCombinedParam(const NFmiCombinedParam &theParam)
 
 NFmiCombinedParam &NFmiCombinedParam::operator=(const NFmiCombinedParam &theParam)
 {
-  if (this != &theParam)
+  try
   {
-    itsSubParams = (theParam.itsSubParams ? new NFmiParamBag(*theParam.itsSubParams) : nullptr);
-    itsIntegrators =
-        nullptr;  // Tässä pitäisi käyttää ParamModifierListin operator=, vaan ei ole vielä
-    fIntegrationMode = theParam.fIntegrationMode;
-    fIntegrationReady = theParam.fIntegrationReady;
-    fIntegrationStarted = theParam.fIntegrationStarted;
-    fDataOk = theParam.fDataOk;
-    fAutoUpdate = theParam.fAutoUpdate;
-    itsInfoVersion = theParam.InfoVersion();
-
-    int size = itsSubParams ? itsSubParams->GetSize() : 0;
-    if (size)
+    if (this != &theParam)
     {
-      itsIntegrators = new NFmiDataModifierCombi *[size];
-      for (int i = 0; i < size; i++)
-        itsIntegrators[i] = new NFmiDataModifierCombi(*theParam.itsIntegrators[i]);
+      itsSubParams = (theParam.itsSubParams ? new NFmiParamBag(*theParam.itsSubParams) : nullptr);
+      itsIntegrators =
+          nullptr;  // Tässä pitäisi käyttää ParamModifierListin operator=, vaan ei ole vielä
+      fIntegrationMode = theParam.fIntegrationMode;
+      fIntegrationReady = theParam.fIntegrationReady;
+      fIntegrationStarted = theParam.fIntegrationStarted;
+      fDataOk = theParam.fDataOk;
+      fAutoUpdate = theParam.fAutoUpdate;
+      itsInfoVersion = theParam.InfoVersion();
+
+      int size = itsSubParams ? itsSubParams->GetSize() : 0;
+      if (size)
+      {
+        itsIntegrators = new NFmiDataModifierCombi *[size];
+        for (int i = 0; i < size; i++)
+          itsIntegrators[i] = new NFmiDataModifierCombi(*theParam.itsIntegrators[i]);
+      }
+      //	InitIntegration();//Tämä pitäisi tehdä kopioimalla
+      //	CreateIntegrators();
     }
-    //	InitIntegration();//Tämä pitäisi tehdä kopioimalla
-    //	CreateIntegrators();
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -132,7 +155,14 @@ NFmiCombinedParam &NFmiCombinedParam::operator=(const NFmiCombinedParam &thePara
 
 bool NFmiCombinedParam::TransformFromFloatValue(float theValue)
 {
-  return LongValue(ConvertFloatToLong(theValue));
+  try
+  {
+    return LongValue(ConvertFloatToLong(theValue));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -143,14 +173,22 @@ bool NFmiCombinedParam::TransformFromFloatValue(float theValue)
 
 float NFmiCombinedParam::TransformedFloatValue()
 {
-  union converter {
-    unsigned long ulongvalue;
-    float floatvalue;
-  };
+  try
+  {
+    union converter
+    {
+      unsigned long ulongvalue;
+      float floatvalue;
+    };
 
-  converter tmp;
-  tmp.ulongvalue = LongValue();
-  return tmp.floatvalue;
+    converter tmp;
+    tmp.ulongvalue = LongValue();
+    return tmp.floatvalue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -162,23 +200,32 @@ float NFmiCombinedParam::TransformedFloatValue()
 
 unsigned long NFmiCombinedParam::ConvertFloatToLong(float theValue)
 {
-  // MSVC60:ssa on bugi ja ylempi rivi (if(theValue == kFloatMissing)) ei toimi oikein
-  // TotalWind-arvoille,
-  // jotka tulkitaan jotenkin NaN:eiksi ja ylemmässä versiossa tulee true vertailussa. Alempi joka
-  // on käytännössä
-  // sama toimii oikein molemmissa kääntäjä versioissa (MSVC60 ja MSVC71).
+  try
+  {
+    // MSVC60:ssa on bugi ja ylempi rivi (if(theValue == kFloatMissing)) ei toimi oikein
+    // TotalWind-arvoille,
+    // jotka tulkitaan jotenkin NaN:eiksi ja ylemmässä versiossa tulee true vertailussa. Alempi joka
+    // on käytännössä
+    // sama toimii oikein molemmissa kääntäjä versioissa (MSVC60 ja MSVC71).
 
-  //  if(theValue == kFloatMissing)
-  if (theValue == 32700.0F) return kTCombinedWeatherMissing;
+    //  if(theValue == kFloatMissing)
+    if (theValue == 32700.0F)
+      return kTCombinedWeatherMissing;
 
-  union converter {
-    unsigned long ulongvalue;
-    float floatvalue;
-  };
+    union converter
+    {
+      unsigned long ulongvalue;
+      float floatvalue;
+    };
 
-  converter tmp;
-  tmp.floatvalue = theValue;
-  return tmp.ulongvalue;
+    converter tmp;
+    tmp.floatvalue = theValue;
+    return tmp.ulongvalue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -189,11 +236,18 @@ unsigned long NFmiCombinedParam::ConvertFloatToLong(float theValue)
 
 void NFmiCombinedParam::InitIntegration()
 {
-  CreateSubParams();
-  CreateIntegrators();
-  fIntegrationMode = true;
-  fIntegrationStarted = false;
-  fIntegrationReady = false;
+  try
+  {
+    CreateSubParams();
+    CreateIntegrators();
+    fIntegrationMode = true;
+    fIntegrationStarted = false;
+    fIntegrationReady = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -204,19 +258,24 @@ void NFmiCombinedParam::InitIntegration()
 
 void NFmiCombinedParam::ClearIntegration()
 {
-  fIntegrationMode = true;
-  fIntegrationStarted = false;
-  fIntegrationReady = false;
-  if (itsSubParams)
+  try
   {
-    for (unsigned int idx = 0; idx < itsSubParams->GetSize(); idx++)
+    fIntegrationMode = true;
+    fIntegrationStarted = false;
+    fIntegrationReady = false;
+    if (itsSubParams)
     {
-      NFmiDataModifier *integrator = GetSubIntegrator(idx);
-      if (integrator)
+      for (unsigned int idx = 0; idx < itsSubParams->GetSize(); idx++)
       {
-        integrator->Clear();
+        NFmiDataModifier *integrator = GetSubIntegrator(idx);
+        if (integrator)
+          integrator->Clear();
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -228,33 +287,41 @@ void NFmiCombinedParam::ClearIntegration()
 
 void NFmiCombinedParam::EndIntegration()
 {
-  if (!fIntegrationMode) return;
-
-  if (fIntegrationStarted && itsSubParams)
+  try
   {
-    itsSubParams->Reset();
-    int idx = 0;
-    while (itsSubParams->Next())
+    if (!fIntegrationMode)
+      return;
+
+    if (fIntegrationStarted && itsSubParams)
     {
-      // Mika 08.11.2001: No huh-huh?!
-      // NFmiDataModifierCombi *integrator =
-      // GetSubIntegrator(index);itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
-      NFmiDataModifierCombi *integrator = GetSubIntegrator(idx);
-      if (integrator)
+      itsSubParams->Reset();
+      int idx = 0;
+      while (itsSubParams->Next())
       {
-        //				SubValue(integrator->CalculationResult(),
-        // itsSubParams->CurrentParam());
-        /////Persa poisti koska yrittää toisella tavalla tuloksia
-        ///				SubValue(integrator->CalcResult(kFmiMean),
-        /// itsSubParams->CurrentParam());
+        // Mika 08.11.2001: No huh-huh?!
+        // NFmiDataModifierCombi *integrator =
+        // GetSubIntegrator(index);itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
+        NFmiDataModifierCombi *integrator = GetSubIntegrator(idx);
+        if (integrator)
+        {
+          //				SubValue(integrator->CalculationResult(),
+          // itsSubParams->CurrentParam());
+          /////Persa poisti koska yrittää toisella tavalla tuloksia
+          ///				SubValue(integrator->CalcResult(kFmiMean),
+          /// itsSubParams->CurrentParam());
+        }
+        idx++;
       }
-      idx++;
     }
+    //	DeleteIntegrators();
+    //	fIntegrationMode = false;
+    fIntegrationStarted = false;
+    fIntegrationReady = true;
   }
-  //	DeleteIntegrators();
-  //	fIntegrationMode = false;
-  fIntegrationStarted = false;
-  fIntegrationReady = true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -265,26 +332,35 @@ void NFmiCombinedParam::EndIntegration()
 
 void NFmiCombinedParam::Integrate(float theValue)
 {
-  if (!fIntegrationMode) return;
-  fIntegrationStarted = true;
-
-  if (itsSubParams)
+  try
   {
-    NFmiCombinedParam *addNewValue = CreateNew(theValue);
-    itsSubParams->Reset();
-    int idx = 0;
-    while (itsSubParams->Next())
+    if (!fIntegrationMode)
+      return;
+
+    fIntegrationStarted = true;
+
+    if (itsSubParams)
     {
-      NFmiDataModifier *integrator = GetSubIntegrator(
-          idx);  // itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
-      if (integrator)
+      NFmiCombinedParam *addNewValue = CreateNew(theValue);
+      itsSubParams->Reset();
+      int idx = 0;
+      while (itsSubParams->Next())
       {
-        integrator->Calculate(
-            static_cast<float>(addNewValue->RawSubValue(itsSubParams->CurrentParam())));
+        NFmiDataModifier *integrator = GetSubIntegrator(
+            idx);  // itsIntegrators[index];//FindSubParamIntegrator(itsSubParams->CurrentParam());
+        if (integrator)
+        {
+          integrator->Calculate(
+              static_cast<float>(addNewValue->RawSubValue(itsSubParams->CurrentParam())));
+        }
+        idx++;
       }
-      idx++;
+      delete addNewValue;
     }
-    delete addNewValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -295,6 +371,7 @@ void NFmiCombinedParam::Integrate(float theValue)
 // ----------------------------------------------------------------------
 
 void NFmiCombinedParam::CreateIntegrators() {}
+
 // ----------------------------------------------------------------------
 /*!
  *
@@ -302,6 +379,7 @@ void NFmiCombinedParam::CreateIntegrators() {}
 // ----------------------------------------------------------------------
 
 void NFmiCombinedParam::DeleteIntegrators() {}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theName Undocumented
@@ -311,13 +389,18 @@ void NFmiCombinedParam::DeleteIntegrators() {}
 
 NFmiDataModifierCombi *NFmiCombinedParam::FindSubParamIntegrator(FmiParameterName theName)
 {
-  int idx = FindSubParamIntegratorIndex(theName);
-  if (idx >= 0)
+  try
   {
-    return itsIntegrators[idx];
-  }
-  else
+    int idx = FindSubParamIntegratorIndex(theName);
+    if (idx >= 0)
+      return itsIntegrators[idx];
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -329,19 +412,25 @@ NFmiDataModifierCombi *NFmiCombinedParam::FindSubParamIntegrator(FmiParameterNam
 
 int NFmiCombinedParam::FindSubParamIntegratorIndex(FmiParameterName theName)
 {
-  if (itsIntegrators && itsSubParams)
+  try
   {
-    int i = 0;
-    for (itsSubParams->Reset(); itsSubParams->Next();)
+    if (itsIntegrators && itsSubParams)
     {
-      if (itsSubParams->CurrentParam() == theName)
+      int i = 0;
+      for (itsSubParams->Reset(); itsSubParams->Next();)
       {
-        return i;
+        if (itsSubParams->CurrentParam() == theName)
+          return i;
+
+        i++;
       }
-      i++;
     }
+    return -1;
   }
-  return -1;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -355,13 +444,20 @@ int NFmiCombinedParam::FindSubParamIntegratorIndex(FmiParameterName theName)
 bool NFmiCombinedParam::SetSubIntegrator(FmiParameterName theSubParamName,
                                          NFmiDataModifierCombi *theModifier)
 {
-  int idx = FindSubParamIntegratorIndex(theSubParamName);
-  if (idx >= 0)
+  try
   {
-    itsIntegrators[idx] = theModifier;
-    return true;
+    int idx = FindSubParamIntegratorIndex(theSubParamName);
+    if (idx >= 0)
+    {
+      itsIntegrators[idx] = theModifier;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -371,14 +467,36 @@ bool NFmiCombinedParam::SetSubIntegrator(FmiParameterName theSubParamName,
  */
 // ----------------------------------------------------------------------
 
-NFmiCombinedParam *NFmiCombinedParam::CreateNew(float /* theInitValue */) { return nullptr; }
+NFmiCombinedParam *NFmiCombinedParam::CreateNew(float /* theInitValue */)
+{
+  try
+  {
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-void NFmiCombinedParam::CreateSubParams() { itsSubParams = nullptr; }
+void NFmiCombinedParam::CreateSubParams()
+{
+  try
+  {
+    itsSubParams = nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -388,10 +506,17 @@ void NFmiCombinedParam::CreateSubParams() { itsSubParams = nullptr; }
 
 NFmiDataModifierCombi *NFmiCombinedParam::GetSubIntegrator(unsigned long theIndex)
 {
-  if (theIndex < itsSubParams->GetSize())
-    return itsIntegrators[theIndex];
-  else
+  try
+  {
+    if (theIndex < itsSubParams->GetSize())
+      return itsIntegrators[theIndex];
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -403,11 +528,18 @@ NFmiDataModifierCombi *NFmiCombinedParam::GetSubIntegrator(unsigned long theInde
 
 NFmiDataModifierCombi *NFmiCombinedParam::SubIntegrator(FmiParameterName theSubParamName)
 {
-  int idx = FindSubParamIntegratorIndex(theSubParamName);
-  if (idx >= 0)
-    return GetSubIntegrator(idx);
-  else
+  try
+  {
+    int idx = FindSubParamIntegratorIndex(theSubParamName);
+    if (idx >= 0)
+      return GetSubIntegrator(idx);
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

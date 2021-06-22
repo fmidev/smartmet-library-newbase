@@ -16,6 +16,7 @@
 
 #include "NFmiCommentStripper.h"
 
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -108,40 +109,49 @@ NFmiCommentStripper::NFmiCommentStripper(const NFmiCommentStripper& theStripper)
 
 bool NFmiCommentStripper::ReadFile(const string& theFileName)
 {
-  ifstream in(theFileName.c_str(), std::ios::binary);
+  try
+  {
+    ifstream in(theFileName.c_str(), std::ios::binary);
 #ifndef UNIX
-  itsFileName = theFileName.substr(theFileName.rfind("\\") + 1);
+    itsFileName = theFileName.substr(theFileName.rfind("\\") + 1);
 #else
-  itsFileName = theFileName;
+    itsFileName = theFileName;
 #endif
-  if (in)
-  {
-    itsString = "";  // nollaa lopullinen stringi
-
-    string filt_elem1("//");
-    string rowbuffer, bigstring;
-
-    // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
-
-    while (getline(in, rowbuffer))
+    if (in)
     {
-      if (!rowbuffer.empty())
-      {
-        if (fStripPound && rowbuffer[0] == '#') continue;
-        if (rowbuffer[rowbuffer.size() - 1] == '\r') rowbuffer.resize(rowbuffer.size() - 1);
-      }
-      bigstring += rowbuffer + "\n";
-    }
-    itsString = bigstring;
-    in.close();
-  }
-  else
-  {
-    itsMessage = "file not found = " + theFileName;
-    return false;
-  }
+      itsString = "";  // nollaa lopullinen stringi
 
-  return true;
+      string filt_elem1("//");
+      string rowbuffer, bigstring;
+
+      // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
+
+      while (getline(in, rowbuffer))
+      {
+        if (!rowbuffer.empty())
+        {
+          if (fStripPound && rowbuffer[0] == '#')
+            continue;
+          if (rowbuffer[rowbuffer.size() - 1] == '\r')
+            rowbuffer.resize(rowbuffer.size() - 1);
+        }
+        bigstring += rowbuffer + "\n";
+      }
+      itsString = bigstring;
+      in.close();
+    }
+    else
+    {
+      itsMessage = "file not found = " + theFileName;
+      return false;
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -169,48 +179,57 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
                                                   const string& theOptionText,
                                                   set<string>& theOptionTexts)
 {
-  ifstream in(theFileName.c_str(), std::ios::binary);
+  try
+  {
+    ifstream in(theFileName.c_str(), std::ios::binary);
 #ifndef UNIX
-  itsFileName = theFileName.substr(theFileName.rfind("\\") + 1);
+    itsFileName = theFileName.substr(theFileName.rfind("\\") + 1);
 #else
-  itsFileName = theFileName;
+    itsFileName = theFileName;
 #endif
 
-  if (in)
-  {
-    itsString = "";  // nollaa lopullinen stringi
-
-    string filt_elem1("//");
-    string rowbuffer, bigstring;
-
-    // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
-
-    while (getline(in, rowbuffer))
+    if (in)
     {
-      if (!rowbuffer.empty())
-      {
-        string::size_type pos = rowbuffer.find(theOptionText);
-        if (pos != string::npos)
-        {
-          string::size_type lastPos = rowbuffer.find_first_of(" ", pos);
-          string option = rowbuffer.substr(pos, lastPos - pos);
-          theOptionTexts.insert(option);
-        }
-        if (fStripPound && rowbuffer[0] == '#') continue;
-        if (rowbuffer[rowbuffer.size() - 1] == '\r') rowbuffer.resize(rowbuffer.size() - 1);
-      }
-      bigstring += rowbuffer + "\n";
-    }
-    itsString = bigstring;
-    in.close();
-  }
-  else
-  {
-    itsMessage = "file not found = " + theFileName;
-    return false;
-  }
+      itsString = "";  // nollaa lopullinen stringi
 
-  return true;
+      string filt_elem1("//");
+      string rowbuffer, bigstring;
+
+      // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
+
+      while (getline(in, rowbuffer))
+      {
+        if (!rowbuffer.empty())
+        {
+          string::size_type pos = rowbuffer.find(theOptionText);
+          if (pos != string::npos)
+          {
+            string::size_type lastPos = rowbuffer.find_first_of(" ", pos);
+            string option = rowbuffer.substr(pos, lastPos - pos);
+            theOptionTexts.insert(option);
+          }
+          if (fStripPound && rowbuffer[0] == '#')
+            continue;
+          if (rowbuffer[rowbuffer.size() - 1] == '\r')
+            rowbuffer.resize(rowbuffer.size() - 1);
+        }
+        bigstring += rowbuffer + "\n";
+      }
+      itsString = bigstring;
+      in.close();
+    }
+    else
+    {
+      itsMessage = "file not found = " + theFileName;
+      return false;
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -222,8 +241,17 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
 
 bool NFmiCommentStripper::ReadAndStripFile(const string& theFileName)
 {
-  if (ReadFile(theFileName)) return Strip();
-  return false;
+  try
+  {
+    if (ReadFile(theFileName))
+      return Strip();
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -237,60 +265,79 @@ bool NFmiCommentStripper::ReadAndStripFile(const string& theFileName)
 
 bool NFmiCommentStripper::Strip()
 {
-  StripBomMarkersFromStart();
-  string filt_elem2("/*"), filt_elem3("*/");
-  if (fStripSlashAst)
+  try
   {
-    if (fStripNested)
+    StripBomMarkersFromStart();
+    string filt_elem2("/*"), filt_elem3("*/");
+    if (fStripSlashAst)
     {
-      if (!CollectAndStripNested(filt_elem2, filt_elem3)) return false;
-    }
-    else
-    {
-      if (!StripBlocks(filt_elem2, filt_elem3)) return false;
-    }
-  }
-  if (fStripPound)
-  {
-    if (!StripPounds()) return false;
-  }
-  if (fStripDoubleSlash)
-  {
-    if (!StripDoubleSlashes()) return false;
-  }
-
-  if (fStripEndOfLineSpaces)
-  {
-    // Mika: 07.02.2002:
-    // Lopuksi poistetaan tarpeeton whitespace:
-    // Kun tulee \n vastaan, peruutetaan spacet pois ja jätetään korkeintaan
-    // 3 peräkkäistä \n merkkiä
-    unsigned int j = 2;
-
-    for (unsigned int i = 2; i < itsString.size(); i++)
-    {
-      if (itsString[i] != '\n')
-        itsString[j++] = itsString[i];
+      if (fStripNested)
+      {
+        if (!CollectAndStripNested(filt_elem2, filt_elem3))
+          return false;
+      }
       else
       {
-        for (; j > 1 && (itsString[j - 1] == ' ' || itsString[j - 1] == '\t'); j--)
-          ;
-        if ((j >= 1 && itsString[j - 1] != '\n') || (j >= 2 && itsString[j - 2] != '\n'))
-          itsString[j++] = itsString[i];
+        if (!StripBlocks(filt_elem2, filt_elem3))
+          return false;
       }
     }
-    itsString.resize(j);
+    if (fStripPound)
+    {
+      if (!StripPounds())
+        return false;
+    }
+    if (fStripDoubleSlash)
+    {
+      if (!StripDoubleSlashes())
+        return false;
+    }
+
+    if (fStripEndOfLineSpaces)
+    {
+      // Mika: 07.02.2002:
+      // Lopuksi poistetaan tarpeeton whitespace:
+      // Kun tulee \n vastaan, peruutetaan spacet pois ja jätetään korkeintaan
+      // 3 peräkkäistä \n merkkiä
+      unsigned int j = 2;
+
+      for (unsigned int i = 2; i < itsString.size(); i++)
+      {
+        if (itsString[i] != '\n')
+          itsString[j++] = itsString[i];
+        else
+        {
+          for (; j > 1 && (itsString[j - 1] == ' ' || itsString[j - 1] == '\t'); j--)
+            ;
+          if ((j >= 1 && itsString[j - 1] != '\n') || (j >= 2 && itsString[j - 2] != '\n'))
+            itsString[j++] = itsString[i];
+        }
+      }
+      itsString.resize(j);
+    }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiCommentStripper::StripBomMarkersFromStart()
 {
-  const std::string bomMarkers =
-      "\xEF\xBB\xBF";  // BOM characters ï»¿ must be given with hexa escape format because this cpp
-                       // file is Utf-8 encoded
-  auto pos = itsString.find(bomMarkers);
-  if (pos == 0) itsString = std::string(itsString.begin() + bomMarkers.size(), itsString.end());
+  try
+  {
+    const std::string bomMarkers =
+        "\xEF\xBB\xBF";  // BOM characters ï»¿ must be given with hexa escape format because this
+                         // cpp file is Utf-8 encoded
+    auto pos = itsString.find(bomMarkers);
+    if (pos == 0)
+      itsString = std::string(itsString.begin() + bomMarkers.size(), itsString.end());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -302,8 +349,15 @@ void NFmiCommentStripper::StripBomMarkersFromStart()
 
 bool NFmiCommentStripper::Strip(const std::string& theString)
 {
-  itsString = theString;
-  return Strip();
+  try
+  {
+    itsString = theString;
+    return Strip();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -317,15 +371,22 @@ bool NFmiCommentStripper::Strip(const std::string& theString)
 bool NFmiCommentStripper::CollectAndStripNested(const string& theBeginDirective,
                                                 const string& theEndDirective)
 {
-  std::vector<unsigned long> posStartFilts;
-  std::vector<unsigned long> posEndFilts;
-
-  if (CollectStringPositions(theBeginDirective, posStartFilts) &&
-      CollectStringPositions(theEndDirective, posEndFilts))
+  try
   {
-    return StripNested(posStartFilts, posEndFilts);
+    std::vector<unsigned long> posStartFilts;
+    std::vector<unsigned long> posEndFilts;
+
+    if (CollectStringPositions(theBeginDirective, posStartFilts) &&
+        CollectStringPositions(theEndDirective, posEndFilts))
+    {
+      return StripNested(posStartFilts, posEndFilts);
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -336,30 +397,37 @@ bool NFmiCommentStripper::CollectAndStripNested(const string& theBeginDirective,
 
 bool NFmiCommentStripper::StripDoubleSlashes()  // from to endline
 {
-  string oldString(itsString);
-  string newString = "";
-  string doubleSlash = "//";
-  string::size_type posbigalku = oldString.find(doubleSlash);
-  string::size_type posbigloppu;
-  //	unsigned int len = theEndFilt.length();
-
-  if (posbigalku == string::npos)
-    itsString = oldString;
-  else
+  try
   {
-    while (posbigalku != string::npos)
+    string oldString(itsString);
+    string newString = "";
+    string doubleSlash = "//";
+    string::size_type posbigalku = oldString.find(doubleSlash);
+    string::size_type posbigloppu;
+    //	unsigned int len = theEndFilt.length();
+
+    if (posbigalku == string::npos)
+      itsString = oldString;
+    else
     {
-      posbigalku = oldString.find(doubleSlash);
-      posbigloppu = oldString.find('\n', posbigalku);
-      newString += oldString.substr(0, posbigalku);
-      if (posbigloppu != string::npos)
-        oldString = oldString.substr(posbigloppu);
-      else
-        break;  // This prevents an eternal loop
+      while (posbigalku != string::npos)
+      {
+        posbigalku = oldString.find(doubleSlash);
+        posbigloppu = oldString.find('\n', posbigalku);
+        newString += oldString.substr(0, posbigalku);
+        if (posbigloppu != string::npos)
+          oldString = oldString.substr(posbigloppu);
+        else
+          break;  // This prevents an eternal loop
+      }
+      itsString = newString;
     }
-    itsString = newString;
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -373,71 +441,88 @@ bool NFmiCommentStripper::StripDoubleSlashes()  // from to endline
 
 bool NFmiCommentStripper::StripPounds()  // from pound to end of line
 {
-  string oldString(itsString);
-  string newString = "";
-  string pound = "#";
-  string::size_type posbigalku = oldString.find(pound);
-  string::size_type posbigloppu;
-  //	unsigned int len = theEndFilt.length();
-
-  if (posbigalku == string::npos)
-    itsString = oldString;
-  else
+  try
   {
-    while (posbigalku != string::npos)
+    string oldString(itsString);
+    string newString = "";
+    string pound = "#";
+    string::size_type posbigalku = oldString.find(pound);
+    string::size_type posbigloppu;
+    //	unsigned int len = theEndFilt.length();
+
+    if (posbigalku == string::npos)
+      itsString = oldString;
+    else
     {
-      posbigalku = oldString.find(pound);
-      posbigloppu = oldString.find('\n', posbigalku);
-      newString += oldString.substr(0, posbigalku);
-      if (posbigloppu != string::npos)
-        oldString = oldString.substr(posbigloppu);
-      else
-        break;  // This prevents an eternal loop
+      while (posbigalku != string::npos)
+      {
+        posbigalku = oldString.find(pound);
+        posbigloppu = oldString.find('\n', posbigalku);
+        newString += oldString.substr(0, posbigalku);
+        if (posbigloppu != string::npos)
+          oldString = oldString.substr(posbigloppu);
+        else
+          break;  // This prevents an eternal loop
+      }
+      itsString = newString;
     }
-    itsString = newString;
+    return true;
   }
-  return true;
-}  // ----------------------------------------------------------------------
-   /*!
-    * \param theBeginDirective Undocumented
-    * \param theEndDirective Undocumented
-    * \return Undocumented
-    */
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \param theBeginDirective Undocumented
+ * \param theEndDirective Undocumented
+ * \return Undocumented
+ */
 // ----------------------------------------------------------------------
 
 bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
                                       const string& theEndDirective)
 {
-  string oldString(itsString);
-  string newString = "";
-  string::size_type posbigalku = oldString.find(theBeginDirective);
-  string::size_type posbigloppu;
-  string::size_type len = theEndDirective.length();
-
-  if (posbigalku == string::npos)
-    itsString = oldString;
-  else
+  try
   {
-    while (posbigalku != string::npos)
+    string oldString(itsString);
+    string newString = "";
+    string::size_type posbigalku = oldString.find(theBeginDirective);
+    string::size_type posbigloppu;
+    string::size_type len = theEndDirective.length();
+
+    if (posbigalku == string::npos)
+      itsString = oldString;
+    else
     {
-      posbigalku = oldString.find(theBeginDirective);
-
-      if (posbigalku != string::npos)
-        posbigloppu = oldString.find(theEndDirective, posbigalku);
-      else
-        posbigloppu = string::npos;
-
-      if (posbigalku != string::npos && posbigloppu == string::npos)
+      while (posbigalku != string::npos)
       {
-        itsMessage = "ERROR in " + itsFileName + ": Missing */";
-        return false;
+        posbigalku = oldString.find(theBeginDirective);
+
+        if (posbigalku != string::npos)
+          posbigloppu = oldString.find(theEndDirective, posbigalku);
+        else
+          posbigloppu = string::npos;
+
+        if (posbigalku != string::npos && posbigloppu == string::npos)
+        {
+          itsMessage = "ERROR in " + itsFileName + ": Missing */";
+          return false;
+        }
+        newString += oldString.substr(0, posbigalku);
+        if (posbigloppu != string::npos)
+          oldString = oldString.substr(posbigloppu + len);
       }
-      newString += oldString.substr(0, posbigalku);
-      if (posbigloppu != string::npos) oldString = oldString.substr(posbigloppu + len);
+      itsString = newString;
     }
-    itsString = newString;
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -449,28 +534,35 @@ bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
 
 bool NFmiCommentStripper::StripSubStrings(const string& theString)
 {
-  string oldString(itsString);
-  string newString = "";
-  string::size_type posbigalku = oldString.find(theString);
-  string::size_type posbigloppu;
-  string::size_type len = theString.length();
-
-  if (posbigalku == string::npos)
-    itsString = oldString;
-  else
+  try
   {
-    while (posbigalku != string::npos)
+    string oldString(itsString);
+    string newString = "";
+    string::size_type posbigalku = oldString.find(theString);
+    string::size_type posbigloppu;
+    string::size_type len = theString.length();
+
+    if (posbigalku == string::npos)
+      itsString = oldString;
+    else
     {
-      posbigalku = oldString.find(theString);
-      posbigloppu = posbigalku + len;
-      newString += oldString.substr(0, posbigalku);
-      oldString = oldString.substr(posbigloppu);
-      posbigalku = oldString.find(theString);
+      while (posbigalku != string::npos)
+      {
+        posbigalku = oldString.find(theString);
+        posbigloppu = posbigalku + len;
+        newString += oldString.substr(0, posbigalku);
+        oldString = oldString.substr(posbigloppu);
+        posbigalku = oldString.find(theString);
+      }
+      newString += oldString;
+      itsString = newString;
     }
-    newString += oldString;
-    itsString = newString;
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -484,46 +576,54 @@ bool NFmiCommentStripper::StripSubStrings(const string& theString)
 bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositions,
                                       std::vector<unsigned long> theEndPositions)
 {
-  auto startFiltsInd = theBeginPositions.begin();
-  auto endFiltsInd = theEndPositions.begin();
-  int posStart, posEnd, startOfErase = 0;
-  int eraseSum = 0;
-  int level = 0;
-  while (startFiltsInd != theBeginPositions.end() || endFiltsInd != theEndPositions.end())
+  try
   {
-    posStart = startFiltsInd == theBeginPositions.end() ? kShortMissing : *startFiltsInd;
-    posEnd = endFiltsInd == theEndPositions.end() ? kShortMissing : *endFiltsInd;
+    auto startFiltsInd = theBeginPositions.begin();
+    auto endFiltsInd = theEndPositions.begin();
+    int posStart, posEnd, startOfErase = 0;
+    int eraseSum = 0;
+    int level = 0;
+    while (startFiltsInd != theBeginPositions.end() || endFiltsInd != theEndPositions.end())
+    {
+      posStart = startFiltsInd == theBeginPositions.end() ? kShortMissing : *startFiltsInd;
+      posEnd = endFiltsInd == theEndPositions.end() ? kShortMissing : *endFiltsInd;
 
-    if (posStart < posEnd)
-    {
-      level++;
-      if (level == 1) startOfErase = posStart;
-      startFiltsInd++;
-    }
-    else
-    {
-      level--;
-      if (level < 0)
+      if (posStart < posEnd)
       {
-        itsMessage = "ERROR in " + itsFileName +
-                     ": Missing pair to */ after: " + itsString.substr(max(posEnd - 22, 0), 21);
-        return false;
+        level++;
+        if (level == 1)
+          startOfErase = posStart;
+        startFiltsInd++;
       }
-      else if (level == 0)
+      else
       {
-        int len = posEnd + 2 - startOfErase;
-        itsString.erase(startOfErase - eraseSum, len);
-        eraseSum += len;
+        level--;
+        if (level < 0)
+        {
+          itsMessage = "ERROR in " + itsFileName +
+                       ": Missing pair to */ after: " + itsString.substr(max(posEnd - 22, 0), 21);
+          return false;
+        }
+        else if (level == 0)
+        {
+          int len = posEnd + 2 - startOfErase;
+          itsString.erase(startOfErase - eraseSum, len);
+          eraseSum += len;
+        }
+        endFiltsInd++;
       }
-      endFiltsInd++;
     }
+    if (level > 0)
+    {
+      itsMessage = "ERROR in " + itsFileName + ": the /*'s exceed the */'s";
+      return false;
+    }
+    return true;
   }
-  if (level > 0)
+  catch (...)
   {
-    itsMessage = "ERROR in " + itsFileName + ": the /*'s exceed the */'s";
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -537,21 +637,29 @@ bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositio
 bool NFmiCommentStripper::CollectStringPositions(const string& theSearchString,
                                                  std::vector<unsigned long>& theResVector)
 {
-  string aString(itsString);
-  string::size_type filtLen = theSearchString.length();
-  string::size_type pos = aString.find(theSearchString);
-  if (pos == string::npos) return true;
-
-  string::size_type sum = 0;
-  while (pos != string::npos)
+  try
   {
-    sum += pos;
-    theResVector.push_back(static_cast<unsigned long>(sum));
-    aString = aString.substr(pos + filtLen);
-    sum += filtLen;
-    pos = aString.find(theSearchString);
+    string aString(itsString);
+    string::size_type filtLen = theSearchString.length();
+    string::size_type pos = aString.find(theSearchString);
+    if (pos == string::npos)
+      return true;
+
+    string::size_type sum = 0;
+    while (pos != string::npos)
+    {
+      sum += pos;
+      theResVector.push_back(static_cast<unsigned long>(sum));
+      aString = aString.substr(pos + filtLen);
+      sum += filtLen;
+      pos = aString.find(theSearchString);
+    }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

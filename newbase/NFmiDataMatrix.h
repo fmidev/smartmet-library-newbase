@@ -45,6 +45,7 @@
 
 #include "NFmiGlobals.h"  // kFloatMissing
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 
 #include <iostream>
 #include <sstream>
@@ -52,7 +53,7 @@
 
 //! A 2D data container
 template <class T>  // miten annetaan containeri template parametrina??????
-class NFmiDataMatrix : public std::vector<std::vector<T> >
+class NFmiDataMatrix : public std::vector<std::vector<T>>
 {
  public:
   typedef typename std::vector<T>::size_type size_type;
@@ -64,10 +65,21 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
  public:
   //! Constructor
 
+  using Base = std::vector<std::vector<T>>;
+
   NFmiDataMatrix(size_type nx = 0, size_type ny = 0, const T& theValue = T())
-      : std::vector<std::vector<T> >(nx, std::vector<T>(ny, theValue)), itsNX(nx), itsNY(ny)
+      : Base(nx, std::vector<T>(ny, theValue)), itsNX(nx), itsNY(ny)
   {
   }
+
+  //! Copy constructor
+
+  NFmiDataMatrix<T>(const NFmiDataMatrix<T>& other)
+      : Base(other), itsNX(other.NX()), itsNY(other.NY())
+  {
+  }
+
+  ~NFmiDataMatrix() = default;
 
   //! Return matrix width.
 
@@ -116,7 +128,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw std::runtime_error(
+    throw Fmi::Exception(
+        BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -133,7 +146,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     {
       DoErrorReporting(e, i, j);
     }
-    throw std::runtime_error(
+    throw Fmi::Exception(
+        BCP,
         "Ei pitäisi mennä tähän, mutta muuten kääntäjä valittaa että funktion pitää palauttaa");
   }
 
@@ -148,14 +162,15 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     indexStr += " and ";
     indexStr += NFmiStringTools::Convert(j);
     indexStr += "\n";
-    throw std::runtime_error(e.what() + std::string("\n") + indexStr);
+    throw Fmi::Exception(BCP, e.what() + std::string("\n") + indexStr);
   }
 
   //! Resize matrix to desired size, with given value for new elements.
 
   void Resize(size_type theNX, size_type theNY, const T& theValue = T())
   {
-    if (itsNY == theNY && itsNX == theNX) return;
+    if (itsNY == theNY && itsNX == theNX)
+      return;
 
     itsNY = theNY;
     itsNX = theNX;
@@ -204,13 +219,27 @@ class NFmiDataMatrix : public std::vector<std::vector<T> >
     return *this;
   }
 
+  //! Move assignment operator: matrix = matrix
+
+  NFmiDataMatrix<T>& operator=(NFmiDataMatrix<T>&& other)
+  {
+    if (&other != this)
+    {
+      itsNX = other.itsNX;
+      itsNY = other.itsNY;
+      Base::operator=(std::move(other));
+    }
+    return *this;
+  }
+
   //! Data replacement operator: matrix.Replace(source,target)
 
   void Replace(const T& theSourceValue, const T& theTargetValue)
   {
     for (size_type j = 0; j < itsNY; j++)
       for (size_type i = 0; i < itsNX; i++)
-        if (this->operator[](i)[j] == theSourceValue) this->operator[](i)[j] = theTargetValue;
+        if (this->operator[](i)[j] == theSourceValue)
+          this->operator[](i)[j] = theTargetValue;
   }
 
   //! Addition operator matrix += matrix

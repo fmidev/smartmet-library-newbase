@@ -64,7 +64,7 @@
 // ======================================================================
 
 #include "NFmiIndexMask.h"
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <deque>
 #include <iterator>
@@ -120,14 +120,21 @@ NFmiIndexMask::NFmiIndexMask(const NFmiIndexMask& theMask)
 
 NFmiIndexMask& NFmiIndexMask::operator=(const NFmiIndexMask& theMask)
 {
-  if (this != &theMask)
+  try
   {
-    itsData = theMask.itsData;
-    itsSorted = theMask.itsSorted;
-    itsXSize = theMask.itsXSize;
-    itsYSize = theMask.itsYSize;
+    if (this != &theMask)
+    {
+      itsData = theMask.itsData;
+      itsSorted = theMask.itsSorted;
+      itsXSize = theMask.itsXSize;
+      itsYSize = theMask.itsYSize;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -138,8 +145,15 @@ NFmiIndexMask& NFmiIndexMask::operator=(const NFmiIndexMask& theMask)
 
 void NFmiIndexMask::clear()
 {
-  itsData.clear();
-  itsSorted = true;
+  try
+  {
+    itsData.clear();
+    itsSorted = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -150,7 +164,17 @@ void NFmiIndexMask::clear()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiIndexMask::empty() const { return itsData.empty(); }
+bool NFmiIndexMask::empty() const
+{
+  try
+  {
+    return itsData.empty();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Return the size of the mask
@@ -161,8 +185,15 @@ bool NFmiIndexMask::empty() const { return itsData.empty(); }
 
 NFmiIndexMask::size_type NFmiIndexMask::size() const
 {
-  require_sorted();
-  return itsData.size();
+  try
+  {
+    require_sorted();
+    return itsData.size();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -175,8 +206,15 @@ NFmiIndexMask::size_type NFmiIndexMask::size() const
 
 void NFmiIndexMask::insert(value_type theIndex)
 {
-  itsData.push_back(theIndex);
-  itsSorted = false;
+  try
+  {
+    itsData.push_back(theIndex);
+    itsSorted = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -193,9 +231,16 @@ void NFmiIndexMask::insert(value_type theIndex)
 
 NFmiIndexMask::const_iterator NFmiIndexMask::find(value_type theIndex) const
 {
-  // not optimal, could use binary_search once sorted
-  require_sorted();
-  return std::find(itsData.begin(), itsData.end(), theIndex);
+  try
+  {
+    // not optimal, could use binary_search once sorted
+    require_sorted();
+    return std::find(itsData.begin(), itsData.end(), theIndex);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -208,8 +253,15 @@ NFmiIndexMask::const_iterator NFmiIndexMask::find(value_type theIndex) const
 
 NFmiIndexMask::const_iterator NFmiIndexMask::begin() const
 {
-  require_sorted();
-  return itsData.begin();
+  try
+  {
+    require_sorted();
+    return itsData.begin();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -222,8 +274,15 @@ NFmiIndexMask::const_iterator NFmiIndexMask::begin() const
 
 NFmiIndexMask::const_iterator NFmiIndexMask::end() const
 {
-  require_sorted();
-  return itsData.end();
+  try
+  {
+    require_sorted();
+    return itsData.end();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -237,10 +296,19 @@ NFmiIndexMask::const_iterator NFmiIndexMask::end() const
 
 bool NFmiIndexMask::operator==(const NFmiIndexMask& theMask) const
 {
-  require_sorted();
-  theMask.require_sorted();
-  if (itsData.size() != theMask.itsData.size()) return false;
-  return (std::equal(itsData.begin(), itsData.end(), theMask.itsData.begin()));
+  try
+  {
+    require_sorted();
+    theMask.require_sorted();
+    if (itsData.size() != theMask.itsData.size())
+      return false;
+
+    return (std::equal(itsData.begin(), itsData.end(), theMask.itsData.begin()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -254,9 +322,16 @@ bool NFmiIndexMask::operator==(const NFmiIndexMask& theMask) const
 
 bool NFmiIndexMask::operator!=(const NFmiIndexMask& theMask) const
 {
-  require_sorted();
-  theMask.require_sorted();
-  return !operator==(theMask);
+  try
+  {
+    require_sorted();
+    theMask.require_sorted();
+    return !operator==(theMask);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -270,19 +345,26 @@ bool NFmiIndexMask::operator!=(const NFmiIndexMask& theMask) const
 
 NFmiIndexMask& NFmiIndexMask::operator&=(const NFmiIndexMask& theMask)
 {
-  // Collect unique indices for both sets
+  try
+  {
+    // Collect unique indices for both sets
 
-  require_sorted();
-  theMask.require_sorted();
+    require_sorted();
+    theMask.require_sorted();
 
-  storage_type indexes;
+    storage_type indexes;
 
-  std::set_intersection(
-      begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
+    std::set_intersection(
+        begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
 
-  std::swap(indexes, itsData);
+    std::swap(indexes, itsData);
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -296,17 +378,24 @@ NFmiIndexMask& NFmiIndexMask::operator&=(const NFmiIndexMask& theMask)
 
 NFmiIndexMask& NFmiIndexMask::operator|=(const NFmiIndexMask& theMask)
 {
-  require_sorted();
-  theMask.require_sorted();
+  try
+  {
+    require_sorted();
+    theMask.require_sorted();
 
-  storage_type indexes;
+    storage_type indexes;
 
-  std::set_union(
-      begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
+    std::set_union(
+        begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
 
-  std::swap(indexes, itsData);
+    std::swap(indexes, itsData);
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -320,17 +409,24 @@ NFmiIndexMask& NFmiIndexMask::operator|=(const NFmiIndexMask& theMask)
 
 NFmiIndexMask& NFmiIndexMask::operator-=(const NFmiIndexMask& theMask)
 {
-  require_sorted();
-  theMask.require_sorted();
+  try
+  {
+    require_sorted();
+    theMask.require_sorted();
 
-  storage_type indexes;
+    storage_type indexes;
 
-  std::set_difference(
-      begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
+    std::set_difference(
+        begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
 
-  std::swap(indexes, itsData);
+    std::swap(indexes, itsData);
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -344,17 +440,24 @@ NFmiIndexMask& NFmiIndexMask::operator-=(const NFmiIndexMask& theMask)
 
 NFmiIndexMask& NFmiIndexMask::operator^=(const NFmiIndexMask& theMask)
 {
-  require_sorted();
-  theMask.require_sorted();
+  try
+  {
+    require_sorted();
+    theMask.require_sorted();
 
-  storage_type indexes;
+    storage_type indexes;
 
-  std::set_symmetric_difference(
-      begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
+    std::set_symmetric_difference(
+        begin(), end(), theMask.begin(), theMask.end(), inserter(indexes, indexes.begin()));
 
-  std::swap(indexes, itsData);
+    std::swap(indexes, itsData);
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -369,9 +472,16 @@ NFmiIndexMask& NFmiIndexMask::operator^=(const NFmiIndexMask& theMask)
 
 NFmiIndexMask operator&(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs)
 {
-  NFmiIndexMask tmp(theLhs);
-  tmp &= theRhs;
-  return tmp;
+  try
+  {
+    NFmiIndexMask tmp(theLhs);
+    tmp &= theRhs;
+    return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -386,9 +496,16 @@ NFmiIndexMask operator&(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
 
 NFmiIndexMask operator|(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs)
 {
-  NFmiIndexMask tmp(theLhs);
-  tmp |= theRhs;
-  return tmp;
+  try
+  {
+    NFmiIndexMask tmp(theLhs);
+    tmp |= theRhs;
+    return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -403,9 +520,16 @@ NFmiIndexMask operator|(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
 
 NFmiIndexMask operator-(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs)
 {
-  NFmiIndexMask tmp(theLhs);
-  tmp -= theRhs;
-  return tmp;
+  try
+  {
+    NFmiIndexMask tmp(theLhs);
+    tmp -= theRhs;
+    return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -420,9 +544,16 @@ NFmiIndexMask operator-(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
 
 NFmiIndexMask operator^(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs)
 {
-  NFmiIndexMask tmp(theLhs);
-  tmp ^= theRhs;
-  return tmp;
+  try
+  {
+    NFmiIndexMask tmp(theLhs);
+    tmp ^= theRhs;
+    return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -454,31 +585,38 @@ NFmiIndexMask operator^(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
 
 void NFmiIndexMask::Move(int theXMove, int theYMove)
 {
-  // Have to have knowledge about the original grid in able to operate
-  if (itsXSize && itsYSize)
+  try
   {
-    // pitää täyttää uusi set-otus, koska ei voida editoida suoraan
-    // set:issä olevaa dataa
-    storage_type tmpData;
-    value_type origIndex = 0;
-    int xPos = 0;
-    int yPos = 0;
-
-    auto it = begin();
-    auto endIt = end();
-    for (; it != endIt; ++it)
+    // Have to have knowledge about the original grid in able to operate
+    if (itsXSize && itsYSize)
     {
-      origIndex = *it;
-      xPos = theXMove + origIndex % itsXSize;
-      yPos = theYMove + origIndex / itsXSize;
-      if (xPos >= 0 && yPos >= 0 && static_cast<unsigned int>(xPos) < itsXSize &&
-          static_cast<unsigned int>(yPos) < itsYSize)
+      // pitää täyttää uusi set-otus, koska ei voida editoida suoraan
+      // set:issä olevaa dataa
+      storage_type tmpData;
+      value_type origIndex = 0;
+      int xPos = 0;
+      int yPos = 0;
+
+      auto it = begin();
+      auto endIt = end();
+      for (; it != endIt; ++it)
       {
-        tmpData.push_back(yPos * itsXSize + xPos);
+        origIndex = *it;
+        xPos = theXMove + origIndex % itsXSize;
+        yPos = theYMove + origIndex / itsXSize;
+        if (xPos >= 0 && yPos >= 0 && static_cast<unsigned int>(xPos) < itsXSize &&
+            static_cast<unsigned int>(yPos) < itsYSize)
+        {
+          tmpData.push_back(yPos * itsXSize + xPos);
+        }
       }
+      itsData.swap(tmpData);
+      itsSorted = false;
     }
-    itsData.swap(tmpData);
-    itsSorted = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -490,14 +628,22 @@ void NFmiIndexMask::Move(int theXMove, int theYMove)
 
 void NFmiIndexMask::require_sorted() const
 {
-  if (itsSorted) return;
+  try
+  {
+    if (itsSorted)
+      return;
 
-  sort(itsData.begin(), itsData.end());
+    sort(itsData.begin(), itsData.end());
 
-  auto it = unique(itsData.begin(), itsData.end());
-  itsData.erase(it, itsData.end());
+    auto it = unique(itsData.begin(), itsData.end());
+    itsData.erase(it, itsData.end());
 
-  itsSorted = true;
+    itsSorted = true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

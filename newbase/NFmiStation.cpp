@@ -13,9 +13,8 @@
 // ======================================================================
 
 #include "NFmiStation.h"
-
 #include "NFmiVersion.h"
-
+#include <macgyver/Exception.h>
 #include <fstream>
 
 // ----------------------------------------------------------------------
@@ -108,15 +107,22 @@ NFmiStation::NFmiStation(const NFmiStation &theStation)
 
 bool NFmiStation::IsEqual(const NFmiSortable &theLocation) const
 {
-  return ((GetIdent() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->GetIdent())) &&
-          (GetName() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->GetName())) &&
-          (IdentType() ==
-           (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
-                ->IdentType())));
+  try
+  {
+    return ((GetIdent() ==
+             (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->GetIdent())) &&
+            (GetName() ==
+             (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->GetName())) &&
+            (IdentType() ==
+             (static_cast<const NFmiStation *>(static_cast<const NFmiLocation *>(&theLocation))
+                  ->IdentType())));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -127,7 +133,10 @@ bool NFmiStation::IsEqual(const NFmiSortable &theLocation) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStation::IsLessThan(const NFmiSortable & /* theLocation */) const { return false; }
+bool NFmiStation::IsLessThan(const NFmiSortable & /* theLocation */) const
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theStation Undocumented
@@ -136,7 +145,14 @@ bool NFmiStation::IsLessThan(const NFmiSortable & /* theLocation */) const { ret
 // ----------------------------------------------------------------------
 bool NFmiStation::IsEqualName(const NFmiStation &theStation) const
 {
-  return GetName().IsEqual(theStation.GetName());
+  try
+  {
+    return GetName().IsEqual(theStation.GetName());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -150,10 +166,17 @@ bool NFmiStation::IsEqualName(const NFmiStation &theStation) const
 
 NFmiStation &NFmiStation::operator=(const NFmiStation &theStation)
 {
-  SetLocation(theStation);
-  itsMaxDistance = theStation.itsMaxDistance;
-  itsIdentType = theStation.itsIdentType;
-  return *this;
+  try
+  {
+    SetLocation(theStation);
+    itsMaxDistance = theStation.itsMaxDistance;
+    itsIdentType = theStation.itsIdentType;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -164,10 +187,17 @@ NFmiStation &NFmiStation::operator=(const NFmiStation &theStation)
 
 void NFmiStation::SetLocation(const NFmiLocation &theLocation)
 {
-  NFmiIndividual::operator=(
-      *(static_cast<const NFmiIndividual *>(static_cast<const NFmiStation *>(&theLocation))));
+  try
+  {
+    NFmiIndividual::operator=(
+        *(static_cast<const NFmiIndividual *>(static_cast<const NFmiStation *>(&theLocation))));
 
-  NFmiLocation::SetLocation(theLocation);
+    NFmiLocation::SetLocation(theLocation);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -176,7 +206,18 @@ void NFmiStation::SetLocation(const NFmiLocation &theLocation)
  */
 // ----------------------------------------------------------------------
 
-NFmiLocation *NFmiStation::Clone() const { return new NFmiStation(*this); }
+NFmiLocation *NFmiStation::Clone() const
+{
+  try
+  {
+    return new NFmiStation(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -188,17 +229,24 @@ NFmiLocation *NFmiStation::Clone() const { return new NFmiStation(*this); }
 
 std::ostream &NFmiStation::Write(std::ostream &file) const
 {
-  NFmiIndividual::Write(file);
-  NFmiLocation::Write(file);
-
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file << itsMaxDistance << " ";
-    file << static_cast<unsigned int>(itsIdentType) << std::endl;
-  }
+    NFmiIndividual::Write(file);
+    NFmiLocation::Write(file);
 
-  return file;
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file << itsMaxDistance << " ";
+      file << static_cast<unsigned int>(itsIdentType) << std::endl;
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -212,20 +260,27 @@ std::ostream &NFmiStation::Write(std::ostream &file) const
 
 std::istream &NFmiStation::Read(std::istream &file)
 {
-  NFmiIndividual::Read(file);
-  NFmiLocation::Read(file);
-
-  itsMaxDistance = kFloatMissing;
-
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    unsigned int theIdentType;
-    file >> itsMaxDistance;
-    file >> theIdentType;
-    itsIdentType = FmiStationType(theIdentType);
-  }
+    NFmiIndividual::Read(file);
+    NFmiLocation::Read(file);
 
-  return file;
+    itsMaxDistance = kFloatMissing;
+
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      unsigned int theIdentType;
+      file >> itsMaxDistance;
+      file >> theIdentType;
+      itsIdentType = FmiStationType(theIdentType);
+    }
+
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

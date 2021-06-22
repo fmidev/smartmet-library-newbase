@@ -27,13 +27,16 @@ void tostring()
   string result;
 
   result = converter.ToString(kFmiTemperature);
-  if (result != "Temperature") TEST_FAILED("kFmiTemperature name not found");
+  if (result != "Temperature")
+    TEST_FAILED("kFmiTemperature name not found");
 
   result = converter.ToString(kFmiPrecipitation1h);
-  if (result != "Precipitation1h") TEST_FAILED("kFmiPrecipitation1h name not found");
+  if (result != "Precipitation1h")
+    TEST_FAILED("kFmiPrecipitation1h name not found");
 
   result = converter.ToString(66666);
-  if (result != "") TEST_FAILED("66666 should not be defined");
+  if (result != "")
+    TEST_FAILED("66666 should not be defined");
 
   TEST_PASSED();
 }

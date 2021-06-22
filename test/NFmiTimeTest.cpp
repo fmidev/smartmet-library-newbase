@@ -39,18 +39,29 @@ void daysinyear()
 
   NFmiTime t;
 
-  if (t.DaysInYear(2005) != 365) TEST_FAILED("There are 365 days in year 2005");
-  if (t.DaysInYear(2004) != 366) TEST_FAILED("There are 366 days in year 2004");
-  if (t.DaysInYear(2003) != 365) TEST_FAILED("There are 365 days in year 2003");
-  if (t.DaysInYear(2002) != 365) TEST_FAILED("There are 365 days in year 2002");
-  if (t.DaysInYear(2001) != 365) TEST_FAILED("There are 365 days in year 2001");
-  if (t.DaysInYear(2000) != 366) TEST_FAILED("There are 366 days in year 2000");
-  if (t.DaysInYear(1999) != 365) TEST_FAILED("There are 365 days in year 1999");
+  if (t.DaysInYear(2005) != 365)
+    TEST_FAILED("There are 365 days in year 2005");
+  if (t.DaysInYear(2004) != 366)
+    TEST_FAILED("There are 366 days in year 2004");
+  if (t.DaysInYear(2003) != 365)
+    TEST_FAILED("There are 365 days in year 2003");
+  if (t.DaysInYear(2002) != 365)
+    TEST_FAILED("There are 365 days in year 2002");
+  if (t.DaysInYear(2001) != 365)
+    TEST_FAILED("There are 365 days in year 2001");
+  if (t.DaysInYear(2000) != 366)
+    TEST_FAILED("There are 366 days in year 2000");
+  if (t.DaysInYear(1999) != 365)
+    TEST_FAILED("There are 365 days in year 1999");
 
-  if (t.DaysInYear(1900) != 365) TEST_FAILED("There are 365 days in year 1900");
-  if (t.DaysInYear(2100) != 365) TEST_FAILED("There are 365 days in year 2100");
-  if (t.DaysInYear(2200) != 365) TEST_FAILED("There are 365 days in year 2200");
-  if (t.DaysInYear(2400) != 366) TEST_FAILED("There are 366 days in year 2400");
+  if (t.DaysInYear(1900) != 365)
+    TEST_FAILED("There are 365 days in year 1900");
+  if (t.DaysInYear(2100) != 365)
+    TEST_FAILED("There are 365 days in year 2100");
+  if (t.DaysInYear(2200) != 365)
+    TEST_FAILED("There are 365 days in year 2200");
+  if (t.DaysInYear(2400) != 366)
+    TEST_FAILED("There are 366 days in year 2400");
 
   TEST_PASSED();
 }
@@ -173,33 +184,40 @@ void decodecomparevalue()
   MyTime t(2000, 1, 1);
 
   t.MyDecodeCompareValue(0);
-  if (t != MyTime(2002, 1, 1)) TEST_FAILED("Time for value 0 should be 1.1.2002 00:00");
+  if (t != MyTime(2002, 1, 1))
+    TEST_FAILED("Time for value 0 should be 1.1.2002 00:00");
 
   t.MyDecodeCompareValue(60);
-  if (t != MyTime(2002, 1, 1, 1, 0)) TEST_FAILED("Time for value 60 should be 1.1.2002 01:00");
+  if (t != MyTime(2002, 1, 1, 1, 0))
+    TEST_FAILED("Time for value 60 should be 1.1.2002 01:00");
 
   t.MyDecodeCompareValue(135);
-  if (t != MyTime(2002, 1, 1, 2, 15)) TEST_FAILED("Time for value 135 should be 1.1.2002 02:15");
+  if (t != MyTime(2002, 1, 1, 2, 15))
+    TEST_FAILED("Time for value 135 should be 1.1.2002 02:15");
 
   t.MyDecodeCompareValue(1440);
-  if (t != MyTime(2002, 1, 2, 0, 0)) TEST_FAILED("Time for value 1440 should be 2.1.2002 00:00");
+  if (t != MyTime(2002, 1, 2, 0, 0))
+    TEST_FAILED("Time for value 1440 should be 2.1.2002 00:00");
 
   t.MyDecodeCompareValue(44640);
-  if (t != MyTime(2002, 2, 1, 0, 0)) TEST_FAILED("Time for value 44640 should be 1.2.2002 00:00");
+  if (t != MyTime(2002, 2, 1, 0, 0))
+    TEST_FAILED("Time for value 44640 should be 1.2.2002 00:00");
 
   t.MyDecodeCompareValue(-60);
   if (t != MyTime(2001, 12, 31, 23, 0))
     TEST_FAILED("Time for value -60 should be 31.12.2001 23:00");
 
   t.MyDecodeCompareValue(-440640);
-  if (t != MyTime(2001, 3, 1, 0, 0)) TEST_FAILED("Time for value -440640 should be 3.1.2001 00:00");
+  if (t != MyTime(2001, 3, 1, 0, 0))
+    TEST_FAILED("Time for value -440640 should be 3.1.2001 00:00");
 
   t.MyDecodeCompareValue(-442080);
   if (t != MyTime(2001, 2, 28, 0, 0))
     TEST_FAILED("Time for value -442080 should be 28.2.2001 00:00");
 
   t.MyDecodeCompareValue(-966240);
-  if (t != MyTime(2000, 3, 1, 0, 0)) TEST_FAILED("Time for value -966240 should be 1.3.2000 00:00");
+  if (t != MyTime(2000, 3, 1, 0, 0))
+    TEST_FAILED("Time for value -966240 should be 1.3.2000 00:00");
 
   t.MyDecodeCompareValue(-967680);
   if (t != MyTime(2000, 2, 29, 0, 0))

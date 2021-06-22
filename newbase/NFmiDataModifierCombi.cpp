@@ -24,7 +24,8 @@
 
 NFmiDataModifierCombi::~NFmiDataModifierCombi()
 {
-  if (itsFrequencies) delete[] itsFrequencies;
+  if (itsFrequencies)
+    delete[] itsFrequencies;
 }
 
 // ----------------------------------------------------------------------
@@ -53,7 +54,8 @@ NFmiDataModifierCombi::NFmiDataModifierCombi(unsigned int theNumberOfValues,
       itsSum(),
       itsFrequencies(nullptr)
 {
-  if (itsNumberOfValues > 0) itsFrequencies = new int[itsNumberOfValues];
+  if (itsNumberOfValues > 0)
+    itsFrequencies = new int[itsNumberOfValues];
   Clear();
 }
 
@@ -95,7 +97,8 @@ void NFmiDataModifierCombi::Clear()
   itsMax = -kFloatMissing;
   itsMin = kFloatMissing;
   itsTotalCounter = 0;
-  if (!itsNumberOfValues) return;
+  if (!itsNumberOfValues)
+    return;
   for (int i = 0; i < itsNumberOfValues; i++)
     itsFrequencies[i] = 0;
 }
@@ -109,7 +112,8 @@ void NFmiDataModifierCombi::Clear()
 
 bool NFmiDataModifierCombi::CheckParams(double theValue)
 {
-  if (theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0) return false;
+  if (theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0)
+    return false;
   return true;
 }
 
@@ -121,15 +125,18 @@ bool NFmiDataModifierCombi::CheckParams(double theValue)
 
 void NFmiDataModifierCombi::Calculate(float theValue)
 {
-  if (!CheckParams(theValue)) return;
+  if (!CheckParams(theValue))
+    return;
 
   itsTotalCounter++;
 
   itsSum += theValue;
 
-  if (theValue > itsMax) itsMax = theValue;
+  if (theValue > itsMax)
+    itsMax = theValue;
 
-  if (theValue < itsMin) itsMin = theValue;
+  if (theValue < itsMin)
+    itsMin = theValue;
 
   if (itsNumberOfValues)
   {
@@ -200,7 +207,8 @@ float NFmiDataModifierCombi::ProbValue(const NFmiIntegrationSelector& theSelecto
 bool NFmiDataModifierCombi::CheckFrequency(float theValue,
                                            const NFmiIntegrationSelector& theSelector)
 {
-  if (!CheckParams(theValue)) return false;
+  if (!CheckParams(theValue))
+    return false;
 
   switch (theSelector.ProbabilityCondition())
   {

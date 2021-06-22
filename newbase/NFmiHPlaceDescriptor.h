@@ -69,6 +69,7 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
 
   NFmiPoint WorldXY(
       unsigned long index) const;  // actual metric coordinate, or WGS84 for point data
+
   const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix(bool wrapped) const;
   bool NeedsGlobeWrap() const;
@@ -162,49 +163,77 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline NFmiHPlaceDescriptor::~NFmiHPlaceDescriptor() { Destroy(); }
+inline NFmiHPlaceDescriptor::~NFmiHPlaceDescriptor()
+{
+  Destroy();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsLocation() const { return (itsLocationBag != 0); }
+inline bool NFmiHPlaceDescriptor::IsLocation() const
+{
+  return (itsLocationBag != 0);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsArea() const { return (itsArea != 0); }
+inline bool NFmiHPlaceDescriptor::IsArea() const
+{
+  return (itsArea != 0);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiHPlaceDescriptor::IsGrid() const { return (itsGrid != 0); }
+inline bool NFmiHPlaceDescriptor::IsGrid() const
+{
+  return (itsGrid != 0);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiGrid *NFmiHPlaceDescriptor::Grid() const { return itsGrid; }
+inline const NFmiGrid *NFmiHPlaceDescriptor::Grid() const
+{
+  return itsGrid;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid *NFmiHPlaceDescriptor::NonConstGrid() const { return itsGrid; }
+inline NFmiGrid *NFmiHPlaceDescriptor::NonConstGrid() const
+{
+  return itsGrid;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline FmiStationType NFmiHPlaceDescriptor::SelectedType() const { return itsSelectedType; }
+inline FmiStationType NFmiHPlaceDescriptor::SelectedType() const
+{
+  return itsSelectedType;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theStationType Undocumented
@@ -285,13 +314,20 @@ inline std::istream &operator>>(std::istream &file, NFmiHPlaceDescriptor &ob)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiHPlaceDescriptor::ClassId() const { return kNFmiHPlaceDescriptor; }
+inline unsigned long NFmiHPlaceDescriptor::ClassId() const
+{
+  return kNFmiHPlaceDescriptor;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiHPlaceDescriptor::ClassName() const { return "NFmiHPlaceDescriptor"; }
+inline const char *NFmiHPlaceDescriptor::ClassName() const
+{
+  return "NFmiHPlaceDescriptor";
+}
 
 // ======================================================================

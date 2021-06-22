@@ -32,17 +32,20 @@ void nearestpoint(void)
   // An exact point
   if (!tree.NearestPoint(result, NFmiPoint(0, 0)))
     TEST_FAILED("NearestPoint failed for point (0,0)");
-  if (result != NFmiPoint(0, 0)) TEST_FAILED("NearestPoint returned wrong result for (0,0)");
+  if (result != NFmiPoint(0, 0))
+    TEST_FAILED("NearestPoint returned wrong result for (0,0)");
 
   // A near point inside grid
   if (!tree.NearestPoint(result, NFmiPoint(4.9, 5.1)))
     TEST_FAILED("NearestPoint failed for point(4.9,5.1");
-  if (result != NFmiPoint(5, 5)) TEST_FAILED("NearestPoint returned wrong result for (4.9,5.1");
+  if (result != NFmiPoint(5, 5))
+    TEST_FAILED("NearestPoint returned wrong result for (4.9,5.1");
 
   // A near point outside grid
   if (!tree.NearestPoint(result, NFmiPoint(-0.5, 5.1)))
     TEST_FAILED("NearestPoint failed for point(-0.5,5.1");
-  if (result != NFmiPoint(0, 5)) TEST_FAILED("NearestPoint returned wrong result for (-0.5,5.1");
+  if (result != NFmiPoint(0, 5))
+    TEST_FAILED("NearestPoint returned wrong result for (-0.5,5.1");
 
   // A distance limit
   if (tree.NearestPoint(result, NFmiPoint(-1, -1), 1))
@@ -75,17 +78,20 @@ void farthestpoint(void)
   // An exact point
   if (!tree.FarthestPoint(result, NFmiPoint(0, 0)))
     TEST_FAILED("FarthestPoint failed for point (0,0)");
-  if (result != NFmiPoint(9, 9)) TEST_FAILED("FarthestPoint returned wrong result for (0,0)");
+  if (result != NFmiPoint(9, 9))
+    TEST_FAILED("FarthestPoint returned wrong result for (0,0)");
 
   // A near point inside grid
   if (!tree.FarthestPoint(result, NFmiPoint(4.9, 5.1)))
     TEST_FAILED("FarthestPoint failed for point(4.9,5.1");
-  if (result != NFmiPoint(0, 0)) TEST_FAILED("FarthestPoint returned wrong result for (4.9,5.1");
+  if (result != NFmiPoint(0, 0))
+    TEST_FAILED("FarthestPoint returned wrong result for (4.9,5.1");
 
   // A near point outside grid
   if (!tree.FarthestPoint(result, NFmiPoint(-0.5, 5.1)))
     TEST_FAILED("FarthestPoint failed for point(-0.5,5.1");
-  if (result != NFmiPoint(9, 0)) TEST_FAILED("FarthestPoint returned wrong result for (-0.5,5.1");
+  if (result != NFmiPoint(9, 0))
+    TEST_FAILED("FarthestPoint returned wrong result for (-0.5,5.1");
 
   TEST_PASSED();
 }

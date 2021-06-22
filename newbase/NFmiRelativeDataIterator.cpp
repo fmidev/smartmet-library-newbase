@@ -16,6 +16,7 @@
 
 #include "NFmiDataModifier.h"
 #include "NFmiQueryInfo.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -88,23 +89,35 @@ NFmiRelativeDataIterator::NFmiRelativeDataIterator(NFmiQueryInfo* theData,
 
 void NFmiRelativeDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 {
-  if (!theDataModifier) return;
+  try
+  {
+    if (!theDataModifier)
+      return;
 
-  CheckIfMaskIsUsed();  // käy asettamassa fMaskInUse-flagin päälle (optimointia, jos ei ole maskia
-                        // käytössä)
-  theDataModifier->Clear();
+    CheckIfMaskIsUsed();  // käy asettamassa fMaskInUse-flagin päälle (optimointia, jos ei ole
+                          // maskia käytössä)
+    theDataModifier->Clear();
 
-  for (long t = itsDtStart; t <= itsDtEnd; t++)
-    for (long y = itsDyStart; y <= itsDyEnd; y++)
-      for (long x = itsDxStart; x <= itsDxEnd; x++)
+    for (long t = itsDtStart; t <= itsDtEnd; t++)
+    {
+      for (long y = itsDyStart; y <= itsDyEnd; y++)
       {
-        if ((!fMaskInUse) || IsMasked(itsData->PeekLocationLatLon(x, y)))  // tehdään laskut, jos
-          // maski ei ole käytössä
-          // tai sitten jos maski
-          // on käytössä ja
-          // 'päällä'
-          theDataModifier->Calculate(itsData->PeekValue(t, x, y));
+        for (long x = itsDxStart; x <= itsDxEnd; x++)
+        {
+          if ((!fMaskInUse) || IsMasked(itsData->PeekLocationLatLon(x, y)))  // tehdään laskut, jos
+            // maski ei ole käytössä
+            // tai sitten jos maski
+            // on käytössä ja
+            // 'päällä'
+            theDataModifier->Calculate(itsData->PeekValue(t, x, y));
+        }
       }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -117,12 +130,19 @@ void NFmiRelativeDataIterator::DoForEach(NFmiDataModifier* theDataModifier)
 
 void NFmiRelativeDataIterator::SetDimensions(long dx, long dy, long dt)
 {
-  itsDxStart = -dx;
-  itsDyStart = -dy;
-  itsDtStart = -dt;
-  itsDxEnd = dx;
-  itsDyEnd = dy;
-  itsDtEnd = dt;
+  try
+  {
+    itsDxStart = -dx;
+    itsDyStart = -dy;
+    itsDtStart = -dt;
+    itsDxEnd = dx;
+    itsDyEnd = dy;
+    itsDtEnd = dt;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

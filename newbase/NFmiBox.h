@@ -55,7 +55,10 @@ class NFmiBox
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiBox &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiBox &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for NFmiBox class
@@ -66,6 +69,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiBox &ob) { return 
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiBox &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiBox &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

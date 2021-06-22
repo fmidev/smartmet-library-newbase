@@ -52,7 +52,8 @@ NFmiParamDataModifier* NFmiDataModifierDescriptor::VarianceModifier(const NFmiDa
 {
   NFmiParamDataModifier* modifier = nullptr;
   if (itsVarianceModifiers)
-    if (itsVarianceModifiers->Find(theParam, theLevel)) modifier = itsVarianceModifiers->Current();
+    if (itsVarianceModifiers->Find(theParam, theLevel))
+      modifier = itsVarianceModifiers->Current();
   return modifier;
 }
 
@@ -65,7 +66,8 @@ NFmiParamDataModifier* NFmiDataModifierDescriptor::VarianceModifier(const NFmiDa
 void NFmiDataModifierDescriptor::SetVarianceModifiers(NFmiParamDataModifierList* theList)
 {
   // HUOM!!! Ottaa annetun listan omistukseensa!
-  if (itsVarianceModifiers) delete itsVarianceModifiers;
+  if (itsVarianceModifiers)
+    delete itsVarianceModifiers;
   itsVarianceModifiers = theList;
 }
 
@@ -86,21 +88,30 @@ NFmiParamDataModifierList* NFmiDataModifierDescriptor::GetVarianceModifiers()
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiDataModifierDescriptor::Index() const { return 0; }
+unsigned long NFmiDataModifierDescriptor::Index() const
+{
+  return 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiDataModifierDescriptor::Size() const { return 0; }
+unsigned long NFmiDataModifierDescriptor::Size() const
+{
+  return 0;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierDescriptor::IsActive() const { return false; }
+bool NFmiDataModifierDescriptor::IsActive() const
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theActivityState Undocumented
@@ -108,22 +119,20 @@ bool NFmiDataModifierDescriptor::IsActive() const { return false; }
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierDescriptor::SetActivity(bool /* theActivityState*/) { return false; }
+bool NFmiDataModifierDescriptor::SetActivity(bool /* theActivityState*/)
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierDescriptor::NextActive() { return false; }
-// ----------------------------------------------------------------------
-/*!
- * \param file Undocumented
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-std::ostream& NFmiDataModifierDescriptor::Write(std::ostream& file) const { return file; }
+bool NFmiDataModifierDescriptor::NextActive()
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param file Undocumented
@@ -131,5 +140,19 @@ std::ostream& NFmiDataModifierDescriptor::Write(std::ostream& file) const { retu
  */
 // ----------------------------------------------------------------------
 
-std::istream& NFmiDataModifierDescriptor::Read(std::istream& file) { return file; }
+std::ostream& NFmiDataModifierDescriptor::Write(std::ostream& file) const
+{
+  return file;
+}
+// ----------------------------------------------------------------------
+/*!
+ * \param file Undocumented
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+std::istream& NFmiDataModifierDescriptor::Read(std::istream& file)
+{
+  return file;
+}
 // ======================================================================

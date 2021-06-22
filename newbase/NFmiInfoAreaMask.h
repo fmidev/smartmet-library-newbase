@@ -656,7 +656,8 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
         if (IgnoreSimpleConditionWhileIteratingLevels() ||
             VertFuncSimpleconditionCheck(theCalculationParams))
           functionObject();
-        if (iterationBreakingData.BreakIteration()) break;
+        if (iterationBreakingData.BreakIteration())
+          break;
       }
     }
   }

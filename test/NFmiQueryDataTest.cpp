@@ -25,12 +25,14 @@ void reading()
 {
   string filename = "data/hiladata.sqd";
   ifstream input(filename.c_str());
-  if (!input) TEST_FAILED("Failed to open " + filename + " for reading");
+  if (!input)
+    TEST_FAILED("Failed to open " + filename + " for reading");
 
   NFmiQueryData q;
   input >> q;
 
-  if (input.bad()) TEST_FAILED("Input stream " + filename + " was left in bad state");
+  if (input.bad())
+    TEST_FAILED("Input stream " + filename + " was left in bad state");
 
   TEST_PASSED();
 }
@@ -38,7 +40,8 @@ void reading()
 void constructing()
 {
   qd = new NFmiQueryData("data/hiladata.sqd");
-  if (qd == 0) TEST_FAILED("Failed to create mmapped file with new");
+  if (qd == 0)
+    TEST_FAILED("Failed to create mmapped file with new");
 
   NFmiQueryData dir("data/");
   NFmiQueryData gzipped("data/hiladata.sqd.gz");
@@ -54,49 +57,56 @@ void infoversion()
   using NFmiStringTools::Convert;
 
   double version = qd->InfoVersion();
-  if (version != 6) TEST_FAILED("Info Version should be 6, not " + Convert(version));
+  if (version != 6)
+    TEST_FAILED("Info Version should be 6, not " + Convert(version));
 
   TEST_PASSED();
 }
 
 void islocation()
 {
-  if (qd->IsLocation()) TEST_FAILED("Should return false for gridded data");
+  if (qd->IsLocation())
+    TEST_FAILED("Should return false for gridded data");
 
   TEST_PASSED();
 }
 
 void isarea()
 {
-  if (qd->IsArea()) TEST_FAILED("Should return false for gridded data");
+  if (qd->IsArea())
+    TEST_FAILED("Should return false for gridded data");
 
   TEST_PASSED();
 }
 
 void isgrid()
 {
-  if (!qd->IsGrid()) TEST_FAILED("Should return true for gridded data");
+  if (!qd->IsGrid())
+    TEST_FAILED("Should return true for gridded data");
 
   TEST_PASSED();
 }
 
 void isvalidtime()
 {
-  if (!qd->IsValidTime()) TEST_FAILED("Should return true for the test data");
+  if (!qd->IsValidTime())
+    TEST_FAILED("Should return true for the test data");
 
   TEST_PASSED();
 }
 
 void isorigintime()
 {
-  if (qd->IsOriginTime()) TEST_FAILED("Should return false for the test data");
+  if (qd->IsOriginTime())
+    TEST_FAILED("Should return false for the test data");
 
   TEST_PASSED();
 }
 
 void islevel()
 {
-  if (!qd->IsLevel()) TEST_FAILED("Should return true for the test data");
+  if (!qd->IsLevel())
+    TEST_FAILED("Should return true for the test data");
 
   TEST_PASSED();
 }
@@ -111,27 +121,32 @@ void nextparam()
   if ((id = qd->Param().GetParamIdent()) != kFmiBadParameter)
     TEST_FAILED("Param after reset should be BadParameter, not " + Convert(id));
 
-  if (!qd->NextParam()) TEST_FAILED("Expecting next parameter to be Temperature");
+  if (!qd->NextParam())
+    TEST_FAILED("Expecting next parameter to be Temperature");
 
   if ((id = qd->Param().GetParamIdent()) != kFmiTemperature)
     TEST_FAILED("First param should be Temperature, not " + Convert(id));
 
-  if (!qd->NextParam()) TEST_FAILED("Expecting next parameter to be DewPoint");
+  if (!qd->NextParam())
+    TEST_FAILED("Expecting next parameter to be DewPoint");
 
   if ((id = qd->Param().GetParamIdent()) != kFmiDewPoint)
     TEST_FAILED("Second param should be DewPoint, not " + Convert(id));
 
-  if (!qd->NextParam()) TEST_FAILED("Expecting next parameter to be DewPoint");
+  if (!qd->NextParam())
+    TEST_FAILED("Expecting next parameter to be DewPoint");
 
   if ((id = qd->Param().GetParamIdent()) != kFmiTotalWindMS)
     TEST_FAILED("Third param should be TotalWindMS, not " + Convert(id));
 
-  if (!qd->NextParam()) TEST_FAILED("Expecting next parameter to be WeatherAndCloudiness");
+  if (!qd->NextParam())
+    TEST_FAILED("Expecting next parameter to be WeatherAndCloudiness");
 
   if ((id = qd->Param().GetParamIdent()) != kFmiWeatherAndCloudiness)
     TEST_FAILED("Fourth param should be WeatherAndCloudiness, not " + Convert(id));
 
-  if (qd->NextParam()) TEST_FAILED("Not expecting more parameters after WeatherAndCloudiness");
+  if (qd->NextParam())
+    TEST_FAILED("Not expecting more parameters after WeatherAndCloudiness");
 
   TEST_PASSED();
 }
@@ -147,12 +162,14 @@ void nexttime()
   if ((t = qd->ValidTime()) != NFmiMetTime(2002, 10, 9, 5, 0, 0))
     TEST_FAILED("ValidTime after reset should be 2002 10 9 5 0 0, not " + Convert(t));
 
-  if (!qd->NextTime()) TEST_FAILED("Expecting more than 1 timestep in test data");
+  if (!qd->NextTime())
+    TEST_FAILED("Expecting more than 1 timestep in test data");
 
   if ((t = qd->ValidTime()) != NFmiMetTime(2002, 10, 9, 6, 0, 0))
     TEST_FAILED("ValidTime after 1 nexttime should be 2002 10 9 6 0 0, not " + Convert(t));
 
-  if (!qd->NextTime()) TEST_FAILED("Expecting more than 2 timesteps in test data");
+  if (!qd->NextTime())
+    TEST_FAILED("Expecting more than 2 timesteps in test data");
 
   if ((t = qd->ValidTime()) != NFmiMetTime(2002, 10, 9, 7, 0, 0))
     TEST_FAILED("ValidTime after 2 nexttimes should be 2002 10 9 7 0 0, not " + Convert(t));
@@ -209,7 +226,8 @@ void time()
   if ((t = qd->Time()) != NFmiMetTime(2002, 10, 9, 5))
     TEST_FAILED("First time should be 9.10.2002 05:00, not " + Convert(t));
 
-  if (!qd->NextTime()) TEST_FAILED("Data should have more than 1 timestep");
+  if (!qd->NextTime())
+    TEST_FAILED("Data should have more than 1 timestep");
 
   if ((t = qd->Time()) != NFmiMetTime(2002, 10, 9, 6))
     TEST_FAILED("Second time should be 9.10.2002 06:00, not " + Convert(t));
@@ -228,7 +246,8 @@ void validtime()
   if ((t = qd->ValidTime()) != NFmiMetTime(2002, 10, 9, 5))
     TEST_FAILED("First time should be 9.10.2002 05:00, not " + Convert(t));
 
-  if (!qd->NextTime()) TEST_FAILED("Data should have more than 1 timestep");
+  if (!qd->NextTime())
+    TEST_FAILED("Data should have more than 1 timestep");
 
   if ((t = qd->ValidTime()) != NFmiMetTime(2002, 10, 9, 6))
     TEST_FAILED("First time should be 9.10.2002 06:00, not " + Convert(t));
@@ -272,7 +291,8 @@ void level()
   if ((l = lev.LevelTypeId()) != kFmiAnyLevelType)
     TEST_FAILED("Level typeid should be kFmiAnyLevelType, not " + Convert(l));
 
-  if ((l = lev.LevelValue()) != 0) TEST_FAILED("Level value should be 0, not " + Convert(l));
+  if ((l = lev.LevelValue()) != 0)
+    TEST_FAILED("Level value should be 0, not " + Convert(l));
 
   TEST_PASSED();
 }
@@ -283,7 +303,8 @@ void paramsize()
 
   unsigned long n = qd->ParamSize();
 
-  if (n != 4) TEST_FAILED("Param size should be 4, not " + Convert(n));
+  if (n != 4)
+    TEST_FAILED("Param size should be 4, not " + Convert(n));
 
   TEST_PASSED();
 }
@@ -293,7 +314,8 @@ void quality()
   using NFmiStringTools::Convert;
 
   float q = qd->Quality();
-  if (q != 100) TEST_FAILED("Quality should be 100, not " + Convert(q));
+  if (q != 100)
+    TEST_FAILED("Quality should be 100, not " + Convert(q));
 
   TEST_PASSED();
 }
@@ -337,7 +359,8 @@ void floatvalue()
   if (abs(val - 1.56875) > 1e-5)
     TEST_FAILED("Second param third time value should be 1.56875, not " + Convert(val));
 
-  if (!qd->Time(NFmiTime(2002, 10, 12, 6))) TEST_FAILED("Failed to set last time on");
+  if (!qd->Time(NFmiTime(2002, 10, 12, 6)))
+    TEST_FAILED("Failed to set last time on");
 
   val = qd->FloatValue();
   if (abs(val - 2.91922) > 1e-5)
@@ -348,7 +371,8 @@ void floatvalue()
 
 void isbinarystorageused()
 {
-  if (!qd->IsBinaryStorageUsed()) TEST_FAILED("Binary storage should be on for the test data");
+  if (!qd->IsBinaryStorageUsed())
+    TEST_FAILED("Binary storage should be on for the test data");
 
   TEST_PASSED();
 }
@@ -358,14 +382,17 @@ void usebinarystorage()
   bool oldstate = qd->IsBinaryStorageUsed();
 
   qd->UseBinaryStorage(true);
-  if (!qd->IsBinaryStorageUsed()) TEST_FAILED("Setting binary storage on failed");
+  if (!qd->IsBinaryStorageUsed())
+    TEST_FAILED("Setting binary storage on failed");
 
   qd->UseBinaryStorage(false);
-  if (qd->IsBinaryStorageUsed()) TEST_FAILED("Setting binary storage off failed");
+  if (qd->IsBinaryStorageUsed())
+    TEST_FAILED("Setting binary storage off failed");
 
   qd->UseBinaryStorage(oldstate);
 
-  if (qd->IsBinaryStorageUsed() != oldstate) TEST_FAILED("Restoring old state failed");
+  if (qd->IsBinaryStorageUsed() != oldstate)
+    TEST_FAILED("Restoring old state failed");
 
   TEST_PASSED();
 }

@@ -132,42 +132,66 @@ inline void NFmiRect::Set(const NFmiPoint &theTopLeftCorner, const NFmiPoint &th
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Top() const { return itsPlace.Y(); }
+inline double NFmiRect::Top() const
+{
+  return itsPlace.Y();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Bottom() const { return itsPlace.Y() + itsSize.Y(); }
+inline double NFmiRect::Bottom() const
+{
+  return itsPlace.Y() + itsSize.Y();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Left() const { return itsPlace.X(); }
+inline double NFmiRect::Left() const
+{
+  return itsPlace.X();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Right() const { return itsPlace.X() + itsSize.X(); }
+inline double NFmiRect::Right() const
+{
+  return itsPlace.X() + itsSize.X();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiRect::TopLeft() const { return itsPlace; }
+inline NFmiPoint NFmiRect::TopLeft() const
+{
+  return itsPlace;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiRect::BottomRight() const { return itsPlace + itsSize; }
+inline NFmiPoint NFmiRect::BottomRight() const
+{
+  return itsPlace + itsSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -224,28 +248,44 @@ inline NFmiPoint NFmiRect::Corner(FmiDirection cornerIdent) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint &NFmiRect::Size() const { return itsSize; }
+inline const NFmiPoint &NFmiRect::Size() const
+{
+  return itsSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint &NFmiRect::Place() const { return itsPlace; }
+inline const NFmiPoint &NFmiRect::Place() const
+{
+  return itsPlace;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Height() const { return itsSize.Y(); }
+inline double NFmiRect::Height() const
+{
+  return itsSize.Y();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiRect::Width() const { return itsSize.X(); }
+inline double NFmiRect::Width() const
+{
+  return itsSize.X();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -264,7 +304,10 @@ inline void NFmiRect::Top(double theValue)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRect::Bottom(double theValue) { itsSize.Y(theValue - itsPlace.Y()); }
+inline void NFmiRect::Bottom(double theValue)
+{
+  itsSize.Y(theValue - itsPlace.Y());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -283,21 +326,30 @@ inline void NFmiRect::Left(double theValue)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRect::Right(double theValue) { itsSize.X(theValue - itsPlace.X()); }
+inline void NFmiRect::Right(double theValue)
+{
+  itsSize.X(theValue - itsPlace.X());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newPlace Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRect::Place(const NFmiPoint &newPlace) { itsPlace = newPlace; }
+inline void NFmiRect::Place(const NFmiPoint &newPlace)
+{
+  itsPlace = newPlace;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newSize Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiRect::Size(const NFmiPoint &newSize) { itsSize = newSize; }
+inline void NFmiRect::Size(const NFmiPoint &newSize)
+{
+  itsSize = newSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theRelativePoint Undocumented
@@ -358,7 +410,11 @@ inline bool NFmiRect::IsInside(const NFmiRect &theRect) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiRect::IsEmpty() const { return (itsSize.X() == 0 && itsSize.Y() == 0); }
+inline bool NFmiRect::IsEmpty() const
+{
+  return (itsSize.X() == 0 && itsSize.Y() == 0);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theRect Undocumented
@@ -400,7 +456,11 @@ inline NFmiPoint NFmiRect::Center() const
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiRect::ClassName() const { return "NFmiRect"; }
+inline const char *NFmiRect::ClassName() const
+{
+  return "NFmiRect";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiRect
@@ -411,7 +471,10 @@ inline const char *NFmiRect::ClassName() const { return "NFmiRect"; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &os, const NFmiRect &item) { return item.Write(os); }
+inline std::ostream &operator<<(std::ostream &os, const NFmiRect &item)
+{
+  return item.Write(os);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiRect
@@ -422,4 +485,7 @@ inline std::ostream &operator<<(std::ostream &os, const NFmiRect &item) { return
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &is, NFmiRect &item) { return item.Read(is); }
+inline std::istream &operator>>(std::istream &is, NFmiRect &item)
+{
+  return item.Read(is);
+}

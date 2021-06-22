@@ -20,22 +20,40 @@ namespace NFmiStringTest
 {
 // ----------------------------------------------------------------------
 
-void add() { TEST_NOT_IMPLEMENTED(); }
+void add()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void getlen() { TEST_NOT_IMPLEMENTED(); }
+void getlen()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void getchars() { TEST_NOT_IMPLEMENTED(); }
+void getchars()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void trimr() { TEST_NOT_IMPLEMENTED(); }
+void trimr()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void triml() { TEST_NOT_IMPLEMENTED(); }
+void triml()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void fillr() { TEST_NOT_IMPLEMENTED(); }
+void fillr()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
 void uppercase()
@@ -44,11 +62,13 @@ void uppercase()
 
   tmp = "test";
   tmp.UpperCase();
-  if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'test'");
+  if (string(tmp) != "TEST")
+    TEST_FAILED("Failed to convert 'test'");
 
   tmp = "TEST";
   tmp.UpperCase();
-  if (string(tmp) != "TEST") TEST_FAILED("Failed to convert 'TEST'");
+  if (string(tmp) != "TEST")
+    TEST_FAILED("Failed to convert 'TEST'");
 
   tmp =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ\xC5\xC4\xD6"
@@ -70,16 +90,28 @@ void uppercase()
 
 // ----------------------------------------------------------------------
 
-void lowercase() { TEST_NOT_IMPLEMENTED(); }
+void lowercase()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void firstchartoupper() { TEST_NOT_IMPLEMENTED(); }
+void firstchartoupper()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void firstinwordtoupper() { TEST_NOT_IMPLEMENTED(); }
+void firstinwordtoupper()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void firstcharisupper() { TEST_NOT_IMPLEMENTED(); }
+void firstcharisupper()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
 void search()
@@ -105,26 +137,42 @@ void search()
                 boost::lexical_cast<string>(pos));
 
   path = "|smartmet|foo|bar";
-  if ((pos = path.Search(needle)) != 0) TEST_FAILED("Should not find / in " + path);
+  if ((pos = path.Search(needle)) != 0)
+    TEST_FAILED("Should not find / in " + path);
 
   TEST_PASSED();
 }
 
 // ----------------------------------------------------------------------
 
-void searchlast() { TEST_NOT_IMPLEMENTED(); }
+void searchlast()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void charcount() { TEST_NOT_IMPLEMENTED(); }
+void charcount()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void replacechars() { TEST_NOT_IMPLEMENTED(); }
+void replacechars()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void replace() { TEST_NOT_IMPLEMENTED(); }
+void replace()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 
-void removeextraspaces() { TEST_NOT_IMPLEMENTED(); }
+void removeextraspaces()
+{
+  TEST_NOT_IMPLEMENTED();
+}
 // ----------------------------------------------------------------------
 /*!
  * The actual test suite

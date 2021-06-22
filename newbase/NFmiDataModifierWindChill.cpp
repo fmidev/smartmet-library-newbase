@@ -113,5 +113,8 @@ float NFmiDataModifierWindChill::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierWindChill::Clear() { itsDataModifier->Clear(); }
+void NFmiDataModifierWindChill::Clear()
+{
+  itsDataModifier->Clear();
+}
 // ======================================================================

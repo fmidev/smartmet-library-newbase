@@ -58,7 +58,10 @@ class NFmiMilliSecondTimer
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiMilliSecondTimer::FirstTime() { ftime(&itsTime1); }
+inline void NFmiMilliSecondTimer::FirstTime()
+{
+  ftime(&itsTime1);
+}
 // ----------------------------------------------------------------------
 /*!
  * Ends the timer
@@ -67,21 +70,30 @@ inline void NFmiMilliSecondTimer::FirstTime() { ftime(&itsTime1); }
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiMilliSecondTimer::SecondTime() { ftime(&itsTime2); }
+inline void NFmiMilliSecondTimer::SecondTime()
+{
+  ftime(&itsTime2);
+}
 // ----------------------------------------------------------------------
 /*!
  * Starts the timer
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiMilliSecondTimer::StartTimer() { FirstTime(); }
+inline void NFmiMilliSecondTimer::StartTimer()
+{
+  FirstTime();
+}
 // ----------------------------------------------------------------------
 /*!
  * Ends the timer
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiMilliSecondTimer::StopTimer() { SecondTime(); }
+inline void NFmiMilliSecondTimer::StopTimer()
+{
+  SecondTime();
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns the measured time in milliseconds

@@ -146,7 +146,11 @@ class NFmiDataIdent
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataIdent::~NFmiDataIdent() { Destroy(); }
+inline NFmiDataIdent::~NFmiDataIdent()
+{
+  Destroy();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -245,70 +249,20 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiDataIdent &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiDataIdent &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiDataIdent &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParam *NFmiDataIdent::GetParam() const { return itsParam; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline NFmiProducer *NFmiDataIdent::GetProducer() const { return itsProducer; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiString &NFmiDataIdent::GetParamName() const { return itsParam->GetName(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiDataIdent::GetParamIdent() const { return itsParam->GetIdent(); }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiDataIdent::Type() const { return itsType % kIncrementalParam; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiDataIdent::IsIncremental() const { return itsType / kIncrementalParam == 1; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiDataIdent::IsActive() const { return fIsActive; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiDataIdent::IsGroup() const { return fIsGroup; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline bool NFmiDataIdent::ContainsIndividualParams() const { return fContainsIndividualParams; }
+inline NFmiParam *NFmiDataIdent::GetParam() const
+{
+  return itsParam;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -316,41 +270,151 @@ inline bool NFmiDataIdent::ContainsIndividualParams() const { return fContainsIn
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataIdent::IsDataParam() const { return fIsDataParam; }
+inline NFmiProducer *NFmiDataIdent::GetProducer() const
+{
+  return itsProducer;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataIdent::IsDataProducer() const { return itsProducer != 0; }
+inline const NFmiString &NFmiDataIdent::GetParamName() const
+{
+  return itsParam->GetName();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataIdent::HasDataParams() const { return fHasDataParams; }
+inline unsigned long NFmiDataIdent::GetParamIdent() const
+{
+  return itsParam->GetIdent();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParamBag *NFmiDataIdent::GetDataParams() const { return itsDataParams; }
+inline unsigned long NFmiDataIdent::Type() const
+{
+  return itsType % kIncrementalParam;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::IsIncremental() const
+{
+  return itsType / kIncrementalParam == 1;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::IsActive() const
+{
+  return fIsActive;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::IsGroup() const
+{
+  return fIsGroup;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::ContainsIndividualParams() const
+{
+  return fContainsIndividualParams;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::IsDataParam() const
+{
+  return fIsDataParam;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::IsDataProducer() const
+{
+  return itsProducer != 0;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline bool NFmiDataIdent::HasDataParams() const
+{
+  return fHasDataParams;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline NFmiParamBag *NFmiDataIdent::GetDataParams() const
+{
+  return itsDataParams;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param isActive Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataIdent::SetActive(bool isActive) { fIsActive = isActive; }
+inline void NFmiDataIdent::SetActive(bool isActive)
+{
+  fIsActive = isActive;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiDataIdent::ClassName() const { return "NFmiDataIdent"; }
+inline const char *NFmiDataIdent::ClassName() const
+{
+  return "NFmiDataIdent";
+}
 
 // ======================================================================

@@ -27,12 +27,18 @@ NFmiDataModifierMin::~NFmiDataModifierMin() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierMin::NFmiDataModifierMin() { itsExtremeValue = 3.4E+38f; }
+NFmiDataModifierMin::NFmiDataModifierMin()
+{
+  itsExtremeValue = 3.4E+38f;
+}
 NFmiDataModifierMin::NFmiDataModifierMin(const NFmiDataModifierMin& theOther)
 
     = default;
 
-NFmiDataModifier* NFmiDataModifierMin::Clone() const { return new NFmiDataModifierMin(*this); }
+NFmiDataModifier* NFmiDataModifierMin::Clone() const
+{
+  return new NFmiDataModifierMin(*this);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -52,7 +58,10 @@ void NFmiDataModifierMin::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierMin::Clear() { itsExtremeValue = 3.4E+38f; }
+void NFmiDataModifierMin::Clear()
+{
+  itsExtremeValue = 3.4E+38f;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -73,5 +82,8 @@ float NFmiDataModifierMin::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierMin::IsNewExtreme(float value) { return value < itsExtremeValue; }
+bool NFmiDataModifierMin::IsNewExtreme(float value)
+{
+  return value < itsExtremeValue;
+}
 // ======================================================================

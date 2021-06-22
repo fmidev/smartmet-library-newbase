@@ -71,35 +71,53 @@ inline void NFmiCalculationCondition::Condition(FmiMaskOperation theCondition)
  */
 // ----------------------------------------------------------------------
 
-inline FmiMaskOperation NFmiCalculationCondition::Condition() const { return itsCondition; }
+inline FmiMaskOperation NFmiCalculationCondition::Condition() const
+{
+  return itsCondition;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiCalculationCondition::UpperLimit() const { return itsUpperLimit; }
+inline double NFmiCalculationCondition::UpperLimit() const
+{
+  return itsUpperLimit;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiCalculationCondition::UpperLimit(double newValue) { itsUpperLimit = newValue; }
+inline void NFmiCalculationCondition::UpperLimit(double newValue)
+{
+  itsUpperLimit = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiCalculationCondition::LowerLimit() const { return itsLowerLimit; }
+inline double NFmiCalculationCondition::LowerLimit() const
+{
+  return itsLowerLimit;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiCalculationCondition::LowerLimit(double newValue) { itsLowerLimit = newValue; }
+inline void NFmiCalculationCondition::LowerLimit(double newValue)
+{
+  itsLowerLimit = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

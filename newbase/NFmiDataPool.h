@@ -130,21 +130,30 @@ class NFmiDataPool
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataPool::~NFmiDataPool() { NFmiDataPool::Destroy(); }
+inline NFmiDataPool::~NFmiDataPool()
+{
+  NFmiDataPool::Destroy();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiDataPool::Index() const { return itsIndex; }
+inline unsigned long NFmiDataPool::Index() const
+{
+  return itsIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataPool::Reset(long theIndex) { itsIndex = theIndex; }
+inline void NFmiDataPool::Reset(long theIndex)
+{
+  itsIndex = theIndex;
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -186,21 +195,30 @@ inline bool NFmiDataPool::IsInside() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataPool::IsInside(unsigned long theIndex) const { return theIndex < itsSize; }
+inline bool NFmiDataPool::IsInside(unsigned long theIndex) const
+{
+  return theIndex < itsSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const float* NFmiDataPool::Data() const { return itsData; }
+inline const float* NFmiDataPool::Data() const
+{
+  return itsData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataPool::FloatValue() const { return FloatValue(itsIndex); }
+inline float NFmiDataPool::FloatValue() const
+{
+  return FloatValue(itsIndex);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theData Undocumented
@@ -208,7 +226,10 @@ inline float NFmiDataPool::FloatValue() const { return FloatValue(itsIndex); }
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataPool::FloatValue(float theData) { return FloatValue(itsIndex, theData); }
+inline bool NFmiDataPool::FloatValue(float theData)
+{
+  return FloatValue(itsIndex, theData);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -259,35 +280,50 @@ inline void NFmiDataPool::Clamp(double theClampMinValue, double theClampMaxValue
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataPool::Normalize() { Normalize(MinValue(), MaxValue(), 0., 1.); }
+inline void NFmiDataPool::Normalize()
+{
+  Normalize(MinValue(), MaxValue(), 0., 1.);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newState Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataPool::UseBinaryStorage(bool newState) const { fUseBinaryStorage = newState; }
+inline void NFmiDataPool::UseBinaryStorage(bool newState) const
+{
+  fUseBinaryStorage = newState;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataPool::IsBinaryStorageUsed() { return fUseBinaryStorage; }
+inline bool NFmiDataPool::IsBinaryStorageUsed()
+{
+  return fUseBinaryStorage;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataPool::DoEndianByteSwap(bool newValue) { fDoEndianByteSwap = newValue; }
+inline void NFmiDataPool::DoEndianByteSwap(bool newValue)
+{
+  fDoEndianByteSwap = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theData Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataPool::Data(float* theData) { itsData = theData; }
+inline void NFmiDataPool::Data(float* theData)
+{
+  itsData = theData;
+}
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiDataPool
@@ -313,6 +349,9 @@ inline std::ostream& operator<<(std::ostream& file, const NFmiDataPool& ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream& operator>>(std::istream& file, NFmiDataPool& ob) { return ob.Read(file); }
+inline std::istream& operator>>(std::istream& file, NFmiDataPool& ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

@@ -17,39 +17,59 @@
 
 #include "NFmiFastQueryInfo.h"
 
+#include <macgyver/Exception.h>
 #include <cmath>
 
 //! Destructor
 NFmiAreaMask::~NFmiAreaMask() = default;
+
 boost::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
-  if (theInfo)
+  try
   {
-    return boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
-  }
-  else
+    if (theInfo)
+      return boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
+
     return theInfo;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 boost::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
     const boost::shared_ptr<NFmiAreaMask> &theMask)
 {
-  if (theMask)
+  try
   {
-    return boost::shared_ptr<NFmiAreaMask>(theMask->Clone());
-  }
-  else
+    if (theMask)
+      return boost::shared_ptr<NFmiAreaMask>(theMask->Clone());
+
     return theMask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 std::vector<boost::shared_ptr<NFmiAreaMask> > NFmiAreaMask::DoShallowCopy(
     const std::vector<boost::shared_ptr<NFmiAreaMask> > &theMaskVector)
 {
-  std::vector<boost::shared_ptr<NFmiAreaMask> > returnVector(theMaskVector.size());
-  for (size_t i = 0; i < theMaskVector.size(); i++)
-    returnVector[i] = NFmiAreaMask::DoShallowCopy(theMaskVector[i]);
-  return returnVector;
+  try
+  {
+    std::vector<boost::shared_ptr<NFmiAreaMask> > returnVector(theMaskVector.size());
+    for (size_t i = 0; i < theMaskVector.size(); i++)
+      returnVector[i] = NFmiAreaMask::DoShallowCopy(theMaskVector[i]);
+
+    return returnVector;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

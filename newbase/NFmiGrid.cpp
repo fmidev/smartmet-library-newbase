@@ -13,14 +13,12 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
-
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
-
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -34,37 +32,49 @@ NFmiLocationCache::NFmiLocationCache()
 }
 
 NFmiLocationCache::~NFmiLocationCache() = default;
-static const double gGridPointEpsilon =
-    0.0000001;  // kuinka paljon interpolointi hila-piste saa poiketa maksimissaan tasaluvuista,
+
+// kuinka paljon interpolointi hila-piste saa poiketa maksimissaan tasaluvuista,
 // että erotus tulkitaan interpolaatiossa turhaksi ja indeksi pyöristetään vain lähintä
 // pistettä vastaavaksi. HUOM! x- ja y-suunnat pyöristetään erikseen!!!
-static const double gOutlineGridPointEpsilon =
-    gGridPointEpsilon * 10;  // vielä on toinen raja, jota käytetään vain jos epätarkkuus vie
+static const double gGridPointEpsilon = 0.0000001;
+
+// vielä on toinen raja, jota käytetään vain jos epätarkkuus vie
 // tietyn hilan indeksi rajojen yli, tällöin pyörittetään aina alas/ylös rajalle.
+static const double gOutlineGridPointEpsilon = gGridPointEpsilon * 10;
+
 void NFmiLocationCache::CalcIsInterpolationNeeded(int theGridSizeX, int theGridSizeY)
 {
-  double xDiff = ::fabs(itsGridPoint.X() - ::round(itsGridPoint.X()));
-  double yDiff = ::fabs(itsGridPoint.Y() - ::round(itsGridPoint.Y()));
-  fNoInterpolation = (xDiff < gGridPointEpsilon) && (yDiff < gGridPointEpsilon);
+  try
+  {
+    double xDiff = ::fabs(itsGridPoint.X() - ::round(itsGridPoint.X()));
+    double yDiff = ::fabs(itsGridPoint.Y() - ::round(itsGridPoint.Y()));
+    fNoInterpolation = (xDiff < gGridPointEpsilon) && (yDiff < gGridPointEpsilon);
 
-  // Lisäksi tarpeeksi lähellä olevat x/y arvot pitää pyöristää lähimpään tasalukuun.
-  // Tämä siksi että mm. reunoilla tulee ongelmia, kun cache laskee hilapisteen hivenen yli reunan
-  // (tarkkuus virhe)
-  if (xDiff < gGridPointEpsilon) itsGridPoint.X(::round(itsGridPoint.X()));
-  if (yDiff < gGridPointEpsilon) itsGridPoint.Y(::round(itsGridPoint.Y()));
+    // Lisäksi tarpeeksi lähellä olevat x/y arvot pitää pyöristää lähimpään tasalukuun.
+    // Tämä siksi että mm. reunoilla tulee ongelmia, kun cache laskee hilapisteen hivenen yli reunan
+    // (tarkkuus virhe)
+    if (xDiff < gGridPointEpsilon)
+      itsGridPoint.X(::round(itsGridPoint.X()));
+    if (yDiff < gGridPointEpsilon)
+      itsGridPoint.Y(::round(itsGridPoint.Y()));
 
-  // Jos indeksit menevät laskenta tarkkuuden takia halutun hila koon alle/yli vähäsen, pyöristetään
-  // rajalle
-  if (itsGridPoint.X() < 0 && ::fabs(itsGridPoint.X()) < gOutlineGridPointEpsilon)
-    itsGridPoint.X(0);
-  if (itsGridPoint.Y() < 0 && ::fabs(itsGridPoint.Y()) < gOutlineGridPointEpsilon)
-    itsGridPoint.Y(0);
-  if (itsGridPoint.X() > (theGridSizeX - 1) &&
-      ::fabs(itsGridPoint.X() - theGridSizeX + 1) < gOutlineGridPointEpsilon)
-    itsGridPoint.X(theGridSizeX - 1);
-  if (itsGridPoint.Y() > (theGridSizeY - 1) &&
-      ::fabs(itsGridPoint.Y() - theGridSizeY + 1) < gOutlineGridPointEpsilon)
-    itsGridPoint.Y(theGridSizeY - 1);
+    // Jos indeksit menevät laskenta tarkkuuden takia halutun hila koon alle/yli vähäsen,
+    // pyöristetään rajalle
+    if (itsGridPoint.X() < 0 && ::fabs(itsGridPoint.X()) < gOutlineGridPointEpsilon)
+      itsGridPoint.X(0);
+    if (itsGridPoint.Y() < 0 && ::fabs(itsGridPoint.Y()) < gOutlineGridPointEpsilon)
+      itsGridPoint.Y(0);
+    if (itsGridPoint.X() > (theGridSizeX - 1) &&
+        ::fabs(itsGridPoint.X() - theGridSizeX + 1) < gOutlineGridPointEpsilon)
+      itsGridPoint.X(theGridSizeX - 1);
+    if (itsGridPoint.Y() > (theGridSizeY - 1) &&
+        ::fabs(itsGridPoint.Y() - theGridSizeY + 1) < gOutlineGridPointEpsilon)
+      itsGridPoint.Y(theGridSizeY - 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiLocationCache NFmiLocationCache::MakePeekedLocation(const NFmiLocationCache &theOrigLocation,
@@ -73,34 +83,41 @@ NFmiLocationCache NFmiLocationCache::MakePeekedLocation(const NFmiLocationCache 
                                                         int theGridSizeX,
                                                         int theGridSizeY)
 {
-  NFmiLocationCache peekedLocation = theOrigLocation;
-  if (theOffsetX != 0)
-  {  // lasketaan siirto X-suunnassa
-    peekedLocation.itsGridPoint.X(peekedLocation.itsGridPoint.X() + theOffsetX);
-    if (peekedLocation.itsGridPoint.X() >= 0. &&
-        peekedLocation.itsGridPoint.X() <= theGridSizeX - 1.)
-      peekedLocation.itsLocationIndex += theOffsetX;
-    else
-    {
-      peekedLocation.itsLocationIndex = gMissingIndex;
-      return peekedLocation;  // voidaan lopettaa jo, koska kurkkaus meni jo 'metsään'
+  try
+  {
+    NFmiLocationCache peekedLocation = theOrigLocation;
+    if (theOffsetX != 0)
+    {  // lasketaan siirto X-suunnassa
+      peekedLocation.itsGridPoint.X(peekedLocation.itsGridPoint.X() + theOffsetX);
+      if (peekedLocation.itsGridPoint.X() >= 0. &&
+          peekedLocation.itsGridPoint.X() <= theGridSizeX - 1.)
+        peekedLocation.itsLocationIndex += theOffsetX;
+      else
+      {
+        peekedLocation.itsLocationIndex = gMissingIndex;
+        return peekedLocation;  // voidaan lopettaa jo, koska kurkkaus meni jo 'metsään'
+      }
     }
-  }
 
-  if (theOffsetY != 0)
-  {  // lasketaan siirto Y-suunnassa
-    peekedLocation.itsGridPoint.Y(peekedLocation.itsGridPoint.Y() + theOffsetY);
-    if (peekedLocation.itsGridPoint.Y() >= 0. &&
-        peekedLocation.itsGridPoint.Y() <= theGridSizeY - 1.)
-      peekedLocation.itsLocationIndex += theOffsetY * theGridSizeX;
-    else
-    {
-      peekedLocation.itsLocationIndex = gMissingIndex;
-      return peekedLocation;  // voidaan lopettaa jo, koska kurkkaus meni jo 'metsään'
+    if (theOffsetY != 0)
+    {  // lasketaan siirto Y-suunnassa
+      peekedLocation.itsGridPoint.Y(peekedLocation.itsGridPoint.Y() + theOffsetY);
+      if (peekedLocation.itsGridPoint.Y() >= 0. &&
+          peekedLocation.itsGridPoint.Y() <= theGridSizeY - 1.)
+        peekedLocation.itsLocationIndex += theOffsetY * theGridSizeX;
+      else
+      {
+        peekedLocation.itsLocationIndex = gMissingIndex;
+        return peekedLocation;  // voidaan lopettaa jo, koska kurkkaus meni jo 'metsään'
+      }
     }
-  }
 
-  return peekedLocation;
+    return peekedLocation;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Pyöristetään hilapiste lähimpään kokonaislukuun. X- ja Y-säädöt erikseen.
@@ -111,9 +128,19 @@ void NFmiLocationCache::SetToNearestGridPoint(bool fDoX,
                                               int theGridSizeX,
                                               int theGridSizeY)
 {
-  if (fDoX) itsGridPoint.X(::round(itsGridPoint.X()));
-  if (fDoY) itsGridPoint.Y(::round(itsGridPoint.Y()));
-  if (fDoX || fDoY) CalcIsInterpolationNeeded(theGridSizeX, theGridSizeY);
+  try
+  {
+    if (fDoX)
+      itsGridPoint.X(::round(itsGridPoint.X()));
+    if (fDoY)
+      itsGridPoint.Y(::round(itsGridPoint.Y()));
+    if (fDoX || fDoY)
+      CalcIsInterpolationNeeded(theGridSizeX, theGridSizeY);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiTimeCache::NFmiTimeCache()
@@ -124,17 +151,25 @@ NFmiTimeCache::NFmiTimeCache()
 }
 
 NFmiTimeCache::~NFmiTimeCache() = default;
+
 void NFmiTimeCache::CalcIsInterpolationNeeded()
 {
-  double diff = ::fabs(itsOffset - ::round(itsOffset));
-
-  if (diff < gGridPointEpsilon)  // käytetään tässä samaa epsilonia
+  try
   {
-    itsOffset = static_cast<float>(::round(itsOffset));
-    if (itsOffset == 0)
-      itsTimeIndex1 = itsTimeIndex2;
-    else
-      itsTimeIndex2 = itsTimeIndex1;
+    double diff = ::fabs(itsOffset - ::round(itsOffset));
+
+    if (diff < gGridPointEpsilon)  // käytetään tässä samaa epsilonia
+    {
+      itsOffset = static_cast<float>(::round(itsOffset));
+      if (itsOffset == 0)
+        itsTimeIndex1 = itsTimeIndex2;
+      else
+        itsTimeIndex2 = itsTimeIndex1;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -150,22 +185,36 @@ void NFmiTimeCache::CalcIsInterpolationNeeded()
 NFmiGrid::NFmiGrid(const NFmiGrid &theGrid, FmiDirection theStartingCorner)
     : NFmiGridBase(theGrid), itsArea(theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr)
 {
-  if (theStartingCorner != kBase)
+  try
   {
-    Origo(theGrid.Origo());
-    Swap();
-    itsData->InitMissingValues(*theGrid.DataPool());
+    if (theStartingCorner != kBase)
+    {
+      Origo(theGrid.Origo());
+      Swap();
+      itsData->InitMissingValues(*theGrid.DataPool());
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 NFmiGrid &NFmiGrid::operator=(const NFmiGrid &theGrid)
 {
-  if (this != &theGrid)
+  try
   {
-    NFmiGridBase::operator=(theGrid);
-    itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr;
+    if (this != &theGrid)
+    {
+      NFmiGridBase::operator=(theGrid);
+      itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -179,28 +228,36 @@ NFmiGrid &NFmiGrid::operator=(const NFmiGrid &theGrid)
 
 bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
 {
-  unsigned long counter = 0;
-  double theValue;
-  auto *values = new float[Size()];
-
-  Reset();
-  while (Next())
+  try
   {
-    theValue = kFloatMissing;
-    theGrid.InterpolateToLatLonPoint(LatLon(), theValue, howToInterpolate);
-    values[counter] = static_cast<float>(theValue);
-    counter++;
+    unsigned long counter = 0;
+    double theValue;
+    auto *values = new float[Size()];
+
+    Reset();
+    while (Next())
+    {
+      theValue = kFloatMissing;
+      theGrid.InterpolateToLatLonPoint(LatLon(), theValue, howToInterpolate);
+      values[counter] = static_cast<float>(theValue);
+      counter++;
+    }
+
+    if (itsData)
+      delete itsData;
+    itsData = new NFmiDataPool();
+    itsData->Init(Size(), values);
+
+    itsData->InitMissingValues(*theGrid.DataPool());  // 24.7.98/EL
+    delete[] values;
+
+    Reset();
+    return true;
   }
-
-  if (itsData) delete itsData;
-  itsData = new NFmiDataPool();
-  itsData->Init(Size(), values);
-
-  itsData->InitMissingValues(*theGrid.DataPool());  // 24.7.98/EL
-  delete[] values;
-
-  Reset();
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -216,39 +273,47 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
                     NFmiGrid &theSubGrid,
                     FmiInterpolationMethod howToInterpolate)
 {
-  // Interpolate from 'theSubGrid', when inside 'theSubGrid' area.
-  // Otherwise, interpolate from 'theGrid'
-
-  unsigned long counter = 0;
-  double theValue;
-  auto *values = new float[Size()];
-
-  Reset();
-  while (Next())
+  try
   {
-    theValue = kFloatMissing;
-    NFmiPoint latLon = LatLon();
+    // Interpolate from 'theSubGrid', when inside 'theSubGrid' area.
+    // Otherwise, interpolate from 'theGrid'
 
-    // Is latlon point inside the sub grid area?
-    if (theSubGrid.Area()->IsInside(latLon))
-      theSubGrid.InterpolateToLatLonPoint(latLon, theValue, howToInterpolate);
-    else
-      theGrid.InterpolateToLatLonPoint(latLon, theValue, howToInterpolate);
+    unsigned long counter = 0;
+    double theValue;
+    auto *values = new float[Size()];
 
-    values[counter] = static_cast<float>(theValue);
-    counter++;
+    Reset();
+    while (Next())
+    {
+      theValue = kFloatMissing;
+      NFmiPoint latLon = LatLon();
+
+      // Is latlon point inside the sub grid area?
+      if (theSubGrid.Area()->IsInside(latLon))
+        theSubGrid.InterpolateToLatLonPoint(latLon, theValue, howToInterpolate);
+      else
+        theGrid.InterpolateToLatLonPoint(latLon, theValue, howToInterpolate);
+
+      values[counter] = static_cast<float>(theValue);
+      counter++;
+    }
+
+    if (itsData)
+      delete itsData;
+    itsData = new NFmiDataPool();
+    itsData->Init(Size(), values);
+
+    // HUOM! Puuttuvien arvojen lista otetaan "päägridin" datapoolista
+    itsData->InitMissingValues(*theGrid.DataPool());
+    delete[] values;
+
+    Reset();
+    return true;
   }
-
-  if (itsData) delete itsData;
-  itsData = new NFmiDataPool();
-  itsData->Init(Size(), values);
-
-  // HUOM! Puuttuvien arvojen lista otetaan "päägridin" datapoolista
-  itsData->InitMissingValues(*theGrid.DataPool());
-  delete[] values;
-
-  Reset();
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -261,15 +326,22 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
 
 NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
 {
-  // x: scale, convert and add the base
-  // y: swap, scale, convert and add the base
+  try
+  {
+    // x: scale, convert and add the base
+    // y: swap, scale, convert and add the base
 
-  //  double x_ = x / itsArea->Width() * (itsXNumber - 1) + Base();
-  double x_ = x / itsArea->Width() * (itsXNumber - 1);
-  //  double y_ = (itsArea->Height() - y) / itsArea->Height() * (itsYNumber - 1) + Base();
-  double y_ = (itsArea->Height() - y) / itsArea->Height() * (itsYNumber - 1);
+    //  double x_ = x / itsArea->Width() * (itsXNumber - 1) + Base();
+    double x_ = x / itsArea->Width() * (itsXNumber - 1);
+    //  double y_ = (itsArea->Height() - y) / itsArea->Height() * (itsYNumber - 1) + Base();
+    double y_ = (itsArea->Height() - y) / itsArea->Height() * (itsYNumber - 1);
 
-  return NFmiPoint(x_, y_);
+    return NFmiPoint(x_, y_);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -282,11 +354,18 @@ NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
 
 NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
 {
-  //  double x = itsArea->Left() + (x_ - Base()) / (itsXNumber - 1) * itsArea->Width();
-  double x = itsArea->Left() + x_ / (itsXNumber - 1) * itsArea->Width();
-  //  double y = itsArea->Bottom() - (y_ - Base()) / (itsYNumber - 1) * itsArea->Height();
-  double y = itsArea->Bottom() - y_ / (itsYNumber - 1) * itsArea->Height();
-  return NFmiPoint(x, y);
+  try
+  {
+    //  double x = itsArea->Left() + (x_ - Base()) / (itsXNumber - 1) * itsArea->Width();
+    double x = itsArea->Left() + x_ / (itsXNumber - 1) * itsArea->Width();
+    //  double y = itsArea->Bottom() - (y_ - Base()) / (itsYNumber - 1) * itsArea->Height();
+    double y = itsArea->Bottom() - y_ / (itsYNumber - 1) * itsArea->Height();
+    return NFmiPoint(x, y);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -299,22 +378,29 @@ NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
 
 double NFmiGrid::Coverage(const NFmiGrid &theGrid, unsigned long theStep)
 {
-  double counter = 0;
-  double sum = 0;
-
-  for (unsigned long y = 0; y < itsYNumber; y += theStep)
+  try
   {
-    for (unsigned long x = 0; x < itsXNumber; x += theStep)
-    {
-      if (theGrid.itsArea->IsInsideWorldXY(GridToWorldXY(x, y)))
-      {
-        counter += 1;
-      }
-      sum += 1;
-    }
-  }
+    double counter = 0;
+    double sum = 0;
 
-  return sum ? counter / sum : 0.;
+    for (unsigned long y = 0; y < itsYNumber; y += theStep)
+    {
+      for (unsigned long x = 0; x < itsXNumber; x += theStep)
+      {
+        if (theGrid.itsArea->IsInsideWorldXY(GridToWorldXY(x, y)))
+        {
+          counter += 1;
+        }
+        sum += 1;
+      }
+    }
+
+    return sum ? counter / sum : 0.;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -335,11 +421,18 @@ NFmiGrid *NFmiGrid::CreateNewGrid(NFmiArea *newArea,
                                   FmiDirection theStartingCorner,
                                   FmiInterpolationMethod theInterpolationMethod)
 {
-  auto *newGrid =
-      new NFmiGrid(newArea, theXNumber, theYNumber, theStartingCorner, theInterpolationMethod);
-  ResetCrop();
-  newGrid->Init(*this, theInterpolationMethod);
-  return newGrid;
+  try
+  {
+    auto *newGrid =
+        new NFmiGrid(newArea, theXNumber, theYNumber, theStartingCorner, theInterpolationMethod);
+    ResetCrop();
+    newGrid->Init(*this, theInterpolationMethod);
+    return newGrid;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -353,23 +446,30 @@ NFmiGrid *NFmiGrid::CreateNewGrid(NFmiArea *newArea,
 
 std::ostream &NFmiGrid::Write(std::ostream &file) const
 {
-  if (itsArea)
+  try
   {
+    if (itsArea)
+    {
 #ifdef WGS84
-    file << *itsArea;
+      file << *itsArea;
 #else
-    file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
-    file << *itsArea;
+      file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
+      file << *itsArea;
 #endif
+    }
+    else
+    {
+      file << 0 << " NFmiArea" << std::endl;
+    }
+
+    NFmiGridBase::Write(file);
+
+    return file;
   }
-  else
+  catch (...)
   {
-    file << 0 << " NFmiArea" << std::endl;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  NFmiGridBase::Write(file);
-
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -383,32 +483,40 @@ std::ostream &NFmiGrid::Write(std::ostream &file) const
 
 std::istream &NFmiGrid::Read(std::istream &file)
 {
-  unsigned long classId;
-  std::string className;
-
-  file >> classId;
-  file >> className;
-
-  if (classId)
+  try
   {
-    itsArea = static_cast<NFmiArea *>(CreateSaveBase(classId));
-    file >> *itsArea;
-#ifndef WGS84
-    NFmiArea *fixedArea = itsArea->DoPossiblePacificFix();
-    if (fixedArea)
+    unsigned long classId;
+    std::string className;
+
+    file >> classId;
+    file >> className;
+
+    if (classId)
     {
-      delete itsArea;
-      itsArea = fixedArea;
-    }
+      itsArea = static_cast<NFmiArea *>(CreateSaveBase(classId));
+      file >> *itsArea;
+#ifndef WGS84
+      NFmiArea *fixedArea = itsArea->DoPossiblePacificFix();
+      if (fixedArea)
+      {
+        delete itsArea;
+        itsArea = fixedArea;
+      }
 #endif
+    }
+
+    NFmiGridBase::Read(file);
+
+    // Setup bilinear coordinate interpolation
+    if (itsArea)
+      itsArea->SetGridSize(XNumber(), YNumber());
+
+    return file;
   }
-
-  NFmiGridBase::Read(file);
-
-  // Setup bilinear coordinate interpolation
-  if (itsArea) itsArea->SetGridSize(XNumber(), YNumber());
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -424,17 +532,25 @@ std::istream &NFmiGrid::Read(std::istream &file)
 
 bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
 {
-  if ((itsXNumber == theOtherGrid.itsXNumber) && (itsYNumber == theOtherGrid.itsYNumber))
+  try
   {
-    // areoiden tarkastelu on hankalaa ja tämä jää mahdollisesti vaillinaiseksi
-    // miksi ClassId()-metodi ei voi olla const:i???
-    if (const_cast<NFmiGrid *>(this)->ClassId() == const_cast<NFmiGrid &>(theOtherGrid).ClassId())
+    if ((itsXNumber == theOtherGrid.itsXNumber) && (itsYNumber == theOtherGrid.itsYNumber))
     {
-      // ei oteta huomioon polster:in ja stereogriphicin mahdollista samanlaisuutta
-      if (*itsArea == *theOtherGrid.Area()) return true;
+      // areoiden tarkastelu on hankalaa ja tämä jää mahdollisesti vaillinaiseksi
+      // miksi ClassId()-metodi ei voi olla const:i???
+      if (const_cast<NFmiGrid *>(this)->ClassId() == const_cast<NFmiGrid &>(theOtherGrid).ClassId())
+      {
+        // ei oteta huomioon polster:in ja stereogriphicin mahdollista samanlaisuutta
+        if (*itsArea == *theOtherGrid.Area())
+          return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -447,9 +563,16 @@ bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
 
 NFmiPoint NFmiGrid::RelativePoint() const
 {
-  double relativeX = itsCurrentX / (itsXNumber - 1);
-  double relativeY = itsCurrentY / (itsYNumber - 1);
-  return NFmiPoint(relativeX, relativeY);
+  try
+  {
+    double relativeX = itsCurrentX / (itsXNumber - 1);
+    double relativeY = itsCurrentY / (itsYNumber - 1);
+    return NFmiPoint(relativeX, relativeY);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -464,9 +587,16 @@ NFmiPoint NFmiGrid::RelativePoint() const
 
 NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
 {
-  double relativeX = itsCurrentX / (itsXNumber - 1);
-  double relativeY = itsCurrentY / (itsYNumber - 1);
-  return NFmiPoint(relativeX, relativeY);
+  try
+  {
+    double relativeX = itsCurrentX / (itsXNumber - 1);
+    double relativeY = itsCurrentY / (itsYNumber - 1);
+    return NFmiPoint(relativeX, relativeY);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -483,17 +613,28 @@ bool NFmiGrid::NearestLatLon(double newLon,
                              double theMaxDistance,
                              NFmiPoint *theGridPoint)
 {
-  NFmiPoint gridPoint = LatLonToGrid(newLon, newLat);
-  if (theGridPoint) *theGridPoint = gridPoint;
-  if (!GridPoint(gridPoint.X(), gridPoint.Y())) return false;
-  if (theMaxDistance == kFloatMissing * 1000.)  // optimization..
-    return true;
+  try
+  {
+    NFmiPoint gridPoint = LatLonToGrid(newLon, newLat);
+    if (theGridPoint)
+      *theGridPoint = gridPoint;
+    if (!GridPoint(gridPoint.X(), gridPoint.Y()))
+      return false;
+    if (theMaxDistance == kFloatMissing * 1000.)  // optimization..
+      return true;
 
-  NFmiPoint currentPoint = LatLon();
-  NFmiLocation location1(currentPoint.X(), currentPoint.Y());
-  NFmiLocation location2(newLon, newLat);
-  if (location1.Distance(location2) <= theMaxDistance) return true;
-  return false;  // doesn't set iterator into the original GridPoint
+    NFmiPoint currentPoint = LatLon();
+    NFmiLocation location1(currentPoint.X(), currentPoint.Y());
+    NFmiLocation location2(newLon, newLat);
+    if (location1.Distance(location2) <= theMaxDistance)
+      return true;
+
+    return false;  // doesn't set iterator into the original GridPoint
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //***********************************************************************************
@@ -515,39 +656,47 @@ static bool SeekStartingPoint(ifstream &in,
                               unsigned int theStartOffsetInBytes,
                               const string &theDataStartsAfterString)
 {
-  if (theStartOffsetInBytes)
+  try
   {
-    in.ignore(theStartOffsetInBytes);
-    return !in.fail();
-  }
-  else if (!theDataStartsAfterString.empty())
-  {
-    // int maxIgnoredCount = std::numeric_limits<double>::max(); // ei piru käänny!!!???!!!!
-    int maxIgnoredCount = 2000000000;  // tähän iso luku
-    int firstChar = theDataStartsAfterString[0];
-    do
+    if (theStartOffsetInBytes)
     {
-      in.ignore(maxIgnoredCount, firstChar);
-      if (!in.fail())
+      in.ignore(theStartOffsetInBytes);
+      return !in.fail();
+    }
+    else if (!theDataStartsAfterString.empty())
+    {
+      // int maxIgnoredCount = std::numeric_limits<double>::max(); // ei piru käänny!!!???!!!!
+      int maxIgnoredCount = 2000000000;  // tähän iso luku
+      int firstChar = theDataStartsAfterString[0];
+      do
       {
-        if (theDataStartsAfterString.size() == 1)
-          return true;
-        else if (theDataStartsAfterString.size() == 2)
+        in.ignore(maxIgnoredCount, firstChar);
+        if (!in.fail())
         {
-          int secondChar = theDataStartsAfterString[1];
-          if (in.peek() == secondChar)
+          if (theDataStartsAfterString.size() == 1)
+            return true;
+          else if (theDataStartsAfterString.size() == 2)
           {
-            // int ch = in.get();
-            in.get();
-            return !(in.fail());
+            int secondChar = theDataStartsAfterString[1];
+            if (in.peek() == secondChar)
+            {
+              // int ch = in.get();
+              in.get();
+              return !(in.fail());
+            }
           }
         }
-      }
-    } while (!in.fail());
+      } while (!in.fail());
+    }
+    else
+      return !(in.fail());
+
+    return false;  // eof saavutettu, haku meni pieleen
   }
-  else
-    return !(in.fail());
-  return false;  // eof saavutettu, haku meni pieleen
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -560,13 +709,20 @@ static bool SeekStartingPoint(ifstream &in,
 
 bool NFmiGrid::SwapData(FmiDirection theStartingCorner, bool walkXDimFirst)
 {
-  if (walkXDimFirst)
-    return NFmiGridBase::Swap(theStartingCorner);
-  else
+  try
   {
-    // ei ole vielä toteutettu!!!!!!!
+    if (walkXDimFirst)
+      return NFmiGridBase::Swap(theStartingCorner);
+    else
+    {
+      // ei ole vielä toteutettu!!!!!!!
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -611,72 +767,83 @@ bool NFmiGrid::Init(const std::string &theFileName,
                     float theConversionScale,
                     float theConversionBase)
 {
-  assert(walkXDimFirst);  // Juoksutusta ensin y-dimensio suuntaan ei ole vielä toteutettu!
-  assert(theElementSizeInBytes > 0);  // DataElementin tavukoon pitää olla suurempi kuin 0!
-  assert(theElementSizeInBytes < 5);  // Ei ole vielä toteutettu yli 4 tavun integerien käsittelyä!
-  assert(theDataStartsAfterString.size() <=
-         2);  // Ei ole vielä toteutettu yli 2 merkin mittaisia datan alku merkkijonoja!
-
-  bool status = NFmiGridBase::Init(nx, ny);
-  ifstream in(theFileName.c_str(), ios::in | ios::binary);
-  if (status && in)
+  try
   {
-    unsigned long rowByteSize = nx * theElementSizeInBytes;
-    std::vector<char> buffer(rowByteSize);
-    std::vector<float> floatData(nx);  // tehdään float taulu, johon mahtuu rivin arvot
-    if ((status = SeekStartingPoint(in, theStartOffsetInBytes, theDataStartsAfterString)) == true)
+    assert(walkXDimFirst);  // Juoksutusta ensin y-dimensio suuntaan ei ole vielä toteutettu!
+    assert(theElementSizeInBytes > 0);  // DataElementin tavukoon pitää olla suurempi kuin 0!
+    assert(theElementSizeInBytes <
+           5);  // Ei ole vielä toteutettu yli 4 tavun integerien käsittelyä!
+    assert(theDataStartsAfterString.size() <=
+           2);  // Ei ole vielä toteutettu yli 2 merkin mittaisia datan alku merkkijonoja!
+
+    bool status = NFmiGridBase::Init(nx, ny);
+    ifstream in(theFileName.c_str(), ios::in | ios::binary);
+    if (status && in)
     {
-      for (unsigned long i = 0; i < ny; i++)
+      unsigned long rowByteSize = nx * theElementSizeInBytes;
+      std::vector<char> buffer(rowByteSize);
+      std::vector<float> floatData(nx);  // tehdään float taulu, johon mahtuu rivin arvot
+      if ((status = SeekStartingPoint(in, theStartOffsetInBytes, theDataStartsAfterString)) == true)
       {
-        in.read(&buffer[0], rowByteSize);  // HUOM! read ei suostu ottamaan unsigned char-pointteria
-        if (in.fail())
+        for (unsigned long i = 0; i < ny; i++)
         {
-          status = false;
-          break;
-        }
-
-        int offset = (isLittleEndian ? 0 : theElementSizeInBytes - 1);
-        int step = (isLittleEndian ? 1 : -1);
-
-        for (unsigned int elem = 0; elem < nx; elem++)
-        {
-          double dvalue = 0.0;
-          unsigned int pos = elem * theElementSizeInBytes + offset;
-          double scale = 1.0;
-          for (unsigned int b = 0; b < theElementSizeInBytes; b++)
+          in.read(&buffer[0],
+                  rowByteSize);  // HUOM! read ei suostu ottamaan unsigned char-pointteria
+          if (in.fail())
           {
-            unsigned char ch = buffer[pos];
-            pos += step;
-            if (isSigned && (b + 1 == theElementSizeInBytes))
-            {
-              dvalue += (ch & 0x7F) * scale;
-              if ((ch & 0x80) != 0) dvalue = -dvalue;  // safe, since loop ends now
-            }
-            else
-              dvalue += ch * scale;
-            scale *= 256;
+            status = false;
+            break;
           }
 
-          if (dvalue == theBeforeConversionMissingValue)
-            floatData[elem] = kFloatMissing;
-          else
+          int offset = (isLittleEndian ? 0 : theElementSizeInBytes - 1);
+          int step = (isLittleEndian ? 1 : -1);
+
+          for (unsigned int elem = 0; elem < nx; elem++)
           {
-            auto value = static_cast<float>(dvalue * theConversionScale + theConversionBase);
-            if (value == theAfterConversionMissingValue)
+            double dvalue = 0.0;
+            unsigned int pos = elem * theElementSizeInBytes + offset;
+            double scale = 1.0;
+            for (unsigned int b = 0; b < theElementSizeInBytes; b++)
+            {
+              unsigned char ch = buffer[pos];
+              pos += step;
+              if (isSigned && (b + 1 == theElementSizeInBytes))
+              {
+                dvalue += (ch & 0x7F) * scale;
+                if ((ch & 0x80) != 0)
+                  dvalue = -dvalue;  // safe, since loop ends now
+              }
+              else
+                dvalue += ch * scale;
+              scale *= 256;
+            }
+
+            if (dvalue == theBeforeConversionMissingValue)
               floatData[elem] = kFloatMissing;
             else
-              floatData[elem] = value;
+            {
+              auto value = static_cast<float>(dvalue * theConversionScale + theConversionBase);
+              if (value == theAfterConversionMissingValue)
+                floatData[elem] = kFloatMissing;
+              else
+                floatData[elem] = value;
+            }
           }
-        }
 
-        for (unsigned long j = 0; j < floatData.size(); j++)
-          itsData->FloatValue(i * nx + j, floatData[j]);
+          for (unsigned long j = 0; j < floatData.size(); j++)
+            itsData->FloatValue(i * nx + j, floatData[j]);
+        }
       }
+      in.close();
+      if (status)
+        status = SwapData(theStartingCorner, walkXDimFirst);
     }
-    in.close();
-    if (status) status = SwapData(theStartingCorner, walkXDimFirst);
+    return status;
   }
-  return status;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //***********************************************************************************
@@ -718,100 +885,121 @@ std::vector<pair<int, double> > NFmiGrid::NearestLocations(const NFmiLocation & 
                                                            int /* theMaxWantedLocations */,
                                                            double /* theMaxDistance */) const
 {
-  int size = 1;  //(int)this->GetSize();
-  std::vector<IndDistPari> tempValues(size, make_pair(-1, kFloatMissing));
+  try
+  {
+    int size = 1;  //(int)this->GetSize();
+    std::vector<IndDistPari> tempValues(size, make_pair(-1, kFloatMissing));
 
 #ifdef COMMENTED_OUT
 
-  for (int i = 0; i < size; i++)
-    tempValues[i] = make_pair(i, theLocation.Distance(*this->itsLocations[i]));
-  if (theMaxWantedLocations == -1 &&
-      theMaxDistance ==
-          kFloatMissing)  // molemmat rajoittimet puuttuvat, palautetaan kaikki sortattuna
-  {
-    sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
-    return tempValues;
-  }
-  else if (theMaxWantedLocations != -1 &&
-           theMaxDistance == kFloatMissing)  // halutaan n kpl lahimpiä paikkoja
-  {
-    nth_element(tempValues.begin(),
-                tempValues.begin() + theMaxWantedLocations,
-                tempValues.end(),
-                LocationIndexDistanceLess<IndDistPari>());
-    return std::vector<IndDistPari>(
-        tempValues.begin(),
-        tempValues.begin() + theMaxWantedLocations);  // palautetaan haluttu määrä locatioita
-  }
-  else  // theMaxDistance != kFloatMissing) // haetaan kaikki annetun säteen sisällä olevat paikat
-  {
-    sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
-    std::vector<IndDistPari>::iterator pos =
-        find_if(tempValues.begin(),
-                tempValues.end(),
-                LocationIndexDistanceGreater<IndDistPari>(theMaxDistance));
-
-    if (theMaxWantedLocations != -1)
+    for (int i = 0; i < size; i++)
+      tempValues[i] = make_pair(i, theLocation.Distance(*this->itsLocations[i]));
+    if (theMaxWantedLocations == -1 &&
+        theMaxDistance ==
+            kFloatMissing)  // molemmat rajoittimet puuttuvat, palautetaan kaikki sortattuna
     {
-      std::vector<IndDistPari>::iterator maxWantedPos = tempValues.begin() + theMaxWantedLocations;
-      if (pos > maxWantedPos) pos = maxWantedPos;
-    }
-
-    if (pos == tempValues.end())
+      sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
       return tempValues;
-    else
-      return std::vector<IndDistPari>(tempValues.begin(), pos);
-  }
+    }
+    else if (theMaxWantedLocations != -1 &&
+             theMaxDistance == kFloatMissing)  // halutaan n kpl lahimpiä paikkoja
+    {
+      nth_element(tempValues.begin(),
+                  tempValues.begin() + theMaxWantedLocations,
+                  tempValues.end(),
+                  LocationIndexDistanceLess<IndDistPari>());
+      return std::vector<IndDistPari>(
+          tempValues.begin(),
+          tempValues.begin() + theMaxWantedLocations);  // palautetaan haluttu määrä locatioita
+    }
+    else  // theMaxDistance != kFloatMissing) // haetaan kaikki annetun säteen sisällä olevat
+          // paikat
+    {
+      sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
+      std::vector<IndDistPari>::iterator pos =
+          find_if(tempValues.begin(),
+                  tempValues.end(),
+                  LocationIndexDistanceGreater<IndDistPari>(theMaxDistance));
+
+      if (theMaxWantedLocations != -1)
+      {
+        std::vector<IndDistPari>::iterator maxWantedPos =
+            tempValues.begin() + theMaxWantedLocations;
+        if (pos > maxWantedPos)
+          pos = maxWantedPos;
+      }
+
+      if (pos == tempValues.end())
+        return tempValues;
+      else
+        return std::vector<IndDistPari>(tempValues.begin(), pos);
+    }
 
 #endif  // COMMENTED_OUT
 
-  return tempValues;
+    return tempValues;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiGrid::operator==(const NFmiGrid &theGrid) const
 {
-  if (this == &theGrid)
-    return true;
-  else
+  try
   {
+    if (this == &theGrid)
+      return true;
+
     if (NFmiGridBase::operator==(theGrid))
     {
       if (itsArea && theGrid.itsArea)
       {
-        if (*itsArea == *(theGrid.itsArea)) return true;
+        if (*itsArea == *(theGrid.itsArea))
+          return true;
       }
     }
     return false;
   }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-// Halutaan laskea this-gridin avulla interpoloituja arvoja theTargetGrid:lle. Sitä varten lasketaan
-// kerran
-// halutut hilapisteet (targetin hilan pisteet this-hilassa). Sisältää myös tiedon hilapisteen
-// indeksistä.
-// Tätä voidaan käyttää apuna kun interpolidaan monta kertaan hilasta toiseen arvoja (esim. eri
-// ajoille,
-// leveleille ja parametreille), cache lasketaan vain kerran. Cache-pisteet voidaan sitten antaa eri
-// InterpolatedValue-metodeille. Ks. mallia NFmiQueryDataUtil::FillGridData-metodista.
+// Halutaan laskea this-gridin avulla interpoloituja arvoja theTargetGrid:lle. Sitä varten
+// lasketaan kerran halutut hilapisteet (targetin hilan pisteet this-hilassa). Sisältää myös
+// tiedon hilapisteen indeksistä. Tätä voidaan käyttää apuna kun interpolidaan monta kertaan
+// hilasta toiseen arvoja (esim. eri ajoille, leveleille ja parametreille), cache lasketaan vain
+// kerran. Cache-pisteet voidaan sitten antaa eri InterpolatedValue-metodeille. Ks. mallia
+// NFmiQueryDataUtil::FillGridData-metodista.
 void NFmiGrid::CalcLatlonCachePoints(NFmiGrid &theTargetGrid,
                                      NFmiDataMatrix<NFmiLocationCache> &theLocationCache)
 {
-  unsigned long sourceSizeX = XNumber();
-  unsigned long sourceSizeY = YNumber();
-  unsigned long targetSizeX = theTargetGrid.XNumber();
-  unsigned long targetSizeY = theTargetGrid.YNumber();
-  theLocationCache.Resize(targetSizeX, targetSizeY);
-  for (theTargetGrid.Reset(); theTargetGrid.Next();)
+  try
   {
-    NFmiLocationCache locCache;
-    NFmiPoint latlon(theTargetGrid.LatLon());
-    if (NearestLatLon(latlon.X(), latlon.Y(), 100 * 1000, &locCache.itsGridPoint))
+    unsigned long sourceSizeX = XNumber();
+    unsigned long sourceSizeY = YNumber();
+    unsigned long targetSizeX = theTargetGrid.XNumber();
+    unsigned long targetSizeY = theTargetGrid.YNumber();
+    theLocationCache.Resize(targetSizeX, targetSizeY);
+    for (theTargetGrid.Reset(); theTargetGrid.Next();)
     {
-      locCache.itsLocationIndex = Index();
-      locCache.CalcIsInterpolationNeeded(sourceSizeX, sourceSizeY);
+      NFmiLocationCache locCache;
+      NFmiPoint latlon(theTargetGrid.LatLon());
+      if (NearestLatLon(latlon.X(), latlon.Y(), 100 * 1000, &locCache.itsGridPoint))
+      {
+        locCache.itsLocationIndex = Index();
+        locCache.CalcIsInterpolationNeeded(sourceSizeX, sourceSizeY);
+      }
+      theLocationCache[theTargetGrid.Index() % targetSizeX][theTargetGrid.Index() / targetSizeX] =
+          locCache;
     }
-    theLocationCache[theTargetGrid.Index() % targetSizeX][theTargetGrid.Index() / targetSizeX] =
-        locCache;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -823,7 +1011,14 @@ void NFmiGrid::CalcLatlonCachePoints(NFmiGrid &theTargetGrid,
 
 bool NFmiGrid::IsInside(const NFmiPoint &theLatLon) const
 {
-  return IsInsideGrid(LatLonToGrid(theLatLon));
+  try
+  {
+    return IsInsideGrid(LatLonToGrid(theLatLon));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Maailma datoja annetaan latlon- projektioissa, niin että
@@ -838,25 +1033,33 @@ bool NFmiGrid::IsInside(const NFmiPoint &theLatLon) const
 // (-180, -90) -> (179.5, 90)
 bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
 {
-#ifndef WGS84
-  if (theGrid.Area() && theGrid.Area()->ClassId() == kNFmiLatLonArea)
+  try
   {
-    const NFmiArea &area = *(theGrid.Area());
-
-    if (area.PacificView())
+#ifndef WGS84
+    if (theGrid.Area() && theGrid.Area()->ClassId() == kNFmiLatLonArea)
     {
-      const NFmiPoint globalBL(0, -90);
-      if (area.BottomLeftLatLon() == globalBL && area.TopRightLatLon().X() < 360)
+      const NFmiArea &area = *(theGrid.Area());
+
+      if (area.PacificView())
       {
-        float totalLongitudeDiff =
-            static_cast<float>(area.TopRightLatLon().X() - area.BottomLeftLatLon().X());
-        float gridPointLongitudeDiff = totalLongitudeDiff / (theGrid.XNumber() - 1);
-        if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01f) return true;
+        const NFmiPoint globalBL(0, -90);
+        if (area.BottomLeftLatLon() == globalBL && area.TopRightLatLon().X() < 360)
+        {
+          float totalLongitudeDiff =
+              static_cast<float>(area.TopRightLatLon().X() - area.BottomLeftLatLon().X());
+          float gridPointLongitudeDiff = totalLongitudeDiff / (theGrid.XNumber() - 1);
+          if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01f)
+            return true;
+        }
       }
     }
-  }
 #endif
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -867,9 +1070,18 @@ bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
 
 std::size_t NFmiGrid::HashValue() const
 {
-  std::size_t hash = NFmiGridBase::HashValue();
-  if (itsArea != nullptr) boost::hash_combine(hash, itsArea->HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiGridBase::HashValue();
+    if (itsArea != nullptr)
+      boost::hash_combine(hash, itsArea->HashValue());
+
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -880,8 +1092,17 @@ std::size_t NFmiGrid::HashValue() const
 
 const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
 {
-  if (itsArea) return itsArea->SpatialReference();
-  return NFmiWGS84::SpatialReference();
+  try
+  {
+    if (itsArea)
+      return itsArea->SpatialReference();
+
+    return NFmiWGS84::SpatialReference();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -892,7 +1113,14 @@ const Fmi::SpatialReference &NFmiGrid::SpatialReference() const
 
 Fmi::CoordinateMatrix NFmiGrid::CoordinateMatrix(bool wrap) const
 {
-  return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
+  try
+  {
+    return itsArea->CoordinateMatrix(XNumber(), YNumber(), wrap);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -916,5 +1144,6 @@ NFmiGrid::NFmiGrid(const NFmiArea *theArea,
     : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod),
       itsArea(theArea ? theArea->Clone() : 0)
 {
-  if (itsArea && theXNumber > 1 && theYNumber > 1) itsArea->SetGridSize(theXNumber, theYNumber);
+  if (itsArea && theXNumber > 1 && theYNumber > 1)
+    itsArea->SetGridSize(theXNumber, theYNumber);
 }

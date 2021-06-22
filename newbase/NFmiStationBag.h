@@ -75,7 +75,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiStationBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiStationBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiStationBag &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -94,7 +97,11 @@ inline const NFmiStation NFmiStationBag::Current() const
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiStationBag::CurrentStation() const { return Current().GetIdent(); }
+inline long NFmiStationBag::CurrentStation() const
+{
+  return Current().GetIdent();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theStation Undocumented

@@ -15,6 +15,7 @@
 #include "NFmiParamDataModifierList.h"
 
 #include "NFmiDataIdent.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -22,7 +23,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiParamDataModifierList::~NFmiParamDataModifierList() { Clear(true); }
+NFmiParamDataModifierList::~NFmiParamDataModifierList()
+{
+  try
+  {
+    Clear(true);
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -30,6 +43,7 @@ NFmiParamDataModifierList::~NFmiParamDataModifierList() { Clear(true); }
 // ----------------------------------------------------------------------
 
 NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter() {}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theModifier Undocumented
@@ -39,7 +53,14 @@ NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter() {}
 
 bool NFmiParamDataModifierList::Add(NFmiParamDataModifier* theModifier)
 {
-  return itsList.AddEnd(theModifier) == true;
+  try
+  {
+    return itsList.AddEnd(theModifier) == true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -50,8 +71,15 @@ bool NFmiParamDataModifierList::Add(NFmiParamDataModifier* theModifier)
 
 bool NFmiParamDataModifierList::Reset()
 {
-  itsIter = itsList.Start();
-  return true;
+  try
+  {
+    itsIter = itsList.Start();
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -60,14 +88,36 @@ bool NFmiParamDataModifierList::Reset()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiParamDataModifierList::Next() { return itsIter.Next() == true; }
+bool NFmiParamDataModifierList::Next()
+{
+  try
+  {
+    return itsIter.Next() == true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-NFmiParamDataModifier* NFmiParamDataModifierList::Current() { return itsIter.CurrentPtr(); }
+NFmiParamDataModifier* NFmiParamDataModifierList::Current()
+{
+  try
+  {
+    return itsIter.CurrentPtr();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fDeleteData Undocumented
@@ -77,8 +127,17 @@ NFmiParamDataModifier* NFmiParamDataModifierList::Current() { return itsIter.Cur
 
 bool NFmiParamDataModifierList::Remove(bool fDeleteData)
 {
-  if (itsIter.Remove(fDeleteData)) return true;
-  return false;
+  try
+  {
+    if (itsIter.Remove(fDeleteData))
+      return true;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -87,7 +146,18 @@ bool NFmiParamDataModifierList::Remove(bool fDeleteData)
  */
 // ----------------------------------------------------------------------
 
-void NFmiParamDataModifierList::Clear(bool fDeleteData) { itsList.Clear(fDeleteData); }
+void NFmiParamDataModifierList::Clear(bool fDeleteData)
+{
+  try
+  {
+    itsList.Clear(fDeleteData);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -97,9 +167,17 @@ void NFmiParamDataModifierList::Clear(bool fDeleteData) { itsList.Clear(fDeleteD
 
 bool NFmiParamDataModifierList::Index(unsigned long theIndex)
 {
-  itsIter = itsList.Index(theIndex);
-  if (Current()) return true;
-  return false;
+  try
+  {
+    itsIter = itsList.Index(theIndex);
+    if (Current())
+      return true;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -111,13 +189,21 @@ bool NFmiParamDataModifierList::Index(unsigned long theIndex)
 
 bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam)
 {
-  NFmiDataIdent* paramPtr = nullptr;
-  for (Reset(); Next();)
+  try
   {
-    paramPtr = Current()->Param();
-    if (paramPtr && (*paramPtr == theParam)) return true;
+    NFmiDataIdent* paramPtr = nullptr;
+    for (Reset(); Next();)
+    {
+      paramPtr = Current()->Param();
+      if (paramPtr && (*paramPtr == theParam))
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -130,11 +216,19 @@ bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam)
 
 bool NFmiParamDataModifierList::Find(const NFmiDataIdent& theParam, const NFmiLevel* theLevel)
 {
-  for (Reset(); Next();)
+  try
   {
-    if (Current()->Match(theParam, theLevel)) return true;
+    for (Reset(); Next();)
+    {
+      if (Current()->Match(theParam, theLevel))
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

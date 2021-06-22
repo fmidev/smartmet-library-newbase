@@ -69,20 +69,29 @@ inline NFmiMultiValuedGrid::NFmiMultiValuedGrid() : itsMultiData(0), itsCurrentD
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiMultiValuedGrid::First() { return NFmiGrid::First(); }
+inline bool NFmiMultiValuedGrid::First()
+{
+  return NFmiGrid::First();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiMultiValuedGrid::Size() const { return NFmiGrid::Size(); }
+inline unsigned long NFmiMultiValuedGrid::Size() const
+{
+  return NFmiGrid::Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiArea* NFmiMultiValuedGrid::Area() const { return NFmiGrid::Area(); }
+inline NFmiArea* NFmiMultiValuedGrid::Area() const
+{
+  return NFmiGrid::Area();
+}
 
 // ======================================================================

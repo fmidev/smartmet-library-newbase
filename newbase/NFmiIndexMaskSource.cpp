@@ -31,6 +31,7 @@
 // ======================================================================
 
 #include "NFmiIndexMaskSource.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -68,8 +69,17 @@ NFmiIndexMaskSource::NFmiIndexMaskSource(const NFmiIndexMaskSource& theSource)
 
 NFmiIndexMaskSource& NFmiIndexMaskSource::operator=(const NFmiIndexMaskSource& theSource)
 {
-  if (this != &theSource) itsData = theSource.itsData;
-  return *this;
+  try
+  {
+    if (this != &theSource)
+      itsData = theSource.itsData;
+
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -85,7 +95,14 @@ NFmiIndexMaskSource& NFmiIndexMaskSource::operator=(const NFmiIndexMaskSource& t
 
 void NFmiIndexMaskSource::Insert(const NFmiMetTime& theTime, const NFmiIndexMask& theMask)
 {
-  itsData.insert(storage_type::value_type(theTime, theMask));
+  try
+  {
+    itsData.insert(storage_type::value_type(theTime, theMask));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -105,34 +122,45 @@ void NFmiIndexMaskSource::Insert(const NFmiMetTime& theTime, const NFmiIndexMask
 
 const NFmiIndexMask& NFmiIndexMaskSource::Find(const NFmiMetTime& theTime) const
 {
-  // this is needed in case no masks have been inserted
-  static NFmiIndexMask empty_mask;
+  try
+  {
+    // this is needed in case no masks have been inserted
+    static NFmiIndexMask empty_mask;
 
-  // empty mask if storage is empty
-  if (itsData.empty()) return empty_mask;
+    // empty mask if storage is empty
+    if (itsData.empty())
+      return empty_mask;
 
-  // find first time >= theTime
-  auto it = itsData.lower_bound(theTime);
+    // find first time >= theTime
+    auto it = itsData.lower_bound(theTime);
 
-  // Return last mask when the time is too late
-  if (it == itsData.end()) return (--it)->second;
+    // Return last mask when the time is too late
+    if (it == itsData.end())
+      return (--it)->second;
 
-  // return exact match if there is one
-  if (it->first == theTime) return it->second;
+    // return exact match if there is one
+    if (it->first == theTime)
+      return it->second;
 
-  // return first match if match was first
-  if (it == itsData.begin()) return it->second;
+    // return first match if match was first
+    if (it == itsData.begin())
+      return it->second;
 
-  // now see if the previous time (before theTime) is closer
+    // now see if the previous time (before theTime) is closer
 
-  const long diff2 = it->first.DifferenceInMinutes(theTime);
-  --it;
-  const long diff1 = theTime.DifferenceInMinutes(it->first);
+    const long diff2 = it->first.DifferenceInMinutes(theTime);
+    --it;
+    const long diff1 = theTime.DifferenceInMinutes(it->first);
 
-  if (diff1 > diff2)  // note how earlier time is favored
-    ++it;
+    if (diff1 > diff2)  // note how earlier time is favored
+      ++it;
 
-  return it->second;
+    return it->second;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -143,5 +171,15 @@ const NFmiIndexMask& NFmiIndexMaskSource::Find(const NFmiMetTime& theTime) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiIndexMaskSource::Clear() { itsData.clear(); }
+void NFmiIndexMaskSource::Clear()
+{
+  try
+  {
+    itsData.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ======================================================================

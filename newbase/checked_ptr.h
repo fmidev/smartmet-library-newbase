@@ -76,13 +76,15 @@ class checked_ptr
   element_type* get() { return p; }
   element_type& operator*() const
   {
-    if (p) return *p;
+    if (p)
+      return *p;
     throw checked_ptr_deref_err("Trying to dereference a null checked_ptr");
   }
 
   element_type* operator->() const
   {
-    if (p) return p;
+    if (p)
+      return p;
     throw checked_ptr_get_err("Trying to get a null checked_ptr");
   }
 

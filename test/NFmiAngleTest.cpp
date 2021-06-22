@@ -30,7 +30,8 @@ void winddirection_structors()
 
   {
     NFmiWindDirection dir(0.0, 0.0);
-    if (dir.Value() != 0.0) TEST_FAILED("should get value 0 for (0,0)");
+    if (dir.Value() != 0.0)
+      TEST_FAILED("should get value 0 for (0,0)");
   }
 
   {

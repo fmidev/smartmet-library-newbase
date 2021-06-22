@@ -1,32 +1,49 @@
 #include "NFmiSimpleCondition.h"
+#include <macgyver/Exception.h>
 
 namespace
 {
 bool CheckForStationaryData(const boost::shared_ptr<NFmiAreaMask> &mask)
 {
-  if (mask)
+  try
   {
-    if (mask->GetDataType() == NFmiInfoData::kStationary) return true;
+    if (mask)
+    {
+      if (mask->GetDataType() == NFmiInfoData::kStationary)
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static bool UseTimeInterpolation(bool maskIsStationaryData, bool normalInterpolationCondition)
 {
-  if (maskIsStationaryData)
-    return false;
-  else
+  try
+  {
+    if (maskIsStationaryData)
+      return false;
+
     return normalInterpolationCondition;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double CalculateValue(double value1,
                       double value2,
                       NFmiAreaMask::CalculationOperator calculationOperator)
 {
-  if (value1 == kFloatMissing || value2 == kFloatMissing)
-    return kFloatMissing;
-  else
+  try
   {
+    if (value1 == kFloatMissing || value2 == kFloatMissing)
+      return kFloatMissing;
+
     switch (calculationOperator)
     {
       case NFmiAreaMask::Add:
@@ -52,12 +69,18 @@ double CalculateValue(double value1,
       case NFmiAreaMask::Pow:
         return std::pow(value1, value2);
       default:
-        throw std::runtime_error(
+        throw Fmi::Exception(
+            BCP,
             "Internal program error with SimpleCondition's calculation operator - unknown "
             "operator");
     }
   }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 }  // namespace
 
 NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
@@ -81,55 +104,84 @@ NFmiSimpleConditionPart::NFmiSimpleConditionPart(const NFmiSimpleConditionPart &
 
 void NFmiSimpleConditionPart::Initialize()
 {
-  isMask1StationaryData = ::CheckForStationaryData(itsMask1);
-  isMask2StationaryData = ::CheckForStationaryData(itsMask2);
+  try
+  {
+    isMask1StationaryData = ::CheckForStationaryData(itsMask1);
+    isMask2StationaryData = ::CheckForStationaryData(itsMask2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiSimpleConditionPart *NFmiSimpleConditionPart::Clone() const
 {
-  return new NFmiSimpleConditionPart(*this);
+  try
+  {
+    return new NFmiSimpleConditionPart(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 double NFmiSimpleConditionPart::Value(const NFmiCalculationParams &theCalculationParams,
                                       bool fUseTimeInterpolationAlways)
 {
-  double value1 =
-      itsMask1->Value(theCalculationParams,
-                      ::UseTimeInterpolation(isMask1StationaryData, fUseTimeInterpolationAlways));
-  if (!itsMask2)
-    return value1;
-  else
+  try
   {
+    double value1 =
+        itsMask1->Value(theCalculationParams,
+                        ::UseTimeInterpolation(isMask1StationaryData, fUseTimeInterpolationAlways));
+    if (!itsMask2)
+      return value1;
+
     double value2 =
         itsMask2->Value(theCalculationParams,
                         ::UseTimeInterpolation(isMask2StationaryData, fUseTimeInterpolationAlways));
     return ::CalculateValue(value1, value2, itsCalculationOperator);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 double NFmiSimpleConditionPart::PressureValue(double thePressure,
                                               const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = itsMask1->PressureValue(thePressure, theCalculationParams);
-  if (!itsMask2)
-    return value1;
-  else
+  try
   {
+    double value1 = itsMask1->PressureValue(thePressure, theCalculationParams);
+    if (!itsMask2)
+      return value1;
+
     double value2 = itsMask2->PressureValue(thePressure, theCalculationParams);
     return ::CalculateValue(value1, value2, itsCalculationOperator);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 double NFmiSimpleConditionPart::HeightValue(double theHeight,
                                             const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = itsMask1->HeightValue(theHeight, theCalculationParams);
-  if (!itsMask2)
-    return value1;
-  else
+  try
   {
+    double value1 = itsMask1->HeightValue(theHeight, theCalculationParams);
+    if (!itsMask2)
+      return value1;
+
     double value2 = itsMask2->HeightValue(theHeight, theCalculationParams);
     return ::CalculateValue(value1, value2, itsCalculationOperator);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -159,26 +211,53 @@ NFmiSingleCondition::NFmiSingleCondition(const NFmiSingleCondition &theOther)
 
 static void InitializePart(boost::shared_ptr<NFmiSimpleConditionPart> &part)
 {
-  if (part) part->Initialize();
+  try
+  {
+    if (part)
+      part->Initialize();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiSingleCondition::Initialize()
 {
-  InitializePart(part1);
-  InitializePart(part2);
-  InitializePart(part3);
+  try
+  {
+    InitializePart(part1);
+    InitializePart(part2);
+    InitializePart(part3);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-NFmiSingleCondition *NFmiSingleCondition::Clone() const { return new NFmiSingleCondition(*this); }
+NFmiSingleCondition *NFmiSingleCondition::Clone() const
+{
+  try
+  {
+    return new NFmiSingleCondition(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 static bool EvaluateCondition(double value1, FmiMaskOperation operand, double value2)
 {
-  if (value1 == kFloatMissing || value2 == kFloatMissing)
-    return false;
-  else if (operand == kFmiNoMaskOperation)
-    return false;
-  else
+  try
   {
+    if (value1 == kFloatMissing || value2 == kFloatMissing)
+      return false;
+
+    if (operand == kFmiNoMaskOperation)
+      return false;
+
     switch (operand)
     {
       case kFmiMaskEqual:
@@ -194,15 +273,27 @@ static bool EvaluateCondition(double value1, FmiMaskOperation operand, double va
       case kFmiMaskNotEqual:
         return value1 != value2;
       default:
-        throw std::runtime_error(
+        throw Fmi::Exception(
+            BCP,
             "Error in SimpleCondition's EvaluateCondition function: unsupported condition operand");
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 static bool IsGreaterOperand(FmiMaskOperation operand)
 {
-  return (operand == kFmiMaskGreaterThan || operand == kFmiMaskGreaterOrEqualThan);
+  try
+  {
+    return (operand == kFmiMaskGreaterThan || operand == kFmiMaskGreaterOrEqualThan);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Note: only range option accepted are:
@@ -214,65 +305,77 @@ static bool EvaluateRangeCondition(double value1,
                                    FmiMaskOperation operand2,
                                    double value3)
 {
-  bool condition1 = ::EvaluateCondition(value1, operand1, value2);
-  bool condition2 = ::EvaluateCondition(value2, operand2, value3);
-  if (::IsGreaterOperand(operand1))
+  try
   {
-    // Outside limits case e.g. "-5 > T > 0", only other condition is true
-    return condition1 ^ condition2;
-  }
-  else
-  {
+    bool condition1 = ::EvaluateCondition(value1, operand1, value2);
+    bool condition2 = ::EvaluateCondition(value2, operand2, value3);
+    if (::IsGreaterOperand(operand1))
+      // Outside limits case e.g. "-5 > T > 0", only other condition is true
+      return condition1 ^ condition2;
+
     // In between case e.g. "-5 < T < 0", both conditions must be true
     return condition1 && condition2;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiSingleCondition::CheckCondition(const NFmiCalculationParams &theCalculationParams,
                                          bool fUseTimeInterpolationAlways)
 {
-  double value1 = part1->Value(theCalculationParams, fUseTimeInterpolationAlways);
-  double value2 = part2->Value(theCalculationParams, fUseTimeInterpolationAlways);
-  if (!part3)
+  try
   {
-    return ::EvaluateCondition(value1, conditionOperand1, value2);
-  }
-  else
-  {
+    double value1 = part1->Value(theCalculationParams, fUseTimeInterpolationAlways);
+    double value2 = part2->Value(theCalculationParams, fUseTimeInterpolationAlways);
+    if (!part3)
+      return ::EvaluateCondition(value1, conditionOperand1, value2);
+
     double value3 = part3->Value(theCalculationParams, fUseTimeInterpolationAlways);
     return ::EvaluateRangeCondition(value1, conditionOperand1, value2, conditionOperand2, value3);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiSingleCondition::CheckPressureCondition(double thePressure,
                                                  const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = part1->PressureValue(thePressure, theCalculationParams);
-  double value2 = part2->PressureValue(thePressure, theCalculationParams);
-  if (!part3)
+  try
   {
-    return ::EvaluateCondition(value1, conditionOperand1, value2);
-  }
-  else
-  {
+    double value1 = part1->PressureValue(thePressure, theCalculationParams);
+    double value2 = part2->PressureValue(thePressure, theCalculationParams);
+    if (!part3)
+      return ::EvaluateCondition(value1, conditionOperand1, value2);
+
     double value3 = part3->PressureValue(thePressure, theCalculationParams);
     return ::EvaluateRangeCondition(value1, conditionOperand1, value2, conditionOperand2, value3);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
                                                const NFmiCalculationParams &theCalculationParams)
 {
-  double value1 = part1->HeightValue(theHeight, theCalculationParams);
-  double value2 = part2->HeightValue(theHeight, theCalculationParams);
-  if (!part3)
+  try
   {
-    return ::EvaluateCondition(value1, conditionOperand1, value2);
-  }
-  else
-  {
+    double value1 = part1->HeightValue(theHeight, theCalculationParams);
+    double value2 = part2->HeightValue(theHeight, theCalculationParams);
+    if (!part3)
+      return ::EvaluateCondition(value1, conditionOperand1, value2);
+
     double value3 = part3->HeightValue(theHeight, theCalculationParams);
     return ::EvaluateRangeCondition(value1, conditionOperand1, value2, conditionOperand2, value3);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -295,34 +398,68 @@ NFmiSimpleCondition::NFmiSimpleCondition(const NFmiSimpleCondition &theOther)
 
 static void InitializePart(boost::shared_ptr<NFmiSingleCondition> &condition)
 {
-  if (condition) condition->Initialize();
+  try
+  {
+    if (condition)
+      condition->Initialize();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
 // stationaaristä dataa
+
 void NFmiSimpleCondition::Initialize()
 {
-  ::InitializePart(condition1);
-  ::InitializePart(condition2);
+  try
+  {
+    ::InitializePart(condition1);
+    ::InitializePart(condition2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-NFmiSimpleCondition *NFmiSimpleCondition::Clone() const { return new NFmiSimpleCondition(*this); }
+NFmiSimpleCondition *NFmiSimpleCondition::Clone() const
+{
+  try
+  {
+    return new NFmiSimpleCondition(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 static bool EvaluateBinaryCondition(bool condition1,
                                     NFmiAreaMask::BinaryOperator conditionOperator,
                                     bool condition2)
 {
-  switch (conditionOperator)
+  try
   {
-    case NFmiAreaMask::kAnd:
-      return condition1 && condition2;
-    case NFmiAreaMask::kOr:
-      return condition1 || condition2;
-    case NFmiAreaMask::kXor:
-      return condition1 ^ condition2;
-    default:
-      throw std::runtime_error(
-          "Error in SimpleCondition's EvaluateCondition function: unsupported binary operator");
+    switch (conditionOperator)
+    {
+      case NFmiAreaMask::kAnd:
+        return condition1 && condition2;
+      case NFmiAreaMask::kOr:
+        return condition1 || condition2;
+      case NFmiAreaMask::kXor:
+        return condition1 ^ condition2;
+      default:
+        throw Fmi::Exception(
+            BCP,
+            "Error in SimpleCondition's EvaluateCondition function: unsupported binary operator");
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -330,40 +467,55 @@ static bool EvaluateBinaryCondition(bool condition1,
 bool NFmiSimpleCondition::CheckCondition(const NFmiCalculationParams &theCalculationParams,
                                          bool fUseTimeInterpolationAlways)
 {
-  bool conditionValue1 =
-      condition1->CheckCondition(theCalculationParams, fUseTimeInterpolationAlways);
-  if (!condition2)
-    return conditionValue1;
-  else
+  try
   {
+    bool conditionValue1 =
+        condition1->CheckCondition(theCalculationParams, fUseTimeInterpolationAlways);
+    if (!condition2)
+      return conditionValue1;
+
     bool conditionValue2 =
         condition2->CheckCondition(theCalculationParams, fUseTimeInterpolationAlways);
     return ::EvaluateBinaryCondition(conditionValue1, conditionOperator, conditionValue2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiSimpleCondition::CheckPressureCondition(double thePressure,
                                                  const NFmiCalculationParams &theCalculationParams)
 {
-  bool conditionValue1 = condition1->CheckPressureCondition(thePressure, theCalculationParams);
-  if (!condition2)
-    return conditionValue1;
-  else
+  try
   {
+    bool conditionValue1 = condition1->CheckPressureCondition(thePressure, theCalculationParams);
+    if (!condition2)
+      return conditionValue1;
+
     bool conditionValue2 = condition2->CheckPressureCondition(thePressure, theCalculationParams);
     return ::EvaluateBinaryCondition(conditionValue1, conditionOperator, conditionValue2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiSimpleCondition::CheckHeightCondition(double theHeight,
                                                const NFmiCalculationParams &theCalculationParams)
 {
-  bool conditionValue1 = condition1->CheckHeightCondition(theHeight, theCalculationParams);
-  if (!condition2)
-    return conditionValue1;
-  else
+  try
   {
+    bool conditionValue1 = condition1->CheckHeightCondition(theHeight, theCalculationParams);
+    if (!condition2)
+      return conditionValue1;
+
     bool conditionValue2 = condition2->CheckHeightCondition(theHeight, theCalculationParams);
     return ::EvaluateBinaryCondition(conditionValue1, conditionOperator, conditionValue2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }

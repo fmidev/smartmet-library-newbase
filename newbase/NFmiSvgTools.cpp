@@ -21,6 +21,7 @@
 #include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
+#include <macgyver/Exception.h>
 
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
@@ -39,7 +40,14 @@ namespace NFmiSvgTools
 
 bool IsInside(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 {
-  return thePath.IsInside(thePoint);
+  try
+  {
+    return thePath.IsInside(thePoint);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -54,49 +62,59 @@ bool IsInside(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 
 double Distance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 {
-  if (thePath.empty()) return -1;
-
-  double minDist = -1;
-
-  auto firstPoint = thePath.begin();
-
-  double lastX = 0;
-  double lastY = 0;
-
-  for (auto it = thePath.begin(); it != thePath.end(); ++it)
+  try
   {
-    switch (it->itsType)
+    if (thePath.empty())
+      return -1;
+
+    double minDist = -1;
+
+    auto firstPoint = thePath.begin();
+
+    double lastX = 0;
+    double lastY = 0;
+
+    for (auto it = thePath.begin(); it != thePath.end(); ++it)
     {
-      case NFmiSvgPath::kElementMoveto:
-        firstPoint = it;
-        lastX = it->itsX;
-        lastY = it->itsY;
-        break;
-      case NFmiSvgPath::kElementClosePath:
+      switch (it->itsType)
       {
-        double dist = NFmiGeoTools::DistanceFromLineSegment(
-            thePoint.X(), thePoint.Y(), lastX, lastY, firstPoint->itsX, firstPoint->itsY);
+        case NFmiSvgPath::kElementMoveto:
+          firstPoint = it;
+          lastX = it->itsX;
+          lastY = it->itsY;
+          break;
+        case NFmiSvgPath::kElementClosePath:
+        {
+          double dist = NFmiGeoTools::DistanceFromLineSegment(
+              thePoint.X(), thePoint.Y(), lastX, lastY, firstPoint->itsX, firstPoint->itsY);
 
-        if (minDist < 0 || dist < minDist) minDist = dist;
-        lastX = firstPoint->itsX;
-        lastY = firstPoint->itsY;
-        break;
-      }
-      case NFmiSvgPath::kElementLineto:
-      {
-        double dist = NFmiGeoTools::DistanceFromLineSegment(
-            thePoint.X(), thePoint.Y(), lastX, lastY, it->itsX, it->itsY);
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
+          lastX = firstPoint->itsX;
+          lastY = firstPoint->itsY;
+          break;
+        }
+        case NFmiSvgPath::kElementLineto:
+        {
+          double dist = NFmiGeoTools::DistanceFromLineSegment(
+              thePoint.X(), thePoint.Y(), lastX, lastY, it->itsX, it->itsY);
 
-        if (minDist < 0 || dist < minDist) minDist = dist;
-        lastX = it->itsX;
-        lastY = it->itsY;
-        break;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
+          lastX = it->itsX;
+          lastY = it->itsY;
+          break;
+        }
+        case NFmiSvgPath::kElementNotValid:
+          return -1;
       }
-      case NFmiSvgPath::kElementNotValid:
-        return -1;
     }
+    return minDist;
   }
-  return minDist;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -118,62 +136,71 @@ double Distance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 
 double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 {
-  if (thePath.empty()) return -1;
-
-  // Nurkilla ei ole väliä
-
-  auto proj4 = fmt::format(
-      "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs",
-      thePoint.Y(),
-      thePoint.X(),
-      kRearth);
-
-  auto sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs", kRearth);
-
-  const double any_distance = 1000;
-  std::unique_ptr<NFmiArea> area(
-      NFmiArea::CreateFromCenter(proj4, sphere, thePoint, any_distance, any_distance));
-
-  double minDist = -1;
-
-  NFmiPoint firstPoint =
-      area->LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
-  NFmiPoint lastPoint = firstPoint;
-  NFmiPoint center = area->LatLonToWorldXY(thePoint);
-
-  for (const auto& it : thePath)
+  try
   {
-    switch (it.itsType)
+    if (thePath.empty())
+      return -1;
+
+    // Nurkilla ei ole väliä
+
+    auto proj4 = fmt::format(
+        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
+        "+towgs84=0,0,0 +no_defs",
+        thePoint.Y(),
+        thePoint.X(),
+        kRearth);
+
+    auto sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs", kRearth);
+
+    const double any_distance = 1000;
+    std::unique_ptr<NFmiArea> area(
+        NFmiArea::CreateFromCenter(proj4, sphere, thePoint, any_distance, any_distance));
+
+    double minDist = -1;
+
+    NFmiPoint firstPoint =
+        area->LatLonToWorldXY(NFmiPoint(thePath.front().itsX, thePath.front().itsY));
+    NFmiPoint lastPoint = firstPoint;
+    NFmiPoint center = area->LatLonToWorldXY(thePoint);
+
+    for (const auto& it : thePath)
     {
-      case NFmiSvgPath::kElementMoveto:
-        lastPoint = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
-        firstPoint = lastPoint;
-        break;
-      case NFmiSvgPath::kElementClosePath:
+      switch (it.itsType)
       {
-        double dist = NFmiGeoTools::DistanceFromLineSegment(
-            center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), firstPoint.X(), firstPoint.Y());
+        case NFmiSvgPath::kElementMoveto:
+          lastPoint = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+          firstPoint = lastPoint;
+          break;
+        case NFmiSvgPath::kElementClosePath:
+        {
+          double dist = NFmiGeoTools::DistanceFromLineSegment(
+              center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), firstPoint.X(), firstPoint.Y());
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
+          lastPoint = firstPoint;
+          break;
+        }
+        case NFmiSvgPath::kElementLineto:
+        {
+          NFmiPoint p = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+          double dist = NFmiGeoTools::DistanceFromLineSegment(
+              center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), p.X(), p.Y());
 
-        if (minDist < 0 || dist < minDist) minDist = dist;
-        lastPoint = firstPoint;
-        break;
+          if (minDist < 0 || dist < minDist)
+            minDist = dist;
+          lastPoint = p;
+          break;
+        }
+        case NFmiSvgPath::kElementNotValid:
+          return -1;
       }
-      case NFmiSvgPath::kElementLineto:
-      {
-        NFmiPoint p = area->LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
-        double dist = NFmiGeoTools::DistanceFromLineSegment(
-            center.X(), center.Y(), lastPoint.X(), lastPoint.Y(), p.X(), p.Y());
-
-        if (minDist < 0 || dist < minDist) minDist = dist;
-        lastPoint = p;
-        break;
-      }
-      case NFmiSvgPath::kElementNotValid:
-        return -1;
     }
+    return minDist;
   }
-  return minDist;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -195,33 +222,44 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 void BoundingBox(
     const NFmiSvgPath& thePath, double& theXmin, double& theYmin, double& theXmax, double& theYmax)
 {
-  if (thePath.empty())
+  try
   {
-    theXmin = theYmin = theXmax = theYmax = 0;
+    if (thePath.empty())
+    {
+      theXmin = theYmin = theXmax = theYmax = 0;
+      return;
+    }
+
+    bool firstmove = true;
+
+    for (const auto& it : thePath)
+    {
+      switch (it.itsType)
+      {
+        case NFmiSvgPath::kElementMoveto:
+        case NFmiSvgPath::kElementLineto:
+
+          if (firstmove || it.itsX < theXmin)
+            theXmin = it.itsX;
+          if (firstmove || it.itsX > theXmax)
+            theXmax = it.itsX;
+          if (firstmove || it.itsY < theYmin)
+            theYmin = it.itsY;
+          if (firstmove || it.itsY > theYmax)
+            theYmax = it.itsY;
+          firstmove = false;
+          break;
+        case NFmiSvgPath::kElementNotValid:
+        case NFmiSvgPath::kElementClosePath:
+          break;
+      }
+    }
     return;
   }
-
-  bool firstmove = true;
-
-  for (const auto& it : thePath)
+  catch (...)
   {
-    switch (it.itsType)
-    {
-      case NFmiSvgPath::kElementMoveto:
-      case NFmiSvgPath::kElementLineto:
-
-        if (firstmove || it.itsX < theXmin) theXmin = it.itsX;
-        if (firstmove || it.itsX > theXmax) theXmax = it.itsX;
-        if (firstmove || it.itsY < theYmin) theYmin = it.itsY;
-        if (firstmove || it.itsY > theYmax) theYmax = it.itsY;
-        firstmove = false;
-        break;
-      case NFmiSvgPath::kElementNotValid:
-      case NFmiSvgPath::kElementClosePath:
-        break;
-    }
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return;
 }
 
 // ----------------------------------------------------------------------
@@ -235,46 +273,67 @@ void BoundingBox(
 
 void LatLonToWorldXY(NFmiSvgPath& thePath, const NFmiArea& theArea)
 {
-  NFmiPoint tmp;
-  for (auto& it : thePath)
+  try
   {
-    switch (it.itsType)
+    NFmiPoint tmp;
+    for (auto& it : thePath)
     {
-      case NFmiSvgPath::kElementMoveto:
-      case NFmiSvgPath::kElementLineto:
+      switch (it.itsType)
       {
-        tmp = theArea.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
-        it.itsX = tmp.X();
-        it.itsY = tmp.Y();
-        break;
+        case NFmiSvgPath::kElementMoveto:
+        case NFmiSvgPath::kElementLineto:
+        {
+          tmp = theArea.LatLonToWorldXY(NFmiPoint(it.itsX, it.itsY));
+          it.itsX = tmp.X();
+          it.itsY = tmp.Y();
+          break;
+        }
+        case NFmiSvgPath::kElementNotValid:
+        case NFmiSvgPath::kElementClosePath:
+          break;
       }
-      case NFmiSvgPath::kElementNotValid:
-      case NFmiSvgPath::kElementClosePath:
-        break;
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 void PointToSvgPath(NFmiSvgPath& thePath, double x, double y)
 {
-  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x, y);
-  NFmiSvgPath::Element element2(NFmiSvgPath::kElementClosePath, 0, 0);
-  thePath.push_back(element1);
-  thePath.push_back(element2);
+  try
+  {
+    NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x, y);
+    NFmiSvgPath::Element element2(NFmiSvgPath::kElementClosePath, 0, 0);
+    thePath.push_back(element1);
+    thePath.push_back(element2);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void BBoxToSvgPath(NFmiSvgPath& thePath, double x1, double y1, double x2, double y2)
 {
-  NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x1, y1);
-  NFmiSvgPath::Element element2(NFmiSvgPath::kElementLineto, x1, y2);
-  NFmiSvgPath::Element element3(NFmiSvgPath::kElementLineto, x2, y2);
-  NFmiSvgPath::Element element4(NFmiSvgPath::kElementLineto, x2, y1);
-  NFmiSvgPath::Element element5(NFmiSvgPath::kElementClosePath, x1, y1);
-  thePath.push_back(element1);
-  thePath.push_back(element2);
-  thePath.push_back(element3);
-  thePath.push_back(element4);
-  thePath.push_back(element5);
+  try
+  {
+    NFmiSvgPath::Element element1(NFmiSvgPath::kElementMoveto, x1, y1);
+    NFmiSvgPath::Element element2(NFmiSvgPath::kElementLineto, x1, y2);
+    NFmiSvgPath::Element element3(NFmiSvgPath::kElementLineto, x2, y2);
+    NFmiSvgPath::Element element4(NFmiSvgPath::kElementLineto, x2, y1);
+    NFmiSvgPath::Element element5(NFmiSvgPath::kElementClosePath, x1, y1);
+    thePath.push_back(element1);
+    thePath.push_back(element2);
+    thePath.push_back(element3);
+    thePath.push_back(element4);
+    thePath.push_back(element5);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiSvgTools

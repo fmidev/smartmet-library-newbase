@@ -26,16 +26,20 @@ void size(void)
 
   NFmiSvgPath path;
 
-  if (path.size() != 0) TEST_FAILED("Path size after construction must be 0");
+  if (path.size() != 0)
+    TEST_FAILED("Path size after construction must be 0");
 
   path.push_back(NFmiSvgPath::value_type(NFmiSvgPath::kElementMoveto, 0, 0));
-  if (path.size() != 1) TEST_FAILED("Path size after 1 push_back must be 1");
+  if (path.size() != 1)
+    TEST_FAILED("Path size after 1 push_back must be 1");
 
   path.push_back(NFmiSvgPath::value_type(NFmiSvgPath::kElementMoveto, 0, 0));
-  if (path.size() != 2) TEST_FAILED("Path size after 2 push_backs must be 2");
+  if (path.size() != 2)
+    TEST_FAILED("Path size after 2 push_backs must be 2");
 
   path.clear();
-  if (path.size() != 0) TEST_FAILED("Path size after clear() must be 0");
+  if (path.size() != 0)
+    TEST_FAILED("Path size after clear() must be 0");
 
   TEST_PASSED();
 }
@@ -52,13 +56,16 @@ void empty(void)
 
   NFmiSvgPath path;
 
-  if (!path.empty()) TEST_FAILED("Path must be empty after construction");
+  if (!path.empty())
+    TEST_FAILED("Path must be empty after construction");
 
   path.push_back(NFmiSvgPath::value_type(NFmiSvgPath::kElementMoveto, 0, 0));
-  if (path.empty()) TEST_FAILED("Path must not be empty after push_back()");
+  if (path.empty())
+    TEST_FAILED("Path must not be empty after push_back()");
 
   path.clear();
-  if (!path.empty()) TEST_FAILED("Path must be empty after clear()");
+  if (!path.empty())
+    TEST_FAILED("Path must be empty after clear()");
 
   TEST_PASSED();
 }
@@ -105,19 +112,23 @@ void iter(void)
   NFmiSvgPath path;
   NFmiSvgPath::value_type elem1(NFmiSvgPath::kElementMoveto, 0, 0);
 
-  if (path.begin() != path.end()) TEST_FAILED("begin() and end() must be equal for empty paths");
+  if (path.begin() != path.end())
+    TEST_FAILED("begin() and end() must be equal for empty paths");
 
   path.push_back(elem1);
 
   NFmiSvgPath::const_iterator it1 = path.begin();
   NFmiSvgPath::const_iterator it2 = path.end();
 
-  if (++it1 != it2) TEST_FAILED("++begin() and end() must be equal for one element");
+  if (++it1 != it2)
+    TEST_FAILED("++begin() and end() must be equal for one element");
 
-  if (--it1 != --it2) TEST_FAILED("begin() and --end() must be equal for one element");
+  if (--it1 != --it2)
+    TEST_FAILED("begin() and --end() must be equal for one element");
 
   path.begin()->itsX = 1;
-  if (path.front().itsX != 1) TEST_FAILED("Failed to modify iterated element");
+  if (path.front().itsX != 1)
+    TEST_FAILED("Failed to modify iterated element");
 
   TEST_PASSED();
 }
@@ -151,7 +162,8 @@ void read_and_write(void)
 
     ostringstream out;
     path.Write(out);
-    if (out.str() != path1) TEST_FAILED("Failed to write M 0 1 L 1 2");
+    if (out.str() != path1)
+      TEST_FAILED("Failed to write M 0 1 L 1 2");
   }
 
   {
@@ -160,7 +172,8 @@ void read_and_write(void)
     path.Read(in);
     ostringstream out;
     path.Write(out);
-    if (out.str() != path1) TEST_FAILED("Failed to read M0 1 1 2");
+    if (out.str() != path1)
+      TEST_FAILED("Failed to read M0 1 1 2");
   }
 
   {
@@ -169,7 +182,8 @@ void read_and_write(void)
     path.Read(in);
     ostringstream out;
     path.Write(out);
-    if (out.str() != path1) TEST_FAILED("Failed to read m0 1 1 1");
+    if (out.str() != path1)
+      TEST_FAILED("Failed to read m0 1 1 1");
   }
 
   {
@@ -178,7 +192,8 @@ void read_and_write(void)
     path.Read(in);
     ostringstream out;
     path.Write(out);
-    if (out.str() != path1) TEST_FAILED("Failed to read M0,1 1,2");
+    if (out.str() != path1)
+      TEST_FAILED("Failed to read M0,1 1,2");
   }
 
   {
@@ -187,7 +202,8 @@ void read_and_write(void)
     path.Read(in);
     ostringstream out;
     path.Write(out);
-    if (out.str() != path1) TEST_FAILED("Failed to read M0,1,1,2");
+    if (out.str() != path1)
+      TEST_FAILED("Failed to read M0,1,1,2");
   }
 
   TEST_PASSED();

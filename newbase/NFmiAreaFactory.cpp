@@ -113,6 +113,7 @@
 #include <boost/optional.hpp>
 #include <fmt/printf.h>
 #include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <bitset>
@@ -177,7 +178,7 @@ struct ProjStrings
 ProjStrings parse_projection(const std::string &theProjection)
 {
   if (theProjection.empty())
-    throw std::runtime_error("Cannot construct projection from an empty string");
+    throw Fmi::Exception(BCP, "Cannot construct projection from an empty string");
 
   ProjStrings result;
 
@@ -212,7 +213,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     // for lgeacy reasons "latlon" means "eqc" instead of PROJ.4 "latlon"
     if (params.size() != 0)
-      throw runtime_error("latlon area does not require any parameters");
+      throw Fmi::Exception(BCP, "latlon area does not require any parameters");
 
     result.sphere = "WGS84";
 
@@ -221,7 +222,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   else if (name == "rotlatlon")
   {
     if (params.size() > 2)
-      throw runtime_error("rotlatlon area requires max 2 parameters");
+      throw Fmi::Exception(BCP, "rotlatlon area requires max 2 parameters");
     auto spole_lon = (params.size() >= 2 ? params[1] : 0);
     auto spole_lat = (params.size() >= 1 ? params[0] : -90);
 
@@ -240,7 +241,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   else if (name == "invrotlatlon")
   {
     if (params.size() > 2)
-      throw runtime_error("invrotlatlon area requires max 2 parameters");
+      throw Fmi::Exception(BCP, "invrotlatlon area requires max 2 parameters");
     auto spole_lon = (params.size() >= 2 ? params[1] : 0);
     auto spole_lat = (params.size() >= 1 ? params[0] : -90);
 
@@ -270,7 +271,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   else if (name == "mercator")
   {
     if (params.size() > 0)
-      throw runtime_error("mercator area requires no parameters");
+      throw Fmi::Exception(BCP, "mercator area requires no parameters");
 
     result.proj4 =
         fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
@@ -278,7 +279,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   else if (name == "stereographic")
   {
     if (params.size() > 3)
-      throw runtime_error("stereographic area requires max 3 parameters");
+      throw Fmi::Exception(BCP, "stereographic area requires max 3 parameters");
     const double clon = (params.size() >= 1 ? params[0] : 0);
     const double clat = (params.size() >= 2 ? params[1] : 90);
     const double tlat = (params.size() >= 3 ? params[2] : 60);
@@ -293,16 +294,16 @@ ProjStrings parse_projection(const std::string &theProjection)
   }
   else if (name == "gnomonic")
   {
-    throw std::runtime_error("gnomonic was never in old style FMI projections");
+    throw Fmi::Exception(BCP, "gnomonic was never in old style FMI projections");
   }
   else if (name == "lambertequal")
   {
-    throw std::runtime_error("lambertequal was never in old style FMI projections");
+    throw Fmi::Exception(BCP, "lambertequal was never in old style FMI projections");
   }
   else if (name == "ykj")
   {
     if (params.size() != 0)
-      throw runtime_error("ykj area does not require any parameters");
+      throw Fmi::Exception(BCP, "ykj area does not require any parameters");
     result.proj4 =
         "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
         "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
@@ -312,7 +313,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   {
     // lcc,centrallongitude,centrallatitude,truelatitude1,truelatitude2=truelatitude1,radius=6371229
     if (params.size() < 3 || params.size() > 5)
-      throw runtime_error("lcc area requires max 3-5 parameters");
+      throw Fmi::Exception(BCP, "lcc area requires max 3-5 parameters");
     const double clon = params[0];
     const double clat = params[1];
     const double tlat1 = params[2];
@@ -332,7 +333,7 @@ ProjStrings parse_projection(const std::string &theProjection)
   else if (name == "equidist")
   {
     if (params.size() > 2)
-      throw runtime_error("equidist area requires max 2 parameters");
+      throw Fmi::Exception(BCP, "equidist area requires max 2 parameters");
     const double clon = (params.size() >= 1 ? params[0] : 0);
     const double clat = (params.size() >= 2 ? params[1] : 90);
 
@@ -386,7 +387,7 @@ std::vector<std::string> split_components(const std::string &theProjection)
   split_string(words, theProjection, separator);
 
   if (words.size() < 1 || words.size() > 3)
-    throw runtime_error("must have 1-3 projection components separated by ':' or '|'");
+    throw Fmi::Exception(BCP, "must have 1-3 projection components separated by ':' or '|'");
 
   return words;
 }
@@ -404,7 +405,7 @@ struct Bounds
 Bounds parse_bounds(const std::string &theBounds)
 {
   if (theBounds.empty())
-    throw std::runtime_error("Projection bbox/center settings missing");
+    throw Fmi::Exception(BCP, "Projection bbox/center settings missing");
 
   Bounds bounds;
 
@@ -412,7 +413,7 @@ Bounds parse_bounds(const std::string &theBounds)
   split_string(words, theBounds, "/");
 
   if (words.size() < 1 || words.size() > 2)
-    throw std::runtime_error("Invalid projection bbox/center setting: " + theBounds);
+    throw Fmi::Exception(BCP, "Invalid projection bbox/center setting: " + theBounds);
 
   if (words.size() == 2)
     bounds.aspect = Fmi::stod(words[1]);
@@ -435,7 +436,7 @@ Bounds parse_bounds(const std::string &theBounds)
     bounds.scale = numbers[2];
   }
   else
-    throw std::runtime_error("Invalid number of elements in bbox/center definition: " + theBounds);
+    throw Fmi::Exception(BCP, "Invalid number of elements in bbox/center definition: " + theBounds);
 
   return bounds;
 }
@@ -472,9 +473,9 @@ Grid parse_grid(std::string str)
 
   // intermediate validity checks
   if (words.size() != 2 && words.size() != 4)
-    throw std::runtime_error("grid specification must have 2 or 4 numbers");
+    throw Fmi::Exception(BCP, "grid specification must have 2 or 4 numbers");
   if (words.size() != 2 && grid.units)
-    throw std::runtime_error("grid specification must have 2 numbers when length units are used");
+    throw Fmi::Exception(BCP, "grid specification must have 2 numbers when length units are used");
 
   std::vector<double> numbers;
   for (const auto &word : words)
@@ -494,7 +495,7 @@ Grid parse_grid(std::string str)
   }
 
   if (grid.units && (grid.width() <= 0 || grid.height() <= 0))
-    throw runtime_error("Cannot use negative lengths when specifying the grid size");
+    throw Fmi::Exception(BCP, "Cannot use negative lengths when specifying the grid size");
 
   return grid;
 }
@@ -523,7 +524,7 @@ void set_grid(NFmiArea &theArea, const Grid &theGrid, const Bounds &theBounds)
     theArea.SetXYArea(rect);
   }
   else if (theGrid.width() < 0 && theGrid.height() < 0)
-    throw runtime_error("Width and height cannot both be negative");
+    throw Fmi::Exception(BCP, "Width and height cannot both be negative");
   else if (!theGrid.units)
     theArea.SetXYArea(NFmiRect(corner1, corner2));
   else
@@ -534,7 +535,7 @@ void set_grid(NFmiArea &theArea, const Grid &theGrid, const Bounds &theBounds)
     if (theArea.SpatialReference().isGeographic())
     {
       // Haven't figured out how to calculate this. Use "eqc" projection instead.
-      throw std::runtime_error("Cropping metric areas from geographic data is not supported");
+      throw Fmi::Exception(BCP, "Cropping metric areas from geographic data is not supported");
     }
     else
     {
@@ -578,8 +579,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     // More validity checks
 
     if (grid.units && bounds.center)
-      throw runtime_error(
-          "Cannot use a centered projection speficiation with grid size of specific length");
+      throw Fmi::Exception(
+          BCP, "Cannot use a centered projection speficiation with grid size of specific length");
 
     // Generate PROJ.4 string for the projection and the spatial reference used for the
     // corners, center coordinate or bottom left corner for GRIB stuff
@@ -609,7 +610,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
   }
   catch (std::runtime_error &e)
   {
-    throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
+    throw Fmi::Exception(
+        BCP, "Projection specification '" + theProjection + "' is invalid: " + e.what());
   }
 }
 
@@ -639,7 +641,8 @@ boost::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
   }
   catch (std::runtime_error &e)
   {
-    throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
+    throw Fmi::Exception(
+        BCP, "Projection specification '" + theProjection + "' is invalid: " + e.what());
   }
 }
 
@@ -670,7 +673,8 @@ boost::shared_ptr<NFmiArea> CreateFromCenter(const std::string &theProjection,
   }
   catch (std::runtime_error &e)
   {
-    throw runtime_error("Projection specification '" + theProjection + "' is invalid: " + e.what());
+    throw Fmi::Exception(
+        BCP, "Projection specification '" + theProjection + "' is invalid: " + e.what());
   }
 }
 

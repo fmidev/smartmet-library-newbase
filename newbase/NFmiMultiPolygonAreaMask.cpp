@@ -32,6 +32,7 @@
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -39,7 +40,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiPolygonAreaMask::~NFmiMultiPolygonAreaMask() { Clear(); }
+NFmiMultiPolygonAreaMask::~NFmiMultiPolygonAreaMask()
+{
+  try
+  {
+    Clear();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -84,10 +97,20 @@ NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask(const NFmiCalculationConditio
 
 double NFmiMultiPolygonAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLon) const
 {
-  int size = itsAreaPolygons.size();
-  for (int i = 0; i < size; i++)
-    if (NFmiSvgTools::IsInside(*itsAreaPolygons[i], theLatLon)) return itsAreaPolygonValues[i];
-  return kFloatMissing;
+  try
+  {
+    int size = itsAreaPolygons.size();
+    for (int i = 0; i < size; i++)
+    {
+      if (NFmiSvgTools::IsInside(*itsAreaPolygons[i], theLatLon))
+        return itsAreaPolygonValues[i];
+    }
+    return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -100,8 +123,15 @@ double NFmiMultiPolygonAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLo
 
 const NFmiString NFmiMultiPolygonAreaMask::MakeSubMaskString() const
 {
-  NFmiString str;
-  return str;
+  try
+  {
+    NFmiString str;
+    return str;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -112,13 +142,20 @@ const NFmiString NFmiMultiPolygonAreaMask::MakeSubMaskString() const
 
 void NFmiMultiPolygonAreaMask::Clear()
 {
-  int size = itsAreaPolygons.size();
-  for (int i = 0; i < size; i++)
-    delete itsAreaPolygons[i];
+  try
+  {
+    int size = itsAreaPolygons.size();
+    for (int i = 0; i < size; i++)
+      delete itsAreaPolygons[i];
 
-  std::vector<NFmiSvgPath*>().swap(
-      itsAreaPolygons);  // tyhjennetään vectorit empty-object-swap -tempulla.
-  std::vector<double>().swap(itsAreaPolygonValues);
+    std::vector<NFmiSvgPath*>().swap(
+        itsAreaPolygons);  // tyhjennetään vectorit empty-object-swap -tempulla.
+    std::vector<double>().swap(itsAreaPolygonValues);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -132,13 +169,20 @@ void NFmiMultiPolygonAreaMask::Clear()
 
 std::ostream& NFmiMultiPolygonAreaMask::Write(std::ostream& file) const
 {
-  int size = itsAreaPolygons.size();
-  for (int i = 0; i < size; i++)
+  try
   {
-    file << itsAreaPolygonValues[i] << std::endl;
-    file << *itsAreaPolygons[i] << std::endl;
+    int size = itsAreaPolygons.size();
+    for (int i = 0; i < size; i++)
+    {
+      file << itsAreaPolygonValues[i] << std::endl;
+      file << *itsAreaPolygons[i] << std::endl;
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -160,24 +204,32 @@ std::ostream& NFmiMultiPolygonAreaMask::Write(std::ostream& file) const
 
 std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
 {
-  NFmiSvgPath* tmp = nullptr;
-  double value;
-  Clear();
-  do
+  try
   {
-    file >> value;
-    if (file.fail()) break;
-    tmp = new NFmiSvgPath;
-    file >> *tmp;
-    if (file.fail())
+    NFmiSvgPath* tmp = nullptr;
+    double value;
+    Clear();
+    do
     {
-      delete tmp;
-      break;
-    }
-    itsAreaPolygons.push_back(tmp);
-    itsAreaPolygonValues.push_back(value);
-  } while (!file.fail());
-  return file;
+      file >> value;
+      if (file.fail())
+        break;
+      tmp = new NFmiSvgPath;
+      file >> *tmp;
+      if (file.fail())
+      {
+        delete tmp;
+        break;
+      }
+      itsAreaPolygons.push_back(tmp);
+      itsAreaPolygonValues.push_back(value);
+    } while (!file.fail());
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -198,16 +250,23 @@ std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
 
 NFmiBitmapAreaMask* NFmiMultiPolygonAreaMask::CreateBitmapAreaMask(const NFmiGrid& theGrid)
 {
-  auto* mask = new NFmiBitmapAreaMask(theGrid, nullptr, nullptr, kNoValue);
-  if (mask)
+  try
   {
-    NFmiGrid grid(theGrid);  // tehdään hilasta kopio, että voidaan käydä hila läpi
-    for (grid.Reset(); grid.Next();)
+    auto* mask = new NFmiBitmapAreaMask(theGrid, nullptr, nullptr, kNoValue);
+    if (mask)
     {
-      mask->Mask(grid.Index(), this->IsMasked(grid.LatLon()));
+      NFmiGrid grid(theGrid);  // tehdään hilasta kopio, että voidaan käydä hila läpi
+      for (grid.Reset(); grid.Next();)
+      {
+        mask->Mask(grid.Index(), this->IsMasked(grid.LatLon()));
+      }
     }
+    return mask;
   }
-  return mask;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

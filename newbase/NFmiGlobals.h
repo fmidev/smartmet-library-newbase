@@ -236,20 +236,25 @@ inline int round(double x)
 {
   return (x < 0.0) ? static_cast<long>(x - 0.5) : static_cast<long>(x + 0.5);
 }
-inline int trunc(double x) { return static_cast<int>(x); }
+inline int trunc(double x)
+{
+  return static_cast<int>(x);
+}
 #endif
 
 template <typename T>
 inline bool FmiIsValidNumber(T theValue)
 {
-  if (boost::math::isfinite(theValue)) return true;
+  if (boost::math::isfinite(theValue))
+    return true;
   return false;
 }
 
 template <typename T>
 inline T FmiMakeValidNumber(T theValue)
 {
-  if (::FmiIsValidNumber(theValue)) return theValue;
+  if (::FmiIsValidNumber(theValue))
+    return theValue;
   return kFloatMissing;
 }
 
@@ -277,8 +282,14 @@ inline const _Tp& FmiMax(const _Tp& __a, const _Tp& __b)
 // (viimeksi VC++ 2008-käännöksessä). Käyttämällä tätä fiksataan tyyppi
 // doubleksi.   --AKa 7-Oct-2008
 //
-inline double FmiMin(double a, double b) { return b < a ? b : a; }
-inline double FmiMax(double a, double b) { return a < b ? b : a; }
+inline double FmiMin(double a, double b)
+{
+  return b < a ? b : a;
+}
+inline double FmiMax(double a, double b)
+{
+  return a < b ? b : a;
+}
 /* C++ equivalents
    inline double	FmiMax(double x, double y) const {x > y ? x : y;};
    inline double	FmiMin(double x, double y) const {x < y ? x : y;};
