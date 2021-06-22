@@ -5849,7 +5849,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiMetTime &theIn
   try
   {
     if (PressureDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
     NFmiDataMatrix<float> values(GridXNumber(), GridYNumber(), kFloatMissing);
@@ -5917,7 +5918,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
   try
   {
     if (PressureDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
     NFmiGrid usedGrid(theWantedGrid);
@@ -5937,9 +5939,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw std::runtime_error("Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -5956,7 +5958,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -5974,7 +5976,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw std::runtime_error("Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6011,7 +6014,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       return PressureValues(theWantedGrid, theInterpolatedTime, wantedPressureLevel);
 
     if (PressureDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
           "unsuitable.");
 
@@ -6055,9 +6059,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw std::runtime_error("Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -6076,7 +6080,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -6096,7 +6100,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw std::runtime_error("Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6158,7 +6163,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiMetTime &theInte
   try
   {
     if (HeightDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data "
           "unsuitable.");
 
@@ -6185,7 +6191,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
   try
   {
     if (HeightDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data "
           "unsuitable.");
     NFmiGrid usedGrid(theWantedGrid);
@@ -6204,9 +6211,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       bool isSubParamUsed = IsSubParamUsed();
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Data does not contain Wind U-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind U-component");
       if (!Param(kFmiWindVMS))
-        throw std::runtime_error("Data does not contain Wind V-component");
+        throw Fmi::Exception(BCP, "Data does not contain Wind V-component");
 
       SetIsSubParamUsed(isSubParamUsed);
 
@@ -6223,7 +6230,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       // Get U values
 
       if (!Param(kFmiWindUMS))
-        throw std::runtime_error("Internal error: could not switch to parameter U");
+        throw Fmi::Exception(BCP, "Internal error: could not switch to parameter U");
       SetIsSubParamUsed(isSubParamUsed);
 
       valBuf uValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
@@ -6241,7 +6248,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
-        throw std::runtime_error("Internal error: could not switch to parameter " +
+        throw Fmi::Exception(BCP,
+                             "Internal error: could not switch to parameter " +
                                  boost::lexical_cast<std::string>(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
@@ -6276,7 +6284,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       return HeightValues(theWantedGrid, theInterpolatedTime, wantedHeightLevel);
 
     if (HeightDataAvailable() == false)
-      throw std::runtime_error(
+      throw Fmi::Exception(
+          BCP,
           "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height values, data "
           "unsuitable.");
 
