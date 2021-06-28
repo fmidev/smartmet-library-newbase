@@ -7,6 +7,8 @@
 
 #pragma once
 
+#define WGS84 1
+
 #include "NFmiDef.h"
 #include "NFmiPragma.h"
 

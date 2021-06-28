@@ -15,10 +15,10 @@ REQUIRES += fmt
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-DEFINES = -DUNIX -DWGS84 -D_REENTRANT -DBOOST -DFMI_COMPRESSION
+DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 
-CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
+CFLAGS0 = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
 LIBS += -lsmartmet-gis \
 	-lboost_regex \
