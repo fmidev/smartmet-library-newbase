@@ -1,3 +1,4 @@
+%bcond_with tests
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
@@ -20,6 +21,9 @@ BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 21.6.16
 BuildRequires: smartmet-library-gis-devel >= 21.6.16
+%if %{with tests}
+BuildRequires: smartmet-library-regression
+%endif
 Requires: smartmet-library-gis >= 21.6.16
 Requires: smartmet-library-macgyver >= 21.6.16
 Requires: boost169-date-time
@@ -58,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
  
 %build
 make %{_smp_mflags}
+%if %{with tests}
+make test %{_smp_mflags}
+%endif
 
 %install
 %makeinstall

@@ -15,6 +15,8 @@ REQUIRES += fmt
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
+RPMBUILD_OPT ?=
+
 DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 
@@ -99,8 +101,8 @@ objdir:
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
-	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
-	rpmbuild -tb $(SPEC).tar.gz
+	tar -czvf $(SPEC).tar.gz --exclude-vcs --transform "s,^,$(SPEC)/," *
+	rpmbuild -tb $(SPEC).tar.gz $(RPMBUILD_OPT)
 	rm -f $(SPEC).tar.gz
 
 .SUFFIXES: $(SUFFIXES) .cpp
