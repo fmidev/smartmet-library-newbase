@@ -96,9 +96,6 @@ install:
 test:
 	+cd test && make test
 
-objdir:
-	@mkdir -p $(objdir)
-
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --exclude-vcs --transform "s,^,$(SPEC)/," *
@@ -110,11 +107,11 @@ rpm: clean $(SPEC).spec
 modernize:
 	for F in newbase/*.cpp; do echo $$F; clang-tidy $$F -fix -checks=-*,modernize-* -- $(CFLAGS) $(DEFINES) $(INCLUDES); done
 
-obj/%.o: %.cpp
-	@mkdir -p obj
-	$(CXX) $(CFLAGS) $(INCLUDES) -c  -MD -MF $(patsubst obj/%.o, obj/%.d.new, $@) -o $@ $<
-	@sed -e "s|^$(notdir $@):|$@:|" $(patsubst obj/%.o, obj/%.d.new, $@) >$(patsubst obj/%.o, obj/%.d, $@)
-	@rm -f $(patsubst obj/%.o, obj/%.d.new, $@)
+objdir:
+	mkdir -p $(objdir)
+
+obj/%.o : %.cpp objdir
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $<
 
 ifneq ($(USE_CLANG), yes)
 obj/NFmiEnumConverterInit.o: CFLAGS += -O0
