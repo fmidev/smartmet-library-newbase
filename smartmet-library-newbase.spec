@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.6.28
+Version: 21.8.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -97,6 +97,11 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Aug  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.3-1.fmi
+- Added +type=crs to PROJ strings
+- Fixed NFmiArea::ProjStr to return the string from Fmi::SpatialReference
+- Added NFmiArea::EnableBilinearInterpolation, DisableBilinearinterpolation and BilinearInterpolationEnabled methods
+
 * Mon Jun 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.28-1.fmi
 - Added WGS84 define into NFmiGlobals so outside code can detect which newbase version is installed
 

@@ -217,7 +217,7 @@ ProjStrings parse_projection(const std::string &theProjection)
 
     result.sphere = "WGS84";
 
-    result.proj4 = fmt::format("+proj=eqc +datum=WGS84 +wktext +over +no_defs");
+    result.proj4 = fmt::format("+type=crs +proj=eqc +datum=WGS84 +wktext +over +no_defs");
   }
   else if (name == "rotlatlon")
   {
@@ -231,7 +231,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     auto lon_0 = spole_lon;
 
     result.proj4 = fmt::format(
-        "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
+        "+type=crs +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
         "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
@@ -250,7 +250,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     auto lon_0 = spole_lon;
 
     result.proj4 = fmt::format(
-        "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
+        "+type=crs +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
         "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
         npole_lat,
@@ -260,7 +260,8 @@ ProjStrings parse_projection(const std::string &theProjection)
     // the legacy corners are in rotated spherical latlon coordinates
     // the +to_meter setting is necessary to avoid radians
     result.sphere = fmt::format(
-        "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
+        "+type=crs +to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} "
+        "+o_lat_p={} "
         "+lon_0={} "
         "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
         npole_lon,
@@ -273,8 +274,8 @@ ProjStrings parse_projection(const std::string &theProjection)
     if (params.size() > 0)
       throw Fmi::Exception(BCP, "mercator area requires no parameters");
 
-    result.proj4 =
-        fmt::format("+proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
+    result.proj4 = fmt::format(
+        "+type=crs +proj=merc +R={:.0f} +wktext +over +towgs84=0,0,0 +no_defs", kRearth);
   }
   else if (name == "stereographic")
   {
@@ -285,7 +286,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double tlat = (params.size() >= 3 ? params[2] : 60);
 
     result.proj4 = fmt::format(
-        "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} "
+        "+type=crs +proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} "
         "+units=m +wktext +towgs84=0,0,0 +no_defs",
         clat,
         tlat,
@@ -305,9 +306,10 @@ ProjStrings parse_projection(const std::string &theProjection)
     if (params.size() != 0)
       throw Fmi::Exception(BCP, "ykj area does not require any parameters");
     result.proj4 =
-        "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+        "+type=crs +proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m "
+        "+wktext "
         "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
-    result.sphere = "+proj=longlat +ellps=intl +no_defs";
+    result.sphere = "+type=crs +proj=longlat +ellps=intl +no_defs";
   }
   else if (name == "lcc")
   {
@@ -321,14 +323,14 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double rad = (params.size() >= 5 ? params[4] : kRearth);
 
     result.proj4 = fmt::format(
-        "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} "
+        "+type=crs +proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} "
         "+units=m +wktext +towgs84=0,0,0 +no_defs",
         tlat1,
         tlat2,
         clat,
         clon,
         rad);
-    result.sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs +towgs84=0,0,0", rad);
+    result.sphere = fmt::format("+type=crs +proj=longlat +R={:.0f} +no_defs +towgs84=0,0,0", rad);
   }
   else if (name == "equidist")
   {
@@ -338,7 +340,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double clat = (params.size() >= 2 ? params[1] : 90);
 
     result.proj4 = fmt::format(
-        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
+        "+type=crs +proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
         "+towgs84=0,0,0 +no_defs",
         clat,
         clon,

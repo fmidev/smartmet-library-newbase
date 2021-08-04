@@ -20,14 +20,10 @@
 
 namespace
 {
-std::string exportToProj(const OGRSpatialReference &theSRS)
-{
-  char *out;
-  theSRS.exportToProj4(&out);
-  std::string ret = out;
-  CPLFree(out);
-  return ret;
-}
+// Global flag indicating whether bilinear interpolation will be used for coordinate transformations
+// for better speed but lower accuracy.
+
+std::atomic_bool gEnableBilinearInterpolation{false};
 
 NFmiPoint transform(const Fmi::CoordinateTransformation &theTransformation,
                     const NFmiPoint &thePoint)
@@ -1183,7 +1179,7 @@ std::size_t NFmiArea::HashValueKludge() const
 
 NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 {
-  if (impl->itsToWorldXYBilinearConverter)
+  if (gEnableBilinearInterpolation && impl->itsToWorldXYBilinearConverter)
   {
     double x = theWgs84.X();
     double y = theWgs84.Y();
@@ -1205,7 +1201,7 @@ NFmiPoint NFmiArea::LatLonToWorldXY(const NFmiPoint &theWgs84) const
 
 NFmiPoint NFmiArea::WorldXYToLatLon(const NFmiPoint &theWorldXY) const
 {
-  if (impl->itsToLatLonBilinearConverter)
+  if (gEnableBilinearInterpolation && impl->itsToLatLonBilinearConverter)
   {
     double x = theWorldXY.X();
     double y = theWorldXY.Y();
@@ -1637,7 +1633,7 @@ std::string NFmiArea::PrettyWKT() const
 
 std::string NFmiArea::ProjStr() const
 {
-  return Fmi::OGR::exportToProj(*impl->itsSpatialReference);
+  return impl->itsSpatialReference->projStr();
 }
 
 std::string NFmiArea::AreaFactoryStr() const
@@ -1990,6 +1986,12 @@ void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight)
   impl->itsToLatLonBilinearConverter.reset(new Fmi::BilinearCoordinateTransformation(
       *impl->itsToLatLonConverter, theWidth, theHeight, x1, y1, x2, y2));
 
+  // itsLoLatLonBilinearConverter is also used as a latlon cache, so we never disable creating
+  // for the benefit of NFmiArea::LatLon(i,j). However,
+
+  if (!gEnableBilinearInterpolation)
+    return;
+
   // Establish LatLon to WorldXY bilinear conversion by looking for the grid bbox
 
   // TODO: Create a LatLonBBox cache to optimize this step
@@ -2036,6 +2038,19 @@ NFmiPoint NFmiArea::LatLon(unsigned long i, unsigned long j) const
   const auto &latlons = impl->itsToLatLonBilinearConverter->coordinateMatrix();
 
   return NFmiPoint(latlons.x(i, j), latlons.y(i, j));
+}
+
+bool NFmiArea::BilinearInterpolationEnabled()
+{
+  return gEnableBilinearInterpolation;
+}
+void NFmiArea::EnableBilinearInterpolation()
+{
+  gEnableBilinearInterpolation = true;
+}
+void NFmiArea::DisableBilinearInterpolation()
+{
+  gEnableBilinearInterpolation = false;
 }
 
 #endif

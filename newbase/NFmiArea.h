@@ -122,6 +122,11 @@ class NFmiArea
   void WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const;
   void NativeLatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
   void NativeToXY(Fmi::CoordinateMatrix &theMatrix) const;
+
+  static bool BilinearInterpolationEnabled();
+  static void EnableBilinearInterpolation();
+  static void DisableBilinearInterpolation();
+
 #endif
 
   unsigned long ClassId() const;
