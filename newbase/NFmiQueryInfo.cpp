@@ -1625,7 +1625,8 @@ static bool IsWeatherSubParam(const NFmiQueryInfo &theInfo)
   }
 }
 
-static const double gInterpolatedValueEps = 0.00001;
+// Change also kFmiEps if you change this or qdcrop test results may fail
+static const double gInterpolatedValueEps = 0.005;
 
 float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint)
 {

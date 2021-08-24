@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.8.3
+Version: 21.8.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -97,6 +97,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Aug 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.24-1.fmi
+- Increased grid location error tolerance due to accuracy issues in sphere <--> WGS84 conversions
+
 * Tue Aug  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.3-1.fmi
 - Added +type=crs to PROJ strings
 - Fixed NFmiArea::ProjStr to return the string from Fmi::SpatialReference

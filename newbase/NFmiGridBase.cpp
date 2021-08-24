@@ -23,7 +23,8 @@
 
 using namespace std;
 
-const double kFmiEps = 0.0001;
+// Change also gInterpolatedValueEps if you change this or qdcrop test results may fail
+const double kFmiEps = 0.005;
 
 // ----------------------------------------------------------------------
 /*!
