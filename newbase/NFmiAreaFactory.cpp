@@ -196,7 +196,7 @@ ProjStrings parse_projection(const std::string &theProjection)
     projection = projection.substr(6);
   }
   else
-    result.sphere = "FMI";  // default for backwards compatibility
+    result.sphere = "WGS84";  // default
 
   std::vector<std::string> words;
   split_string(words, projection, ",");
