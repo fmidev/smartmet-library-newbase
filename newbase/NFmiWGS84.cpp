@@ -13,11 +13,7 @@
 class NFmiWGS84Impl
 {
  public:
-#ifdef NEW_NFMIAREA
   NFmiWGS84Impl() : sr("WGS84") {}
-#else
-  NFmiWGS84Impl() : sr(fmt::format("+proj=longlat +R={} +wktext +no_defs +type=crs", kRearth)) {}
-#endif
 
   const Fmi::SpatialReference& SpatialReference() const { return sr; }
 

@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.8.24
+Version: 21.9.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -97,6 +97,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Sep  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.2-1.fmi
+- Use WGS84 datum by default
+
 * Tue Aug 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.24-1.fmi
 - Increased grid location error tolerance due to accuracy issues in sphere <--> WGS84 conversions
 

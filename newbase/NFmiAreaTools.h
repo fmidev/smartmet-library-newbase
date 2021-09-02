@@ -43,8 +43,8 @@ NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
                                                 double theCentralLongitude,
                                                 double theCentralLatitude,
                                                 double theTrueLatitude1,
-                                                double theTrueLatitude2,
-                                                double theRadius = kRearth);
+                                                double theTrueLatitude2);
+
 NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
                                    const NFmiPoint& theTopRight,
                                    double theCentralLongitude,

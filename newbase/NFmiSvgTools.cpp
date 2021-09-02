@@ -143,14 +143,12 @@ double GeoDistance(const NFmiSvgPath& thePath, const NFmiPoint& thePoint)
 
     // Nurkilla ei ole väliä
 
-    auto proj4 = fmt::format(
-        "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={:.0f} +units=m +wktext "
-        "+towgs84=0,0,0 +no_defs",
-        thePoint.Y(),
-        thePoint.X(),
-        kRearth);
+    auto proj4 =
+        fmt::format("+type=crs +proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +datum=WGS84 +units=m",
+                    thePoint.Y(),
+                    thePoint.X());
 
-    auto sphere = fmt::format("+proj=longlat +R={:.0f} +no_defs", kRearth);
+    auto sphere = "+type=crs +proj=longlat +datum=WGS84";
 
     const double any_distance = 1000;
     std::unique_ptr<NFmiArea> area(

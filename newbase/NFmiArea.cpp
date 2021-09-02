@@ -734,6 +734,7 @@ std::ostream &NFmiArea::Write(std::ostream &file) const
       if (!clon || !clat || !lat1 || !lat2)
         throw Fmi::Exception(BCP, "Internal error writing lcc area");
 
+      // Note: kRearth is a dummy in here
       file << kNFmiLambertConformalConicArea << ' ' << impl->itsClassName << '\n'
            << impl->itsXYRect << impl->TopLeftCorner() << impl->BottomRightCorner() << *clon << ' '
            << *clat << ' ' << *lat1 << ' ' << *lat2 << ' ' << kRearth << '\n';
