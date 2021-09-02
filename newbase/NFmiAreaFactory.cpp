@@ -277,11 +277,12 @@ ProjStrings parse_projection(const std::string &theProjection)
     const double clat = (params.size() >= 2 ? params[1] : 90);
     const double tlat = (params.size() >= 3 ? params[2] : 60);
 
-    result.proj4 = fmt::format("+type=crs +proj=stere +lat_0={} +lat_ts={} +lon_0={} +datum=WGS84",
-                               "+units=m +wktext +towgs84=0,0,0 +no_defs",
-                               clat,
-                               tlat,
-                               clon);
+    result.proj4 = fmt::format(
+        "+type=crs +proj=stere +lat_0={} +lat_ts={} +lon_0={} +datum=WGS84 +units=m +wktext "
+        "+towgs84=0,0,0 +no_defs",
+        clat,
+        tlat,
+        clon);
   }
   else if (name == "gnomonic")
   {
