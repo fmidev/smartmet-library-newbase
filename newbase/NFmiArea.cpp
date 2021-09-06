@@ -1404,12 +1404,10 @@ int NFmiArea::DetectClassId() const
   if (!name)
     throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
 
-  if (*name == "eqc" && proj.getString("datum") == std::string("WGS84"))
-    return kNFmiLatLonArea;
-
-  if (proj.getDouble("R") == kRearth ||
-      (proj.getDouble("a") == kRearth && proj.getDouble("b") == kRearth))
+  if (proj.getString("datum") == std::string("WGS84"))
   {
+    if (*name == "eqc")
+      return kNFmiLatLonArea;
     if (*name == "merc")
       return kNFmiMercatorArea;
     if (*name == "stere")
