@@ -310,6 +310,10 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                      const NFmiMetTime &theTime,
                      double pressure,
                      double &pInd);
+  bool GetFixedPressureLevelIndex(const NFmiPoint &theLatlon,
+                                  const NFmiMetTime &theTime,
+                                  double &pressure,
+                                  double &pInd);
   float FastPressureLevelValue(double xInd, double yInd, double tInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd);
