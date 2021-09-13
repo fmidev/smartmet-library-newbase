@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.9.6
+Version: 21.9.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -97,6 +97,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Sep 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.13-1.fmi
+- Fixed YKJ projection PROJ string
+
 * Mon Sep  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.6-1.fmi
 - Updated DetectClassId to check for +datum=WGS84
 

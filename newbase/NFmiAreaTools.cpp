@@ -281,7 +281,7 @@ NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& t
       "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
 
   std::string sphere =
-      "+tyep=crs +proj=latlong +ellps=intl "
+      "+type=crs +proj=latlong +ellps=intl "
       "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964";
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
