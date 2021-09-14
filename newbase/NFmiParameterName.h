@@ -1792,6 +1792,10 @@ enum FmiParameterName
   kFmiSeaLevelF90N2000,
   kFmiSeaLevelF95N2000,
 
+  // Railroading parameters
+
+  kFmiProbabilityOfRailRule5,
+
   // Meta parameters calculated on the fly. This list is not exhaustive, some parameters
   // already had numbers assigned to them.
   // This list starts intentionally at 9000 before the start of NetCDF parameters.

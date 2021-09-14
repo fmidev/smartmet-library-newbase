@@ -1528,6 +1528,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "WmoStationNumber", kFmiWmoStationNumber},
       { "Year", kFmiYear},
       { "ZResolution", kFmiZResolution},
+      { "ProbabilityOfRailRule5",kFmiProbabilityOfRailRule5},
 
       // Metaparameters starting at index 9000 are listed here. Note that some have a short and a long name marked by "alias".
       // The aliases exist simply because legacy queries allowed for both strings.

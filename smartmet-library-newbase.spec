@@ -1,9 +1,10 @@
+%bcond_with tests
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.9.13
+Version: 21.9.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -20,6 +21,9 @@ BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 21.6.16
 BuildRequires: smartmet-library-gis-devel >= 21.6.16
+%if %{with tests}
+BuildRequires: smartmet-library-regression
+%endif
 Requires: smartmet-library-gis >= 21.6.16
 Requires: smartmet-library-macgyver >= 21.6.16
 Requires: boost169-date-time
@@ -58,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
  
 %build
 make %{_smp_mflags}
+%if %{with tests}
+make test %{_smp_mflags}
+%endif
 
 %install
 %makeinstall
@@ -97,6 +104,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Sep 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.14-1.fmi
+- Added rail probability parameter
+
 * Mon Sep 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.13-1.fmi
 - Fixed YKJ projection PROJ string
 
