@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.6.16
+Version: 21.9.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -104,6 +104,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Sep 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.14-1.fmi
+- Added rail probability parameter
+
 * Wed Jun 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.16-1.fmi
 - Use Fmi::Exception
 
