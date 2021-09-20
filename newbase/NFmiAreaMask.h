@@ -22,7 +22,6 @@ class NFmiParam;
 class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
 class NFmiCalculationParams;
-class NFMiMacroParamValue;
 
 //! Undocumented class
 class NFmiAreaMask
