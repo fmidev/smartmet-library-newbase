@@ -21,38 +21,7 @@ class NFmiLevel;
 class NFmiParam;
 class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
-
-class NFmiCalculationParams
-{
- public:
-  NFmiCalculationParams()
-      : itsLatlon(),
-        itsLocationIndex(gMissingIndex),
-        itsTime(),
-        itsTimeIndex(gMissingIndex),
-        fCrossSectionCase(false)
-  {
-  }
-
-  NFmiCalculationParams(const NFmiPoint &theLatlon,
-                        unsigned long theLocationIndex,
-                        const NFmiMetTime &theTime,
-                        unsigned long theTimeIndex,
-                        bool crossSectionCase = false)
-      : itsLatlon(theLatlon),
-        itsLocationIndex(theLocationIndex),
-        itsTime(theTime),
-        itsTimeIndex(theTimeIndex),
-        fCrossSectionCase(crossSectionCase)
-  {
-  }
-
-  NFmiPoint itsLatlon;
-  unsigned long itsLocationIndex;
-  NFmiMetTime itsTime;
-  unsigned long itsTimeIndex;
-  bool fCrossSectionCase;  // Joskus pitää tietää että kyse on poikkileikkaus laskuista
-};
+class NFmiCalculationParams;
 
 //! Undocumented class
 class NFmiAreaMask
