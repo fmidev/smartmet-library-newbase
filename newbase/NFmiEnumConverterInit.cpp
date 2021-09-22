@@ -978,6 +978,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "RadiationReflected", kFmiRadiationReflected},
       { "RadiationSW", kFmiRadiationSW},
       { "RadiationSWAccumulation", kFmiRadiationSWAccumulation},
+      { "RadiationDownLWClearSky", kFmiRadiationDownLWClearSky},
       { "RaftIceConcentration", kFmiRaftIceConcentration},
       { "RaftIceThickness", kFmiRaftIceThickness},
       { "RagweedPollenAvailable", kFmiRagweedPollenAvailable},
