@@ -303,7 +303,8 @@ enum FmiParameterName
   kFmiRadiationLW,
   kFmiRadiationSW,
   kFmiRadiationGlobal,
-  kFmiRadiationReflected = 318,
+  kFmiRadiationReflected,
+  kFmiRadiationDownLWClearSky = 319,
 
   kFmiLatentHeatFlux = 321,
   kFmiSensibleHeatFlux,
