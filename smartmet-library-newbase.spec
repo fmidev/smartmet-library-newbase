@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.9.22
+Version: 21.10.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -104,6 +104,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Oct 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.10.13-1.fmi
+- Print station coordinates with full accuracy
+
 * Wed Sep 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.22-1.fmi
 - Added parameter RadiationDownLWClearSky
 
