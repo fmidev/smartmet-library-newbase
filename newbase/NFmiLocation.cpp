@@ -24,10 +24,9 @@
 #include "NFmiAngle.h"
 #include "NFmiGeoTools.h"
 #include "NFmiMetTime.h"
-#include <macgyver/Exception.h>
-
 #include <boost/functional/hash.hpp>
-
+#include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 
@@ -792,7 +791,7 @@ std::ostream &NFmiLocation::Write(std::ostream &file) const
 {
   try
   {
-    file << itsLatlon.X() << " " << itsLatlon.Y() << std::endl;
+    file << fmt::format("{} {}\n", itsLatlon.X(), itsLatlon.Y());
 
     return file;
   }
