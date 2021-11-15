@@ -419,7 +419,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "KIndex", kFmiKIndex},
       { "LCL", kFmiLCL},
       { "LNB", kFmiLNB},
-      { "EddyDissipationRate", kFmiEDR},
+      { "EDR", kFmiEDR},
       { "LandCover", kFmiLandCover},
       { "LandPercentage", kFmiLandPercentage},
       { "LandSeaMask", kFmiLandSeaMask},
