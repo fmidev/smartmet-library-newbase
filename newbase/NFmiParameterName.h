@@ -93,6 +93,7 @@ enum FmiParameterName
   kFmiHelicity = 67,
   kFmiLCL = 68,
   kFmiLNB = 69,
+  kFmiEDR = 70,
 
   kFmiTotalCloudCover = 79,
   kFmiKIndex = 80,

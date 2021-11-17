@@ -419,6 +419,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "KIndex", kFmiKIndex},
       { "LCL", kFmiLCL},
       { "LNB", kFmiLNB},
+      { "EDR", kFmiEDR},
       { "LandCover", kFmiLandCover},
       { "LandPercentage", kFmiLandPercentage},
       { "LandSeaMask", kFmiLandSeaMask},

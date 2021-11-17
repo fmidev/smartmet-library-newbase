@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.10.13
+Version: 21.11.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -19,13 +19,13 @@ BuildRequires: gdal32-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.6.16
-BuildRequires: smartmet-library-gis-devel >= 21.6.16
+BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
+BuildRequires: smartmet-library-gis-devel >= 21.9.24
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-gis >= 21.6.16
-Requires: smartmet-library-macgyver >= 21.6.16
+Requires: smartmet-library-gis >= 21.9.24
+Requires: smartmet-library-macgyver >= 21.10.4
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -41,10 +41,10 @@ Requires: geos39
 #TestRequires: gdal32-libs
 #TestRequires: make
 #TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-gis-devel >= 21.6.16
-#TestRequires: smartmet-library-macgyver-devel >= 21.6.16
-#TestRequires: smartmet-library-macgyver >= 21.6.16
-#TestRequires: smartmet-library-gis >= 21.6.16
+#TestRequires: smartmet-library-gis-devel >= 21.9.24
+#TestRequires: smartmet-library-macgyver-devel >= 21.10.4
+#TestRequires: smartmet-library-macgyver >= 21.10.4
+#TestRequires: smartmet-library-gis >= 21.9.24
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -104,6 +104,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-1.fmi
+- Added EDR (eddy dissipation rate) parameter
+
 * Wed Oct 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.10.13-1.fmi
 - Print station coordinates with full accuracy
 
