@@ -15,7 +15,7 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: gcc-c++
-BuildRequires: gdal32-devel
+BuildRequires: gdal33-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
@@ -32,15 +32,15 @@ Requires: boost169-iostreams
 Requires: boost169-regex
 Requires: boost169-system
 Requires: fmt >= 7.1.3
-Requires: gdal32-libs
+Requires: gdal33-libs
 Requires: geos39
 #TestRequires: boost169-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal32-devel
-#TestRequires: gdal32-libs
+#TestRequires: gdal33-devel
+#TestRequires: gdal33-libs
 #TestRequires: make
-#TestRequires: postgresql12-libs
+#TestRequires: postgresql13-libs
 #TestRequires: smartmet-library-gis-devel >= 21.9.24
 #TestRequires: smartmet-library-macgyver-devel >= 21.10.4
 #TestRequires: smartmet-library-macgyver >= 21.10.4
