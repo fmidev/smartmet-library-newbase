@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.11.15
+Version: 21.12.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -104,6 +104,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Dec  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.12.1-1.fmi
+- New parameters: PowerOutput, PowerOutputSum
+
 * Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-1.fmi
 - Added EDR (eddy dissipation rate) parameter
 

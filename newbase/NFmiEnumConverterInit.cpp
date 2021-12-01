@@ -620,6 +620,8 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "PotentialPrecipitationType", kFmiPotentialPrecipitationType},
       { "PotentialTemperature", kFmiPotentialTemperature},
       { "PotentialWindSpeed", kFmiPotentialWindSpeed},
+      { "PowerOutput", kFmiPowerOutput},
+      { "PowerOutputSum", kFmiPowerOutputSum},
       { "PrecipitableWater", kFmiPrecipitableWater},
       { "PrecipitableWater2", kFmiPrecipitableWater2},
       { "Precipitation06", kFmiPrecipitation06},

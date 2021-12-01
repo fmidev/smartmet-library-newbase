@@ -882,6 +882,9 @@ enum FmiParameterName
   kFmiTotalPrecipitationF10 = 896,
   kFmiTotalPrecipitationF0 = 897,
 
+  kFmiPowerOutput = 900,
+  kFmiPowerOutputSum = 901,
+
   // Added 10.11.2008 - Antti Westerberg
   kFmiExceptionalPrecipitation = 910,
   kFmi1CloudTop = 911,
