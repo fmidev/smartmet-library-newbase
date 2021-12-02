@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 21.12.1
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -19,13 +19,13 @@ BuildRequires: gdal33-devel
 BuildRequires: geos39-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
-BuildRequires: smartmet-library-gis-devel >= 21.9.24
+BuildRequires: smartmet-library-macgyver-devel >= 21.12.1
+BuildRequires: smartmet-library-gis-devel >= 21.12.1
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-gis >= 21.9.24
-Requires: smartmet-library-macgyver >= 21.10.4
+Requires: smartmet-library-macgyver >= 21.12.1
+Requires: smartmet-library-gis >= 21.12.1
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -41,10 +41,10 @@ Requires: geos39
 #TestRequires: gdal33-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 21.9.24
-#TestRequires: smartmet-library-macgyver-devel >= 21.10.4
-#TestRequires: smartmet-library-macgyver >= 21.10.4
-#TestRequires: smartmet-library-gis >= 21.9.24
+#TestRequires: smartmet-library-gis-devel >= 21.12.1
+#TestRequires: smartmet-library-macgyver-devel >= 21.12.1
+#TestRequires: smartmet-library-macgyver
+#TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
