@@ -15,34 +15,34 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: gcc-c++
-BuildRequires: gdal33-devel
-BuildRequires: geos39-devel
+BuildRequires: gdal34-devel
+BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.12.1
-BuildRequires: smartmet-library-gis-devel >= 21.12.1
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.21
+BuildRequires: smartmet-library-gis-devel >= 21.1.21
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 21.12.1
-Requires: smartmet-library-gis >= 21.12.1
+Requires: smartmet-library-macgyver >= 21.1.21
+Requires: smartmet-library-gis >= 21.1.21
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
 Requires: boost169-regex
 Requires: boost169-system
 Requires: fmt >= 7.1.3
-Requires: gdal33-libs
-Requires: geos39
+Requires: gdal34-libs
+Requires: geos310
 #TestRequires: boost169-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal33-devel
-#TestRequires: gdal33-libs
+#TestRequires: gdal34-devel
+#TestRequires: gdal34-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 21.12.1
-#TestRequires: smartmet-library-macgyver-devel >= 21.12.1
+#TestRequires: smartmet-library-gis-devel >= 21.1.21
+#TestRequires: smartmet-library-macgyver-devel >= 21.1.21
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
