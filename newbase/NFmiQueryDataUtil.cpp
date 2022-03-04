@@ -4552,8 +4552,10 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
   auto paramDescriptor = ::MakeParamDescriptor(theFInfoVectorIn, firstInfo, fFirstInfoDefines);
   NFmiMetTime origTime = firstInfo->OriginTime();
   NFmiTimeDescriptor timeDesc(origTime, ::MakeTimeList(theValidTimesIn));
-  if (firstInfo->Grid() == nullptr)
-    throw std::runtime_error("Error in MakeCombinedDatasMetaInfo, 1. fastInfo's has no grid.");
+  // HPlaceDescin tapauksessa otetaan se vain 1. datasta, jos hila, ei erilaisia hiloja 
+  // voi comboilla. Jos asemalista, sen jumppaaminen pomminvarmasti on liian iso urakka 
+  // (locationit voivat mm. olla eri luokkia ja samalla station-id:llä voi olla eri 
+  // datoissa eri koordinaatteja, nimi, jne.)
   NFmiHPlaceDescriptor hPlaceDesc = firstInfo->HPlaceDescriptor();
   NFmiVPlaceDescriptor vPlaceDesc;
   if (fFirstInfoDefines)
@@ -4576,6 +4578,58 @@ static NFmiFastQueryInfo *FindWantedInfo(
   return nullptr;  // tänne ei pitäisi mennä, pitäisikö heittää poikkeus?
 }
 
+static bool StationDataHasSameStructure(NFmiFastQueryInfo &info1,
+                                        NFmiFastQueryInfo &info2) 
+{
+  if (info1.HPlaceDescriptor().IsLocation() && info2.HPlaceDescriptor().IsLocation()) 
+  {
+    if (info1.SizeLocations() == info2.SizeLocations())
+    {
+        // Tarkastellaan vain että asema-id:t ovat samoja ja samassa järjestyksessä.
+        // Ei täydellistä, mutta saa nyt kelvata...
+      for (info1.ResetLocation(), info2.ResetLocation();
+           info1.NextLocation() && info2.NextLocation(); )
+        {
+        if (info1.Location()->GetIdent() != info2.Location()->GetIdent()) return false;
+        }
+        return true;
+    }
+  }
+  return false;
+}
+
+static bool HasStationData(NFmiFastQueryInfo &info1, NFmiFastQueryInfo &info2)
+{
+  if (info1.HPlaceDescriptor().IsLocation() && info2.HPlaceDescriptor().IsLocation())
+    return true;
+  else
+    return false;
+}
+
+static void FillStationDataToCurrentTimeWithDifferentStationStructure(NFmiFastQueryInfo &destInfo,
+                                                  NFmiFastQueryInfo &sourceInfo)
+{
+  for (destInfo.ResetLevel(); destInfo.NextLevel();)
+  {
+    if (sourceInfo.Level(*destInfo.Level()))
+    {
+      for (destInfo.ResetParam(); destInfo.NextParam();)
+      {
+        if (sourceInfo.Param(destInfo.Param()))
+        {
+          for (destInfo.ResetLocation(); destInfo.NextLocation();)
+          {
+            if (sourceInfo.Location(destInfo.Location()->GetIdent()))
+            {
+              destInfo.FloatValue(sourceInfo.FloatValue());
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 static void FillDataToCurrentTime(
     NFmiFastQueryInfo &theFilledInfo,
     std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn,
@@ -4585,7 +4639,8 @@ static void FillDataToCurrentTime(
   if (sourceInfo)  // aina pitäisi löytyä sourceInfo, mutta tarkistetaan kuitenkin
   {
     if (theFilledInfo.Grid() && sourceInfo->Grid() &&
-        *(theFilledInfo.Grid()) == *(sourceInfo->Grid()))
+        *(theFilledInfo.Grid()) == *(sourceInfo->Grid()) ||
+        ::StationDataHasSameStructure(theFilledInfo, *sourceInfo))
     {
       std::vector<float> values;
       for (theFilledInfo.ResetLevel(); theFilledInfo.NextLevel();)
@@ -4606,6 +4661,10 @@ static void FillDataToCurrentTime(
           }
         }
       }
+    }
+    else if (::HasStationData(theFilledInfo, *sourceInfo))
+    {
+      ::FillStationDataToCurrentTimeWithDifferentStationStructure(theFilledInfo, *sourceInfo);
     }
   }
 }
