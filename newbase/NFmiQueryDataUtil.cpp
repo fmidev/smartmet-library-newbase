@@ -4619,7 +4619,7 @@ static void FillStationDataToCurrentTimeWithDifferentStationStructure(NFmiFastQu
         {
           for (destInfo.ResetLocation(); destInfo.NextLocation();)
           {
-            if (sourceInfo.Location(destInfo.Location()->GetIdent()))
+            if (sourceInfo.Location(*destInfo.Location()))
             {
               destInfo.FloatValue(sourceInfo.FloatValue());
             }
