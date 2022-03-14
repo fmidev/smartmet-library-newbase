@@ -375,6 +375,9 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   NFmiDataMatrix<float> GridValues(const NFmiGrid &theWantedGrid,
                                    const NFmiMetTime &theInterpolatedTime);
   NFmiDataMatrix<float> GridValues(const NFmiGrid &theWantedGrid,
+                  const NFmiMetTime &theInterpolatedTime,
+                  long theTimeRangeInMinutes);
+  NFmiDataMatrix<float> GridValues(const NFmiGrid &theWantedGrid,
                                    const NFmiMetTime &theInterpolatedTime,
                                    bool relative_uv);
 

@@ -5003,7 +5003,16 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
 }
 
 NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGrid,
-                                                    const NFmiMetTime &theInterpolatedTime)
+                                   const NFmiMetTime &theInterpolatedTime)
+{
+  return GridValues(theWantedGrid,
+             theInterpolatedTime,
+             180l);
+}
+
+NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGrid,
+                                                    const NFmiMetTime &theInterpolatedTime,
+                long theTimeRangeInMinutes)
 {
   NFmiGrid usedGrid(theWantedGrid);
 
@@ -5036,7 +5045,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
 
     for (usedGrid.Reset(); usedGrid.Next(); vPtr++)
       *vPtr = timeInterpolationNeeded
-                  ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
+                  ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, theTimeRangeInMinutes)
                   : InterpolatedValue(usedGrid.LatLon());
 
     // Get U values
@@ -5050,7 +5059,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
 
     for (usedGrid.Reset(); usedGrid.Next(); uPtr++)
       *uPtr = timeInterpolationNeeded
-                  ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
+                  ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, theTimeRangeInMinutes)
                   : InterpolatedValue(usedGrid.LatLon());
 
     // Rotate
@@ -5074,7 +5083,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
     for (usedGrid.Reset(); usedGrid.Next();)
     {
       float value = timeInterpolationNeeded
-                        ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
+                        ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, theTimeRangeInMinutes)
                         : InterpolatedValue(usedGrid.LatLon());
       values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
     }
