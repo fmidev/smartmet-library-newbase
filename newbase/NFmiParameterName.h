@@ -1142,6 +1142,9 @@ enum FmiParameterName
 
   kFmiHakeMessageType = 1176,
 
+  kFmiSoaringFlightIndex = 1177,
+  kFmiThermalBirdMigrationIndex = 1178,
+
   // Dry and wet deposition 6h cumulative
   kFmiSurface6hAccumulatedNOxDryDeposition = 1180,
   kFmiSurface6hAccumulatedNOxWetDeposition,
