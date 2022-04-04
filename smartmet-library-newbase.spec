@@ -83,6 +83,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
+Requires: smartmet-library-gis-devel >= 22.1.24
+Requires: smartmet-library-macgyver-devel >= 22.3.8
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
