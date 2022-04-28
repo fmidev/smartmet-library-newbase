@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.3.22
+Version: 22.4.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -106,6 +106,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Apr 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.4.28-1.fmi
+- New Enfuser parameters: LungDepositedSurfaceArea (LDSA) and BlackCarbonConcentration
+- New power grid parameters: PowerOutagesByCounty and PowerOutagesByMunicipality
+
 * Tue Mar 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.22-1.fmi
 - New parameters: SoaringFlightIndex, ThermalBirdMigrationIndex
 

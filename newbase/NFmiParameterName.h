@@ -884,6 +884,8 @@ enum FmiParameterName
 
   kFmiPowerOutput = 900,
   kFmiPowerOutputSum = 901,
+  kFmiPowerOutagesByCounty = 902,
+  kFmiPowerOutagesByMunicipality = 903,
 
   // Added 10.11.2008 - Antti Westerberg
   kFmiExceptionalPrecipitation = 910,
@@ -1771,6 +1773,9 @@ enum FmiParameterName
   // Volumetric soil water layer for 0-28 cm (SOL-7344)
   kFmiVolumetricSoilWaterLayer28 = 4850,
   kFmiVolumetricSoilWaterLayerAnomaly28 = 4851,
+
+  kFmiLungDepositedSurfaceArea = 4898,  // Enfused model parameters
+  kFmiBlackCarbonConcentration = 4899,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
   kFmiNO2Concentration,
