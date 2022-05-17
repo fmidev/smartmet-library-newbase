@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.11.15
+Version: 22.4.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -15,36 +15,36 @@ BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: gcc-c++
-BuildRequires: gdal32-devel
-BuildRequires: geos39-devel
+BuildRequires: gdal34-devel
+BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
-BuildRequires: smartmet-library-gis-devel >= 21.9.24
+BuildRequires: smartmet-library-macgyver-devel >= 22.3.8
+BuildRequires: smartmet-library-gis-devel >= 22.1.24
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-gis >= 21.9.24
-Requires: smartmet-library-macgyver >= 21.10.4
+Requires: smartmet-library-macgyver >= 22.3.8
+Requires: smartmet-library-gis >= 22.1.24
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
 Requires: boost169-regex
 Requires: boost169-system
 Requires: fmt >= 7.1.3
-Requires: gdal32-libs
-Requires: geos39
+Requires: gdal34-libs
+Requires: geos310
 #TestRequires: boost169-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal32-devel
-#TestRequires: gdal32-libs
+#TestRequires: gdal34-devel
+#TestRequires: gdal34-libs
 #TestRequires: make
-#TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-gis-devel >= 21.9.24
-#TestRequires: smartmet-library-macgyver-devel >= 21.10.4
-#TestRequires: smartmet-library-macgyver >= 21.10.4
-#TestRequires: smartmet-library-gis >= 21.9.24
+#TestRequires: postgresql13-libs
+#TestRequires: smartmet-library-gis-devel >= 22.1.24
+#TestRequires: smartmet-library-macgyver-devel >= 22.3.8
+#TestRequires: smartmet-library-macgyver
+#TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -83,6 +83,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
+Requires: smartmet-library-gis-devel >= 22.1.24
+Requires: smartmet-library-macgyver-devel >= 22.3.8
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -104,6 +106,22 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Apr 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.4.28-1.fmi
+- New Enfuser parameters: LungDepositedSurfaceArea (LDSA) and BlackCarbonConcentration
+- New power grid parameters: PowerOutagesByCounty and PowerOutagesByMunicipality
+
+* Tue Mar 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.22-1.fmi
+- New parameters: SoaringFlightIndex, ThermalBirdMigrationIndex
+
+* Fri Jan 21 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.21-1.fmi
+- Repackage due to upgrade of packages from PGDG repo: gdal-3.4, geos-3.10, proj-8.2
+
+* Tue Dec  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.7-1.fmi
+- Update to postgresql 13 and gdal 3.3
+
+* Wed Dec  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.12.1-1.fmi
+- New parameters: PowerOutput, PowerOutputSum
+
 * Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-1.fmi
 - Added EDR (eddy dissipation rate) parameter
 

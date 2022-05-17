@@ -882,6 +882,11 @@ enum FmiParameterName
   kFmiTotalPrecipitationF10 = 896,
   kFmiTotalPrecipitationF0 = 897,
 
+  kFmiPowerOutput = 900,
+  kFmiPowerOutputSum = 901,
+  kFmiPowerOutagesByCounty = 902,
+  kFmiPowerOutagesByMunicipality = 903,
+
   // Added 10.11.2008 - Antti Westerberg
   kFmiExceptionalPrecipitation = 910,
   kFmi1CloudTop = 911,
@@ -1138,6 +1143,9 @@ enum FmiParameterName
   kFmiFloodWarningIndex = 1175,
 
   kFmiHakeMessageType = 1176,
+
+  kFmiSoaringFlightIndex = 1177,
+  kFmiThermalBirdMigrationIndex = 1178,
 
   // Dry and wet deposition 6h cumulative
   kFmiSurface6hAccumulatedNOxDryDeposition = 1180,
@@ -1765,6 +1773,9 @@ enum FmiParameterName
   // Volumetric soil water layer for 0-28 cm (SOL-7344)
   kFmiVolumetricSoilWaterLayer28 = 4850,
   kFmiVolumetricSoilWaterLayerAnomaly28 = 4851,
+
+  kFmiLungDepositedSurfaceArea = 4898,  // Enfused model parameters
+  kFmiBlackCarbonConcentration = 4899,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
   kFmiNO2Concentration,
