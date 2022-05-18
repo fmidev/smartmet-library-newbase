@@ -917,14 +917,15 @@ double NFmiLocation::Distance(const NFmiLocation &theLocation) const
 
 // ======================================================================
 
-#ifdef WGS84
 NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
                                            double theDistanceInMeters) const
-#else
+{
+  return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, false);
+}
+
 NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
                                            double theDistanceInMeters,
                                            bool usePacificView) const
-#endif
 {
   // Palauttaa maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
   // (metreissä) avulla.
@@ -1008,11 +1009,7 @@ NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
       sign = -1;
 
     double newLongitude = itsLatlon.X() + sign * longDiff;
-#ifdef WGS84
-    NFmiLongitude longitude(newLongitude);
-#else
     NFmiLongitude longitude(newLongitude, usePacificView);
-#endif
     newLongitude = longitude.Value();
 
     return NFmiLocation(newLongitude, newLatitude);
@@ -1023,7 +1020,6 @@ NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
   }
 }
 
-#ifdef WGS84
 void NFmiLocation::SetLocation(double theAzimuthInDegrees, double theDistanceInMeters)
 {
   // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
@@ -1034,7 +1030,7 @@ void NFmiLocation::SetLocation(double theAzimuthInDegrees, double theDistanceInM
 
   *this = ComputeLocation(theAzimuthInDegrees, theDistanceInMeters);
 }
-#else
+
 void NFmiLocation::SetLocation(double theAzimuthInDegrees,
                                double theDistanceInMeters,
                                bool usePacificView)
@@ -1054,9 +1050,7 @@ void NFmiLocation::SetLocation(double theAzimuthInDegrees,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-#endif
 
-#ifdef WGS84
 NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees, double theDistanceInMeters) const
 {
   // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
@@ -1066,7 +1060,7 @@ NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees, double theDis
 
   return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters);
 }
-#else
+
 const NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
                                              double theDistanceInMeters,
                                              bool usePacificView) const
@@ -1085,7 +1079,6 @@ const NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-#endif
 
 // ----------------------------------------------------------------------
 /*!
