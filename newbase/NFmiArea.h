@@ -147,6 +147,8 @@ class NFmiArea
   // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
   bool PacificView_legacy(void) const { return false; }
   void PacificView_legacy(bool) {}
+  bool PacificView(void) const { return false; }
+
   static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
   {
     // Obvious case
