@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.4.28
+Version: 22.5.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed May 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.18-1.fmi
+- Added convenience methods for creating legacy projections via NFmiAreaTools instead of direct constructors
+
 * Thu Apr 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.4.28-1.fmi
 - New Enfuser parameters: LungDepositedSurfaceArea (LDSA) and BlackCarbonConcentration
 - New power grid parameters: PowerOutagesByCounty and PowerOutagesByMunicipality

@@ -13,9 +13,20 @@
 // ======================================================================
 
 #include "NFmiAreaTools.h"
-#include "NFmiArea.h"
+#include "NFmiPoint.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
+#include <iostream>
+
+#include "NFmiEquidistArea.h"
+#include "NFmiGnomonicArea.h"
+#include "NFmiLambertConformalConicArea.h"
+#include "NFmiLambertEqualArea.h"
+#include "NFmiLatLonArea.h"
+#include "NFmiMercatorArea.h"
+#include "NFmiRotatedLatLonArea.h"
+#include "NFmiStereographicArea.h"
+#include "NFmiYKJArea.h"
 
 // Local utility functions
 
@@ -139,6 +150,100 @@ void LatLonBoundingBox(const NFmiArea& theArea,
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  bool pacific = (theBottomLeft.X() < 180 && theTopRight.X() > 180);
+  return new NFmiLatLonArea(theBottomLeft, theTopRight, NFmiPoint(0, 0), NFmiPoint(1, 1), pacific);
+}
+
+NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
+                                        const NFmiPoint& theTopRight,
+                                        const NFmiPoint& theSouthPole)
+{
+  return new NFmiRotatedLatLonArea(theBottomLeft, theTopRight, theSouthPole);
+}
+
+NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
+                                        const NFmiPoint& theTopRight,
+                                        double theCentralLongitude,
+                                        double theCentralLatitude,
+                                        double theTrueLatitude)
+{
+  return new NFmiStereographicArea(theBottomLeft,
+                                   theTopRight,
+                                   theCentralLongitude,
+                                   NFmiPoint(0, 0),
+                                   NFmiPoint(1, 1),
+                                   theCentralLatitude,
+                                   theTrueLatitude);
+}
+
+NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
+                                   const NFmiPoint& theTopRight,
+                                   double theCentralLongitude,
+                                   double theCentralLatitude)
+{
+  return new NFmiEquidistArea(theBottomLeft,
+                              theTopRight,
+                              theCentralLongitude,
+                              NFmiPoint(0, 0),
+                              NFmiPoint(1, 1),
+                              theCentralLatitude);
+}
+
+NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  bool pacific = (theBottomLeft.X() < 180 && theTopRight.X() > 180);
+  return new NFmiMercatorArea(
+      theBottomLeft, theTopRight, NFmiPoint(0, 0), NFmiPoint(1, 1), pacific);
+}
+
+NFmiArea* CreateLegacyLambertEqualArea(const NFmiPoint& theBottomLeft,
+                                       const NFmiPoint& theTopRight,
+                                       double theCentralLongitude,
+                                       double theCentralLatitude)
+{
+  return new NFmiLambertEqualArea(theBottomLeft,
+                                  theTopRight,
+                                  theCentralLongitude,
+                                  NFmiPoint(0, 0),
+                                  NFmiPoint(1, 1),
+                                  theCentralLatitude);
+}
+
+NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
+                                                const NFmiPoint& theTopRight,
+                                                double theCentralLongitude,
+                                                double theCentralLatitude,
+                                                double theTrueLatitude1,
+                                                double theTrueLatitude2)
+{
+  return new NFmiLambertConformalConicArea(theBottomLeft,
+                                           theTopRight,
+                                           theCentralLongitude,
+                                           theCentralLatitude,
+                                           theTrueLatitude1,
+                                           theTrueLatitude2);
+}
+
+NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
+                                   const NFmiPoint& theTopRight,
+                                   double theCentralLongitude,
+                                   double theCentralLatitude)
+{
+  return new NFmiGnomonicArea(theBottomLeft,
+                              theTopRight,
+                              theCentralLongitude,
+                              NFmiPoint(0, 0),
+                              NFmiPoint(1, 1),
+                              theCentralLatitude);
+}
+
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
+{
+  return new NFmiYKJArea(theBottomLeft, theTopRight);
 }
 
 }  // namespace NFmiAreaTools
