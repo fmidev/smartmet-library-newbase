@@ -881,4 +881,4 @@ boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
   return {};
 }
 
-void SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache) {}
+void NFmiQueryData::SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache) {}
