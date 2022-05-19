@@ -2053,3 +2053,5 @@ void NFmiArea::DisableBilinearInterpolation()
 }
 
 #endif
+
+void NFmiArea::Init(bool fKeepWorldRect) {}  // For backwards compatibility

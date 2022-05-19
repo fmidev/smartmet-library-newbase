@@ -235,13 +235,14 @@ class NFmiArea
   struct Impl;
   std::unique_ptr<Impl> impl;
 
+  void Init(bool fKeepWorldRect = false);  // For backwards compatibility
+
 #ifndef WGS84
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;
 
  public:
-  void Init(bool fKeepWorldRect = false);
   NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
                     const NFmiPoint &theTopRightLatLon,
                     bool allowPacificFix = true) const;
