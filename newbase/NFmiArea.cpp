@@ -1758,7 +1758,7 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
   return CreateFromWGS84Corners(*impl->itsSpatialReference, theBottomLeftLatLon, theTopRightLatLon);
 }
 
-NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const
+NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
 {
   NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
   NFmiPoint newTopRightXY = theWorldRect.TopRight();

@@ -104,7 +104,7 @@ class NFmiArea
   NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
   NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                           const NFmiPoint &theTopRightLatLon) const;
-  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const;
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
   NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                           FmiDirection theFixedPoint,
                           bool fShrinkArea);
