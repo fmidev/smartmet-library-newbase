@@ -149,6 +149,10 @@ class NFmiArea
   const Fmi::SpatialReference &SpatialReference() const;
   std::string ProjStr() const;
 
+  static NFmiArea *CreateFromBBox(const Fmi::SpatialReference &theSR,
+                                  const NFmiPoint &theBottomLeftWorldXY,
+                                  const NFmiPoint &theTopRightWorldXY);
+
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;

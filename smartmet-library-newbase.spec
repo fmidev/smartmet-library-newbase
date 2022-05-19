@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.5.18
+Version: 22.5.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu May 19 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.19-1.fmi
+- Added NFmiArea::CreateFromBBox for ABI compatibility with the WGS84 branch
+
 * Wed May 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.18-1.fmi
 - Added convenience methods for creating legacy projections via NFmiAreaTools instead of direct constructors
 

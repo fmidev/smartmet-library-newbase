@@ -808,3 +808,15 @@ std::string NFmiArea::ProjStr() const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
+                                   const NFmiPoint &theBottomLeftWorldXY,
+                                   const NFmiPoint &theTopRightWorldXY)
+{
+  return new NFmiGdalArea("FMI",
+                          theSR,
+                          theBottomLeftWorldXY.X(),
+                          theBottomLeftWorldXY.Y(),
+                          theTopRightWorldXY.X(),
+                          theTopRightWorldXY.Y());
+}
