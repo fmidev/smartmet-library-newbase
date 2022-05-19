@@ -133,6 +133,10 @@ class NFmiQueryData
   double InfoVersion() const;
   void InfoVersion(double newValue) const;
 
+  // Two dummy methods for backward ABI compatibility
+  boost::shared_ptr<std::vector<NFmiPoint> > LatLonCache() const;
+  void SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache);
+
   // Unique value for unique grids
   std::size_t GridHashValue() const;
 

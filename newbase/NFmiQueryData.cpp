@@ -874,3 +874,11 @@ std::size_t NFmiQueryData::GridHashValue() const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// Two dummy methods for backward ABI compatibility
+boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
+{
+  return {};
+}
+
+void SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache) {}
