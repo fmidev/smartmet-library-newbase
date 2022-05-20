@@ -1126,7 +1126,7 @@ NFmiPoint NFmiFastQueryInfo::WorldXY(unsigned long index) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint &NFmiFastQueryInfo::LatLon(unsigned long index) const
+NFmiPoint NFmiFastQueryInfo::LatLon(unsigned long index) const
 {
   try
   {

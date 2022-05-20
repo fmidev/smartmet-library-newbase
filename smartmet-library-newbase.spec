@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.5.19
+Version: 22.5.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -19,13 +19,13 @@ BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 22.3.8
-BuildRequires: smartmet-library-gis-devel >= 22.1.24
+BuildRequires: smartmet-library-macgyver-devel >= 22.3.28
+BuildRequires: smartmet-library-gis-devel >= 22.5.4
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 22.3.8
-Requires: smartmet-library-gis >= 22.1.24
+Requires: smartmet-library-macgyver >= 22.3.28
+Requires: smartmet-library-gis >= 22.5.4
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -41,8 +41,8 @@ Requires: geos310
 #TestRequires: gdal34-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 22.1.24
-#TestRequires: smartmet-library-macgyver-devel >= 22.3.8
+#TestRequires: smartmet-library-gis-devel >= 22.5.4
+#TestRequires: smartmet-library-macgyver-devel >= 22.3.28
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
@@ -83,8 +83,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 22.1.24
-Requires: smartmet-library-macgyver-devel >= 22.3.8
+Requires: smartmet-library-gis-devel >= 22.5.4
+Requires: smartmet-library-macgyver-devel >= 22.3.28
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -106,6 +106,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri May 20 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.20-1.fmi
+- NFmiFastQueryInfo::LatLon no longer returns a const reference due to ABI compability issues
+- Removed NFmiFastQueryInfo::LatLonFast as obsolete
+
 * Thu May 19 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.19-1.fmi
 - Added NFmiArea::CreateFromBBox for ABI compatibility with the WGS84 branch
 

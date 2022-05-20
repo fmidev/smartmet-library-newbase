@@ -106,11 +106,8 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
 
   const NFmiLocation *Location() const;
   NFmiPoint LatLon() const;
-  const NFmiPoint &LatLonFast() const;  // Lisäsin nopean Latlon-metodin, joka ei ole
-                                        // virtuaalinen. NFmiQueryInfo:n Latlon ei voi palauttaa
-  // const referenssiä, koska se pyytää NFmiGrid-luokalta
-  // latlon-pistettä ja se rakennetaan lennossa.
-  const NFmiPoint &LatLon(unsigned long index) const;
+  NFmiPoint LatLon(unsigned long index) const;
+
   const NFmiPoint RelativePoint() const;
   const NFmiLevel *Level() const;
   FmiLevelType LevelType() const;
@@ -1113,10 +1110,6 @@ inline NFmiPoint NFmiFastQueryInfo::WorldXY() const
 // ----------------------------------------------------------------------
 
 inline NFmiPoint NFmiFastQueryInfo::LatLon() const
-{
-  return LatLon(itsLocationIndex);
-}
-inline const NFmiPoint &NFmiFastQueryInfo::LatLonFast() const
 {
   return LatLon(itsLocationIndex);
 }
