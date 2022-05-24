@@ -1635,6 +1635,11 @@ std::string NFmiArea::ProjStr() const
   return impl->itsSpatialReference->projStr();
 }
 
+std::string NFmiArea::AreaStr() const
+{
+  return AreaFactoryStr();
+}
+
 std::string NFmiArea::AreaFactoryStr() const
 {
   if (impl->itsClassId == kNFmiProjArea)
@@ -1728,21 +1733,13 @@ const NFmiRect &NFmiArea::WorldRect() const
   return impl->itsWorldRect;
 }
 
-#ifdef WGS84
-NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
-                            const NFmiPoint &theTopRightLatLon) const
-{
-  return CreateNewArea(theBottomLeftLatLon, theTopRightLatLon);
-}
-#else
 NFmiArea *NFmiArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                             const NFmiPoint &theTopRightLatLon,
-                            bool allowPacificFix = true) const
+                            bool allowPacificFix) const
 {
   // Ignoring Pacific "fix" for now
   return CreateNewArea(theBottomLeftLatLon, theTopRightLatLon);
 }
-#endif
 
 NFmiArea *NFmiArea::CreateNewArea(const NFmiRect &theRect) const
 {
