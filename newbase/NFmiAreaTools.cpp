@@ -184,7 +184,7 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
   // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
       "+type=crs +to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
-      "+lon_0={} 0datum=WGS84",
+      "+lon_0={} +datum=WGS84",
       npole_lon,
       npole_lat,
       lon_0);
