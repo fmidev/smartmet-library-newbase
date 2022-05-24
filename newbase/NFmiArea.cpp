@@ -1418,11 +1418,7 @@ int NFmiArea::DetectClassId() const
       return kNFmiLambertConformalConicArea;
     if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
         proj.getDouble("o_lon_p") == 0.0)
-    {
-      if (proj.getString("towgs84") == std::string("0,0,0") ||
-          proj.getString("towgs84") == std::string("0,0,0,0,0,0,0"))
-        return kNFmiRotatedLatLonArea;
-    }
+      return kNFmiRotatedLatLonArea;
   }
   else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
            proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&

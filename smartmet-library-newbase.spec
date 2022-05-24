@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.5.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-2.fmi
+- Fixed NFmiArea::DetectClassId to ignore rotated latlon +towgs84 settings
+
 * Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-1.fmi
 - Update WGS84 branch to same version as master branch
 
