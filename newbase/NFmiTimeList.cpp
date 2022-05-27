@@ -573,7 +573,7 @@ std::istream &NFmiTimeList::Read(std::istream &file)
 
 // apu-funktori, jolla vertaillaan aikalistalla olevia aika-pointtereita
 template <typename T>
-struct ComparePtrs : public binary_function<T, T, bool>
+struct ComparePtrs
 {
   bool operator()(const T *lhs, const T *rhs) { return *lhs < *rhs; }
 };
