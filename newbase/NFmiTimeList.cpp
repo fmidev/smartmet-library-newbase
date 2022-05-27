@@ -814,7 +814,7 @@ bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
   try
   {
     if (theTimeRangeInMinutes == kUnsignedLongMissing ||
-        static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
+        static_cast<unsigned long>(std::abs(Current()->DifferenceInMinutes(theTime))) <
             theTimeRangeInMinutes)
       return true;
 
