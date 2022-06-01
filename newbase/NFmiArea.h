@@ -117,6 +117,7 @@ class NFmiArea
   virtual const std::string &ClassName() const;
   virtual std::string AreaStr() const;
   virtual std::string WKT() const;
+  std::string SimpleWKT() const;
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);

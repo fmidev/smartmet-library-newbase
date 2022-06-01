@@ -20,8 +20,8 @@
 class NFmiSortable
 {
  public:
-  virtual ~NFmiSortable() {}
-  NFmiSortable() {}
+  virtual ~NFmiSortable();
+  NFmiSortable();
   virtual bool IsEqual(const NFmiSortable& aFmiTest) const = 0;
   virtual bool IsLessThan(const NFmiSortable& aFmiTest) const = 0;
 

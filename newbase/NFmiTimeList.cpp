@@ -574,7 +574,7 @@ std::istream &NFmiTimeList::Read(std::istream &file)
 
 // apu-funktori, jolla vertaillaan aikalistalla olevia aika-pointtereita
 template <typename T>
-struct ComparePtrs : public binary_function<T, T, bool>
+struct ComparePtrs
 {
   bool operator()(const T *lhs, const T *rhs) { return *lhs < *rhs; }
 };
@@ -815,7 +815,7 @@ bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
   try
   {
     if (theTimeRangeInMinutes == kUnsignedLongMissing ||
-        static_cast<unsigned long>(::abs(Current()->DifferenceInMinutes(theTime))) <
+        static_cast<unsigned long>(std::abs(Current()->DifferenceInMinutes(theTime))) <
             theTimeRangeInMinutes)
       return true;
 
