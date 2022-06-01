@@ -1173,3 +1173,14 @@ int NFmiArea::Sign(double theValue) const
 {
   return theValue < 0 ? -1 : 1;
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * For compatibility with WGS84 branch where this returns WKT1_SIMPLE format
+ */
+// ----------------------------------------------------------------------
+
+std::string NFmiArea::SimpleWKT() const
+{
+  return WKT();
+}
