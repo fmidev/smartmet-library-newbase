@@ -472,7 +472,17 @@ Fmi::CoordinateMatrix NFmiArea::CoordinateMatrix(std::size_t nx, std::size_t ny,
     // Add one more column to the right since wrapping is requested. We assume an earlier phase
     // has already checked the data is geographic and global apart from one column.
 
-    const auto dx = (x2 - x1) / (nx - 1);
+    auto dx = (x2 - x1) / (nx - 1);
+
+    // If the new coordinate is not an integer, say 180 or 360, reduce the extrapolated value
+    // a little bit to avoid wrapping back to the left edge when reprojecting the coordinates.
+    // Otherwise for example for the global GFS data in equidistant cylindrical coordinates
+    // the X coordinate 20037508.34278925 is reprojected to 1.0177774980683254e-13 instead of 360
+    // with crs = +init=epsg:4326 +lon_wrap=180
+
+    if (x2 + dx != std::floor(x2 + dx))
+      dx = 0.99999 * dx;
+
     return Fmi::CoordinateMatrix(nx + 1, ny, x1, y1, x2 + dx, y2);
   }
   catch (...)
