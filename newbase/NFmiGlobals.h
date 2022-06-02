@@ -15,6 +15,11 @@ PRAGMA_WARNING_DISABLE(4996)
 #include <boost/math/special_functions/fpclassify.hpp>
 PRAGMA_WARNING_POP()
 
+namespace Fmi
+{
+bool LegacyMode();
+}
+
 //! keep Chinese as last because no names defined
 enum FmiLanguage
 {
