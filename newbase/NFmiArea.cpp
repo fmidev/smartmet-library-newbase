@@ -1194,3 +1194,11 @@ std::string NFmiArea::SimpleWKT() const
 {
   return WKT();
 }
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Dummy for ABI compability with the WGS84 branch
+ */
+// ----------------------------------------------------------------------
+
+void SetGridSize(std::size_t theWidth, std::size_t theHeight) {}

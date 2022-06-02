@@ -58,6 +58,8 @@ class NFmiArea
 
   NFmiArea &operator=(const NFmiArea &theArea);
 
+  void SetGridSize(std::size_t theWidth, std::size_t theHeight);
+
   bool IsInside(const NFmiPoint &theLatLonPoint) const;
   bool IsInside(const NFmiArea &theArea) const;
 
