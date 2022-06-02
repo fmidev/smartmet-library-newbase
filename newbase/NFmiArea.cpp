@@ -1201,4 +1201,4 @@ std::string NFmiArea::SimpleWKT() const
  */
 // ----------------------------------------------------------------------
 
-void SetGridSize(std::size_t theWidth, std::size_t theHeight) {}
+void NFmiArea::SetGridSize(std::size_t theWidth, std::size_t theHeight) {}
