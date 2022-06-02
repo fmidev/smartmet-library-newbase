@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.6.2
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
+- Added Fmi::LegacyMode() function for detecting when old NFmiArea classes are being used
+
 * Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-1.fmi
 - Fixed world wrap problems when extending the coordinates for global data by one column
 
