@@ -105,6 +105,10 @@ class NFmiArea
                                   const NFmiPoint &theTopRightLatLon) const;
   //  virtual NFmiArea * CreateNewArea(const NFmiRect & theRect);
   virtual NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
+
+  // Added to enable enlarging areas
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside);
+
   virtual NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                                   FmiDirection theFixedPoint,
                                   bool fShrinkArea);
@@ -155,6 +159,28 @@ class NFmiArea
   static NFmiArea *CreateFromBBox(const Fmi::SpatialReference &theSR,
                                   const NFmiPoint &theBottomLeftWorldXY,
                                   const NFmiPoint &theTopRightWorldXY);
+
+  static NFmiArea *CreateFromCenter(const Fmi::SpatialReference &theSR,
+                                    const Fmi::SpatialReference &theCenterSR,
+                                    const NFmiPoint &theCenterLatLon,
+                                    double theWidthInMeters,
+                                    double theHeightInMeters);
+
+  static NFmiArea *CreateFromCorners(const Fmi::SpatialReference &theSR,
+                                     const Fmi::SpatialReference &theBBoxSR,
+                                     const NFmiPoint &theBottomLeftLatLon,
+                                     const NFmiPoint &theTopRightLatLon);
+
+  static NFmiArea *CreateFromReverseCorners(const Fmi::SpatialReference &theSR,
+                                            const Fmi::SpatialReference &theBBoxSR,
+                                            const NFmiPoint &theTopLeftLatLon,
+                                            const NFmiPoint &theBottomRightLatLon);
+
+  static NFmiArea *CreateFromCornerAndSize(const Fmi::SpatialReference &theSR,
+                                           const Fmi::SpatialReference &theCornerSR,
+                                           const NFmiPoint &theBottomLeftLatLon,
+                                           double theWidthInMeters,
+                                           double theHeightInMeters);
 
  protected:
   int Sign(double theValue) const;

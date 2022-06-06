@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.6.2
-Release: 2%{?dist}.fmi
+Version: 22.6.3
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,13 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Jun  3 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.3-1.fmi
+- Added Fmi::LegacyMode
+- Added NFmiArea::CreateFromCenter
+- Added NFmiArea::CreateFromCorners
+- Added NFmiArea::CreateFromReverseCorners
+- Added NFmiArea::CreateFromCornerAndSize
+
 * Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
 - Added NFmiArea::SetGridSize for ABI compatibility
 

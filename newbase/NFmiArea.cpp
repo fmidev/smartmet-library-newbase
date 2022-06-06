@@ -13,6 +13,7 @@
 
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
+#include "NFmiAreaTools.h"
 #include <boost/functional/hash.hpp>
 
 // Needed until HashValue API is changed
@@ -32,8 +33,129 @@
 #include "NFmiStereographicArea.h"
 #include "NFmiYKJArea.h"
 #include <gis/CoordinateMatrix.h>
+#include <gis/CoordinateTransformation.h>
+#include <gis/ProjInfo.h>
 #include <macgyver/Exception.h>
 #include <iostream>
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Detect legacy projection from PROJ.x information
+ */
+// ----------------------------------------------------------------------
+
+int DetectClassId(const Fmi::ProjInfo &proj)
+{
+  auto name = proj.getString("proj");
+  if (!name)
+    throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
+
+  if (proj.getString("datum") == std::string("WGS84"))
+  {
+    if (*name == "eqc")
+      return kNFmiLatLonArea;
+    if (*name == "merc")
+      return kNFmiMercatorArea;
+    if (*name == "stere")
+      return kNFmiStereographicArea;
+    if (*name == "aeqd")
+      return kNFmiEquiDistArea;
+    if (*name == "laea")
+      return kNFmiLambertEqualArea;
+    if (*name == "lcc")
+      return kNFmiLambertConformalConicArea;
+    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
+        proj.getDouble("o_lon_p") == 0.0)
+      return kNFmiRotatedLatLonArea;
+  }
+  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
+           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
+           proj.getDouble("lon_0") == 27.0 &&
+           proj.getString("towgs84") ==
+               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+    return kNFmiYKJArea;
+
+  // Not a legacy projection, use PROJ.x
+  return kNFmiGdalArea;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create a legacy projection from a spatial reference with dummy corners
+ */
+//----------------------------------------------------------------------
+
+NFmiArea *Create(const Fmi::SpatialReference &theSR)
+{
+  const auto &proj = theSR.projInfo();
+  auto id = DetectClassId(proj);
+
+  NFmiPoint bl(-90, -180);  // these must be big enough since creating a new area with the
+  NFmiPoint tr(90, 180);    // final WorldXY rectangle requires the bbox to be inside these limits
+  switch (id)
+  {
+    case kNFmiLatLonArea:
+      return NFmiAreaTools::CreateLegacyLatLonArea(bl, tr);
+    case kNFmiMercatorArea:
+      return NFmiAreaTools::CreateLegacyMercatorArea(bl, tr);
+    case kNFmiStereographicArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto clat = proj.getDouble("lat_0");
+      auto tlat = proj.getDouble("lat_ts");
+      return NFmiAreaTools::CreateLegacyStereographicArea(
+          bl, tr, clon ? *clon : 0, clat ? *clat : 90, tlat ? *tlat : 60);
+    }
+    case kNFmiEquiDistArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto clat = proj.getDouble("lat_0");
+      return NFmiAreaTools::CreateLegacyEquiDistArea(bl, tr, clon ? *clon : 0, clat ? *clat : 90);
+    }
+    case kNFmiLambertEqualArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto clat = proj.getDouble("lat_0");
+      return NFmiAreaTools::CreateLegacyLambertEqualArea(
+          bl, tr, clon ? *clon : 0, clat ? *clat : 9);
+    }
+    case kNFmiLambertConformalConicArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto clat = proj.getDouble("lat_0");
+      auto lat1 = proj.getDouble("lat_1");
+      auto lat2 = proj.getDouble("lat_2");
+      if (!lat2)
+        lat2 = lat1;
+      if (!lat1)
+        lat1 = lat2;
+      return NFmiAreaTools::CreateLegacyLambertConformalConicArea(
+          bl, tr, clon ? *clon : 0, clat ? *clat : 0, lat1 ? *lat1 : 0, lat2 ? *lat2 : 0);
+    }
+    case kNFmiRotatedLatLonArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto o_lon_p = proj.getDouble("o_lon_p");
+      auto o_lat_p = proj.getDouble("o_lat_p");
+      if (!o_lon_p)
+        o_lon_p = 0;
+      if (!o_lat_p)
+        o_lat_p = 90;
+      if (!clon)
+        clon = 0;
+
+      if (o_lon_p != 0.0)
+        return new NFmiGdalArea("FMI", theSR, bl, tr);
+
+      NFmiPoint spole(*clon, -*o_lat_p);
+      return NFmiAreaTools::CreateLegacyRotatedLatLonArea(bl, tr, spole);
+    }
+    case kNFmiYKJArea:
+      return NFmiAreaTools::CreateLegacyYKJArea(bl, tr);
+    default:
+      return new NFmiGdalArea("FMI", theSR, bl, tr);
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -424,19 +546,33 @@ NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
 {
   try
   {
+    return CreateNewAreaByWorldRect(theWorldRect, true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside)
+{
+  try
+  {
     NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
     NFmiPoint newTopRightXY = theWorldRect.TopRight();
 
     NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
     NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
 
-    if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
-      return nullptr;
+    if (fMustBeInside)
+      if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
+        return nullptr;
 
     auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
 
-    if (!IsInside(*newArea))
-      return nullptr;
+    if (fMustBeInside)
+      if (!IsInside(*newArea))
+        return nullptr;
 
     return newArea;
   }
@@ -821,12 +957,69 @@ NFmiArea *NFmiArea::CreateFromBBox(const Fmi::SpatialReference &theSR,
                                    const NFmiPoint &theBottomLeftWorldXY,
                                    const NFmiPoint &theTopRightWorldXY)
 {
-  return new NFmiGdalArea("FMI",
-                          theSR,
-                          theBottomLeftWorldXY.X(),
-                          theBottomLeftWorldXY.Y(),
-                          theTopRightWorldXY.X(),
-                          theTopRightWorldXY.Y());
+  std::unique_ptr<NFmiArea> area(Create(theSR));
+  NFmiRect rect(theBottomLeftWorldXY, theTopRightWorldXY);
+  return area->CreateNewAreaByWorldRect(rect, false);
+}
+
+NFmiArea *NFmiArea::CreateFromCorners(const Fmi::SpatialReference &theSR,
+                                      const Fmi::SpatialReference &theBBoxSR,
+                                      const NFmiPoint &theBottomLeftLatLon,
+                                      const NFmiPoint &theTopRightLatLon)
+{
+  Fmi::CoordinateTransformation trans(theBBoxSR, theSR);
+  double x1 = theBottomLeftLatLon.X();
+  double y1 = theBottomLeftLatLon.Y();
+  double x2 = theTopRightLatLon.X();
+  double y2 = theTopRightLatLon.Y();
+  trans.transform(x1, y1);
+  trans.transform(x2, y2);
+  return CreateFromBBox(theSR, NFmiPoint(x1, y1), NFmiPoint(x2, y2));
+}
+
+NFmiArea *NFmiArea::CreateFromReverseCorners(const Fmi::SpatialReference &theSR,
+                                             const Fmi::SpatialReference &theBBoxSR,
+                                             const NFmiPoint &theTopLeftLatLon,
+                                             const NFmiPoint &theBottomRightLatLon)
+{
+  Fmi::CoordinateTransformation trans(theBBoxSR, theSR);
+  double x1 = theTopLeftLatLon.X();
+  double y1 = theTopLeftLatLon.Y();
+  double x2 = theBottomRightLatLon.X();
+  double y2 = theBottomRightLatLon.Y();
+  trans.transform(x1, y1);
+  trans.transform(x2, y2);
+  return CreateFromBBox(theSR, NFmiPoint(x1, y2), NFmiPoint(x2, y1));
+}
+
+NFmiArea *NFmiArea::CreateFromCornerAndSize(const Fmi::SpatialReference &theSR,
+                                            const Fmi::SpatialReference &theCornerSR,
+                                            const NFmiPoint &theBottomLeftLatLon,
+                                            double theWidth,
+                                            double theHeight)
+{
+  Fmi::CoordinateTransformation trans(theCornerSR, theSR);
+  double x1 = theBottomLeftLatLon.X();
+  double y1 = theBottomLeftLatLon.Y();
+  trans.transform(x1, y1);
+  double x2 = x1 + theWidth;
+  double y2 = y1 + theHeight;
+  return CreateFromBBox(theSR, NFmiPoint(x1, y1), NFmiPoint(x2, y2));
+}
+
+NFmiArea *NFmiArea::CreateFromCenter(const Fmi::SpatialReference &theSR,
+                                     const Fmi::SpatialReference &theCenterSR,
+                                     const NFmiPoint &theCenterLatLon,
+                                     double theWidth,
+                                     double theHeight)
+{
+  Fmi::CoordinateTransformation trans(theCenterSR, theSR);
+  double x = theCenterLatLon.X();
+  double y = theCenterLatLon.Y();
+  trans.transform(x, y);
+  return CreateFromBBox(theSR,
+                        NFmiPoint(x - theWidth / 2, y - theHeight / 2),
+                        NFmiPoint(x + theWidth / 2, y + theHeight / 2));
 }
 
 // ----------------------------------------------------------------------
