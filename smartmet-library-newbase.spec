@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.6.3
+Version: 22.6.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -112,6 +112,8 @@ FMI newbase static library
 - Added NFmiArea::CreateFromCorners
 - Added NFmiArea::CreateFromReverseCorners
 - Added NFmiArea::CreateFromCornerAndSize
+- Added NFmiArea::CreateNewAreaByWorldRect which optionally allows enlarging the area
+- Added new parameters for Himan: MaxProbabilityThunderstrom24h, WindGustDuration24h, MaxWindGust24h, MaxSevereThunderstormPotential24h
 
 * Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
 - Added NFmiArea::SetGridSize for ABI compatibility
