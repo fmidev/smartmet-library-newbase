@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.6.2
-Release: 2%{?dist}.fmi
+Version: 22.6.6
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun  6 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.6-1.fmi
+- Added NFmiArea::CreateNewAreaByWorldRect which allows enlarging an area
+
 * Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
 - Added Fmi::LegacyMode() function for detecting when old NFmiArea classes are being used
 

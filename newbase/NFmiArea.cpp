@@ -1764,19 +1764,26 @@ NFmiArea *NFmiArea::CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
 {
+  return CreateNewAreaByWorldRect(theWorldRect, true);
+}
+
+NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside)
+{
   NFmiPoint newBottomLeftXY = theWorldRect.BottomLeft();
   NFmiPoint newTopRightXY = theWorldRect.TopRight();
 
   NFmiPoint newBottomLeftLatLon = WorldXYToLatLon(newBottomLeftXY);
   NFmiPoint newTopRightLatLon = WorldXYToLatLon(newTopRightXY);
 
-  if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
-    return nullptr;
+  if (fMustBeInside)
+    if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
+      return nullptr;
 
-  auto *newArea = CreateFromBBox(*impl->itsSpatialReference, newBottomLeftXY, newTopRightXY);
+  auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
 
-  if (!IsInside(*newArea))
-    return nullptr;
+  if (fMustBeInside)
+    if (!IsInside(*newArea))
+      return nullptr;
 
   return newArea;
 }

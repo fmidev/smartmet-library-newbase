@@ -96,6 +96,7 @@ class NFmiArea
   virtual NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
                                   const NFmiPoint &theTopRightLatLon) const;
   virtual NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside);
   virtual NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                                   FmiDirection theFixedPoint,
                                   bool fShrinkArea);
