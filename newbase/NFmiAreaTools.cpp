@@ -243,7 +243,8 @@ NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
 
 NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
-  return new NFmiYKJArea(theBottomLeft, theTopRight);
+  bool worldxy_in_meters = true;
+  return new NFmiYKJArea(theBottomLeft, theTopRight, worldxy_in_meters);
 }
 
 }  // namespace NFmiAreaTools

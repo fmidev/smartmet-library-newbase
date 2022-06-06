@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.6.6
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun  6 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.6-2.fmi
+- Fixed NFmiAreaTools::CreateLegacyYKJArea to force meters as units
+
 * Fri Jun  3 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.3-1.fmi
 - Added Fmi::LegacyMode
 - Added NFmiArea::CreateFromCenter
