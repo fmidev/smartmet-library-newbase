@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jun  6 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
+- Added NFmiArea::CreateNewAreaByWorldRect which allows enlarging an area
+
 * Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
 - Added Fmi::LegacyMode() function for detecting when old NFmiArea classes are being used
 
