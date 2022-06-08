@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.6.8
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Jun  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.8-2.fmi
+- Allow legacy sphere to be specified either with +ellps=sphere, plain +R, plain +a or with +a == +b
+
 * Wed Jun  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.8-1.fmi
 - Allow both legacy sphere and WGS84 spatial references for legacy NFmiXXXArea classes
 
