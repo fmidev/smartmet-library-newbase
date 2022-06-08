@@ -50,7 +50,21 @@ int DetectClassId(const Fmi::ProjInfo &proj)
   if (!name)
     throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
 
-  if (proj.getString("datum") == std::string("WGS84"))
+  // Accept WGS84 and sphere for legacy projections despite possible errors
+  bool ok = false;
+  auto opt_datum = proj.getString("datum");
+  if (opt_datum)
+    ok = (opt_datum == std::string("WGS84"));
+  else
+  {
+    auto opt_ellps = proj.getString("ellps");
+    if (opt_ellps)
+      ok = (opt_ellps == std::string("sphere"));
+    else
+      ok = (proj.getDouble("R") > 0.0);  // any sphere will do
+  }
+
+  if (ok)
   {
     if (*name == "eqc")
       return kNFmiLatLonArea;
