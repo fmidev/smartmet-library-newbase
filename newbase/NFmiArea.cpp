@@ -1420,11 +1420,15 @@ int NFmiArea::DetectClassId() const
         proj.getDouble("o_lon_p") == 0.0)
       return kNFmiRotatedLatLonArea;
   }
+  // We allow for two slightly different towgs84 strings, since legacy code uses more decimals than
+  // PROJ.x prints
   else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
            proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
            proj.getDouble("lon_0") == 27.0 &&
-           proj.getString("towgs84") ==
-               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964"))
+           (proj.getString("towgs84") ==
+                std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964") ||
+            proj.getString("towgs84") ==
+                std::string("-96.062,-82.428,-121.753,4.801,0.345,-1.376,1.496")))
     return kNFmiYKJArea;
 
   // Not a legacy projection, use PROJ.4
