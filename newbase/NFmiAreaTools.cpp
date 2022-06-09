@@ -158,6 +158,14 @@ NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint
   return new NFmiLatLonArea(theBottomLeft, theTopRight, NFmiPoint(0, 0), NFmiPoint(1, 1), pacific);
 }
 
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft,
+                                 const NFmiPoint& theTopRight,
+                                 bool fUsePacificView)
+{
+  return new NFmiLatLonArea(
+      theBottomLeft, theTopRight, NFmiPoint(0, 0), NFmiPoint(1, 1), fUsePacificView);
+}
+
 NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole)

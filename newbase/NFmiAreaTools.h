@@ -21,6 +21,9 @@ void LatLonBoundingBox(const NFmiArea& theArea,
                        double& theMaxLat);
 
 NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft,
+                                 const NFmiPoint& theTopRight,
+                                 bool fUsePacificView);
 NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole);
