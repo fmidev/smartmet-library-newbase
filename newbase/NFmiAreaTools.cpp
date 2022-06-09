@@ -170,7 +170,21 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole)
 {
-  return new NFmiRotatedLatLonArea(theBottomLeft, theTopRight, theSouthPole);
+  bool rotated_corners = true;
+  if (theBottomLeft.Y() < theTopRight.Y())
+  {
+    return new NFmiRotatedLatLonArea(theBottomLeft,
+                                     theTopRight,
+                                     theSouthPole,
+                                     NFmiPoint(0, 0),
+                                     NFmiPoint(1, 1),
+                                     rotated_corners);
+  }
+
+  NFmiPoint bl(theBottomLeft.X(), theTopRight.Y());
+  NFmiPoint tr(theTopRight.X(), theBottomLeft.Y());
+  return new NFmiRotatedLatLonArea(
+      bl, tr, theSouthPole, NFmiPoint(0, 0), NFmiPoint(1, 1), rotated_corners);
 }
 
 NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
