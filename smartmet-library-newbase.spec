@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.6.8
+Version: 22.6.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jun  9 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.9-1.fmi
+- Added NFmiAreaTools::CreateLegacyLatLonArea with option to use Pacific view
+
 * Wed Jun  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.8-1.fmi
 - Improved EPSG:2393 (YKJ) PROJ string detection
 

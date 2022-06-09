@@ -159,6 +159,22 @@ NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft,
+                                 const NFmiPoint& theTopRight,
+                                 bool fUsePacificView)
+{
+  if (fUsePacificView)
+  {
+    // Pacific view
+    auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +lon_0=180 +wktext +over +no_defs");
+    return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
+  }
+
+  // Atlantic  view
+  auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +wktext +over +no_defs");
+  return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
+}
+
 NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole)
