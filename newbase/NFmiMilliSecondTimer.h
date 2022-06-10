@@ -17,11 +17,7 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiStringTools.h"
-
-extern "C"
-{
-#include <sys/timeb.h>
-}
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 //! Luokka koodin nopeusmittauksia varten
 
@@ -43,10 +39,8 @@ class NFmiMilliSecondTimer
   void SecondTime();
 
  private:
-  int CalcTimeDiffInMS(const struct timeb &theTime1, const struct timeb &theTime2) const;
-
-  struct timeb itsTime1;  //!< The start time
-  struct timeb itsTime2;  //!< The end time
+  boost::posix_time::ptime itsTime1;  //!< The start time
+  boost::posix_time::ptime itsTime2;  //!< The end time
 
 };  // class NFmiMilliSecondTimer
 
@@ -60,7 +54,7 @@ class NFmiMilliSecondTimer
 
 inline void NFmiMilliSecondTimer::FirstTime()
 {
-  ftime(&itsTime1);
+  itsTime1 = boost::posix_time::microsec_clock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -72,7 +66,7 @@ inline void NFmiMilliSecondTimer::FirstTime()
 
 inline void NFmiMilliSecondTimer::SecondTime()
 {
-  ftime(&itsTime2);
+  itsTime2 = boost::posix_time::microsec_clock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -105,22 +99,12 @@ inline void NFmiMilliSecondTimer::StopTimer()
 
 inline int NFmiMilliSecondTimer::TimeDiffInMSeconds() const
 {
-  return CalcTimeDiffInMS(itsTime1, itsTime2);
-}
-
-inline int NFmiMilliSecondTimer::CalcTimeDiffInMS(const struct timeb &theTime1,
-                                                  const struct timeb &theTime2) const
-{
-  int seconds = static_cast<int>(theTime2.time - theTime1.time);
-  int mseconds = seconds * 1000 + (theTime2.millitm - theTime1.millitm);
-  return mseconds;
+  return (itsTime2 - itsTime1).total_milliseconds();
 }
 
 inline int NFmiMilliSecondTimer::CurrentTimeDiffInMSeconds() const
 {
-  struct timeb currentTime;
-  ftime(&currentTime);
-  return CalcTimeDiffInMS(itsTime1, currentTime);
+  return (boost::posix_time::microsec_clock::universal_time() - itsTime1).total_milliseconds();
 }
 
 // ======================================================================

@@ -18,8 +18,8 @@ NFmiMilliSecondTimer::NFmiMilliSecondTimer()
 {
   try
   {
-    ftime(&itsTime1);
-    ftime(&itsTime2);
+    FirstTime();
+    itsTime2 = itsTime1;
   }
   catch (...)
   {
