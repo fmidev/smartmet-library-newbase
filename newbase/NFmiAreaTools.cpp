@@ -302,4 +302,18 @@ NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& t
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
 
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
+                              const NFmiPoint& theTopRight,
+                              bool fMeters)
+{
+  if (!fMeters)
+    return CreateLegacyYKJArea(theBottomLeft, theTopRight);
+
+  std::string proj =
+      "+type=crs +proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m "
+      "+wktext "
+      "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+  return NFmiArea::CreateFromBBox(proj, theBottomLeft, theTopRight);
+}
+
 }  // namespace NFmiAreaTools

@@ -53,6 +53,9 @@ NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
                                    double theCentralLongitude,
                                    double theCentralLatitude);
 NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
+                              const NFmiPoint& theTopRight,
+                              bool fMeters);
 
 }  // namespace NFmiAreaTools
 
