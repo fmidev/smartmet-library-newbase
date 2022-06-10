@@ -96,9 +96,10 @@ int DetectClassId(const Fmi::ProjInfo &proj)
                 std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964") ||
             proj.getString("towgs84") ==
                 std::string("-96.062,-82.428,-121.753,4.801,0.345,-1.376,1.496")))
+    return kNFmiYKJArea;
 
-    // Not a legacy projection, use PROJ.x
-    return kNFmiGdalArea;
+  // Not a legacy projection, use PROJ.x
+  return kNFmiGdalArea;
 }
 
 // ----------------------------------------------------------------------
