@@ -101,7 +101,7 @@ class NFmiArea
                                   FmiDirection theFixedPoint,
                                   bool fShrinkArea);
 
-  virtual const NFmiRect &WorldRect() const;
+  virtual const NFmiRect WorldRect() const;  // not a reference for ABI compability with master
 
   virtual NFmiPoint WorldXYPlace() const;
   virtual NFmiPoint WorldXYSize() const;

@@ -1735,7 +1735,7 @@ std::string NFmiArea::AreaFactoryProjStr() const
   return fmt::format("{}|{},{},{},{}", ProjStr(), tl.X(), tl.Y(), br.X(), br.Y());
 }
 
-const NFmiRect &NFmiArea::WorldRect() const
+const NFmiRect NFmiArea::WorldRect() const
 {
   return impl->itsWorldRect;
 }

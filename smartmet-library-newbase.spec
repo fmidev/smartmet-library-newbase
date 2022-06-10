@@ -5,7 +5,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.6.10
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-2.fmi
+- Fixed NFmiArea::WorldRect not to return a reference for ABI compatibility with master branch
+
 * Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-1.fmi
 - Fixed NFmiArea::ClassName ABI to be the same as in the master branch
 - Added NFmiArea:::IsPacificView and NFmiArea::IsPacificLongitude from master to WGS84 branch
