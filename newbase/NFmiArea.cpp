@@ -992,7 +992,6 @@ NFmiPoint NFmiArea::CenterLatLon() const
   return ToLatLon(center);
 }
 
-#ifndef WGS84
 bool NFmiArea::IsPacificLongitude(double theLongitude)
 {
   if (theLongitude > 180 && theLongitude <= 360)
@@ -1000,7 +999,6 @@ bool NFmiArea::IsPacificLongitude(double theLongitude)
   else
     return false;
 }
-#endif
 
 #ifndef WGS84
 void NFmiArea::CheckForPacificView()
@@ -1030,7 +1028,6 @@ PacificPointFixerData NFmiArea::PacificPointFixer(const NFmiPoint &theBottomLeft
 }
 #endif
 
-#ifndef WGS84
 bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
 {
   // Obvious case
@@ -1041,7 +1038,6 @@ bool NFmiArea::IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint 
     return true;
   return false;
 }
-#endif
 
 #ifndef WGS84
 double NFmiArea::FixLongitude(double theLon) const

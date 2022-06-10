@@ -108,6 +108,7 @@ FMI newbase static library
 %changelog
 * Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-1.fmi
 - Fixed NFmiArea::ClassName ABI to be the same as in the master branch
+- Added NFmiArea:::IsPacificView and NFmiArea::IsPacificLongitude from master to WGS84 branch
 
 * Thu Jun  9 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.9-1.fmi
 - Added NFmiAreaTools::CreateLegacyLatLonArea with option to use Pacific view

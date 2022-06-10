@@ -126,6 +126,9 @@ class NFmiArea
   virtual bool operator==(const NFmiArea &theArea) const;
   virtual bool operator!=(const NFmiArea &theArea) const;
 
+  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon);
+  static bool IsPacificLongitude(double theLongitude);
+
   std::string PrettyWKT() const;
   std::string ProjStr() const;
   std::string AreaFactoryStr() const;
@@ -154,25 +157,6 @@ class NFmiArea
   bool PacificView_legacy(void) const { return false; }
   void PacificView_legacy(bool) {}
   bool PacificView(void) const { return false; }
-
-  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
-  {
-    // Obvious case
-    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0)
-      return true;
-    // 0...360 coordinate system is used
-    if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
-      return true;
-    return false;
-  }
-
-  static bool IsPacificLongitude(double theLongitude)
-  {
-    if (theLongitude > 180 && theLongitude <= 360)
-      return true;
-    else
-      return false;
-  }
 
   std::size_t HashValue() const;
 
