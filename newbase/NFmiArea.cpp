@@ -34,7 +34,7 @@ NFmiPoint transform(const Fmi::CoordinateTransformation &theTransformation,
   return NFmiPoint(x, y);
 }
 
-std::string class_name_from_id(int id)
+const char *class_name_from_id(int id)
 {
   switch (id)
   {
@@ -470,9 +470,9 @@ unsigned long NFmiArea::ClassId() const
  */
 // ----------------------------------------------------------------------
 
-const std::string &NFmiArea::ClassName() const
+const char *NFmiArea::ClassName() const
 {
-  return impl->itsClassName;
+  return impl->itsClassName.c_str();
 }
 
 // ----------------------------------------------------------------------

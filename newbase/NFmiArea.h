@@ -115,7 +115,7 @@ class NFmiArea
   Fmi::CoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const;
 
   virtual unsigned long ClassId() const;
-  virtual const std::string &ClassName() const;
+  virtual const char *ClassName() const;
   virtual std::string AreaStr() const;
   virtual std::string WKT() const;
   std::string SimpleWKT() const;
