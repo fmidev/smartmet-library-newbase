@@ -144,7 +144,7 @@ class NFmiQueryInfo
 
   virtual const NFmiLocation *Location() const;
   virtual NFmiPoint LatLon() const;
-  virtual NFmiPoint RelativePoint() const;  // relative point in grid
+  virtual NFmiPoint RelativePoint();  // relative point in grid
   virtual const NFmiLevel *Level() const;
   virtual NFmiProducer *Producer();
 
@@ -1290,7 +1290,7 @@ inline NFmiPoint NFmiQueryInfo::LatLon() const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiQueryInfo::RelativePoint() const
+inline NFmiPoint NFmiQueryInfo::RelativePoint()
 {
   return itsHPlaceDescriptor->RelativePoint();
 }
