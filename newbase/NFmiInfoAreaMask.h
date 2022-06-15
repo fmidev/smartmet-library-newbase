@@ -62,6 +62,12 @@ class MetaParamDataHolderDoCheckStateRestorer
 class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 {
  public:
+  using MultiSourceDataGetterType = std::function<void(std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &,
+                         const NFmiDataIdent &,
+                         const NFmiLevel &,
+                         NFmiInfoData::Type,
+                         const boost::shared_ptr<NFmiArea> &)>;
+
   virtual ~NFmiInfoAreaMask();
   NFmiInfoAreaMask();
   NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
@@ -77,6 +83,21 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther);
   NFmiAreaMask *Clone() const override;
   NFmiInfoAreaMask &operator=(const NFmiInfoAreaMask &theMask) = delete;
+
+  static void SetMultiSourceDataGetterCallback(
+      const MultiSourceDataGetterType &theCallbackFunction);
+  static MultiSourceDataGetterType& GetMultiSourceDataGetterCallback()
+  {
+    return itsMultiSourceDataGetter;
+  }
+  // Nyt ainakin synop ja salama datat ovat tälläisiä
+  static bool IsKnownMultiSourceData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
+  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> GetMultiSourceData(
+      const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+      boost::shared_ptr<NFmiArea> &calculationArea,
+      bool getSynopXData);
+  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> CreateShallowCopyOfInfoVector(
+      const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector);
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
   double Value(const NFmiCalculationParams &theCalculationParams,
@@ -178,6 +199,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   double itsUsedPressureLevelValue;
   MetaParamDataHolder metaParamDataHolder;
   bool fIsModelClimatologyData = false;
+  static MultiSourceDataGetterType itsMultiSourceDataGetter;
 
   template <typename GetFunction>
   float CalcMetaParamValueWithFunction(GetFunction getFunction)
@@ -810,6 +832,9 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
                                            int theOffsetY,
                                            const NFmiMetTime &theInterpolationTime,
                                            bool useInterpolatedTime);
+  double DoObservationAreaMaskCalculations(const NFmiCalculationParams &theCalculationParams);
+  double CalcAreaProbability();
+  float CalculationPointValueForObservation(const boost::shared_ptr<NFmiFastQueryInfo> &info);
 
   // Esim. Over, Under, Between, Equal
   NFmiAreaMask::FunctionType itsPrimaryFunc;

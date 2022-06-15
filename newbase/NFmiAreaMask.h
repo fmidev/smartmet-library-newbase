@@ -220,7 +220,8 @@ class NFmiAreaMask
                             //!< annetaan tällä
     CalculationType,  //!< Tällä voi määritellä että onko joku laskenta esim. indeksi tyyppinen vai
                       //!< normi reaaliluku
-    PeekZ  //!< 'Kurkistetaan' arvo vertikaali suunnassa halutussa yksikössä (hPa/m/FL/hybrid-level)
+    PeekZ,  //!< 'Kurkistetaan' arvo vertikaali suunnassa halutussa yksikössä (hPa/m/FL/hybrid-level)
+    SimpleConditionUsedAsStationData  //!< Jos pääfunktion (esim. area_sum funktion) datan tuottaja on sama kuin simple-condition tuottaja ja kyse on asemadatasta, pitää kyseistä simple-condition dataa käsitellä myös asemadatana.
   };
 
   //! Function direction, e.g. with 'met'-functions x- and/or y-direction
