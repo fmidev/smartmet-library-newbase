@@ -5,13 +5,12 @@
 
 %if 0%{?rhel} && 0%{rhel} < 9
 %define smartmet_boost boost169
-%define smartmet_fmt_min 7.1.3
-%define smartmet_fmt_max 7.2.0
 %else
 %define smartmet_boost boost
+%endif
+
 %define smartmet_fmt_min 8.1.1
 %define smartmet_fmt_max 8.2.0
-%endif
 
 Summary: newbase library
 Name: %{SPECNAME}
@@ -30,13 +29,13 @@ BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 22.3.28
-BuildRequires: smartmet-library-gis-devel >= 22.5.4
+BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
+BuildRequires: smartmet-library-gis-devel >= 22.6.16
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 22.3.28
-Requires: smartmet-library-gis >= 22.5.4
+Requires: smartmet-library-macgyver >= 22.6.16
+Requires: smartmet-library-gis >= 22.6.16
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -52,8 +51,8 @@ Requires: geos310
 #TestRequires: gdal34-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 22.5.4
-#TestRequires: smartmet-library-macgyver-devel >= 22.3.28
+#TestRequires: smartmet-library-gis-devel >= 22.6.16
+#TestRequires: smartmet-library-macgyver-devel >= 22.6.16
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
