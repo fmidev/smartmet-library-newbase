@@ -1101,6 +1101,8 @@ NFmiCalculationParams NFmiInfoAreaMaskPeekXY3::MakeModifiedCalculationParams(
 double NFmiInfoAreaMaskPeekXY3::Value(const NFmiCalculationParams &theCalculationParams,
                                       bool fUseTimeInterpolationAlways)
 {
+  if (itsFunctionDataTimeOffsetInHours != 0) fUseTimeInterpolationAlways = true;
+
   return NFmiInfoAreaMask::Value(MakeModifiedCalculationParams(theCalculationParams),
                                  fUseTimeInterpolationAlways);
 }
@@ -3096,7 +3098,9 @@ bool NFmiInfoAreaMaskProbFunc::CheckTimeIndicesForLoopBreak(unsigned long theSta
 bool NFmiInfoAreaMaskProbFunc::IsCalculationPointInsideCircle(
     const NFmiLocation &theCalculationPointLocation, int theOffsetX, int theOffsetY)
 {
-  if (itsSecondaryFunc == NFmiAreaMask::AreaCircle)
+  if (itsSecondaryFunc == NFmiAreaMask::AreaCircle ||
+      itsSecondaryFunc == NFmiAreaMask::Occurrence ||
+      itsSecondaryFunc == NFmiAreaMask::Occurrence2)
   {
     // ympyrä tapauksessa tarkastetaan jokainen piste erikseen, onko se halutun säteisen ympyrän
     // sisällä
