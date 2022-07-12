@@ -128,7 +128,7 @@ void NFmiWebMercatorArea::Init(bool fKeepWorldRect)
     NFmiArea::Init(fKeepWorldRect);
 
     const char* fmt = "+proj=webmerc +R={}";
-    itsProjStr = fmt::format(fmt, kRearth);
+    itsProjStr = fmt::format(fmt::runtime(fmt), kRearth);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)

@@ -265,7 +265,7 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
                             NFmiPoint(itsRadialRange, itsRadialRange));
     NFmiAzimuthalArea::Init(true);
 
-    itsProjStr = fmt::format(proj_fmt,
+    itsProjStr = fmt::format(fmt::runtime(proj_fmt),
                              itsCentralLatitude.Value(),
                              itsTrueLatitude.Value(),
                              itsCentralLongitude.Value(),
@@ -302,7 +302,7 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
     }
     NFmiAzimuthalArea::Init();
 
-    itsProjStr = fmt::format(proj_fmt,
+    itsProjStr = fmt::format(fmt::runtime(proj_fmt),
                              itsCentralLatitude.Value(),
                              itsTrueLatitude.Value(),
                              itsCentralLongitude.Value(),
@@ -580,7 +580,7 @@ std::istream &NFmiStereographicArea::Read(std::istream &file)
   try
   {
     NFmiAzimuthalArea::Read(file);
-    itsProjStr = fmt::format(proj_fmt,
+    itsProjStr = fmt::format(fmt::runtime(proj_fmt),
                              itsCentralLatitude.Value(),
                              itsTrueLatitude.Value(),
                              itsCentralLongitude.Value(),
@@ -676,7 +676,7 @@ const std::string NFmiStereographicArea::WKT() const
                         R"(PARAMETER["central_meridian",{}],)"
                         R"(UNIT["Metre",1.0]])";
 
-      return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+      return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
     }
 
     const char *fmt = R"(PROJCS["FMI_Polar_Stereographic",)"
@@ -689,7 +689,7 @@ const std::string NFmiStereographicArea::WKT() const
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
 
-    return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
+    return fmt::format(fmt::runtime(fmt), kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
   }
   catch (...)
   {

@@ -204,7 +204,7 @@ void NFmiMercatorArea::Init(bool fKeepWorldRect)
     NFmiArea::Init(fKeepWorldRect);
 
     const char* fmt = "+proj=merc +R={} +wktext +over +no_defs +type=crs";
-    itsProjStr = fmt::format(fmt, kRearth);
+    itsProjStr = fmt::format(fmt::runtime(fmt), kRearth);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -547,7 +547,7 @@ const std::string NFmiMercatorArea::WKT() const
                       R"(UNIT["Degree",0.0174532925199433]],)"
                       R"(PROJECTION["Transverse_Mercator"],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth);
+    return fmt::format(fmt::runtime(fmt), kRearth);
   }
   catch (...)
   {

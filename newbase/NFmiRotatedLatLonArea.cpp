@@ -235,7 +235,7 @@ void NFmiRotatedLatLonArea::Init(bool fKeepWorldRect)
     const char *fmt =
         "+type=crs +proj=ob_tran +o_proj=eqc +o_lon_p=0 +o_lat_p={} +lon_0={} +R={} +units=m "
         "+no_defs";
-    itsProjStr = fmt::format(fmt, -itsSouthernPole.Y(), itsSouthernPole.X(), kRearth);
+    itsProjStr = fmt::format(fmt::runtime(fmt), -itsSouthernPole.Y(), itsSouthernPole.X(), kRearth);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -485,7 +485,7 @@ const std::string NFmiRotatedLatLonArea::WKT() const
 
     // clang-format on
 
-    return fmt::format(fmt, kRearth, degree, nlon, degree, nlat, degree, lon0, degree);
+    return fmt::format(fmt::runtime(fmt), kRearth, degree, nlon, degree, nlat, degree, lon0, degree);
   }
   catch (...)
   {

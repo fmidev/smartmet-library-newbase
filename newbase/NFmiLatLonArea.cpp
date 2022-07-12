@@ -126,7 +126,7 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
     NFmiArea::Init(fKeepWorldRect);
 
     const char *fmt = "+proj=eqc +R={} +wktext +no_defs +type=crs";
-    itsProjStr = fmt::format(fmt, kRearth);
+    itsProjStr = fmt::format(fmt::runtime(fmt), kRearth);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -390,7 +390,7 @@ const std::string NFmiLatLonArea::WKT() const
     const char *fmt =
         R"(PROJCS["unknown",GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",{},0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]],PROJECTION["Equirectangular"],PARAMETER["standard_parallel_1",0],PARAMETER["central_meridian",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1, AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]])";
 
-    return fmt::format(fmt, kRearth);
+    return fmt::format(fmt::runtime(fmt), kRearth);
   }
   catch (...)
   {

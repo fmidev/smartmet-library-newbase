@@ -238,7 +238,7 @@ void NFmiLambertEqualArea::Init(bool fKeepWorldRect)
     }
     NFmiAzimuthalArea::Init();
     const char *fmt = "+proj=laea +lat_0={} +lon_0={} +lat_ts={} +R={} +units=m +no_defs +type=crs";
-    itsProjStr = fmt::format(fmt,
+    itsProjStr = fmt::format(fmt::runtime(fmt),
                              itsCentralLatitude.Value(),
                              itsCentralLongitude.Value(),
                              itsTrueLatitude.Value(),
@@ -586,7 +586,7 @@ const std::string NFmiLambertEqualArea::WKT() const
                         R"(PARAMETER["latitude_of_origin",{}],)"
                         R"(PARAMETER["central_meridian",{}],)"
                         R"(UNIT["Metre",1.0]])";
-      return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+      return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
     }
     else
     {
@@ -599,7 +599,7 @@ const std::string NFmiLambertEqualArea::WKT() const
                         R"(PARAMETER["latitude_of_origin",{}],)"
                         R"(PARAMETER["central_meridian",{}],)"
                         R"(UNIT["Metre",1.0]])";
-      return fmt::format(fmt, kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
+      return fmt::format(fmt::runtime(fmt), kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
     }
   }
   catch (...)

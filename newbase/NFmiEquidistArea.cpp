@@ -514,7 +514,7 @@ void NFmiEquidistArea::Init(bool fKeepWorldRect)
     const char *fmt =
         "+proj=aeqd +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext +no_defs +type=crs";
 
-    itsProjStr = fmt::format(fmt, CentralLatitude(), CentralLongitude(), kRearth);
+    itsProjStr = fmt::format(fmt::runtime(fmt), CentralLatitude(), CentralLongitude(), kRearth);
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -570,7 +570,7 @@ const std::string NFmiEquidistArea::WKT() const
                       R"(PARAMETER["latitude_of_center",{}],)"
                       R"(PARAMETER["longitude_of_center",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+    return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
   }
   catch (...)
   {

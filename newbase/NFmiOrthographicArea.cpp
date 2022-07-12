@@ -682,7 +682,7 @@ const std::string NFmiOrthographicArea::WKT() const
                       R"(PARAMETER["latitude_of_origin",{}],)"
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+    return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
   }
   catch (...)
   {

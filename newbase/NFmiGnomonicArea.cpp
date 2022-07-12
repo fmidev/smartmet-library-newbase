@@ -523,7 +523,7 @@ void NFmiGnomonicArea::Init(bool fKeepWorldRect)
 
     const char *fmt = "+proj=gnom +lon_0={} +lat_0={} +R={} +lat_ts={}";
     itsProjStr =
-        fmt::format(fmt, CentralLongitude(), CentralLatitude(), kRearth, itsTrueLatitude.Value());
+        fmt::format(fmt::runtime(fmt), CentralLongitude(), CentralLatitude(), kRearth, itsTrueLatitude.Value());
     itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
   }
   catch (...)
@@ -578,7 +578,7 @@ const std::string NFmiGnomonicArea::WKT() const
                       R"(PARAMETER["latitude_of_origin",{}],)"
                       R"(PARAMETER["central_meridian",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt, kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
+    return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
   }
   catch (...)
   {

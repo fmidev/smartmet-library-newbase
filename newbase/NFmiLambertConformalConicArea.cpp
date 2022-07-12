@@ -82,7 +82,7 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
     const char *fmt =
         "+proj=lcc +lat_1={} +lat_2={} +lat_0={} +lon_0={} +x_0=0 +y_0=0 +R={} +units=m +wktext "
         "+no_defs +type=crs";
-    itsProjStr = fmt::format(fmt,
+    itsProjStr = fmt::format(fmt::runtime(fmt),
                              itsTrueLatitude1,
                              itsTrueLatitude2,
                              itsCentralLatitude,
@@ -377,7 +377,7 @@ const std::string NFmiLambertConformalConicArea::WKT() const
                       R"(PARAMETER["standard_parallel_1",{}],)"
                       R"(PARAMETER["standard_parallel_2",{}],)"
                       R"(UNIT["Metre",1.0]])";
-    return fmt::format(fmt,
+    return fmt::format(fmt::runtime(fmt),
                        itsRadius,
                        itsCentralLatitude,
                        itsCentralLongitude,
