@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-library-%{DIRNAME}
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.6.10
-Release: 4%{?dist}.fmi
+Version: 22.8.4
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -13,7 +13,7 @@ Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost169-devel
 BuildRequires: bzip2-devel
-BuildRequires: fmt-devel >= 7.1.3
+BuildRequires: fmt-devel >= 8.1.1
 BuildRequires: gcc-c++
 BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
@@ -31,7 +31,7 @@ Requires: boost169-filesystem
 Requires: boost169-iostreams
 Requires: boost169-regex
 Requires: boost169-system
-Requires: fmt >= 7.1.3
+Requires: fmt >= 8.1.1
 Requires: gdal34-libs
 Requires: geos310
 #TestRequires: boost169-devel
@@ -106,6 +106,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Aug  4 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.4-1.fmi
+- Update to fmt 8.1.1
+
 * Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-4.fmi
 - Fixed NFmiQueryInfo::RelativePoint not to be const as in the master branch
 
