@@ -144,6 +144,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   }
   double UsedPressureLevelValue() const override { return itsUsedPressureLevelValue; }
   void UsedPressureLevelValue(double newValue) override { itsUsedPressureLevelValue = newValue; }
+  bool CheckPossibleObservationDistance(const NFmiCalculationParams &theCalculationParams) override;
 
   static boost::shared_ptr<NFmiDataModifier> CreateIntegrationFuction(
       NFmiAreaMask::FunctionType func);
