@@ -95,7 +95,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> GetMultiSourceData(
       const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
       boost::shared_ptr<NFmiArea> &calculationArea,
-      bool getSynopXData);
+      bool getStationarySynopDataOnly);
   static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> CreateShallowCopyOfInfoVector(
       const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector);
 
@@ -144,7 +144,8 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   }
   double UsedPressureLevelValue() const override { return itsUsedPressureLevelValue; }
   void UsedPressureLevelValue(double newValue) override { itsUsedPressureLevelValue = newValue; }
-  bool CheckPossibleObservationDistance(const NFmiCalculationParams &theCalculationParams) override;
+  bool CheckPossibleObservationDistance(const NFmiCalculationParams &theCalculationParamsInOut) override;
+  void Initialize() override;
 
   static boost::shared_ptr<NFmiDataModifier> CreateIntegrationFuction(
       NFmiAreaMask::FunctionType func);
@@ -183,6 +184,11 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   void AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                         boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                         const NFmiLocationCache &theLocationCache);
+  bool FindClosestStationData(const NFmiPoint &latlon,
+                              double observationRadiusInKm,
+                              size_t &dataIndexOut,
+                              unsigned long &locationIndexOut);
+  double GetSearchRadiusInMetres(double observationRadiusInKm);
 
   void DoConstructorInitializations(unsigned long thePossibleMetaParamId);
 
@@ -200,6 +206,11 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   double itsUsedPressureLevelValue;
   MetaParamDataHolder metaParamDataHolder;
   bool fIsModelClimatologyData = false;
+  // Datan tuottajasta päätellään, voiko tuottajalla olla useita datoja (synop + salamat)
+  bool fUseMultiSourceData = false;
+  // Tähän laitetaan havainto laskuissa käytettävät datat, joko se joko on jo emoluokassa
+  // oleva itsInfo, tai multisource tapauksissa joukko datoja
+  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> itsInfoVector;
   static MultiSourceDataGetterType itsMultiSourceDataGetter;
 
   template <typename GetFunction>

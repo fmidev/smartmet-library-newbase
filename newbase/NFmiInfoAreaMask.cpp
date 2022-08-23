@@ -118,11 +118,12 @@ void NFmiInfoAreaMask::SetMultiSourceDataGetterCallback(
 std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSourceData(
     const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
     boost::shared_ptr<NFmiArea> &calculationArea,
-    bool getSynopXData)
+    bool getStationarySynopDataOnly)
 {
   std::vector<boost::shared_ptr<NFmiFastQueryInfo>> infoVector;
   NFmiDataIdent usedDataIdent = theInfo->Param();
-  if (getSynopXData) usedDataIdent.GetProducer()->SetIdent(NFmiInfoData::kFmiSpSynoXProducer);
+  if (getStationarySynopDataOnly)
+    usedDataIdent.GetProducer()->SetIdent(NFmiInfoData::kFmiSpSynoXProducer);
   itsMultiSourceDataGetter(infoVector, usedDataIdent, *theInfo->Level(), theInfo->DataType(), calculationArea);
   return infoVector;
 }
@@ -176,7 +177,8 @@ NFmiInfoAreaMask::NFmiInfoAreaMask()
       fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder()
+      metaParamDataHolder(),
+      itsInfoVector()
 {
   DoConstructorInitializations(kFmiBadParameter);
 }
@@ -208,7 +210,8 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
       fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder()
+      metaParamDataHolder(),
+      itsInfoVector()
 {
   DoConstructorInitializations(thePossibleMetaParamId);
 }
@@ -235,7 +238,8 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const boost::shared_ptr<NFmiFastQueryInfo> &t
       fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder()
+      metaParamDataHolder(),
+      itsInfoVector()
 {
   DoConstructorInitializations(thePossibleMetaParamId);
 }
@@ -249,7 +253,9 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther)
       fUsePressureLevelInterpolation(theOther.fUsePressureLevelInterpolation),
       itsUsedPressureLevelValue(theOther.itsUsedPressureLevelValue),
       metaParamDataHolder(theOther.metaParamDataHolder),
-      fIsModelClimatologyData(theOther.fIsModelClimatologyData)
+      fIsModelClimatologyData(theOther.fIsModelClimatologyData),
+      fUseMultiSourceData(theOther.fUseMultiSourceData),
+      itsInfoVector(NFmiInfoAreaMask::CreateShallowCopyOfInfoVector(theOther.itsInfoVector))
 {
 }
 
@@ -260,10 +266,30 @@ void NFmiInfoAreaMask::DoConstructorInitializations(unsigned long thePossibleMet
     metaParamDataHolder.initialize(itsInfo, thePossibleMetaParamId);
     if (itsInfo->Level()) itsLevel = *itsInfo->Level();
     fIsModelClimatologyData = NFmiFastInfoUtils::IsModelClimatologyData(itsInfo);
+    fUseMultiSourceData = IsKnownMultiSourceData(itsInfo);
   }
 }
 
 NFmiAreaMask *NFmiInfoAreaMask::Clone() const { return new NFmiInfoAreaMask(*this); }
+
+void NFmiInfoAreaMask::Initialize()
+{
+  if (fUseMultiSourceData)
+  {
+    boost::shared_ptr<NFmiArea> dummyArea;
+    bool getStationarySynopDataOnly = false;
+    itsInfoVector =
+        NFmiInfoAreaMask::GetMultiSourceData(itsInfo, dummyArea, getStationarySynopDataOnly);
+  }
+  else
+  {
+    if (itsInfo)
+    {
+      itsInfoVector.push_back(itsInfo);
+    }
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theTime Undocumented
@@ -339,17 +365,60 @@ void NFmiInfoAreaMask::Level(const NFmiLevel &theLevel) { itsLevel = theLevel; }
 
 bool NFmiInfoAreaMask::UseLevelInfo() const { return false; }
 
-bool NFmiInfoAreaMask::CheckPossibleObservationDistance(
-    const NFmiCalculationParams &theCalculationParams)
+double NFmiInfoAreaMask::GetSearchRadiusInMetres(double observationRadiusInKm)
 {
-  if (theCalculationParams.itsObservationRadiusInKm != kFloatMissing && itsInfo && !itsInfo->IsGrid())
+  if (observationRadiusInKm == kFloatMissing)
   {
-    auto usedInfo = theCalculationParams.itsCurrentMultiInfoData
-                        ? theCalculationParams.itsCurrentMultiInfoData
-                        : itsInfo.get();
-    if (usedInfo->NearestLocation(theCalculationParams.itsLatlon,
-                                  theCalculationParams.itsObservationRadiusInKm * 1000.))
+    // Tämä on rajaton etsintä NFmiFastInfo::NearestLocation metodissa
+    return kFloatMissing * 1000.;
+  }
+  else
+    return observationRadiusInKm * 1000.;
+}
+
+bool NFmiInfoAreaMask::FindClosestStationData(
+    const NFmiPoint &latlon,
+    double observationRadiusInKm,
+    size_t &dataIndexOut,
+    unsigned long &locationIndexOut)
+{
+  NFmiLocation wantedLocation(latlon);
+  double minDistanceInMetres = 99999999999;
+  double searchRadiusInMetres = GetSearchRadiusInMetres(observationRadiusInKm);
+  for (size_t dataCounter = 0; dataCounter < itsInfoVector.size(); dataCounter++)
+  {
+    const auto &info = itsInfoVector[dataCounter];
+    if (!NFmiFastInfoUtils::IsInfoShipTypeData(*info) && info->NearestLocation(latlon, searchRadiusInMetres))
     {
+      double currentDistanceInMetres = wantedLocation.Distance(info->LatLon());
+      if (currentDistanceInMetres < minDistanceInMetres)
+      {
+        minDistanceInMetres = currentDistanceInMetres;
+        dataIndexOut = dataCounter;
+        locationIndexOut = info->LocationIndex();
+      }
+    }
+  }
+  return minDistanceInMetres <= searchRadiusInMetres;
+}
+
+
+
+bool NFmiInfoAreaMask::CheckPossibleObservationDistance(
+    const NFmiCalculationParams &theCalculationParamsInOut)
+{
+  theCalculationParamsInOut.itsCurrentMultiInfoData = nullptr;
+  if (theCalculationParamsInOut.itsObservationRadiusInKm != kFloatMissing && itsInfo &&
+      !itsInfo->IsGrid())
+  {
+    size_t dataIndex = 0;
+    unsigned long locationIndex = 0;
+    if (FindClosestStationData(theCalculationParamsInOut.itsLatlon, theCalculationParamsInOut.itsObservationRadiusInKm, dataIndex, locationIndex))
+    {
+      if (itsInfoVector.size() > 1)
+      {
+        theCalculationParamsInOut.itsCurrentMultiInfoData = itsInfoVector[dataIndex].get();
+      }
       return true;
     }
     else
