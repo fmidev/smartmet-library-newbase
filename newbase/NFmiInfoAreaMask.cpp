@@ -274,6 +274,7 @@ NFmiAreaMask *NFmiInfoAreaMask::Clone() const { return new NFmiInfoAreaMask(*thi
 
 void NFmiInfoAreaMask::Initialize()
 {
+  NFmiAreaMaskImpl::Initialize();
   if (fUseMultiSourceData)
   {
     boost::shared_ptr<NFmiArea> dummyArea;
