@@ -2,6 +2,17 @@
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
+
+%if 0%{?rhel} && 0%{rhel} < 9
+%define smartmet_boost boost169
+%define smartmet_fmt_min 7.1.3
+%define smartmet_fmt_max 7.2.0
+%else
+%define smartmet_boost boost
+%define smartmet_fmt_min 8.1.1
+%define smartmet_fmt_max 8.2.0
+%endif
+
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 22.8.29
@@ -11,9 +22,9 @@ Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: boost169-devel
+BuildRequires: %{smartmet_boost}-devel
 BuildRequires: bzip2-devel
-BuildRequires: fmt-devel >= 8.1.1
+BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel <= %{smartmet_fmt_max}
 BuildRequires: gcc-c++
 BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
@@ -26,15 +37,15 @@ BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 22.3.28
 Requires: smartmet-library-gis >= 22.5.4
-Requires: boost169-date-time
-Requires: boost169-filesystem
-Requires: boost169-iostreams
-Requires: boost169-regex
-Requires: boost169-system
-Requires: fmt >= 8.1.1
+Requires: %{smartmet_boost}-date-time
+Requires: %{smartmet_boost}-filesystem
+Requires: %{smartmet_boost}-iostreams
+Requires: %{smartmet_boost}-regex
+Requires: %{smartmet_boost}-system
+Requires: fmt >= %{smartmet_fmt_min}, fmt <= %{smartmet_fmt_max}
 Requires: gdal34-libs
 Requires: geos310
-#TestRequires: boost169-devel
+#TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
 #TestRequires: gdal34-devel
