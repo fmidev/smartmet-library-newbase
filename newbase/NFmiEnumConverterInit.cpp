@@ -72,6 +72,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "AreaOfRisk", kFmiAreaOfRisk },
       { "AshConcentration", kFmiAshConcentration },
       { "AshOnOff", kFmiAshOnOff },
+      { "AtmosphericIcGrowth", kFmiAtmosphericIcGrowth},
       { "AvailableEnsembleMemberCount", kFmiAvailableEnsembleMemberCount },
       { "AverageHumidity", kFmiAverageHumidity },
       { "AveragePressure", kFmiAveragePressure },
