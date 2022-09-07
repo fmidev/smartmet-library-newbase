@@ -687,8 +687,6 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
     {
       if (itsInfo->LevelIndex(levelIndex))  // pitäisi olla aina totta
       {
-        if (IgnoreSimpleConditionWhileIteratingLevels() ||
-            VertFuncSimpleconditionCheck(theCalculationParams))
           functionObject();
         if (iterationBreakingData.BreakIteration()) break;
       }
@@ -696,33 +694,34 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
   }
 
   bool VertFuncSimpleconditionCheck(const NFmiCalculationParams &theCalculationParams);
-  bool IgnoreSimpleConditionWhileIteratingLevels() const;
 
-  NFmiAreaMask::FunctionType itsPrimaryFunc;    // esim. Avg, Max, Get, Find, jne.
-  NFmiAreaMask::FunctionType itsSecondaryFunc;  // esim. VertP, VertZ, jne.
+  // Esim. Avg, Max, Get, Find, jne.
+  NFmiAreaMask::FunctionType itsPrimaryFunc;
+  // Esim. VertP, VertZ, jne.
+  NFmiAreaMask::FunctionType itsSecondaryFunc;
   std::vector<float> itsArgumentVector;
-
-  boost::shared_ptr<NFmiDataModifier>
-      itsFunctionModifier;   // tämä luodaan itsPrimaryFunc-dataosan mukaan
-  float itsStartLevelValue;  // tähän otetaan annetusta argumentti listasta aloitus korkeus (missä
-                             // yksikössä onkaan)
-  float itsEndLevelValue;  // tähän otetaan annetusta argumentti listasta lopetus korkeus (missä
+  // tämä luodaan itsPrimaryFunc-dataosan mukaan
+  boost::shared_ptr<NFmiDataModifier> itsFunctionModifier;
+  // Tähän otetaan annetusta argumentti listasta aloitus korkeus (missä yksikössä onkaan)
+  float itsStartLevelValue;
+  // tähän otetaan annetusta argumentti listasta lopetus korkeus (missä
   // yksikössä onkaan), PAITSI, jos kyse on get-funktiosta, jolloin tämä on
   // puuttuva
+  float itsEndLevelValue;
   unsigned long itsStartLevelIndex;  // dataa käydään läpi alkaen tästä levelistä
   unsigned long itsEndLevelIndex;    // dataa käydään läpi tähän leveliin asti
 
   FmiParameterName itsUsedHeightParId;
   bool fReturnHeightValue;
-  int itsLevelIncrement;  // kun ollaan päätelty mihin suuntaan leveldata menee (ylös maanpinnasta
-                          // vai alas avaruudesta)
+  // Kun ollaan päätelty mihin suuntaan leveldata menee (ylös maanpinnasta vai alas avaruudesta)
   // tähän on tarkoitus laskea for-looppeja varten level incrementti (joko 1 tai -1)
   // Jos datan levelien suunta on maanpinnasta ylöspäin, on incrementti 1 ja käydään levelit
-  // normaali järjestyksessä läpi.
-  // Jos datan levelien suuntä on avaruudesta maanpintaa kohden, on incrementti -1 ja levelit
-  // käydään käänteisessä järjestyksessä.
-  bool fReverseLevels;  // Jos itsLevelIncrement on -1, tämä on true, jolloin for-loopitus tehdään
-                        // käänteisessä järjestyksessä
+  // normaali järjestyksessä läpi. Jos datan levelien suuntä on avaruudesta maanpintaa kohden, on
+  // incrementti -1 ja levelit käydään käänteisessä järjestyksessä.
+  int itsLevelIncrement;
+  // Jos itsLevelIncrement on -1, tämä on true, jolloin for-loopitus tehdään
+  // käänteisessä järjestyksessä
+  bool fReverseLevels;
 };
 
 class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc

@@ -411,26 +411,28 @@ bool NFmiInfoAreaMask::CheckPossibleObservationDistance(
   theCalculationParamsInOut.itsCurrentMultiInfoData = nullptr;
   if (itsInfo && !itsInfo->IsGrid())
   {
-      // Jos ObsRadius:sella on arvo tai on kyse multi-info datasta, pitää etsiä lähin data ja paikka siinä
+    // Jos ObsRadius:sella on arvo tai on kyse multi-info datasta, pitää etsiä lähin data ja paikka
+    // siinä
     if (theCalculationParamsInOut.itsObservationRadiusInKm != kFloatMissing ||
         itsInfoVector.size() > 1)
-  {
-    size_t dataIndex = 0;
-    unsigned long locationIndex = 0;
+    {
+      size_t dataIndex = 0;
+      unsigned long locationIndex = 0;
       if (FindClosestStationData(theCalculationParamsInOut.itsLatlon,
                                  theCalculationParamsInOut.itsObservationRadiusInKm,
                                  dataIndex,
                                  locationIndex))
-    {
-      if (itsInfoVector.size() > 1)
       {
-        theCalculationParamsInOut.itsCurrentMultiInfoData = itsInfoVector[dataIndex].get();
+        if (itsInfoVector.size() > 1)
+        {
+          theCalculationParamsInOut.itsCurrentMultiInfoData = itsInfoVector[dataIndex].get();
+        }
+        return true;
       }
-      return true;
-    }
-    else
-    {
-      return false;
+      else
+      {
+        return false;
+      }
     }
   }
   return true;
@@ -2323,7 +2325,7 @@ float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
       // simple-condition tila muuttunut niin tilanne on mennyt päälle ja otetaan tilanne talteen
       if (currentLevelHeigth != kFloatMissing)
       {
-        if (previousLevelCondition == false && currentLevelCondition == true)
+        if (previousLevelCondition != currentLevelCondition)
         {
           foundCount++;
           // Laitetaan löytökorkeudeksi sen levelin arvo missä simple-condition oli päällä
@@ -2561,11 +2563,6 @@ bool NFmiInfoAreaMaskVertFunc::VertFuncSimpleconditionCheck(
     return itsSimpleCondition->CheckPressureCondition(pressure, theCalculationParams);
   }
   return true;
-}
-
-bool NFmiInfoAreaMaskVertFunc::IgnoreSimpleConditionWhileIteratingLevels() const
-{
-  return IsSimpleConditionFindFunction(itsPrimaryFunc);
 }
 
 // **********************************************************
