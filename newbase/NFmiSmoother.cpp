@@ -6,9 +6,8 @@
 // ======================================================================
 
 #include "NFmiSmoother.h"
-
 #include <gis/CoordinateMatrix.h>
-
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <cstdlib>
 // abs(int)
@@ -62,17 +61,24 @@ NFmiSmoother::NFmiSmoother(const std::string& theSmootherName, int theFactor, fl
 const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& thePts,
                                                    const NFmiDataMatrix<float>& theValues) const
 {
-  assert(thePts.width() == theValues.NX() && thePts.height() == theValues.NY());
-
-  switch (Smoother())
+  try
   {
-    case kFmiSmootherNeighbourhood:
-    case kFmiSmootherPseudoGaussian:
-      return SmoothenKernel(thePts, theValues);
-    default:
-      break;
+    assert(thePts.width() == theValues.NX() && thePts.height() == theValues.NY());
+
+    switch (Smoother())
+    {
+      case kFmiSmootherNeighbourhood:
+      case kFmiSmootherPseudoGaussian:
+        return SmoothenKernel(thePts, theValues);
+      default:
+        break;
+    }
+    return theValues;
   }
-  return theValues;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -88,17 +94,24 @@ const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& 
 const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
                                                 const std::vector<float>& theY) const
 {
-  assert(theX.size() == theY.size());
-
-  switch (Smoother())
+  try
   {
-    case kFmiSmootherNeighbourhood:
-    case kFmiSmootherPseudoGaussian:
-      return SmoothenKernel(theX, theY);
-    default:
-      break;
+    assert(theX.size() == theY.size());
+
+    switch (Smoother())
+    {
+      case kFmiSmootherNeighbourhood:
+      case kFmiSmootherPseudoGaussian:
+        return SmoothenKernel(theX, theY);
+      default:
+        break;
+    }
+    return theY;
   }
-  return theY;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -119,104 +132,113 @@ const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
 const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
     const Fmi::CoordinateMatrix& thePts, const NFmiDataMatrix<float>& theValues) const
 {
-  // Temporary holder for the interpolated values
+  try
+  {
+    // Temporary holder for the interpolated values
 
-  NFmiDataMatrix<float> values(theValues.NX(), theValues.NY());
+    NFmiDataMatrix<float> values(theValues.NX(), theValues.NY());
 
-  // From how may sectors do we require values?
-  // Should not exceed the number of bits in an integer
+    // From how may sectors do we require values?
+    // Should not exceed the number of bits in an integer
 
-  const int nsectors = 4;
-  const float pi = 3.14159265358979323f;
-  const auto factor = static_cast<float>(nsectors / (2.0 * pi));
+    const int nsectors = 4;
+    const float pi = 3.14159265358979323f;
+    const auto factor = static_cast<float>(nsectors / (2.0 * pi));
 
-  // Bitmask indicating full set of sectors:
+    // Bitmask indicating full set of sectors:
 
-  const int allsectors = (1 << nsectors) - 1;
+    const int allsectors = (1 << nsectors) - 1;
 
-  for (unsigned int j = 0; j < thePts.width(); j++)
-    for (unsigned int i = 0; i < thePts.height(); i++)
-    {
-      // The coordinates to which we're interpolating
-
-      auto x = static_cast<float>(thePts.x(i, j));
-      auto y = static_cast<float>(thePts.y(i, j));
-
-      float zsum = 0.0;  // weighted sum of function values
-      float wsum = 0.0;  // sum of the weights
-
-      // Search the grid for nearby values
-
-      int sectors = 0;
-      int ymisses = 0;
-      for (int dj = 0; static_cast<unsigned int>(abs(dj)) < theValues.NY(); dj = NEXTDIR(dj))
+    for (unsigned int j = 0; j < thePts.height(); j++)
+      for (unsigned int i = 0; i < thePts.width(); i++)
       {
-        if (ymisses >= 2) break;
-        int xmisses = 0;
-        int xgoods = 0;
-        for (int di = 0; static_cast<unsigned int>(abs(di)) < theValues.NX(); di = NEXTDIR(di))
+        // The coordinates to which we're interpolating
+
+        auto x = static_cast<float>(thePts.x(i, j));
+        auto y = static_cast<float>(thePts.y(i, j));
+
+        float zsum = 0.0;  // weighted sum of function values
+        float wsum = 0.0;  // sum of the weights
+
+        // Search the grid for nearby values
+
+        int sectors = 0;
+        int ymisses = 0;
+        for (int dj = 0; static_cast<unsigned int>(abs(dj)) < theValues.NY(); dj = NEXTDIR(dj))
         {
-          if (xmisses >= 2) break;
-
-          // Test against grid bounds
-
-          if (static_cast<int>(i) + di < 0 || static_cast<int>(j) + dj < 0 ||
-              i + di >= theValues.NX() || j + dj >= theValues.NY())
+          if (ymisses >= 2)
+            break;
+          int xmisses = 0;
+          int xgoods = 0;
+          for (int di = 0; static_cast<unsigned int>(abs(di)) < theValues.NX(); di = NEXTDIR(di))
           {
-            xmisses++;
-            continue;
+            if (xmisses >= 2)
+              break;
+
+            // Test against grid bounds
+
+            if (static_cast<int>(i) + di < 0 || static_cast<int>(j) + dj < 0 ||
+                i + di >= theValues.NX() || j + dj >= theValues.NY())
+            {
+              xmisses++;
+              continue;
+            }
+
+            // Test the coordinate and the value are valid
+
+            if (thePts.x(i + di, j + dj) == kFloatMissing ||
+                thePts.y(i + di, j + dj) == kFloatMissing ||
+                theValues[i + di][j + dj] == kFloatMissing)
+              continue;
+
+            // See if within search radius
+
+            auto dx = static_cast<float>(thePts.x(i + di, j + dj) - x);
+            auto dy = static_cast<float>(thePts.y(i + di, j + dj) - y);
+
+            float dist = sqrt(dx * dx + dy * dy);
+
+            if (dist > Radius())
+              xmisses++;
+            else
+            {
+              xmisses = 0;
+              xgoods++;
+
+              float weight = Weight(dist);
+
+              wsum += weight;
+              zsum += weight * theValues[i + di][j + dj];
+
+              // The sector in question (0..nsectors-1)
+
+              int sector = static_cast<int>((atan2(dx, dy) + pi) * factor) % nsectors;
+              // Set the bit on for this sector
+
+              sectors |= (1 << sector);
+            }
           }
-
-          // Test the coordinate and the value are valid
-
-          if (thePts.x(i + di, j + dj) == kFloatMissing ||
-              thePts.y(i + di, j + dj) == kFloatMissing ||
-              theValues[i + di][j + dj] == kFloatMissing)
-            continue;
-
-          // See if within search radius
-
-          auto dx = static_cast<float>(thePts.x(i + di, j + dj) - x);
-          auto dy = static_cast<float>(thePts.y(i + di, j + dj) - y);
-
-          float dist = sqrt(dx * dx + dy * dy);
-
-          if (dist > Radius())
-            xmisses++;
+          if (xgoods == 0)
+            ymisses++;
           else
-          {
-            xmisses = 0;
-            xgoods++;
-
-            float weight = Weight(dist);
-
-            wsum += weight;
-            zsum += weight * theValues[i + di][j + dj];
-
-            // The sector in question (0..nsectors-1)
-
-            int sector = static_cast<int>((atan2(dx, dy) + pi) * factor) % nsectors;
-            // Set the bit on for this sector
-
-            sectors |= (1 << sector);
-          }
+            ymisses = 0;
         }
-        if (xgoods == 0)
-          ymisses++;
+        // If got all desired sectors, then we can handle the sum
+
+        if ((sectors == allsectors) && (wsum > 0.0))
+          values[i][j] = zsum / wsum;
         else
-          ymisses = 0;
+          values[i][j] = theValues[i][j];
       }
-      // If got all desired sectors, then we can handle the sum
 
-      if ((sectors == allsectors) && (wsum > 0.0))
-        values[i][j] = zsum / wsum;
-      else
-        values[i][j] = theValues[i][j];
-    }
+    // And return the interpolated values
 
-  // And return the interpolated values
-
-  return values;
+    return values;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -235,30 +257,38 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
 const std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& theX,
                                                       const std::vector<float>& theY) const
 {
-  // We need a dummy
-  std::vector<float> result(theY.size(), kFloatMissing);
-
-  for (unsigned int i = 0; i < result.size(); i++)
+  try
   {
-    float sum = 0;
-    float wsum = 0;
-    for (unsigned int j = 0; j < theX.size(); j++)
+    // We need a dummy
+    std::vector<float> result(theY.size(), kFloatMissing);
+
+    for (unsigned int i = 0; i < result.size(); i++)
     {
-      if (theY[j] != kFloatMissing)
+      float sum = 0;
+      float wsum = 0;
+      for (unsigned int j = 0; j < theX.size(); j++)
       {
-        float dist = abs(theX[i] - theX[j]);
-        if (dist <= itsRadius)
+        if (theY[j] != kFloatMissing)
         {
-          float w = Weight(dist);
-          sum += w * theY[j];
-          wsum += w;
+          float dist = abs(theX[i] - theX[j]);
+          if (dist <= itsRadius)
+          {
+            float w = Weight(dist);
+            sum += w * theY[j];
+            wsum += w;
+          }
         }
       }
+      if (wsum > 0)
+        result[i] = sum / wsum;
     }
-    if (wsum > 0) result[i] = sum / wsum;
-  }
 
-  return result;
+    return result;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -274,14 +304,23 @@ const std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& 
 
 NFmiSmoother::NFmiSmootherMethod NFmiSmoother::SmootherValue(const string& theName)
 {
-  if (theName == "None")
-    return kFmiSmootherNone;
-  else if (theName == "Neighbourhood")
-    return kFmiSmootherNeighbourhood;
-  else if (theName == "PseudoGaussian")
-    return kFmiSmootherPseudoGaussian;
-  else
+  try
+  {
+    if (theName == "None")
+      return kFmiSmootherNone;
+
+    if (theName == "Neighbourhood")
+      return kFmiSmootherNeighbourhood;
+
+    if (theName == "PseudoGaussian")
+      return kFmiSmootherPseudoGaussian;
+
     return kFmiSmootherMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -297,16 +336,23 @@ NFmiSmoother::NFmiSmootherMethod NFmiSmoother::SmootherValue(const string& theNa
 
 const string NFmiSmoother::SmootherName(NFmiSmoother::NFmiSmootherMethod theSmoother)
 {
-  switch (theSmoother)
+  try
   {
-    case kFmiSmootherNone:
-      return string("None");
-    case kFmiSmootherNeighbourhood:
-      return string("Neighbourhood");
-    case kFmiSmootherPseudoGaussian:
-      return string("PseudoGaussian");
-    default:
-      return string("Missing");
+    switch (theSmoother)
+    {
+      case kFmiSmootherNone:
+        return string("None");
+      case kFmiSmootherNeighbourhood:
+        return string("Neighbourhood");
+      case kFmiSmootherPseudoGaussian:
+        return string("PseudoGaussian");
+      default:
+        return string("Missing");
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

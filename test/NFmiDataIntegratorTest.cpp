@@ -63,7 +63,8 @@ void integrate_time(void)
     float result = Integrate(*q, time1, time2, modifier);
     float expected = 7.77182;
 
-    if (std::abs(result - expected) > 0.1) TEST_FAILED("max over time failed");
+    if (std::abs(result - expected) > 0.1)
+      TEST_FAILED("max over time failed");
   }
 
   {
@@ -71,7 +72,8 @@ void integrate_time(void)
     float result = Integrate(*q, time1, time2, modifier);
     float expected = 5.9;
 
-    if (std::abs(result - expected) > 0.1) TEST_FAILED("min over time failed");
+    if (std::abs(result - expected) > 0.1)
+      TEST_FAILED("min over time failed");
   }
 
   {
@@ -79,7 +81,8 @@ void integrate_time(void)
     float result = Integrate(*q, time1, time2, modifier);
     float expected = 75.5807;
 
-    if (std::abs(result - expected) > 0.1) TEST_FAILED("sum over time failed");
+    if (std::abs(result - expected) > 0.1)
+      TEST_FAILED("sum over time failed");
   }
 
   {
@@ -87,7 +90,8 @@ void integrate_time(void)
     float result = Integrate(*q, time1, time2, modifier);
     float expected = 6.87097;
 
-    if (std::abs(result - expected) > 0.1) TEST_FAILED("average over time failed");
+    if (std::abs(result - expected) > 0.1)
+      TEST_FAILED("average over time failed");
   }
 
   TEST_PASSED();
@@ -132,7 +136,8 @@ void integrate_space(void)
     float result = Integrate(*q, helsinki, modifier);
     float expected = 2.6;
 
-    if (result != expected) TEST_FAILED("maximum over helsinki failed");
+    if (result != expected)
+      TEST_FAILED("maximum over helsinki failed");
   }
 
   {
@@ -140,7 +145,8 @@ void integrate_space(void)
     float result = Integrate(*q, helsinki, modifier);
     float expected = -0.7;
 
-    if (result != expected) TEST_FAILED("minimum over helsinki failed");
+    if (result != expected)
+      TEST_FAILED("minimum over helsinki failed");
   }
 
   {
@@ -148,7 +154,8 @@ void integrate_space(void)
     float result = Integrate(*q, helsinki, modifier);
     float expected = 14.8 / 12;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("average over helsinki failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("average over helsinki failed");
   }
 
   {
@@ -156,7 +163,8 @@ void integrate_space(void)
     float result = Integrate(*q, suomi, modifier);
     float expected = 5.3;
 
-    if (result != expected) TEST_FAILED("maximum over suomi failed");
+    if (result != expected)
+      TEST_FAILED("maximum over suomi failed");
   }
 
   {
@@ -164,7 +172,8 @@ void integrate_space(void)
     float result = Integrate(*q, suomi, modifier);
     float expected = -7.7;
 
-    if (result != expected) TEST_FAILED("minimum over suomi failed");
+    if (result != expected)
+      TEST_FAILED("minimum over suomi failed");
   }
 
   TEST_PASSED();
@@ -199,7 +208,8 @@ void integrate_time_space(void)
 
     float expected = 5.12285;
 
-    if (std::abs(result - expected) > 00.1) TEST_FAILED("maximum over helsinki and time failed");
+    if (std::abs(result - expected) > 00.1)
+      TEST_FAILED("maximum over helsinki and time failed");
   }
 
   {
@@ -209,7 +219,8 @@ void integrate_time_space(void)
 
     float expected = -0.7;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minimum over helsinki and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minimum over helsinki and time failed");
   }
 
   {
@@ -219,7 +230,8 @@ void integrate_time_space(void)
 
     float expected = 6.86388;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("maximum over suomi and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("maximum over suomi and time failed");
   }
 
   {
@@ -229,7 +241,8 @@ void integrate_time_space(void)
 
     float expected = -7.7;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minimum over suomi and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minimum over suomi and time failed");
   }
 
   {
@@ -239,7 +252,8 @@ void integrate_time_space(void)
 
     float expected = 2.6;
 
-    if (std::abs(result - expected) > 00.1) TEST_FAILED("maxmin over helsinki and time failed");
+    if (std::abs(result - expected) > 00.1)
+      TEST_FAILED("maxmin over helsinki and time failed");
   }
 
   {
@@ -249,7 +263,8 @@ void integrate_time_space(void)
 
     float expected = -0.7;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minmax over helsinki and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minmax over helsinki and time failed");
   }
 
   {
@@ -259,7 +274,8 @@ void integrate_time_space(void)
 
     float expected = 5.3;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("maxmin over suomi and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("maxmin over suomi and time failed");
   }
 
   {
@@ -269,7 +285,8 @@ void integrate_time_space(void)
 
     float expected = -7.7;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minmax over suomi and time failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minmax over suomi and time failed");
   }
 
   TEST_PASSED();
@@ -304,7 +321,8 @@ void integrate_space_time(void)
 
     float expected = 2.6;
 
-    if (std::abs(result - expected) > 00.1) TEST_FAILED("maxmin over time and helsinki failed");
+    if (std::abs(result - expected) > 00.1)
+      TEST_FAILED("maxmin over time and helsinki failed");
   }
 
   {
@@ -314,7 +332,8 @@ void integrate_space_time(void)
 
     float expected = 1.71659;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minmax over time and helsinki failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minmax over time and helsinki failed");
   }
 
   {
@@ -324,7 +343,8 @@ void integrate_space_time(void)
 
     float expected = 3.68;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("maxmin over time and suomi failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("maxmin over time and suomi failed");
   }
 
   {
@@ -334,7 +354,8 @@ void integrate_space_time(void)
 
     float expected = 0.783088;
 
-    if (std::abs(result - expected) > 0.01) TEST_FAILED("minmax over time and suomi failed");
+    if (std::abs(result - expected) > 0.01)
+      TEST_FAILED("minmax over time and suomi failed");
   }
 
   TEST_PASSED();

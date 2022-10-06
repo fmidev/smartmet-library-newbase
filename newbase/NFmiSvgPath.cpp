@@ -20,6 +20,7 @@
 #include "NFmiSvgPath.h"
 
 #include "NFmiPoint.h"
+#include <macgyver/Exception.h>
 
 #include <algorithm>
 #include <iterator>
@@ -45,16 +46,23 @@ namespace
 
 bool EatWhiteSpaces(istream& theInput)
 {
-  char ch = '\0';
-  do
+  try
   {
-    ch = static_cast<char>(theInput.get());
-  } while (isspace(ch));
-  if (theInput.fail())
-    return false;  // jos stremin lopussa, epäonnistuu
-  else
-    theInput.unget();
-  return true;
+    char ch = '\0';
+    do
+    {
+      ch = static_cast<char>(theInput.get());
+    } while (isspace(ch));
+    if (theInput.fail())
+      return false;  // jos stremin lopussa, epäonnistuu
+    else
+      theInput.unget();
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -68,16 +76,23 @@ bool EatWhiteSpaces(istream& theInput)
 
 char SvgElementToChar(NFmiSvgPath::ElementType theType)
 {
-  switch (theType)
+  try
   {
-    case NFmiSvgPath::kElementMoveto:
-      return 'M';
-    case NFmiSvgPath::kElementLineto:
-      return 'L';
-    case NFmiSvgPath::kElementClosePath:
-      return 'Z';
-    default:
-      return '?';
+    switch (theType)
+    {
+      case NFmiSvgPath::kElementMoveto:
+        return 'M';
+      case NFmiSvgPath::kElementLineto:
+        return 'L';
+      case NFmiSvgPath::kElementClosePath:
+        return 'Z';
+      default:
+        return '?';
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -92,19 +107,26 @@ char SvgElementToChar(NFmiSvgPath::ElementType theType)
 
 NFmiSvgPath::ElementType CharToSvgElement(char theChar)
 {
-  switch (theChar)
+  try
   {
-    case 'M':
-    case 'm':
-      return NFmiSvgPath::kElementMoveto;
-    case 'L':
-    case 'l':
-      return NFmiSvgPath::kElementLineto;
-    case 'Z':
-    case 'z':
-      return NFmiSvgPath::kElementClosePath;
-    default:
-      return NFmiSvgPath::kElementNotValid;
+    switch (theChar)
+    {
+      case 'M':
+      case 'm':
+        return NFmiSvgPath::kElementMoveto;
+      case 'L':
+      case 'l':
+        return NFmiSvgPath::kElementLineto;
+      case 'Z':
+      case 'z':
+        return NFmiSvgPath::kElementClosePath;
+      default:
+        return NFmiSvgPath::kElementNotValid;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -117,7 +139,11 @@ NFmiSvgPath::ElementType CharToSvgElement(char theChar)
  */
 // ----------------------------------------------------------------------
 
-bool IsRelativeSvgElement(char theChar) { return (theChar >= 'a' && theChar <= 'z'); }
+bool IsRelativeSvgElement(char theChar)
+{
+  return (theChar >= 'a' && theChar <= 'z');
+}
+
 // ----------------------------------------------------------------------
 /*!
  *  Irroittaa streamista aina stringin, joka on seuraavan ""-blokin sisällä.
@@ -130,25 +156,31 @@ bool IsRelativeSvgElement(char theChar) { return (theChar >= 'a' && theChar <= '
 
 bool GetPolygonStringFromStream(istream& theInput, string& thePolygonDataStr)
 {
-  char ch = '\0';
-  do  // luetaan streamia kunnes loppuu tai tulee "-merkki
+  try
   {
-    theInput.get(ch);
-  } while ((!theInput.fail()) && ch != '\"');
+    char ch = '\0';
+    do  // luetaan streamia kunnes loppuu tai tulee "-merkki
+    {
+      theInput.get(ch);
+    } while ((!theInput.fail()) && ch != '\"');
 
-  // luetaan streamia kunnes loppuu tai tulee "-merkki ja
-  // lisätään merkit stringiin
-  do
+    // luetaan streamia kunnes loppuu tai tulee "-merkki ja
+    // lisätään merkit stringiin
+    do
+    {
+      theInput.get(ch);
+      if ((!theInput.fail()) && ch != '\"')
+        thePolygonDataStr += ch;
+      else if ((!theInput.fail()) && ch == '\"')
+        return true;  // saatiin "" -blokin välistä merkit kunnialla talteen, palautetaan true
+    } while ((!theInput.fail()) && ch != '\"');  // tupla tarkistus fail-bittiin (tämä on turha
+                                                 // periaateessa koska loopissa on tarkistus)
+    return false;
+  }
+  catch (...)
   {
-    theInput.get(ch);
-    if ((!theInput.fail()) && ch != '\"')
-      thePolygonDataStr += ch;
-    else if ((!theInput.fail()) && ch == '\"')
-      return true;  // saatiin "" -blokin välistä merkit kunnialla talteen, palautetaan true
-  } while ((!theInput.fail()) && ch != '\"');  // tupla tarkistus fail-bittiin (tämä on turha
-                                               // periaateessa koska loopissa on tarkistus)
-
-  return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -191,93 +223,106 @@ bool GetPolygonStringFromStream(istream& theInput, string& thePolygonDataStr)
 
 bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
 {
-  stringstream strStream(theSvgPathString);
-  char elementTypeChar = '\0';
-  double x = 0, y = 0;
-  NFmiSvgPath::ElementType eType = NFmiSvgPath::kElementNotValid;
-
-  double firstX = 0, firstY = 0;
-  double lastX = 0, lastY = 0;
-
-  bool isRelative = false;
-  do
+  try
   {
-    if (!EatWhiteSpaces(strStream)) break;
+    stringstream strStream(theSvgPathString);
+    char elementTypeChar = '\0';
+    double x = 0, y = 0;
+    NFmiSvgPath::ElementType eType = NFmiSvgPath::kElementNotValid;
 
-    // katsotaan peek:illa ensin onko merkki, koska käskyt
-    // voivat olla yhdessä 1. koordinaatin kanssa.
+    double firstX = 0, firstY = 0;
+    double lastX = 0, lastY = 0;
 
-    elementTypeChar = static_cast<char>(strStream.peek());
-
-    // Jos löytyy merkki, saadaan uusi käsky, muuten vanha
-    // käsky jää voimaan ja luetaan vain koordinaatteja.
-    // Kuitenkin jos vanha käsky oli moveto, muutetaan
-    // se automaattisesti lineto käskyksi.
-
-    if (isalpha(elementTypeChar))
+    bool isRelative = false;
+    do
     {
-      strStream.get(elementTypeChar);
-      eType = CharToSvgElement(elementTypeChar);
-      isRelative = IsRelativeSvgElement(elementTypeChar);
-    }
-    else if (elementTypeChar == ',')
-    {
-      strStream.get();
-      continue;
-    }
-    else if (eType == NFmiSvgPath::kElementMoveto)
-      eType = NFmiSvgPath::kElementLineto;
-
-    // Tarkistetaan luvun onnistuminen
-
-    if (strStream.fail()) return false;
-
-    switch (eType)
-    {
-      case NFmiSvgPath::kElementMoveto:
-      case NFmiSvgPath::kElementLineto:
-      {
-        strStream >> x;
-        if (strStream.fail()) return false;
-
-        if (!EatWhiteSpaces(strStream)) return false;
-
-        if (strStream.peek() == ',') strStream.get();
-        strStream >> y;
-        if (strStream.fail()) return false;
-
-        if (isRelative)
-        {
-          lastX += x;
-          lastY += y;
-        }
-        else
-        {
-          lastX = x;
-          lastY = y;
-        }
-        thePath.push_back(NFmiSvgPath::Element(eType, lastX, lastY));
-
-        if (eType == NFmiSvgPath::kElementMoveto)
-        {
-          firstX = lastX;
-          firstY = lastY;
-        }
-
+      if (!EatWhiteSpaces(strStream))
         break;
-      }
-      case NFmiSvgPath::kElementClosePath:
+
+      // katsotaan peek:illa ensin onko merkki, koska käskyt
+      // voivat olla yhdessä 1. koordinaatin kanssa.
+
+      elementTypeChar = static_cast<char>(strStream.peek());
+
+      // Jos löytyy merkki, saadaan uusi käsky, muuten vanha
+      // käsky jää voimaan ja luetaan vain koordinaatteja.
+      // Kuitenkin jos vanha käsky oli moveto, muutetaan
+      // se automaattisesti lineto käskyksi.
+
+      if (isalpha(elementTypeChar))
       {
-        lastX = firstX;
-        lastY = firstY;
-        thePath.push_back(NFmiSvgPath::Element(eType, lastX, lastY));
-        break;
+        strStream.get(elementTypeChar);
+        eType = CharToSvgElement(elementTypeChar);
+        isRelative = IsRelativeSvgElement(elementTypeChar);
       }
-      case NFmiSvgPath::kElementNotValid:
+      else if (elementTypeChar == ',')
+      {
+        strStream.get();
+        continue;
+      }
+      else if (eType == NFmiSvgPath::kElementMoveto)
+        eType = NFmiSvgPath::kElementLineto;
+
+      // Tarkistetaan luvun onnistuminen
+
+      if (strStream.fail())
         return false;
-    }
-  } while (!strStream.fail());
-  return (!strStream.fail());
+
+      switch (eType)
+      {
+        case NFmiSvgPath::kElementMoveto:
+        case NFmiSvgPath::kElementLineto:
+        {
+          strStream >> x;
+          if (strStream.fail())
+            return false;
+
+          if (!EatWhiteSpaces(strStream))
+            return false;
+
+          if (strStream.peek() == ',')
+            strStream.get();
+          strStream >> y;
+          if (strStream.fail())
+            return false;
+
+          if (isRelative)
+          {
+            lastX += x;
+            lastY += y;
+          }
+          else
+          {
+            lastX = x;
+            lastY = y;
+          }
+          thePath.push_back(NFmiSvgPath::Element(eType, lastX, lastY));
+
+          if (eType == NFmiSvgPath::kElementMoveto)
+          {
+            firstX = lastX;
+            firstY = lastY;
+          }
+
+          break;
+        }
+        case NFmiSvgPath::kElementClosePath:
+        {
+          lastX = firstX;
+          lastY = firstY;
+          thePath.push_back(NFmiSvgPath::Element(eType, lastX, lastY));
+          break;
+        }
+        case NFmiSvgPath::kElementNotValid:
+          return false;
+      }
+    } while (!strStream.fail());
+    return (!strStream.fail());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace
@@ -305,7 +350,18 @@ NFmiSvgPath::NFmiSvgPath()
  */
 // ----------------------------------------------------------------------
 
-NFmiSvgPath::size_type NFmiSvgPath::size() const { return itsData.size(); }
+NFmiSvgPath::size_type NFmiSvgPath::size() const
+{
+  try
+  {
+    return itsData.size();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Testaa onko polku tyhjä
@@ -314,7 +370,18 @@ NFmiSvgPath::size_type NFmiSvgPath::size() const { return itsData.size(); }
  */
 // ----------------------------------------------------------------------
 
-bool NFmiSvgPath::empty() const { return itsData.empty(); }
+bool NFmiSvgPath::empty() const
+{
+  try
+  {
+    return itsData.empty();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Tyhjennä polku
@@ -323,8 +390,15 @@ bool NFmiSvgPath::empty() const { return itsData.empty(); }
 
 void NFmiSvgPath::clear()
 {
-  itsBBoxValid = false;
-  itsData.clear();
+  try
+  {
+    itsBBoxValid = false;
+    itsData.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,8 +411,15 @@ void NFmiSvgPath::clear()
 
 void NFmiSvgPath::push_back(const Element& theElement)
 {
-  itsBBoxValid = false;
-  itsData.push_back(theElement);
+  try
+  {
+    itsBBoxValid = false;
+    itsData.push_back(theElement);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -355,20 +436,29 @@ void NFmiSvgPath::push_back(const Element& theElement)
 
 std::ostream& NFmiSvgPath::Write(std::ostream& file) const
 {
-  if (itsData.size() > 0)
+  try
   {
-    file << '"';
-    for (auto it = begin(); it != end(); ++it)
+    if (itsData.size() > 0)
     {
-      if (it != begin()) file << ' ';
+      file << '"';
+      for (auto it = begin(); it != end(); ++it)
+      {
+        if (it != begin())
+          file << ' ';
 
-      file << SvgElementToChar(it->itsType);
+        file << SvgElementToChar(it->itsType);
 
-      if (it->itsType != kElementClosePath) file << ' ' << it->itsX << ' ' << it->itsY;
+        if (it->itsType != kElementClosePath)
+          file << ' ' << it->itsX << ' ' << it->itsY;
+      }
+      file << '"';
     }
-    file << '"';
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -385,15 +475,23 @@ std::ostream& NFmiSvgPath::Write(std::ostream& file) const
 
 std::istream& NFmiSvgPath::Read(std::istream& file)
 {
-  itsBBoxValid = false;
-
-  if (file)
+  try
   {
-    clear();  // Pitääkö tyhjentää olemassa oleva polku ennen lukua?!?! Nyt tyhjenee.
-    string polygonDataStr;
-    if (GetPolygonStringFromStream(file, polygonDataStr)) ExtractSvgPath(*this, polygonDataStr);
+    itsBBoxValid = false;
+
+    if (file)
+    {
+      clear();  // Pitääkö tyhjentää olemassa oleva polku ennen lukua?!?! Nyt tyhjenee.
+      string polygonDataStr;
+      if (GetPolygonStringFromStream(file, polygonDataStr))
+        ExtractSvgPath(*this, polygonDataStr);
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -413,80 +511,91 @@ std::istream& NFmiSvgPath::Read(std::istream& file)
 
 bool NFmiSvgPath::IsInside(const NFmiPoint& thePoint) const
 {
-  if (empty()) return false;
-
-  // lyhyt nimi koodin luettavuuden kannalta
-  const NFmiPoint& p = thePoint;
-
-  // Ensin pitää varmistaa, että bounding box on ajan tasalla
-
-  if (!itsBBoxValid)
+  try
   {
-    for (const auto& it : itsData)
+    if (empty())
+      return false;
+
+    // lyhyt nimi koodin luettavuuden kannalta
+    const NFmiPoint& p = thePoint;
+
+    // Ensin pitää varmistaa, että bounding box on ajan tasalla
+
+    if (!itsBBoxValid)
     {
-      switch (it.itsType)
+      for (const auto& it : itsData)
       {
-        case kElementNotValid:
-        case kElementClosePath:
-          break;
-        case kElementMoveto:
-        case kElementLineto:
+        switch (it.itsType)
         {
-          if (!itsBBoxValid)
+          case kElementNotValid:
+          case kElementClosePath:
+            break;
+          case kElementMoveto:
+          case kElementLineto:
           {
-            itsMinX = itsMaxX = it.itsX;
-            itsMinY = itsMaxY = it.itsY;
-            itsBBoxValid = true;
-          }
-          else
-          {
-            itsMinX = FmiMin(itsMinX, it.itsX);
-            itsMinY = FmiMin(itsMinY, it.itsY);
-            itsMaxX = FmiMax(itsMaxX, it.itsX);
-            itsMaxY = FmiMax(itsMaxY, it.itsY);
+            if (!itsBBoxValid)
+            {
+              itsMinX = itsMaxX = it.itsX;
+              itsMinY = itsMaxY = it.itsY;
+              itsBBoxValid = true;
+            }
+            else
+            {
+              itsMinX = FmiMin(itsMinX, it.itsX);
+              itsMinY = FmiMin(itsMinY, it.itsY);
+              itsMaxX = FmiMax(itsMaxX, it.itsX);
+              itsMaxY = FmiMax(itsMaxY, it.itsY);
+            }
           }
         }
       }
     }
-  }
 
-  // Käytetään bounding boksia hyväksi
+    // Käytetään bounding boksia hyväksi
 
-  if (itsBBoxValid)
-  {
-    if (p.X() < itsMinX || p.X() > itsMaxX || p.Y() < itsMinY || p.Y() > itsMaxY) return false;
-  }
-
-  // Joudutaan laskemaan suoraan
-
-  auto firstPoint = begin();
-  auto p1 = begin();
-  auto p2 = begin();
-
-  int counter = 0;
-
-  // hypätään ensimmäisen käskyn yli, se on aina moveto
-  auto it = begin();
-  for (++it; it != end(); ++it)
-  {
-    p2 = it;
-    if (p2->itsType == NFmiSvgPath::kElementMoveto)
-      firstPoint = p2;
-    else
+    if (itsBBoxValid)
     {
-      if (p2->itsType == NFmiSvgPath::kElementClosePath) p2 = firstPoint;
-      if (p.Y() > FmiMin(p1->itsY, p2->itsY) && p.Y() <= FmiMax(p1->itsY, p2->itsY) &&
-          p.X() <= FmiMax(p1->itsX, p2->itsX) && p1->itsY != p2->itsY)
-      {
-        const double xinters =
-            ((p.Y() - p1->itsY) * (p2->itsX - p1->itsX) / (p2->itsY - p1->itsY) + p1->itsX);
-        if (p1->itsX == p2->itsX || p.X() <= xinters) counter++;
-      }
+      if (p.X() < itsMinX || p.X() > itsMaxX || p.Y() < itsMinY || p.Y() > itsMaxY)
+        return false;
     }
-    p1 = p2;
-  }
 
-  return (counter % 2 != 0);
+    // Joudutaan laskemaan suoraan
+
+    auto firstPoint = begin();
+    auto p1 = begin();
+    auto p2 = begin();
+
+    int counter = 0;
+
+    // hypätään ensimmäisen käskyn yli, se on aina moveto
+    auto it = begin();
+    for (++it; it != end(); ++it)
+    {
+      p2 = it;
+      if (p2->itsType == NFmiSvgPath::kElementMoveto)
+        firstPoint = p2;
+      else
+      {
+        if (p2->itsType == NFmiSvgPath::kElementClosePath)
+          p2 = firstPoint;
+        if (p.Y() > FmiMin(p1->itsY, p2->itsY) && p.Y() <= FmiMax(p1->itsY, p2->itsY) &&
+            p.X() <= FmiMax(p1->itsX, p2->itsX) && p1->itsY != p2->itsY)
+        {
+          const double xinters =
+              ((p.Y() - p1->itsY) * (p2->itsX - p1->itsX) / (p2->itsY - p1->itsY) + p1->itsX);
+          if (p1->itsX == p2->itsX || p.X() <= xinters)
+            counter++;
+        }
+      }
+      p1 = p2;
+    }
+
+    return (counter % 2 != 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

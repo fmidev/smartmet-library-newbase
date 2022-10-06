@@ -15,16 +15,14 @@
 // ======================================================================
 
 #include "NFmiLocationBag.h"
-
 #include "NFmiArea.h"
 #include "NFmiRadarStation.h"
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
-
 #include <boost/functional/hash.hpp>
 #include <gis/CoordinateMatrix.h>
-
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <functional>
 
@@ -36,7 +34,18 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::~NFmiLocationBag() { Destroy(); }
+NFmiLocationBag::~NFmiLocationBag()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * Void constructor
@@ -61,7 +70,14 @@ NFmiLocationBag::NFmiLocationBag() : NFmiSize(), itsLocations(), itsSortedLocati
 NFmiLocationBag::NFmiLocationBag(const NFmiLocation &theLocation)
     : NFmiSize(), itsLocations(), itsSortedLocations(), itsNearTree()
 {
-  AddLocation(theLocation);
+  try
+  {
+    AddLocation(theLocation);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -78,11 +94,18 @@ NFmiLocationBag::NFmiLocationBag(const NFmiStation *theLocationArray,
                                  unsigned long numberOfLocations)
     : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
 {
-  itsLocations.reserve(numberOfLocations);
-  for (unsigned long i = 0; i < numberOfLocations; i++)
+  try
   {
-    AddLocation(*theLocationArray);
-    theLocationArray++;
+    itsLocations.reserve(numberOfLocations);
+    for (unsigned long i = 0; i < numberOfLocations; i++)
+    {
+      AddLocation(*theLocationArray);
+      theLocationArray++;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -100,11 +123,18 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation *theLocationArray,
                                  unsigned long numberOfLocations)
     : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
 {
-  itsLocations.reserve(numberOfLocations);
-  for (unsigned long i = 0; i < numberOfLocations; i++)
+  try
   {
-    AddLocation(*theLocationArray);
-    theLocationArray++;
+    itsLocations.reserve(numberOfLocations);
+    for (unsigned long i = 0; i < numberOfLocations; i++)
+    {
+      AddLocation(*theLocationArray);
+      theLocationArray++;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -123,9 +153,16 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation *theLocationArray,
 NFmiLocationBag::NFmiLocationBag(NFmiLocation **theLocationArray, unsigned long numberOfLocations)
     : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
 {
-  itsLocations.reserve(numberOfLocations);
-  for (unsigned long i = 0; i < numberOfLocations; i++)
-    AddLocation(*theLocationArray[i]);
+  try
+  {
+    itsLocations.reserve(numberOfLocations);
+    for (unsigned long i = 0; i < numberOfLocations; i++)
+      AddLocation(*theLocationArray[i]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -139,10 +176,17 @@ NFmiLocationBag::NFmiLocationBag(NFmiLocation **theLocationArray, unsigned long 
 NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag &theLocationBag)
     : NFmiSize(theLocationBag), itsLocations(), itsSortedLocations(), itsNearTree()
 {
-  itsLocations.reserve(theLocationBag.itsLocations.size());
+  try
+  {
+    itsLocations.reserve(theLocationBag.itsLocations.size());
 
-  for (unsigned long i = 0; i < theLocationBag.itsLocations.size(); i++)
-    AddLocation(*(theLocationBag.itsLocations[i]), false);
+    for (unsigned long i = 0; i < theLocationBag.itsLocations.size(); i++)
+      AddLocation(*(theLocationBag.itsLocations[i]), false);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -154,11 +198,19 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag &theLocationBag)
 
 void NFmiLocationBag::Destroy()
 {
-  for (unsigned long i = 0; i < itsLocations.size(); i++)
-    delete itsLocations[i];
-  itsLocations.clear();
-  itsSortedLocations.clear();
-  itsNearTree.Clear();
+  try
+  {
+    for (unsigned long i = 0; i < itsLocations.size(); i++)
+      delete itsLocations[i];
+
+    itsLocations.clear();
+    itsSortedLocations.clear();
+    itsNearTree.Clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -173,21 +225,28 @@ void NFmiLocationBag::Destroy()
 
 const NFmiLocationBag NFmiLocationBag::Combine(const NFmiLocationBag &theBag)
 {
-  NFmiLocationBag outbag;
-  outbag.itsLocations.reserve(itsLocations.size() + theBag.itsLocations.size());
+  try
+  {
+    NFmiLocationBag outbag;
+    outbag.itsLocations.reserve(itsLocations.size() + theBag.itsLocations.size());
 
-  StorageType::const_iterator begin = itsLocations.begin();
-  StorageType::const_iterator end = itsLocations.end();
-  StorageType::const_iterator iter;
-  for (iter = begin; iter != end; ++iter)
-    outbag.AddLocation(*(*iter), true);
+    StorageType::const_iterator begin = itsLocations.begin();
+    StorageType::const_iterator end = itsLocations.end();
+    StorageType::const_iterator iter;
+    for (iter = begin; iter != end; ++iter)
+      outbag.AddLocation(*(*iter), true);
 
-  begin = theBag.itsLocations.begin();
-  end = theBag.itsLocations.end();
-  for (iter = begin; iter != end; ++iter)
-    outbag.AddLocation(*(*iter), true);
+    begin = theBag.itsLocations.begin();
+    end = theBag.itsLocations.end();
+    for (iter = begin; iter != end; ++iter)
+      outbag.AddLocation(*(*iter), true);
 
-  return outbag;
+    return outbag;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -202,8 +261,17 @@ const NFmiLocationBag NFmiLocationBag::Combine(const NFmiLocationBag &theBag)
 
 const NFmiLocation *NFmiLocationBag::Location() const
 {
-  if (CurrentIndex() == -1) return nullptr;
-  return itsLocations[CurrentIndex()];
+  try
+  {
+    if (CurrentIndex() == -1)
+      return nullptr;
+
+    return itsLocations[CurrentIndex()];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -217,19 +285,26 @@ const NFmiLocation *NFmiLocationBag::Location() const
 
 bool NFmiLocationBag::Location(const NFmiLocation &theLocation)
 {
-  NFmiNearTreeLocation searchloc(theLocation, 0);
+  try
+  {
+    NFmiNearTreeLocation searchloc(theLocation, 0);
 
-  // Search with a zero radius to get an exact coordinate match
-  NFmiNearTreeLocation result;
-  if (itsNearTree.NearestPoint(result, searchloc, 0))
-  {
-    itsIndex = result.GetIndex();
-    return true;
+    // Search with a zero radius to get an exact coordinate match
+    NFmiNearTreeLocation result;
+    if (itsNearTree.NearestPoint(result, searchloc, 0))
+    {
+      itsIndex = result.GetIndex();
+      return true;
+    }
+    else
+    {
+      Reset();
+      return false;
+    }
   }
-  else
+  catch (...)
   {
-    Reset();
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -247,23 +322,30 @@ bool NFmiLocationBag::Location(const NFmiLocation &theLocation)
 
 bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation, double theMaxDistance)
 {
-  NFmiNearTreeLocation searchloc(theLocation, 0);
-
-  // Equivalent unit sphere cord distance
-  // Ref: https://en.wikipedia.org/wiki/Great-circle_distance
-
-  theMaxDistance = std::min(theMaxDistance, kPii * kRearth);  // limit cannot exceed a half circle
-  double cordlimit = 2 * sin(theMaxDistance / (2 * kRearth));
-
-  NFmiNearTreeLocation result;
-  if (itsNearTree.NearestPoint(result, searchloc, cordlimit))
+  try
   {
-    itsIndex = result.GetIndex();
-    return true;
+    NFmiNearTreeLocation searchloc(theLocation, 0);
+
+    // Equivalent unit sphere cord distance
+    // Ref: https://en.wikipedia.org/wiki/Great-circle_distance
+
+    theMaxDistance = std::min(theMaxDistance, kPii * kRearth);  // limit cannot exceed a half circle
+    double cordlimit = 2 * sin(theMaxDistance / (2 * kRearth));
+
+    NFmiNearTreeLocation result;
+    if (itsNearTree.NearestPoint(result, searchloc, cordlimit))
+    {
+      itsIndex = result.GetIndex();
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
-  else
+  catch (...)
   {
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -284,32 +366,40 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
                                       const NFmiArea *theArea,
                                       double theMaxDistance)
 {
-  // NFmiNearTree does not sort the results in increasing order
-  // of distance, hence this cannot be used.
-
-  bool found = false;
-  unsigned long best_index = 0;
-  double best_distance = 0;
-
-  for (unsigned long i = 0; i < itsLocations.size(); i++)
+  try
   {
-    double dist = theLocation.Distance(*itsLocations[i]);
-    if (dist <= theMaxDistance && (!found || dist < best_distance))
+    // NFmiNearTree does not sort the results in increasing order
+    // of distance, hence this cannot be used.
+
+    bool found = false;
+    unsigned long best_index = 0;
+    double best_distance = 0;
+
+    for (unsigned long i = 0; i < itsLocations.size(); i++)
     {
-      if (theArea->IsInside(itsLocations[i]->GetLocation()))  // optimointi kysymys, kumpi hitaampi
-                                                              // Distance vai IsInside?
+      double dist = theLocation.Distance(*itsLocations[i]);
+      if (dist <= theMaxDistance && (!found || dist < best_distance))
       {
-        found = true;
-        best_index = i;
-        best_distance = dist;
+        if (theArea->IsInside(itsLocations[i]->GetLocation()))  // optimointi kysymys, kumpi
+                                                                // hitaampi Distance vai IsInside?
+        {
+          found = true;
+          best_index = i;
+          best_distance = dist;
+        }
       }
     }
+
+    // Set current to best location, if one was found
+    if (found)
+      itsIndex = best_index;
+
+    return found;
   }
-
-  // Set current to best location, if one was found
-  if (found) itsIndex = best_index;
-
-  return found;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -328,11 +418,19 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation,
 
 bool NFmiLocationBag::AddLocation(const NFmiLocation &theLocation, bool theChecking)
 {
-  if (theChecking)
-    if (itsSortedLocations.find(theLocation) != itsSortedLocations.end()) return false;
+  try
+  {
+    if (theChecking)
+      if (itsSortedLocations.find(theLocation) != itsSortedLocations.end())
+        return false;
 
-  Add(theLocation);
-  return true;
+    Add(theLocation);
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -346,11 +444,18 @@ bool NFmiLocationBag::AddLocation(const NFmiLocation &theLocation, bool theCheck
 
 void NFmiLocationBag::Add(const NFmiLocation &theLocation)
 {
-  NFmiLocation *tmp = theLocation.Clone();
-  itsLocations.push_back(tmp);
-  itsSortedLocations.insert(*tmp);
-  itsSize = itsLocations.size();  // safer than itsSize++
-  itsNearTree.Insert(NFmiNearTreeLocation(*tmp, itsSize - 1));
+  try
+  {
+    NFmiLocation *tmp = theLocation.Clone();
+    itsLocations.push_back(tmp);
+    itsSortedLocations.insert(*tmp);
+    itsSize = itsLocations.size();  // safer than itsSize++
+    itsNearTree.Insert(NFmiNearTreeLocation(*tmp, itsSize - 1));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -366,19 +471,26 @@ void NFmiLocationBag::Add(const NFmiLocation &theLocation)
 
 std::ostream &NFmiLocationBag::Write(std::ostream &file) const
 {
-  NFmiSize::Write(file);
-
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file << itsLocations[0]->ClassId() << std::endl;
-  }
+    NFmiSize::Write(file);
 
-  for (unsigned long i = 0; i < itsLocations.size(); i++)
-  {
-    file << *(itsLocations[i]);
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file << itsLocations[0]->ClassId() << std::endl;
+    }
+
+    for (unsigned long i = 0; i < itsLocations.size(); i++)
+    {
+      file << *(itsLocations[i]);
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -392,59 +504,66 @@ std::ostream &NFmiLocationBag::Write(std::ostream &file) const
 
 std::istream &NFmiLocationBag::Read(std::istream &file)
 {
-  Destroy();
-
-  NFmiSize::Read(file);
-  int classID = kNFmiStation;
-
-  // We trust all data to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 4)
+  try
   {
-    file >> classID;
+    Destroy();
+
+    NFmiSize::Read(file);
+    int classID = kNFmiStation;
+
+    // We trust all data to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 4)
+    {
+      file >> classID;
+    }
+
+    unsigned long newSize = GetSize();
+    itsLocations.reserve(newSize);
+
+    NFmiLocation *temp;
+
+    switch (classID)
+    {
+      case kNFmiLocation:
+      {
+        temp = new NFmiLocation;
+        break;
+      }
+      case kNFmiStation:
+      {
+        temp = new NFmiStation;
+        break;
+      }
+      case kNFmiRadarStation:
+      {
+        temp = new NFmiRadarStation;
+        break;
+      }
+      default:
+      {
+        temp = new NFmiLocation;
+      }
+    }
+
+    // Note: Must use newSize, not GetSize in the loop, since Add modifies itsSize
+    for (unsigned long i = 0; i < newSize; i++)
+    {
+      file >> *temp;
+      Add(*temp);
+    }
+    delete temp;
+
+    Reset();
+
+    // This is enough to make using itsNearTree thread safe if no more points are added
+    itsNearTree.Flush();
+
+    return file;
   }
-
-  unsigned long newSize = GetSize();
-  itsLocations.reserve(newSize);
-
-  NFmiLocation *temp;
-
-  switch (classID)
+  catch (...)
   {
-    case kNFmiLocation:
-    {
-      temp = new NFmiLocation;
-      break;
-    }
-    case kNFmiStation:
-    {
-      temp = new NFmiStation;
-      break;
-    }
-    case kNFmiRadarStation:
-    {
-      temp = new NFmiRadarStation;
-      break;
-    }
-    default:
-    {
-      temp = new NFmiLocation;
-    }
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // Note: Must use newSize, not GetSize in the loop, since Add modifies itsSize
-  for (unsigned long i = 0; i < newSize; i++)
-  {
-    file >> *temp;
-    Add(*temp);
-  }
-  delete temp;
-
-  Reset();
-
-  // This is enough to make using itsNearTree thread safe if no more points are added
-  itsNearTree.Flush();
-
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -460,16 +579,23 @@ std::istream &NFmiLocationBag::Read(std::istream &file)
 
 NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBag)
 {
-  Destroy();
+  try
+  {
+    Destroy();
 
-  itsIndex = theLocationBag.CurrentIndex();
-  itsSize = theLocationBag.GetSize();
+    itsIndex = theLocationBag.CurrentIndex();
+    itsSize = theLocationBag.GetSize();
 
-  itsLocations.reserve(theLocationBag.itsLocations.size());
-  for (unsigned int i = 0; i < theLocationBag.itsLocations.size(); i++)
-    Add(*(theLocationBag.itsLocations[i]));
+    itsLocations.reserve(theLocationBag.itsLocations.size());
+    for (unsigned int i = 0; i < theLocationBag.itsLocations.size(); i++)
+      Add(*(theLocationBag.itsLocations[i]));
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -483,13 +609,22 @@ NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBa
 
 bool NFmiLocationBag::operator==(const NFmiLocationBag &theLocationBag) const
 {
-  if (itsLocations.size() != theLocationBag.itsLocations.size()) return false;
-
-  for (int i = 0; i < static_cast<int>(this->GetSize()); i++)
+  try
   {
-    if (!(this->itsLocations[i]->IsEqual(*(theLocationBag.itsLocations[i])))) return false;
+    if (itsLocations.size() != theLocationBag.itsLocations.size())
+      return false;
+
+    for (int i = 0; i < static_cast<int>(this->GetSize()); i++)
+    {
+      if (!(this->itsLocations[i]->IsEqual(*(theLocationBag.itsLocations[i]))))
+        return false;
+    }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //! Undocumented typedef
@@ -554,58 +689,65 @@ struct LocationIndexDistanceGreater
 const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
     const NFmiLocation &theLocation, int theMaxWantedLocations, double theMaxDistance) const
 {
-  auto size = static_cast<int>(this->GetSize());
-  std::vector<IndDistPari> tempValues(size, make_pair(-1, kFloatMissing));
-  for (int i = 0; i < size; i++)
-    tempValues[i] = make_pair(i, theLocation.Distance(*this->itsLocations[i]));
-
-  if (theMaxWantedLocations == -1 && theMaxDistance == kFloatMissing)
+  try
   {
-    // molemmat rajoittimet puuttuvat, palautetaan kaikki sortattuna
-    std::sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
-    return tempValues;
-  }
+    auto size = static_cast<int>(this->GetSize());
+    std::vector<IndDistPari> tempValues(size, make_pair(-1, kFloatMissing));
+    for (int i = 0; i < size; i++)
+      tempValues[i] = make_pair(i, theLocation.Distance(*this->itsLocations[i]));
 
-  if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
-  {
-    if (tempValues.size() == 0)
-      return std::vector<pair<int, double> >();
-    else
+    if (theMaxWantedLocations == -1 && theMaxDistance == kFloatMissing)
     {
-      // halutaan n kpl lahimpiä paikkoja
-      int usedCount = theMaxWantedLocations;
-      if (usedCount > static_cast<int>(tempValues.size()))
-        usedCount =
-            static_cast<int>(tempValues.size());  // maksimissaan voidaan sortata size:iin asti
-      std::partial_sort(tempValues.begin(),
-                        tempValues.begin() + usedCount,
-                        tempValues.end(),
-                        LocationIndexDistanceLess<IndDistPari>());
-      // palautetaan haluttu määrä locatioita
-      return std::vector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
+      // molemmat rajoittimet puuttuvat, palautetaan kaikki sortattuna
+      std::sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
+      return tempValues;
     }
-  }
 
-  // theMaxDistance != kFloatMissing)
-
-  // haetaan kaikki annetun säteen sisällä olevat paikat
-  std::sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
-  auto pos = std::find_if(tempValues.begin(),
+    if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
+    {
+      if (tempValues.size() == 0)
+        return std::vector<pair<int, double> >();
+      else
+      {
+        // halutaan n kpl lahimpiä paikkoja
+        int usedCount = theMaxWantedLocations;
+        if (usedCount > static_cast<int>(tempValues.size()))
+          usedCount =
+              static_cast<int>(tempValues.size());  // maksimissaan voidaan sortata size:iin asti
+        std::partial_sort(tempValues.begin(),
+                          tempValues.begin() + usedCount,
                           tempValues.end(),
-                          LocationIndexDistanceGreater<IndDistPari>(theMaxDistance));
+                          LocationIndexDistanceLess<IndDistPari>());
+        // palautetaan haluttu määrä locatioita
+        return std::vector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
+      }
+    }
 
-  if (theMaxWantedLocations != -1)
-  {
-    auto usedMaxLocationCount =
-        (tempValues.size() >= theMaxWantedLocations) ? theMaxWantedLocations : tempValues.size();
-    auto maxWantedPos = tempValues.begin() + usedMaxLocationCount;
-    if (pos > maxWantedPos) pos = maxWantedPos;
+    // theMaxDistance != kFloatMissing)
+  
+    // haetaan kaikki annetun säteen sisällä olevat paikat
+    std::sort(tempValues.begin(), tempValues.end(), LocationIndexDistanceLess<IndDistPari>());
+    auto pos = std::find_if(tempValues.begin(),
+                            tempValues.end(),
+                            LocationIndexDistanceGreater<IndDistPari>(theMaxDistance));
+  
+    if (theMaxWantedLocations != -1)
+    {
+      auto usedMaxLocationCount =
+          (tempValues.size() >= theMaxWantedLocations) ? theMaxWantedLocations : tempValues.size();
+      auto maxWantedPos = tempValues.begin() + usedMaxLocationCount;
+      if (pos > maxWantedPos) pos = maxWantedPos;
+    }
+  
+    if (pos == tempValues.end())
+      return tempValues;
+    else
+      return std::vector<IndDistPari>(tempValues.begin(), pos);
   }
-
-  if (pos == tempValues.end())
-    return tempValues;
-  else
-    return std::vector<IndDistPari>(tempValues.begin(), pos);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //----------------------------------------------------------------------
@@ -616,20 +758,27 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
 
 bool NFmiLocationBag::IsInside(const NFmiPoint &theLatLon, double theRadius) const
 {
-  // Equivalent unit sphere cord distance
-  // Ref: https://en.wikipedia.org/wiki/Great-circle_distance
+  try
+  {
+    // Equivalent unit sphere cord distance
+    // Ref: https://en.wikipedia.org/wiki/Great-circle_distance
 
-  theRadius = std::min(theRadius, kPii * kRearth);  // limit cannot exceed a half circle
+    theRadius = std::min(theRadius, kPii * kRearth);  // limit cannot exceed a half circle
 
-  double cordlimit = 2 * sin(theRadius / (2 * kRearth));
+    double cordlimit = 2 * sin(theRadius / (2 * kRearth));
 
-  // The location to search for
-  NFmiLocation location(theLatLon);
-  NFmiNearTreeLocation searchloc(location, 0);
+    // The location to search for
+    NFmiLocation location(theLatLon);
+    NFmiNearTreeLocation searchloc(location, 0);
 
-  // We'll ignore this result, we just want to know if there is one
-  NFmiNearTreeLocation result;
-  return itsNearTree.NearestPoint(result, searchloc, cordlimit);
+    // We'll ignore this result, we just want to know if there is one
+    NFmiNearTreeLocation result;
+    return itsNearTree.NearestPoint(result, searchloc, cordlimit);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -640,14 +789,22 @@ bool NFmiLocationBag::IsInside(const NFmiPoint &theLatLon, double theRadius) con
 
 std::size_t NFmiLocationBag::HashValue() const
 {
-  std::size_t hash = 0;
-
-  for (NFmiLocation *location : itsLocations)
+  try
   {
-    if (location != nullptr) boost::hash_combine(hash, location->HashValue());
-  }
+    std::size_t hash = 0;
 
-  return hash;
+    for (NFmiLocation *location : itsLocations)
+    {
+      if (location != nullptr)
+        boost::hash_combine(hash, location->HashValue());
+    }
+
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -658,20 +815,27 @@ std::size_t NFmiLocationBag::HashValue() const
 
 Fmi::CoordinateMatrix NFmiLocationBag::CoordinateMatrix() const
 {
-  // Note: The coordinates are assumed to be WGS84. We return them in
-  // a 1D vector since there is no structure.
-
-  const auto ysize = 1;
-  Fmi::CoordinateMatrix matrix(itsLocations.size(), ysize);
-
-  const auto j = 0;
-  std::size_t i = 0;
-  for (const auto *location : itsLocations)
+  try
   {
-    if (location == nullptr)
-      matrix.set(i, j, HUGE_VAL, HUGE_VAL);  // as done by PROJ.6
-    else
-      matrix.set(i, j, location->GetLocation());
+    // Note: The coordinates are assumed to be WGS84. We return them in
+    // a 1D vector since there is no structure.
+
+    const auto ysize = 1;
+    Fmi::CoordinateMatrix matrix(itsLocations.size(), ysize);
+
+    const auto j = 0;
+    std::size_t i = 0;
+    for (const auto *location : itsLocations)
+    {
+      if (location == nullptr)
+        matrix.set(i, j, HUGE_VAL, HUGE_VAL);  // as done by PROJ.6
+      else
+        matrix.set(i, j, location->GetLocation());
+    }
+    return matrix;
   }
-  return matrix;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

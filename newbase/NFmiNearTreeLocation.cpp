@@ -2,6 +2,7 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiLocation.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -19,9 +20,16 @@ NFmiNearTreeLocation::NFmiNearTreeLocation() = default;
 NFmiNearTreeLocation::NFmiNearTreeLocation(const NFmiLocation& theLocation, std::size_t theIndex)
     : itsX(), itsY(), itsZ(), itsIndex(theIndex)
 {
-  double lon = FmiRad(theLocation.GetLongitude());
-  double lat = FmiRad(theLocation.GetLatitude());
-  itsX = cos(lat) * cos(lon);
-  itsY = cos(lat) * sin(lon);
-  itsZ = sin(lat);
+  try
+  {
+    double lon = FmiRad(theLocation.GetLongitude());
+    double lat = FmiRad(theLocation.GetLatitude());
+    itsX = cos(lat) * cos(lon);
+    itsY = cos(lat) * sin(lon);
+    itsZ = sin(lat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

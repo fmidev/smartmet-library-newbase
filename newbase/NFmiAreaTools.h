@@ -21,6 +21,9 @@ void LatLonBoundingBox(const NFmiArea& theArea,
                        double& theMaxLat);
 
 NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft,
+                                 const NFmiPoint& theTopRight,
+                                 bool fUsePacificView);
 NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
                                         const NFmiPoint& theTopRight,
                                         const NFmiPoint& theSouthPole);
@@ -43,13 +46,16 @@ NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
                                                 double theCentralLongitude,
                                                 double theCentralLatitude,
                                                 double theTrueLatitude1,
-                                                double theTrueLatitude2,
-                                                double theRadius = kRearth);
+                                                double theTrueLatitude2);
+
 NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
                                    const NFmiPoint& theTopRight,
                                    double theCentralLongitude,
                                    double theCentralLatitude);
 NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
+                              const NFmiPoint& theTopRight,
+                              bool fMeters);
 
 }  // namespace NFmiAreaTools
 

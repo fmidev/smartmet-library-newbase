@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
+
 const unsigned long kNFmiSaveBase = 0;
 const unsigned int kNFmiArea = 1;
 #ifdef WGS84

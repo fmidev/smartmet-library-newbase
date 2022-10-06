@@ -301,14 +301,22 @@ inline bool NFmiSuperSmartInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSuperSmartInfo::ClassId() const { return kNFmiQueryInfo; }
+inline unsigned long NFmiSuperSmartInfo::ClassId() const
+{
+  return kNFmiQueryInfo;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiSuperSmartInfo::ClassName() const { return "NFmiSuperSmartInfo"; }
+inline const char* NFmiSuperSmartInfo::ClassName() const
+{
+  return "NFmiSuperSmartInfo";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -337,21 +345,32 @@ inline NFmiSuperSmartInfo::DataAccessLevel NFmiSuperSmartInfo::FloatValueAccessL
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::UseCalculator(bool value) { fUseCalculator = value; }
+inline void NFmiSuperSmartInfo::UseCalculator(bool value)
+{
+  fUseCalculator = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseCalculator() const { return fUseCalculator; }
+inline bool NFmiSuperSmartInfo::UseCalculator() const
+{
+  return fUseCalculator;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseVarianceCalculator() const { return fUseVarianceCalculator; }
+inline bool NFmiSuperSmartInfo::UseVarianceCalculator() const
+{
+  return fUseVarianceCalculator;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -369,7 +388,10 @@ inline void NFmiSuperSmartInfo::UseVariationCalculator(bool value)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseVariationCalculator() const { return fUseVariationCalculator; }
+inline bool NFmiSuperSmartInfo::UseVariationCalculator() const
+{
+  return fUseVariationCalculator;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -410,7 +432,11 @@ inline NFmiDataModifierDescriptor* NFmiSuperSmartInfo::DataModifierDescriptor()
  */
 // ----------------------------------------------------------------------
 
-inline NFmiCalculator* NFmiSuperSmartInfo::Calculator() const { return itsCalculator; }
+inline NFmiCalculator* NFmiSuperSmartInfo::Calculator() const
+{
+  return itsCalculator;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -429,35 +455,53 @@ inline NFmiCalculator* NFmiSuperSmartInfo::CurrentVarianceCalculator() const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::AreaMask(NFmiAreaMask* value) { itsAreaMask = value; }
+inline void NFmiSuperSmartInfo::AreaMask(NFmiAreaMask* value)
+{
+  itsAreaMask = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMask* NFmiSuperSmartInfo::AreaMask() const { return itsAreaMask; }
+inline NFmiAreaMask* NFmiSuperSmartInfo::AreaMask() const
+{
+  return itsAreaMask;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSuperSmartInfo::UseAreaMask(bool value) { fUseAreaMask = value; }
+inline void NFmiSuperSmartInfo::UseAreaMask(bool value)
+{
+  fUseAreaMask = value;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseAreaMask() const { return fUseAreaMask; }
+inline bool NFmiSuperSmartInfo::UseAreaMask() const
+{
+  return fUseAreaMask;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseHelperBinaryMasks() const { return fUseHelperBinaryMasks; }
+inline bool NFmiSuperSmartInfo::UseHelperBinaryMasks() const
+{
+  return fUseHelperBinaryMasks;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -475,7 +519,10 @@ inline const NFmiBitmapAreaMask* NFmiSuperSmartInfo::CurrentHelperBinaryMask() c
  */
 // ----------------------------------------------------------------------
 
-inline NFmiCalculator* NFmiSuperSmartInfo::VariationCalculator() { return itsVariationCalculator; }
+inline NFmiCalculator* NFmiSuperSmartInfo::VariationCalculator()
+{
+  return itsVariationCalculator;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -517,6 +564,9 @@ inline void NFmiSuperSmartInfo::TimeIntegrationCalculator(NFmiCalculator* newCal
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiSuperSmartInfo::RawFloatValue() const { return NFmiFastQueryInfo::FloatValue(); }
+inline float NFmiSuperSmartInfo::RawFloatValue() const
+{
+  return NFmiFastQueryInfo::FloatValue();
+}
 
 // ======================================================================

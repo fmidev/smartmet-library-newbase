@@ -37,7 +37,7 @@
 #include "NFmiLocationFinder.h"
 
 #include "NFmiStringTools.h"
-
+#include <macgyver/Exception.h>
 #include <cstdio>  // for sscanf()
 #include <cstdlib>
 #include <fstream>
@@ -112,82 +112,97 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
                                  bool lonFirst,
                                  bool optionalFileType)
 {
-  if (optionalFileType) return AddFileOfOptionalType(theFileName, lonFirst);
-
-  // We expect max 6 location names, then 2 coordinates
-
-  const unsigned int maxlocations = 6;
-  const unsigned int maxwords = maxlocations + 2;
-  const unsigned int coordinate1 = maxlocations;
-  const unsigned int coordinate2 = coordinate1 + 1;
-
-  // Open the file, returning false if the file cannot be read
-
-  ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
-  if (!in) return false;
-
-  // Process one line at a time
-
-  string line;
-  while (getline(in, line))
+  try
   {
-    // Ignore the line if it is a comment line
+    if (optionalFileType)
+      return AddFileOfOptionalType(theFileName, lonFirst);
 
-    if (line[0] == '#' || line.substr(0, 2) == "//") continue;
+    // We expect max 6 location names, then 2 coordinates
 
-    // Split the line from tabulators into a vector
+    const unsigned int maxlocations = 6;
+    const unsigned int maxwords = maxlocations + 2;
+    const unsigned int coordinate1 = maxlocations;
+    const unsigned int coordinate2 = coordinate1 + 1;
 
-    vector<string> fields;
+    // Open the file, returning false if the file cannot be read
 
-    string::size_type pos1 = 0;
-    while (pos1 < line.size())
+    ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
+    if (!in)
+      return false;
+
+    // Process one line at a time
+
+    string line;
+    while (getline(in, line))
     {
-      string::size_type pos2 = line.find("\t", pos1);
-      if (pos2 == string::npos) pos2 = line.size();
-      fields.push_back(line.substr(pos1, pos2 - pos1));
-      pos1 = pos2 + 1;
-    }
+      // Ignore the line if it is a comment line
 
-    // We require 6 text fields + 2 number fields + optional extra fields
+      if (line[0] == '#' || line.substr(0, 2) == "//")
+        continue;
 
-    if (fields.size() < maxwords) continue;
+      // Split the line from tabulators into a vector
 
-    // Extract the numbers. Note that atof returns nothing
-    // to indicate success, hence we use sscanf instead.
+      vector<string> fields;
 
-    double value1, value2;
-    if (sscanf(fields[coordinate1].c_str(), "%lg", &value1) != 1) continue;
-    if (sscanf(fields[coordinate2].c_str(), "%lg", &value2) != 1) continue;
+      string::size_type pos1 = 0;
+      while (pos1 < line.size())
+      {
+        string::size_type pos2 = line.find("\t", pos1);
+        if (pos2 == string::npos)
+          pos2 = line.size();
+        fields.push_back(line.substr(pos1, pos2 - pos1));
+        pos1 = pos2 + 1;
+      }
 
-    double longitude = lonFirst ? value1 : value2;
-    double latitude = lonFirst ? value2 : value1;
+      // We require 6 text fields + 2 number fields + optional extra fields
 
-    // Then add all non-empty names into the internal container
+      if (fields.size() < maxwords)
+        continue;
 
-    NFmiPoint lonlat(longitude, latitude);
-    for (unsigned int idx = 0; idx < maxlocations; idx++)
-    {
-      string word = fields[idx];
-      if (word.empty()) continue;
+      // Extract the numbers. Note that atof returns nothing
+      // to indicate success, hence we use sscanf instead.
 
-      // Convert the name to lower case
+      double value1, value2;
+      if (sscanf(fields[coordinate1].c_str(), "%lg", &value1) != 1)
+        continue;
+      if (sscanf(fields[coordinate2].c_str(), "%lg", &value2) != 1)
+        continue;
 
-      word = NFmiStringTools::LowerCase(word);
+      double longitude = lonFirst ? value1 : value2;
+      double latitude = lonFirst ? value2 : value1;
 
-      // And add it into the maps
+      // Then add all non-empty names into the internal container
 
-      if (idx == 0)
-        itsPrimaryPoints.insert(make_pair(word, lonlat));
-      else
-        itsSecondaryPoints.insert(make_pair(word, lonlat));
-    }
-  }  // Next line loop
+      NFmiPoint lonlat(longitude, latitude);
+      for (unsigned int idx = 0; idx < maxlocations; idx++)
+      {
+        string word = fields[idx];
+        if (word.empty())
+          continue;
 
-  // Done inserting
+        // Convert the name to lower case
 
-  in.close();
+        word = NFmiStringTools::LowerCase(word);
 
-  return true;
+        // And add it into the maps
+
+        if (idx == 0)
+          itsPrimaryPoints.insert(make_pair(word, lonlat));
+        else
+          itsSecondaryPoints.insert(make_pair(word, lonlat));
+      }
+    }  // Next line loop
+
+    // Done inserting
+
+    in.close();
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -207,100 +222,112 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
 // used by the Press application
 
 {
-  // We expect max 6 location names, then 2 coordinates
-
-  const unsigned int maxlocations = 6;
-  const unsigned int maxwords = maxlocations + 2;
-
-  // Open the file, returning false if the file cannot be read
-
-  ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
-  if (!in) return false;
-
-  // Process one line at a time
-
-  string line;
-  int nerr = 0;
-  int nlong = 0;
-  while (getline(in, line))
+  try
   {
-    // Ignore the line if it is a comment line or "thrash" line
+    // We expect max 6 location names, then 2 coordinates
 
-    if (line[0] == '#' || line.substr(0, 2) == "//" || line.size() < 6) continue;
+    const unsigned int maxlocations = 6;
+    const unsigned int maxwords = maxlocations + 2;
 
-    // Split the line from white spaces into a vector
+    // Open the file, returning false if the file cannot be read
 
-    vector<string> fields;
+    ifstream in(theFileName.CharPtr(), ios::in | ios::binary);
+    if (!in)
+      return false;
 
-    string::size_type pos1 = 0;
-    string::size_type pos2 = 0;
-    vector<string>::size_type firstCoord = 0;
-    pos1 = line.find_first_not_of("\t", pos2);
-    while (pos1 < line.size())
+    // Process one line at a time
+
+    string line;
+    int nerr = 0;
+    int nlong = 0;
+    while (getline(in, line))
     {
-      pos2 = line.find_first_of("\t", pos1);
-      if (pos2 == string::npos) pos2 = line.size();
-      fields.push_back(line.substr(pos1, pos2 - pos1));
-      if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
+      // Ignore the line if it is a comment line or "thrash" line
+
+      if (line[0] == '#' || line.substr(0, 2) == "//" || line.size() < 6)
+        continue;
+
+      // Split the line from white spaces into a vector
+
+      vector<string> fields;
+
+      string::size_type pos1 = 0;
+      string::size_type pos2 = 0;
+      vector<string>::size_type firstCoord = 0;
+      pos1 = line.find_first_not_of("\t", pos2);
+      while (pos1 < line.size())
       {
-        firstCoord = fields.size();  // you must know which words shall be converted to doubles
-        if (firstCoord > 2) nlong++;
+        pos2 = line.find_first_of("\t", pos1);
+        if (pos2 == string::npos)
+          pos2 = line.size();
+        fields.push_back(line.substr(pos1, pos2 - pos1));
+        if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
+        {
+          firstCoord = fields.size();  // you must know which words shall be converted to doubles
+          if (firstCoord > 2)
+            nlong++;
+        }
+
+        if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
+          break;  // mahdolliset kommentit pois
+        pos1 = line.find_first_not_of("\t", pos2);
       }
 
-      if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
-        break;  // mahdolliset kommentit pois
-      pos1 = line.find_first_not_of("\t", pos2);
-    }
+      // We require 1-6 text fields + 2 number fields + optional extra fields
 
-    // We require 1-6 text fields + 2 number fields + optional extra fields
+      //      if(fields.size()<maxwords)
+      //	continue;
 
-    //      if(fields.size()<maxwords)
-    //	continue;
+      // Extract the numbers. Note that atof returns nothing
+      // to indicate success, hence we use sscanf instead.
 
-    // Extract the numbers. Note that atof returns nothing
-    // to indicate success, hence we use sscanf instead.
+      double value1, value2;
+      if (sscanf(fields[firstCoord - 1].c_str(), "%lg", &value1) != 1)
+      {
+        nerr++;
+        continue;
+      }
+      if (sscanf(fields[firstCoord].c_str(), "%lg", &value2) != 1)
+      {
+        nerr++;
+        continue;
+      }
 
-    double value1, value2;
-    if (sscanf(fields[firstCoord - 1].c_str(), "%lg", &value1) != 1)
-    {
-      nerr++;
-      continue;
-    }
-    if (sscanf(fields[firstCoord].c_str(), "%lg", &value2) != 1)
-    {
-      nerr++;
-      continue;
-    }
+      double longitude = lonFirst ? value1 : value2;
+      double latitude = lonFirst ? value2 : value1;
 
-    double longitude = lonFirst ? value1 : value2;
-    double latitude = lonFirst ? value2 : value1;
+      // Then add all non-empty names into the internal container
 
-    // Then add all non-empty names into the internal container
+      NFmiPoint lonlat(longitude, latitude);
+      for (unsigned int idx = 0; idx < maxlocations && idx < firstCoord - 1; idx++)
+      {
+        string word = fields[idx];
+        if (word.empty())
+          continue;
 
-    NFmiPoint lonlat(longitude, latitude);
-    for (unsigned int idx = 0; idx < maxlocations && idx < firstCoord - 1; idx++)
-    {
-      string word = fields[idx];
-      if (word.empty()) continue;
+        // Convert the name to lower case
 
-      // Convert the name to lower case
+        word = NFmiStringTools::LowerCase(word);
 
-      word = NFmiStringTools::LowerCase(word);
+        // And add it into the map
 
-      // And add it into the map
+        if (idx == 0)
+          itsPrimaryPoints.insert(make_pair(word, lonlat));
+        else
+          itsSecondaryPoints.insert(make_pair(word, lonlat));
+      }
+    }  // Next line loop
 
-      if (idx == 0)
-        itsPrimaryPoints.insert(make_pair(word, lonlat));
-      else
-        itsSecondaryPoints.insert(make_pair(word, lonlat));
-    }
-  }  // Next line loop
+    // Done inserting
 
-  // Done inserting
+    in.close();
 
-  in.close();
-
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -318,26 +345,33 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
 
 NFmiPoint NFmiLocationFinder::Find(const NFmiString& theName)
 {
-  string name(theName.CharPtr());
-  name = NFmiStringTools::LowerCase(name);
-
-  LocationFinderMap::const_iterator iter;
-
-  iter = itsPrimaryPoints.find(name);
-
-  if (iter != itsPrimaryPoints.end())
+  try
   {
-    itsLastSearchFailed = false;
-    return iter->second;
+    string name(theName.CharPtr());
+    name = NFmiStringTools::LowerCase(name);
+
+    LocationFinderMap::const_iterator iter;
+
+    iter = itsPrimaryPoints.find(name);
+
+    if (iter != itsPrimaryPoints.end())
+    {
+      itsLastSearchFailed = false;
+      return iter->second;
+    }
+
+    iter = itsSecondaryPoints.find(name);
+
+    itsLastSearchFailed = (iter == itsSecondaryPoints.end());
+    if (itsLastSearchFailed)
+      return NFmiPoint(kFloatMissing, kFloatMissing);
+    else
+      return iter->second;
   }
-
-  iter = itsSecondaryPoints.find(name);
-
-  itsLastSearchFailed = (iter == itsSecondaryPoints.end());
-  if (itsLastSearchFailed)
-    return NFmiPoint(kFloatMissing, kFloatMissing);
-  else
-    return iter->second;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -357,35 +391,42 @@ NFmiPoint NFmiLocationFinder::Find(const NFmiString& theName)
 // ======================================================================
 unsigned long NFmiLocationFinder::FindWmo(const NFmiString& theName)
 {
-  string name(theName.CharPtr());
-  string wmoName;
-  name = NFmiStringTools::LowerCase(name);
-  LocationFinderMap::const_iterator iter;
-  iter = itsPrimaryPoints.find(name);
-  unsigned long wmo;
+  try
+  {
+    string name(theName.CharPtr());
+    string wmoName;
+    name = NFmiStringTools::LowerCase(name);
+    LocationFinderMap::const_iterator iter;
+    iter = itsPrimaryPoints.find(name);
+    unsigned long wmo;
 
-  if (iter == itsPrimaryPoints.end())
-  {
-    itsLastSearchFailed = false;
-    return 0;
-  }
-  NFmiPoint lonLat = iter->second;
-  for (iter = itsSecondaryPoints.begin(); iter != itsSecondaryPoints.end(); ++iter)
-  {
-    // NFmiPoint lonLat2 = iter->second;
-    // if(abs(lonLat2.X()-lonLat.X())< 0.5 && abs(lonLat2.Y()-lonLat.Y())< 0.5)
-    if (iter->second ==
-        lonLat)  // flotarin epätarkkuus voi aiheuttaa eron n:ssä desimaalissa (Madrid???)
+    if (iter == itsPrimaryPoints.end())
     {
-      wmoName = iter->first;
-      if (wmoName.substr(0, 3) == "wmo" && wmoName.size() == 8)
+      itsLastSearchFailed = false;
+      return 0;
+    }
+    NFmiPoint lonLat = iter->second;
+    for (iter = itsSecondaryPoints.begin(); iter != itsSecondaryPoints.end(); ++iter)
+    {
+      // NFmiPoint lonLat2 = iter->second;
+      // if(abs(lonLat2.X()-lonLat.X())< 0.5 && abs(lonLat2.Y()-lonLat.Y())< 0.5)
+      if (iter->second ==
+          lonLat)  // flotarin epätarkkuus voi aiheuttaa eron n:ssä desimaalissa (Madrid???)
       {
-        wmoName.erase(0, 3);
-        wmo = atoi(wmoName.c_str());
-        return wmo;
+        wmoName = iter->first;
+        if (wmoName.substr(0, 3) == "wmo" && wmoName.size() == 8)
+        {
+          wmoName.erase(0, 3);
+          wmo = atoi(wmoName.c_str());
+          return wmo;
+        }
       }
     }
+    return 0;
   }
-  return 0;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ======================================================================

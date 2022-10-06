@@ -14,6 +14,7 @@
 
 #include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -29,38 +30,46 @@
 
 void *CreateSaveBase(unsigned int classId)
 {
-  switch (classId)
+  try
   {
-    case kNFmiGrid:
-      return static_cast<void *>(new NFmiGrid);
+    switch (classId)
+    {
+      case kNFmiGrid:
+        return static_cast<void *>(new NFmiGrid);
 
-    case kNFmiProjArea:
-    case kNFmiLatLonArea:
-    case kNFmiRotatedLatLonArea:
-    case kNFmiStereographicArea:
-    case kNFmiYKJArea:
-    case kNFmiEquiDistArea:
-    case kNFmiLambertConformalConicArea:
+      case kNFmiProjArea:
+      case kNFmiLatLonArea:
+      case kNFmiRotatedLatLonArea:
+      case kNFmiStereographicArea:
+      case kNFmiYKJArea:
+      case kNFmiEquiDistArea:
+      case kNFmiLambertConformalConicArea:
 #ifdef UNIX
 #ifndef DISABLED_GDAL
-    case kNFmiGdalArea:
+      case kNFmiGdalArea:
 #endif
 #endif
-      return static_cast<void *>(new NFmiArea(classId));
+        return static_cast<void *>(new NFmiArea(classId));
 
-    case kNFmiQueryData:
-      return static_cast<void *>(new NFmiQueryData);
-    case kNFmiQueryInfo:
-      return static_cast<void *>(new NFmiQueryInfo);
+      case kNFmiQueryData:
+        return static_cast<void *>(new NFmiQueryData);
+      case kNFmiQueryInfo:
+        return static_cast<void *>(new NFmiQueryInfo);
 
-    case kNFmiLocationBag:
-      return static_cast<void *>(new NFmiLocationBag);
-    case kNFmiStationBag:
-      return static_cast<void *>(new NFmiStationBag);
+      case kNFmiLocationBag:
+        return static_cast<void *>(new NFmiLocationBag);
+      case kNFmiStationBag:
+        return static_cast<void *>(new NFmiStationBag);
 
-    default:
-      throw std::runtime_error("Newbase: unable to create unknown class " +
-                               boost::lexical_cast<std::string>(classId));
+      default:
+        throw Fmi::Exception(
+            BCP,
+            "Newbase: unable to create unknown class " + boost::lexical_cast<std::string>(classId));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

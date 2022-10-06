@@ -121,7 +121,10 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiLocationBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiLocationBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiLocationBag &ob)
+{
+  return ob.Read(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Returns the location with the given index. Note that the
@@ -150,7 +153,11 @@ inline const NFmiLocation *NFmiLocationBag::Location(unsigned long theIndex) con
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLocationBag *NFmiLocationBag::Clone() const { return new NFmiLocationBag(*this); }
+inline NFmiLocationBag *NFmiLocationBag::Clone() const
+{
+  return new NFmiLocationBag(*this);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Test if the bag contains any locations
@@ -159,6 +166,9 @@ inline NFmiLocationBag *NFmiLocationBag::Clone() const { return new NFmiLocation
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLocationBag::IsLocations() const { return (!itsLocations.empty()); }
+inline bool NFmiLocationBag::IsLocations() const
+{
+  return (!itsLocations.empty());
+}
 
 // ======================================================================

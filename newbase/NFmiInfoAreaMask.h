@@ -688,7 +688,8 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
       if (itsInfo->LevelIndex(levelIndex))  // pitäisi olla aina totta
       {
           functionObject();
-        if (iterationBreakingData.BreakIteration()) break;
+        if (iterationBreakingData.BreakIteration())
+          break;
       }
     }
   }

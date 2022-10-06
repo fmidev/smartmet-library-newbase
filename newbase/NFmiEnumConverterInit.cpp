@@ -1,32 +1,49 @@
 #include "NFmiEnumConverter.h"
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
+#include <macgyver/Exception.h>
 
 void NFmiEnumConverter::Impl::initRoadRegions()
 {
-  itsParamMap = ParameterMap{
-      {"None", kTieAlueNone}, {"U1", kTieAlueU1},   {"U2", kTieAlueU2},   {"U3", kTieAlueU3},
-      {"U4", kTieAlueU4},     {"U5", kTieAlueU5},   {"T1", kTieAlueT1},   {"T2", kTieAlueT2},
-      {"T3", kTieAlueT3},     {"T4", kTieAlueT4},   {"T5", kTieAlueT5},   {"H1", kTieAlueH1},
-      {"H2", kTieAlueH2},     {"H3", kTieAlueH3},   {"H4", kTieAlueH4},   {"H5", kTieAlueH5},
-      {"K1", kTieAlueK1},     {"K2", kTieAlueK2},   {"K3", kTieAlueK3},   {"K4", kTieAlueK4},
-      {"S1", kTieAlueS1},     {"S2", kTieAlueS2},   {"S3", kTieAlueS3},   {"S4", kTieAlueS4},
-      {"S5", kTieAlueS5},     {"V1", kTieAlueV1},   {"V2", kTieAlueV2},   {"V4", kTieAlueV4},
-      {"V5", kTieAlueV5},     {"O1e", kTieAlueO1e}, {"O1p", kTieAlueO1p}, {"O2", kTieAlueO2},
-      {"O3", kTieAlueO3},     {"O4", kTieAlueO4},   {"O5", kTieAlueO5},   {"L1", kTieAlueL1},
-      {"L2", kTieAlueL2},     {"L3", kTieAlueL3},   {"L4", kTieAlueL4},   {"L5", kTieAlueL5},
-      {"Ke1", kTieAlueKe1},   {"Ke2", kTieAlueKe2}};
+  try
+  {
+    itsParamMap = ParameterMap{
+        {"None", kTieAlueNone}, {"U1", kTieAlueU1},   {"U2", kTieAlueU2},   {"U3", kTieAlueU3},
+        {"U4", kTieAlueU4},     {"U5", kTieAlueU5},   {"T1", kTieAlueT1},   {"T2", kTieAlueT2},
+        {"T3", kTieAlueT3},     {"T4", kTieAlueT4},   {"T5", kTieAlueT5},   {"H1", kTieAlueH1},
+        {"H2", kTieAlueH2},     {"H3", kTieAlueH3},   {"H4", kTieAlueH4},   {"H5", kTieAlueH5},
+        {"K1", kTieAlueK1},     {"K2", kTieAlueK2},   {"K3", kTieAlueK3},   {"K4", kTieAlueK4},
+        {"S1", kTieAlueS1},     {"S2", kTieAlueS2},   {"S3", kTieAlueS3},   {"S4", kTieAlueS4},
+        {"S5", kTieAlueS5},     {"V1", kTieAlueV1},   {"V2", kTieAlueV2},   {"V4", kTieAlueV4},
+        {"V5", kTieAlueV5},     {"O1e", kTieAlueO1e}, {"O1p", kTieAlueO1p}, {"O2", kTieAlueO2},
+        {"O3", kTieAlueO3},     {"O4", kTieAlueO4},   {"O5", kTieAlueO5},   {"L1", kTieAlueL1},
+        {"L2", kTieAlueL2},     {"L3", kTieAlueL3},   {"L4", kTieAlueL4},   {"L5", kTieAlueL5},
+        {"Ke1", kTieAlueKe1},   {"Ke2", kTieAlueKe2}};
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiEnumConverter::Impl::initPressRegions()
 {
-  itsParamMap = ParameterMap{{"None", kPressMaskNone}, {"TampereenAlue", kPressTampereenAlue}};
+  try
+  {
+    itsParamMap = ParameterMap{{"None", kPressMaskNone}, {"TampereenAlue", kPressTampereenAlue}};
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiEnumConverter::Impl::initParamNames()
 {
   // clang-format off
-  itsParamMap = ParameterMap
+  try
+  {
+    itsParamMap = ParameterMap
     {
       { "1CloudBase", kFmi1CloudBase },
       { "1CloudCover", kFmi1CloudCover },
@@ -55,6 +72,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "AreaOfRisk", kFmiAreaOfRisk },
       { "AshConcentration", kFmiAshConcentration },
       { "AshOnOff", kFmiAshOnOff },
+      { "AtmosphericIcGrowth", kFmiAtmosphericIcGrowth},
       { "AvailableEnsembleMemberCount", kFmiAvailableEnsembleMemberCount },
       { "AverageHumidity", kFmiAverageHumidity },
       { "AveragePressure", kFmiAveragePressure },
@@ -74,7 +92,8 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "BirchPollenAvailable", kFmiBirchPollenAvailable},
       { "BirchPollenConcentration", kFmiBirchPollenConcentration},
       { "BirchPollenRemainingRatio", kFmiBirchPollenRemainingRatio},
-      { "BirchPollenTemperatureSum", kFmiBirchPollenTemperatureSum},
+      { "BirchPollenTemperatureSum", kFmiBirchPollenTemperatureSum },
+      { "BlackCarbonConcentration", kFmiBlackCarbonConcentration },
       { "BoundaryLayerDissipation", kFmiBoundaryLayerDissipation },
       { "BoundaryLayerTurbulence", kFmiBoundaryLayerTurbulence },
       { "CAPE", kFmiCAPE },
@@ -112,10 +131,16 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "CloudCondensate", kFmiCloudCondensate },
       { "CloudHeight", kFmiCloudHeight },
       { "CloudIce", kFmiCloudIce },
+      { "CloudMask", kFmiCloudMask },
+      { "CloudMaskQuality", kFmiCloudMaskQuality },
       { "CloudSymbol", kFmiCloudSymbol },
       { "CloudTop", kFmiCloudTop },
       { "CloudTop2", kFmiCloudTop2 },
       { "CloudTopBrightnessTemperature", kFmiCloudTopBrightnessTemperature },
+      { "CloudTopPressure", kFmiCloudTopPressure },
+      { "CloudTopQuality", kFmiCloudTopQuality },
+      { "CloudType", kFmiCloudType },
+      { "CloudTypeQuality", kFmiCloudTypeQuality },
       { "CloudWater", kFmiCloudWater },
       { "CloudWaterReflectivity", kFmiCloudWaterReflectivity },
       { "ClusterGeopHeight1", kFmiClusterGeopHeight1 },
@@ -188,6 +213,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "DivergenceRelative", kFmiDivergenceRelative },
       { "DragCoefficient", kFmiDragCoefficient },
       { "DrySnowLoad", kFmiDrySnowLoad },
+      { "EffectiveCloudiness", kFmiEffectiveCloudiness },
       { "EFIPrecipitation", kFmiEFIPrecipitation },
       { "EFITemperature", kFmiEFITemperature },
       { "EFIWindGust", kFmiEFIWindGust },
@@ -328,6 +354,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "GrowthPeriodStarted", kFmiGrowthPeriodStarted},
       { "HaKeTaskCode", kFmiHaKeTaskCode},
       { "HakeMessageType", kFmiHakeMessageType},
+      { "HardPackedSnowIndex", kFmiHardPackedSnowIndex},
       { "HeightMinus20C", kFmiHeightMinus20C},
       { "Helicity", kFmiHelicity},
       { "HighCloudCover", kFmiHighCloudCover},
@@ -392,8 +419,10 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "InCloudTurbulence", kFmiInCloudTurbulence},
       { "InstantaneousWindGust", kFmiInstantaneousWindGust},
       { "KIndex", kFmiKIndex},
+      { "LungDepositedSurfaceArea", kFmiLungDepositedSurfaceArea},
       { "LCL", kFmiLCL},
       { "LNB", kFmiLNB},
+      { "EDR", kFmiEDR},
       { "LandCover", kFmiLandCover},
       { "LandPercentage", kFmiLandPercentage},
       { "LandSeaMask", kFmiLandSeaMask},
@@ -594,6 +623,10 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "PotentialPrecipitationType", kFmiPotentialPrecipitationType},
       { "PotentialTemperature", kFmiPotentialTemperature},
       { "PotentialWindSpeed", kFmiPotentialWindSpeed},
+      { "PowerOutagesByCounty", kFmiPowerOutagesByCounty},
+      { "PowerOutagesByMunicipality", kFmiPowerOutagesByMunicipality},
+      { "PowerOutput", kFmiPowerOutput},
+      { "PowerOutputSum", kFmiPowerOutputSum},
       { "PrecipitableWater", kFmiPrecipitableWater},
       { "PrecipitableWater2", kFmiPrecipitableWater2},
       { "Precipitation06", kFmiPrecipitation06},
@@ -655,6 +688,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "Precipitation5d", kFmiPrecipitation5d},
       { "Precipitation6h", kFmiPrecipitation6h},
       { "Precipitation7Days", kFmiPrecipitation7Days},
+      { "PrecipitationAccumulation", kFmiPrecipitationAccumulation},
       { "PrecipitationAmount", kFmiPrecipitationAmount},
       { "PrecipitationAmount2", kFmiPrecipitationAmount2},
       { "PrecipitationAnomaly10", kFmiPrecipitationAnomaly10},
@@ -952,6 +986,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "RadiationReflected", kFmiRadiationReflected},
       { "RadiationSW", kFmiRadiationSW},
       { "RadiationSWAccumulation", kFmiRadiationSWAccumulation},
+      { "RadiationDownLWClearSky", kFmiRadiationDownLWClearSky},
       { "RaftIceConcentration", kFmiRaftIceConcentration},
       { "RaftIceThickness", kFmiRaftIceThickness},
       { "RagweedPollenAvailable", kFmiRagweedPollenAvailable},
@@ -1150,6 +1185,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "SnowWarning", kFmiSnowWarning},
       { "SnowWaterRatio", kFmiSnowWaterRatio},
       { "SnowfallRate", kFmiSnowfallRate},
+      { "SoaringFlightIndex", kFmiSoaringFlightIndex},
       { "SoilMoistureContent", kFmiSoilMoistureContent},
       { "SoilTemperature", kFmiSoilTemperature},
       { "SoilTemperatureLevel1", kFmiSoilTemperatureLevel1},
@@ -1305,6 +1341,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "TemperatureSeaSurface", kFmiTemperatureSeaSurface},
       { "TemperatureVirtual", kFmiTemperatureVirtual},
       { "TemperatureVoltage", kFmiTemperatureVoltage},
+      { "ThermalBirdMigrationIndex", kFmiThermalBirdMigrationIndex},
       { "Thickness", kFmiThickness},
       { "TimeOfUVMaximum", kFmiTimeOfUVMaximum},
       { "TimeToNextMeasure", kFmiTimeToNextMeasure},
@@ -1502,7 +1539,102 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "WmoStationNumber", kFmiWmoStationNumber},
       { "Year", kFmiYear},
       { "ZResolution", kFmiZResolution},
+      { "ProbabilityOfRailRule5",kFmiProbabilityOfRailRule5},
 
+      // Metaparameters starting at index 9000 are listed here. Note that some have a short and a long name marked by "alias".
+      // The aliases exist simply because legacy queries allowed for both strings.
+ 
+      { "ApparentTemperature", kFmiApparentTemperature},
+      { "Cloudiness8th", kFmiCloudiness8th},
+      { "Country", kFmiCountry},
+      { "CoverType", kFmiCoverType},
+      { "DEM", kFmiDEM},
+      { "Dark", kFmiDark},
+      { "DataSource", kFmiDataSource},
+      { "Data_Source", kFmiDataSource}, // alias
+      { "DayLength", kFmiDayLength},
+      { "Direction", kFmiDirection},
+      { "Distance", kFmiDistance},
+      { "Elevation", kFmiElevation},
+      { "EpochTime", kFmiEpochTime},
+      { "FMISID", kFmiFMISID},
+      { "Feature", kFmiFeature},
+      { "GEOID", kFmiGEOID},
+      { "GridNorth", kFmiGridNorth},
+      { "ISO2", kFmiISO2},
+      { "ISOTime", kFmiISOTime},
+      { "LPNN", kFmiLPNN},
+      { "Lat", kFmiLatitude}, // alias
+      { "LatLon", kFmiLatLon},
+      { "Level", kFmiLevel},
+      { "LocalTZ", kFmiLocalTZ},
+      { "LocalTime", kFmiLocalTime},
+      { "Lon", kFmiLongitude}, // alias
+      { "LonLat", kFmiLonLat},
+      { "MTime", kFmiModTime}, // alias
+      { "ModTime", kFmiModTime},
+      { "Model", kFmiModel},
+      { "Mon", kFmiMon},
+      { "MoonDown24h", kFmiMoonDown24h},
+      { "MoonPhase", kFmiMoonPhase},
+      { "MoonUp24h", kFmiMoonUp24h},
+      { "Moonrise", kFmiMoonrise},
+      { "Moonrise2", kFmiMoonrise2},
+      { "Moonrise2Today", kFmiMoonrise2Today},
+      { "MoonriseToday", kFmiMoonriseToday},
+      { "Moonset", kFmiMoonset},
+      { "Moonset2", kFmiMoonset2},
+      { "Moonset2Today", kFmiMoonset2Today},
+      { "MoonsetToday", kFmiMoonsetToday},
+      { "Name", kFmiName},
+      { "NearLatLon", kFmiNearLatLon},
+      { "NearLatitude", kFmiNearLatitude},
+      { "NearLonLat", kFmiNearLonLat},
+      { "NearLongitude", kFmiNearLongitude},
+      { "Noon", kFmiNoon},
+      { "OriginTime", kFmiOriginTime},
+      { "Place", kFmiPlace},
+      { "Population", kFmiPopulation},
+      { "Producer", kFmiProducer},
+      { "RWSID", kFmiRWSID},
+      { "Region", kFmiRegion},
+      { "SSI", kFmiSummerSimmerIndex}, // alias
+      { "SmartSymbolText", kFmiSmartSymbolText},
+      { "Snow1hLower", kFmiSnow1hLower},
+      { "Snow1hUpper", kFmiSnow1hUpper},
+      { "StationElevation", kFmiStationElevation},
+      { "Station_Elevation", kFmiStationElevation}, // alias
+      { "StationLat", kFmiStationLatitude}, // alias
+      { "StationLatitude", kFmiStationLatitude},
+      { "StationLon", kFmiStationLongitude}, // alias
+      { "StationLongitude", kFmiStationLongitude},
+      { "StationName", kFmiStationName},
+      { "Station_Name", kFmiStationName}, // alias
+      { "StationType", kFmiStationType},
+      { "Station_Name", kFmiStationName}, // alias
+      { "Stationary", kFmiStationary},
+      { "SummerSimmerIndex", kFmiSummerSimmerIndex},
+      { "SunAzimuth", kFmiSunAzimuth},
+      { "SunDeclination", kFmiSunDeclination},
+      { "SunElevation", kFmiSunElevation},
+      { "Sunrise", kFmiSunrise},
+      { "SunriseToday", kFmiSunriseToday},
+      { "Sunset", kFmiSunset},
+      { "SunsetToday", kFmiSunsetToday},
+      { "TZ", kFmiTZ},
+      { "Time", kFmiTime},
+      { "TimeString", kFmiTimeString},
+      { "UTCTime", kFmiUTCTime},
+      { "WDay", kFmiWDay},
+      { "Weather", kFmiWeather},
+      { "Weekday", kFmiWeekday},
+      { "WindChill", kFmiWindChill},
+      { "WindCompass16", kFmiWindCompass16},
+      { "WindCompass32", kFmiWindCompass32},
+      { "WindCompass8", kFmiWindCompass8},
+      { "Wmo", kFmiWmoStationNumber}, // alias
+      { "XMLTime", kFmiXMLTime},
+      
       // Generated from
       // http://cfconventions.org/Data/cf-standard-names/45/build/cf-standard-name-table.html
 
@@ -4796,6 +4928,11 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "tendency_of_atmosphere_mass_content_of_nitrogen_due_to_dry_deposition", cf_tendency_of_atmosphere_mass_content_of_nitrogen_due_to_dry_deposition },
       { "tendency_of_atmosphere_mass_content_of_nitrogen_due_to_deposition", cf_tendency_of_atmosphere_mass_content_of_nitrogen_due_to_deposition }
     };
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 
   // clang-format on
 }

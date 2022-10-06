@@ -20,7 +20,10 @@ NFmiDataModifierMaxPlace::~NFmiDataModifierMaxPlace() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierMaxPlace::NFmiDataModifierMaxPlace() { itsExtremeValue = -3.4E+38f; }
+NFmiDataModifierMaxPlace::NFmiDataModifierMaxPlace()
+{
+  itsExtremeValue = -3.4E+38f;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -40,7 +43,10 @@ void NFmiDataModifierMaxPlace::Calculate(float theValue)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierMaxPlace::Clear() { itsExtremeValue = -3.4E+38f; }
+void NFmiDataModifierMaxPlace::Clear()
+{
+  itsExtremeValue = -3.4E+38f;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -61,5 +67,8 @@ float NFmiDataModifierMaxPlace::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifierMaxPlace::IsNewExtreme(float value) { return value > itsExtremeValue; }
+bool NFmiDataModifierMaxPlace::IsNewExtreme(float value)
+{
+  return value > itsExtremeValue;
+}
 // ======================================================================

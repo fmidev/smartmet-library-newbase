@@ -21,7 +21,7 @@ INCLUDES += \
 	-I.
 
 LIBS +=  ../libsmartmet-newbase.so \
-	-lgdal \
+	-lsmartmet-macgyver \
 	-lboost_date_time \
 	-lboost_filesystem \
 	-lboost_iostreams \

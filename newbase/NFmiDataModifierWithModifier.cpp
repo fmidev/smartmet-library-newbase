@@ -40,5 +40,8 @@ float NFmiDataModifierWithModifier::FloatOperation(float /* theValue */)
  */
 // ----------------------------------------------------------------------
 
-void NFmiDataModifierWithModifier::Calculate(float theValue) { FloatOperation(theValue); }
+void NFmiDataModifierWithModifier::Calculate(float theValue)
+{
+  FloatOperation(theValue);
+}
 // ======================================================================

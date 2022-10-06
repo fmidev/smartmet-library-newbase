@@ -589,7 +589,7 @@
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
-
+#include <macgyver/Exception.h>
 #include <cassert>
 
 // Implementation hiding detail functions
@@ -619,28 +619,35 @@ void Insert(NFmiNearTree<NFmiPoint> &theTree,
             const NFmiPoint &theEnd,
             double theResolution)
 {
-  // Safety against infinite recursion
-  if (theResolution <= 0)
+  try
   {
-    theTree.Insert(theStart);
-    theTree.Insert(theEnd);
-  }
-  else
-  {
-    // if edge length is small enough, stop recursion
-    const double dist = theStart.Distance(theEnd);
-    if (dist <= theResolution)
+    // Safety against infinite recursion
+    if (theResolution <= 0)
     {
       theTree.Insert(theStart);
       theTree.Insert(theEnd);
     }
     else
     {
-      // subdivide and recurse
-      NFmiPoint mid((theStart.X() + theEnd.X()) / 2, (theStart.Y() + theEnd.Y()) / 2);
-      Insert(theTree, theStart, mid, theResolution);
-      Insert(theTree, theEnd, mid, theResolution);
+      // if edge length is small enough, stop recursion
+      const double dist = theStart.Distance(theEnd);
+      if (dist <= theResolution)
+      {
+        theTree.Insert(theStart);
+        theTree.Insert(theEnd);
+      }
+      else
+      {
+        // subdivide and recurse
+        NFmiPoint mid((theStart.X() + theEnd.X()) / 2, (theStart.Y() + theEnd.Y()) / 2);
+        Insert(theTree, theStart, mid, theResolution);
+        Insert(theTree, theEnd, mid, theResolution);
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -661,36 +668,44 @@ void Insert(NFmiNearTree<NFmiPoint> &theTree,
 
 void Insert(NFmiNearTree<NFmiPoint> &theTree, const NFmiSvgPath &thePath, double theResolution)
 {
-  if (thePath.empty()) return;
-
-  NFmiPoint firstPoint(thePath.front().itsX, thePath.front().itsY);
-
-  NFmiPoint lastPoint(0, 0);
-
-  for (const auto &it : thePath)
+  try
   {
-    switch (it.itsType)
+    if (thePath.empty())
+      return;
+
+    NFmiPoint firstPoint(thePath.front().itsX, thePath.front().itsY);
+
+    NFmiPoint lastPoint(0, 0);
+
+    for (const auto &it : thePath)
     {
-      case NFmiSvgPath::kElementMoveto:
-        lastPoint.Set(it.itsX, it.itsY);
-        firstPoint = lastPoint;
-        break;
-      case NFmiSvgPath::kElementClosePath:
+      switch (it.itsType)
       {
-        Insert(theTree, lastPoint, firstPoint, theResolution);
-        lastPoint = firstPoint;
-        break;
+        case NFmiSvgPath::kElementMoveto:
+          lastPoint.Set(it.itsX, it.itsY);
+          firstPoint = lastPoint;
+          break;
+        case NFmiSvgPath::kElementClosePath:
+        {
+          Insert(theTree, lastPoint, firstPoint, theResolution);
+          lastPoint = firstPoint;
+          break;
+        }
+        case NFmiSvgPath::kElementLineto:
+        {
+          NFmiPoint nextPoint(it.itsX, it.itsY);
+          Insert(theTree, lastPoint, nextPoint, theResolution);
+          lastPoint = nextPoint;
+          break;
+        }
+        case NFmiSvgPath::kElementNotValid:
+          return;
       }
-      case NFmiSvgPath::kElementLineto:
-      {
-        NFmiPoint nextPoint(it.itsX, it.itsY);
-        Insert(theTree, lastPoint, nextPoint, theResolution);
-        lastPoint = nextPoint;
-        break;
-      }
-      case NFmiSvgPath::kElementNotValid:
-        return;
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -718,69 +733,81 @@ namespace NFmiIndexMaskTools
 
 NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 {
-  NFmiIndexMask mask;
+  try
+  {
+    NFmiIndexMask mask;
 
-  // Handle empty paths
-  if (thePath.empty()) return mask;
+    // Handle empty paths
+    if (thePath.empty())
+      return mask;
 
-  // Establish grid resolution
+    // Establish grid resolution
 
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-  // Fast lookup tree for distance calculations
+    // Fast lookup tree for distance calculations
 
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
 
-  // Optimization
+    // Optimization
 
-  bool lastPointOn = false;
-  NFmiPoint lastPoint;
-  double lastDistance = 0.0;
-  bool lastInside = false;
+    bool lastPointOn = false;
+    NFmiPoint lastPoint;
+    double lastDistance = 0.0;
+    bool lastInside = false;
 
-  // Non-optimal solution loops through the entire grid
+    // Non-optimal solution loops through the entire grid
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
 
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-      const NFmiPoint p = theGrid.LatLon(idx);
-
-      const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
-
-      bool recalculate = true;
-
-      if (lastPointOn)
+      for (unsigned long i = 0; i < nx; i++)
       {
-        double distance = xy.Distance(lastPoint);
-        if (distance < lastDistance)
+        const unsigned long idx = j * nx + i;
+        const NFmiPoint p = theGrid.LatLon(idx);
+
+        const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
+
+        bool recalculate = true;
+
+        if (lastPointOn)
         {
-          recalculate = false;
-          if (lastInside) mask.insert(idx);
+          double distance = xy.Distance(lastPoint);
+          if (distance < lastDistance)
+          {
+            recalculate = false;
+            if (lastInside)
+              mask.insert(idx);
+          }
+        }
+
+        if (recalculate)
+        {
+          NFmiPoint nearest;
+          tree.NearestPoint(nearest, xy);
+
+          lastPointOn = true;
+          lastPoint = xy;
+          lastInside = NFmiSvgTools::IsInside(thePath, p);
+          lastDistance = xy.Distance(nearest);
+
+          if (lastInside)
+            mask.insert(idx);
         }
       }
-
-      if (recalculate)
-      {
-        NFmiPoint nearest;
-        tree.NearestPoint(nearest, xy);
-
-        lastPointOn = true;
-        lastPoint = xy;
-        lastInside = NFmiSvgTools::IsInside(thePath, p);
-        lastDistance = xy.Distance(nearest);
-
-        if (lastInside) mask.insert(idx);
-      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -803,75 +830,84 @@ NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 
 NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 {
-  NFmiIndexMask mask;
-
-  // Establish grid resolution
-
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
-
-  // Fast lookup tree for distance calculations
-
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
-
-  // Optimization
-
-  bool lastPointOn = false;
-  NFmiPoint lastPoint;
-  double lastDistance = 0;
-  bool lastInside = false;
-
-  // Non-optimal solution loops through the entire grid
-
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
-
-  if (thePath.empty())
+  try
   {
-    for (unsigned long j = 0; j < ny; j++)
-      for (unsigned long i = 0; i < nx; i++)
-        mask.insert(j * nx + i);
-  }
-  else
-  {
-    for (unsigned long j = 0; j < ny; j++)
-      for (unsigned long i = 0; i < nx; i++)
-      {
-        const unsigned long idx = j * nx + i;
-        const NFmiPoint p = theGrid.LatLon(idx);
+    NFmiIndexMask mask;
 
-        const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
+    // Establish grid resolution
 
-        bool recalculate = true;
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-        if (lastPointOn)
+    // Fast lookup tree for distance calculations
+
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+
+    // Optimization
+
+    bool lastPointOn = false;
+    NFmiPoint lastPoint;
+    double lastDistance = 0;
+    bool lastInside = false;
+
+    // Non-optimal solution loops through the entire grid
+
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
+
+    if (thePath.empty())
+    {
+      for (unsigned long j = 0; j < ny; j++)
+        for (unsigned long i = 0; i < nx; i++)
+          mask.insert(j * nx + i);
+    }
+    else
+    {
+      for (unsigned long j = 0; j < ny; j++)
+        for (unsigned long i = 0; i < nx; i++)
         {
-          double distance = xy.Distance(lastPoint);
-          if (distance < lastDistance)
+          const unsigned long idx = j * nx + i;
+          const NFmiPoint p = theGrid.LatLon(idx);
+
+          const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
+
+          bool recalculate = true;
+
+          if (lastPointOn)
           {
-            recalculate = false;
-            if (!lastInside) mask.insert(idx);
+            double distance = xy.Distance(lastPoint);
+            if (distance < lastDistance)
+            {
+              recalculate = false;
+              if (!lastInside)
+                mask.insert(idx);
+            }
+          }
+
+          if (recalculate)
+          {
+            NFmiPoint nearest;
+            tree.NearestPoint(nearest, xy);
+
+            lastPointOn = true;
+            lastPoint = xy;
+            lastInside = NFmiSvgTools::IsInside(thePath, p);
+            lastDistance = xy.Distance(nearest);
+
+            if (!lastInside)
+              mask.insert(idx);
           }
         }
-
-        if (recalculate)
-        {
-          NFmiPoint nearest;
-          tree.NearestPoint(nearest, xy);
-
-          lastPointOn = true;
-          lastPoint = xy;
-          lastInside = NFmiSvgTools::IsInside(thePath, p);
-          lastDistance = xy.Distance(nearest);
-
-          if (!lastInside) mask.insert(idx);
-        }
-      }
+    }
+    return mask;
   }
-  return mask;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -899,79 +935,93 @@ NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
 
 NFmiIndexMask MaskExpand(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
-  if (theDistance == 0) return MaskInside(theGrid, thePath);
-  if (theDistance < 0) return MaskShrink(theGrid, thePath, -theDistance);
+  try
+  {
+    if (theDistance == 0)
+      return MaskInside(theGrid, thePath);
 
-  NFmiIndexMask mask;
+    if (theDistance < 0)
+      return MaskShrink(theGrid, thePath, -theDistance);
 
-  // Handle empty paths
-  if (thePath.empty()) return mask;
+    NFmiIndexMask mask;
 
-  // Establish grid resolution
+    // Handle empty paths
+    if (thePath.empty())
+      return mask;
 
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
+    // Establish grid resolution
 
-  // Fast lookup tree for distance calculations
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    // Fast lookup tree for distance calculations
 
-  // Optimization
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
 
-  bool lastPointOn = false;
-  NFmiPoint lastPoint;
-  double lastDistance = 0;
-  bool lastInside = false;
+    // Optimization
 
-  // Non-optimal solution loops through the entire grid
+    bool lastPointOn = false;
+    NFmiPoint lastPoint;
+    double lastDistance = 0;
+    bool lastInside = false;
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    // Non-optimal solution loops through the entire grid
 
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
+
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-
-      const NFmiPoint p = theGrid.LatLon(idx);
-      const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
-
-      bool recalculate = true;
-
-      if (lastPointOn)
+      for (unsigned long i = 0; i < nx; i++)
       {
-        double distance = xy.Distance(lastPoint);
-        if (lastInside)
+        const unsigned long idx = j * nx + i;
+
+        const NFmiPoint p = theGrid.LatLon(idx);
+        const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
+
+        bool recalculate = true;
+
+        if (lastPointOn)
         {
-          if (distance < lastDistance + theDistance * 1000)
+          double distance = xy.Distance(lastPoint);
+          if (lastInside)
           {
-            recalculate = false;
-            mask.insert(idx);
+            if (distance < lastDistance + theDistance * 1000)
+            {
+              recalculate = false;
+              mask.insert(idx);
+            }
+          }
+          else
+          {
+            recalculate = (distance >= lastDistance - theDistance * 1000);
           }
         }
-        else
+
+        if (recalculate)
         {
-          recalculate = (distance >= lastDistance - theDistance * 1000);
+          NFmiPoint nearest;
+          tree.NearestPoint(nearest, xy);
+
+          lastPointOn = true;
+          lastPoint = xy;
+          lastInside = NFmiSvgTools::IsInside(thePath, p);
+          lastDistance = xy.Distance(nearest);
+
+          if (lastInside || lastDistance <= theDistance * 1000)
+            mask.insert(idx);
         }
       }
-
-      if (recalculate)
-      {
-        NFmiPoint nearest;
-        tree.NearestPoint(nearest, xy);
-
-        lastPointOn = true;
-        lastPoint = xy;
-        lastInside = NFmiSvgTools::IsInside(thePath, p);
-        lastDistance = xy.Distance(nearest);
-
-        if (lastInside || lastDistance <= theDistance * 1000) mask.insert(idx);
-      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -989,43 +1039,56 @@ NFmiIndexMask MaskExpand(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, do
 
 NFmiIndexMask MaskShrink(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
-  if (theDistance == 0) return MaskInside(theGrid, thePath);
-  if (theDistance < 0) return MaskExpand(theGrid, thePath, -theDistance);
+  try
+  {
+    if (theDistance == 0)
+      return MaskInside(theGrid, thePath);
 
-  NFmiIndexMask mask;
+    if (theDistance < 0)
+      return MaskExpand(theGrid, thePath, -theDistance);
 
-  // Handle empty paths
-  if (thePath.empty()) return mask;
+    NFmiIndexMask mask;
 
-  // Establish grid resolution
+    // Handle empty paths
+    if (thePath.empty())
+      return mask;
 
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
+    // Establish grid resolution
 
-  // Fast lookup tree for distance calculations
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    // Fast lookup tree for distance calculations
 
-  // Non-optimal solution loops through the entire grid
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    // Non-optimal solution loops through the entire grid
 
-  NFmiPoint nearestPoint, p, xy;
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
+
+    NFmiPoint nearestPoint, p, xy;
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-      p = theGrid.LatLon(idx);
-      xy = theGrid.GridToWorldXY(i, j);
-      if (NFmiSvgTools::IsInside(thePath, p) &&
-          !tree.NearestPoint(nearestPoint, xy, theDistance * 1000))
-        mask.insert(idx);
+      for (unsigned long i = 0; i < nx; i++)
+      {
+        const unsigned long idx = j * nx + i;
+        p = theGrid.LatLon(idx);
+        xy = theGrid.GridToWorldXY(i, j);
+        if (NFmiSvgTools::IsInside(thePath, p) &&
+            !tree.NearestPoint(nearestPoint, xy, theDistance * 1000))
+          mask.insert(idx);
+      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1043,39 +1106,51 @@ NFmiIndexMask MaskShrink(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, do
 
 NFmiIndexMask MaskDistance(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, double theDistance)
 {
-  NFmiIndexMask mask;
+  try
+  {
+    NFmiIndexMask mask;
 
-  if (theDistance < 0) return mask;
+    if (theDistance < 0)
+      return mask;
 
-  // Handle empty paths
-  if (thePath.empty()) return mask;
+    // Handle empty paths
+    if (thePath.empty())
+      return mask;
 
-  // Establish grid resolution
+    // Establish grid resolution
 
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-  // Fast lookup tree for distance calculations
+    // Fast lookup tree for distance calculations
 
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
 
-  // Non-optimal solution loops through the entire grid
+    // Non-optimal solution loops through the entire grid
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
 
-  NFmiPoint nearestPoint, xy;
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    NFmiPoint nearestPoint, xy;
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-      xy = theGrid.GridToWorldXY(i, j);
-      if (tree.NearestPoint(nearestPoint, xy, theDistance * 1000)) mask.insert(idx);
+      for (unsigned long i = 0; i < nx; i++)
+      {
+        const unsigned long idx = j * nx + i;
+        xy = theGrid.GridToWorldXY(i, j);
+        if (tree.NearestPoint(nearestPoint, xy, theDistance * 1000))
+          mask.insert(idx);
+      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1091,26 +1166,37 @@ NFmiIndexMask MaskDistance(const NFmiGrid &theGrid, const NFmiSvgPath &thePath, 
 
 NFmiIndexMask MaskDistance(const NFmiGrid &theGrid, const NFmiPoint &thePoint, double theDistance)
 {
-  NFmiIndexMask mask;
+  try
+  {
+    NFmiIndexMask mask;
 
-  if (theDistance < 0) return mask;
+    if (theDistance < 0)
+      return mask;
 
-  NFmiPoint p = theGrid.Area()->LatLonToWorldXY(thePoint);
+    NFmiPoint p = theGrid.Area()->LatLonToWorldXY(thePoint);
 
-  // Non-optimal solution loops through the entire grid
+    // Non-optimal solution loops through the entire grid
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
 
-  NFmiPoint xy;
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    NFmiPoint xy;
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-      xy = theGrid.GridToWorldXY(i, j);
-      if (p.Distance(xy) <= theDistance * 1000) mask.insert(idx);
+      for (unsigned long i = 0; i < nx; i++)
+      {
+        const unsigned long idx = j * nx + i;
+        xy = theGrid.GridToWorldXY(i, j);
+        if (p.Distance(xy) <= theDistance * 1000)
+          mask.insert(idx);
+      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1130,57 +1216,67 @@ std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
                                       const NFmiSvgPath &thePath,
                                       std::vector<double> theDistances)
 {
-  std::vector<NFmiIndexMask> masks;
-  masks.resize(theDistances.size());
+  try
+  {
+    std::vector<NFmiIndexMask> masks;
+    masks.resize(theDistances.size());
 
-  // Handle special cases
-  if (theDistances.empty() || thePath.empty()) return masks;
+    // Handle special cases
+    if (theDistances.empty() || thePath.empty())
+      return masks;
 
-  // Establish grid resolution
+    // Establish grid resolution
 
-  const double dx = theGrid.Area()->WorldXYWidth() / theGrid.XNumber();
-  const double dy = theGrid.Area()->WorldXYHeight() / theGrid.YNumber();
+    const double dx = theGrid.Area()->WorldXYWidth() / (theGrid.XNumber() - 1);
+    const double dy = theGrid.Area()->WorldXYHeight() / (theGrid.YNumber() - 1);
 
-  // Fast lookup tree for distance calculations
+    // Fast lookup tree for distance calculations
 
-  NFmiSvgPath projectedPath(thePath);
-  NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
-  NFmiNearTree<NFmiPoint> tree;
-  Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    NFmiSvgPath projectedPath(thePath);
+    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
+    NFmiNearTree<NFmiPoint> tree;
+    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
 
-  // Non-optimal solution loops through the entire grid
+    // Non-optimal solution loops through the entire grid
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
 
-  NFmiPoint nearestPoint, xy;
+    NFmiPoint nearestPoint, xy;
 
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-
-      xy = theGrid.GridToWorldXY(i, j);
-
-      bool isinside = NFmiSvgTools::IsInside(thePath, theGrid.LatLon(idx));
-      bool foundnear = tree.NearestPoint(nearestPoint, xy);
-      double dist = (!foundnear ? 0.0 : nearestPoint.Distance(xy));
-
-      for (unsigned int k = 0; k < theDistances.size(); k++)
+      for (unsigned long i = 0; i < nx; i++)
       {
-        const double limit = 1000 * theDistances[k];
+        const unsigned long idx = j * nx + i;
 
-        if (isinside && limit >= 0)  // inside expand?
-          masks[k].insert(idx);
-        else if (!isinside && limit < 0)  // outside shrink?
-          ;
-        else if (limit >= 0 && foundnear && dist <= limit)
-          masks[k].insert(idx);
-        else if (limit < 0 && foundnear && dist > (-limit))
-          masks[k].insert(idx);
+        xy = theGrid.GridToWorldXY(i, j);
+
+        bool isinside = NFmiSvgTools::IsInside(thePath, theGrid.LatLon(idx));
+        bool foundnear = tree.NearestPoint(nearestPoint, xy);
+        double dist = (!foundnear ? 0.0 : nearestPoint.Distance(xy));
+
+        for (unsigned int k = 0; k < theDistances.size(); k++)
+        {
+          const double limit = 1000 * theDistances[k];
+
+          if (isinside && limit >= 0)  // inside expand?
+            masks[k].insert(idx);
+          else if (!isinside && limit < 0)  // outside shrink?
+            ;
+          else if (limit >= 0 && foundnear && dist <= limit)
+            masks[k].insert(idx);
+          else if (limit < 0 && foundnear && dist > (-limit))
+            masks[k].insert(idx);
+        }
       }
     }
-  return masks;
+    return masks;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1197,20 +1293,27 @@ std::string MaskString(const NFmiIndexMask &theMask,
                        unsigned long theWidth,
                        unsigned long theHeight)
 {
-  std::string out;
-  for (long j = theHeight - 1; j >= 0; j--)
+  try
   {
-    for (unsigned long i = 0; i < theWidth; i++)
+    std::string out;
+    for (long j = theHeight - 1; j >= 0; j--)
     {
-      const unsigned long idx = j * theWidth + i;
-      if (theMask.find(idx) != theMask.end())
-        out += 'X';
-      else
-        out += '.';
+      for (unsigned long i = 0; i < theWidth; i++)
+      {
+        const unsigned long idx = j * theWidth + i;
+        if (theMask.find(idx) != theMask.end())
+          out += 'X';
+        else
+          out += '.';
+      }
+      out += '\n';
     }
-    out += '\n';
+    return out;
   }
-  return out;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1232,23 +1335,34 @@ NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
                             NFmiFastQueryInfo &theInfo,
                             const NFmiCalculationCondition &theCondition)
 {
-  NFmiIndexMask mask;
+  try
+  {
+    NFmiIndexMask mask;
 
-  if (!theInfo.IsGrid()) return mask;
+    if (!theInfo.IsGrid())
+      return mask;
 
-  const unsigned long nx = theGrid.XNumber();
-  const unsigned long ny = theGrid.YNumber();
+    const unsigned long nx = theGrid.XNumber();
+    const unsigned long ny = theGrid.YNumber();
 
-  NFmiPoint latlon;
-  for (unsigned long j = 0; j < ny; j++)
-    for (unsigned long i = 0; i < nx; i++)
+    NFmiPoint latlon;
+    for (unsigned long j = 0; j < ny; j++)
     {
-      const unsigned long idx = j * nx + i;
-      latlon = theGrid.GridToLatLon(i, j);
-      double value = theInfo.InterpolatedValue(latlon);
-      if (theCondition.IsMasked(value)) mask.insert(idx);
+      for (unsigned long i = 0; i < nx; i++)
+      {
+        const unsigned long idx = j * nx + i;
+        latlon = theGrid.GridToLatLon(i, j);
+        double value = theInfo.InterpolatedValue(latlon);
+        if (theCondition.IsMasked(value))
+          mask.insert(idx);
+      }
     }
-  return mask;
+    return mask;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace NFmiIndexMaskTools

@@ -80,6 +80,9 @@ inline std::ostream& operator<<(std::ostream& os, const NFmiStation& item)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream& operator>>(std::istream& is, NFmiStation& item) { return item.Read(is); }
+inline std::istream& operator>>(std::istream& is, NFmiStation& item)
+{
+  return item.Read(is);
+}
 
 // ======================================================================

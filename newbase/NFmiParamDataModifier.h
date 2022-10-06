@@ -61,13 +61,20 @@ class NFmiParamDataModifier : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataIdent* NFmiParamDataModifier::Param() { return itsParam; }
+inline NFmiDataIdent* NFmiParamDataModifier::Param()
+{
+  return itsParam;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel* NFmiParamDataModifier::Level() { return itsLevel; }
+inline NFmiLevel* NFmiParamDataModifier::Level()
+{
+  return itsLevel;
+}
 
 // ======================================================================

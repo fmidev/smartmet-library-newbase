@@ -82,7 +82,11 @@ class NFmiParamDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParamDescriptor::~NFmiParamDescriptor() { Destroy(); }
+inline NFmiParamDescriptor::~NFmiParamDescriptor()
+{
+  Destroy();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fIgnoreSubParam Undocumented
@@ -113,7 +117,11 @@ inline bool NFmiParamDescriptor::Previous(bool fIgnoreSubParam)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiParamDescriptor::Reset() { itsParamBag->Reset(); }
+inline void NFmiParamDescriptor::Reset()
+{
+  itsParamBag->Reset();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fIgnoreSubParam Undocumented
@@ -144,21 +152,33 @@ inline NFmiDataIdent &NFmiParamDescriptor::EditParam(bool fIgnoreSubParam)
  */
 // ----------------------------------------------------------------------
 
-inline NFmiParamBag *NFmiParamDescriptor::ParamBag() const { return itsParamBag; }
+inline NFmiParamBag *NFmiParamDescriptor::ParamBag() const
+{
+  return itsParamBag;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiParamDescriptor::Index() const { return itsParamBag->CurrentIndex(); }
+inline unsigned long NFmiParamDescriptor::Index() const
+{
+  return itsParamBag->CurrentIndex();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiParamDescriptor::Size() const { return itsParamBag->GetSize(); }
+inline unsigned long NFmiParamDescriptor::Size() const
+{
+  return itsParamBag->GetSize();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fIgnoreSubParam Undocumented
@@ -190,7 +210,11 @@ inline bool NFmiParamDescriptor::IsActive(unsigned long theIndex, bool fIgnoreSu
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParamDescriptor::IsActive() const { return itsActivity[Index()]; }
+inline bool NFmiParamDescriptor::IsActive() const
+{
+  return itsActivity[Index()];
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Vaihtaa kaikille parametreille tuottajan
@@ -211,7 +235,10 @@ inline void NFmiParamDescriptor::SetProducer(const NFmiProducer &newProducer)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParamDescriptor::IsSubParamUsed() const { return itsParamBag->IsSubParamUsed(); }
+inline bool NFmiParamDescriptor::IsSubParamUsed() const
+{
+  return itsParamBag->IsSubParamUsed();
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -219,21 +246,33 @@ inline bool NFmiParamDescriptor::IsSubParamUsed() const { return itsParamBag->Is
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParamDescriptor::Interpolate() const { return fInterpolate; }
+inline bool NFmiParamDescriptor::Interpolate() const
+{
+  return fInterpolate;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiParamDescriptor::ClassId() const { return kNFmiParamDescriptor; }
+inline unsigned long NFmiParamDescriptor::ClassId() const
+{
+  return kNFmiParamDescriptor;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiParamDescriptor::ClassName() const { return "NFmiParamDescriptor"; }
+inline const char *NFmiParamDescriptor::ClassName() const
+{
+  return "NFmiParamDescriptor";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiParamDescriptor

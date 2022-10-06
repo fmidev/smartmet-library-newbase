@@ -55,13 +55,20 @@ class NFmiQueryInfoSatel : public NFmiQueryInfo
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfoSatel::ClassId() const { return kNFmiSatelQueryInfo; }
+inline unsigned long NFmiQueryInfoSatel::ClassId() const
+{
+  return kNFmiSatelQueryInfo;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiQueryInfoSatel::ClassName() const { return "NFmiQueryInfoSatel"; }
+inline const char* NFmiQueryInfoSatel::ClassName() const
+{
+  return "NFmiQueryInfoSatel";
+}
 
 // ======================================================================

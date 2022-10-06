@@ -22,6 +22,7 @@
 #include "NFmiStringList.h"
 
 #include "NFmiStatusPositionString.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -29,7 +30,19 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiStringList::~NFmiStringList() { Destroy(); }
+NFmiStringList::~NFmiStringList()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -40,10 +53,17 @@ NFmiStringList::~NFmiStringList() { Destroy(); }
 
 NFmiStringList::NFmiStringList(const NFmiStringList &theList) : itsList(), itsIndex(0)
 {
-  const StorageType::const_iterator begin = theList.itsList.begin();
-  const StorageType::const_iterator end = theList.itsList.end();
-  for (StorageType::const_iterator iter = begin; iter != end; ++iter)
-    Add((*iter)->Clone());
+  try
+  {
+    const StorageType::const_iterator begin = theList.itsList.begin();
+    const StorageType::const_iterator end = theList.itsList.end();
+    for (StorageType::const_iterator iter = begin; iter != end; ++iter)
+      Add((*iter)->Clone());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -63,13 +83,20 @@ NFmiStringList::NFmiStringList(const NFmiStringList &theList) : itsList(), itsIn
 
 bool NFmiStringList::Next(NFmiString **theItem)
 {
-  *theItem = Current();
-  if (*theItem)
+  try
   {
-    Next();
-    return true;
+    *theItem = Current();
+    if (*theItem)
+    {
+      Next();
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -82,12 +109,19 @@ bool NFmiStringList::Next(NFmiString **theItem)
 
 bool NFmiStringList::Next()
 {
-  if (itsList.size())
+  try
   {
-    itsIndex = (itsIndex < itsList.size() - 1) ? itsIndex + 1 : 0;
-    return (itsIndex != 0);
+    if (itsList.size())
+    {
+      itsIndex = (itsIndex < itsList.size() - 1) ? itsIndex + 1 : 0;
+      return (itsIndex != 0);
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //--------------------------------------------------------
@@ -99,13 +133,20 @@ bool NFmiStringList::Next()
 //--------------------------------------------------------
 bool NFmiStringList::Previous()
 {
-  if (itsIndex > 0)
+  try
   {
-    itsIndex--;
-    return true;
+    if (itsIndex > 0)
+    {
+      itsIndex--;
+      return true;
+    }
+    itsIndex = 0;
+    return false;
   }
-  itsIndex = 0;
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -119,10 +160,17 @@ bool NFmiStringList::Previous()
 
 NFmiString *NFmiStringList::Current() const
 {
-  if (itsIndex < itsList.size())
-    return itsList[itsIndex];
-  else
+  try
+  {
+    if (itsIndex < itsList.size())
+      return itsList[itsIndex];
+
     return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -138,17 +186,24 @@ NFmiString *NFmiStringList::Current() const
 
 bool NFmiStringList::Reset(FmiDirection theDirect)
 {
-  if (theDirect == kBackward)
+  try
   {
-    if (itsList.size() > 0)
-      itsIndex = itsList.size() - 1;
+    if (theDirect == kBackward)
+    {
+      if (itsList.size() > 0)
+        itsIndex = itsList.size() - 1;
+      else
+        itsIndex = 0;
+    }
     else
       itsIndex = 0;
-  }
-  else
-    itsIndex = 0;
 
-  return (itsList.size() > 0);
+    return (itsList.size() > 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -163,8 +218,15 @@ bool NFmiStringList::Reset(FmiDirection theDirect)
 
 void NFmiStringList::Add(NFmiString *theItem)
 {
-  itsList.push_back(theItem);
-  Reset();
+  try
+  {
+    itsList.push_back(theItem);
+    Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -181,10 +243,17 @@ void NFmiStringList::Add(NFmiString *theItem)
 
 void NFmiStringList::Add(NFmiStringList *theList)
 {
-  const StorageType::const_iterator begin = theList->itsList.begin();
-  const StorageType::const_iterator end = theList->itsList.end();
-  for (StorageType::const_iterator iter = begin; iter != end; ++iter)
-    Add(*iter);
+  try
+  {
+    const StorageType::const_iterator begin = theList->itsList.begin();
+    const StorageType::const_iterator end = theList->itsList.end();
+    for (StorageType::const_iterator iter = begin; iter != end; ++iter)
+      Add(*iter);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -203,32 +272,40 @@ void NFmiStringList::Add(NFmiStringList *theList)
 
 void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStrItem)
 {
-  auto *strLeft = new NFmiString(*theStr);
-  NFmiString *tempStr = nullptr;
-  unsigned long lineLenght = theLengthLimitForStrItem;
-  unsigned long ind = 0;
-
-  do
+  try
   {
-    if (strLeft->GetLen() <= lineLenght)  // only on line left
+    auto *strLeft = new NFmiString(*theStr);
+    NFmiString *tempStr = nullptr;
+    unsigned long lineLenght = theLengthLimitForStrItem;
+    unsigned long ind = 0;
+
+    do
     {
-      Add(strLeft);
-      return;
-    }
+      if (strLeft->GetLen() <= lineLenght)  // only on line left
+      {
+        Add(strLeft);
+        return;
+      }
 
-    ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLenght);
-    // if line feed not found, the end of the word which is longer than lineLenght must be splitt
-    // into the next line
-    if (!ind) ind = lineLenght;
-    // the line feed found stays at the end of the line added to the list
-    tempStr = new NFmiString(strLeft->GetChars(1, ind));
-    Add(tempStr);
+      ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLenght);
+      // if line feed not found, the end of the word which is longer than lineLenght must be splitt
+      // into the next line
+      if (!ind)
+        ind = lineLenght;
+      // the line feed found stays at the end of the line added to the list
+      tempStr = new NFmiString(strLeft->GetChars(1, ind));
+      Add(tempStr);
 
-    NFmiString strLeft2(strLeft->GetChars(ind + 1, strLeft->GetLen() - ind));
+      NFmiString strLeft2(strLeft->GetChars(ind + 1, strLeft->GetLen() - ind));
+      delete strLeft;
+      strLeft = new NFmiString(strLeft2);
+    } while (strLeft->GetLen() > 0);  // because of this check have to use "new NFmiString"
     delete strLeft;
-    strLeft = new NFmiString(strLeft2);
-  } while (strLeft->GetLen() > 0);  // because of this check have to use "new NFmiString"
-  delete strLeft;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -241,11 +318,18 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
 
 void NFmiStringList::Clear(bool fDeleteData)
 {
-  if (fDeleteData)
-    Destroy();
-  else
-    itsList.clear();
-  Reset();
+  try
+  {
+    if (fDeleteData)
+      Destroy();
+    else
+      itsList.clear();
+    Reset();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -259,16 +343,23 @@ void NFmiStringList::Clear(bool fDeleteData)
 
 NFmiStringList &NFmiStringList::operator=(NFmiStringList &theList)
 {
-  if (this != &theList)
+  try
   {
-    Destroy();
-    const StorageType::const_iterator begin = theList.itsList.begin();
-    const StorageType::const_iterator end = theList.itsList.end();
-    for (StorageType::const_iterator iter = begin; iter != end; ++iter)
-      Add((*iter)->Clone());
-    Reset();
+    if (this != &theList)
+    {
+      Destroy();
+      const StorageType::const_iterator begin = theList.itsList.begin();
+      const StorageType::const_iterator end = theList.itsList.end();
+      for (StorageType::const_iterator iter = begin; iter != end; ++iter)
+        Add((*iter)->Clone());
+      Reset();
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -282,16 +373,23 @@ NFmiStringList &NFmiStringList::operator=(NFmiStringList &theList)
 
 std::ostream &NFmiStringList::Write(std::ostream &file) const
 {
-  long items = NumberOfItems();
-  file << items << std::endl;
-
-  const StorageType::const_iterator begin = itsList.begin();
-  const StorageType::const_iterator end = itsList.end();
-  for (StorageType::const_iterator iter = begin; iter != end; ++iter)
+  try
   {
-    file << (*iter)->ClassId() << " " << *(*iter);
+    long items = NumberOfItems();
+    file << items << std::endl;
+
+    const StorageType::const_iterator begin = itsList.begin();
+    const StorageType::const_iterator end = itsList.end();
+    for (StorageType::const_iterator iter = begin; iter != end; ++iter)
+    {
+      file << (*iter)->ClassId() << " " << *(*iter);
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -302,28 +400,35 @@ std::ostream &NFmiStringList::Write(std::ostream &file) const
 
 std::istream &NFmiStringList::Read(std::istream &file)
 {
-  int items;
-  file >> items;
-
-  unsigned long classId;
-
-  NFmiString *item = nullptr;
-  for (long i = 0; i < items; i++)
+  try
   {
-    file >> classId;
-    if (classId == kNFmiString)
-      item = new NFmiString;
-    else if (classId == kNFmiStatusString)
-      item = new NFmiStatusString;
-    else if (classId == kNFmiStatusPositionString)
-      item = new NFmiStatusPositionString;
-    else
-      throw std::runtime_error("Unknown string type in input stream");
+    int items;
+    file >> items;
 
-    file >> *item;
-    Add(item);
+    unsigned long classId;
+
+    NFmiString *item = nullptr;
+    for (long i = 0; i < items; i++)
+    {
+      file >> classId;
+      if (classId == kNFmiString)
+        item = new NFmiString;
+      else if (classId == kNFmiStatusString)
+        item = new NFmiStatusString;
+      else if (classId == kNFmiStatusPositionString)
+        item = new NFmiStatusPositionString;
+      else
+        throw Fmi::Exception(BCP, "Unknown string type in input stream");
+
+      file >> *item;
+      Add(item);
+    }
+    return file;
   }
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -335,14 +440,22 @@ std::istream &NFmiStringList::Read(std::istream &file)
 
 bool NFmiStringList::FindWithStatus(long status)
 {
-  for (itsIndex = 0; itsIndex < itsList.size(); itsIndex++)
+  try
   {
-    if (Current()->ClassId() == kNFmiStatusString ||
-        Current()->ClassId() == kNFmiStatusPositionString)
-      if (status == (static_cast<NFmiStatusString *>(Current())->Status())) return true;
+    for (itsIndex = 0; itsIndex < itsList.size(); itsIndex++)
+    {
+      if (Current()->ClassId() == kNFmiStatusString ||
+          Current()->ClassId() == kNFmiStatusPositionString)
+        if (status == (static_cast<NFmiStatusString *>(Current())->Status()))
+          return true;
+    }
+    Reset();
+    return false;
   }
-  Reset();
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -354,11 +467,19 @@ bool NFmiStringList::FindWithStatus(long status)
 
 bool NFmiStringList::Find(const NFmiString &str)
 {
-  for (itsIndex = 0; itsIndex < itsList.size(); itsIndex++)
+  try
   {
-    if (str == *Current()) return true;
+    for (itsIndex = 0; itsIndex < itsList.size(); itsIndex++)
+    {
+      if (str == *Current())
+        return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -376,16 +497,24 @@ bool NFmiStringList::Find(const NFmiString &str)
 
 bool NFmiStringList::Remove()
 {
-  if (Current())
+  try
   {
-    auto iter = itsList.begin() + itsIndex;
-    delete *iter;
-    *iter = nullptr;
-    itsList.erase(iter);
-    if (itsIndex > itsList.size()) Reset();
-    return true;
+    if (Current())
+    {
+      auto iter = itsList.begin() + itsIndex;
+      delete *iter;
+      *iter = nullptr;
+      itsList.erase(iter);
+      if (itsIndex > itsList.size())
+        Reset();
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -396,12 +525,20 @@ bool NFmiStringList::Remove()
 
 void NFmiStringList::Destroy()
 {
-  const StorageType::iterator begin = itsList.begin();
-  const StorageType::iterator end = itsList.end();
-  for (StorageType::iterator iter = begin; iter != end; ++iter)
-    delete *iter;
-  itsList.clear();
-  itsIndex = 0;
+  try
+  {
+    const StorageType::iterator begin = itsList.begin();
+    const StorageType::iterator end = itsList.end();
+    for (StorageType::iterator iter = begin; iter != end; ++iter)
+      delete *iter;
+
+    itsList.clear();
+    itsIndex = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

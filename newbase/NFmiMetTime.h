@@ -168,7 +168,11 @@ inline NFmiMetTime::NFmiMetTime(const NFmiMetTime& aMetTime, short negRange, sho
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiMetTime::GetTimeStep() const { return fTimeStepInMinutes; }
+inline long NFmiMetTime::GetTimeStep() const
+{
+  return fTimeStepInMinutes;
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
@@ -271,7 +275,11 @@ inline NFmiMetTime::NFmiMetTime(const short year,
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiMetTime::PreviousMetTime() { PreviousMetTime(GetTimeStep()); }
+inline void NFmiMetTime::PreviousMetTime()
+{
+  PreviousMetTime(GetTimeStep());
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param thePerioid Undocumented
@@ -300,7 +308,11 @@ inline short NFmiMetTime::GetLocalHour() const
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiMetTime::ClassName() const { return "NFmiMetTime"; }
+inline const char* NFmiMetTime::ClassName() const
+{
+  return "NFmiMetTime";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiMetTime
@@ -311,7 +323,10 @@ inline const char* NFmiMetTime::ClassName() const { return "NFmiMetTime"; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream& operator<<(std::ostream& os, const NFmiMetTime& ob) { return ob.Write(os); }
+inline std::ostream& operator<<(std::ostream& os, const NFmiMetTime& ob)
+{
+  return ob.Write(os);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiMetTime
@@ -322,6 +337,9 @@ inline std::ostream& operator<<(std::ostream& os, const NFmiMetTime& ob) { retur
  */
 // ----------------------------------------------------------------------
 
-inline std::istream& operator>>(std::istream& is, NFmiMetTime& ob) { return ob.Read(is); }
+inline std::istream& operator>>(std::istream& is, NFmiMetTime& ob)
+{
+  return ob.Read(is);
+}
 
 // ======================================================================

@@ -15,6 +15,7 @@
 #include "NFmiRegressionItem.h"
 
 #include "NFmiSuperSmartInfo.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -53,18 +54,25 @@ NFmiRegressionItem::NFmiRegressionItem(double theCoefficient,
 
 void NFmiRegressionItem::Calculate(NFmiQueryInfo *theData)
 {
-  if (itsParam)
+  try
   {
-    if (theData)
+    if (itsParam)
     {
-      NFmiDataIdent tmpIdent(theData->Param());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!
-      theData->Param(*itsParam);
-      itsReturnValue = itsConstant + itsCoefficient * theData->FloatValue();
-      theData->Param(tmpIdent);
+      if (theData)
+      {
+        NFmiDataIdent tmpIdent(theData->Param());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!
+        theData->Param(*itsParam);
+        itsReturnValue = itsConstant + itsCoefficient * theData->FloatValue();
+        theData->Param(tmpIdent);
+      }
+      itsReturnValue = kFloatMissing;
     }
-    itsReturnValue = kFloatMissing;
+    itsReturnValue = itsConstant;
   }
-  itsReturnValue = itsConstant;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -73,7 +81,10 @@ void NFmiRegressionItem::Calculate(NFmiQueryInfo *theData)
  */
 // ----------------------------------------------------------------------
 
-float NFmiRegressionItem::CalculationResult() { return static_cast<float>(itsReturnValue); }
+float NFmiRegressionItem::CalculationResult()
+{
+  return static_cast<float>(itsReturnValue);
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -82,21 +93,28 @@ float NFmiRegressionItem::CalculationResult() { return static_cast<float>(itsRet
 
 double NFmiRegressionItem::FloatValue()
 {
-  if (itsParam)
+  try
   {
-    if (itsData)
+    if (itsParam)
     {
-      NFmiParam tmpParam(
-          *itsData->Param().GetParam());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!
-      itsData->Param(*itsParam->GetParam());
-      itsReturnValue = itsCoefficient * itsData->FloatValue();
-      itsData->Param(tmpParam);
+      if (itsData)
+      {
+        NFmiParam tmpParam(
+            *itsData->Param().GetParam());  // hidasta koodia, pitäisi olla PeekValue!!!!!!!!
+        itsData->Param(*itsParam->GetParam());
+        itsReturnValue = itsCoefficient * itsData->FloatValue();
+        itsData->Param(tmpParam);
 
-      return itsReturnValue;
+        return itsReturnValue;
+      }
+      return kFloatMissing;
     }
-    return kFloatMissing;
+    return itsCoefficient;
   }
-  return itsCoefficient;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

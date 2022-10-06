@@ -33,7 +33,7 @@
 // ======================================================================
 
 #include "NFmiModMeanCalculator.h"
-
+#include <macgyver/Exception.h>
 #include <cmath>
 
 // ----------------------------------------------------------------------
@@ -60,7 +60,11 @@ NFmiModMeanCalculator::NFmiModMeanCalculator(float theModulo)
  */
 // ----------------------------------------------------------------------
 
-int NFmiModMeanCalculator::count() const { return itsCount; }
+int NFmiModMeanCalculator::count() const
+{
+  return itsCount;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Return the calculated mean
@@ -73,11 +77,19 @@ int NFmiModMeanCalculator::count() const { return itsCount; }
 
 float NFmiModMeanCalculator::operator()() const
 {
-  if (!itsValid || itsCount == 0 || itsWeightSum == 0) return kFloatMissing;
+  try
+  {
+    if (!itsValid || itsCount == 0 || itsWeightSum == 0)
+      return kFloatMissing;
 
-  float mean = itsWeightedSum / itsWeightSum;
-  mean -= itsModulo * floor(mean / itsModulo);
-  return mean;
+    float mean = itsWeightedSum / itsWeightSum;
+    mean -= itsModulo * floor(mean / itsModulo);
+    return mean;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -91,32 +103,40 @@ float NFmiModMeanCalculator::operator()() const
 
 void NFmiModMeanCalculator::operator()(float theValue, float theWeight)
 {
-  ++itsCount;
-
-  if (!itsValid) return;
-
-  if (theValue == kFloatMissing || theWeight == kFloatMissing)
+  try
   {
-    itsValid = false;
-    return;
+    ++itsCount;
+
+    if (!itsValid)
+      return;
+
+    if (theValue == kFloatMissing || theWeight == kFloatMissing)
+    {
+      itsValid = false;
+      return;
+    }
+
+    if (itsCount == 1)
+    {
+      itsLastValue = theValue;
+      itsWeightedSum = theValue * theWeight;
+      itsWeightSum = theWeight;
+    }
+    else
+    {
+      const float delta = theValue - itsLastValue;
+      itsLastValue = theValue;
+      if (delta < -itsModulo / 2.0)
+        itsLastValue += itsModulo;
+      else if (delta > itsModulo / 2.0)
+        itsLastValue -= itsModulo;
+
+      itsWeightedSum += theWeight * itsLastValue;
+      itsWeightSum += theWeight;
+    }
   }
-
-  if (itsCount == 1)
+  catch (...)
   {
-    itsLastValue = theValue;
-    itsWeightedSum = theValue * theWeight;
-    itsWeightSum = theWeight;
-  }
-  else
-  {
-    const float delta = theValue - itsLastValue;
-    itsLastValue = theValue;
-    if (delta < -itsModulo / 2.0)
-      itsLastValue += itsModulo;
-    else if (delta > itsModulo / 2.0)
-      itsLastValue -= itsModulo;
-
-    itsWeightedSum += theWeight * itsLastValue;
-    itsWeightSum += theWeight;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }

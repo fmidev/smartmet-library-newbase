@@ -15,9 +15,8 @@
 // ======================================================================
 
 #include "NFmiAngle.h"
-
 #include <boost/functional/hash.hpp>
-
+#include <macgyver/Exception.h>
 #include <iostream>
 
 using namespace std;
@@ -36,7 +35,14 @@ using namespace std;
 NFmiAngle::NFmiAngle(double theValue, FmiAngleUnit theUnit)
     : itsValue(0)  // dummy to prevent advanced warnings
 {
-  SetValue(theValue, theUnit);
+  try
+  {
+    SetValue(theValue, theUnit);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -56,18 +62,26 @@ NFmiAngle::NFmiAngle(double theValue, FmiAngleUnit theUnit)
 
 void NFmiAngle::SetValue(double theValue, FmiAngleUnit theUnit)
 {
-  if (theUnit == kRad)
+  try
   {
-    itsValue = 180 / kPii * theValue;
-    if (itsValue != 0 && fmod(itsValue, 360) == 0)
-      itsValue = 360;
+    if (theUnit == kRad)
+    {
+      itsValue = 180 / kPii * theValue;
+      if (itsValue != 0 && fmod(itsValue, 360) == 0)
+        itsValue = 360;
+      else
+        itsValue = fmod(itsValue, 360);
+    }
     else
-      itsValue = fmod(itsValue, 360);
-  }
-  else
-    itsValue = theValue;  // fmod(theValue, 360);
+      itsValue = theValue;  // fmod(theValue, 360);
 
-  if (itsValue < 0) itsValue = itsValue + 360;
+    if (itsValue < 0)
+      itsValue = itsValue + 360;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -83,7 +97,14 @@ void NFmiAngle::SetValue(double theValue, FmiAngleUnit theUnit)
 
 bool NFmiAngle::operator>(const NFmiAngle& theAngle) const
 {
-  return (itsValue > theAngle.itsValue);
+  try
+  {
+    return (itsValue > theAngle.itsValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -100,8 +121,15 @@ bool NFmiAngle::operator>(const NFmiAngle& theAngle) const
 
 NFmiAngle& NFmiAngle::operator+=(const NFmiAngle& theAngle)
 {
-  itsValue = NFmiAngle(itsValue + theAngle.itsValue).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiAngle(itsValue + theAngle.itsValue).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -118,8 +146,15 @@ NFmiAngle& NFmiAngle::operator+=(const NFmiAngle& theAngle)
 
 NFmiAngle& NFmiAngle::operator-=(const NFmiAngle& theAngle)
 {
-  itsValue = NFmiAngle(itsValue - theAngle.itsValue).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiAngle(itsValue - theAngle.itsValue).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -151,19 +186,26 @@ NFmiWindDirection::NFmiWindDirection(double theValue, FmiAngleUnit theUnit)
 
 NFmiWindDirection::NFmiWindDirection(double theU, double theV) : NFmiAngle()
 {
-  if (theU == kFloatMissing || theV == kFloatMissing)
+  try
   {
-    itsValue = kFloatMissing;
-    return;
-  }
+    if (theU == kFloatMissing || theV == kFloatMissing)
+    {
+      itsValue = kFloatMissing;
+      return;
+    }
 
-  if (theU == 0 && theV == 0)
-  {
-    SetValue(0, kDeg);
+    if (theU == 0 && theV == 0)
+    {
+      SetValue(0, kDeg);
+    }
+    else
+    {
+      SetValue(atan2(theU, theV) + kPii, kRad);
+    }
   }
-  else
+  catch (...)
   {
-    SetValue(atan2(theU, theV) + kPii, kRad);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -184,9 +226,18 @@ NFmiWindDirection::NFmiWindDirection(double theU, double theV) : NFmiAngle()
 
 NFmiWindDirection& NFmiWindDirection::operator-=(const NFmiWindDirection& theAngle)
 {
-  itsValue = NFmiAngle(NFmiAngle::operator-=(theAngle)).Value();
-  if (itsValue > 180) itsValue = 360 - itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiAngle(NFmiAngle::operator-=(theAngle)).Value();
+    if (itsValue > 180)
+      itsValue = 360 - itsValue;
+
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -200,7 +251,18 @@ NFmiWindDirection& NFmiWindDirection::operator-=(const NFmiWindDirection& theAng
  */
 // ======================================================================
 
-NFmiLatitude::NFmiLatitude(double theAngle, FmiAngleUnit theUnit) { SetValue(theAngle, theUnit); }
+NFmiLatitude::NFmiLatitude(double theAngle, FmiAngleUnit theUnit)
+{
+  try
+  {
+    SetValue(theAngle, theUnit);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ======================================================================
 /*!
  * Asetusmetodi latitudille. Metodi varmistaa, että annettu arvo
@@ -219,16 +281,23 @@ NFmiLatitude::NFmiLatitude(double theAngle, FmiAngleUnit theUnit) { SetValue(the
 
 void NFmiLatitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 {
-  if (fabs(theAngle - 90) < 0.0000001)
-    itsValue = 90;
-  else if (fabs(theAngle + 90) < 0.0000001)
-    itsValue = -90;
-  else if (theAngle > 90)
-    SetValue(90, theUnit);
-  else if (theAngle < -90)
-    SetValue(-90, theUnit);
-  else
-    itsValue = theAngle;
+  try
+  {
+    if (fabs(theAngle - 90) < 0.0000001)
+      itsValue = 90;
+    else if (fabs(theAngle + 90) < 0.0000001)
+      itsValue = -90;
+    else if (theAngle > 90)
+      SetValue(90, theUnit);
+    else if (theAngle < -90)
+      SetValue(-90, theUnit);
+    else
+      itsValue = theAngle;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -244,8 +313,15 @@ void NFmiLatitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 
 NFmiLatitude& NFmiLatitude::operator-=(const NFmiLatitude& theAngle)
 {
-  itsValue = NFmiLatitude(itsValue - theAngle.itsValue).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiLatitude(itsValue - theAngle.itsValue).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -261,8 +337,15 @@ NFmiLatitude& NFmiLatitude::operator-=(const NFmiLatitude& theAngle)
 
 NFmiLatitude& NFmiLatitude::operator+=(const NFmiLatitude& theAngle)
 {
-  itsValue = NFmiLatitude(itsValue + theAngle.itsValue).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiLatitude(itsValue + theAngle.itsValue).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -278,8 +361,15 @@ NFmiLatitude& NFmiLatitude::operator+=(const NFmiLatitude& theAngle)
 
 NFmiLatitude& NFmiLatitude::operator-=(const double& theAngle)
 {
-  itsValue = NFmiLatitude(itsValue - theAngle).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiLatitude(itsValue - theAngle).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -295,8 +385,15 @@ NFmiLatitude& NFmiLatitude::operator-=(const double& theAngle)
 
 NFmiLatitude& NFmiLatitude::operator+=(const double& theAngle)
 {
-  itsValue = NFmiLatitude(itsValue + theAngle).itsValue;
-  return *this;
+  try
+  {
+    itsValue = NFmiLatitude(itsValue + theAngle).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -310,15 +407,23 @@ NFmiLatitude& NFmiLatitude::operator+=(const double& theAngle)
  */
 // ======================================================================
 
-#ifdef WGS84
-NFmiLongitude::NFmiLongitude(double theAngle, FmiAngleUnit theUnit) { SetValue(theAngle, theUnit); }
-#else
-NFmiLongitude::NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit theUnit)
-    : fPacificView(usePacificView)
+NFmiLongitude::NFmiLongitude(double theAngle, FmiAngleUnit theUnit)
 {
   SetValue(theAngle, theUnit);
 }
-#endif
+
+NFmiLongitude::NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit theUnit)
+    : fPacificView(usePacificView)
+{
+  try
+  {
+    SetValue(theAngle, theUnit);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 // ======================================================================
 /*!
@@ -336,51 +441,42 @@ NFmiLongitude::NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit 
  */
 // ======================================================================
 
-#ifdef WGS84
 void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 {
-  if (::fabs(theAngle - 180.) < 0.0000001)
-    itsValue = 180.;
-  else if (::fabs(theAngle + 180.) < 0.0000001)
-    itsValue = -180.;
-  else if (theAngle > 180)
-    SetValue(theAngle - 360, theUnit);
-  else if (theAngle < -180)
-    SetValue(theAngle + 360, theUnit);
-  else
-    itsValue = theAngle;
-}
-#else
-void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
-{
-  if (fPacificView)
+  try
   {
-    if (::fabs(theAngle - 360.) < 0.0000001)
-      itsValue = 360.;
-    else if (::fabs(theAngle + 360.) < 0.0000001)
-      itsValue = 0.;
-    else if (theAngle > 360)
-      SetValue(theAngle - 360, theUnit);
-    else if (theAngle < 0)
-      SetValue(theAngle + 360, theUnit);
+    if (fPacificView)
+    {
+      if (::fabs(theAngle - 360.) < 0.0000001)
+        itsValue = 360.;
+      else if (::fabs(theAngle + 360.) < 0.0000001)
+        itsValue = 0.;
+      else if (theAngle > 360)
+        SetValue(theAngle - 360, theUnit);
+      else if (theAngle < 0)
+        SetValue(theAngle + 360, theUnit);
+      else
+        itsValue = theAngle;
+    }
     else
-      itsValue = theAngle;
+    {
+      if (::fabs(theAngle - 180.) < 0.0000001)
+        itsValue = 180.;
+      else if (::fabs(theAngle + 180.) < 0.0000001)
+        itsValue = -180.;
+      else if (theAngle > 180)
+        SetValue(theAngle - 360, theUnit);
+      else if (theAngle < -180)
+        SetValue(theAngle + 360, theUnit);
+      else
+        itsValue = theAngle;
+    }
   }
-  else
+  catch (...)
   {
-    if (::fabs(theAngle - 180.) < 0.0000001)
-      itsValue = 180.;
-    else if (::fabs(theAngle + 180.) < 0.0000001)
-      itsValue = -180.;
-    else if (theAngle > 180)
-      SetValue(theAngle - 360, theUnit);
-    else if (theAngle < -180)
-      SetValue(theAngle + 360, theUnit);
-    else
-      itsValue = theAngle;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-#endif
 
 // ======================================================================
 /*!
@@ -395,12 +491,15 @@ void NFmiLongitude::SetValue(double theAngle, FmiAngleUnit theUnit)
 
 NFmiLongitude& NFmiLongitude::operator-=(const NFmiLongitude& theAngle)
 {
-#ifdef WGS84
-  itsValue = NFmiLongitude(itsValue - theAngle.itsValue).itsValue;
-#else
-  itsValue = NFmiLongitude(itsValue - theAngle.itsValue, fPacificView).itsValue;
-#endif
-  return *this;
+  try
+  {
+    itsValue = NFmiLongitude(itsValue - theAngle.itsValue, fPacificView).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -416,12 +515,15 @@ NFmiLongitude& NFmiLongitude::operator-=(const NFmiLongitude& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator+=(const NFmiLongitude& theAngle)
 {
-#ifdef WGS84
-  itsValue = NFmiLongitude(itsValue + theAngle.itsValue).itsValue;
-#else
-  itsValue = NFmiLongitude(itsValue + theAngle.itsValue, fPacificView).itsValue;
-#endif
-  return *this;
+  try
+  {
+    itsValue = NFmiLongitude(itsValue + theAngle.itsValue, fPacificView).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -437,12 +539,15 @@ NFmiLongitude& NFmiLongitude::operator+=(const NFmiLongitude& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator-=(const double& theAngle)
 {
-#ifdef WGS84
-  itsValue = NFmiLongitude(itsValue - theAngle).itsValue;
-#else
-  itsValue = NFmiLongitude(itsValue - theAngle, fPacificView).itsValue;
-#endif
-  return *this;
+  try
+  {
+    itsValue = NFmiLongitude(itsValue - theAngle, fPacificView).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -458,12 +563,15 @@ NFmiLongitude& NFmiLongitude::operator-=(const double& theAngle)
 
 NFmiLongitude& NFmiLongitude::operator+=(const double& theAngle)
 {
-#ifdef WGS84
-  itsValue = NFmiLongitude(itsValue + theAngle).itsValue;
-#else
-  itsValue = NFmiLongitude(itsValue + theAngle, fPacificView).itsValue;
-#endif
-  return *this;
+  try
+  {
+    itsValue = NFmiLongitude(itsValue + theAngle, fPacificView).itsValue;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -472,6 +580,16 @@ NFmiLongitude& NFmiLongitude::operator+=(const double& theAngle)
  */
 // ======================================================================
 
-std::size_t NFmiAngle::HashValue() const { return boost::hash_value(itsValue); }
+std::size_t NFmiAngle::HashValue() const
+{
+  try
+  {
+    return boost::hash_value(itsValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 // ======================================================================

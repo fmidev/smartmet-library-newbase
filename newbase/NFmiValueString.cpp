@@ -6,7 +6,7 @@
 // ----------------------------------------------------------------------
 
 #include "NFmiValueString.h"
-
+#include <macgyver/Exception.h>
 #include <cctype>
 #include <cmath>
 #include <cstdio>
@@ -93,7 +93,14 @@ NFmiValueString::NFmiValueString(const NFmiValueString &theValue)
 NFmiValueString::NFmiValueString(const short theValue, const char *theFormat)
     : NFmiString(), itsValueType(eShort)
 {
-  SetValue(theValue, theFormat);
+  try
+  {
+    SetValue(theValue, theFormat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -108,7 +115,14 @@ NFmiValueString::NFmiValueString(const short theValue, const char *theFormat)
 NFmiValueString::NFmiValueString(const int theValue, const char *theFormat)
     : NFmiString(), itsValueType(eInt)
 {
-  SetValue(theValue, theFormat);
+  try
+  {
+    SetValue(theValue, theFormat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -121,7 +135,14 @@ NFmiValueString::NFmiValueString(const int theValue, const char *theFormat)
 NFmiValueString::NFmiValueString(const long theValue, const char *theFormat)
     : NFmiString(), itsValueType(eLong)
 {
-  SetValue(theValue, theFormat);
+  try
+  {
+    SetValue(theValue, theFormat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -134,7 +155,14 @@ NFmiValueString::NFmiValueString(const long theValue, const char *theFormat)
 NFmiValueString::NFmiValueString(const float theValue, const char *theFormat)
     : NFmiString(), itsValueType(eFloat)
 {
-  SetValue(theValue, theFormat);
+  try
+  {
+    SetValue(theValue, theFormat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -149,7 +177,14 @@ NFmiValueString::NFmiValueString(const float theValue, const char *theFormat)
 NFmiValueString::NFmiValueString(const double theValue, const char *theFormat)
     : NFmiString(), itsValueType(eDouble)
 {
-  SetValue(theValue, theFormat);
+  try
+  {
+    SetValue(theValue, theFormat);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -161,19 +196,26 @@ NFmiValueString::NFmiValueString(const double theValue, const char *theFormat)
 
 void NFmiValueString::SetValue(const short theValue, const char *theFormat)
 {
-  unsigned char valueString[16];
-  unsigned int valueLength;
+  try
+  {
+    unsigned char valueString[16];
+    unsigned int valueLength;
 
 #ifdef _MSC_VER
-  valueLength = ::_snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::_snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #else
-  valueLength = ::snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #endif
-  valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
 
-  Set(valueString, static_cast<short>(valueLength));
+    Set(valueString, static_cast<short>(valueLength));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -185,19 +227,26 @@ void NFmiValueString::SetValue(const short theValue, const char *theFormat)
 
 void NFmiValueString::SetValue(const int theValue, const char *theFormat)
 {
-  unsigned char valueString[16];
-  unsigned int valueLength;
+  try
+  {
+    unsigned char valueString[16];
+    unsigned int valueLength;
 
 #ifdef _MSC_VER
-  valueLength = ::_snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::_snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #else
-  valueLength = ::snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #endif
-  valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
 
-  Set(valueString, static_cast<short>(valueLength));
+    Set(valueString, static_cast<short>(valueLength));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -209,19 +258,26 @@ void NFmiValueString::SetValue(const int theValue, const char *theFormat)
 
 void NFmiValueString::SetValue(const float theValue, const char *theFormat)
 {
-  unsigned char valueString[64];
-  unsigned int valueLength;
+  try
+  {
+    unsigned char valueString[64];
+    unsigned int valueLength;
 
 #ifdef _MSC_VER
-  valueLength = ::_snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::_snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #else
-  valueLength = ::snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #endif
-  valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
 
-  Set(valueString, static_cast<short>(valueLength));
+    Set(valueString, static_cast<short>(valueLength));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -233,19 +289,26 @@ void NFmiValueString::SetValue(const float theValue, const char *theFormat)
 
 void NFmiValueString::SetValue(const long theValue, const char *theFormat)
 {
-  unsigned char valueString[16];
-  unsigned int valueLength;
+  try
+  {
+    unsigned char valueString[16];
+    unsigned int valueLength;
 
 #ifdef _MSC_VER
-  valueLength = ::_snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::_snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #else
-  valueLength = ::snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #endif
-  valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
 
-  Set(valueString, static_cast<short>(valueLength));
+    Set(valueString, static_cast<short>(valueLength));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -257,19 +320,26 @@ void NFmiValueString::SetValue(const long theValue, const char *theFormat)
 
 void NFmiValueString::SetValue(const double theValue, const char *theFormat)
 {
-  unsigned char valueString[310];
-  unsigned int valueLength;
+  try
+  {
+    unsigned char valueString[310];
+    unsigned int valueLength;
 
 #ifdef _MSC_VER
-  valueLength = ::_snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::_snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #else
-  valueLength = ::snprintf(
-      reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
+    valueLength = ::snprintf(
+        reinterpret_cast<char *>(valueString), sizeof(valueString) - 1, theFormat, theValue);
 #endif
-  valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    valueString[sizeof(valueString) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
 
-  Set(valueString, static_cast<short>(valueLength));
+    Set(valueString, static_cast<short>(valueLength));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -280,15 +350,25 @@ void NFmiValueString::SetValue(const double theValue, const char *theFormat)
 
 bool NFmiValueString::IsShort() const
 {
-  short returnValue;
+  try
+  {
+    short returnValue;
 
-  if (itsValueType == eShort) return true;
+    if (itsValueType == eShort)
+      return true;
 
-  if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>("."))) return false;
+    if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>(".")))
+      return false;
 
-  if (itsValueType == eChar) return sscanf(CharPtr(), "%hd", &returnValue) == 1 ? true : false;
+    if (itsValueType == eChar)
+      return sscanf(CharPtr(), "%hd", &returnValue) == 1 ? true : false;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -299,21 +379,28 @@ bool NFmiValueString::IsShort() const
 
 unsigned int NFmiValueString::SignificantDecimals() const
 {
-  unsigned int pointIndex = Search(reinterpret_cast<const unsigned char *>("."));
-
-  if (pointIndex > 0)
+  try
   {
-    unsigned int idx = GetLen() - 1;
-    while (idx >= pointIndex)
+    unsigned int pointIndex = Search(reinterpret_cast<const unsigned char *>("."));
+
+    if (pointIndex > 0)
     {
-      if (fChar[idx] != '0')
+      unsigned int idx = GetLen() - 1;
+      while (idx >= pointIndex)
       {
-        return idx - pointIndex + 1;
+        if (fChar[idx] != '0')
+        {
+          return idx - pointIndex + 1;
+        }
+        idx--;
       }
-      idx--;
     }
+    return 0;
   }
-  return 0;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -326,17 +413,25 @@ unsigned int NFmiValueString::SignificantDecimals() const
 
 bool NFmiValueString::IsNumeric(int theStart, int theSize) const
 {
-  bool digitFound = false;
-  for (unsigned int idx = theStart; idx < (theSize ? theSize : GetLen()); idx++)
-    if (!isdigit(fChar[idx]))
-    {
-      if ((fChar[idx] != ' ') && (fChar[idx] != '.') && (fChar[idx] != '+') && (fChar[idx] != '-'))
-        return false;
-    }
-    else
-      digitFound = true;
+  try
+  {
+    bool digitFound = false;
+    for (unsigned int idx = theStart; idx < (theSize ? theSize : GetLen()); idx++)
+      if (!isdigit(fChar[idx]))
+      {
+        if ((fChar[idx] != ' ') && (fChar[idx] != '.') && (fChar[idx] != '+') &&
+            (fChar[idx] != '-'))
+          return false;
+      }
+      else
+        digitFound = true;
 
-  return GetLen() && digitFound ? true : false;
+    return GetLen() && digitFound ? true : false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -349,15 +444,25 @@ bool NFmiValueString::IsNumeric(int theStart, int theSize) const
 // ----------------------------------------------------------------------
 unsigned long NFmiValueString::SearchNumeric(unsigned long start) const
 {
-  if (start == 0) start = 1;
-  unsigned long index = start - 1;
-  int len = GetLen();
-  while (static_cast<int>(index) < len)
+  try
   {
-    if (isdigit(fChar[index])) return index + 1;
-    index++;
+    if (start == 0)
+      start = 1;
+
+    unsigned long index = start - 1;
+    int len = GetLen();
+    while (static_cast<int>(index) < len)
+    {
+      if (isdigit(fChar[index]))
+        return index + 1;
+      index++;
+    }
+    return 0;
   }
-  return 0;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -370,11 +475,19 @@ unsigned long NFmiValueString::SearchNumeric(unsigned long start) const
 
 bool NFmiValueString::IsInt(int theStart, int theSize) const
 {
-  int returnValue;
+  try
+  {
+    int returnValue;
 
-  if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>("."))) return false;
+    if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>(".")))
+      return false;
 
-  return ConvertToInt(returnValue, theStart, theSize);
+    return ConvertToInt(returnValue, theStart, theSize);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -387,11 +500,19 @@ bool NFmiValueString::IsInt(int theStart, int theSize) const
 
 bool NFmiValueString::IsFloat(int theStart, int theSize) const
 {
-  float returnValue;
+  try
+  {
+    float returnValue;
 
-  if (!IsNumeric()) return false;
+    if (!IsNumeric())
+      return false;
 
-  return ConvertToFloat(returnValue, theStart, theSize);
+    return ConvertToFloat(returnValue, theStart, theSize);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -404,11 +525,19 @@ bool NFmiValueString::IsFloat(int theStart, int theSize) const
 
 bool NFmiValueString::IsLong(int theStart, int theSize) const
 {
-  long returnValue;
+  try
+  {
+    long returnValue;
 
-  if (!IsNumeric()) return false;
+    if (!IsNumeric())
+      return false;
 
-  return ConvertToLong(returnValue, theStart, theSize);
+    return ConvertToLong(returnValue, theStart, theSize);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -421,15 +550,24 @@ bool NFmiValueString::IsLong(int theStart, int theSize) const
 
 bool NFmiValueString::IsDouble(int theStart, int theSize) const
 {
-  double returnValue;
+  try
+  {
+    double returnValue;
 
-  if (itsValueType == eDouble) return true;
+    if (itsValueType == eDouble)
+      return true;
 
-  if (!IsNumeric()) return false;
+    if (!IsNumeric())
+      return false;
 
-  return (sscanf(theSize ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
-                 "%lf",
-                 &returnValue) == 1);
+    return (sscanf(theSize ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
+                   "%lf",
+                   &returnValue) == 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -443,8 +581,17 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
 
 bool NFmiValueString::ConvertToInt(int &theValue, const int theStart, const int theSize) const
 {
-  if (theSize) return sscanf(GetChars(theStart, theSize), "%d", &theValue) ? true : false;
-  return sscanf(CharPtr(), "%d", &theValue) ? true : false;
+  try
+  {
+    if (theSize)
+      return sscanf(GetChars(theStart, theSize), "%d", &theValue) ? true : false;
+
+    return sscanf(CharPtr(), "%d", &theValue) ? true : false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -458,16 +605,24 @@ bool NFmiValueString::ConvertToInt(int &theValue, const int theStart, const int 
 
 bool NFmiValueString::ConvertToLong(long &theValue, const int theStart, const int theSize) const
 {
-  NFmiString theConvertStr;
+  try
+  {
+    NFmiString theConvertStr;
 
-  if (theSize)
-    theConvertStr = GetChars(theStart, theSize);
-  else
-    theConvertStr = CharPtr();
+    if (theSize)
+      theConvertStr = GetChars(theStart, theSize);
+    else
+      theConvertStr = CharPtr();
 
-  if (sscanf(theConvertStr, "%ld", &theValue)) return true;
+    if (sscanf(theConvertStr, "%ld", &theValue))
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -481,16 +636,24 @@ bool NFmiValueString::ConvertToLong(long &theValue, const int theStart, const in
 
 bool NFmiValueString::ConvertToFloat(float &theValue, const int theStart, const int theSize) const
 {
-  NFmiString theConvertStr;
+  try
+  {
+    NFmiString theConvertStr;
 
-  if (theSize)
-    theConvertStr = GetChars(theStart, theSize);
-  else
-    theConvertStr = CharPtr();
+    if (theSize)
+      theConvertStr = GetChars(theStart, theSize);
+    else
+      theConvertStr = CharPtr();
 
-  if (sscanf(theConvertStr, "%f", &theValue) > 0) return true;
+    if (sscanf(theConvertStr, "%f", &theValue) > 0)
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -503,9 +666,20 @@ bool NFmiValueString::ConvertToFloat(float &theValue, const int theStart, const 
 
 bool NFmiValueString::ConvertToDouble(double &theValue, const int theStart, const int theSize) const
 {
-  if (*this == NFmiString("")) return false;
-  if (theSize > 0) return sscanf(GetChars(theStart, theSize), "%lf", &theValue) != 0;
-  return sscanf(CharPtr(), "%lf", &theValue) != 0;
+  try
+  {
+    if (*this == NFmiString(""))
+      return false;
+
+    if (theSize > 0)
+      return sscanf(GetChars(theStart, theSize), "%lf", &theValue) != 0;
+
+    return sscanf(CharPtr(), "%lf", &theValue) != 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -516,9 +690,16 @@ bool NFmiValueString::ConvertToDouble(double &theValue, const int theStart, cons
 
 NFmiValueString::operator short() const
 {
-  short returnValue;
+  try
+  {
+    short returnValue;
 
-  return short(sscanf(CharPtr(), "%hd", &returnValue) ? returnValue : 0);
+    return short(sscanf(CharPtr(), "%hd", &returnValue) ? returnValue : 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -529,11 +710,18 @@ NFmiValueString::operator short() const
 
 NFmiValueString::operator int() const
 {
-  int returnValue = 0;
+  try
+  {
+    int returnValue = 0;
 
-  sscanf(CharPtr(), "%d", &returnValue);
+    sscanf(CharPtr(), "%d", &returnValue);
 
-  return returnValue;
+    return returnValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -544,9 +732,16 @@ NFmiValueString::operator int() const
 
 NFmiValueString::operator float() const
 {
-  float returnValue = 0.0;
-  sscanf(CharPtr(), "%f", &returnValue);
-  return returnValue;
+  try
+  {
+    float returnValue = 0.0;
+    sscanf(CharPtr(), "%f", &returnValue);
+    return returnValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -557,10 +752,17 @@ NFmiValueString::operator float() const
 
 NFmiValueString::operator long() const
 {
-  long returnValue = 0;
-  sscanf(CharPtr(), "%ld", &returnValue);
+  try
+  {
+    long returnValue = 0;
+    sscanf(CharPtr(), "%ld", &returnValue);
 
-  return returnValue;
+    return returnValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -571,11 +773,18 @@ NFmiValueString::operator long() const
 
 NFmiValueString::operator double() const
 {
-  double returnValue;
+  try
+  {
+    double returnValue;
 
-  sscanf(CharPtr(), "%lf", &returnValue);
+    sscanf(CharPtr(), "%lf", &returnValue);
 
-  return returnValue;
+    return returnValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -588,37 +797,44 @@ NFmiValueString::operator double() const
 
 const NFmiString NFmiValueString::GetStringWithMaxDecimalsSmartWay(double value, int maxDecimals)
 {
-  /* AKa 11-Mar-2008: Removing 'static' to get SVG generation happen multithreaded
-   *                  (Marko pinpointed the problem to be here)
-    static char buffer[128]="";
-    static char buffer2[128]="";
-  */
-  char buffer[128] = "";
-  char buffer2[128] = "";
-  int precisionValue = maxDecimals;
-  NFmiString format;
-  if (precisionValue)
+  try
   {
-    for (double tmp = fabs(value); tmp > 1; tmp /= 10.)
-      precisionValue++;
+    /* AKa 11-Mar-2008: Removing 'static' to get SVG generation happen multithreaded
+     *                  (Marko pinpointed the problem to be here)
+      static char buffer[128]="";
+      static char buffer2[128]="";
+    */
+    char buffer[128] = "";
+    char buffer2[128] = "";
+    int precisionValue = maxDecimals;
+    NFmiString format;
+    if (precisionValue)
+    {
+      for (double tmp = fabs(value); tmp > 1; tmp /= 10.)
+        precisionValue++;
 #ifdef _MSC_VER
-    ::_snprintf(buffer2, sizeof(buffer2) - 1, "%%0.%dg", precisionValue);
+      ::_snprintf(buffer2, sizeof(buffer2) - 1, "%%0.%dg", precisionValue);
 #else
-    ::snprintf(buffer2, sizeof(buffer2) - 1, "%%0.%dg", precisionValue);
+      ::snprintf(buffer2, sizeof(buffer2) - 1, "%%0.%dg", precisionValue);
 #endif
-    buffer2[sizeof(buffer2) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
-    format = buffer2;
+      buffer2[sizeof(buffer2) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+      format = buffer2;
+    }
+    else  // jos maxDecimals oli 0 ja luku vaikka 10, tuli MSVC:lla tulos 1e+001 (tämä XP:llä,
+          // mielestäni toimi NT4:lla?!?!?)
+      format += "%.0f";
+#ifdef _MSC_VER
+    ::_snprintf(buffer, sizeof(buffer) - 1, format, value);
+#else
+    ::snprintf(buffer, sizeof(buffer) - 1, format, value);
+#endif
+    buffer[sizeof(buffer) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+    return NFmiString(buffer);
   }
-  else  // jos maxDecimals oli 0 ja luku vaikka 10, tuli MSVC:lla tulos 1e+001 (tämä XP:llä,
-        // mielestäni toimi NT4:lla?!?!?)
-    format += "%.0f";
-#ifdef _MSC_VER
-  ::_snprintf(buffer, sizeof(buffer) - 1, format, value);
-#else
-  ::snprintf(buffer, sizeof(buffer) - 1, format, value);
-#endif
-  buffer[sizeof(buffer) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
-  return NFmiString(buffer);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

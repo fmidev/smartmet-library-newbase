@@ -7,6 +7,7 @@
 // ======================================================================
 
 #include "NFmiVoidPtrList.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -30,7 +31,14 @@ NFmiVoidPtrList::NFmiVoidPtrList()
 NFmiVoidPtrList::NFmiVoidPtrList(const NFmiVoidPtrList &listItem)
     : itsFirstItem(nullptr), itsCurrentItem(nullptr), itsPreviousItem(nullptr), itsNumberOffItems(0)
 {
-  CopyList(listItem);
+  try
+  {
+    CopyList(listItem);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -39,7 +47,18 @@ NFmiVoidPtrList::NFmiVoidPtrList(const NFmiVoidPtrList &listItem)
  */
 // ----------------------------------------------------------------------
 
-void NFmiVoidPtrList::Add(NFmiVoidPtrData *value) { AddEnd(value); }
+void NFmiVoidPtrList::Add(NFmiVoidPtrData *value)
+{
+  try
+  {
+    AddEnd(value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param value Undocumented
@@ -48,14 +67,21 @@ void NFmiVoidPtrList::Add(NFmiVoidPtrData *value) { AddEnd(value); }
 
 void NFmiVoidPtrList::AddStart(NFmiVoidPtrData *value)
 {
-  if (value)
+  try
   {
-    if (itsFirstItem)
-      itsFirstItem = new NFmiVoidPtrItem(value, itsFirstItem);
-    else
-      itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value, itsFirstItem);
+    if (value)
+    {
+      if (itsFirstItem)
+        itsFirstItem = new NFmiVoidPtrItem(value, itsFirstItem);
+      else
+        itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value, itsFirstItem);
 
-    ++itsNumberOffItems;
+      ++itsNumberOffItems;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -67,21 +93,28 @@ void NFmiVoidPtrList::AddStart(NFmiVoidPtrData *value)
 
 void NFmiVoidPtrList::AddEnd(NFmiVoidPtrData *value)
 {
-  if (value)
+  try
   {
-    ++itsNumberOffItems;
-    if (!itsFirstItem)
+    if (value)
     {
-      itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value);
-    }
-    else
-    {
-      while (itsCurrentItem->itsNextItem)
+      ++itsNumberOffItems;
+      if (!itsFirstItem)
+      {
+        itsFirstItem = itsCurrentItem = new NFmiVoidPtrItem(value);
+      }
+      else
+      {
+        while (itsCurrentItem->itsNextItem)
+          itsCurrentItem = itsCurrentItem->itsNextItem;
+        itsCurrentItem->itsNextItem = new NFmiVoidPtrItem(value);
+        itsPreviousItem = itsCurrentItem;
         itsCurrentItem = itsCurrentItem->itsNextItem;
-      itsCurrentItem->itsNextItem = new NFmiVoidPtrItem(value);
-      itsPreviousItem = itsCurrentItem;
-      itsCurrentItem = itsCurrentItem->itsNextItem;
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -93,22 +126,29 @@ void NFmiVoidPtrList::AddEnd(NFmiVoidPtrData *value)
 
 void NFmiVoidPtrList::AddBefore(NFmiVoidPtrData *value)
 {
-  if (value)
+  try
   {
-    if (!itsCurrentItem)  // empty list
-      AddEnd(value);
-    else if (!itsPreviousItem)  // added before first item
+    if (value)
     {
-      itsFirstItem = itsPreviousItem = new NFmiVoidPtrItem(value);
-      itsFirstItem->itsNextItem = itsCurrentItem;
-      ++itsNumberOffItems;
+      if (!itsCurrentItem)  // empty list
+        AddEnd(value);
+      else if (!itsPreviousItem)  // added before first item
+      {
+        itsFirstItem = itsPreviousItem = new NFmiVoidPtrItem(value);
+        itsFirstItem->itsNextItem = itsCurrentItem;
+        ++itsNumberOffItems;
+      }
+      else
+      {
+        itsPreviousItem = itsPreviousItem->itsNextItem = new NFmiVoidPtrItem(value);
+        itsPreviousItem->itsNextItem = itsCurrentItem;
+        ++itsNumberOffItems;
+      }
     }
-    else
-    {
-      itsPreviousItem = itsPreviousItem->itsNextItem = new NFmiVoidPtrItem(value);
-      itsPreviousItem->itsNextItem = itsCurrentItem;
-      ++itsNumberOffItems;
-    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -120,23 +160,32 @@ void NFmiVoidPtrList::AddBefore(NFmiVoidPtrData *value)
 
 void NFmiVoidPtrList::Remove(NFmiVoidPtrData *removeValue)
 {
-  NFmiVoidPtrItem *temp = itsFirstItem;
-  if (temp->itsValue == removeValue)
+  try
   {
-    DeleteItem();
-    itsNumberOffItems--;
-    return;
-  }
-  NFmiVoidPtrItem *previousItem = nullptr;
-
-  for (; temp; previousItem = temp, temp = temp->itsNextItem)
+    NFmiVoidPtrItem *temp = itsFirstItem;
     if (temp->itsValue == removeValue)
     {
-      previousItem->itsNextItem = temp->itsNextItem;
-      delete temp;
+      DeleteItem();
       itsNumberOffItems--;
       return;
     }
+    NFmiVoidPtrItem *previousItem = nullptr;
+
+    for (; temp; previousItem = temp, temp = temp->itsNextItem)
+    {
+      if (temp->itsValue == removeValue)
+      {
+        previousItem->itsNextItem = temp->itsNextItem;
+        delete temp;
+        itsNumberOffItems--;
+        return;
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -148,12 +197,19 @@ void NFmiVoidPtrList::Remove(NFmiVoidPtrData *removeValue)
 void NFmiVoidPtrList::Clear(
     bool /* doDelete */)  // miksi ei tarkisteta tätä ja jätetä deletoimatta tarvittaessa?
 {
-  while (itsFirstItem)
+  try
   {
-    DeleteItem();
+    while (itsFirstItem)
+    {
+      DeleteItem();
+    }
+    itsNumberOffItems = 0;
+    itsCurrentItem = nullptr;
   }
-  itsNumberOffItems = 0;
-  itsCurrentItem = nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -164,11 +220,20 @@ void NFmiVoidPtrList::Clear(
 
 void NFmiVoidPtrList::DeleteItem()
 {
-  NFmiVoidPtrItem *deleteItem;
-  deleteItem = itsFirstItem;
-  itsFirstItem = itsFirstItem->itsNextItem;
-  if (deleteItem == itsCurrentItem) itsCurrentItem = itsFirstItem;
-  delete deleteItem;
+  try
+  {
+    NFmiVoidPtrItem *deleteItem;
+    deleteItem = itsFirstItem;
+    itsFirstItem = itsFirstItem->itsNextItem;
+    if (deleteItem == itsCurrentItem)
+      itsCurrentItem = itsFirstItem;
+
+    delete deleteItem;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -179,10 +244,17 @@ void NFmiVoidPtrList::DeleteItem()
 
 void NFmiVoidPtrList::CopyList(const NFmiVoidPtrList &listItem)
 {
-  NFmiVoidPtrItem *temp = listItem.itsFirstItem;
-  for (; temp; temp = temp->itsNextItem)
+  try
   {
-    AddEnd(temp->itsValue);
+    NFmiVoidPtrItem *temp = listItem.itsFirstItem;
+    for (; temp; temp = temp->itsNextItem)
+    {
+      AddEnd(temp->itsValue);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -192,7 +264,18 @@ void NFmiVoidPtrList::CopyList(const NFmiVoidPtrList &listItem)
  */
 // ----------------------------------------------------------------------
 
-void NFmiVoidPtrList::operator+=(const NFmiVoidPtrList &listItem) { CopyList(listItem); }
+void NFmiVoidPtrList::operator+=(const NFmiVoidPtrList &listItem)
+{
+  try
+  {
+    CopyList(listItem);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
 
 //                            Iterator                          II
@@ -239,9 +322,16 @@ NFmiVoidPtrIterator::NFmiVoidPtrIterator(NFmiVoidPtrList &listItem)
 
 void NFmiVoidPtrIterator::Reset()
 {
-  itsListItem->itsPreviousItem = itsPreviousItem = nullptr;
-  itsCurrentItem = itsListItem->itsFirstItem;
-  itsIndex = 0;
+  try
+  {
+    itsListItem->itsPreviousItem = itsPreviousItem = nullptr;
+    itsCurrentItem = itsListItem->itsFirstItem;
+    itsIndex = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -252,17 +342,24 @@ void NFmiVoidPtrIterator::Reset()
 
 void *NFmiVoidPtrIterator::Next()
 {
-  NFmiVoidPtrItem *temp = itsCurrentItem;
-  if (temp)
+  try
   {
-    itsListItem->itsPreviousItem = itsPreviousItem;
-    itsListItem->itsCurrentItem = temp;
-    itsPreviousItem = itsCurrentItem;
-    itsCurrentItem = itsCurrentItem->itsNextItem;
-    itsIndex++;
-    return temp->itsValue->itsDataValue;
+    NFmiVoidPtrItem *temp = itsCurrentItem;
+    if (temp)
+    {
+      itsListItem->itsPreviousItem = itsPreviousItem;
+      itsListItem->itsCurrentItem = temp;
+      itsPreviousItem = itsCurrentItem;
+      itsCurrentItem = itsCurrentItem->itsNextItem;
+      itsIndex++;
+      return temp->itsValue->itsDataValue;
+    }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -273,10 +370,17 @@ void *NFmiVoidPtrIterator::Next()
 
 void NFmiVoidPtrIterator::NextPreviousPtr()
 {
-  if (itsPreviousItem)
-    itsPreviousItem = itsPreviousItem->itsNextItem;
-  else
-    itsPreviousItem = itsListItem->itsFirstItem;
+  try
+  {
+    if (itsPreviousItem)
+      itsPreviousItem = itsPreviousItem->itsNextItem;
+    else
+      itsPreviousItem = itsListItem->itsFirstItem;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -287,16 +391,23 @@ void NFmiVoidPtrIterator::NextPreviousPtr()
 
 NFmiVoidPtrData *NFmiVoidPtrIterator::NextPtr()
 {
-  NFmiVoidPtrItem *temp = itsCurrentItem;
-  if (temp)
+  try
   {
-    itsPreviousItem = itsCurrentItem;
-    itsCurrentItem = itsCurrentItem->itsNextItem;
-    itsIndex++;
-    return temp->itsValue;
-  }
+    NFmiVoidPtrItem *temp = itsCurrentItem;
+    if (temp)
+    {
+      itsPreviousItem = itsCurrentItem;
+      itsCurrentItem = itsCurrentItem->itsNextItem;
+      itsIndex++;
+      return temp->itsValue;
+    }
 
-  return nullptr;
+    return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -305,7 +416,18 @@ NFmiVoidPtrData *NFmiVoidPtrIterator::NextPtr()
  */
 // ----------------------------------------------------------------------
 
-NFmiVoidPtrData *NFmiVoidPtrIterator::CurrentPtr() { return itsCurrentItem->itsValue; }
+NFmiVoidPtrData *NFmiVoidPtrIterator::CurrentPtr()
+{
+  try
+  {
+    return itsCurrentItem->itsValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theItem Undocumented
@@ -315,8 +437,15 @@ NFmiVoidPtrData *NFmiVoidPtrIterator::CurrentPtr() { return itsCurrentItem->itsV
 
 bool NFmiVoidPtrIterator::Next(void *&theItem)
 {
-  theItem = Next();
-  return *&theItem ? true : false;
+  try
+  {
+    theItem = Next();
+    return *&theItem ? true : false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -328,8 +457,15 @@ bool NFmiVoidPtrIterator::Next(void *&theItem)
 
 bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
 {
-  theItem = NextPtr();
-  return *&theItem ? true : false;
+  try
+  {
+    theItem = NextPtr();
+    return *&theItem ? true : false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -339,7 +475,14 @@ bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
 // ----------------------------------------------------------------------
 void *NFmiVoidPtrIterator::Current()
 {
-  return itsCurrentItem ? itsCurrentItem->itsValue->itsDataValue : nullptr;
+  try
+  {
+    return itsCurrentItem ? itsCurrentItem->itsValue->itsDataValue : nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -348,7 +491,18 @@ void *NFmiVoidPtrIterator::Current()
  */
 // ----------------------------------------------------------------------
 
-long NFmiVoidPtrIterator::Index() const { return CheckIndex(itsIndex) ? itsIndex : kNotInList; }
+long NFmiVoidPtrIterator::Index() const
+{
+  try
+  {
+    return CheckIndex(itsIndex) ? itsIndex : kNotInList;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theNewValue Undocumented
@@ -358,16 +512,25 @@ long NFmiVoidPtrIterator::Index() const { return CheckIndex(itsIndex) ? itsIndex
 
 bool NFmiVoidPtrIterator::Index(long theNewValue)
 {
-  if (!CheckIndex(theNewValue)) return false;
-  Reset();
-  do
+  try
   {
-    if (theNewValue == itsIndex)
+    if (!CheckIndex(theNewValue))
+      return false;
+
+    Reset();
+    do
     {
-      return true;
-    }
-  } while (Next());
-  return false;
+      if (theNewValue == itsIndex)
+      {
+        return true;
+      }
+    } while (Next());
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -379,7 +542,14 @@ bool NFmiVoidPtrIterator::Index(long theNewValue)
 
 bool NFmiVoidPtrIterator::CheckIndex(long theValue) const
 {
-  return theValue >= 0 && theValue < itsListItem->itsNumberOffItems;
+  try
+  {
+    return theValue >= 0 && theValue < itsListItem->itsNumberOffItems;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

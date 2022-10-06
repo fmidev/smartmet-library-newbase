@@ -27,9 +27,11 @@ void linearcoords()
 {
   using namespace NFmiInterpolation;
 
-  if (abs(Linear(0, 0, 1, 10, 20) - 10) > 1e-5) TEST_FAILED("Test Linear(0,0,1,10,20)=10 failed");
+  if (abs(Linear(0, 0, 1, 10, 20) - 10) > 1e-5)
+    TEST_FAILED("Test Linear(0,0,1,10,20)=10 failed");
 
-  if (abs(Linear(1, 0, 1, 10, 20) - 20) > 1e-5) TEST_FAILED("Test Linear(1,0,1,10,20)=20 failed");
+  if (abs(Linear(1, 0, 1, 10, 20) - 20) > 1e-5)
+    TEST_FAILED("Test Linear(1,0,1,10,20)=20 failed");
 
   if (abs(Linear(0.5, 0, 1, 10, 20) - 15) > 1e-5)
     TEST_FAILED("Test Linear(0.5,0,1,10,20)=15 failed");
@@ -37,12 +39,14 @@ void linearcoords()
   if (Linear(0, 0, 1, kFloatMissing, 20) != kFloatMissing)
     TEST_FAILED("Test Linear(0,0,1,?,20)=? failed");
 
-  if (Linear(1, 0, 1, kFloatMissing, 20) != 20) TEST_FAILED("Test Linear(1,0,1,?,20)=20 failed");
+  if (Linear(1, 0, 1, kFloatMissing, 20) != 20)
+    TEST_FAILED("Test Linear(1,0,1,?,20)=20 failed");
 
   if (Linear(0.5, 0, 1, kFloatMissing, 20) != kFloatMissing)
     TEST_FAILED("Test Linear(0.5,0,1,?,20)=? failed");
 
-  if (Linear(0, 0, 1, 10, kFloatMissing) != 10) TEST_FAILED("Test Linear(0,0,1,10,?)=10 failed");
+  if (Linear(0, 0, 1, 10, kFloatMissing) != 10)
+    TEST_FAILED("Test Linear(0,0,1,10,?)=10 failed");
 
   if (Linear(1, 0, 1, 10, kFloatMissing) != kFloatMissing)
     TEST_FAILED("Test Linear(1,0,1,10,?)=? failed");
@@ -72,22 +76,29 @@ void linearfactor()
 {
   using namespace NFmiInterpolation;
 
-  if (abs(Linear(0, 10, 20) - 10) > 1e-5) TEST_FAILED("Test Linear(0,10,20)=10 failed");
+  if (abs(Linear(0, 10, 20) - 10) > 1e-5)
+    TEST_FAILED("Test Linear(0,10,20)=10 failed");
 
-  if (abs(Linear(1, 10, 20) - 20) > 1e-5) TEST_FAILED("Test Linear(1,10,20)=20 failed");
+  if (abs(Linear(1, 10, 20) - 20) > 1e-5)
+    TEST_FAILED("Test Linear(1,10,20)=20 failed");
 
-  if (abs(Linear(0.5, 10, 20) - 15) > 1e-5) TEST_FAILED("Test Linear(0.5,10,20)=15 failed");
+  if (abs(Linear(0.5, 10, 20) - 15) > 1e-5)
+    TEST_FAILED("Test Linear(0.5,10,20)=15 failed");
 
-  if (Linear(0, kFloatMissing, 20) != kFloatMissing) TEST_FAILED("Test Linear(0,?,20)=? failed");
+  if (Linear(0, kFloatMissing, 20) != kFloatMissing)
+    TEST_FAILED("Test Linear(0,?,20)=? failed");
 
-  if (Linear(1, kFloatMissing, 20) != 20) TEST_FAILED("Test Linear(1,?,20)=20 failed");
+  if (Linear(1, kFloatMissing, 20) != 20)
+    TEST_FAILED("Test Linear(1,?,20)=20 failed");
 
   if (Linear(0.5, kFloatMissing, 20) != kFloatMissing)
     TEST_FAILED("Test Linear(0.5,?,20)=? failed");
 
-  if (Linear(0, 10, kFloatMissing) != 10) TEST_FAILED("Test Linear(0,10,?)=10 failed");
+  if (Linear(0, 10, kFloatMissing) != 10)
+    TEST_FAILED("Test Linear(0,10,?)=10 failed");
 
-  if (Linear(1, 10, kFloatMissing) != kFloatMissing) TEST_FAILED("Test Linear(1,10,?)=? failed");
+  if (Linear(1, 10, kFloatMissing) != kFloatMissing)
+    TEST_FAILED("Test Linear(1,10,?)=? failed");
 
   if (Linear(0.5, 10, kFloatMissing) != kFloatMissing)
     TEST_FAILED("Test Linear(0.5,10,?)=? failed");

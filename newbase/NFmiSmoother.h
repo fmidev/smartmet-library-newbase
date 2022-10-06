@@ -10,7 +10,7 @@
 #include "NFmiDataMatrix.h"  // for NFmiDataMatrix
 #include "NFmiGlobals.h"     // for kFloatMissing
 #include "NFmiPoint.h"       // for NFmiPoint
-
+#include <gis/CoordinateMatrix.h>
 #include <string>
 
 namespace Fmi
@@ -82,42 +82,63 @@ class NFmiSmoother
  */
 // ----------------------------------------------------------------------
 
-inline NFmiSmoother::NFmiSmootherMethod NFmiSmoother::Smoother() const { return itsSmoother; }
+inline NFmiSmoother::NFmiSmootherMethod NFmiSmoother::Smoother() const
+{
+  return itsSmoother;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiSmoother::Factor() const { return itsFactor; }
+inline int NFmiSmoother::Factor() const
+{
+  return itsFactor;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiSmoother::Radius() const { return itsRadius; }
+inline float NFmiSmoother::Radius() const
+{
+  return itsRadius;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param smoother Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSmoother::Smoother(NFmiSmootherMethod smoother) { itsSmoother = smoother; }
+inline void NFmiSmoother::Smoother(NFmiSmootherMethod smoother)
+{
+  itsSmoother = smoother;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param factor Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSmoother::Factor(int factor) { itsFactor = factor; }
+inline void NFmiSmoother::Factor(int factor)
+{
+  itsFactor = factor;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param radius Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiSmoother::Radius(float radius) { itsRadius = radius; }
+inline void NFmiSmoother::Radius(float radius)
+{
+  itsRadius = radius;
+}
 // ----------------------------------------------------------------------
 /*!
  * The weighting function. This is public so that external

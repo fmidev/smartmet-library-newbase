@@ -68,7 +68,8 @@ void NFmiDataModifierMaxMean::Calculate(float theValue)
     itsCounter++;
     itsAverage -= ((itsAverage - theValue) / itsCounter);
 
-    if (itsMaxValue < theValue) itsMaxValue = theValue;
+    if (itsMaxValue < theValue)
+      itsMaxValue = theValue;
   }
 }
 

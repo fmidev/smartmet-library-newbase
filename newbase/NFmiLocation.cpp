@@ -25,9 +25,9 @@
 #include "NFmiAngle.h"
 #include "NFmiGeoTools.h"
 #include "NFmiMetTime.h"
-
 #include <boost/functional/hash.hpp>
-
+#include <fmt/format.h>
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 
@@ -46,7 +46,14 @@ const double kRefractCorr = -0.0145386;  // See comments in the CalcSunriseOrSun
 
 bool NFmiLocation::operator==(const NFmiLocation &theLocation) const
 {
-  return (GetName() == theLocation.GetName() && itsLatlon == theLocation.itsLatlon);
+  try
+  {
+    return (GetName() == theLocation.GetName() && itsLatlon == theLocation.itsLatlon);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -60,9 +67,20 @@ bool NFmiLocation::operator==(const NFmiLocation &theLocation) const
 
 bool NFmiLocation::operator<(const NFmiLocation &theLocation) const
 {
-  if (GetName() != theLocation.GetName()) return GetName() < theLocation.GetName();
-  if (itsLatlon.Y() != theLocation.itsLatlon.Y()) return itsLatlon.Y() < theLocation.itsLatlon.Y();
-  return itsLatlon.X() < theLocation.itsLatlon.X();
+  try
+  {
+    if (GetName() != theLocation.GetName())
+      return GetName() < theLocation.GetName();
+
+    if (itsLatlon.Y() != theLocation.itsLatlon.Y())
+      return itsLatlon.Y() < theLocation.itsLatlon.Y();
+
+    return itsLatlon.X() < theLocation.itsLatlon.X();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -74,8 +92,15 @@ bool NFmiLocation::operator<(const NFmiLocation &theLocation) const
 
 bool NFmiLocation::IsEqual(const NFmiSortable &theSortable) const
 {
-  return (itsLatlon.Y() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
-          itsLatlon.X() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  try
+  {
+    return (itsLatlon.Y() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
+            itsLatlon.X() == (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -87,8 +112,15 @@ bool NFmiLocation::IsEqual(const NFmiSortable &theSortable) const
 
 bool NFmiLocation::IsLessThan(const NFmiSortable &theSortable) const
 {
-  return (itsLatlon.Y() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
-          itsLatlon.X() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  try
+  {
+    return (itsLatlon.Y() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.Y() &&
+            itsLatlon.X() > (static_cast<const NFmiLocation *>(&theSortable))->itsLatlon.X());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -103,12 +135,19 @@ bool NFmiLocation::IsLessThan(const NFmiSortable &theSortable) const
 
 NFmiLocation &NFmiLocation::operator=(const NFmiLocation &theLocation)
 {
-  if (this != &theLocation)
+  try
   {
-    NFmiIndividual::operator=(theLocation);
-    itsLatlon = theLocation.itsLatlon;
+    if (this != &theLocation)
+    {
+      NFmiIndividual::operator=(theLocation);
+      itsLatlon = theLocation.itsLatlon;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -119,7 +158,14 @@ NFmiLocation &NFmiLocation::operator=(const NFmiLocation &theLocation)
 
 void NFmiLocation::SetLocation(const NFmiLocation &theLocation)
 {
-  itsLatlon = theLocation.itsLatlon;
+  try
+  {
+    itsLatlon = theLocation.itsLatlon;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -141,16 +187,23 @@ void NFmiLocation::SetLocation(const NFmiLocation &theLocation)
 
 double NFmiLocation::CalcDeclinationAngle(const NFmiTime &theSolarTime)
 {
-  double yearAngle =
-      2.0 * kPii *
-      (theSolarTime.GetJulianDay() +
-       (theSolarTime.GetHour() + theSolarTime.GetMin() / 60. + theSolarTime.GetSec() / 3600.) /
-           24.  // 17.09.2002/Viljo adds the seconds
-       - 1.0) /
-      365.;
-  return (0.006918 - 0.399912 * cos(yearAngle) + 0.070257 * sin(yearAngle) -
-          0.006758 * cos(2 * yearAngle) + 0.000907 * sin(2 * yearAngle) -
-          0.002697 * cos(3 * yearAngle) + 0.00148 * sin(3 * yearAngle));
+  try
+  {
+    double yearAngle =
+        2.0 * kPii *
+        (theSolarTime.GetJulianDay() +
+         (theSolarTime.GetHour() + theSolarTime.GetMin() / 60. + theSolarTime.GetSec() / 3600.) /
+             24.  // 17.09.2002/Viljo adds the seconds
+         - 1.0) /
+        365.;
+    return (0.006918 - 0.399912 * cos(yearAngle) + 0.070257 * sin(yearAngle) -
+            0.006758 * cos(2 * yearAngle) + 0.000907 * sin(2 * yearAngle) -
+            0.002697 * cos(3 * yearAngle) + 0.00148 * sin(3 * yearAngle));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -169,13 +222,20 @@ double NFmiLocation::CalcDeclinationAngle(const NFmiTime &theSolarTime)
 
 double NFmiLocation::CalcAtzimuthAngle(const NFmiTime &theSolarTime)
 {
-  double hour =
-      theSolarTime.GetHour() + theSolarTime.GetMin() / 60. + theSolarTime.GetSec() / 3600.;
-  double yearAngle = 2.0 * kPii * (theSolarTime.GetJulianDay() + hour / 24. - 1.0) / 365.;
-  double anEqualizerTerm = (0.0172 + 0.4281 * cos(yearAngle) - 7.3515 * sin(yearAngle) -
-                            3.3495 * cos(2. * yearAngle) - 9.3619 * sin(2. * yearAngle)) /
-                           60.;
-  return (hour + anEqualizerTerm) * kPii / 12.;
+  try
+  {
+    double hour =
+        theSolarTime.GetHour() + theSolarTime.GetMin() / 60. + theSolarTime.GetSec() / 3600.;
+    double yearAngle = 2.0 * kPii * (theSolarTime.GetJulianDay() + hour / 24. - 1.0) / 365.;
+    double anEqualizerTerm = (0.0172 + 0.4281 * cos(yearAngle) - 7.3515 * sin(yearAngle) -
+                              3.3495 * cos(2. * yearAngle) - 9.3619 * sin(2. * yearAngle)) /
+                             60.;
+    return (hour + anEqualizerTerm) * kPii / 12.;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -193,9 +253,16 @@ double NFmiLocation::CalcAtzimuthAngle(const NFmiTime &theSolarTime)
 
 double NFmiLocation::ElevationAngleFromSolarTime(const NFmiTime &theSolarTime)
 {
-  return asin(sin(CalcDeclinationAngle(theSolarTime)) * sin(GetLatitude() * kPii / 180.) -
-              cos(CalcDeclinationAngle(theSolarTime)) * cos(GetLatitude() * kPii / 180.) *
-                  cos(CalcAtzimuthAngle(theSolarTime)));
+  try
+  {
+    return asin(sin(CalcDeclinationAngle(theSolarTime)) * sin(GetLatitude() * kPii / 180.) -
+                cos(CalcDeclinationAngle(theSolarTime)) * cos(GetLatitude() * kPii / 180.) *
+                    cos(CalcAtzimuthAngle(theSolarTime)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -207,8 +274,15 @@ double NFmiLocation::ElevationAngleFromSolarTime(const NFmiTime &theSolarTime)
 
 double NFmiLocation::DeclinationAngle(const NFmiMetTime &theTime)
 {
-  NFmiTime solarTime(LocalSolarTime(theTime));
-  return 180. / kPii * CalcDeclinationAngle(solarTime);
+  try
+  {
+    NFmiTime solarTime(LocalSolarTime(theTime));
+    return 180. / kPii * CalcDeclinationAngle(solarTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -220,8 +294,15 @@ double NFmiLocation::DeclinationAngle(const NFmiMetTime &theTime)
 
 double NFmiLocation::ElevationAngle(const NFmiMetTime &theTime)
 {
-  NFmiTime solarTime(LocalSolarTime(theTime));
-  return 180. / kPii * ElevationAngleFromSolarTime(solarTime);
+  try
+  {
+    NFmiTime solarTime(LocalSolarTime(theTime));
+    return 180. / kPii * ElevationAngleFromSolarTime(solarTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -233,8 +314,15 @@ double NFmiLocation::ElevationAngle(const NFmiMetTime &theTime)
 
 double NFmiLocation::AtzimuthAngle(const NFmiMetTime &theTime)
 {
-  NFmiTime solarTime(LocalSolarTime(theTime));
-  return 180. / kPii * CalcAtzimuthAngle(solarTime);
+  try
+  {
+    NFmiTime solarTime(LocalSolarTime(theTime));
+    return 180. / kPii * CalcAtzimuthAngle(solarTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -251,9 +339,16 @@ double NFmiLocation::AtzimuthAngle(const NFmiMetTime &theTime)
 
 NFmiTime NFmiLocation::LocalSolarTime(const NFmiMetTime &theTime)
 {
-  NFmiTime t(static_cast<NFmiTime>(theTime));
-  t.ChangeBySeconds(long(240 * itsLatlon.X()));
-  return t;
+  try
+  {
+    NFmiTime t(static_cast<NFmiTime>(theTime));
+    t.ChangeBySeconds(long(240 * itsLatlon.X()));
+    return t;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -267,11 +362,19 @@ NFmiTime NFmiLocation::LocalSolarTime(const NFmiMetTime &theTime)
 
 NFmiMetTime NFmiLocation::UtcTimeFromSolarTime(const NFmiTime &theSolarTime)
 {
-  NFmiMetTime t(theSolarTime, 1);
-  t.ChangeBySeconds(long(-240 * itsLatlon.X()));
-  if (t.GetSec() > 29) t.ChangeByMinutes(1);
-  t.SetSec(0);  // NFmiMetTime does not have seconds
-  return t;
+  try
+  {
+    NFmiMetTime t(theSolarTime, 1);
+    t.ChangeBySeconds(long(-240 * itsLatlon.X()));
+    if (t.GetSec() > 29)
+      t.ChangeByMinutes(1);
+    t.SetSec(0);  // NFmiMetTime does not have seconds
+    return t;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -295,11 +398,19 @@ NFmiMetTime NFmiLocation::UtcTimeFromSolarTime(const NFmiTime &theSolarTime)
 
 NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurrentDay)
 {
-  bool isMidNightSun, isPolarNight;
-  NFmiMetTime sunrise = LastTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
-  if (isPolarNight) sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
-  isCurrentDay = !isMidNightSun && !isPolarNight;
-  return sunrise;
+  try
+  {
+    bool isMidNightSun, isPolarNight;
+    NFmiMetTime sunrise = LastTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
+    if (isPolarNight)
+      sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
+    isCurrentDay = !isMidNightSun && !isPolarNight;
+    return sunrise;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -323,11 +434,19 @@ NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurr
 
 NFmiMetTime NFmiLocation::TimeOfSunset(const NFmiMetTime &theTime, bool &isCurrentDay)
 {
-  bool isMidNightSun, isPolarNight;
-  NFmiMetTime sunset = NextTimeOfSunset(theTime, isMidNightSun, isPolarNight);
-  if (isPolarNight) sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);
-  isCurrentDay = !isMidNightSun && !isPolarNight;
-  return sunset;
+  try
+  {
+    bool isMidNightSun, isPolarNight;
+    NFmiMetTime sunset = NextTimeOfSunset(theTime, isMidNightSun, isPolarNight);
+    if (isPolarNight)
+      sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);
+    isCurrentDay = !isMidNightSun && !isPolarNight;
+    return sunset;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -350,38 +469,45 @@ NFmiMetTime NFmiLocation::NextTimeOfSunset(const NFmiMetTime &theTime,
                                            bool &isMidNightSun,
                                            bool &isPolarNight)
 {
-  NFmiTime solarTime = LocalSolarTime(theTime);
-  solarTime.SetHour(12);
-  solarTime.SetMin(0);
-  solarTime.SetSec(0);
-  isMidNightSun = false;
-  isPolarNight = false;
-  if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
+  try
   {
-    // polar night
-    isPolarNight = true;
-    do
+    NFmiTime solarTime = LocalSolarTime(theTime);
+    solarTime.SetHour(12);
+    solarTime.SetMin(0);
+    solarTime.SetSec(0);
+    isMidNightSun = false;
+    isPolarNight = false;
+    if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
     {
-      solarTime.ChangeByDays(1);  // finds the next day of the sunset
-    } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
-    solarTime.ChangeByHours(12);  // next midnight
-  }
-  else
-  {
-    solarTime.ChangeByHours(12);  // next midnight
-    if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
-    {
-      // midnight sun
-      isMidNightSun = true;
+      // polar night
+      isPolarNight = true;
       do
       {
         solarTime.ChangeByDays(1);  // finds the next day of the sunset
-      } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      solarTime.ChangeByHours(12);  // next midnight
     }
-  }
+    else
+    {
+      solarTime.ChangeByHours(12);  // next midnight
+      if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
+      {
+        // midnight sun
+        isMidNightSun = true;
+        do
+        {
+          solarTime.ChangeByDays(1);  // finds the next day of the sunset
+        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      }
+    }
 
-  CalcSunriseOrSunsetTime(solarTime);  // solarTime == 24:00
-  return UtcTimeFromSolarTime(solarTime);
+    CalcSunriseOrSunsetTime(solarTime);  // solarTime == 24:00
+    return UtcTimeFromSolarTime(solarTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -404,37 +530,44 @@ NFmiMetTime NFmiLocation::NextTimeOfSunrise(const NFmiMetTime &theTime,
                                             bool &isMidNightSun,
                                             bool &isPolarNight)
 {
-  NFmiTime solarTime = LocalSolarTime(theTime);
-  solarTime.SetHour(12);
-  solarTime.SetMin(0);
-  solarTime.SetSec(0);
-  isMidNightSun = false;
-  isPolarNight = false;
-  if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
+  try
   {
-    // polar night
-    isPolarNight = true;
-    do
+    NFmiTime solarTime = LocalSolarTime(theTime);
+    solarTime.SetHour(12);
+    solarTime.SetMin(0);
+    solarTime.SetSec(0);
+    isMidNightSun = false;
+    isPolarNight = false;
+    if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
     {
-      solarTime.ChangeByDays(1);  // finds the next day of the sunrise
-    } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
-  }
-  else
-  {
-    solarTime.ChangeByHours(12);  // next midnight
-    if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
-    {
-      // midnight sun
-      isMidNightSun = true;
+      // polar night
+      isPolarNight = true;
       do
       {
         solarTime.ChangeByDays(1);  // finds the next day of the sunrise
-      } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
     }
-    solarTime.SetHour(12);
+    else
+    {
+      solarTime.ChangeByHours(12);  // next midnight
+      if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
+      {
+        // midnight sun
+        isMidNightSun = true;
+        do
+        {
+          solarTime.ChangeByDays(1);  // finds the next day of the sunrise
+        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      }
+      solarTime.SetHour(12);
+    }
+    CalcSunriseOrSunsetTime(solarTime);  // solarTime == 12:00
+    return UtcTimeFromSolarTime(solarTime);
   }
-  CalcSunriseOrSunsetTime(solarTime);  // solarTime == 12:00
-  return UtcTimeFromSolarTime(solarTime);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -457,37 +590,44 @@ NFmiMetTime NFmiLocation::LastTimeOfSunset(const NFmiMetTime &theTime,
                                            bool &isMidNightSun,
                                            bool &isPolarNight)
 {
-  NFmiTime solarTime = LocalSolarTime(theTime);
-  solarTime.SetHour(12);
-  solarTime.SetMin(0);
-  solarTime.SetSec(0);
-  isMidNightSun = false;
-  isPolarNight = false;
-  if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
+  try
   {
-    // polar night
-    isPolarNight = true;
-    do
+    NFmiTime solarTime = LocalSolarTime(theTime);
+    solarTime.SetHour(12);
+    solarTime.SetMin(0);
+    solarTime.SetSec(0);
+    isMidNightSun = false;
+    isPolarNight = false;
+    if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
     {
-      solarTime.ChangeByDays(-1);  // finds the last day of the sunset
-    } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
-    solarTime.ChangeByHours(12);  // midnight
-  }
-  else
-  {
-    solarTime.SetHour(0);  // previous midnight
-    if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
-    {
-      // midnight sun
-      isMidNightSun = true;
+      // polar night
+      isPolarNight = true;
       do
       {
         solarTime.ChangeByDays(-1);  // finds the last day of the sunset
-      } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      solarTime.ChangeByHours(12);  // midnight
     }
+    else
+    {
+      solarTime.SetHour(0);  // previous midnight
+      if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
+      {
+        // midnight sun
+        isMidNightSun = true;
+        do
+        {
+          solarTime.ChangeByDays(-1);  // finds the last day of the sunset
+        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      }
+    }
+    CalcSunriseOrSunsetTime(solarTime);  // solarTime == 24:00
+    return UtcTimeFromSolarTime(solarTime);
   }
-  CalcSunriseOrSunsetTime(solarTime);  // solarTime == 24:00
-  return UtcTimeFromSolarTime(solarTime);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -510,38 +650,45 @@ NFmiMetTime NFmiLocation::LastTimeOfSunrise(const NFmiMetTime &theTime,
                                             bool &isMidNightSun,
                                             bool &isPolarNight)
 {
-  NFmiTime solarTime = LocalSolarTime(theTime);
-  solarTime.SetHour(12);
-  solarTime.SetMin(0);
-  solarTime.SetSec(0);
-  isMidNightSun = false;
-  isPolarNight = false;
+  try
+  {
+    NFmiTime solarTime = LocalSolarTime(theTime);
+    solarTime.SetHour(12);
+    solarTime.SetMin(0);
+    solarTime.SetSec(0);
+    isMidNightSun = false;
+    isPolarNight = false;
 
-  if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
-  {
-    // polar night
-    isPolarNight = true;
-    do
+    if (ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
     {
-      solarTime.ChangeByDays(-1);  // finds the last day of the sunrise
-    } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
-  }
-  else
-  {
-    solarTime.SetHour(0);  // previous midnight
-    if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
-    {
-      // midnight sun
-      isMidNightSun = true;
+      // polar night
+      isPolarNight = true;
       do
       {
         solarTime.ChangeByDays(-1);  // finds the last day of the sunrise
-      } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
     }
-    solarTime.SetHour(12);
+    else
+    {
+      solarTime.SetHour(0);  // previous midnight
+      if (ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
+      {
+        // midnight sun
+        isMidNightSun = true;
+        do
+        {
+          solarTime.ChangeByDays(-1);  // finds the last day of the sunrise
+        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+      }
+      solarTime.SetHour(12);
+    }
+    CalcSunriseOrSunsetTime(solarTime);  // solarTime == 12:00
+    return UtcTimeFromSolarTime(solarTime);
   }
-  CalcSunriseOrSunsetTime(solarTime);  // solarTime == 12:00
-  return UtcTimeFromSolarTime(solarTime);
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -574,37 +721,44 @@ NFmiMetTime NFmiLocation::LastTimeOfSunrise(const NFmiMetTime &theTime,
 
 void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
 {
-  short stopHour = 23;
-  double angle1 = kFloatMissing, angle2 = kFloatMissing;
-  if (theSolarTime.GetHour() == 0)  // Sunset
+  try
   {
-    stopHour = 11;
-    angle2 = -1 * kFloatMissing;
-    ;  // angle2 must have a negative initial value in case of sunset (XOR-checking)
-  }
-
-  while (theSolarTime.GetHour() != stopHour)
-  {
-    theSolarTime.ChangeByHours(-1);
-    angle1 = ElevationAngleFromSolarTime(theSolarTime);
-    if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
+    short stopHour = 23;
+    double angle1 = kFloatMissing, angle2 = kFloatMissing;
+    if (theSolarTime.GetHour() == 0)  // Sunset
     {
-      do
-      {
-        theSolarTime.ChangeByMinutes(1);
-        angle2 = ElevationAngleFromSolarTime(theSolarTime);
-        if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
-        {
-          if (fabs(angle1 + kRefractCorr) < fabs(angle2 + kRefractCorr))
-            theSolarTime.ChangeByMinutes(-1);  // rounding to a nearest minute
-          return;
-        }
-        angle1 = angle2;
-      } while (theSolarTime.GetMin() != 0);  // beginnig of the next hour is already handled
+      stopHour = 11;
+      angle2 = -1 * kFloatMissing;
+      ;  // angle2 must have a negative initial value in case of sunset (XOR-checking)
     }
-    angle2 = angle1;
+
+    while (theSolarTime.GetHour() != stopHour)
+    {
+      theSolarTime.ChangeByHours(-1);
+      angle1 = ElevationAngleFromSolarTime(theSolarTime);
+      if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
+      {
+        do
+        {
+          theSolarTime.ChangeByMinutes(1);
+          angle2 = ElevationAngleFromSolarTime(theSolarTime);
+          if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
+          {
+            if (fabs(angle1 + kRefractCorr) < fabs(angle2 + kRefractCorr))
+              theSolarTime.ChangeByMinutes(-1);  // rounding to a nearest minute
+            return;
+          }
+          angle1 = angle2;
+        } while (theSolarTime.GetMin() != 0);  // beginnig of the next hour is already handled
+      }
+      angle2 = angle1;
+    }
+    return;
   }
-  return;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -614,7 +768,17 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
  */
 // ----------------------------------------------------------------------
 
-NFmiLocation *NFmiLocation::Clone() const { return new NFmiLocation(*this); }
+NFmiLocation *NFmiLocation::Clone() const
+{
+  try
+  {
+    return new NFmiLocation(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -626,9 +790,16 @@ NFmiLocation *NFmiLocation::Clone() const { return new NFmiLocation(*this); }
 
 std::ostream &NFmiLocation::Write(std::ostream &file) const
 {
-  file << itsLatlon.X() << " " << itsLatlon.Y() << std::endl;
+  try
+  {
+    file << fmt::format("{} {}\n", itsLatlon.X(), itsLatlon.Y());
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -642,11 +813,18 @@ std::ostream &NFmiLocation::Write(std::ostream &file) const
 
 std::istream &NFmiLocation::Read(std::istream &file)
 {
-  double lon = kFloatMissing;
-  double lat = kFloatMissing;
-  file >> lon >> lat;
-  itsLatlon = NFmiPoint(lon, lat);
-  return file;
+  try
+  {
+    double lon = kFloatMissing;
+    double lat = kFloatMissing;
+    file >> lon >> lat;
+    itsLatlon = NFmiPoint(lon, lat);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -661,38 +839,46 @@ std::istream &NFmiLocation::Read(std::istream &file)
 
 double NFmiLocation::Direction(const NFmiPoint &theLatLon) const
 {
-  // Returns the azimuth bearing (in degrees [0..360] CLOCKWISE, 0 = north, 180 = south)
-  // between points (lon1, lat1) (current point) and (lon2, lat2):
-
-  double lon1 = FmiRad(GetLongitude());
-  double lat1 = FmiRad(GetLatitude());
-
-  double lon2 = FmiRad(theLatLon.X());
-  double lat2 = FmiRad(theLatLon.Y());
-  double dlon = lon2 - lon1;
-
-  if (dlon == 0.)
+  try
   {
-    // Points along meridian
-    if (lat2 - lat1 > 0.) return 0.;  // Exact north
+    // Returns the azimuth bearing (in degrees [0..360] CLOCKWISE, 0 = north, 180 = south)
+    // between points (lon1, lat1) (current point) and (lon2, lat2):
 
-    return 180.;  // Exact south
+    double lon1 = FmiRad(GetLongitude());
+    double lat1 = FmiRad(GetLatitude());
+
+    double lon2 = FmiRad(theLatLon.X());
+    double lat2 = FmiRad(theLatLon.Y());
+    double dlon = lon2 - lon1;
+
+    if (dlon == 0.)
+    {
+      // Points along meridian
+      if (lat2 - lat1 > 0.)
+        return 0.;  // Exact north
+
+      return 180.;  // Exact south
+    }
+
+    ////////////////!!!!!!!!!!!!!!!
+    // From:
+    //  Movable Type Ltd:
+    // http://www.movable-type.co.uk/
+    //
+    // -AND-
+    //
+    // calculate (initial) bearing (in radians clockwise) between two points
+    //
+    // from: Ed Williams' Aviation Formulary, http://williams.best.vwh.net/avform.htm#Crs
+    //
+
+    return FmiDeg(atan2(sin(dlon) * cos(lat2),
+                        cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)));  // [deg]
   }
-
-  ////////////////!!!!!!!!!!!!!!!
-  // From:
-  //  Movable Type Ltd:
-  // http://www.movable-type.co.uk/
-  //
-  // -AND-
-  //
-  // calculate (initial) bearing (in radians clockwise) between two points
-  //
-  // from: Ed Williams' Aviation Formulary, http://williams.best.vwh.net/avform.htm#Crs
-  //
-
-  return FmiDeg(atan2(sin(dlon) * cos(lat2),
-                      cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dlon)));  // [deg]
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -718,20 +904,28 @@ double NFmiLocation::Direction(const NFmiPoint &theLatLon) const
 
 double NFmiLocation::Distance(const NFmiLocation &theLocation) const
 {
-  return NFmiGeoTools::GeoDistance(
-      GetLongitude(), GetLatitude(), theLocation.GetLongitude(), theLocation.GetLatitude());
+  try
+  {
+    return NFmiGeoTools::GeoDistance(
+        GetLongitude(), GetLatitude(), theLocation.GetLongitude(), theLocation.GetLatitude());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
 
-#ifdef WGS84
 NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
                                            double theDistanceInMeters) const
-#else
+{
+  return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, false);
+}
+
 NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
                                            double theDistanceInMeters,
                                            bool usePacificView) const
-#endif
 {
   // Palauttaa maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
   // (metreissä) avulla.
@@ -793,37 +987,39 @@ NFmiLocation NFmiLocation::ComputeLocation(double theAzimuthInDegrees,
   // muttei kuitenkaan uutta "kompassisuuntaa" 'hdng2'.
   // min() ja max() -funktioilla estetään mahd. pyöristysvirheiden vaikutus:
 
-  double azimuthInDegrees =
-      theAzimuthInDegrees - int(theAzimuthInDegrees / 360) * 360;  // Kulma välille [-360..360]
-  double alpha = theDistanceInMeters / kRearth;
-  double lat1 = FmiRad(itsLatlon.Y());
-  double value = cos(FmiRad(azimuthInDegrees)) * cos(lat1) * sin(alpha) + sin(lat1) * cos(alpha);
-  double lat2 = asin(std::min(std::max(value, -1.0), 1.0));
-  double newLatitude = FmiDeg(lat2);
+  try
+  {
+    double azimuthInDegrees =
+        theAzimuthInDegrees - int(theAzimuthInDegrees / 360) * 360;  // Kulma välille [-360..360]
+    double alpha = theDistanceInMeters / kRearth;
+    double lat1 = FmiRad(itsLatlon.Y());
+    double value = cos(FmiRad(azimuthInDegrees)) * cos(lat1) * sin(alpha) + sin(lat1) * cos(alpha);
+    double lat2 = asin(std::min(std::max(value, -1.0), 1.0));
+    double newLatitude = FmiDeg(lat2);
 
-  // Lasketaan uusi longitudi:
+    // Lasketaan uusi longitudi:
 
-  value = (cos(alpha) - sin(lat1) * sin(lat2)) / (cos(lat1) * cos(lat2));
-  double longDiff = FmiDeg(acos(std::min(std::max(value, -1.0), 1.0)));
+    value = (cos(alpha) - sin(lat1) * sin(lat2)) / (cos(lat1) * cos(lat2));
+    double longDiff = FmiDeg(acos(std::min(std::max(value, -1.0), 1.0)));
 
-  int sign = 1;
+    int sign = 1;
 
-  if (((azimuthInDegrees < 0.) && (azimuthInDegrees >= -180.)) ||
-      ((azimuthInDegrees >= 180.) && (azimuthInDegrees < 360.)))
-    sign = -1;
+    if (((azimuthInDegrees < 0.) && (azimuthInDegrees >= -180.)) ||
+        ((azimuthInDegrees >= 180.) && (azimuthInDegrees < 360.)))
+      sign = -1;
 
-  double newLongitude = itsLatlon.X() + sign * longDiff;
-#ifdef WGS84
-  NFmiLongitude longitude(newLongitude);
-#else
-  NFmiLongitude longitude(newLongitude, usePacificView);
-#endif
-  newLongitude = longitude.Value();
+    double newLongitude = itsLatlon.X() + sign * longDiff;
+    NFmiLongitude longitude(newLongitude, usePacificView);
+    newLongitude = longitude.Value();
 
-  return NFmiLocation(newLongitude, newLatitude);
+    return NFmiLocation(newLongitude, newLatitude);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-#ifdef WGS84
 void NFmiLocation::SetLocation(double theAzimuthInDegrees, double theDistanceInMeters)
 {
   // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
@@ -834,22 +1030,27 @@ void NFmiLocation::SetLocation(double theAzimuthInDegrees, double theDistanceInM
 
   *this = ComputeLocation(theAzimuthInDegrees, theDistanceInMeters);
 }
-#else
+
 void NFmiLocation::SetLocation(double theAzimuthInDegrees,
                                double theDistanceInMeters,
                                bool usePacificView)
 {
-  // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
-  // (metreissä) avulla.
-  // Azimuutti kasvaa myötäpäivään pohjoisesta, pohjoinen = 0 astetta
-  // HUOM! Tämä metodi muuttaa olion datajäseniä (*this) eli
-  // käytännössä muuttaa olion maant. sijainnin argumentteja vastaavaksi sijainniksi
+  try
+  {
+    // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
+    // (metreissä) avulla.
+    // Azimuutti kasvaa myötäpäivään pohjoisesta, pohjoinen = 0 astetta
+    // HUOM! Tämä metodi muuttaa olion datajäseniä (*this) eli
+    // käytännössä muuttaa olion maant. sijainnin argumentteja vastaavaksi sijainniksi
 
-  *this = ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, usePacificView);
+    *this = ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, usePacificView);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
-#endif
 
-#ifdef WGS84
 NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees, double theDistanceInMeters) const
 {
   // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
@@ -859,19 +1060,25 @@ NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees, double theDis
 
   return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters);
 }
-#else
+
 const NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
                                              double theDistanceInMeters,
                                              bool usePacificView) const
 {
-  // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
-  // (metreissä) avulla.
-  // Azimuutti kasvaa myötäpäivään pohjoisesta, pohjoinen = 0 astetta
-  // Metodi EI muuta datajäseniään; ainoastaan palauttaa argumentteja vastaavan maant. sijainnin
+  try
+  {
+    // Laskee maantieteellisen paikan nykysijainnin suhteen azimuutin (asteissa) ja etäisyyden
+    // (metreissä) avulla.
+    // Azimuutti kasvaa myötäpäivään pohjoisesta, pohjoinen = 0 astetta
+    // Metodi EI muuta datajäseniään; ainoastaan palauttaa argumentteja vastaavan maant. sijainnin
 
-  return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, usePacificView);
+    return ComputeLocation(theAzimuthInDegrees, theDistanceInMeters, usePacificView);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
-#endif
 
 // ----------------------------------------------------------------------
 /*!
@@ -881,7 +1088,14 @@ const NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
 
 std::size_t NFmiLocation::HashValue() const
 {
-  std::size_t hash = NFmiIndividual::HashValue();
-  boost::hash_combine(hash, itsLatlon.HashValue());
-  return hash;
+  try
+  {
+    std::size_t hash = NFmiIndividual::HashValue();
+    boost::hash_combine(hash, itsLatlon.HashValue());
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

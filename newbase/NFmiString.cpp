@@ -23,6 +23,7 @@
 #include "NFmiStringTools.h"
 
 #include <boost/functional/hash.hpp>
+#include <macgyver/Exception.h>
 
 #include <cctype>
 #include <cstdio>
@@ -50,7 +51,14 @@ using namespace std;
 NFmiString::NFmiString(const unsigned char *aText, unsigned long len)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(aText, len);
+  try
+  {
+    Set(aText, len);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -65,7 +73,14 @@ NFmiString::NFmiString(const unsigned char *aText, unsigned long len)
 NFmiString::NFmiString(const char *aText, unsigned long len)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(reinterpret_cast<const unsigned char *>(aText), len);
+  try
+  {
+    Set(reinterpret_cast<const unsigned char *>(aText), len);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -76,7 +91,14 @@ NFmiString::NFmiString(const char *aText, unsigned long len)
 
 NFmiString::NFmiString() : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(reinterpret_cast<const unsigned char *>(""), 0);
+  try
+  {
+    Set(reinterpret_cast<const unsigned char *>(""), 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -91,9 +113,16 @@ NFmiString::NFmiString() : NFmiSortable(), fChar(), fLength(), fReservedLength(-
 NFmiString::NFmiString(unsigned long len, bool fSetLengthToRealStringLength)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(reinterpret_cast<const unsigned char *>(""),
-      len,
-      fSetLengthToRealStringLength);  // 8.10.1997/Marko
+  try
+  {
+    Set(reinterpret_cast<const unsigned char *>(""),
+        len,
+        fSetLengthToRealStringLength);  // 8.10.1997/Marko
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -107,7 +136,14 @@ NFmiString::NFmiString(unsigned long len, bool fSetLengthToRealStringLength)
 NFmiString::NFmiString(const unsigned char *aText)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(aText, strlen(reinterpret_cast<const char *>(aText)));
+  try
+  {
+    Set(aText, strlen(reinterpret_cast<const char *>(aText)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -120,7 +156,14 @@ NFmiString::NFmiString(const unsigned char *aText)
 
 NFmiString::NFmiString(const char *aText) : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(reinterpret_cast<const unsigned char *>(aText), strlen(aText));
+  try
+  {
+    Set(reinterpret_cast<const unsigned char *>(aText), strlen(aText));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -134,7 +177,14 @@ NFmiString::NFmiString(const char *aText) : NFmiSortable(), fChar(), fLength(), 
 NFmiString::NFmiString(const NFmiString &aString)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(aString.fChar, aString.fLength);
+  try
+  {
+    Set(aString.fChar, aString.fLength);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -148,7 +198,14 @@ NFmiString::NFmiString(const NFmiString &aString)
 NFmiString::NFmiString(const std::string &str)
     : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
 {
-  Set(reinterpret_cast<unsigned char *>(const_cast<char *>(str.c_str())), str.size());
+  try
+  {
+    Set(reinterpret_cast<unsigned char *>(const_cast<char *>(str.c_str())), str.size());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -157,7 +214,19 @@ NFmiString::NFmiString(const std::string &str)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::~NFmiString() { delete[] fChar; }
+NFmiString::~NFmiString()
+{
+  try
+  {
+    delete[] fChar;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param fFmi Undocumented
@@ -167,8 +236,16 @@ NFmiString::~NFmiString() { delete[] fChar; }
 
 bool NFmiString::IsEqual(const NFmiSortable &fFmi) const
 {
-  return strcmp(reinterpret_cast<char *>(fChar),
-                reinterpret_cast<const char *>((static_cast<const NFmiString &>(fFmi)).fChar)) == 0;
+  try
+  {
+    return strcmp(reinterpret_cast<char *>(fChar),
+                  reinterpret_cast<const char *>((static_cast<const NFmiString &>(fFmi)).fChar)) ==
+           0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -183,29 +260,36 @@ void NFmiString::Set(const unsigned char *aText,
                      unsigned long len,
                      bool fSetLengthToRealStringLength)
 {
-  if (fReservedLength <= static_cast<int>(len))
+  try
   {
-    if (fReservedLength > -1)
+    if (fReservedLength <= static_cast<int>(len))
     {
-      delete[] fChar;
+      if (fReservedLength > -1)
+      {
+        delete[] fChar;
+      }
+
+      fReservedLength = (len + 1);                 // add 1 for safety in case of a null string
+      fChar = new unsigned char[fReservedLength];  // add 1 for terminator null
     }
 
-    fReservedLength = (len + 1);                 // add 1 for safety in case of a null string
-    fChar = new unsigned char[fReservedLength];  // add 1 for terminator null
+    if (fSetLengthToRealStringLength)
+    {
+      fLength = strlen(reinterpret_cast<const char *>(aText));
+      fChar[fLength] = '\0';  // Put end character after string
+    }
+    else
+    {
+      fLength = len;
+      fReservedLength = fLength + 1;
+    }
+    strncpy(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aText), fLength);
+    fChar[fReservedLength - 1] = '\0';  // Kun riviä ei ollut jätti joskus roskaa
   }
-
-  if (fSetLengthToRealStringLength)
+  catch (...)
   {
-    fLength = strlen(reinterpret_cast<const char *>(aText));
-    fChar[fLength] = '\0';  // Put end character after string
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  else
-  {
-    fLength = len;
-    fReservedLength = fLength + 1;
-  }
-  strncpy(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aText), fLength);
-  fChar[fReservedLength - 1] = '\0';  // Kun riviä ei ollut jätti joskus roskaa
 }
 
 // ----------------------------------------------------------------------
@@ -217,18 +301,26 @@ void NFmiString::Set(const unsigned char *aText,
 
 NFmiString &NFmiString::Add(const unsigned char *aChar)
 {
-  if (fReservedLength <= static_cast<long>(fLength + strlen(reinterpret_cast<const char *>(aChar))))
+  try
   {
-    fReservedLength = fLength + strlen(reinterpret_cast<const char *>(aChar)) + 1;
-    auto *aHelp = new unsigned char[fReservedLength];
-    strcpy(reinterpret_cast<char *>(aHelp), reinterpret_cast<char *>(fChar));
-    delete[] static_cast<unsigned char *>(fChar);
-    fChar = aHelp;
-  }
-  strcat(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aChar));
-  fLength += strlen(reinterpret_cast<const char *>(aChar));
+    if (fReservedLength <=
+        static_cast<long>(fLength + strlen(reinterpret_cast<const char *>(aChar))))
+    {
+      fReservedLength = fLength + strlen(reinterpret_cast<const char *>(aChar)) + 1;
+      auto *aHelp = new unsigned char[fReservedLength];
+      strcpy(reinterpret_cast<char *>(aHelp), reinterpret_cast<char *>(fChar));
+      delete[] static_cast<unsigned char *>(fChar);
+      fChar = aHelp;
+    }
+    strcat(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aChar));
+    fLength += strlen(reinterpret_cast<const char *>(aChar));
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -239,25 +331,33 @@ NFmiString &NFmiString::Add(const unsigned char *aChar)
 
 void NFmiString::TrimR(unsigned char theChar)
 {
-  int len = strlen(reinterpret_cast<char *>(fChar));
+  try
+  {
+    int len = strlen(reinterpret_cast<char *>(fChar));
 
-  /*
-   * Workaround for MSVC bug:
-   *
-   * If len is 0, after 'while' loop we get calculation -1 + 1
-   * which for some reason has the result 4294967295, which
-   * then causes the the calling program to crash.
-   *
-   * This happens only with 64bit MSVC 2008, release build.
-   */
+    /*
+     * Workaround for MSVC bug:
+     *
+     * If len is 0, after 'while' loop we get calculation -1 + 1
+     * which for some reason has the result 4294967295, which
+     * then causes the the calling program to crash.
+     *
+     * This happens only with 64bit MSVC 2008, release build.
+     */
 
-  if (len == 0) return;
+    if (len == 0)
+      return;
 
-  while (fChar[--len] == theChar)
-    ;
+    while (fChar[--len] == theChar)
+      ;
 
-  fChar[len + 1] = '\0';
-  fLength = len + 1;
+    fChar[len + 1] = '\0';
+    fLength = len + 1;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -268,14 +368,21 @@ void NFmiString::TrimR(unsigned char theChar)
 
 void NFmiString::TrimL(unsigned char theChar)
 {
-  int len = 0;
-
-  while (fChar[len] == theChar)
-    len++;
-
-  if (len)
+  try
   {
-    Set(&fChar[len], (fLength - len));
+    int len = 0;
+
+    while (fChar[len] == theChar)
+      len++;
+
+    if (len)
+    {
+      Set(&fChar[len], (fLength - len));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -288,22 +395,29 @@ void NFmiString::TrimL(unsigned char theChar)
 
 void NFmiString::FillR(long theSize, unsigned char theChar)
 {
-  // Mika: Jostain syystä g++ kääntää väärin ilman castia
-  if (theSize > static_cast<long>(fLength))
+  try
   {
-    unsigned char *theCharBuffer;
-
-    theCharBuffer = new unsigned char[(theSize - fLength) + 1];
-
-    for (unsigned long i = 0; i < (theSize - fLength); i++)
+    // Mika: Jostain syystä g++ kääntää väärin ilman castia
+    if (theSize > static_cast<long>(fLength))
     {
-      theCharBuffer[i] = theChar;
-      theCharBuffer[i + 1] = '\0';
+      unsigned char *theCharBuffer;
+
+      theCharBuffer = new unsigned char[(theSize - fLength) + 1];
+
+      for (unsigned long i = 0; i < (theSize - fLength); i++)
+      {
+        theCharBuffer[i] = theChar;
+        theCharBuffer[i + 1] = '\0';
+      }
+
+      Add(theCharBuffer);
+
+      delete[] theCharBuffer;
     }
-
-    Add(theCharBuffer);
-
-    delete[] theCharBuffer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -315,7 +429,14 @@ void NFmiString::FillR(long theSize, unsigned char theChar)
 
 void NFmiString::SetCharPtr(unsigned char *aChar)
 {
-  Set(aChar, strlen(reinterpret_cast<char *>(aChar)));
+  try
+  {
+    Set(aChar, strlen(reinterpret_cast<char *>(aChar)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -327,8 +448,15 @@ void NFmiString::SetCharPtr(unsigned char *aChar)
 
 bool NFmiString::IsLessThan(const NFmiSortable &fFmi) const
 {
-  return (strcmp(reinterpret_cast<char *>(fChar),
-                 (reinterpret_cast<char *>((static_cast<const NFmiString &>(fFmi)).fChar))) < 0);
+  try
+  {
+    return (strcmp(reinterpret_cast<char *>(fChar),
+                   (reinterpret_cast<char *>((static_cast<const NFmiString &>(fFmi)).fChar))) < 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -339,9 +467,16 @@ bool NFmiString::IsLessThan(const NFmiSortable &fFmi) const
 
 void NFmiString::SizeCheck(unsigned long len) const
 {
-  if ((len > GetLen()) || (len <= 0))
+  try
   {
-    throw runtime_error("NFmiString::SizeCheck - out-of-bounds");
+    if ((len > GetLen()) || (len <= 0))
+    {
+      throw Fmi::Exception(BCP, "NFmiString::SizeCheck - out-of-bounds");
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -354,23 +489,30 @@ void NFmiString::SizeCheck(unsigned long len) const
 
 const NFmiString NFmiString::GetChars(unsigned long firstChar, unsigned long length) const
 {
-  NFmiString back(length);
+  try
+  {
+    NFmiString back(length);
 
-  firstChar--;
+    firstChar--;
 
-  unsigned long test = (back.fLength < GetLen()) ? back.fLength : GetLen();
+    unsigned long test = (back.fLength < GetLen()) ? back.fLength : GetLen();
 
-  // for (unsigned long i=0; i<test; i++)
-  for (unsigned long i = 0; i + firstChar < fLength && i < length;
-       i++)  // 14.10.2002/Viljo, ylivuodon korjaus
-    back.fChar[i] = fChar[i + firstChar];
+    // for (unsigned long i=0; i<test; i++)
+    for (unsigned long i = 0; i + firstChar < fLength && i < length;
+         i++)  // 14.10.2002/Viljo, ylivuodon korjaus
+      back.fChar[i] = fChar[i + firstChar];
 
-  for (unsigned long j = test; j < length; j++)
-    back.fChar[j] = ' ';
+    for (unsigned long j = test; j < length; j++)
+      back.fChar[j] = ' ';
 
-  back.fChar[back.fLength] = '\0';
+    back.fChar[back.fLength] = '\0';
 
-  return back;
+    return back;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -384,17 +526,24 @@ const NFmiString NFmiString::GetChars(unsigned long firstChar, unsigned long len
 
 char *NFmiString::GetCharsPtr(unsigned long firstChar, unsigned long length) const
 {
-  SizeCheck(firstChar);
-  SizeCheck(firstChar + length - 1);
+  try
+  {
+    SizeCheck(firstChar);
+    SizeCheck(firstChar + length - 1);
 
-  auto *back = new NFmiString(length);
+    auto *back = new NFmiString(length);
 
-  firstChar--;
-  for (unsigned long i = 0; i < back->fLength; i++)
-    back->fChar[i] = fChar[i + firstChar];
-  back->fChar[back->fLength] = '\0';
+    firstChar--;
+    for (unsigned long i = 0; i < back->fLength; i++)
+      back->fChar[i] = fChar[i + firstChar];
+    back->fChar[back->fLength] = '\0';
 
-  return reinterpret_cast<char *>(back->fChar);
+    return reinterpret_cast<char *>(back->fChar);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -408,15 +557,22 @@ char *NFmiString::GetCharsPtr(unsigned long firstChar, unsigned long length) con
 
 bool NFmiString::ReplaceChars(const unsigned char *fromChar, const unsigned char *toChar)
 {
-  unsigned long pos = 1;
-  pos = Search(fromChar, pos);
-  bool replaceableCharFound = pos > 0;
-  while (pos > 0)
+  try
   {
-    fChar[pos - 1] = *toChar;
-    pos = Search(fromChar, ++pos);
+    unsigned long pos = 1;
+    pos = Search(fromChar, pos);
+    bool replaceableCharFound = pos > 0;
+    while (pos > 0)
+    {
+      fChar[pos - 1] = *toChar;
+      pos = Search(fromChar, ++pos);
+    }
+    return replaceableCharFound;
   }
-  return replaceableCharFound;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -437,31 +593,43 @@ bool NFmiString::ReplaceChars2(const unsigned char *fromChars,
                                const unsigned char *toChars,
                                unsigned long replacementsMaxCount)
 {
-  NFmiString fromStr(fromChars), toStr(toChars);
-  if (fromStr.GetLen() == 0) return false;
-  unsigned long pos1 = 1, pos = 1, counter = 0;
-  if (replacementsMaxCount == 0) return true;
-  counter++;
-  bool returnBool = false;
-  NFmiString str;
-
-  for (pos = Search(fromChars, pos1); pos >= pos1; counter++)
+  try
   {
-    if (pos < 1) break;
-    returnBool = true;
-    str += GetChars(pos1, pos - pos1);
-    str += toStr;
-    pos1 = pos + fromStr.GetLen();
-    if (counter >= replacementsMaxCount) break;
-    pos = Search(fromChars, pos1);
-  }
+    NFmiString fromStr(fromChars), toStr(toChars);
+    if (fromStr.GetLen() == 0)
+      return false;
+    unsigned long pos1 = 1, pos = 1, counter = 0;
+    if (replacementsMaxCount == 0)
+      return true;
+    counter++;
+    bool returnBool = false;
+    NFmiString str;
 
-  if (returnBool)
-  {
-    if (pos1 <= GetLen()) str += GetChars(pos1, GetLen() - pos1 + 1);
-    *this = str;
+    for (pos = Search(fromChars, pos1); pos >= pos1; counter++)
+    {
+      if (pos < 1)
+        break;
+      returnBool = true;
+      str += GetChars(pos1, pos - pos1);
+      str += toStr;
+      pos1 = pos + fromStr.GetLen();
+      if (counter >= replacementsMaxCount)
+        break;
+      pos = Search(fromChars, pos1);
+    }
+
+    if (returnBool)
+    {
+      if (pos1 <= GetLen())
+        str += GetChars(pos1, GetLen() - pos1 + 1);
+      *this = str;
+    }
+    return returnBool;
   }
-  return returnBool;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -474,14 +642,24 @@ bool NFmiString::ReplaceChars2(const unsigned char *fromChars,
 
 unsigned long NFmiString::Search(const unsigned char *searChar, unsigned long fromPos) const
 {
-  if (fromPos < 1 || fromPos > fLength) return 0;
-  unsigned char *findChar;
-  findChar = reinterpret_cast<unsigned char *>(strstr(reinterpret_cast<char *>(fChar + fromPos - 1),
-                                                      reinterpret_cast<const char *>(searChar)));
+  try
+  {
+    if (fromPos < 1 || fromPos > fLength)
+      return 0;
 
-  if (findChar == nullptr) return 0;
+    unsigned char *findChar;
+    findChar = reinterpret_cast<unsigned char *>(strstr(
+        reinterpret_cast<char *>(fChar + fromPos - 1), reinterpret_cast<const char *>(searChar)));
 
-  return static_cast<unsigned long>(findChar - fChar + 1);
+    if (findChar == nullptr)
+      return 0;
+
+    return static_cast<unsigned long>(findChar - fChar + 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -493,25 +671,32 @@ unsigned long NFmiString::Search(const unsigned char *searChar, unsigned long fr
 
 unsigned long NFmiString::SearchLast(const unsigned char *searChar) const
 {
-  unsigned char *findChar;
-  unsigned char *lastChar = nullptr;
-
-  findChar = reinterpret_cast<unsigned char *>(
-      strstr(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(searChar)));
-
-  while (findChar)
+  try
   {
-    lastChar = findChar;
+    unsigned char *findChar;
+    unsigned char *lastChar = nullptr;
+
     findChar = reinterpret_cast<unsigned char *>(
-        strstr(reinterpret_cast<char *>(findChar + 1), reinterpret_cast<const char *>(searChar)));
-  }
+        strstr(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(searChar)));
 
-  if (lastChar == nullptr)
+    while (findChar)
+    {
+      lastChar = findChar;
+      findChar = reinterpret_cast<unsigned char *>(
+          strstr(reinterpret_cast<char *>(findChar + 1), reinterpret_cast<const char *>(searChar)));
+    }
+
+    if (lastChar == nullptr)
+    {
+      return 0;
+    }
+
+    return static_cast<unsigned long>(lastChar - fChar + 1);
+  }
+  catch (...)
   {
-    return 0;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return static_cast<unsigned long>(lastChar - fChar + 1);
 }
 
 // ----------------------------------------------------------------------
@@ -527,9 +712,18 @@ unsigned long NFmiString::SearchLast(const unsigned char *searChar) const
 // ----------------------------------------------------------------------
 unsigned long NFmiString::SearchLast(const unsigned char *searchChar, unsigned long limit) const
 {
-  NFmiString str(*this);
-  if (GetLen() > limit) str = str.GetChars(1, limit);
-  return str.SearchLast(searchChar);
+  try
+  {
+    NFmiString str(*this);
+    if (GetLen() > limit)
+      str = str.GetChars(1, limit);
+
+    return str.SearchLast(searchChar);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -543,10 +737,17 @@ unsigned long NFmiString::SearchLast(const unsigned char *searchChar, unsigned l
 
 NFmiString &NFmiString::operator=(const char *FmiChar)
 {
-  if (FmiChar)
-    Set(reinterpret_cast<const unsigned char *>(FmiChar),
-        static_cast<unsigned long>(strlen(static_cast<const char *>(FmiChar))));
-  return *this;
+  try
+  {
+    if (FmiChar)
+      Set(reinterpret_cast<const unsigned char *>(FmiChar),
+          static_cast<unsigned long>(strlen(static_cast<const char *>(FmiChar))));
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -560,10 +761,17 @@ NFmiString &NFmiString::operator=(const char *FmiChar)
 
 NFmiString &NFmiString::operator=(const unsigned char *FmiChar)
 {
-  if (FmiChar)
-    Set(static_cast<const unsigned char *>(FmiChar),
-        static_cast<unsigned long>(strlen(reinterpret_cast<const char *>(FmiChar))));
-  return *this;
+  try
+  {
+    if (FmiChar)
+      Set(static_cast<const unsigned char *>(FmiChar),
+          static_cast<unsigned long>(strlen(reinterpret_cast<const char *>(FmiChar))));
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -575,13 +783,20 @@ NFmiString &NFmiString::operator=(const unsigned char *FmiChar)
 
 NFmiString &NFmiString::operator+=(const char aChar)
 {
-  char table[2];
-  table[0] = aChar;
-  table[1] = '\0';
-  NFmiString str(table);
-  *this += str;
+  try
+  {
+    char table[2];
+    table[0] = aChar;
+    table[1] = '\0';
+    NFmiString str(table);
+    *this += str;
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -595,9 +810,16 @@ NFmiString &NFmiString::operator+=(const char aChar)
 
 std::ostream &NFmiString::Write(std::ostream &file) const
 {
-  file << fLength << " " << reinterpret_cast<char *>(fChar) << std::endl;
+  try
+  {
+    file << fLength << " " << reinterpret_cast<char *>(fChar) << std::endl;
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -611,21 +833,29 @@ std::ostream &NFmiString::Write(std::ostream &file) const
 
 std::istream &NFmiString::Read(std::istream &file)
 {
-  unsigned long theLength;
-  char space;
+  try
+  {
+    unsigned long theLength;
+    char space;
 
-  file >> theLength;
-  // Safety against an obsene string size
-  if (file.fail())
-    throw runtime_error("NFmiString::Read string-length read failed, don't read the string");
-  file.get(space);
+    file >> theLength;
+    // Safety against an obsene string size
+    if (file.fail())
+      throw Fmi::Exception(BCP,
+                           "NFmiString::Read string-length read failed, don't read the string");
+    file.get(space);
 
-  Set(reinterpret_cast<const unsigned char *>(""), theLength);
+    Set(reinterpret_cast<const unsigned char *>(""), theLength);
 
-  file.read(reinterpret_cast<char *>(fChar), theLength);
-  fChar[fReservedLength - 1] = '\0';
+    file.read(reinterpret_cast<char *>(fChar), theLength);
+    fChar[fReservedLength - 1] = '\0';
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -636,19 +866,33 @@ std::istream &NFmiString::Read(std::istream &file)
 #ifndef UNIX
 void NFmiString::UpperCase()
 {
-  setlocale(LC_ALL, "Finnish");
-  ::_strupr((char *)fChar);
-  setlocale(LC_ALL, "C");
+  try
+  {
+    setlocale(LC_ALL, "Finnish");
+    ::_strupr((char *)fChar);
+    setlocale(LC_ALL, "C");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 #else
 void NFmiString::UpperCase()
 {
-  char *p;
-  p = reinterpret_cast<char *>(fChar);
-  while (*p != '\0')
+  try
   {
-    *p = NFmiStringTools::toupperfi(*p);
-    p++;
+    char *p;
+    p = reinterpret_cast<char *>(fChar);
+    while (*p != '\0')
+    {
+      *p = NFmiStringTools::toupperfi(*p);
+      p++;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 #endif
@@ -661,19 +905,33 @@ void NFmiString::UpperCase()
 #ifndef UNIX
 void NFmiString::LowerCase()
 {
-  setlocale(LC_ALL, "Finnish");
-  ::_strlwr((char *)fChar);
-  setlocale(LC_ALL, "C");
+  try
+  {
+    setlocale(LC_ALL, "Finnish");
+    ::_strlwr((char *)fChar);
+    setlocale(LC_ALL, "C");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 #else
 void NFmiString::LowerCase()
 {
-  char *p;
-  p = reinterpret_cast<char *>(fChar);
-  while (*p != '\0')
+  try
   {
-    *p = NFmiStringTools::tolowerfi(*p);
-    p++;
+    char *p;
+    p = reinterpret_cast<char *>(fChar);
+    while (*p != '\0')
+    {
+      *p = NFmiStringTools::tolowerfi(*p);
+      p++;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 #endif
@@ -686,19 +944,26 @@ void NFmiString::LowerCase()
 
 void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
 {
-  if (theUpperIndex < fLength)
+  try
   {
-    setlocale(LC_ALL, "Finnish");
-    NFmiString theLetter(fChar);
+    if (theUpperIndex < fLength)
+    {
+      setlocale(LC_ALL, "Finnish");
+      NFmiString theLetter(fChar);
 #ifndef UNIX
-    char *theChar = ::_strupr((char *)theLetter);
+      char *theChar = ::_strupr((char *)theLetter);
 
 #else
-    auto *theChar = static_cast<char *>(theLetter);
-    *theChar = toupper(*theChar);
+      auto *theChar = static_cast<char *>(theLetter);
+      *theChar = toupper(*theChar);
 #endif
-    fChar[theUpperIndex] = theChar[theUpperIndex];
-    setlocale(LC_ALL, "C");
+      fChar[theUpperIndex] = theChar[theUpperIndex];
+      setlocale(LC_ALL, "C");
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -710,10 +975,18 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
 
 bool NFmiString::FirstCharIsUpper() const
 {
-  char c = fChar[0];
-  if ((c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305') return true;
+  try
+  {
+    char c = fChar[0];
+    if ((c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305')
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -725,10 +998,20 @@ bool NFmiString::FirstCharIsUpper() const
 
 int NFmiString::CharCount(unsigned char theChar) const
 {
-  int count = 0;
-  for (unsigned long i = 0; i < fLength; i++)
-    if (fChar[i] == theChar) count++;
-  return count;
+  try
+  {
+    int count = 0;
+    for (unsigned long i = 0; i < fLength; i++)
+    {
+      if (fChar[i] == theChar)
+        count++;
+    }
+    return count;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -755,13 +1038,22 @@ int NFmiString::CharCount(unsigned char theChar) const
 
 bool NFmiString::Replace(const NFmiString &newChars, unsigned long fromIndex)
 {
-  if (GetLen() < fromIndex + newChars.GetLen() || newChars.GetLen() == 0) return false;
+  try
+  {
+    if (GetLen() < fromIndex + newChars.GetLen() || newChars.GetLen() == 0)
+      return false;
 
-  const unsigned char *replStr = newChars.GetCharPtr();
+    const unsigned char *replStr = newChars.GetCharPtr();
 
-  for (unsigned int i = 0; i < newChars.GetLen(); i++)
-    fChar[fromIndex + i] = replStr[i];
-  return true;
+    for (unsigned int i = 0; i < newChars.GetLen(); i++)
+      fChar[fromIndex + i] = replStr[i];
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -772,17 +1064,26 @@ bool NFmiString::Replace(const NFmiString &newChars, unsigned long fromIndex)
 
 void NFmiString::RemoveExtraSpaces()
 {
-  NFmiString tmpStr;
-  TrimR();
-  TrimL();
-  long num = 0;
-  for (unsigned long i = 0; i < fLength; i++)
+  try
   {
-    fChar[i] == ' ' ? num++ : num = 0;
-    if (num < 2) tmpStr += GetChars(i + 1, 1);
+    NFmiString tmpStr;
+    TrimR();
+    TrimL();
+    long num = 0;
+    for (unsigned long i = 0; i < fLength; i++)
+    {
+      fChar[i] == ' ' ? num++ : num = 0;
+      if (num < 2)
+        tmpStr += GetChars(i + 1, 1);
+    }
+    *this = tmpStr;
   }
-  *this = tmpStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return void
@@ -791,11 +1092,19 @@ void NFmiString::RemoveExtraSpaces()
 
 void NFmiString::FirstInWordToUpper()
 {
-  LowerCase();
-  FirstCharToUpper();
-  for (unsigned long i = 2; i < fLength; i++)
+  try
   {
-    if (fChar[i - 1] == ' ' && fChar[i] >= 'a') FirstCharToUpper(i);
+    LowerCase();
+    FirstCharToUpper();
+    for (unsigned long i = 2; i < fLength; i++)
+    {
+      if (fChar[i - 1] == ' ' && fChar[i] >= 'a')
+        FirstCharToUpper(i);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -807,6 +1116,13 @@ void NFmiString::FirstInWordToUpper()
 
 std::size_t NFmiString::HashValue() const
 {
-  std::string name(CharPtr());
-  return boost::hash_value(name);
+  try
+  {
+    std::string name(CharPtr());
+    return boost::hash_value(name);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

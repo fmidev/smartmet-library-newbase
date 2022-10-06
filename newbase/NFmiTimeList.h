@@ -152,6 +152,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiTimeList &ob)
  */
 
 // ----------------------------------------------------------------------
-inline std::istream &operator>>(std::istream &file, NFmiTimeList &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiTimeList &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

@@ -1,40 +1,60 @@
+%bcond_with tests
 %define DIRNAME newbase
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-library-%{DIRNAME}
+
+%if 0%{?rhel} && 0%{rhel} < 9
+%define smartmet_boost boost169
+%else
+%define smartmet_boost boost
+%endif
+
+%define smartmet_fmt_min 8.1.1
+%define smartmet_fmt_max 8.2.0
+
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 21.2.1
+Version: 22.8.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: boost169-devel
+BuildRequires: %{smartmet_boost}-devel
 BuildRequires: bzip2-devel
-BuildRequires: fmt-devel >= 7.1.3
+BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel <= %{smartmet_fmt_max}
 BuildRequires: gcc-c++
-BuildRequires: gdal32-devel
-BuildRequires: geos39-devel
+BuildRequires: gdal34-devel
+BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
-Requires: boost169-date-time
-Requires: boost169-filesystem
-Requires: boost169-iostreams
-Requires: boost169-regex
-Requires: boost169-system
-Requires: fmt >= 7.1.3
-Requires: gdal32-libs
-Requires: geos39
-#TestRequires: boost169-devel
+BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
+BuildRequires: smartmet-library-gis-devel >= 22.6.16
+%if %{with tests}
+BuildRequires: smartmet-library-regression
+%endif
+Requires: smartmet-library-macgyver >= 22.6.16
+Requires: smartmet-library-gis >= 22.6.16
+Requires: %{smartmet_boost}-date-time
+Requires: %{smartmet_boost}-filesystem
+Requires: %{smartmet_boost}-iostreams
+Requires: %{smartmet_boost}-regex
+Requires: %{smartmet_boost}-system
+Requires: fmt >= %{smartmet_fmt_min}, fmt <= %{smartmet_fmt_max}
+Requires: gdal34-libs
+Requires: geos310
+#TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal32-devel
-#TestRequires: gdal32-libs
+#TestRequires: gdal34-devel
+#TestRequires: gdal34-libs
 #TestRequires: make
-#TestRequires: postgresql12-libs
-#TestRequires: smartmet-library-macgyver-devel >= 21.1.14
+#TestRequires: postgresql13-libs
+#TestRequires: smartmet-library-gis-devel >= 22.6.16
+#TestRequires: smartmet-library-macgyver-devel >= 22.6.16
+#TestRequires: smartmet-library-macgyver
+#TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -52,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
  
 %build
 make %{_smp_mflags}
+%if %{with tests}
+make test %{_smp_mflags}
+%endif
 
 %install
 %makeinstall
@@ -70,6 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
+Requires: smartmet-library-gis-devel >= 22.5.4
+Requires: smartmet-library-macgyver-devel >= 22.3.28
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -91,6 +116,184 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Aug 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.29-1.fmi
+- New parameter AtmosphericIceGrowth
+
+* Wed Aug 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.24-1.fmi
+- Fixed index mask tools resolution calculations
+
+* Thu Aug  4 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.4-1.fmi
+- Update to fmt 8.1.1
+
+* Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-4.fmi
+- Fixed NFmiQueryInfo::RelativePoint not to be const as in the master branch
+
+* Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-3.fmi
+- Added NFmiAreaTools::CreateLegacyYKJArea with option for setting degrees/meters for the input coordinates
+
+* Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-2.fmi
+- Fixed NFmiArea::WorldRect not to return a reference for ABI compatibility with master branch
+
+* Fri Jun 10 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.10-1.fmi
+- Fixed NFmiArea::ClassName ABI to be the same as in the master branch
+- Added NFmiArea:::IsPacificView and NFmiArea::IsPacificLongitude from master to WGS84 branch
+
+* Thu Jun  9 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.9-1.fmi
+- Added NFmiAreaTools::CreateLegacyLatLonArea with option to use Pacific view
+
+* Wed Jun  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.8-1.fmi
+- Improved EPSG:2393 (YKJ) PROJ string detection
+
+* Mon Jun  6 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.6-1.fmi
+- Added NFmiArea::CreateNewAreaByWorldRect which allows enlarging an area
+
+* Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-2.fmi
+- Added Fmi::LegacyMode() function for detecting when old NFmiArea classes are being used
+
+* Thu Jun  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.2-1.fmi
+- Fixed world wrap problems when extending the coordinates for global data by one column
+
+* Wed Jun  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.1-2.fmi
+- Added NFmiArea::SimpleWKT for compatibility with the WGS84 branch
+
+* Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-3.fmi
+- Fixed PROJ string for CreateLegacyRotatedLatLonArea
+
+* Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-2.fmi
+- Fixed NFmiArea::DetectClassId to ignore rotated latlon +towgs84 settings
+
+* Tue May 24 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.24-1.fmi
+- Changed several NFmiArea methods not to be inline for ABI compatibility with the WGS84 branch
+- Update WGS84 branch to same version as master branch
+
+* Fri May 20 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.20-1.fmi
+- NFmiFastQueryInfo::LatLon no longer returns a const reference due to ABI compability issues
+- Removed NFmiFastQueryInfo::LatLonFast as obsolete
+
+* Thu May 19 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.19-1.fmi
+- Added NFmiArea::CreateFromBBox for ABI compatibility with the WGS84 branch
+
+* Wed May 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.18-1.fmi
+- Added some legacy Pacific view support to avoid #ifdef WGS84 code in dependent projects
+- Added convenience methods for creating legacy projections via NFmiAreaTools instead of direct constructors
+
+* Thu Apr 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.4.28-1.fmi
+- New Enfuser parameters: LungDepositedSurfaceArea (LDSA) and BlackCarbonConcentration
+- New power grid parameters: PowerOutagesByCounty and PowerOutagesByMunicipality
+
+* Tue Mar 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.22-1.fmi
+- New parameters: SoaringFlightIndex, ThermalBirdMigrationIndex
+
+* Fri Jan 21 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.21-1.fmi
+- Repackage due to upgrade of packages from PGDG repo: gdal-3.4, geos-3.10, proj-8.2
+
+* Tue Dec  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.7-1.fmi
+- Update to postgresql 13 and gdal 3.3
+
+* Wed Dec  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.12.1-1.fmi
+- New parameters: PowerOutput, PowerOutputSum
+
+* Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-1.fmi
+- Added EDR (eddy dissipation rate) parameter
+
+* Wed Oct 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.10.13-1.fmi
+- Print station coordinates with full accuracy
+
+* Wed Sep 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.22-1.fmi
+- Added parameter RadiationDownLWClearSky
+
+* Mon Sep 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.20-1.fmi
+- Added NFmiAreaMaskHelperStructures files
+
+* Tue Sep 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.14-1.fmi
+- Added rail probability parameter
+
+* Mon Sep 13 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.13-1.fmi
+- Fixed YKJ projection PROJ string
+
+* Mon Sep  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.6-1.fmi
+- Updated DetectClassId to check for +datum=WGS84
+
+* Thu Sep  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.2-1.fmi
+- Use WGS84 datum by default
+
+* Tue Aug 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.24-1.fmi
+- Increased grid location error tolerance due to accuracy issues in sphere <--> WGS84 conversions
+
+* Tue Aug  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.3-1.fmi
+- Added +type=crs to PROJ strings
+- Fixed NFmiArea::ProjStr to return the string from Fmi::SpatialReference
+- Added NFmiArea::EnableBilinearInterpolation, DisableBilinearinterpolation and BilinearInterpolationEnabled methods
+
+* Mon Jun 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.28-1.fmi
+- Added WGS84 define into NFmiGlobals so outside code can detect which newbase version is installed
+
+* Wed Jun 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.16-1.fmi
+- Use Fmi::Exception
+
+* Mon Jun  7 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.7-1.fmi
+- Fixed self assignment issues
+
+* Thu May  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.6-1.fmi
+- Fixed azimuthal projections to handle negative central/true latitudes correctly
+
+* Thu Apr 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.4.22-1.fmi
+- Added NWCSAF parameters
+
+* Sat Mar 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.20-1.fmi
+- Faster and disk friendlier grid interpolations
+
+* Fri Mar 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.19-1.fmi
+- Fixed NFmiEquidistantArea to initialize the spatial reference for all constructor calls
+
+* Tue Mar  9 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.9-1.fmi
+- Added move assignment and constructor for NFmiDataMatrix
+
+* Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
+- Added parameter HardPackedSnowIndex (FIN: Polanne)
+
+* Mon Mar  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.1-1.fmi
+- Faster construction of newbase times from Boost.Date_time ones
+- Added numbers for metaparameters used by the SmartMet Server
+
+* Fri Feb 26 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.26-1.fmi
+- Added enumerations for metaparameters which are usually calculated on the fly
+
+* Mon Feb 22 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.2.22-1.fmi
+- Added new PrecipitationAccumulation parameter (QDTOOLS-92)
+
+* Sat Feb 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.20-1.fmi
+- Fixed NFmiRotatedLatLon PROJ.4 string after a copy paste error
+
+* Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
+- Added NFmiArea::SpatialReference()
+- Added NFmiFastQueryInfo::SpatialReference()
+
+* Wed Feb 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.17-1.fmi
+- Fixed NFmiRotatedLatLon WKT
+
+* Tue Feb 16 2021 Andris Pavēnis <andris.pavenis@fmi.fi> - 21.2.16-1.fmi
+- Fmi::NFmiQueryInfo: use std::unique_ptr instead of raw pointers
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-2.fmi
+- Updated NFmiSmoother to use Fmi::CoordinateMatrix
+
+* Mon Feb 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.15-1.fmi
+- Merged more API changes from WGS84 branch: interpolation methods return a datamatrix
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-2.fmi
+- Fixed GIS-library dependencies
+
+* Wed Feb 10 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.10-1.fmi
+- Fixed NFmiLatLonArea WKT to be equirectangular instead of longlat
+- Added NFmiArea::CoordinateMatrix
+- Added NFmiFastQueryInfo::WorldXY
+- Added NFmiFastQueryInfo::NeedsGlobeWrap
+- Added linkage to gis-library
+
+* Mon Feb  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.8-1.fmi
+- Added CoordinateMatrix access
+
 * Mon Feb  1 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.1-1.fmi
 - Removed broken +over option from ob_trans (rotated) projections
 

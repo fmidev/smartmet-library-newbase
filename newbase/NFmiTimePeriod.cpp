@@ -14,6 +14,7 @@
 #include "NFmiTimePeriod.h"
 
 #include "NFmiVersion.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -104,19 +105,26 @@ NFmiTimePerioid::NFmiTimePerioid(const NFmiTimePerioid& theTimePerioid)
 
 void NFmiTimePerioid::CalculatePerioid()
 {
-  itsSeconds += itsMicroSeconds / 100;
-  itsMicroSeconds = itsMicroSeconds % 100;
+  try
+  {
+    itsSeconds += itsMicroSeconds / 100;
+    itsMicroSeconds = itsMicroSeconds % 100;
 
-  itsMinutes += itsSeconds / 60;
-  itsSeconds = itsSeconds % 60;
+    itsMinutes += itsSeconds / 60;
+    itsSeconds = itsSeconds % 60;
 
-  itsHours += itsMinutes / 60;
-  itsMinutes = itsMinutes % 60;
+    itsHours += itsMinutes / 60;
+    itsMinutes = itsMinutes % 60;
 
-  itsDays += itsHours / 24;
-  itsHours = itsHours % 24;
+    itsDays += itsHours / 24;
+    itsHours = itsHours % 24;
 
-  // Kesken
+    // Kesken
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -129,17 +137,24 @@ void NFmiTimePerioid::CalculatePerioid()
 
 NFmiTimePerioid& NFmiTimePerioid::operator=(const NFmiTimePerioid& theTimePerioid)
 {
-  itsYears = theTimePerioid.itsYears;
-  itsMonths = theTimePerioid.itsMonths;
-  itsDays = theTimePerioid.itsDays;
-  itsHours = theTimePerioid.itsHours;
-  itsMinutes = theTimePerioid.itsMinutes;
-  itsSeconds = theTimePerioid.itsSeconds;
-  itsMicroSeconds = theTimePerioid.itsMicroSeconds;
+  try
+  {
+    itsYears = theTimePerioid.itsYears;
+    itsMonths = theTimePerioid.itsMonths;
+    itsDays = theTimePerioid.itsDays;
+    itsHours = theTimePerioid.itsHours;
+    itsMinutes = theTimePerioid.itsMinutes;
+    itsSeconds = theTimePerioid.itsSeconds;
+    itsMicroSeconds = theTimePerioid.itsMicroSeconds;
 
-  CalculatePerioid();
+    CalculatePerioid();
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -153,17 +168,24 @@ NFmiTimePerioid& NFmiTimePerioid::operator=(const NFmiTimePerioid& theTimePerioi
 
 NFmiTimePerioid& NFmiTimePerioid::operator+=(const NFmiTimePerioid& theTimePerioid)
 {
-  itsYears += theTimePerioid.itsYears;
-  itsMonths += theTimePerioid.itsMonths;
-  itsDays += theTimePerioid.itsDays;
-  itsHours += theTimePerioid.itsHours;
-  itsMinutes += theTimePerioid.itsMinutes;
-  itsSeconds += theTimePerioid.itsSeconds;
-  itsMicroSeconds += theTimePerioid.itsMicroSeconds;
+  try
+  {
+    itsYears += theTimePerioid.itsYears;
+    itsMonths += theTimePerioid.itsMonths;
+    itsDays += theTimePerioid.itsDays;
+    itsHours += theTimePerioid.itsHours;
+    itsMinutes += theTimePerioid.itsMinutes;
+    itsSeconds += theTimePerioid.itsSeconds;
+    itsMicroSeconds += theTimePerioid.itsMicroSeconds;
 
-  CalculatePerioid();
+    CalculatePerioid();
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -177,15 +199,22 @@ NFmiTimePerioid& NFmiTimePerioid::operator+=(const NFmiTimePerioid& theTimePerio
 
 NFmiTimePerioid& NFmiTimePerioid::operator=(const long theMinutes)
 {
-  itsYears = 0;
-  itsMonths = 0;
-  itsDays = 0;
-  itsHours = 0;
-  itsMinutes = theMinutes;
-  itsSeconds = 0;
-  itsMicroSeconds = 0;
+  try
+  {
+    itsYears = 0;
+    itsMonths = 0;
+    itsDays = 0;
+    itsHours = 0;
+    itsMinutes = theMinutes;
+    itsSeconds = 0;
+    itsMicroSeconds = 0;
 
-  return *this;
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -199,23 +228,30 @@ NFmiTimePerioid& NFmiTimePerioid::operator=(const long theMinutes)
 
 std::ostream& NFmiTimePerioid::Write(std::ostream& file) const
 {
-  // We trust all data to be version 6-7 by now
-  if (DefaultFmiInfoVersion <= 2)
+  try
   {
-    file << itsMinutes << std::endl;
+    // We trust all data to be version 6-7 by now
+    if (DefaultFmiInfoVersion <= 2)
+    {
+      file << itsMinutes << std::endl;
+
+      return file;
+    }
+
+    file << itsYears << " ";
+    file << itsMonths << " ";
+    file << itsDays << " ";
+    file << itsHours << " ";
+    file << itsMinutes << " ";
+    file << itsSeconds << " ";
+    file << itsMicroSeconds << std::endl;
 
     return file;
   }
-
-  file << itsYears << " ";
-  file << itsMonths << " ";
-  file << itsDays << " ";
-  file << itsHours << " ";
-  file << itsMinutes << " ";
-  file << itsSeconds << " ";
-  file << itsMicroSeconds << std::endl;
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -229,28 +265,35 @@ std::ostream& NFmiTimePerioid::Write(std::ostream& file) const
 
 std::istream& NFmiTimePerioid::Read(std::istream& file)
 {
-  // We trust all data to be version 6-7 by now
-  if (DefaultFmiInfoVersion <= 2)
+  try
   {
-    itsYears = 0;
-    itsMonths = 0;
-    itsDays = 0;
-    itsHours = 0;
+    // We trust all data to be version 6-7 by now
+    if (DefaultFmiInfoVersion <= 2)
+    {
+      itsYears = 0;
+      itsMonths = 0;
+      itsDays = 0;
+      itsHours = 0;
+      file >> itsMinutes;
+      itsSeconds = 0;
+      itsMicroSeconds = 0;
+      return file;
+    }
+
+    file >> itsYears;
+    file >> itsMonths;
+    file >> itsDays;
+    file >> itsHours;
     file >> itsMinutes;
-    itsSeconds = 0;
-    itsMicroSeconds = 0;
+    file >> itsSeconds;
+    file >> itsMicroSeconds;
+
     return file;
   }
-
-  file >> itsYears;
-  file >> itsMonths;
-  file >> itsDays;
-  file >> itsHours;
-  file >> itsMinutes;
-  file >> itsSeconds;
-  file >> itsMicroSeconds;
-
-  return file;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

@@ -15,6 +15,7 @@
 #include "NFmiInfoModifier.h"
 
 #include "NFmiQueryInfo.h"
+#include <macgyver/Exception.h>
 
 // ----------------------------------------------------------------------
 /*!
@@ -48,7 +49,17 @@ NFmiInfoModifier::NFmiInfoModifier(NFmiDataIdent* theParam,
  */
 // ----------------------------------------------------------------------
 
-double NFmiInfoModifier::FloatValue() { return itsData->FloatValue(); }
+double NFmiInfoModifier::FloatValue()
+{
+  try
+  {
+    return itsData->FloatValue();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \param dx Undocumented
@@ -60,7 +71,14 @@ double NFmiInfoModifier::FloatValue() { return itsData->FloatValue(); }
 
 double NFmiInfoModifier::PeekValue(long dx, long dy, long dt)
 {
-  return itsData->PeekValue(dt, dx, dy);
+  try
+  {
+    return itsData->PeekValue(dt, dx, dy);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -69,5 +87,16 @@ double NFmiInfoModifier::PeekValue(long dx, long dy, long dt)
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo* NFmiInfoModifier::Info() { return itsData; }
+NFmiQueryInfo* NFmiInfoModifier::Info()
+{
+  try
+  {
+    return itsData;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ======================================================================

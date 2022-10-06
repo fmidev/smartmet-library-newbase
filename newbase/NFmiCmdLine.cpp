@@ -98,7 +98,7 @@
 // ======================================================================
 
 #include "NFmiCmdLine.h"
-
+#include <macgyver/Exception.h>
 #include <cstdio>
 #include <cstring>
 
@@ -125,27 +125,34 @@ NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
       itsParameterCount(),
       itsParameters()
 {
-  int argc = GetSpaceStringSize(theString);
-  char **argv;
-
-  NFmiString theStringBuffer(theString);
-
-  argv = new char *[argc];
-
-  NFmiString theValue;
-  int k = 0;
-  while (GetSpaceStringValue(theStringBuffer, theValue))
+  try
   {
-    argv[k] = new char[theValue.GetLen() + 1];
-    strcpy(argv[k++], theValue);
+    int argc = GetSpaceStringSize(theString);
+    char **argv;
+
+    NFmiString theStringBuffer(theString);
+
+    argv = new char *[argc];
+
+    NFmiString theValue;
+    int k = 0;
+    while (GetSpaceStringValue(theStringBuffer, theValue))
+    {
+      argv[k] = new char[theValue.GetLen() + 1];
+      strcpy(argv[k++], theValue);
+    }
+
+    Init(argc, const_cast<const char **>(argv), optallow);
+
+    for (int i = 0; i < argc; i++)
+      delete argv[i];
+
+    delete[] argv;
   }
-
-  Init(argc, const_cast<const char **>(argv), optallow);
-
-  for (int i = 0; i < argc; i++)
-    delete argv[i];
-
-  delete[] argv;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -158,21 +165,30 @@ NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
 
 bool NFmiCmdLine::GetSpaceStringValue(NFmiString &theString, NFmiString &theValueString)
 {
-  theString.TrimL();
+  try
+  {
+    theString.TrimL();
 
-  if (!theString.GetLen()) return false;
+    if (!theString.GetLen())
+      return false;
 
-  int theSpaceIndex = theString.Search(NFmiString(" "));
+    int theSpaceIndex = theString.Search(NFmiString(" "));
 
-  if (!theSpaceIndex) theSpaceIndex = theString.GetLen() + 1;
+    if (!theSpaceIndex)
+      theSpaceIndex = theString.GetLen() + 1;
 
-  NFmiString theStr1(theString.GetChars(1, theSpaceIndex - 1));
-  NFmiString theStr2(theString.GetChars(theSpaceIndex, theString.GetLen() - theSpaceIndex + 1));
+    NFmiString theStr1(theString.GetChars(1, theSpaceIndex - 1));
+    NFmiString theStr2(theString.GetChars(theSpaceIndex, theString.GetLen() - theSpaceIndex + 1));
 
-  theString = theStr2;
-  theValueString = theStr1;
+    theString = theStr2;
+    theValueString = theStr1;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -182,7 +198,11 @@ bool NFmiCmdLine::GetSpaceStringValue(NFmiString &theString, NFmiString &theValu
  */
 // ----------------------------------------------------------------------
 
-int NFmiCmdLine::GetSpaceStringSize(const NFmiString & /* theString */) { return 3; }
+int NFmiCmdLine::GetSpaceStringSize(const NFmiString & /* theString */)
+{
+  return 3;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -205,7 +225,14 @@ NFmiCmdLine::NFmiCmdLine(int argc, const char **argv, const char *optallow)
       itsParameterCount(),
       itsParameters()
 {
-  Init(argc, argv, optallow);
+  try
+  {
+    Init(argc, argv, optallow);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -218,96 +245,106 @@ NFmiCmdLine::NFmiCmdLine(int argc, const char **argv, const char *optallow)
 
 void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
 {
-  const char *p;
-  int i;
-  itsParameterCount = 0;  // Init to 0, if illegal option, remains uninitialized
-  itsOptionCount = 0;     // Init to 0, if illegal option, remains uninitialized
-  itsArgc = argc;
-  itsArgv = new char *[itsArgc];
-  // To make it simple, prepare to have all of argvs
-  // either options or parameters. Ususally there will be both
-  itsOptionLetters = new char[itsArgc];
-  itsOptionValues = new char *[itsArgc];
-  itsParameters = new char *[itsArgc];
-  // Copy the arguments to the safe object
-  for (i = 0; i < itsArgc; i++)
+  try
   {
-    itsArgv[i] = new char[strlen(argv[i]) + 1];
-    strcpy(itsArgv[i], argv[i]);
-    itsOptionLetters[i] = '?';
-    itsOptionValues[i] = nullptr;
-    itsParameters[i] = nullptr;
-  }
-  // Save optallow
-  // If optallow is NULL, force it to "" (No options allowed)
-  char nopt[1] = "";
-  p = optallow;
-  if (p == nullptr) p = nopt;
-  itsOptionsAllowed = new char[strlen(p) + 1];
-  strcpy(itsOptionsAllowed, p);
-  // Save Command
-  itsCommand = new char[strlen(argv[0]) + 1];
-  strcpy(itsCommand, itsArgv[0]);
-
-  // Dig Out & save option letters & values
-  i = 1;
-  itsOptionCount = 0;
-  //  while (true)
-  for (;;)  // Marko muutti erilaiseksi iki-luupiksi ja poisti varoituksen
-  {
-    if (i >= itsArgc) break;
-    if (itsArgv[i][0] != '-') break;
-    if (strlen(itsArgv[i]) == 1)
+    const char *p;
+    int i;
+    itsParameterCount = 0;  // Init to 0, if illegal option, remains uninitialized
+    itsOptionCount = 0;     // Init to 0, if illegal option, remains uninitialized
+    itsArgc = argc;
+    itsArgv = new char *[itsArgc];
+    // To make it simple, prepare to have all of argvs
+    // either options or parameters. Ususally there will be both
+    itsOptionLetters = new char[itsArgc];
+    itsOptionValues = new char *[itsArgc];
+    itsParameters = new char *[itsArgc];
+    // Copy the arguments to the safe object
+    for (i = 0; i < itsArgc; i++)
     {
-      ++i;
-      break;
+      itsArgv[i] = new char[strlen(argv[i]) + 1];
+      strcpy(itsArgv[i], argv[i]);
+      itsOptionLetters[i] = '?';
+      itsOptionValues[i] = nullptr;
+      itsParameters[i] = nullptr;
     }
+    // Save optallow
+    // If optallow is NULL, force it to "" (No options allowed)
+    char nopt[1] = "";
+    p = optallow;
+    if (p == nullptr)
+      p = nopt;
+    itsOptionsAllowed = new char[strlen(p) + 1];
+    strcpy(itsOptionsAllowed, p);
+    // Save Command
+    itsCommand = new char[strlen(argv[0]) + 1];
+    strcpy(itsCommand, itsArgv[0]);
 
-    if ((p = strchr(itsOptionsAllowed, itsArgv[i][1])) == nullptr)
+    // Dig Out & save option letters & values
+    i = 1;
+    itsOptionCount = 0;
+    //  while (true)
+    for (;;)  // Marko muutti erilaiseksi iki-luupiksi ja poisti varoituksen
     {
-      char e[256];
-#ifdef _MSC_VER
-      ::_snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-#else
-      ::snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-#endif
-      e[sizeof(e) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
-      itsStatus.ErrorLog(e);
-      return;
-    }
-    itsOptionLetters[itsOptionCount] = *p;
-    i++;
-    const char mode = *(p + 1);
-
-    if (mode == ':' || mode == '!')  // We allow a value associated to this option letter
-    {
-      if (i < itsArgc)  // If we still have something on the command line
+      if (i >= itsArgc)
+        break;
+      if (itsArgv[i][0] != '-')
+        break;
+      if (strlen(itsArgv[i]) == 1)
       {
-        if (mode == '!' || itsArgv[i][0] != '-')  // We do have a value for the previous option
-        {
-          itsOptionValues[itsOptionCount] = new char[strlen(itsArgv[i]) + 1];
-          strcpy(itsOptionValues[itsOptionCount], itsArgv[i]);
-          i++;
-        }
+        ++i;
+        break;
       }
-      else if (mode == '!')
+
+      if ((p = strchr(itsOptionsAllowed, itsArgv[i][1])) == nullptr)
       {
-        NFmiString msg("NFmiCmdLine::Init: Argument for option ");
-        msg += itsArgv[i - 1];
-        msg += " missing";
-        itsStatus.ErrorLog(msg.CharPtr());
+        char e[256];
+#ifdef _MSC_VER
+        ::_snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
+#else
+        ::snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
+#endif
+        e[sizeof(e) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+        itsStatus.ErrorLog(e);
         return;
       }
-    }
-    itsOptionCount++;
-  }
+      itsOptionLetters[itsOptionCount] = *p;
+      i++;
+      const char mode = *(p + 1);
 
-  itsParameterCount = itsArgc - i;
-  int j = 0;
-  while (i < itsArgc)
+      if (mode == ':' || mode == '!')  // We allow a value associated to this option letter
+      {
+        if (i < itsArgc)  // If we still have something on the command line
+        {
+          if (mode == '!' || itsArgv[i][0] != '-')  // We do have a value for the previous option
+          {
+            itsOptionValues[itsOptionCount] = new char[strlen(itsArgv[i]) + 1];
+            strcpy(itsOptionValues[itsOptionCount], itsArgv[i]);
+            i++;
+          }
+        }
+        else if (mode == '!')
+        {
+          NFmiString msg("NFmiCmdLine::Init: Argument for option ");
+          msg += itsArgv[i - 1];
+          msg += " missing";
+          itsStatus.ErrorLog(msg.CharPtr());
+          return;
+        }
+      }
+      itsOptionCount++;
+    }
+
+    itsParameterCount = itsArgc - i;
+    int j = 0;
+    while (i < itsArgc)
+    {
+      itsParameters[j] = new char[strlen(argv[i]) + 1];
+      strcpy(itsParameters[j++], itsArgv[i++]);
+    }
+  }
+  catch (...)
   {
-    itsParameters[j] = new char[strlen(argv[i]) + 1];
-    strcpy(itsParameters[j++], itsArgv[i++]);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -319,24 +356,32 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
 
 NFmiCmdLine::~NFmiCmdLine()
 {
-  int i;
-  for (i = 0; i < itsArgc; i++)
-    delete[] itsArgv[i];
-  delete[] itsArgv;
+  try
+  {
+    int i;
+    for (i = 0; i < itsArgc; i++)
+      delete[] itsArgv[i];
+    delete[] itsArgv;
 
-  delete[] itsOptionLetters;
+    delete[] itsOptionLetters;
 
-  for (i = 0; i < itsOptionCount; i++)
-    delete[] itsOptionValues[i];
-  delete[] itsOptionValues;
+    for (i = 0; i < itsOptionCount; i++)
+      delete[] itsOptionValues[i];
+    delete[] itsOptionValues;
 
-  for (i = 0; i < itsParameterCount; i++)
-    delete[] itsParameters[i];
-  delete[] itsParameters;
+    for (i = 0; i < itsParameterCount; i++)
+      delete[] itsParameters[i];
+    delete[] itsParameters;
 
-  delete[] itsOptionsAllowed;
+    delete[] itsOptionsAllowed;
 
-  delete[] itsCommand;
+    delete[] itsCommand;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -347,7 +392,18 @@ NFmiCmdLine::~NFmiCmdLine()
  */
 // ----------------------------------------------------------------------
 
-int NFmiCmdLine::NumberofOptions() const { return itsOptionCount; }
+int NFmiCmdLine::NumberofOptions() const
+{
+  try
+  {
+    return itsOptionCount;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Returns the number of parameters on the command line
@@ -356,7 +412,18 @@ int NFmiCmdLine::NumberofOptions() const { return itsOptionCount; }
  */
 // ----------------------------------------------------------------------
 
-int NFmiCmdLine::NumberofParameters() const { return itsParameterCount; }
+int NFmiCmdLine::NumberofParameters() const
+{
+  try
+  {
+    return itsParameterCount;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Returns the desired parameter from the command line. if the
@@ -370,10 +437,17 @@ int NFmiCmdLine::NumberofParameters() const { return itsParameterCount; }
 
 const char *NFmiCmdLine::Parameter(int i) const
 {
-  if (i > itsParameterCount || i < 1)
-    return "";
-  else
-    return itsParameters[i - 1];
+  try
+  {
+    if (i > itsParameterCount || i < 1)
+      return "";
+    else
+      return itsParameters[i - 1];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -384,7 +458,18 @@ const char *NFmiCmdLine::Parameter(int i) const
  */
 // ----------------------------------------------------------------------
 
-char *NFmiCmdLine::Command() const { return itsCommand; }
+char *NFmiCmdLine::Command() const
+{
+  try
+  {
+    return itsCommand;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Returns the desired option letter from the command line. If the
@@ -397,10 +482,17 @@ char *NFmiCmdLine::Command() const { return itsCommand; }
 
 char NFmiCmdLine::OptionLetter(int i) const
 {
-  if (i > itsOptionCount || i < 1)
-    return ' ';
-  else
-    return itsOptionLetters[i - 1];
+  try
+  {
+    if (i > itsOptionCount || i < 1)
+      return ' ';
+    else
+      return itsOptionLetters[i - 1];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -416,10 +508,17 @@ char NFmiCmdLine::OptionLetter(int i) const
 
 const char *NFmiCmdLine::OptionValue(int i) const
 {
-  if (i > itsOptionCount || i < 1)
-    return "";
-  else
-    return itsOptionValues[i - 1];
+  try
+  {
+    if (i > itsOptionCount || i < 1)
+      return "";
+    else
+      return itsOptionValues[i - 1];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -435,9 +534,18 @@ const char *NFmiCmdLine::OptionValue(int i) const
 
 int NFmiCmdLine::isOption(char c) const
 {
-  for (int i = 0; i < itsOptionCount; i++)
-    if (itsOptionLetters[i] == c) return 1;
-  return 0;
+  try
+  {
+    for (int i = 0; i < itsOptionCount; i++)
+      if (itsOptionLetters[i] == c)
+        return 1;
+
+    return 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -454,13 +562,21 @@ int NFmiCmdLine::isOption(char c) const
 
 const char *NFmiCmdLine::OptionValue(char c) const
 {
-  int i;
-  for (i = 0; i < itsOptionCount; i++)
-    if (itsOptionLetters[i] == c) break;
-  if (i <= itsOptionCount)
-    return itsOptionValues[i];
-  else
-    return nullptr;
+  try
+  {
+    int i;
+    for (i = 0; i < itsOptionCount; i++)
+      if (itsOptionLetters[i] == c)
+        break;
+    if (i <= itsOptionCount)
+      return itsOptionValues[i];
+    else
+      return nullptr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -477,5 +593,15 @@ const char *NFmiCmdLine::OptionValue(char c) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiStatus &NFmiCmdLine::Status() const { return itsStatus; }
+const NFmiStatus &NFmiCmdLine::Status() const
+{
+  try
+  {
+    return itsStatus;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ======================================================================

@@ -32,6 +32,7 @@
 // ======================================================================
 
 #include "NFmiLagrange.h"
+#include <macgyver/Exception.h>
 
 #include <cctype>
 #include <cstdio>
@@ -79,7 +80,14 @@ NFmiLagrange::NFmiLagrange(const double *si, const double *ti, double *yij, int 
       itsLs(),
       itsLt()
 {
-  Init(si, ti, yij, sn, tn);
+  try
+  {
+    Init(si, ti, yij, sn, tn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -103,7 +111,14 @@ NFmiLagrange::NFmiLagrange(const double *si, const double *yij, int sn)
       itsLs(),
       itsLt()
 {
-  Init(si, yij, sn);
+  try
+  {
+    Init(si, yij, sn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -113,6 +128,7 @@ NFmiLagrange::NFmiLagrange(const double *si, const double *yij, int sn)
 // ----------------------------------------------------------------------
 
 NFmiLagrange::~NFmiLagrange() = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \param ti Undocumented
@@ -122,15 +138,22 @@ NFmiLagrange::~NFmiLagrange() = default;
 
 void NFmiLagrange::Ti(const double *ti, bool isJustCopyNewInputData)
 {
-  // Set independent variable t
-
-  if (!isJustCopyNewInputData)
+  try
   {
-    // Perform a full initialization of data structures
-    itsTi.resize(itsTn);
-  }
+    // Set independent variable t
 
-  memcpy(&itsTi[0], ti, itsTn * sizeof(ti[0]));
+    if (!isJustCopyNewInputData)
+    {
+      // Perform a full initialization of data structures
+      itsTi.resize(itsTn);
+    }
+
+    memcpy(&itsTi[0], ti, itsTn * sizeof(ti[0]));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -142,15 +165,22 @@ void NFmiLagrange::Ti(const double *ti, bool isJustCopyNewInputData)
 
 void NFmiLagrange::Si(const double *si, bool isJustCopyNewInputData)
 {
-  // Set independent variable s
-
-  if (!isJustCopyNewInputData)
+  try
   {
-    // Perform a full initialization of data structures
-    itsSi.resize(itsSn);
-  }
+    // Set independent variable s
 
-  memcpy(&itsSi[0], si, itsSn * sizeof(si[0]));
+    if (!isJustCopyNewInputData)
+    {
+      // Perform a full initialization of data structures
+      itsSi.resize(itsSn);
+    }
+
+    memcpy(&itsSi[0], si, itsSn * sizeof(si[0]));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -161,9 +191,16 @@ void NFmiLagrange::Si(const double *si, bool isJustCopyNewInputData)
 
 double *NFmiLagrange::Ti()
 {
-  // Return independent variable t
+  try
+  {
+    // Return independent variable t
 
-  return &itsTi[0];
+    return &itsTi[0];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -174,9 +211,16 @@ double *NFmiLagrange::Ti()
 
 double *NFmiLagrange::Si()
 {
-  // Return independent variable s
+  try
+  {
+    // Return independent variable s
 
-  return &itsSi[0];
+    return &itsSi[0];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -188,16 +232,24 @@ double *NFmiLagrange::Si()
 
 void NFmiLagrange::Yij(const double *yij, bool isJustCopyNewInputData)
 {
-  // Set dependent variables (m x n)
-
-  if (!isJustCopyNewInputData)
+  try
   {
-    // Perform a full initialization of data structures
-    itsYij.resize(itsSn * itsTn);
-  }
+    // Set dependent variables (m x n)
 
-  memcpy(&itsYij[0], yij, itsSn * itsTn * sizeof(yij[0]));
+    if (!isJustCopyNewInputData)
+    {
+      // Perform a full initialization of data structures
+      itsYij.resize(itsSn * itsTn);
+    }
+
+    memcpy(&itsYij[0], yij, itsSn * itsTn * sizeof(yij[0]));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -206,9 +258,16 @@ void NFmiLagrange::Yij(const double *yij, bool isJustCopyNewInputData)
 
 double *NFmiLagrange::Yij()
 {
-  // Return dependent variables
+  try
+  {
+    // Return dependent variables
 
-  return &itsYij[0];
+    return &itsYij[0];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -223,21 +282,29 @@ void NFmiLagrange::Denominator(const std::vector<double> &xi,
                                std::vector<double> &denominator,
                                int n)
 {
-  // Pre-compute the denominator product of the independent variables xi
-  // for terms Li, i = 0.. n
-
-  denominator.resize(n);
-
-  for (int i = 0; i < n; i++)
+  try
   {
-    // Compute i:th denominator term
+    // Pre-compute the denominator product of the independent variables xi
+    // for terms Li, i = 0.. n
 
-    denominator[i] = 1.0;
+    denominator.resize(n);
 
-    for (int j = 0; j < n; j++)
+    for (int i = 0; i < n; i++)
     {
-      if (j != i) denominator[i] *= (xi[i] - xi[j]);
+      // Compute i:th denominator term
+
+      denominator[i] = 1.0;
+
+      for (int j = 0; j < n; j++)
+      {
+        if (j != i)
+          denominator[i] *= (xi[i] - xi[j]);
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -247,14 +314,35 @@ void NFmiLagrange::Denominator(const std::vector<double> &xi,
  */
 // ----------------------------------------------------------------------
 
-void NFmiLagrange::SiDenominator() { Denominator(itsSi, itsSiDenominator, itsSn); }
+void NFmiLagrange::SiDenominator()
+{
+  try
+  {
+    Denominator(itsSi, itsSiDenominator, itsSn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-void NFmiLagrange::TiDenominator() { Denominator(itsTi, itsTiDenominator, itsTn); }
+void NFmiLagrange::TiDenominator()
+{
+  try
+  {
+    Denominator(itsTi, itsTiDenominator, itsTn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \param xi Undocumented
@@ -269,29 +357,38 @@ void NFmiLagrange::TiDenominator() { Denominator(itsTi, itsTiDenominator, itsTn)
 double NFmiLagrange::L(
     const std::vector<double> &xi, double x, std::vector<double> &denominator, int i, int n)
 {
-  // Computes the i:th term of the Lagrange polynom.
-  // xi :			array of known INDEPENDENT variables
-  // x  :			point where interpolation should occur at
-  // denominator: pre-computed constant denominator of the product of term L.
-  //				It is constant in a sense that it stays unchanged for a given array
-  // of
-  // xi,
-  //				no matter what x is, thus permitting pre-computation
-  // i  :			index of Lagrange term, i = 0..n-1
-  // n  :			number of known independent variables
-
-  double fraction = 1.0;
-
-  for (int j = 0; j < n; j++)
+  try
   {
-    if (x == xi[j]) return 0.0;  // Trying to interpolate at control (or "observed") point!
+    // Computes the i:th term of the Lagrange polynom.
+    // xi :			array of known INDEPENDENT variables
+    // x  :			point where interpolation should occur at
+    // denominator: pre-computed constant denominator of the product of term L.
+    //				It is constant in a sense that it stays unchanged for a given array
+    // of
+    // xi,
+    //				no matter what x is, thus permitting pre-computation
+    // i  :			index of Lagrange term, i = 0..n-1
+    // n  :			number of known independent variables
 
-    if (j != i) fraction *= (x - xi[j]);
+    double fraction = 1.0;
+
+    for (int j = 0; j < n; j++)
+    {
+      if (x == xi[j])
+        return 0.0;  // Trying to interpolate at control (or "observed") point!
+
+      if (j != i)
+        fraction *= (x - xi[j]);
+    }
+
+    fraction /= denominator[i];
+
+    return fraction;
   }
-
-  fraction /= denominator[i];
-
-  return fraction;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -302,7 +399,17 @@ double NFmiLagrange::L(
  */
 // ----------------------------------------------------------------------
 
-double NFmiLagrange::Lt(double t, int i) { return L(itsTi, t, itsTiDenominator, i, itsTn); }
+double NFmiLagrange::Lt(double t, int i)
+{
+  try
+  {
+    return L(itsTi, t, itsTiDenominator, i, itsTn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \param s Undocumented
@@ -311,7 +418,17 @@ double NFmiLagrange::Lt(double t, int i) { return L(itsTi, t, itsTiDenominator, 
  */
 // ----------------------------------------------------------------------
 
-double NFmiLagrange::Ls(double s, int j) { return L(itsSi, s, itsSiDenominator, j, itsSn); }
+double NFmiLagrange::Ls(double s, int j)
+{
+  try
+  {
+    return L(itsSi, s, itsSiDenominator, j, itsSn);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \param s Undocumented
@@ -322,29 +439,36 @@ double NFmiLagrange::Ls(double s, int j) { return L(itsSi, s, itsSiDenominator, 
 
 double NFmiLagrange::Interpolate(double s, double t)
 {
-  // Performs Lagrange 2D polynome interpolation of two independent variables s and t.
-  // NOTE: input grid is assumed to be rectilinear.
-
-  int i, j;
-
-  // Interpolate at (s, t)
-
-  double sum = 0.0;
-
-  for (j = 0; j < itsSn; j++)
-    itsLs[j] = Ls(s, j);
-
-  for (i = 0; i < itsTn; i++)
+  try
   {
-    itsLt[i] = Lt(t, i);
+    // Performs Lagrange 2D polynome interpolation of two independent variables s and t.
+    // NOTE: input grid is assumed to be rectilinear.
+
+    int i, j;
+
+    // Interpolate at (s, t)
+
+    double sum = 0.0;
 
     for (j = 0; j < itsSn; j++)
-    {
-      sum += itsYij[itsTn * i + j] * itsLs[j] * itsLt[i];
-    }
-  }
+      itsLs[j] = Ls(s, j);
 
-  return sum;
+    for (i = 0; i < itsTn; i++)
+    {
+      itsLt[i] = Lt(t, i);
+
+      for (j = 0; j < itsSn; j++)
+      {
+        sum += itsYij[itsTn * i + j] * itsLs[j] * itsLt[i];
+      }
+    }
+
+    return sum;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -356,20 +480,27 @@ double NFmiLagrange::Interpolate(double s, double t)
 
 double NFmiLagrange::Interpolate(double s)
 {
-  // Performs Lagrange 1D polynome interpolation of one independent variable s.
-  // NOTE: input grid is assumed to be rectilinear.
-
-  // Interpolate at (s)
-
-  double sum = 0.0;
-
-  for (int j = 0; j < itsSn; j++)
+  try
   {
-    itsLs[j] = Ls(s, j);
-    sum += itsYij[j] * itsLs[j];
-  }
+    // Performs Lagrange 1D polynome interpolation of one independent variable s.
+    // NOTE: input grid is assumed to be rectilinear.
 
-  return sum;
+    // Interpolate at (s)
+
+    double sum = 0.0;
+
+    for (int j = 0; j < itsSn; j++)
+    {
+      itsLs[j] = Ls(s, j);
+      sum += itsYij[j] * itsLs[j];
+    }
+
+    return sum;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -385,34 +516,41 @@ double NFmiLagrange::Interpolate(double s)
 
 bool NFmiLagrange::Init(const double *si, const double *ti, double *yij, int sn, int tn)
 {
-  // 2D interpolation
+  try
+  {
+    // 2D interpolation
 
-  itsSn = sn;
-  itsTn = tn;
+    itsSn = sn;
+    itsTn = tn;
 
-  // Set input independent variables
-  Ti(ti);
-  Si(si);
+    // Set input independent variables
+    Ti(ti);
+    Si(si);
 
-  // Set input dependent variables
-  Yij(yij);
+    // Set input dependent variables
+    Yij(yij);
 
-  itsLt.resize(itsTn);
+    itsLt.resize(itsTn);
 
-  int i = 0;
-  for (i = 0; i < itsTn; i++)
-    itsLt[i] = kFloatMissing;
+    int i = 0;
+    for (i = 0; i < itsTn; i++)
+      itsLt[i] = kFloatMissing;
 
-  itsLs.resize(itsSn);
+    itsLs.resize(itsSn);
 
-  for (i = 0; i < itsSn; i++)
-    itsLs[i] = kFloatMissing;
+    for (i = 0; i < itsSn; i++)
+      itsLs[i] = kFloatMissing;
 
-  // Pre-compute the denominator products for terms Ls and Lt
-  SiDenominator();
-  TiDenominator();
+    // Pre-compute the denominator products for terms Ls and Lt
+    SiDenominator();
+    TiDenominator();
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -426,26 +564,33 @@ bool NFmiLagrange::Init(const double *si, const double *ti, double *yij, int sn,
 
 bool NFmiLagrange::Init(const double *si, const double *yij, int sn)
 {
-  // 1D interpolation (only 'S' variables and arrays will be used)
+  try
+  {
+    // 1D interpolation (only 'S' variables and arrays will be used)
 
-  itsSn = sn;
-  itsTn = 1;  // Dummy!
+    itsSn = sn;
+    itsTn = 1;  // Dummy!
 
-  // Set input independent variables
-  Si(si);
+    // Set input independent variables
+    Si(si);
 
-  // Set input dependent variables
-  Yij(yij);
+    // Set input dependent variables
+    Yij(yij);
 
-  itsLs.resize(itsSn);
+    itsLs.resize(itsSn);
 
-  for (int i = 0; i < itsSn; i++)
-    itsLs[i] = kFloatMissing;
+    for (int i = 0; i < itsSn; i++)
+      itsLs[i] = kFloatMissing;
 
-  // Pre-compute the denominator products for term Ls
-  SiDenominator();
+    // Pre-compute the denominator products for term Ls
+    SiDenominator();
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -459,20 +604,27 @@ bool NFmiLagrange::Init(const double *si, const double *yij, int sn)
 
 bool NFmiLagrange::UpdateData(const double *si, const double *ti, const double *yij)
 {
-  // Kind of "slight Init()" - doesn't delete nor change the size of the input data arrays
-  // nor associated pre-calculated data structures but updates the input data only.
+  try
+  {
+    // Kind of "slight Init()" - doesn't delete nor change the size of the input data arrays
+    // nor associated pre-calculated data structures but updates the input data only.
 
-  bool isJustCopyNewInputData =
-      true;  // When true, keep the existing input data sizes and pre-computed structures
+    bool isJustCopyNewInputData =
+        true;  // When true, keep the existing input data sizes and pre-computed structures
 
-  // Set input independent variables
-  Ti(ti, isJustCopyNewInputData);
-  Si(si, isJustCopyNewInputData);
+    // Set input independent variables
+    Ti(ti, isJustCopyNewInputData);
+    Si(si, isJustCopyNewInputData);
 
-  // Set input dependent variables
-  Yij(yij, isJustCopyNewInputData);
+    // Set input dependent variables
+    Yij(yij, isJustCopyNewInputData);
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -485,20 +637,27 @@ bool NFmiLagrange::UpdateData(const double *si, const double *ti, const double *
 
 bool NFmiLagrange::UpdateData(const double *si, const double *yij)
 {
-  // 1D interpolation.
-  // Kind of "slight Init()" - doesn't delete nor change the size of the input data arrays
-  // nor associated pre-calculated data structures but updates the input data only.
+  try
+  {
+    // 1D interpolation.
+    // Kind of "slight Init()" - doesn't delete nor change the size of the input data arrays
+    // nor associated pre-calculated data structures but updates the input data only.
 
-  bool isJustCopyNewInputData =
-      true;  // When true, keep the existing input data sizes and pre-computed structures
+    bool isJustCopyNewInputData =
+        true;  // When true, keep the existing input data sizes and pre-computed structures
 
-  // Set input independent variables
-  Si(si, isJustCopyNewInputData);
+    // Set input independent variables
+    Si(si, isJustCopyNewInputData);
 
-  // Set input dependent variables
-  Yij(yij, isJustCopyNewInputData);
+    // Set input dependent variables
+    Yij(yij, isJustCopyNewInputData);
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -541,7 +700,8 @@ int main(int argc, char *argv[])
 
 #if BINARY_OUTPUT
   ofstream inout("LagrangeInput.raw", ios::binary);
-  if (!inout) return false;
+  if (!inout)
+    return false;
 
   unsigned char gray;
 
@@ -558,11 +718,13 @@ int main(int argc, char *argv[])
   // Open an output file for the interpolated (numberOfInterpolatedPoints x
   // numberOfInterpolatedPoints) data - output as a RGB image
   ofstream out("LagrangeOutput.raw", ios::binary);
-  if (!out) return false;
+  if (!out)
+    return false;
 
 #else
   ofstream out("Lagrange.txt");
-  if (!out) return false;
+  if (!out)
+    return false;
 
 #endif
 

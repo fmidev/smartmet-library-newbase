@@ -44,7 +44,10 @@ NFmiDataModifierConstant::NFmiDataModifierConstant(double theConstant,
  */
 // ----------------------------------------------------------------------
 
-double NFmiDataModifierConstant::FloatValue() { return itsConstant; }
+double NFmiDataModifierConstant::FloatValue()
+{
+  return itsConstant;
+}
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given stream.

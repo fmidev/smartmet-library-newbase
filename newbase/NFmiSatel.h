@@ -108,7 +108,8 @@ inline NFmiSatel::NFmiSatel(const NFmiSatel& theSatel)
 
 inline NFmiSatel::~NFmiSatel()
 {
-  if (itsSatelData) delete itsSatelData;
+  if (itsSatelData)
+    delete itsSatelData;
 }
 
 // ----------------------------------------------------------------------
@@ -117,21 +118,33 @@ inline NFmiSatel::~NFmiSatel()
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiSatel::GetName() const { return itsSatelName; }
+inline const NFmiString NFmiSatel::GetName() const
+{
+  return itsSatelName;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiSatel::GetSize() { return itsSatelDataSize; }
+inline unsigned long NFmiSatel::GetSize()
+{
+  return itsSatelDataSize;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiSatel::GetData() { return itsSatelData ? itsSatelData : ""; }
+inline const char* NFmiSatel::GetData()
+{
+  return itsSatelData ? itsSatelData : "";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream

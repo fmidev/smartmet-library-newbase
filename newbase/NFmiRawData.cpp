@@ -24,7 +24,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
-
+#include <macgyver/Exception.h>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -109,7 +109,18 @@ class NFmiRawData::Pimple
  */
 // ----------------------------------------------------------------------
 
-NFmiRawData::Pimple::~Pimple() { delete[] itsData; }
+NFmiRawData::Pimple::~Pimple()
+{
+  try
+  {
+    delete[] itsData;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -129,21 +140,28 @@ NFmiRawData::Pimple::Pimple(const Pimple &other)
     : itsMutex(), itsSize(other.itsSize), itsSaveAsBinaryFlag(other.itsSaveAsBinaryFlag)
 
 {
-  // We assume copied data will be changed so that copying mmapping would
-  // be a wasted effort
-
-  WriteLock lock(itsMutex);
-  itsData = new float[itsSize];
-
-  if (other.itsData != nullptr)
+  try
   {
-    memcpy(itsData, other.itsData, itsSize * sizeof(float));
+    // We assume copied data will be changed so that copying mmapping would
+    // be a wasted effort
+
+    WriteLock lock(itsMutex);
+    itsData = new float[itsSize];
+
+    if (other.itsData != nullptr)
+    {
+      memcpy(itsData, other.itsData, itsSize * sizeof(float));
+    }
+    else
+    {
+      auto *dst = reinterpret_cast<char *>(itsData);
+      const char *src = other.itsMappedFile->const_data() + other.itsOffset;
+      memcpy(dst, src, itsSize * sizeof(float));
+    }
   }
-  else
+  catch (...)
   {
-    auto *dst = reinterpret_cast<char *>(itsData);
-    const char *src = other.itsMappedFile->const_data() + other.itsOffset;
-    memcpy(dst, src, itsSize * sizeof(float));
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -157,59 +175,68 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     : itsMutex(), itsSize(size), itsFileName(filename)
 
 {
-  WriteLock lock(itsMutex);
-
-  // Backward compatibility:
-  long datatype;
-  file >> datatype;
-
-  file >> itsSaveAsBinaryFlag;
-
-  size_t poolsize = 0;
-  file >> poolsize;
-
-  if (poolsize != itsSize * sizeof(float))
-    throw runtime_error("Invalid datapool size in querydata");
-
-  // Skip last newline charater after poolsize
-  char ch;
-  file.get(ch);
-
-  // Sanity check on the size of the data. Note that old querydata
-  // has an extra endl at the end, hence we must permit 2 extra
-  // characters at the end for legacy data to work
-
-  std::size_t filesize = boost::filesystem::file_size(filename);
-  itsOffset = file.tellg();
-
-  if (itsOffset + poolsize > filesize)
-    throw std::runtime_error("Querydata file " +
-                             boost::lexical_cast<std::string>(itsOffset + poolsize - filesize) +
-                             " bytes too short: '" + filename + "'");
-
-  else if (filesize - itsOffset - poolsize > 2)
-    throw std::runtime_error("Querydata file " +
-                             boost::lexical_cast<std::string>(filesize - itsOffset - poolsize) +
-                             " bytes too long: '" + filename + "'");
-
-  // memory map starting from this file position
-  // only if itsSaveAsBinaryFlag is true
-
-  if (itsSaveAsBinaryFlag)
+  try
   {
-    MappedFileParams params(filename.c_str());
-    params.flags = boost::iostreams::mapped_file::readonly;
-    params.length = filesize;
-    itsMappedFile.reset(new MappedFile(params));
-    if (!itsMappedFile->is_open())
-      throw std::runtime_error("Failed to memory map '" + filename + "' in read only mode");
+    WriteLock lock(itsMutex);
+
+    // Backward compatibility:
+    long datatype;
+    file >> datatype;
+
+    file >> itsSaveAsBinaryFlag;
+
+    size_t poolsize = 0;
+    file >> poolsize;
+
+    if (poolsize != itsSize * sizeof(float))
+      throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
+
+    // Skip last newline charater after poolsize
+    char ch;
+    file.get(ch);
+
+    // Sanity check on the size of the data. Note that old querydata
+    // has an extra endl at the end, hence we must permit 2 extra
+    // characters at the end for legacy data to work
+
+    std::size_t filesize = boost::filesystem::file_size(filename);
+    itsOffset = file.tellg();
+
+    if (itsOffset + poolsize > filesize)
+      throw Fmi::Exception(BCP,
+                           "Querydata file " +
+                               boost::lexical_cast<std::string>(itsOffset + poolsize - filesize) +
+                               " bytes too short: '" + filename + "'");
+
+    else if (filesize - itsOffset - poolsize > 2)
+      throw Fmi::Exception(BCP,
+                           "Querydata file " +
+                               boost::lexical_cast<std::string>(filesize - itsOffset - poolsize) +
+                               " bytes too long: '" + filename + "'");
+
+    // memory map starting from this file position
+    // only if itsSaveAsBinaryFlag is true
+
+    if (itsSaveAsBinaryFlag)
+    {
+      MappedFileParams params(filename.c_str());
+      params.flags = boost::iostreams::mapped_file::readonly;
+      params.length = filesize;
+      itsMappedFile.reset(new MappedFile(params));
+      if (!itsMappedFile->is_open())
+        throw Fmi::Exception(BCP, "Failed to memory map '" + filename + "' in read only mode");
+    }
+    else
+    {
+      itsData = new float[itsSize];
+
+      for (size_t idx = 0; idx < itsSize; ++idx)
+        file >> itsData[idx];
+    }
   }
-  else
+  catch (...)
   {
-    itsData = new float[itsSize];
-
-    for (size_t idx = 0; idx < itsSize; ++idx)
-      file >> itsData[idx];
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -228,60 +255,68 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
 
       itsEndianSwapFlag(endianswap)
 {
-  WriteLock lock(itsMutex);
-
-  delete itsData;
-  itsData = new float[itsSize];
-
-  // Backward compatibility:
-  long datatype;
-  file >> datatype;
-
-  // We trust everything to be at least version 6 by now
-  if (DefaultFmiInfoVersion >= 6)
-    file >> itsSaveAsBinaryFlag;
-  else
-    itsSaveAsBinaryFlag = false;
-
-  size_t poolsize = 0;
-  file >> poolsize;
-
-  if (!itsSaveAsBinaryFlag)
+  try
   {
-    for (size_t idx = 0; idx < itsSize; ++idx)
-      file >> itsData[idx];
-  }
-  else
-  {
-    if (poolsize != itsSize * sizeof(float))
-      throw runtime_error("Invalid datapool size in querydata");
+    WriteLock lock(itsMutex);
 
-    // Skip last newline charater after poolsize
-    char ch;
-    file.get(ch);
+    delete itsData;
+    itsData = new float[itsSize];
 
-    auto *ptr = reinterpret_cast<char *>(itsData);
-    file.read(ptr, poolsize);
-  }
+    // Backward compatibility:
+    long datatype;
+    file >> datatype;
 
-  if (file.fail()) throw runtime_error("Failed to read rawdata from input stream");
+    // We trust everything to be at least version 6 by now
+    if (DefaultFmiInfoVersion >= 6)
+      file >> itsSaveAsBinaryFlag;
+    else
+      itsSaveAsBinaryFlag = false;
 
-  if (itsEndianSwapFlag)
-  {
-    char tmp1, tmp2, tmp3, tmp4;
-    auto *ptr = reinterpret_cast<char *>(itsData);
-    for (size_t i = 3; i < itsSize * sizeof(float); i += 4)
+    size_t poolsize = 0;
+    file >> poolsize;
+
+    if (!itsSaveAsBinaryFlag)
     {
-      tmp1 = ptr[i - 3];
-      tmp2 = ptr[i - 2];
-      tmp3 = ptr[i - 1];
-      tmp4 = ptr[i - 0];
-
-      ptr[i - 3] = tmp4;
-      ptr[i - 2] = tmp3;
-      ptr[i - 1] = tmp2;
-      ptr[i - 0] = tmp1;
+      for (size_t idx = 0; idx < itsSize; ++idx)
+        file >> itsData[idx];
     }
+    else
+    {
+      if (poolsize != itsSize * sizeof(float))
+        throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
+
+      // Skip last newline charater after poolsize
+      char ch;
+      file.get(ch);
+
+      auto *ptr = reinterpret_cast<char *>(itsData);
+      file.read(ptr, poolsize);
+    }
+
+    if (file.fail())
+      throw Fmi::Exception(BCP, "Failed to read rawdata from input stream");
+
+    if (itsEndianSwapFlag)
+    {
+      char tmp1, tmp2, tmp3, tmp4;
+      auto *ptr = reinterpret_cast<char *>(itsData);
+      for (size_t i = 3; i < itsSize * sizeof(float); i += 4)
+      {
+        tmp1 = ptr[i - 3];
+        tmp2 = ptr[i - 2];
+        tmp3 = ptr[i - 1];
+        tmp4 = ptr[i - 0];
+
+        ptr[i - 3] = tmp4;
+        ptr[i - 2] = tmp3;
+        ptr[i - 1] = tmp2;
+        ptr[i - 0] = tmp1;
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -296,51 +331,58 @@ bool NFmiRawData::Pimple::Init(size_t size,
                                const std::string &theFilename,
                                bool fInitialize)
 {
-  WriteLock lock(itsMutex);
-
-  // Update number of elements in the data
-
-  itsSize = size;
-
-  // Create info header fully up to start of raw data
-
-  long datatype = 6;  // float??
-  bool saveasbinary = true;
-  std::ostringstream headerstream;
-  headerstream << theHeader << '\n'
-               << datatype << '\n'
-               << saveasbinary << '\n'
-               << itsSize * sizeof(float) << '\n';
-  std::string fullheader = headerstream.str();
-
-  // Now we know the offset to the start of raw data
-
-  itsOffset = fullheader.size();
-
-  // Create memory mapped file for writing
-
-  MappedFileParams params(theFilename.c_str());
-  params.flags = boost::iostreams::mapped_file::readwrite;
-  params.new_file_size = itsOffset + itsSize * sizeof(float);
-  itsMappedFile.reset(new MappedFile(params));
-
-  // Initialize the header
-
-  char *headerdata = itsMappedFile->data();
-  memcpy(headerdata, fullheader.c_str(), fullheader.size());
-
-  // Initialize the data section to kFloatMissing if so requested.
-  // It seems as if this is not requested, the mapped region
-  // will be initialized to zero bytes from start to finish.
-
-  if (fInitialize)
+  try
   {
-    auto *data = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
-    for (std::size_t i = 0; i < itsSize; i++)
-      data[i] = kFloatMissing;
-  }
+    WriteLock lock(itsMutex);
 
-  return true;
+    // Update number of elements in the data
+
+    itsSize = size;
+
+    // Create info header fully up to start of raw data
+
+    long datatype = 6;  // float??
+    bool saveasbinary = true;
+    std::ostringstream headerstream;
+    headerstream << theHeader << '\n'
+                 << datatype << '\n'
+                 << saveasbinary << '\n'
+                 << itsSize * sizeof(float) << '\n';
+    std::string fullheader = headerstream.str();
+
+    // Now we know the offset to the start of raw data
+
+    itsOffset = fullheader.size();
+
+    // Create memory mapped file for writing
+
+    MappedFileParams params(theFilename.c_str());
+    params.flags = boost::iostreams::mapped_file::readwrite;
+    params.new_file_size = itsOffset + itsSize * sizeof(float);
+    itsMappedFile.reset(new MappedFile(params));
+
+    // Initialize the header
+
+    char *headerdata = itsMappedFile->data();
+    memcpy(headerdata, fullheader.c_str(), fullheader.size());
+
+    // Initialize the data section to kFloatMissing if so requested.
+    // It seems as if this is not requested, the mapped region
+    // will be initialized to zero bytes from start to finish.
+
+    if (fInitialize)
+    {
+      auto *data = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
+      for (std::size_t i = 0; i < itsSize; i++)
+        data[i] = kFloatMissing;
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -351,17 +393,24 @@ bool NFmiRawData::Pimple::Init(size_t size,
 
 bool NFmiRawData::Pimple::Init(size_t size)
 {
-  WriteLock lock(itsMutex);
-
-  itsData = nullptr;
-  itsSize = size;
-  if (itsSize > 0)
+  try
   {
-    itsData = new float[itsSize];
-    for (size_t i = 0; i < itsSize; i++)
-      itsData[i] = kFloatMissing;
+    WriteLock lock(itsMutex);
+
+    itsData = nullptr;
+    itsSize = size;
+    if (itsSize > 0)
+    {
+      itsData = new float[itsSize];
+      for (size_t i = 0; i < itsSize; i++)
+        itsData[i] = kFloatMissing;
+    }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -370,7 +419,10 @@ bool NFmiRawData::Pimple::Init(size_t size)
  */
 // ----------------------------------------------------------------------
 
-size_t NFmiRawData::Pimple::Size() const { return itsSize; }
+size_t NFmiRawData::Pimple::Size() const
+{
+  return itsSize;
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Set storage mode to binary/ascii
@@ -379,8 +431,15 @@ size_t NFmiRawData::Pimple::Size() const { return itsSize; }
 
 void NFmiRawData::Pimple::SetBinaryStorage(bool flag) const
 {
-  WriteLock lock(itsMutex);
-  itsSaveAsBinaryFlag = flag;
+  try
+  {
+    WriteLock lock(itsMutex);
+    itsSaveAsBinaryFlag = flag;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -391,8 +450,15 @@ void NFmiRawData::Pimple::SetBinaryStorage(bool flag) const
 
 bool NFmiRawData::Pimple::IsBinaryStorageUsed() const
 {
-  ReadLock lock(itsMutex);
-  return itsSaveAsBinaryFlag;
+  try
+  {
+    ReadLock lock(itsMutex);
+    return itsSaveAsBinaryFlag;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -404,16 +470,24 @@ bool NFmiRawData::Pimple::IsBinaryStorageUsed() const
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
 void NFmiRawData::Pimple::Unmap() const
 {
-  if (itsData) return;  // oli jo alustettu
+  try
+  {
+    if (itsData)
+      return;  // oli jo alustettu
 
-  itsData = new float[itsSize];
-  char *dst = reinterpret_cast<char *>(itsData);
+    itsData = new float[itsSize];
+    char *dst = reinterpret_cast<char *>(itsData);
 
-  char *src = reinterpret_cast<char *>(itsMappedRegion->get_address());
-  memcpy(dst, src, itsSize * sizeof(float));
+    char *src = reinterpret_cast<char *>(itsMappedRegion->get_address());
+    memcpy(dst, src, itsSize * sizeof(float));
 
-  itsMappedFile.reset();
-  itsOffset = 0;
+    itsMappedFile.reset();
+    itsOffset = 0;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 #endif
 
@@ -425,20 +499,29 @@ void NFmiRawData::Pimple::Unmap() const
 
 float NFmiRawData::Pimple::GetValue(size_t index) const
 {
-  ReadLock lock(itsMutex);
+  try
+  {
+    ReadLock lock(itsMutex);
 
-  if (index >= itsSize) return kFloatMissing;
+    if (index >= itsSize)
+      return kFloatMissing;
 
-  if (itsData) return itsData[index];
+    if (itsData)
+      return itsData[index];
 
-  auto *addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
-  float value;
-  memcpy(&value, addr, sizeof(float));
-  return value;
+    auto *addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
+    float value;
+    memcpy(&value, addr, sizeof(float));
+    return value;
 
-  // ASAN does not like the reinterpret_cast here due to bad float alignment:
-  // const auto *ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
-  // return ptr[index];
+    // ASAN does not like the reinterpret_cast here due to bad float alignment:
+    // const auto *ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
+    // return ptr[index];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiRawData::Pimple::GetValues(size_t startIndex,
@@ -446,36 +529,42 @@ bool NFmiRawData::Pimple::GetValues(size_t startIndex,
                                     size_t count,
                                     std::vector<float> &values) const
 {
-  if (startIndex + step * (count - 1) >= itsSize) return false;
-
-  values.resize(count);
-
-  const float *ptr;
-
-  if (itsData)
-    ptr = itsData;
-  else
-    ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
-
+  try
   {
-    ReadLock lock(itsMutex);
-
-    size_t i = 0;
-    std::generate(values.begin(), values.end(), [&] { return ptr[startIndex + (i++) * step]; });
-
-    // C++17 (not supported yet), might enable additional compiler optimization
-
-    // std::generate(values.begin(), values.end(), [&] { return i++; });
-    // std::transform(std::execution::par_unseq,values.begin(),values.end(),
-    // [=] (const float &i)
-    // {
-    // 	return ptr[startIndex + i*step];
-    // });
-
+    if (startIndex + step * (count - 1) >= itsSize) 
+      return false;
+  
+    values.resize(count);
+  
+    const float *ptr;
+  
+    if (itsData)
+      ptr = itsData;
+    else
+      ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
+  
+    {
+      ReadLock lock(itsMutex);
+  
+      size_t i = 0;
+      std::generate(values.begin(), values.end(), [&] { return ptr[startIndex + (i++) * step]; });
+  
+      // C++17 (not supported yet), might enable additional compiler optimization
+  
+      // std::generate(values.begin(), values.end(), [&] { return i++; });
+      // std::transform(std::execution::par_unseq,values.begin(),values.end(),
+      // [=] (const float &i)
+      // {
+      // 	return ptr[startIndex + i*step];
+      // });
+  
+    }
+    return true;
   }
-
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiRawData::Pimple::SetValues(size_t startIndex, size_t step, size_t count, const std::vector<float> &values)
@@ -506,38 +595,42 @@ bool NFmiRawData::Pimple::GetValuesPartial(size_t startIndex,
                                            size_t columnStep,
                                            std::vector<float> &values) const
 {
-  if (startIndex + rowStep * (rowCount - 1) + columnStep * (columnCount - 1) >= itsSize)
-    return false;
-
-  values.resize(rowCount * columnCount);
-
-  const float *ptr;
-
-  if (itsData)
-    ptr = itsData;
-  else
-    ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
-
+  try
   {
-    ReadLock lock(itsMutex);
-
-    size_t i = 0;
-
-    for (size_t row = 0; row < rowCount; row++)
+    if (startIndex + rowStep * (rowCount - 1) + columnStep * (columnCount - 1) >= itsSize)
+      return false;
+  
+    values.resize(rowCount * columnCount);
+  
+    const float *ptr;
+  
+    if (itsData)
+      ptr = itsData;
+    else
+      ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
+  
     {
-      for (size_t column = 0; column < columnCount; column++)
+      ReadLock lock(itsMutex);
+  
+      size_t i = 0;
+  
+      for (size_t row = 0; row < rowCount; row++)
       {
-        values[column + row * columnCount] = ptr[startIndex + i];
-        i += columnStep;
+        for (size_t column = 0; column < columnCount; column++)
+        {
+          values[column + row * columnCount] = ptr[startIndex + i];
+          i += columnStep;
+        }
+        i += rowStep;
       }
-      i += rowStep;
     }
-
-
+  
+    return true;
   }
-
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -548,34 +641,42 @@ bool NFmiRawData::Pimple::GetValuesPartial(size_t startIndex,
 
 bool NFmiRawData::Pimple::SetValue(size_t index, float value)
 {
-  WriteLock lock(itsMutex);
-
-  if (index >= itsSize) return false;
-
-  if (itsData)
+  try
   {
-    itsData[index] = value;
-    return true;
-  }
-  else if (itsOffset > 0)
-  {
-    if (itsMappedFile->flags() == boost::iostreams::mapped_file::readonly)
-      throw std::runtime_error("Can't modify read-only memory-mapped data");
+    WriteLock lock(itsMutex);
 
-    // We have mmapped output data
-    auto *ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
-    ptr[index] = value;
-    return true;
-  }
+    if (index >= itsSize)
+      return false;
 
-  // copy-on-write semantics: switch to memory buffer on a write
+    if (itsData)
+    {
+      itsData[index] = value;
+      return true;
+    }
+    else if (itsOffset > 0)
+    {
+      if (itsMappedFile->flags() == boost::iostreams::mapped_file::readonly)
+        throw Fmi::Exception(BCP, "Can't modify read-only memory-mapped data");
+
+      // We have mmapped output data
+      auto *ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
+      ptr[index] = value;
+      return true;
+    }
+
+    // copy-on-write semantics: switch to memory buffer on a write
 
 #if 0
-  Unmap();
-  itsData[index] = value;
+    Unmap();
+    itsData[index] = value;
 #endif
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -586,38 +687,46 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
 
 ostream &NFmiRawData::Pimple::Write(ostream &file) const
 {
-  ReadLock lock(itsMutex);
-
-  // Backward compatibility when other than floats were supported
-  const int kFloat = 6;
-  file << kFloat << endl;
-
-  if (DefaultFmiInfoVersion >= 6) file << itsSaveAsBinaryFlag << endl;
-
-  file << itsSize * sizeof(float) << endl;
-
-  if (itsSaveAsBinaryFlag && DefaultFmiInfoVersion >= 6)
+  try
   {
-    if (itsData != nullptr)
+    ReadLock lock(itsMutex);
+
+    // Backward compatibility when other than floats were supported
+    const int kFloat = 6;
+    file << kFloat << endl;
+
+    if (DefaultFmiInfoVersion >= 6)
+      file << itsSaveAsBinaryFlag << endl;
+
+    file << itsSize * sizeof(float) << endl;
+
+    if (itsSaveAsBinaryFlag && DefaultFmiInfoVersion >= 6)
     {
-      auto *ptr = reinterpret_cast<char *>(itsData);
-      file.write(ptr, itsSize * sizeof(float));
+      if (itsData != nullptr)
+      {
+        auto *ptr = reinterpret_cast<char *>(itsData);
+        file.write(ptr, itsSize * sizeof(float));
+      }
+      else
+      {
+        const char *ptr = itsMappedFile->const_data() + itsOffset;
+        file.write(ptr, itsSize * sizeof(float));
+      }
+
+      // Backward compatibility - not sure if needed:
+      file << endl;
     }
     else
     {
-      const char *ptr = itsMappedFile->const_data() + itsOffset;
-      file.write(ptr, itsSize * sizeof(float));
+      for (size_t idx = 0; idx < itsSize; ++idx)
+        file << GetValue(idx) << ' ';
     }
-
-    // Backward compatibility - not sure if needed:
-    file << endl;
+    return file;
   }
-  else
+  catch (...)
   {
-    for (size_t idx = 0; idx < itsSize; ++idx)
-      file << GetValue(idx) << ' ';
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return file;
 }
 
 // ----------------------------------------------------------------------
@@ -628,17 +737,24 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
 
 void NFmiRawData::Pimple::Backup(char *ptr) const
 {
-  if (itsData)
+  try
   {
-    ReadLock lock(itsMutex);
+    if (itsData)
+    {
+      ReadLock lock(itsMutex);
 
-// we assume data which is backed up is edited, so might as well unmap
+      // we assume data which is backed up is edited, so might as well unmap
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
-    Unmap();
+      Unmap();
 #endif
 
-    auto *src = reinterpret_cast<char *>(itsData);
-    memcpy(ptr, src, itsSize * sizeof(float));
+      auto *src = reinterpret_cast<char *>(itsData);
+      memcpy(ptr, src, itsSize * sizeof(float));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -650,18 +766,25 @@ void NFmiRawData::Pimple::Backup(char *ptr) const
 
 void NFmiRawData::Pimple::Undo(char *ptr)
 {
-  if (itsData)
+  try
   {
-    WriteLock lock(itsMutex);
+    if (itsData)
+    {
+      WriteLock lock(itsMutex);
 
-    // This may be slower than necessary when mmapped, but since Backup
-    // unmaps this really should never actually unmap
+      // This may be slower than necessary when mmapped, but since Backup
+      // unmaps this really should never actually unmap
 
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
-    Unmap();
+      Unmap();
 #endif
-    auto *src = reinterpret_cast<char *>(itsData);
-    memcpy(src, ptr, itsSize * sizeof(float));
+      auto *src = reinterpret_cast<char *>(itsData);
+      memcpy(src, ptr, itsSize * sizeof(float));
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -683,7 +806,19 @@ bool NFmiRawData::Pimple::Advise(FmiAdvice advice)
  */
 // ----------------------------------------------------------------------
 
-NFmiRawData::~NFmiRawData() { delete itsPimple; }
+NFmiRawData::~NFmiRawData()
+{
+  try
+  {
+    delete itsPimple;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Default constructor
@@ -726,7 +861,17 @@ NFmiRawData::NFmiRawData(istream &file, size_t size, bool endianswap)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiRawData::Init(size_t size) { return itsPimple->Init(size); }
+bool NFmiRawData::Init(size_t size)
+{
+  try
+  {
+    return itsPimple->Init(size);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Init memory mapped file for writing
@@ -738,7 +883,14 @@ bool NFmiRawData::Init(size_t size,
                        const std::string &theFilename,
                        bool fInitialize)
 {
-  return itsPimple->Init(size, theHeader, theFilename, fInitialize);
+  try
+  {
+    return itsPimple->Init(size, theHeader, theFilename, fInitialize);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -747,14 +899,35 @@ bool NFmiRawData::Init(size_t size,
  */
 // ----------------------------------------------------------------------
 
-size_t NFmiRawData::Size() const { return itsPimple->Size(); }
+size_t NFmiRawData::Size() const
+{
+  try
+  {
+    return itsPimple->Size();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Get value at given index
  */
 // ----------------------------------------------------------------------
 
-float NFmiRawData::GetValue(size_t index) const { return itsPimple->GetValue(index); }
+float NFmiRawData::GetValue(size_t index) const
+{
+  try
+  {
+    return itsPimple->GetValue(index);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -769,7 +942,14 @@ bool NFmiRawData::GetValues(size_t startIndex,
                             size_t count,
                             std::vector<float> &values) const
 {
-  return itsPimple->GetValues(startIndex, step, count, values);
+  try
+  {
+    return itsPimple->GetValues(startIndex, step, count, values);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiRawData::SetValues(size_t startIndex, size_t step, size_t count, const std::vector<float> &values) { return itsPimple->SetValues(startIndex, step, count, values); }
@@ -789,8 +969,15 @@ bool NFmiRawData::GetValuesPartial(size_t startIndex,
                                    size_t columnStep,
                                    std::vector<float> &values) const
 {
-  return itsPimple->GetValuesPartial(
-      startIndex, rowCount, rowStep, columnCount, columnStep, values);
+  try
+  {
+    return itsPimple->GetValuesPartial(
+        startIndex, rowCount, rowStep, columnCount, columnStep, values);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -799,42 +986,106 @@ bool NFmiRawData::GetValuesPartial(size_t startIndex,
  */
 // ----------------------------------------------------------------------
 
-bool NFmiRawData::SetValue(size_t index, float value) { return itsPimple->SetValue(index, value); }
+bool NFmiRawData::SetValue(size_t index, float value)
+{
+  try
+  {
+    return itsPimple->SetValue(index, value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Set binary storage mode based on given flag
  */
 // ----------------------------------------------------------------------
 
-void NFmiRawData::SetBinaryStorage(bool flag) const { itsPimple->SetBinaryStorage(flag); }
+void NFmiRawData::SetBinaryStorage(bool flag) const
+{
+  try
+  {
+    itsPimple->SetBinaryStorage(flag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Is binary storage mode on?
  */
 // ----------------------------------------------------------------------
 
-bool NFmiRawData::IsBinaryStorageUsed() const { return itsPimple->IsBinaryStorageUsed(); }
+bool NFmiRawData::IsBinaryStorageUsed() const
+{
+  try
+  {
+    return itsPimple->IsBinaryStorageUsed();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Write raw data
  */
 // ----------------------------------------------------------------------
 
-ostream &NFmiRawData::Write(ostream &file) const { return itsPimple->Write(file); }
+ostream &NFmiRawData::Write(ostream &file) const
+{
+  try
+  {
+    return itsPimple->Write(file);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Backup data to given pointer
  */
 // ----------------------------------------------------------------------
 
-void NFmiRawData::Backup(char *ptr) const { itsPimple->Backup(ptr); }
+void NFmiRawData::Backup(char *ptr) const
+{
+  try
+  {
+    itsPimple->Backup(ptr);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Restore data from given pointer
  */
 // ----------------------------------------------------------------------
 
-void NFmiRawData::Undo(char *ptr) { itsPimple->Undo(ptr); }
+void NFmiRawData::Undo(char *ptr)
+{
+  try
+  {
+    itsPimple->Undo(ptr);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Advise memory mapped region
@@ -843,5 +1094,15 @@ void NFmiRawData::Undo(char *ptr) { itsPimple->Undo(ptr); }
  */
 // ----------------------------------------------------------------------
 
-bool NFmiRawData::Advise(FmiAdvice theAdvice) { return itsPimple->Advise(theAdvice); }
+bool NFmiRawData::Advise(FmiAdvice theAdvice)
+{
+  try
+  {
+    return itsPimple->Advise(theAdvice);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ======================================================================

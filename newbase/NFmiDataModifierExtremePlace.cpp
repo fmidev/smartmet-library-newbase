@@ -43,7 +43,8 @@ NFmiDataModifierExtremePlace::NFmiDataModifierExtremePlace()
 void NFmiDataModifierExtremePlace::SetLocation(NFmiQueryInfo* theQI)
 {  // virtual const NFmiLocation * Location() const;
 
-  if (theQI) itsExtremeLocation = *(theQI->Location());
+  if (theQI)
+    itsExtremeLocation = *(theQI->Location());
 }
 
 // ----------------------------------------------------------------------
@@ -52,7 +53,10 @@ void NFmiDataModifierExtremePlace::SetLocation(NFmiQueryInfo* theQI)
  */
 // ----------------------------------------------------------------------
 
-const NFmiLocation NFmiDataModifierExtremePlace::GetLocation() { return itsExtremeLocation; }
+const NFmiLocation NFmiDataModifierExtremePlace::GetLocation()
+{
+  return itsExtremeLocation;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented

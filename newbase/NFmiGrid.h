@@ -199,7 +199,10 @@ typedef NFmiGrid *PNFmiGrid;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid::~NFmiGrid() { delete itsArea; }
+inline NFmiGrid::~NFmiGrid()
+{
+  delete itsArea;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -208,7 +211,10 @@ inline NFmiGrid::~NFmiGrid() { delete itsArea; }
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGrid::Init(NFmiGrid *theGrid) { return NFmiGridBase::Init(theGrid); }
+inline bool NFmiGrid::Init(NFmiGrid *theGrid)
+{
+  return NFmiGridBase::Init(theGrid);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theData Undocumented
@@ -216,7 +222,10 @@ inline bool NFmiGrid::Init(NFmiGrid *theGrid) { return NFmiGridBase::Init(theGri
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGrid::Init(NFmiDataPool *theData) { return NFmiGridBase::Init(theData); }
+inline bool NFmiGrid::Init(NFmiDataPool *theData)
+{
+  return NFmiGridBase::Init(theData);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theGridPoint Undocumented
@@ -235,14 +244,21 @@ inline NFmiPoint NFmiGrid::GridToXY(const NFmiPoint &theGridPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiGrid::XY() const { return GridToXY(GridPoint()); }
+inline NFmiPoint NFmiGrid::XY() const
+{
+  return GridToXY(GridPoint());
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiArea *NFmiGrid::Area() const { return itsArea; }
+inline NFmiArea *NFmiGrid::Area() const
+{
+  return itsArea;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param xy Undocumented
@@ -250,7 +266,10 @@ inline NFmiArea *NFmiGrid::Area() const { return itsArea; }
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiGrid::XYToGrid(const NFmiPoint &xy) const { return XYToGrid(xy.X(), xy.Y()); }
+inline NFmiPoint NFmiGrid::XYToGrid(const NFmiPoint &xy) const
+{
+  return XYToGrid(xy.X(), xy.Y());
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -338,7 +357,10 @@ inline NFmiPoint NFmiGrid::WorldXYToGrid(const NFmiPoint &theWorldXYPoint) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiGrid::WorldXY() const { return GridToWorldXY(GridPoint()); }
+inline NFmiPoint NFmiGrid::WorldXY() const
+{
+  return GridToWorldXY(GridPoint());
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -346,7 +368,10 @@ inline NFmiPoint NFmiGrid::WorldXY() const { return GridToWorldXY(GridPoint()); 
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiGrid::LatLon() const { return itsArea->LatLon(itsCurrentX, itsCurrentY); }
+inline NFmiPoint NFmiGrid::LatLon() const
+{
+  return itsArea->LatLon(itsCurrentX, itsCurrentY);
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -381,7 +406,10 @@ inline NFmiPoint NFmiGrid::WorldXY(unsigned long theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiGrid::Transform(NFmiTransformList &theList) { NFmiGridBase::Transform(theList); }
+inline void NFmiGrid::Transform(NFmiTransformList &theList)
+{
+  NFmiGridBase::Transform(theList);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theBottomLeftLatLon Undocumented
@@ -526,14 +554,22 @@ inline bool NFmiGrid::InterpolateToXYPoint(double x,
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiGrid::ClassId() const { return kNFmiGrid; }
+inline unsigned long NFmiGrid::ClassId() const
+{
+  return kNFmiGrid;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiGrid::ClassName() const { return "NFmiGrid"; }
+inline const char *NFmiGrid::ClassName() const
+{
+  return "NFmiGrid";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiGrid
@@ -544,7 +580,10 @@ inline const char *NFmiGrid::ClassName() const { return "NFmiGrid"; }
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * Input operator for class NFmiGrid
@@ -555,6 +594,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiGrid &ob) { return
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiGrid &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiGrid &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

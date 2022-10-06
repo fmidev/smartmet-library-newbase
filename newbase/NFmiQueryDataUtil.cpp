@@ -43,6 +43,7 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <macgyver/Exception.h>
 
 #include <gis/SpatialReference.h>
 
@@ -75,99 +76,170 @@ GridRecordData::GridRecordData()
 
 void GridRecordData::ChangeParam(const NFmiParam &theWantedParam)
 {
-  fParamChanged = true;
-  itsOrigParam = *(itsParam.GetParam());
-  itsParam.SetParam(theWantedParam);
+  try
+  {
+    fParamChanged = true;
+    itsOrigParam = *(itsParam.GetParam());
+    itsParam.SetParam(theWantedParam);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool MyGrid::operator<(const MyGrid &theGrid) const
 {
-  if (itsNX != theGrid.itsNX)
-    return itsNX < theGrid.itsNX;
-  if (itsNY != theGrid.itsNY)
-    return itsNY < theGrid.itsNY;
-  if (itsArea == nullptr && theGrid.itsArea == nullptr)
-    return false;
-
-  if (itsArea && theGrid.itsArea)
+  try
   {
-    if (itsArea->ClassId() != theGrid.itsArea->ClassId())
-      return itsArea->ClassId() < theGrid.itsArea->ClassId();
-    if (itsArea->BottomLeftLatLon() != theGrid.itsArea->BottomLeftLatLon())
-      return itsArea->BottomLeftLatLon() < theGrid.itsArea->BottomLeftLatLon();
-    if (itsArea->BottomRightLatLon() != theGrid.itsArea->BottomRightLatLon())
-      return itsArea->BottomRightLatLon() < theGrid.itsArea->BottomRightLatLon();
-    if (itsArea->TopLeftLatLon() != theGrid.itsArea->TopLeftLatLon())
-      return itsArea->TopLeftLatLon() < theGrid.itsArea->TopLeftLatLon();
-    if (itsArea->TopRightLatLon() != theGrid.itsArea->TopRightLatLon())
-      return itsArea->TopRightLatLon() < theGrid.itsArea->TopRightLatLon();
+    if (itsNX != theGrid.itsNX)
+      return itsNX < theGrid.itsNX;
+    if (itsNY != theGrid.itsNY)
+      return itsNY < theGrid.itsNY;
+    if (itsArea == nullptr && theGrid.itsArea == nullptr)
+      return false;
+
+    if (itsArea && theGrid.itsArea)
+    {
+      if (itsArea->ClassId() != theGrid.itsArea->ClassId())
+        return itsArea->ClassId() < theGrid.itsArea->ClassId();
+      if (itsArea->BottomLeftLatLon() != theGrid.itsArea->BottomLeftLatLon())
+        return itsArea->BottomLeftLatLon() < theGrid.itsArea->BottomLeftLatLon();
+      if (itsArea->BottomRightLatLon() != theGrid.itsArea->BottomRightLatLon())
+        return itsArea->BottomRightLatLon() < theGrid.itsArea->BottomRightLatLon();
+      if (itsArea->TopLeftLatLon() != theGrid.itsArea->TopLeftLatLon())
+        return itsArea->TopLeftLatLon() < theGrid.itsArea->TopLeftLatLon();
+      if (itsArea->TopRightLatLon() != theGrid.itsArea->TopRightLatLon())
+        return itsArea->TopRightLatLon() < theGrid.itsArea->TopRightLatLon();
 
 #ifndef WGS84
-    if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea)
-    {
-      if (static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
-          static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
-        return static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() <
-               static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation();
-    }
+      if (itsArea->ClassId() == kNFmiStereographicArea || itsArea->ClassId() == kNFmiEquiDistArea ||
+          itsArea->ClassId() == kNFmiGnomonicArea)
+      {
+        if (static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() !=
+            static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation())
+          return static_cast<const NFmiAzimuthalArea *>(itsArea)->Orientation() <
+                 static_cast<const NFmiAzimuthalArea *>(theGrid.itsArea)->Orientation();
+      }
 #endif
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // NFmiThreadCallBacks inplemantations
 bool NFmiThreadCallBacks::Stop() const
 {
-  if (itsStopper)
-    return itsStopper->Stop();
-  else
-    return false;
+  try
+  {
+    if (itsStopper)
+      return itsStopper->Stop();
+    else
+      return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiThreadCallBacks::Stop(bool newValue)
 {
-  if (itsStopper)
-    return itsStopper->Stop(newValue);
+  try
+  {
+    if (itsStopper)
+      return itsStopper->Stop(newValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiThreadCallBacks::StepIt()
 {
-  if (itsProgress)
-    itsProgress->StepIt();
+  try
+  {
+    if (itsProgress)
+      itsProgress->StepIt();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiThreadCallBacks::SetRange(int low, int high, int stepCount)
 {
-  if (itsProgress)
-    itsProgress->SetRange(low, high, stepCount);
+  try
+  {
+    if (itsProgress)
+      itsProgress->SetRange(low, high, stepCount);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiThreadCallBacks::AddRange(int value)
 {
-  if (itsProgress)
-    itsProgress->AddRange(value);
+  try
+  {
+    if (itsProgress)
+      itsProgress->AddRange(value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiThreadCallBacks::DoPostMessage(unsigned int message, unsigned int wParam, long lParam)
 {
-  if (itsProgress)
-    return itsProgress->DoPostMessage(message, wParam, lParam);
-  else
-    return false;
+  try
+  {
+    if (itsProgress)
+      return itsProgress->DoPostMessage(message, wParam, lParam);
+    else
+      return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiThreadCallBacks::CheckIfStopped()
 {
-  if (itsStopper && itsStopper->Stop())
-    throw NFmiStopThreadException();
+  try
+  {
+    if (itsStopper && itsStopper->Stop())
+      throw NFmiStopThreadException();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiThreadCallBacks::WaitUntilInitialized()
 {
-  if (itsProgress)
-    return itsProgress->WaitUntilInitialized();
-  else
-    return true;
+  try
+  {
+    if (itsProgress)
+      return itsProgress->WaitUntilInitialized();
+    else
+      return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theTimeSize)
@@ -189,14 +261,23 @@ NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theStartTimeIndex
 
 bool NFmiTimeIndexCalculator::GetCurrentTimeIndex(unsigned long &theTimeIndexOut)
 {
-  WriteLock lock(itsMutex);
-  if (fNoMoreWork)
-    return false;
-  theTimeIndexOut = itsCurrentTimeIndex;
-  itsCurrentTimeIndex++;
-  if (itsCurrentTimeIndex > itsEndTimeIndex)
-    fNoMoreWork = true;
-  return true;
+  try
+  {
+    WriteLock lock(itsMutex);
+    if (fNoMoreWork)
+      return false;
+
+    theTimeIndexOut = itsCurrentTimeIndex;
+    itsCurrentTimeIndex++;
+    if (itsCurrentTimeIndex > itsEndTimeIndex)
+      fNoMoreWork = true;
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(unsigned long theLocationSize,
@@ -224,70 +305,115 @@ NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(
 bool NFmiLocationIndexRangeCalculator::GetCurrentLocationRange(unsigned long &theStartIndexOut,
                                                                unsigned long &theEndIndexOut)
 {
-  WriteLock lock(itsMutex);
-  if (fNoMoreWork)
-    return false;
-  theStartIndexOut = itsCurrentLocationIndex;
-  itsCurrentLocationIndex += itsChunkSize;
-  if (itsCurrentLocationIndex >= itsEndLocationIndex)
+  try
   {
-    itsCurrentLocationIndex = itsEndLocationIndex;
-    fNoMoreWork = true;
+    WriteLock lock(itsMutex);
+    if (fNoMoreWork)
+      return false;
+    theStartIndexOut = itsCurrentLocationIndex;
+    itsCurrentLocationIndex += itsChunkSize;
+    if (itsCurrentLocationIndex >= itsEndLocationIndex)
+    {
+      itsCurrentLocationIndex = itsEndLocationIndex;
+      fNoMoreWork = true;
+    }
+    theEndIndexOut = itsCurrentLocationIndex;
+    itsCurrentLocationIndex++;  // viedään indeksi yksi eteenpäin seuraavan threadin alkua varten
+    return true;
   }
-  theEndIndexOut = itsCurrentLocationIndex;
-  itsCurrentLocationIndex++;  // viedään indeksi yksi eteenpäin seuraavan threadin alkua varten
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool GetProducerIdsLister(NFmiQueryInfo *theInfo, NFmiProducerIdLister &theProducerIdsLister)
 {
-  if (theInfo)
-    if (theInfo->FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
-      return theProducerIdsLister.IntepretProducerIdString(string(theInfo->GetCurrentKeyValue()));
-  return false;
+  try
+  {
+    if (theInfo)
+    {
+      if (theInfo->FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
+        return theProducerIdsLister.IntepretProducerIdString(string(theInfo->GetCurrentKeyValue()));
+    }
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void CopyProducerIds(NFmiFastQueryInfo &theDestInfo, NFmiFastQueryInfo &theSourceInfo)
 {
-  if (theSourceInfo.FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
-    theDestInfo.AddKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey(),
-                       theSourceInfo.GetCurrentKeyValue(),
-                       true);
+  try
+  {
+    if (theSourceInfo.FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
+      theDestInfo.AddKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey(),
+                         theSourceInfo.GetCurrentKeyValue(),
+                         true);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void CopyProducerIds(NFmiQueryData *theDestData, NFmiQueryData *theSourceData)
 {
-  if (theDestData && theSourceData)
+  try
   {
-    NFmiFastQueryInfo destInfo(theDestData);
-    NFmiFastQueryInfo sourceInfo(theSourceData);
-    CopyProducerIds(destInfo, sourceInfo);
+    if (theDestData && theSourceData)
+    {
+      NFmiFastQueryInfo destInfo(theDestData);
+      NFmiFastQueryInfo sourceInfo(theSourceData);
+      CopyProducerIds(destInfo, sourceInfo);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 void AddProducerIds(NFmiFastQueryInfo &theDestInfo, NFmiFastQueryInfo &theSourceInfo)
 {
-  NFmiProducerIdLister sourceIds;
-  if (GetProducerIdsLister(&theSourceInfo, sourceIds))
+  try
   {
-    NFmiProducerIdLister destIds(theDestInfo.TimeDescriptor(), -1);
-    for (theDestInfo.ResetTime(); theDestInfo.NextTime();)
+    NFmiProducerIdLister sourceIds;
+    if (GetProducerIdsLister(&theSourceInfo, sourceIds))
     {
-      destIds.ProducerId(theDestInfo.TimeIndex(), sourceIds.ProducerId(theDestInfo.Time(), true));
-      destIds.ModelOriginTime(theDestInfo.TimeIndex(),
-                              sourceIds.ModelOriginTime(theDestInfo.Time(), true));
+      NFmiProducerIdLister destIds(theDestInfo.TimeDescriptor(), -1);
+      for (theDestInfo.ResetTime(); theDestInfo.NextTime();)
+      {
+        destIds.ProducerId(theDestInfo.TimeIndex(), sourceIds.ProducerId(theDestInfo.Time(), true));
+        destIds.ModelOriginTime(theDestInfo.TimeIndex(),
+                                sourceIds.ModelOriginTime(theDestInfo.Time(), true));
+      }
+      theDestInfo.SetCurrentKeyValue(destIds.MakeProducerIdString());
     }
-    theDestInfo.SetCurrentKeyValue(destIds.MakeProducerIdString());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 //! esim. tuulen suunta on ympyrä arvoinen eli arvo menee kehässä ylärajalta alarajalle.
 static bool IsParamCircularValued(const NFmiParam *theParam)
 {
-  // circular toimii siis vain nyt tuulen suunnalle, lisää muita jos tarpeen
-  if (theParam->GetIdent() == kFmiWindDirection)
-    return true;
-  return false;
+  try
+  {
+    // circular toimii siis vain nyt tuulen suunnalle, lisää muita jos tarpeen
+    if (theParam->GetIdent() == kFmiWindDirection)
+      return true;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryDataUtil::LimitChecker::LimitChecker(float theLowerLimit,
@@ -298,50 +424,73 @@ NFmiQueryDataUtil::LimitChecker::LimitChecker(float theLowerLimit,
       fCircularValue(theCircularValue),
       itsLimitDifference()
 {
-  Update();
+  try
+  {
+    Update();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 float NFmiQueryDataUtil::LimitChecker::GetInsideLimitsValue(float theValue) const
 {
-  if (theValue == kFloatMissing)
-    return theValue;
-  if (!fCircularValue)
+  try
   {
-    if (itsLowerLimit != kFloatMissing && theValue < itsLowerLimit)
-      return itsLowerLimit;
-    else if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit)
-      return itsUpperLimit;
-  }
-  else
-  {
-    if (theValue < itsLowerLimit)
-    {  // ei ota huomioon jos arvo menee yli ylä ja alarajan erotuksen. Tuli ongelmia toteuttaa se
-      // ja oletan, että tapaus on harvinainen (lagrange tuskin pystyy tuottamaan niin
-      // isoja/pieniä
-      // lukuja)
-      float tmp = itsUpperLimit - (itsLowerLimit - theValue);
-      return tmp;
-    }
-    else if (theValue > itsUpperLimit)
+    if (theValue == kFloatMissing)
+      return theValue;
+
+    if (!fCircularValue)
     {
-      float tmp = itsLowerLimit + (theValue - itsUpperLimit);
-      return tmp;
+      if (itsLowerLimit != kFloatMissing && theValue < itsLowerLimit)
+        return itsLowerLimit;
+      else if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit)
+        return itsUpperLimit;
     }
+    else
+    {
+      if (theValue < itsLowerLimit)
+      {  // ei ota huomioon jos arvo menee yli ylä ja alarajan erotuksen. Tuli ongelmia toteuttaa
+         // se
+        // ja oletan, että tapaus on harvinainen (lagrange tuskin pystyy tuottamaan niin
+        // isoja/pieniä
+        // lukuja)
+        float tmp = itsUpperLimit - (itsLowerLimit - theValue);
+        return tmp;
+      }
+      else if (theValue > itsUpperLimit)
+      {
+        float tmp = itsLowerLimit + (theValue - itsUpperLimit);
+        return tmp;
+      }
+    }
+    return theValue;
   }
-  return theValue;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiQueryDataUtil::LimitChecker::Update()
 {
-  if (fCircularValue)
+  try
   {
-    if (itsLowerLimit != kFloatMissing && itsUpperLimit != kFloatMissing)
+    if (fCircularValue)
     {
-      itsLimitDifference = itsUpperLimit - itsLowerLimit;
-      if (itsLimitDifference)
-        return;
-      throw runtime_error("Kiertävä arvoisen parametrin max ja min rajat olivat samat.");
+      if (itsLowerLimit != kFloatMissing && itsUpperLimit != kFloatMissing)
+      {
+        itsLimitDifference = itsUpperLimit - itsLowerLimit;
+        if (itsLimitDifference)
+          return;
+        throw Fmi::Exception(BCP, "Kiertävä arvoisen parametrin max ja min rajat olivat samat.");
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -357,19 +506,25 @@ void NFmiQueryDataUtil::LimitChecker::Update()
 
 NFmiQueryInfo *CreateInfo(const NFmiQueryInfo *theSourceInfo, NFmiGrid *theWantedGridFormat)
 {
-  NFmiQueryInfo *info = nullptr;
-  if (theWantedGridFormat)
+  try
   {
-    NFmiHPlaceDescriptor hPlaceDesc(*theWantedGridFormat);
-    info = new NFmiQueryInfo(theSourceInfo->ParamDescriptor(),
-                             theSourceInfo->TimeDescriptor(),
-                             hPlaceDesc,
-                             theSourceInfo->VPlaceDescriptor());
-    info->InfoVersion(
-        theSourceInfo
-            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+    NFmiQueryInfo *info = nullptr;
+    if (theWantedGridFormat)
+    {
+      NFmiHPlaceDescriptor hPlaceDesc(*theWantedGridFormat);
+      info = new NFmiQueryInfo(theSourceInfo->ParamDescriptor(),
+                               theSourceInfo->TimeDescriptor(),
+                               hPlaceDesc,
+                               theSourceInfo->VPlaceDescriptor());
+      info->InfoVersion(theSourceInfo->InfoVersion());  // pidetään infoversio samana, muuten
+                                                        // menee interpoloinnit pieleen!
+    }
+    return info;
   }
-  return info;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -384,27 +539,36 @@ NFmiQueryInfo *CreateInfo(const NFmiQueryInfo *theSourceInfo, NFmiGrid *theWante
 
 bool GridInfo2NewGridInfo(NFmiFastQueryInfo &theSourceInfo, NFmiFastQueryInfo &theDestInfo)
 {
-  if (theSourceInfo.IsGrid() && theDestInfo.IsGrid())
+  try
   {
-    theSourceInfo.First();
-    theDestInfo.First();
-    for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
-         theDestInfo.NextParam() && theSourceInfo.NextParam();)
-      for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
+    if (theSourceInfo.IsGrid() && theDestInfo.IsGrid())
+    {
+      theSourceInfo.First();
+      theDestInfo.First();
+      for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
+           theDestInfo.NextParam() && theSourceInfo.NextParam();)
       {
-        NFmiPoint latlon = theDestInfo.LatLon();
-        for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
-             theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
-          for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
-               theDestInfo.NextTime() && theSourceInfo.NextTime();)
-          {
-            float value = theSourceInfo.InterpolatedValue(latlon);
-            theDestInfo.FloatValue(value);
-          }
+        for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
+        {
+          NFmiPoint latlon = theDestInfo.LatLon();
+          for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
+               theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
+            for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
+                 theDestInfo.NextTime() && theSourceInfo.NextTime();)
+            {
+              float value = theSourceInfo.InterpolatedValue(latlon);
+              theDestInfo.FloatValue(value);
+            }
+        }
       }
-    return true;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -421,25 +585,32 @@ bool GridInfo2NewGridInfo(NFmiFastQueryInfo &theSourceInfo, NFmiFastQueryInfo &t
 NFmiQueryData *NFmiQueryDataUtil::GridQD2NewGridQD(NFmiQueryData *theSourceData,
                                                    NFmiGrid *theWantedGridFormat)
 {
-  NFmiQueryData *newData = nullptr;
-  if (theSourceData && theWantedGridFormat)
+  try
   {
-    NFmiQueryInfo *newInnerInfo = CreateInfo(theSourceData->Info(), theWantedGridFormat);
-    if (newInnerInfo)
+    NFmiQueryData *newData = nullptr;
+    if (theSourceData && theWantedGridFormat)
     {
-      newData = CreateEmptyData(*newInnerInfo);
-      if (newData)
+      NFmiQueryInfo *newInnerInfo = CreateInfo(theSourceData->Info(), theWantedGridFormat);
+      if (newInnerInfo)
       {
-        NFmiFastQueryInfo sourceInfo(theSourceData);
-        NFmiFastQueryInfo destInfo(newData);
-        bool status = GridInfo2NewGridInfo(sourceInfo, destInfo);
-        // interpolointi ei onnistunut??!!??
-        if (!status)
-          throw runtime_error("NFmiQueryDataUtil::GridQD2NewGridQD failed");
+        newData = CreateEmptyData(*newInnerInfo);
+        if (newData)
+        {
+          NFmiFastQueryInfo sourceInfo(theSourceData);
+          NFmiFastQueryInfo destInfo(newData);
+          bool status = GridInfo2NewGridInfo(sourceInfo, destInfo);
+          // interpolointi ei onnistunut??!!??
+          if (!status)
+            throw Fmi::Exception(BCP, "NFmiQueryDataUtil::GridQD2NewGridQD failed");
+        }
       }
     }
+    return newData;
   }
-  return newData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // optimoidaan ja tutkitaan mitä paikkoja todella tarvitaan
@@ -449,21 +620,28 @@ static void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
                                  std::vector<unsigned long> &theLocationIndexies,
                                  std::vector<NFmiPoint> &theLatlons)
 {
-  if (theInfo1.IsGrid() && theInfo2.IsGrid() && theInfo1.Area())
+  try
   {
-    theInfo1.First();
-    theInfo2.First();
-    NFmiPoint latlon;
-    const NFmiArea *area = theInfo1.Area();
-    for (theInfo2.FirstLocation(); theInfo2.NextLocation();)
+    if (theInfo1.IsGrid() && theInfo2.IsGrid() && theInfo1.Area())
     {
-      latlon = theInfo2.LatLon();
-      if (area->IsInside(latlon))
-      {  // jos
-        theLocationIndexies.push_back(theInfo2.LocationIndex());
-        theLatlons.push_back(latlon);
+      theInfo1.First();
+      theInfo2.First();
+      NFmiPoint latlon;
+      const NFmiArea *area = theInfo1.Area();
+      for (theInfo2.FirstLocation(); theInfo2.NextLocation();)
+      {
+        latlon = theInfo2.LatLon();
+        if (area->IsInside(latlon))
+        {  // jos
+          theLocationIndexies.push_back(theInfo2.LocationIndex());
+          theLatlons.push_back(latlon);
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -488,43 +666,46 @@ static void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
 NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
                                                      NFmiQueryData *areaData2)
 {
-  NFmiQueryData *newData = nullptr;
-  if (areaData1 && areaData2)
+  try
   {
-    newData = new NFmiQueryData(*areaData2);
-    NFmiFastQueryInfo area1Info(areaData1);
-    NFmiFastQueryInfo area2Info(newData);
-
-    // optimoidaan ja tutkitaan mitä paikkoja todella tarvitaan eli mitkä
-    // data2:n paikat ovat interpoloitavissa data1:sta
-
-    // tähän kerätään ne data1:n paikka-indeksit, jotkä todella tarvitaan
-    std::vector<unsigned long> locationIndexies;
-
-    // ja tähän niiden paikkojen lotlon-pisteet
-    std::vector<NFmiPoint> latlons;
-
-    GetMatchingLocations(area1Info, area2Info, locationIndexies, latlons);
-    for (area2Info.ResetParam(); area2Info.NextParam();)
+    NFmiQueryData *newData = nullptr;
+    if (areaData1 && areaData2)
     {
-      if (area1Info.Param(FmiParameterName(area2Info.Param().GetParamIdent())))
+      newData = new NFmiQueryData(*areaData2);
+      NFmiFastQueryInfo area1Info(areaData1);
+      NFmiFastQueryInfo area2Info(newData);
+
+      // optimoidaan ja tutkitaan mitä paikkoja todella tarvitaan eli mitkä
+      // data2:n paikat ovat interpoloitavissa data1:sta
+
+      // tähän kerätään ne data1:n paikka-indeksit, jotkä todella tarvitaan
+      std::vector<unsigned long> locationIndexies;
+
+      // ja tähän niiden paikkojen lotlon-pisteet
+      std::vector<NFmiPoint> latlons;
+
+      GetMatchingLocations(area1Info, area2Info, locationIndexies, latlons);
+      for (area2Info.ResetParam(); area2Info.NextParam();)
       {
-        for (area2Info.ResetTime();
-             area2Info.NextTime();)  // aikojen ei täydy olla vielä samoja eri qdatoissa
+        if (area1Info.Param(FmiParameterName(area2Info.Param().GetParamIdent())))
         {
-          if (area1Info.Time(area2Info.Time()))
+          for (area2Info.ResetTime();
+               area2Info.NextTime();)  // aikojen ei täydy olla vielä samoja eri qdatoissa
           {
-            for (area1Info.ResetLevel(), area2Info.ResetLevel();
-                 area1Info.NextLevel() && area2Info.NextLevel();)
+            if (area1Info.Time(area2Info.Time()))
             {
-              size_t ssize = locationIndexies.size();
-              for (size_t i = 0; i < ssize; i++)
+              for (area1Info.ResetLevel(), area2Info.ResetLevel();
+                   area1Info.NextLevel() && area2Info.NextLevel();)
               {
-                float value = area1Info.InterpolatedValue(latlons[i]);
-                if (!(value == kFloatMissing || value == kTCombinedWeatherFloatMissing))
+                size_t ssize = locationIndexies.size();
+                for (size_t i = 0; i < ssize; i++)
                 {
-                  area2Info.LocationIndex(locationIndexies[i]);
-                  area2Info.FloatValue(value);
+                  float value = area1Info.InterpolatedValue(latlons[i]);
+                  if (!(value == kFloatMissing || value == kTCombinedWeatherFloatMissing))
+                  {
+                    area2Info.LocationIndex(locationIndexies[i]);
+                    area2Info.FloatValue(value);
+                  }
                 }
               }
             }
@@ -532,8 +713,12 @@ NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
         }
       }
     }
+    return newData;
   }
-  return newData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -545,24 +730,31 @@ NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
 
 NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo)
 {
-  if (srcInfo.Size() != 0)
+  try
   {
-    auto *data = new NFmiQueryData(srcInfo);
-    data->Init();
-    return data;
+    if (srcInfo.Size() != 0)
+    {
+      auto *data = new NFmiQueryData(srcInfo);
+      data->Init();
+      return data;
+    }
+
+    if (srcInfo.SizeParams() == 0)
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of parameters is zero");
+    if (srcInfo.SizeTimes() == 0)
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of times is zero");
+    if (srcInfo.SizeLevels() == 0)
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of levels is zero");
+    if (srcInfo.SizeLocations() == 0)
+      throw Fmi::Exception(BCP, "CreateEmptyData: number of locations is zero");
+
+    // Should never be reached
+    throw Fmi::Exception(BCP, "CreateEmptyData: total size of data descriptors is zero");
   }
-
-  if (srcInfo.SizeParams() == 0)
-    throw std::runtime_error("CreateEmptyData: number of parameters is zero");
-  if (srcInfo.SizeTimes() == 0)
-    throw std::runtime_error("CreateEmptyData: number of times is zero");
-  if (srcInfo.SizeLevels() == 0)
-    throw std::runtime_error("CreateEmptyData: number of levels is zero");
-  if (srcInfo.SizeLocations() == 0)
-    throw std::runtime_error("CreateEmptyData: number of locations is zero");
-
-  // Should never be reached
-  throw std::runtime_error("CreateEmptyData: total size of data descriptors is zero");
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -579,16 +771,24 @@ NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo,
                                                   const std::string &theFilename,
                                                   bool fInitialize)
 {
-  if (srcInfo.Size() == 0)
-    throw std::runtime_error("Attempt to create empty querydata as a memory mapped file");
-  auto *data = new NFmiQueryData(srcInfo);
+  try
+  {
+    if (srcInfo.Size() == 0)
+      throw Fmi::Exception(BCP, "Attempt to create empty querydata as a memory mapped file");
 
-  std::ostringstream header;
-  header << srcInfo;
+    auto *data = new NFmiQueryData(srcInfo);
 
-  // Initialize with given info as a string to given filename
-  data->Init(header.str(), theFilename, fInitialize);
-  return data;
+    std::ostringstream header;
+    header << srcInfo;
+
+    // Initialize with given info as a string to given filename
+    data->Init(header.str(), theFilename, fInitialize);
+    return data;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -605,44 +805,52 @@ NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo,
 NFmiQueryData *NFmiQueryDataUtil::ExtractParams(NFmiQueryData *theSourceData,
                                                 const NFmiParamBag &theWantedParams)
 {
-  NFmiQueryInfo *dataInfo = theSourceData->Info();
-  NFmiParamDescriptor parDesc(theWantedParams);
-  NFmiQueryInfo tmpInfo(parDesc,
-                        dataInfo->TimeDescriptor(),
-                        dataInfo->HPlaceDescriptor(),
-                        dataInfo->VPlaceDescriptor());
-  tmpInfo.InfoVersion(
-      dataInfo->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-  NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-  if (destData)
+  try
   {
-    NFmiFastQueryInfo sourceInfo(theSourceData);
-    NFmiFastQueryInfo destInfo(destData);
-    for (destInfo.ResetParam(); destInfo.NextParam();)
+    NFmiQueryInfo *dataInfo = theSourceData->Info();
+    NFmiParamDescriptor parDesc(theWantedParams);
+    NFmiQueryInfo tmpInfo(parDesc,
+                          dataInfo->TimeDescriptor(),
+                          dataInfo->HPlaceDescriptor(),
+                          dataInfo->VPlaceDescriptor());
+    tmpInfo.InfoVersion(
+        dataInfo
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+    NFmiQueryData *destData = CreateEmptyData(tmpInfo);
+    if (destData)
     {
-      if (!sourceInfo.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
-                                                            // jolloin palautetaan NFmiParam,
-                                                            // jolloin etsittäessä parametria
-                                                            // tarkastellaan vain param-id:tä
-        continue;  // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-      for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-           destInfo.NextLocation() && sourceInfo.NextLocation();)
+      NFmiFastQueryInfo sourceInfo(theSourceData);
+      NFmiFastQueryInfo destInfo(destData);
+      for (destInfo.ResetParam(); destInfo.NextParam();)
       {
-        for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-             destInfo.NextLevel() && sourceInfo.NextLevel();)
+        if (!sourceInfo.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
+                                                              // jolloin palautetaan NFmiParam,
+                                                              // jolloin etsittäessä parametria
+                                                              // tarkastellaan vain param-id:tä
+          continue;  // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+        for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+             destInfo.NextLocation() && sourceInfo.NextLocation();)
         {
-          for (destInfo.ResetTime(), sourceInfo.ResetTime();
-               destInfo.NextTime() && sourceInfo.NextTime();)
+          for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+               destInfo.NextLevel() && sourceInfo.NextLevel();)
           {
-            float value = sourceInfo.FloatValue();
-            destInfo.FloatValue(value);
+            for (destInfo.ResetTime(), sourceInfo.ResetTime();
+                 destInfo.NextTime() && sourceInfo.NextTime();)
+            {
+              float value = sourceInfo.FloatValue();
+              destInfo.FloatValue(value);
+            }
           }
         }
       }
+      CopyProducerIds(destInfo, sourceInfo);
     }
-    CopyProducerIds(destInfo, sourceInfo);
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -655,24 +863,31 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractParams(NFmiQueryData *theSourceData,
 void ExtractLocationsFromLocationData(NFmiFastQueryInfo &theSourceInfo,
                                       NFmiFastQueryInfo &theDestInfo)
 {
-  for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
+  try
   {
-    if (!theSourceInfo.Location(*theDestInfo.Location()))
-      continue;
-    for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
-         theDestInfo.NextParam() && theSourceInfo.NextParam();)
+    for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
     {
-      for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
-           theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
+      if (!theSourceInfo.Location(*theDestInfo.Location()))
+        continue;
+      for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
+           theDestInfo.NextParam() && theSourceInfo.NextParam();)
       {
-        for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
-             theDestInfo.NextTime() && theSourceInfo.NextTime();)
+        for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
+             theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
         {
-          float value = theSourceInfo.FloatValue();
-          theDestInfo.FloatValue(value);
+          for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
+               theDestInfo.NextTime() && theSourceInfo.NextTime();)
+          {
+            float value = theSourceInfo.FloatValue();
+            theDestInfo.FloatValue(value);
+          }
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -706,11 +921,12 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
                                  FmiInterpolationMethod theParamInterpMethod,
                                  NFmiQueryDataUtil::LimitChecker &theLimitChecker)
 {
-  if (theInterpolationMethod != kLagrange ||
-      !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
-    return theInfo.InterpolatedValue(theLatlon);
-  else
+  try
   {
+    if (theInterpolationMethod != kLagrange ||
+        !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
+      return theInfo.InterpolatedValue(theLatlon);
+
     NFmiLagrange lagrange;
     static const int maxSize = 4;
     std::vector<double> valueVec(maxSize * maxSize);
@@ -723,11 +939,12 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
     NFmiPoint gridPoint(theInfo.Grid()->LatLonToGrid(theLatlon));
     unsigned long zeroPointIndex =
         static_cast<int>(gridPoint.Y()) * gridXNumber +
-        static_cast<int>(gridPoint.X());  // nollapisteindeksi tarkoittaa sen hilapisteen indeksiä,
-                                          // joka saadaan kun griPoint leikataan alas lähimpään
-                                          // kokonais hilapisteeseen
+        static_cast<int>(gridPoint.X());  // nollapisteindeksi tarkoittaa sen hilapisteen
+                                          // indeksiä, joka saadaan kun griPoint leikataan alas
+                                          // lähimpään kokonais hilapisteeseen
     if (!theInfo.LocationIndex(zeroPointIndex))
       return value;
+
     if ((gridPoint.X() > 1) && (gridPoint.Y() > 1) && (gridPoint.X() < gridXNumber - 2) &&
         (gridPoint.Y() < gridYNumber - 2))
     {
@@ -750,10 +967,14 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
         return theLimitChecker.GetInsideLimitsValue(value);
       }
     }
-    else  // hilan reunoilla tehdään lineaarinen interpolointi, en jaksa tehdä erikoistapauksia
-          // reunoille ja kulmiin.
-      return theInfo.InterpolatedValue(theLatlon);
-    //	  return value;
+
+    // hilan reunoilla tehdään lineaarinen interpolointi, en jaksa tehdä erikoistapauksia
+    // reunoille ja kulmiin.
+    return theInfo.InterpolatedValue(theLatlon);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -769,36 +990,43 @@ void ExtractLocationsFromGridData(NFmiFastQueryInfo &theSourceInfo,
                                   NFmiFastQueryInfo &theDestInfo,
                                   FmiInterpolationMethod theInterpolationMethod)
 {
-  for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
-       theDestInfo.NextParam() && theSourceInfo.NextParam();)
+  try
   {
-    const NFmiParam *tmpParam = theDestInfo.Param().GetParam();
-    NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
-        static_cast<float>(tmpParam->MinValue()),
-        static_cast<float>(tmpParam->MaxValue()),
-        IsParamCircularValued(tmpParam));
-
-    FmiInterpolationMethod paramInterpMethod =
-        theDestInfo.Param().GetParam()->InterpolationMethod();
-    for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
+    for (theDestInfo.ResetParam(), theSourceInfo.ResetParam();
+         theDestInfo.NextParam() && theSourceInfo.NextParam();)
     {
-      if (!theSourceInfo.Location(*theDestInfo.Location()))
-        continue;
-      for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
-           theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
+      const NFmiParam *tmpParam = theDestInfo.Param().GetParam();
+      NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
+          static_cast<float>(tmpParam->MinValue()),
+          static_cast<float>(tmpParam->MaxValue()),
+          IsParamCircularValued(tmpParam));
+
+      FmiInterpolationMethod paramInterpMethod =
+          theDestInfo.Param().GetParam()->InterpolationMethod();
+      for (theDestInfo.ResetLocation(); theDestInfo.NextLocation();)
       {
-        for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
-             theDestInfo.NextTime() && theSourceInfo.NextTime();)
+        if (!theSourceInfo.Location(*theDestInfo.Location()))
+          continue;
+        for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
+             theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
         {
-          float value = LocationInterpolationValue(theSourceInfo,
-                                                   theDestInfo.LatLon(),
-                                                   theInterpolationMethod,
-                                                   paramInterpMethod,
-                                                   checkerWithLagrangeInterpolation);
-          theDestInfo.FloatValue(value);
+          for (theDestInfo.ResetTime(), theSourceInfo.ResetTime();
+               theDestInfo.NextTime() && theSourceInfo.NextTime();)
+          {
+            float value = LocationInterpolationValue(theSourceInfo,
+                                                     theDestInfo.LatLon(),
+                                                     theInterpolationMethod,
+                                                     paramInterpMethod,
+                                                     checkerWithLagrangeInterpolation);
+            theDestInfo.FloatValue(value);
+          }
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -820,27 +1048,35 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractLocations(NFmiQueryData *theSourceData,
                                                    const NFmiLocationBag &theWantedLocations,
                                                    FmiInterpolationMethod theInterpolationMethod)
 {
-  NFmiQueryInfo *dataInfo = theSourceData->Info();
-  NFmiHPlaceDescriptor locDesc(theWantedLocations);
-  NFmiQueryInfo tmpInfo(dataInfo->ParamDescriptor(),
-                        dataInfo->TimeDescriptor(),
-                        locDesc,
-                        dataInfo->VPlaceDescriptor());
-  tmpInfo.InfoVersion(
-      dataInfo->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-  NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-  if (destData)
+  try
   {
-    NFmiFastQueryInfo sourceInfo(theSourceData);
-    NFmiFastQueryInfo destInfo(destData);
-    if (sourceInfo.IsGrid())
-      ExtractLocationsFromGridData(sourceInfo, destInfo, theInterpolationMethod);
-    else
-      ExtractLocationsFromLocationData(sourceInfo, destInfo);
+    NFmiQueryInfo *dataInfo = theSourceData->Info();
+    NFmiHPlaceDescriptor locDesc(theWantedLocations);
+    NFmiQueryInfo tmpInfo(dataInfo->ParamDescriptor(),
+                          dataInfo->TimeDescriptor(),
+                          locDesc,
+                          dataInfo->VPlaceDescriptor());
+    tmpInfo.InfoVersion(
+        dataInfo
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+    NFmiQueryData *destData = CreateEmptyData(tmpInfo);
+    if (destData)
+    {
+      NFmiFastQueryInfo sourceInfo(theSourceData);
+      NFmiFastQueryInfo destInfo(destData);
+      if (sourceInfo.IsGrid())
+        ExtractLocationsFromGridData(sourceInfo, destInfo, theInterpolationMethod);
+      else
+        ExtractLocationsFromLocationData(sourceInfo, destInfo);
 
-    CopyProducerIds(destInfo, sourceInfo);
+      CopyProducerIds(destInfo, sourceInfo);
+    }
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -862,73 +1098,80 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractLocations(NFmiQueryData *theSourceData,
 NFmiQueryData *NFmiQueryDataUtil::CombineParams(NFmiQueryData *theSourceData1,
                                                 NFmiQueryData *theSourceData2)
 {
-  NFmiQueryInfo *dataInfo1 = theSourceData1->Info();
-  NFmiParamDescriptor parDesc1(dataInfo1->ParamDescriptor());
-  NFmiParamDescriptor parDesc2(theSourceData2->Info()->ParamDescriptor());
-  NFmiParamDescriptor newParDesc(parDesc1.Combine(parDesc2));
-  NFmiQueryInfo tmpInfo(newParDesc,
-                        dataInfo1->TimeDescriptor(),
-                        dataInfo1->HPlaceDescriptor(),
-                        dataInfo1->VPlaceDescriptor());
-  tmpInfo.InfoVersion(
-      dataInfo1
-          ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-  NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-  if (destData)
+  try
   {
-    NFmiFastQueryInfo sourceInfo1(theSourceData1);
-    NFmiFastQueryInfo sourceInfo2(theSourceData2);
-    NFmiFastQueryInfo destInfo(destData);
-    bool useInfo1 = false;
-    bool useInfo2 = false;
-    for (destInfo.ResetParam(); destInfo.NextParam();)
+    NFmiQueryInfo *dataInfo1 = theSourceData1->Info();
+    NFmiParamDescriptor parDesc1(dataInfo1->ParamDescriptor());
+    NFmiParamDescriptor parDesc2(theSourceData2->Info()->ParamDescriptor());
+    NFmiParamDescriptor newParDesc(parDesc1.Combine(parDesc2));
+    NFmiQueryInfo tmpInfo(newParDesc,
+                          dataInfo1->TimeDescriptor(),
+                          dataInfo1->HPlaceDescriptor(),
+                          dataInfo1->VPlaceDescriptor());
+    tmpInfo.InfoVersion(
+        dataInfo1
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+    NFmiQueryData *destData = CreateEmptyData(tmpInfo);
+    if (destData)
     {
-      if (sourceInfo1.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
-                                                            // jolloin palautetaan NFmiParam,
-                                                            // jolloin etsittäessä parametria
-                                                            // tarkastellaan vain param-id:tä
-        useInfo1 = true;
-      if (sourceInfo2.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
-                                                            // jolloin palautetaan NFmiParam,
-                                                            // jolloin etsittäessä parametria
-                                                            // tarkastellaan vain param-id:tä
-        useInfo2 = true;
-      if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-        continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-
-      for (destInfo.ResetTime(); destInfo.NextTime();)
+      NFmiFastQueryInfo sourceInfo1(theSourceData1);
+      NFmiFastQueryInfo sourceInfo2(theSourceData2);
+      NFmiFastQueryInfo destInfo(destData);
+      bool useInfo1 = false;
+      bool useInfo2 = false;
+      for (destInfo.ResetParam(); destInfo.NextParam();)
       {
-        bool timeFound = false;
-        if (useInfo1 && sourceInfo1.Time(destInfo.Time()))
-          timeFound = true;
-        if (useInfo2 && sourceInfo2.Time(destInfo.Time()))
-          timeFound = true;
-        if (!timeFound ||
-            !(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-          continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+        if (sourceInfo1.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
+                                                              // jolloin palautetaan NFmiParam,
+                                                              // jolloin etsittäessä parametria
+                                                              // tarkastellaan vain param-id:tä
+          useInfo1 = true;
+        if (sourceInfo2.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
+                                                              // jolloin palautetaan NFmiParam,
+                                                              // jolloin etsittäessä parametria
+                                                              // tarkastellaan vain param-id:tä
+          useInfo2 = true;
+        if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+          continue;
 
-        for (destInfo.ResetLocation(), sourceInfo1.ResetLocation(), sourceInfo2.ResetLocation();
-             destInfo.NextLocation() && sourceInfo1.NextLocation() && sourceInfo2.NextLocation();)
+        for (destInfo.ResetTime(); destInfo.NextTime();)
         {
-          for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
-               destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
-          {
-            float value = kFloatMissing;
-            float value1 = sourceInfo1.FloatValue();
-            float value2 = sourceInfo2.FloatValue();
-            if (useInfo2 &&
-                value2 != kFloatMissing)  // kakkosdata on priorisoitu korkeammalle (persa halusi)
-              value = value2;
-            else if (useInfo1 && value1 != kFloatMissing)
-              value = value1;
+          bool timeFound = false;
+          if (useInfo1 && sourceInfo1.Time(destInfo.Time()))
+            timeFound = true;
+          if (useInfo2 && sourceInfo2.Time(destInfo.Time()))
+            timeFound = true;
+          if (!timeFound ||
+              !(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+            continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-            destInfo.FloatValue(value);
+          for (destInfo.ResetLocation(), sourceInfo1.ResetLocation(), sourceInfo2.ResetLocation();
+               destInfo.NextLocation() && sourceInfo1.NextLocation() && sourceInfo2.NextLocation();)
+          {
+            for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
+                 destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
+            {
+              float value = kFloatMissing;
+              float value1 = sourceInfo1.FloatValue();
+              float value2 = sourceInfo2.FloatValue();
+              if (useInfo2 &&
+                  value2 != kFloatMissing)  // kakkosdata on priorisoitu korkeammalle (persa halusi)
+                value = value2;
+              else if (useInfo1 && value1 != kFloatMissing)
+                value = value1;
+
+              destInfo.FloatValue(value);
+            }
           }
         }
       }
     }
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -951,74 +1194,81 @@ NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1
                                                    NFmiQueryData *theSourceData2,
                                                    int thePriorisedDataNumber)
 {
-  NFmiQueryInfo *dataInfo1 = theSourceData1->Info();
-  NFmiHPlaceDescriptor hplaceDesc1(dataInfo1->HPlaceDescriptor());
-  NFmiHPlaceDescriptor hplaceDesc2(theSourceData2->Info()->HPlaceDescriptor());
-  NFmiHPlaceDescriptor newHPlaceDesc(hplaceDesc1.Combine(hplaceDesc2));
-  NFmiQueryInfo tmpInfo(dataInfo1->ParamDescriptor(),
-                        dataInfo1->TimeDescriptor(),
-                        newHPlaceDesc,
-                        dataInfo1->VPlaceDescriptor());
-  tmpInfo.InfoVersion(
-      dataInfo1
-          ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-  NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-  if (destData)
+  try
   {
-    NFmiFastQueryInfo sourceInfo1(theSourceData1);
-    NFmiFastQueryInfo sourceInfo2(theSourceData2);
-    NFmiFastQueryInfo destInfo(destData);
-    for (destInfo.ResetLocation(); destInfo.NextLocation();)
+    NFmiQueryInfo *dataInfo1 = theSourceData1->Info();
+    NFmiHPlaceDescriptor hplaceDesc1(dataInfo1->HPlaceDescriptor());
+    NFmiHPlaceDescriptor hplaceDesc2(theSourceData2->Info()->HPlaceDescriptor());
+    NFmiHPlaceDescriptor newHPlaceDesc(hplaceDesc1.Combine(hplaceDesc2));
+    NFmiQueryInfo tmpInfo(dataInfo1->ParamDescriptor(),
+                          dataInfo1->TimeDescriptor(),
+                          newHPlaceDesc,
+                          dataInfo1->VPlaceDescriptor());
+    tmpInfo.InfoVersion(
+        dataInfo1
+            ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+    NFmiQueryData *destData = CreateEmptyData(tmpInfo);
+    if (destData)
     {
-      bool useInfo1 = false;
-      bool useInfo2 = false;
-      // TODO Muuta latlon-hauksi?!?!
-      if (sourceInfo1.Location(*destInfo.Location()))
-        useInfo1 = true;
-      if (sourceInfo2.Location(*destInfo.Location()))
-        useInfo2 = true;
-      if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-        continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-
-      //				for(destInfo.ResetParam(), sourceInfo1.ResetParam(),
-      // sourceInfo2.ResetParam(); destInfo.NextParam() && sourceInfo1.NextParam() &&
-      // sourceInfo2.NextParam();)
-      for (destInfo.ResetParam(); destInfo.NextParam();)
+      NFmiFastQueryInfo sourceInfo1(theSourceData1);
+      NFmiFastQueryInfo sourceInfo2(theSourceData2);
+      NFmiFastQueryInfo destInfo(destData);
+      for (destInfo.ResetLocation(); destInfo.NextLocation();)
       {
-        // asetetaan sourceinfot osoittamaan oikeaan parametriin, jos sellainen löytyy
-        sourceInfo1.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
-        sourceInfo2.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
+        bool useInfo1 = false;
+        bool useInfo2 = false;
+        // TODO Muuta latlon-hauksi?!?!
+        if (sourceInfo1.Location(*destInfo.Location()))
+          useInfo1 = true;
+        if (sourceInfo2.Location(*destInfo.Location()))
+          useInfo2 = true;
+        if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+          continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-        for (destInfo.ResetTime(), sourceInfo1.ResetTime();
-             destInfo.NextTime() && sourceInfo1.NextTime();)
-        {  // source1:stä voidaan juoksuttaa samalla aika loopilla koska timedesc on otettu
-           // sieltä,
-           // mutta source2:lta pitää aina kysyä!
-          bool useInfo2Time = true;
-          if (!sourceInfo2.Time(destInfo.Time()))
-            useInfo2Time = false;
-          if (!(useInfo1 ||
-                (useInfo2 &&
-                 useInfo2Time)))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-            continue;             // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+        //				for(destInfo.ResetParam(), sourceInfo1.ResetParam(),
+        // sourceInfo2.ResetParam(); destInfo.NextParam() && sourceInfo1.NextParam() &&
+        // sourceInfo2.NextParam();)
+        for (destInfo.ResetParam(); destInfo.NextParam();)
+        {
+          // asetetaan sourceinfot osoittamaan oikeaan parametriin, jos sellainen löytyy
+          sourceInfo1.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
+          sourceInfo2.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
 
-          for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
-               destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
-          {
-            float value1 = sourceInfo1.FloatValue();
-            float value2 = sourceInfo2.FloatValue();
-            float value = (thePriorisedDataNumber == 2) ? value2 : value1;
-            if (value ==
-                kFloatMissing)  // jos priorisoitu data oli puuttuvaa, annetaan sitten se toinen
-              value = (thePriorisedDataNumber == 2) ? value1 : value2;
+          for (destInfo.ResetTime(), sourceInfo1.ResetTime();
+               destInfo.NextTime() && sourceInfo1.NextTime();)
+          {  // source1:stä voidaan juoksuttaa samalla aika loopilla koska timedesc on otettu
+             // sieltä,
+             // mutta source2:lta pitää aina kysyä!
+            bool useInfo2Time = true;
+            if (!sourceInfo2.Time(destInfo.Time()))
+              useInfo2Time = false;
+            if (!(useInfo1 ||
+                  (useInfo2 &&
+                   useInfo2Time)))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+              continue;             // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-            destInfo.FloatValue(value);
+            for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
+                 destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
+            {
+              float value1 = sourceInfo1.FloatValue();
+              float value2 = sourceInfo2.FloatValue();
+              float value = (thePriorisedDataNumber == 2) ? value2 : value1;
+              if (value ==
+                  kFloatMissing)  // jos priorisoitu data oli puuttuvaa, annetaan sitten se toinen
+                value = (thePriorisedDataNumber == 2) ? value1 : value2;
+
+              destInfo.FloatValue(value);
+            }
           }
         }
       }
     }
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1036,43 +1286,50 @@ NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1
 NFmiQueryData *NFmiQueryDataUtil::ExtractTimes(const NFmiQueryData *theSourceData,
                                                const NFmiTimeDescriptor &theWantedTimeDesc)
 {
-  NFmiQueryInfo *tmpInfoPtr = theSourceData->Info();
-  NFmiQueryInfo dataInfo(tmpInfoPtr->ParamDescriptor(),
-                         theWantedTimeDesc,
-                         tmpInfoPtr->HPlaceDescriptor(),
-                         tmpInfoPtr->VPlaceDescriptor(),
-                         tmpInfoPtr->InfoVersion());
-  //  dataInfo.InfoVersion(tmpInfoPtr->InfoVersion()); // pidetään infoversio samana, muuten menee
-  //  interpoloinnit pieleen!
-  NFmiQueryData *destData = CreateEmptyData(dataInfo);
-  if (destData)
+  try
   {
-    NFmiFastQueryInfo sourceInfo(const_cast<NFmiQueryData *>(theSourceData));
-    NFmiFastQueryInfo destInfo(destData);
-    for (destInfo.ResetTime(); destInfo.NextTime();)
+    NFmiQueryInfo *tmpInfoPtr = theSourceData->Info();
+    NFmiQueryInfo dataInfo(tmpInfoPtr->ParamDescriptor(),
+                           theWantedTimeDesc,
+                           tmpInfoPtr->HPlaceDescriptor(),
+                           tmpInfoPtr->VPlaceDescriptor(),
+                           tmpInfoPtr->InfoVersion());
+    //  dataInfo.InfoVersion(tmpInfoPtr->InfoVersion()); // pidetään infoversio samana, muuten
+    //  menee interpoloinnit pieleen!
+    NFmiQueryData *destData = CreateEmptyData(dataInfo);
+    if (destData)
     {
-      if (sourceInfo.Time(destInfo.Time()))
+      NFmiFastQueryInfo sourceInfo(const_cast<NFmiQueryData *>(theSourceData));
+      NFmiFastQueryInfo destInfo(destData);
+      for (destInfo.ResetTime(); destInfo.NextTime();)
       {
-        for (destInfo.ResetParam(), sourceInfo.ResetParam();
-             destInfo.NextParam() && sourceInfo.NextParam();)
+        if (sourceInfo.Time(destInfo.Time()))
         {
-          for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-               destInfo.NextLocation() && sourceInfo.NextLocation();)
+          for (destInfo.ResetParam(), sourceInfo.ResetParam();
+               destInfo.NextParam() && sourceInfo.NextParam();)
           {
-            for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-                 destInfo.NextLevel() && sourceInfo.NextLevel();)
+            for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+                 destInfo.NextLocation() && sourceInfo.NextLocation();)
             {
-              float value = sourceInfo.FloatValue();
-              destInfo.FloatValue(value);
+              for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+                   destInfo.NextLevel() && sourceInfo.NextLevel();)
+              {
+                float value = sourceInfo.FloatValue();
+                destInfo.FloatValue(value);
+              }
             }
           }
         }
       }
+      if (destData)  // lisataan tuottaja id tieto, jos lahdedatasta sita loytyy
+        AddProducerIds(destInfo, sourceInfo);
     }
-    if (destData)  // lisataan tuottaja id tieto, jos lahdedatasta sita loytyy
-      AddProducerIds(destInfo, sourceInfo);
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1091,41 +1348,48 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractTimes(const NFmiQueryData *theSourceDat
 bool FillSimilarDataWithDifferentTimeEnds(NFmiFastQueryInfo *theDestination,
                                           NFmiFastQueryInfo *theSource)
 {
-  bool fullFill = false;
-  if (theDestination && theSource)
+  try
   {
-    float value = kFloatMissing;
-    float sourceValue = kFloatMissing;
-    fullFill = true;
-    for (theDestination->ResetTime(); theDestination->NextTime();)
+    bool fullFill = false;
+    if (theDestination && theSource)
     {
-      theSource->Time(theDestination->Time());
-      for (theDestination->ResetParam(), theSource->ResetParam();
-           theDestination->NextParam() && theSource->NextParam();)
+      float value = kFloatMissing;
+      float sourceValue = kFloatMissing;
+      fullFill = true;
+      for (theDestination->ResetTime(); theDestination->NextTime();)
       {
-        for (theDestination->ResetLocation(), theSource->ResetLocation();
-             theDestination->NextLocation() && theSource->NextLocation();)
+        theSource->Time(theDestination->Time());
+        for (theDestination->ResetParam(), theSource->ResetParam();
+             theDestination->NextParam() && theSource->NextParam();)
         {
-          for (theDestination->ResetLevel(), theSource->ResetLevel();
-               theDestination->NextLevel() && theSource->NextLevel();)
+          for (theDestination->ResetLocation(), theSource->ResetLocation();
+               theDestination->NextLocation() && theSource->NextLocation();)
           {
-            value = theDestination->FloatValue();
-            if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+            for (theDestination->ResetLevel(), theSource->ResetLevel();
+                 theDestination->NextLevel() && theSource->NextLevel();)
             {
-              sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
-                                                      // kohdallaan vain fastqueryinfossa!!!
-              if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
-                fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
-                                   // datasta puuttuu vielä
-              else
-                theDestination->FloatValue(sourceValue);
+              value = theDestination->FloatValue();
+              if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+              {
+                sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
+                                                        // kohdallaan vain fastqueryinfossa!!!
+                if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
+                  fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
+                                     // datasta puuttuu vielä
+                else
+                  theDestination->FloatValue(sourceValue);
+              }
             }
           }
         }
       }
     }
+    return fullFill;
   }
-  return fullFill;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1157,42 +1421,49 @@ bool InterpolateSimilarDataToLargerTimeResolution(NFmiFastQueryInfo *theDestinat
                                                   float /* theTimeResolutionRatio */,
                                                   int theMaxTimeSearchRangeInMinutes)
 {
-  bool fullFill = false;
-  if (theDestination && theSource)
+  try
   {
-    float value = kFloatMissing;
-    float sourceValue = kFloatMissing;
-    fullFill = true;
-    NFmiDataModifierMode modeModifier;
-    for (theDestination->ResetTime(); theDestination->NextTime();)
+    bool fullFill = false;
+    if (theDestination && theSource)
     {
-      NFmiMetTime t(theDestination->Time());
-      theSource->Time(t);
-      for (theDestination->ResetParam(), theSource->ResetParam();
-           theDestination->NextParam() && theSource->NextParam();)
+      float value = kFloatMissing;
+      float sourceValue = kFloatMissing;
+      fullFill = true;
+      NFmiDataModifierMode modeModifier;
+      for (theDestination->ResetTime(); theDestination->NextTime();)
       {
-        for (theDestination->ResetLocation(), theSource->ResetLocation();
-             theDestination->NextLocation() && theSource->NextLocation();)
+        NFmiMetTime t(theDestination->Time());
+        theSource->Time(t);
+        for (theDestination->ResetParam(), theSource->ResetParam();
+             theDestination->NextParam() && theSource->NextParam();)
         {
-          for (theDestination->ResetLevel(), theSource->ResetLevel();
-               theDestination->NextLevel() && theSource->NextLevel();)
+          for (theDestination->ResetLocation(), theSource->ResetLocation();
+               theDestination->NextLocation() && theSource->NextLocation();)
           {
-            value = theDestination->FloatValue();
-            if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+            for (theDestination->ResetLevel(), theSource->ResetLevel();
+                 theDestination->NextLevel() && theSource->NextLevel();)
             {
-              sourceValue = theSource->InterpolatedValue(t, theMaxTimeSearchRangeInMinutes);
-              if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
-                fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
-                                   // datasta puuttuu vielä
-              else
-                theDestination->FloatValue(sourceValue);
-            }
-          }  // for(location)-looppi
-        }    // for(param)-looppi
-      }      // for(level)-looppi
-    }        // for(time)-looppi
+              value = theDestination->FloatValue();
+              if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+              {
+                sourceValue = theSource->InterpolatedValue(t, theMaxTimeSearchRangeInMinutes);
+                if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
+                  fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
+                                     // datasta puuttuu vielä
+                else
+                  theDestination->FloatValue(sourceValue);
+              }
+            }  // for(location)-looppi
+          }    // for(param)-looppi
+        }      // for(level)-looppi
+      }        // for(time)-looppi
+    }
+    return fullFill;
   }
-  return fullFill;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1208,15 +1479,20 @@ float GetLagrangeValue(std::vector<double> &theValueVec,
                        std::vector<double> &theTimeVec,
                        double theInterpolatedTimePlace)
 {
-  NFmiLagrange lagrange;
-  if (std::find_if(theValueVec.begin(),
-                   theValueVec.end(),
-                   ::IsMissingValue<double>(kFloatMissing)) != theValueVec.end())
-    return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
-  else
+  try
   {
+    NFmiLagrange lagrange;
+    if (std::find_if(theValueVec.begin(),
+                     theValueVec.end(),
+                     ::IsMissingValue<double>(kFloatMissing)) != theValueVec.end())
+      return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
+
     lagrange.Init(&theTimeVec[0], &theValueVec[0], static_cast<int>(theValueVec.size()));
     return static_cast<float>(lagrange.Interpolate(theInterpolatedTimePlace));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1247,20 +1523,21 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
                              FmiInterpolationMethod theParamInterpMethod,
                              NFmiQueryDataUtil::LimitChecker &theLimitChecker)
 {
-  if (theInterpolationMethod != kLagrange ||
-      !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
-    return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
-  else
+  try
   {
+    if (theInterpolationMethod != kLagrange ||
+        !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
+      return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
+
     float value = kFloatMissing;
     unsigned long oldTimeIndex = theInfo.TimeIndex();
     theInfo.TimeIndex(theOneStepBeforeTimeIndex);
-    if (theOneStepBeforeTimeIndex ==
-        0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
+    if (theOneStepBeforeTimeIndex == 0)
     {
+      // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
       std::vector<double> valueVec(3);
-      std::vector<double> timeVec(
-          3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+      std::vector<double> timeVec(3);
+      // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = 0;
       timeVec[1] = 1;
       timeVec[2] = 2;
@@ -1274,8 +1551,8 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
                                                                     // interpolointi 3:lla arvolla
     {
       std::vector<double> valueVec(3);
-      std::vector<double> timeVec(
-          3);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+      std::vector<double> timeVec(3);
+      // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = -1;
       timeVec[1] = 0;
       timeVec[2] = 1;
@@ -1284,14 +1561,13 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
       valueVec[2] = theInfo.PeekTimeValue(1);
       value = GetLagrangeValue(valueVec, timeVec, theInterpolatedTimePlace);
     }
-    else if (theOneStepBeforeTimeIndex >
-             theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
-      value = kFloatMissing;
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
+    else if (theOneStepBeforeTimeIndex > theInfo.SizeTimes() - 2)
+      value = kFloatMissing;  // ei voi interpoloida, annettu indeksi väärin?
+    else                      // muuten tehdään normaali 4:n pisteen interpolointi
     {
       std::vector<double> valueVec(4);
-      std::vector<double> timeVec(
-          4);  // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
+      std::vector<double> timeVec(4);
+      // yllä olevien arvojen suhteelliset paikat aika-avaruudessa (0 - 1)
       timeVec[0] = -1;
       timeVec[1] = 0;
       timeVec[2] = 1;
@@ -1305,6 +1581,10 @@ float TimeInterpolationValue(NFmiFastQueryInfo &theInfo,
     theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
                                       // minusta se on turhaa)
     return theLimitChecker.GetInsideLimitsValue(value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1337,39 +1617,38 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
                                                                        // laskettu kerran joka
                                                                        // aika askeleelle
 {
-  if (theInterpolationMethod != kLagrange ||
-      !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
-    return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
-  else
+  try
   {
+    if (theInterpolationMethod != kLagrange ||
+        !(theParamInterpMethod == kLinearly || theParamInterpMethod == kLagrange))
+      return theInfo.InterpolatedValue(theTime, theMaxTimeSearchRangeInMinutes);
+
     //	  std::vector<double> timeVec(4); // yllä olevien arvojen suhteelliset paikat
     // aika-avaruudessa (0 - 1)
     float value = kFloatMissing;
     unsigned long oldTimeIndex = theInfo.TimeIndex();
     theInfo.TimeIndex(theOneStepBeforeTimeIndex);
-    if (theOneStepBeforeTimeIndex ==
-        0)  // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
+    if (theOneStepBeforeTimeIndex == 0)
     {
+      // case: annettu index timebagin alku rajalla, eli tehdään interpolointi 3:lla arvolla
       std::vector<double> valueVec(3);
       valueVec[0] = theInfo.PeekTimeValue(0);
       valueVec[1] = theInfo.PeekTimeValue(1);
       valueVec[2] = theInfo.PeekTimeValue(2);
       value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
     }
-    else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)  // case: annettu index timebagin
-                                                                    // loppu rajalla, eli tehdään
-                                                                    // interpolointi 3:lla arvolla
+    else if (theOneStepBeforeTimeIndex == theInfo.SizeTimes() - 2)
     {
+      // case: annettu index timebagin loppu rajalla, eli tehdään interpolointi 3:lla arvolla
       std::vector<double> valueVec(3);
       valueVec[0] = theInfo.PeekTimeValue(-1);
       valueVec[1] = theInfo.PeekTimeValue(0);
       valueVec[2] = theInfo.PeekTimeValue(1);
       value = GetLagrangeValue(valueVec, theTimeFactors, theInterpolatedTimePlace);
     }
-    else if (theOneStepBeforeTimeIndex >
-             theInfo.SizeTimes() - 2)  // ei voi interpoloida, annettu indeksi väärin?
-      value = kFloatMissing;
-    else  // muuten tehdään normaali 4:n pisteen interpolointi
+    else if (theOneStepBeforeTimeIndex > theInfo.SizeTimes() - 2)
+      value = kFloatMissing;  // ei voi interpoloida, annettu indeksi väärin?
+    else                      // muuten tehdään normaali 4:n pisteen interpolointi
     {
       std::vector<double> valueVec(4);
       valueVec[0] = theInfo.PeekTimeValue(-1);
@@ -1381,6 +1660,10 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
     theInfo.TimeIndex(oldTimeIndex);  // palautetaan varmuuden vuoksi originaali index (vaikka
                                       // minusta se on turhaa)
     return theLimitChecker.GetInsideLimitsValue(value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1411,72 +1694,79 @@ bool InterpolateSimilarDataToSmallerTimeResolution(NFmiFastQueryInfo *theDestina
                                                    int theMaxTimeSearchRangeInMinutes,
                                                    FmiInterpolationMethod theInterpolationMethod)
 {
-  bool fullFill = false;
-  if (theDestination && theSource)
+  try
   {
-    float sourceValue = kFloatMissing;
-    bool useLagrange = theInterpolationMethod == kLagrange;
-    unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
-                                          // ajan aikaindeksi, joka löytyy lähdedatasta
-    double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1
-    // avaruudessa niiden kahden aikapisteen välissä, jotka ovat
-    // lähinnä interpoloitavaa pistettä lähdedatassa.
-    fullFill = true;
-    for (theDestination->ResetTime(); theDestination->NextTime();)
+    bool fullFill = false;
+    if (theDestination && theSource)
     {
-      NFmiMetTime t(theDestination->Time());
-      bool timeStatus = theSource->Time(t);
-      if (useLagrange && (!timeStatus))
-      {  // tehdään lagrange intepolointia varten tarvittavat laskut
-        theSource->TimeToNearestStep(t, kBackward, theMaxTimeSearchRangeInMinutes);
-        lagrangeTimeIndex = theSource->TimeIndex();
-        NFmiMetTime time1(theSource->Time());
-        theSource->NextTime();
-        NFmiMetTime time2(theSource->Time());
-        lagrangeTimePosition = static_cast<double>(t.DifferenceInMinutes(time1)) /
-                               static_cast<double>(time2.DifferenceInMinutes(time1));
-      }
-      for (theDestination->ResetParam(), theSource->ResetParam();
-           theDestination->NextParam() && theSource->NextParam();)
+      float sourceValue = kFloatMissing;
+      bool useLagrange = theInterpolationMethod == kLagrange;
+      unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
+                                            // ajan aikaindeksi, joka löytyy lähdedatasta
+      double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1
+      // avaruudessa niiden kahden aikapisteen välissä, jotka ovat
+      // lähinnä interpoloitavaa pistettä lähdedatassa.
+      fullFill = true;
+      for (theDestination->ResetTime(); theDestination->NextTime();)
       {
-        const NFmiParam *tmpParam = theDestination->Param().GetParam();
-        NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
-            static_cast<float>(tmpParam->MinValue()),
-            static_cast<float>(tmpParam->MaxValue()),
-            IsParamCircularValued(tmpParam));
-        FmiInterpolationMethod paramInterpMethod =
-            theDestination->Param().GetParam()->InterpolationMethod();
-        for (theDestination->ResetLocation(), theSource->ResetLocation();
-             theDestination->NextLocation() && theSource->NextLocation();)
+        NFmiMetTime t(theDestination->Time());
+        bool timeStatus = theSource->Time(t);
+        if (useLagrange && (!timeStatus))
+        {  // tehdään lagrange intepolointia varten tarvittavat laskut
+          theSource->TimeToNearestStep(t, kBackward, theMaxTimeSearchRangeInMinutes);
+          lagrangeTimeIndex = theSource->TimeIndex();
+          NFmiMetTime time1(theSource->Time());
+          theSource->NextTime();
+          NFmiMetTime time2(theSource->Time());
+          lagrangeTimePosition = static_cast<double>(t.DifferenceInMinutes(time1)) /
+                                 static_cast<double>(time2.DifferenceInMinutes(time1));
+        }
+        for (theDestination->ResetParam(), theSource->ResetParam();
+             theDestination->NextParam() && theSource->NextParam();)
         {
-          for (theDestination->ResetLevel(), theSource->ResetLevel();
-               theDestination->NextLevel() && theSource->NextLevel();)
+          const NFmiParam *tmpParam = theDestination->Param().GetParam();
+          NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
+              static_cast<float>(tmpParam->MinValue()),
+              static_cast<float>(tmpParam->MaxValue()),
+              IsParamCircularValued(tmpParam));
+          FmiInterpolationMethod paramInterpMethod =
+              theDestination->Param().GetParam()->InterpolationMethod();
+          for (theDestination->ResetLocation(), theSource->ResetLocation();
+               theDestination->NextLocation() && theSource->NextLocation();)
           {
-            sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
-                                                    // kohdallaan vain fastqueryinfossa!!!
-            if (timeStatus &&
-                !(sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing))
+            for (theDestination->ResetLevel(), theSource->ResetLevel();
+                 theDestination->NextLevel() && theSource->NextLevel();)
             {
-              theDestination->FloatValue(sourceValue);
-            }
-            else  // pitää interpoloida
-            {
-              float tempV = TimeInterpolationValue(*theSource,
-                                                   t,
-                                                   theInterpolationMethod,
-                                                   theMaxTimeSearchRangeInMinutes,
-                                                   lagrangeTimeIndex,
-                                                   lagrangeTimePosition,
-                                                   paramInterpMethod,
-                                                   checkerWithLagrangeInterpolation);
-              theDestination->FloatValue(tempV);
+              sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
+                                                      // kohdallaan vain fastqueryinfossa!!!
+              if (timeStatus &&
+                  !(sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing))
+              {
+                theDestination->FloatValue(sourceValue);
+              }
+              else  // pitää interpoloida
+              {
+                float tempV = TimeInterpolationValue(*theSource,
+                                                     t,
+                                                     theInterpolationMethod,
+                                                     theMaxTimeSearchRangeInMinutes,
+                                                     lagrangeTimeIndex,
+                                                     lagrangeTimePosition,
+                                                     paramInterpMethod,
+                                                     checkerWithLagrangeInterpolation);
+                theDestination->FloatValue(tempV);
+              }
             }
           }
         }
       }
     }
+    return fullFill;
   }
-  return fullFill;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // luo vaihtuva aikaresoluutioisesta (WCTR=With Changing Time Resolution) datasta tasaväliaikaista
@@ -1486,143 +1776,151 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
                                         int theMaxTimeSearchRangeInMinutes,
                                         FmiInterpolationMethod theInterpolationMethod)
 {
-  if (theSource.InfoVersion() != theDestination.InfoVersion())
-    return false;
-
-  theDestination.First();
-  int timeSize = theDestination.TimeDescriptor().Size();
-
-  bool status = true;
-  NFmiMetTime time1, time2;
-  NFmiDataModifierSum sumModifier;
-  NFmiDataModifierMode modeModifier;
-  bool useLagrange = theInterpolationMethod == kLagrange;
-  unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
-                                        // ajan aikaindeksi, joka löytyy lähdedatasta
-  double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1 avaruudessa
-                                    // niiden kahden aikapisteen välissä, jotka ovat lähinnä
-                                    // interpoloitavaa pistettä lähdedatassa.
-  std::vector<double> timeFactors;  // tähän lasketaan joka aika-askeleella mahdolliset lagrange
-                                    // laskuissa tarvittavat aikakertoimet
-
-  int i = 0;
-  for (theDestination.ResetTime(); theDestination.NextTime() && i < timeSize;
-       i++)  // juoksutetaan ajat läpi
+  try
   {
-    if (i == 0)
-      time1 = time2 = theDestination.Time();
-    else
+    if (theSource.InfoVersion() != theDestination.InfoVersion())
+      return false;
+
+    theDestination.First();
+    int timeSize = theDestination.TimeDescriptor().Size();
+
+    bool status = true;
+    NFmiMetTime time1, time2;
+    NFmiDataModifierSum sumModifier;
+    NFmiDataModifierMode modeModifier;
+    bool useLagrange = theInterpolationMethod == kLagrange;
+    unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
+                                          // ajan aikaindeksi, joka löytyy lähdedatasta
+    double lagrangeTimePosition = 0;  // tähän laitetaan interpoloitavan ajan paikka 0 - 1
+                                      // avaruudessa niiden kahden aikapisteen välissä, jotka ovat
+                                      // lähinnä interpoloitavaa pistettä lähdedatassa.
+    std::vector<double> timeFactors;  // tähän lasketaan joka aika-askeleella mahdolliset lagrange
+                                      // laskuissa tarvittavat aikakertoimet
+
+    int i = 0;
+    for (theDestination.ResetTime(); theDestination.NextTime() && i < timeSize;
+         i++)  // juoksutetaan ajat läpi
     {
-      time1 = time2;
-      time1.SetTimeStep(1);
-      time2 = theDestination.Time();
-      time1.ChangeByMinutes(1);
-    }
-
-    bool timeFound = theSource.Time(theDestination.Time());
-    NFmiMetTime currentTime(theDestination.Time());
-    if (!timeFound)
-      theSource.TimeToNearestStep(currentTime, kForward);
-
-    if (useLagrange && (!timeFound))
-    {  // tehdään lagrange intepolointia varten tarvittavat laskut
-      theSource.TimeToNearestStep(currentTime, kBackward, theMaxTimeSearchRangeInMinutes);
-      lagrangeTimeIndex = theSource.TimeIndex();
-      NFmiMetTime timeLagrange1(theSource.Time());
-      theSource.NextTime();
-      lagrangeTimePosition = currentTime.DifferenceInMinutes(timeLagrange1);
-
-      theSource.TimeIndex(lagrangeTimeIndex);  // source pitää asettaa vielä oikeaan aikaan, että
-                                               // timeFactorit voidaan laskea
-      if (lagrangeTimeIndex == 0)  // case: annettu index timebagin alku rajalla, eli tehdään
-                                   // interpolointi 3:lla arvolla
+      if (i == 0)
+        time1 = time2 = theDestination.Time();
+      else
       {
-        timeFactors.resize(3);
-        NFmiMetTime time_0(theSource.Time());
-        theSource.NextTime();
-        NFmiMetTime time_1(theSource.Time());
-        theSource.NextTime();
-        NFmiMetTime time_2(theSource.Time());
-        timeFactors[0] = 0;
-        timeFactors[1] = time_1.DifferenceInMinutes(time_0);
-        timeFactors[2] = time_2.DifferenceInMinutes(time_0);
+        time1 = time2;
+        time1.SetTimeStep(1);
+        time2 = theDestination.Time();
+        time1.ChangeByMinutes(1);
       }
-      else if (lagrangeTimeIndex == theSource.SizeTimes() - 2)  // case: annettu index timebagin
-                                                                // loppu rajalla, eli tehdään
-                                                                // interpolointi 3:lla arvolla
-      {
-        timeFactors.resize(3);
-        NFmiMetTime time_0(theSource.Time());
-        theSource.PreviousTime();
-        NFmiMetTime time_m1(theSource.Time());
-        theSource.NextTime();
-        theSource.NextTime();
-        NFmiMetTime time_1(theSource.Time());
-        timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
-        timeFactors[1] = 0;
-        timeFactors[2] = time_1.DifferenceInMinutes(time_0);
-      }
-      else  // muuten tehdään normaali 4:n pisteen interpolointi
-      {
-        timeFactors.resize(4);
-        NFmiMetTime time_0(theSource.Time());
-        theSource.PreviousTime();
-        NFmiMetTime time_m1(theSource.Time());
-        theSource.NextTime();
-        theSource.NextTime();
-        NFmiMetTime time_1(theSource.Time());
-        theSource.NextTime();
-        NFmiMetTime time_2(theSource.Time());
-        timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
-        timeFactors[1] = 0;
-        timeFactors[2] = time_1.DifferenceInMinutes(time_0);
-        timeFactors[3] = time_2.DifferenceInMinutes(time_0);
-      }
-    }
 
-    for (theDestination.ResetParam(); theDestination.NextParam();)  // juoksutetaan parametrit läpi
-    {
-      const NFmiParam *tmpParam = theDestination.Param().GetParam();
-      NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
-          static_cast<float>(tmpParam->MinValue()),
-          static_cast<float>(tmpParam->MaxValue()),
-          IsParamCircularValued(tmpParam));
-      FmiInterpolationMethod paramInterpMethod =
-          theDestination.Param().GetParam()->InterpolationMethod();
-      if (theSource.Param(*theDestination.Param().GetParam()))
-      {
-        for (theDestination.ResetLocation(), theSource.ResetLocation();
-             theDestination.NextLocation() && theSource.NextLocation();)
+      bool timeFound = theSource.Time(theDestination.Time());
+      NFmiMetTime currentTime(theDestination.Time());
+      if (!timeFound)
+        theSource.TimeToNearestStep(currentTime, kForward);
+
+      if (useLagrange && (!timeFound))
+      {  // tehdään lagrange intepolointia varten tarvittavat laskut
+        theSource.TimeToNearestStep(currentTime, kBackward, theMaxTimeSearchRangeInMinutes);
+        lagrangeTimeIndex = theSource.TimeIndex();
+        NFmiMetTime timeLagrange1(theSource.Time());
+        theSource.NextTime();
+        lagrangeTimePosition = currentTime.DifferenceInMinutes(timeLagrange1);
+
+        theSource.TimeIndex(lagrangeTimeIndex);  // source pitää asettaa vielä oikeaan aikaan,
+                                                 // että timeFactorit voidaan laskea
+        if (lagrangeTimeIndex == 0)  // case: annettu index timebagin alku rajalla, eli tehdään
+                                     // interpolointi 3:lla arvolla
         {
-          for (theDestination.ResetLevel(), theSource.ResetLevel();
-               theDestination.NextLevel() && theSource.NextLevel();)
+          timeFactors.resize(3);
+          NFmiMetTime time_0(theSource.Time());
+          theSource.NextTime();
+          NFmiMetTime time_1(theSource.Time());
+          theSource.NextTime();
+          NFmiMetTime time_2(theSource.Time());
+          timeFactors[0] = 0;
+          timeFactors[1] = time_1.DifferenceInMinutes(time_0);
+          timeFactors[2] = time_2.DifferenceInMinutes(time_0);
+        }
+        else if (lagrangeTimeIndex == theSource.SizeTimes() - 2)  // case: annettu index timebagin
+                                                                  // loppu rajalla, eli tehdään
+                                                                  // interpolointi 3:lla arvolla
+        {
+          timeFactors.resize(3);
+          NFmiMetTime time_0(theSource.Time());
+          theSource.PreviousTime();
+          NFmiMetTime time_m1(theSource.Time());
+          theSource.NextTime();
+          theSource.NextTime();
+          NFmiMetTime time_1(theSource.Time());
+          timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
+          timeFactors[1] = 0;
+          timeFactors[2] = time_1.DifferenceInMinutes(time_0);
+        }
+        else  // muuten tehdään normaali 4:n pisteen interpolointi
+        {
+          timeFactors.resize(4);
+          NFmiMetTime time_0(theSource.Time());
+          theSource.PreviousTime();
+          NFmiMetTime time_m1(theSource.Time());
+          theSource.NextTime();
+          theSource.NextTime();
+          NFmiMetTime time_1(theSource.Time());
+          theSource.NextTime();
+          NFmiMetTime time_2(theSource.Time());
+          timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
+          timeFactors[1] = 0;
+          timeFactors[2] = time_1.DifferenceInMinutes(time_0);
+          timeFactors[3] = time_2.DifferenceInMinutes(time_0);
+        }
+      }
+
+      for (theDestination.ResetParam();
+           theDestination.NextParam();)  // juoksutetaan parametrit läpi
+      {
+        const NFmiParam *tmpParam = theDestination.Param().GetParam();
+        NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
+            static_cast<float>(tmpParam->MinValue()),
+            static_cast<float>(tmpParam->MaxValue()),
+            IsParamCircularValued(tmpParam));
+        FmiInterpolationMethod paramInterpMethod =
+            theDestination.Param().GetParam()->InterpolationMethod();
+        if (theSource.Param(*theDestination.Param().GetParam()))
+        {
+          for (theDestination.ResetLocation(), theSource.ResetLocation();
+               theDestination.NextLocation() && theSource.NextLocation();)
           {
-            if (timeFound)
-              theDestination.FloatValue(theSource.FloatValue());
-            else
+            for (theDestination.ResetLevel(), theSource.ResetLevel();
+                 theDestination.NextLevel() && theSource.NextLevel();)
             {
-              float tempV = TimeInterpolationValueWCTR(theSource,
-                                                       currentTime,
-                                                       theInterpolationMethod,
-                                                       theMaxTimeSearchRangeInMinutes,
-                                                       lagrangeTimeIndex,
-                                                       lagrangeTimePosition,
-                                                       paramInterpMethod,
-                                                       checkerWithLagrangeInterpolation,
-                                                       timeFactors);
-              theDestination.FloatValue(tempV);
+              if (timeFound)
+                theDestination.FloatValue(theSource.FloatValue());
+              else
+              {
+                float tempV = TimeInterpolationValueWCTR(theSource,
+                                                         currentTime,
+                                                         theInterpolationMethod,
+                                                         theMaxTimeSearchRangeInMinutes,
+                                                         lagrangeTimeIndex,
+                                                         lagrangeTimePosition,
+                                                         paramInterpMethod,
+                                                         checkerWithLagrangeInterpolation,
+                                                         timeFactors);
+                theDestination.FloatValue(tempV);
+              }
             }
           }
         }
+        //				else // HUOM! ei vakava virhe (joten kommentissa)
+        //					status = false; // parametrilista ei ollut
+        // täydellinen sourcedatassa (pitää varautua moiseen!)
       }
-      //				else // HUOM! ei vakava virhe (joten kommentissa)
-      //					status = false; // parametrilista ei ollut
-      // täydellinen sourcedatassa (pitää varautua moiseen!)
+      //		else // HUOM! ei vakava virhe (joten kommentissa)
+      //			status = false; // ei saisi tulla tähän!!!!
     }
-    //		else // HUOM! ei vakava virhe (joten kommentissa)
-    //			status = false; // ei saisi tulla tähän!!!!
+    return status;
   }
-  return status;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1641,21 +1939,27 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
 NFmiTimeBag MakeReferenceTimeBagCheck(const NFmiTimeBag &theTimeBag,
                                       NFmiTimeBag *thePossibleReferenceTimeBag)
 {
-  NFmiMetTime startTime(theTimeBag.FirstTime());
-  NFmiMetTime startRefTime(thePossibleReferenceTimeBag->FirstTime());
-  int resolutionInMinutes = theTimeBag.Resolution();
-  int shiftInMinutes = abs(startTime.DifferenceInMinutes(startRefTime) % resolutionInMinutes);
-  if (shiftInMinutes == 0)
-    return theTimeBag;
-  else
+  try
   {
+    NFmiMetTime startTime(theTimeBag.FirstTime());
+    NFmiMetTime startRefTime(thePossibleReferenceTimeBag->FirstTime());
+    int resolutionInMinutes = theTimeBag.Resolution();
+    int shiftInMinutes = abs(startTime.DifferenceInMinutes(startRefTime) % resolutionInMinutes);
+    if (shiftInMinutes == 0)
+      return theTimeBag;
+
     startTime.ChangeByMinutes(shiftInMinutes);
     NFmiMetTime endTime(theTimeBag.LastTime());
     endTime.ChangeByMinutes(-(resolutionInMinutes - shiftInMinutes));
     if (startTime > endTime)
       endTime = startTime;
+
     NFmiTimeBag tmp(startTime, endTime, resolutionInMinutes);
     return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1686,83 +1990,90 @@ NFmiQueryData *CreateSimilarDataWithTimeInterpolation(NFmiFastQueryInfo *theSour
                                                       int theMaxTimeSearchRangeInMinutes,
                                                       FmiInterpolationMethod theInterpolationMethod)
 {
-  NFmiQueryData *newData = nullptr;
-  if (theSourceInfo)
+  try
   {
-    theSourceInfo->FirstTime();  // Varmistetaan että ollaan 1. aika-askeleessa, jotta
-    // aikaresoluutio on aina sama samalle datalle (eikä satunnainen,
-    // jos vaihtuva resoluutioinen data ja aika-indeksi on joku muu
-    // kuin 0)
-    bool sourceDataIsWCTR =
-        theSourceInfo->TimeDescriptor().UseTimeList();  // WCTR = With Changing Time Resolution
-    float timeResolutionRatio =
-        float(theWantedTimeBag ? static_cast<long>(theWantedTimeBag->Resolution())
-                               : theResolutionInMinutes) /
-        theSourceInfo->TimeResolution();
-    if (timeResolutionRatio == 1 && !theWantedTimeBag && !sourceDataIsWCTR)
-      return theSourceInfo->RefQueryData()->Clone();
-
-    // luodaan uusi info, jolla aika-askel parametrina saadun timeperiodin mukainen
-    NFmiTimePerioid timePerioid(theResolutionInMinutes);
-    NFmiTimeBag timeBag;
-    if (theWantedTimeBag)
-      timeBag = *theWantedTimeBag;
-    else
+    NFmiQueryData *newData = nullptr;
+    if (theSourceInfo)
     {
-      NFmiMetTime startTime(theSourceInfo->TimeDescriptor().FirstTime());
-      NFmiMetTime endTime(theSourceInfo->TimeDescriptor().LastTime());
-      if (theStartTimeResolutionInMinutes != kFloatMissing)
-      {
-        startTime.SetTimeStep(static_cast<short>(theStartTimeResolutionInMinutes));
-        // startTime.PreviousMetTime();
-        endTime.SetTimeStep(static_cast<short>(theStartTimeResolutionInMinutes));
-        // endTime.NextMetTime();
-      }
-      NFmiTimeBag tmpTimeBag(startTime, endTime, timePerioid);
-      timeBag = tmpTimeBag;
-    }
+      theSourceInfo->FirstTime();  // Varmistetaan että ollaan 1. aika-askeleessa, jotta
+      // aikaresoluutio on aina sama samalle datalle (eikä satunnainen,
+      // jos vaihtuva resoluutioinen data ja aika-indeksi on joku muu
+      // kuin 0)
+      bool sourceDataIsWCTR =
+          theSourceInfo->TimeDescriptor().UseTimeList();  // WCTR = With Changing Time Resolution
+      float timeResolutionRatio =
+          float(theWantedTimeBag ? static_cast<long>(theWantedTimeBag->Resolution())
+                                 : theResolutionInMinutes) /
+          theSourceInfo->TimeResolution();
+      if (timeResolutionRatio == 1 && !theWantedTimeBag && !sourceDataIsWCTR)
+        return theSourceInfo->RefQueryData()->Clone();
 
-    if (thePossibleReferenceTimeBag)
-      timeBag = MakeReferenceTimeBagCheck(timeBag, thePossibleReferenceTimeBag);
-
-    NFmiTimeDescriptor timeDescriptor(theSourceInfo->TimeDescriptor().OriginTime(),
-                                      timeBag,
-                                      kUTC,
-                                      theSourceInfo->TimeDescriptor().IsInterpolation());
-
-    // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-    NFmiQueryInfo newInnerInfo(theSourceInfo->ParamDescriptor(),
-                               timeDescriptor,
-                               theSourceInfo->HPlaceDescriptor(),
-                               theSourceInfo->VPlaceDescriptor(),
-                               theSourceInfo->InfoVersion());
-    newInnerInfo.Header(theSourceInfo->Header());
-    newData = new NFmiQueryData(newInnerInfo);
-    newData->Init();
-
-    NFmiFastQueryInfo newFastInfo(newData);
-
-    if (sourceDataIsWCTR)
-    {
-      MakeSimilarTimeBagDataFromWCTRData(
-          newFastInfo, *theSourceInfo, theMaxTimeSearchRangeInMinutes, theInterpolationMethod);
-    }
-    else
-    {
-      if (timeResolutionRatio == 1)
-        FillSimilarDataWithDifferentTimeEnds(&newFastInfo, theSourceInfo);
-      else if (timeResolutionRatio > 1)
-        InterpolateSimilarDataToLargerTimeResolution(
-            &newFastInfo, theSourceInfo, timeResolutionRatio, theMaxTimeSearchRangeInMinutes);
+      // luodaan uusi info, jolla aika-askel parametrina saadun timeperiodin mukainen
+      NFmiTimePerioid timePerioid(theResolutionInMinutes);
+      NFmiTimeBag timeBag;
+      if (theWantedTimeBag)
+        timeBag = *theWantedTimeBag;
       else
-        InterpolateSimilarDataToSmallerTimeResolution(&newFastInfo,
-                                                      theSourceInfo,
-                                                      timeResolutionRatio,
-                                                      theMaxTimeSearchRangeInMinutes,
-                                                      theInterpolationMethod);
+      {
+        NFmiMetTime startTime(theSourceInfo->TimeDescriptor().FirstTime());
+        NFmiMetTime endTime(theSourceInfo->TimeDescriptor().LastTime());
+        if (theStartTimeResolutionInMinutes != kFloatMissing)
+        {
+          startTime.SetTimeStep(static_cast<short>(theStartTimeResolutionInMinutes));
+          // startTime.PreviousMetTime();
+          endTime.SetTimeStep(static_cast<short>(theStartTimeResolutionInMinutes));
+          // endTime.NextMetTime();
+        }
+        NFmiTimeBag tmpTimeBag(startTime, endTime, timePerioid);
+        timeBag = tmpTimeBag;
+      }
+
+      if (thePossibleReferenceTimeBag)
+        timeBag = MakeReferenceTimeBagCheck(timeBag, thePossibleReferenceTimeBag);
+
+      NFmiTimeDescriptor timeDescriptor(theSourceInfo->TimeDescriptor().OriginTime(),
+                                        timeBag,
+                                        kUTC,
+                                        theSourceInfo->TimeDescriptor().IsInterpolation());
+
+      // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
+      NFmiQueryInfo newInnerInfo(theSourceInfo->ParamDescriptor(),
+                                 timeDescriptor,
+                                 theSourceInfo->HPlaceDescriptor(),
+                                 theSourceInfo->VPlaceDescriptor(),
+                                 theSourceInfo->InfoVersion());
+      newInnerInfo.Header(theSourceInfo->Header());
+      newData = new NFmiQueryData(newInnerInfo);
+      newData->Init();
+
+      NFmiFastQueryInfo newFastInfo(newData);
+
+      if (sourceDataIsWCTR)
+      {
+        MakeSimilarTimeBagDataFromWCTRData(
+            newFastInfo, *theSourceInfo, theMaxTimeSearchRangeInMinutes, theInterpolationMethod);
+      }
+      else
+      {
+        if (timeResolutionRatio == 1)
+          FillSimilarDataWithDifferentTimeEnds(&newFastInfo, theSourceInfo);
+        else if (timeResolutionRatio > 1)
+          InterpolateSimilarDataToLargerTimeResolution(
+              &newFastInfo, theSourceInfo, timeResolutionRatio, theMaxTimeSearchRangeInMinutes);
+        else
+          InterpolateSimilarDataToSmallerTimeResolution(&newFastInfo,
+                                                        theSourceInfo,
+                                                        timeResolutionRatio,
+                                                        theMaxTimeSearchRangeInMinutes,
+                                                        theInterpolationMethod);
+      }
     }
+    return newData;
   }
-  return newData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1791,22 +2102,29 @@ NFmiQueryData *NFmiQueryDataUtil::InterpolateTimes(NFmiQueryData *theSourceData,
                                                    int theMaxTimeSearchRangeInMinutes,
                                                    FmiInterpolationMethod theInterpolationMethod)
 {
-  NFmiFastQueryInfo sourceInfo(theSourceData);
-  NFmiTimeBag *wantedTimeBag = nullptr;  // tulevaisuudessa erilainen käyttö?
-  NFmiQueryData *data = CreateSimilarDataWithTimeInterpolation(&sourceInfo,
-                                                               theTimeResolutionInMinutes,
-                                                               theStartTimeResolutionInMinutes,
-                                                               wantedTimeBag,
-                                                               thePossibleReferenceTimeBag,
-                                                               theMaxTimeSearchRangeInMinutes,
-                                                               theInterpolationMethod);
-  if (data)
+  try
   {
-    NFmiFastQueryInfo newDataInfo(data);
-    AddProducerIds(newDataInfo, sourceInfo);
-  }
+    NFmiFastQueryInfo sourceInfo(theSourceData);
+    NFmiTimeBag *wantedTimeBag = nullptr;  // tulevaisuudessa erilainen käyttö?
+    NFmiQueryData *data = CreateSimilarDataWithTimeInterpolation(&sourceInfo,
+                                                                 theTimeResolutionInMinutes,
+                                                                 theStartTimeResolutionInMinutes,
+                                                                 wantedTimeBag,
+                                                                 thePossibleReferenceTimeBag,
+                                                                 theMaxTimeSearchRangeInMinutes,
+                                                                 theInterpolationMethod);
+    if (data)
+    {
+      NFmiFastQueryInfo newDataInfo(data);
+      AddProducerIds(newDataInfo, sourceInfo);
+    }
 
-  return data;
+    return data;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1823,14 +2141,21 @@ NFmiQueryData *NFmiQueryDataUtil::InterpolateTimes(NFmiQueryData *theSourceData,
 NFmiTimeDescriptor NFmiQueryDataUtil::NewTimeDescriptor(NFmiQueryData *theSourceData,
                                                         int theTimeResolutionInMinutes)
 {
-  const NFmiTimeBag &originTimeBag = theSourceData->Info()->ValidTimes();
+  try
+  {
+    const NFmiTimeBag &originTimeBag = theSourceData->Info()->ValidTimes();
 
-  // luodaan uusi timeBagi ja	timeDescriptori
-  NFmiTimeBag newTimeBag(
-      originTimeBag.FirstTime(), originTimeBag.LastTime(), theTimeResolutionInMinutes);
-  NFmiTimeDescriptor newTimeDescriptor(theSourceData->Info()->OriginTime(), newTimeBag);
+    // luodaan uusi timeBagi ja	timeDescriptori
+    NFmiTimeBag newTimeBag(
+        originTimeBag.FirstTime(), originTimeBag.LastTime(), theTimeResolutionInMinutes);
+    NFmiTimeDescriptor newTimeDescriptor(theSourceData->Info()->OriginTime(), newTimeBag);
 
-  return newTimeDescriptor;
+    return newTimeDescriptor;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1847,60 +2172,67 @@ NFmiTimeDescriptor NFmiQueryDataUtil::NewTimeDescriptor(NFmiQueryData *theSource
 bool NFmiQueryDataUtil::OverWriteTimesFromFile(NFmiFastQueryInfo &theLongerInfo,
                                                NFmiFastQueryInfo &theShorterInfo)
 {
-  theLongerInfo.Reset();
-  theShorterInfo.Reset();
-  float value = kFloatMissing;
-
-  // Etsitään pienin yhteinen aika
-  do
+  try
   {
-    if (!theShorterInfo.NextTime())
-      break;
-  } while (!theLongerInfo.Time(theShorterInfo.Time()));
+    theLongerInfo.Reset();
+    theShorterInfo.Reset();
+    float value = kFloatMissing;
 
-  // Siirretään ajassa yksi pykälä taaksepäin, että ei jää yhtään aikaa väliin
-  // Entä, jos ensimmäinen aika mätsää --> siirtääkö resettiin?
-  theShorterInfo.PreviousTime();
-  theLongerInfo.PreviousTime();
-
-  // Kirjoitetaan lyhyemmän datan tiedot pidemmän päälle
-  for (; theShorterInfo.NextTime() &&
-         theLongerInfo.NextTime();)  // käydään läpi niin kauan kuin lyhyemmässä datassa on aikoja
-  {
-    for (theLongerInfo.ResetParam(), theShorterInfo.ResetParam();
-         theLongerInfo.NextParam() && theShorterInfo.NextParam();)
+    // Etsitään pienin yhteinen aika
+    do
     {
-      for (theLongerInfo.ResetLocation(), theShorterInfo.ResetLocation();
-           theLongerInfo.NextLocation() && theShorterInfo.NextLocation();)
+      if (!theShorterInfo.NextTime())
+        break;
+    } while (!theLongerInfo.Time(theShorterInfo.Time()));
+
+    // Siirretään ajassa yksi pykälä taaksepäin, että ei jää yhtään aikaa väliin
+    // Entä, jos ensimmäinen aika mätsää --> siirtääkö resettiin?
+    theShorterInfo.PreviousTime();
+    theLongerInfo.PreviousTime();
+
+    // Kirjoitetaan lyhyemmän datan tiedot pidemmän päälle
+    for (; theShorterInfo.NextTime() &&
+           theLongerInfo.NextTime();)  // käydään läpi niin kauan kuin lyhyemmässä datassa on aikoja
+    {
+      for (theLongerInfo.ResetParam(), theShorterInfo.ResetParam();
+           theLongerInfo.NextParam() && theShorterInfo.NextParam();)
       {
-        for (theLongerInfo.ResetLevel(), theShorterInfo.ResetLevel();
-             theLongerInfo.NextLevel() && theShorterInfo.NextLevel();)
+        for (theLongerInfo.ResetLocation(), theShorterInfo.ResetLocation();
+             theLongerInfo.NextLocation() && theShorterInfo.NextLocation();)
         {
-          value = theShorterInfo.FloatValue();
-          if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
-            ;  // ei tehdä mitään jos puuttuvaa
-          else
-            theLongerInfo.FloatValue(value);
+          for (theLongerInfo.ResetLevel(), theShorterInfo.ResetLevel();
+               theLongerInfo.NextLevel() && theShorterInfo.NextLevel();)
+          {
+            value = theShorterInfo.FloatValue();
+            if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+              ;  // ei tehdä mitään jos puuttuvaa
+            else
+              theLongerInfo.FloatValue(value);
 
-          // HUOM! muutin puuttuva arvo käsittelyä siten, että vain ei puuttuvat
-          // arvot sijoitetaan kohdedataan, mutta toimintaa ei lopeteta kuitenkaan.
+            // HUOM! muutin puuttuva arvo käsittelyä siten, että vain ei puuttuvat
+            // arvot sijoitetaan kohdedataan, mutta toimintaa ei lopeteta kuitenkaan.
 
-          // VAARA!!!! Marko joutui tekemään pikavirityksen!!!
-          // Jos löytyy yksikin puuttuva arvo, lopetetaan funktion suoritus.
-          // Tämä sen takia, että ECMWF-jutussa tulee lopussa joka toisessa aika-askeleessa
-          // puuttuvaa ja siitä eteenpäin datan syötön on loputtava!!
-          // Tämä pitää kuitenkin hoitaa joskus tyylikkäämmin.
-          /*
-                                            if(value == kFloatMissing)
-                                                  return true;
+            // VAARA!!!! Marko joutui tekemään pikavirityksen!!!
+            // Jos löytyy yksikin puuttuva arvo, lopetetaan funktion suoritus.
+            // Tämä sen takia, että ECMWF-jutussa tulee lopussa joka toisessa aika-askeleessa
+            // puuttuvaa ja siitä eteenpäin datan syötön on loputtava!!
+            // Tämä pitää kuitenkin hoitaa joskus tyylikkäämmin.
+            /*
+                                              if(value == kFloatMissing)
+                                                    return true;
 
-                                            theLongerInfo.FloatValue(value);
-          */
+                                              theLongerInfo.FloatValue(value);
+            */
+          }
         }
       }
     }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1920,8 +2252,15 @@ NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSource
                                                         const NFmiGrid *theWantedGrid,
                                                         NFmiLogger *theLogger)
 {
-  // Automatic thread count selection
-  return Interpolate2OtherGrid(theSourceData, theWantedGrid, theLogger, 0);
+  try
+  {
+    // Automatic thread count selection
+    return Interpolate2OtherGrid(theSourceData, theWantedGrid, theLogger, 0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSourceData,
@@ -1929,22 +2268,29 @@ NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSource
                                                         NFmiLogger *theLogger,
                                                         int theMaxThreadCount)
 {
-  NFmiQueryData *newData = nullptr;
-  if (theSourceData && theSourceData->IsGrid() && theWantedGrid)
+  try
   {
-    NFmiHPlaceDescriptor newHPlace(*theWantedGrid,
-                                   theSourceData->Info()->HPlaceDescriptor().SelectedType());
-    NFmiQueryInfo innerInfo(theSourceData->Info()->ParamDescriptor(),
-                            theSourceData->Info()->TimeDescriptor(),
-                            newHPlace,
-                            theSourceData->Info()->VPlaceDescriptor(),
-                            theSourceData->InfoVersion());
-    newData = CreateEmptyData(innerInfo);
-    FillGridDataFullMT(
-        theSourceData, newData, gMissingIndex, gMissingIndex, theMaxThreadCount, theLogger);
+    NFmiQueryData *newData = nullptr;
+    if (theSourceData && theSourceData->IsGrid() && theWantedGrid)
+    {
+      NFmiHPlaceDescriptor newHPlace(*theWantedGrid,
+                                     theSourceData->Info()->HPlaceDescriptor().SelectedType());
+      NFmiQueryInfo innerInfo(theSourceData->Info()->ParamDescriptor(),
+                              theSourceData->Info()->TimeDescriptor(),
+                              newHPlace,
+                              theSourceData->Info()->VPlaceDescriptor(),
+                              theSourceData->InfoVersion());
+      newData = CreateEmptyData(innerInfo);
+      FillGridDataFullMT(
+          theSourceData, newData, gMissingIndex, gMissingIndex, theMaxThreadCount, theLogger);
+    }
+    CopyProducerIds(theSourceData, newData);
+    return newData;
   }
-  CopyProducerIds(theSourceData, newData);
-  return newData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -2000,91 +2346,93 @@ NFmiQueryData *NFmiQueryDataUtil::SpaceOutData(NFmiFastQueryInfo &theSourceInfo,
                                                const NFmiRect &theDataGatheringRange,
                                                const NFmiCalculationCondition &theMaskCondition)
 {
-  NFmiQueryData *newData = nullptr;
-  if (theSourceInfo.IsGrid())
+  try
   {
-    NFmiGrid newGrid(theSourceInfo.Grid()->Area(),
-                     static_cast<unsigned long>(newGridSize.X()),
-                     static_cast<unsigned long>(newGridSize.Y()));
-    NFmiHPlaceDescriptor newHPlace(newGrid);
-    NFmiQueryInfo newInnerInfo(theSourceInfo.ParamDescriptor(),
-                               theSourceInfo.TimeDescriptor(),
-                               newHPlace,
-                               theSourceInfo.VPlaceDescriptor());
-    newInnerInfo.InfoVersion(
-        theSourceInfo
-            .InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-    newData = CreateEmptyData(newInnerInfo);
-    if (newData)
+    NFmiQueryData *newData = nullptr;
+    if (theSourceInfo.IsGrid())
     {
-      NFmiFastQueryInfo destInfo(newData);
-      theSourceInfo.First();
-      destInfo.First();
-      if (theModifierId == 101 || theModifierId == 102)
-        SpaceOutDataWithSmoother(theSourceInfo, destInfo, theModifierId, theAreaFactor, theRange);
-      else if (theModifier)
+      NFmiGrid newGrid(theSourceInfo.Grid()->Area(),
+                       static_cast<unsigned long>(newGridSize.X()),
+                       static_cast<unsigned long>(newGridSize.Y()));
+      NFmiHPlaceDescriptor newHPlace(newGrid);
+      NFmiQueryInfo newInnerInfo(theSourceInfo.ParamDescriptor(),
+                                 theSourceInfo.TimeDescriptor(),
+                                 newHPlace,
+                                 theSourceInfo.VPlaceDescriptor());
+      newInnerInfo.InfoVersion(theSourceInfo.InfoVersion());  // pidetään infoversio samana, muuten
+                                                              // menee interpoloinnit pieleen!
+      newData = CreateEmptyData(newInnerInfo);
+      if (newData)
       {
-        auto bottom = static_cast<int>(
-            theDataGatheringRange.Bottom());  // otettu ulos silmukoista optimointia varten
-        auto top = static_cast<int>(
-            theDataGatheringRange.Top());  // otettu ulos silmukoista optimointia varten
-        auto left = static_cast<int>(
-            theDataGatheringRange.Left());  // otettu ulos silmukoista optimointia varten
-        auto right = static_cast<int>(
-            theDataGatheringRange.Right());  // otettu ulos silmukoista optimointia varten
-        float value = kFloatMissing;
-        bool useMask = (theMaskCondition.Condition() != kFmiNoMaskOperation &&
-                        theMaskCondition.Condition() != kFmiMaskAll);
-        for (destInfo.ResetLocation(); destInfo.NextLocation();)
+        NFmiFastQueryInfo destInfo(newData);
+        theSourceInfo.First();
+        destInfo.First();
+        if (theModifierId == 101 || theModifierId == 102)
+          SpaceOutDataWithSmoother(theSourceInfo, destInfo, theModifierId, theAreaFactor, theRange);
+        else if (theModifier)
         {
-          if (theSourceInfo.NearestPoint(destInfo.LatLon()))
+          auto bottom = static_cast<int>(
+              theDataGatheringRange.Bottom());  // otettu ulos silmukoista optimointia varten
+          auto top = static_cast<int>(
+              theDataGatheringRange.Top());  // otettu ulos silmukoista optimointia varten
+          auto left = static_cast<int>(
+              theDataGatheringRange.Left());  // otettu ulos silmukoista optimointia varten
+          auto right = static_cast<int>(
+              theDataGatheringRange.Right());  // otettu ulos silmukoista optimointia varten
+          float value = kFloatMissing;
+          bool useMask = (theMaskCondition.Condition() != kFmiNoMaskOperation &&
+                          theMaskCondition.Condition() != kFmiMaskAll);
+          for (destInfo.ResetLocation(); destInfo.NextLocation();)
           {
-            for (theSourceInfo.ResetParam(), destInfo.ResetParam();
-                 theSourceInfo.NextParam() && destInfo.NextParam();)
+            if (theSourceInfo.NearestPoint(destInfo.LatLon()))
             {
-              bool combinedParam =
-                  theSourceInfo.Param().GetParam()->InterpolationMethod() == kByCombinedParam;
-              for (theSourceInfo.ResetLevel(), destInfo.ResetLevel();
-                   theSourceInfo.NextLevel() && destInfo.NextLevel();)
+              for (theSourceInfo.ResetParam(), destInfo.ResetParam();
+                   theSourceInfo.NextParam() && destInfo.NextParam();)
               {
-                for (theSourceInfo.ResetTime(), destInfo.ResetTime();
-                     theSourceInfo.NextTime() && destInfo.NextTime();)
+                bool combinedParam =
+                    theSourceInfo.Param().GetParam()->InterpolationMethod() == kByCombinedParam;
+                for (theSourceInfo.ResetLevel(), destInfo.ResetLevel();
+                     theSourceInfo.NextLevel() && destInfo.NextLevel();)
                 {
-                  if (combinedParam)
-                  {  // ********* tämä haara vielä toteuttamatta, eli yhdistelmä parametreja ei
-                     // vielä hoideta!!! *******
-                    value = kFloatMissing;
-                  }
-                  else
+                  for (theSourceInfo.ResetTime(), destInfo.ResetTime();
+                       theSourceInfo.NextTime() && destInfo.NextTime();)
                   {
-                    theModifier->Clear();
-                    if (useMask)
-                    {
-                      bool maskOn = theMaskCondition.IsMasked(theSourceInfo.FloatValue());
-                      for (int j = top; j <= bottom; j++)
-                      {
-                        for (int i = left; i <= right; i++)
-                        {
-                          float tmp = theSourceInfo.PeekLocationValue(i, j);
-                          if (maskOn && theMaskCondition.IsMasked(tmp))
-                            theModifier->Calculate(tmp);
-                          else if (!maskOn && !theMaskCondition.IsMasked(tmp))
-                            theModifier->Calculate(tmp);
-                        }
-                      }
-                      value = theModifier->CalculationResult();
+                    if (combinedParam)
+                    {  // ********* tämä haara vielä toteuttamatta, eli yhdistelmä parametreja ei
+                       // vielä hoideta!!! *******
+                      value = kFloatMissing;
                     }
                     else
                     {
-                      for (int j = top; j <= bottom; j++)
+                      theModifier->Clear();
+                      if (useMask)
                       {
-                        for (int i = left; i <= right; i++)
-                          theModifier->Calculate(theSourceInfo.PeekLocationValue(i, j));
+                        bool maskOn = theMaskCondition.IsMasked(theSourceInfo.FloatValue());
+                        for (int j = top; j <= bottom; j++)
+                        {
+                          for (int i = left; i <= right; i++)
+                          {
+                            float tmp = theSourceInfo.PeekLocationValue(i, j);
+                            if (maskOn && theMaskCondition.IsMasked(tmp))
+                              theModifier->Calculate(tmp);
+                            else if (!maskOn && !theMaskCondition.IsMasked(tmp))
+                              theModifier->Calculate(tmp);
+                          }
+                        }
+                        value = theModifier->CalculationResult();
                       }
-                      value = theModifier->CalculationResult();
+                      else
+                      {
+                        for (int j = top; j <= bottom; j++)
+                        {
+                          for (int i = left; i <= right; i++)
+                            theModifier->Calculate(theSourceInfo.PeekLocationValue(i, j));
+                        }
+                        value = theModifier->CalculationResult();
+                      }
                     }
+                    destInfo.FloatValue(value);
                   }
-                  destInfo.FloatValue(value);
                 }
               }
             }
@@ -2092,8 +2440,12 @@ NFmiQueryData *NFmiQueryDataUtil::SpaceOutData(NFmiFastQueryInfo &theSourceInfo,
         }
       }
     }
+    return newData;
   }
-  return newData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &theTimeDescriptor1,
@@ -2103,28 +2455,34 @@ static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &the
                                                    int theOriginTimeFunction,
                                                    bool fMakeChangingTimeResolution)
 {
-  bool is1TimeBag = !theTimeDescriptor1.UseTimeList();
-  bool is2TimeBag = !theTimeDescriptor2.UseTimeList();
-  if (is1TimeBag ^ is2TimeBag)
-    throw runtime_error(
-        "NFmiQueryDataUtil::MakeWantedTimeDescriptor: Ei osaa yhdistää timeList- ja "
-        "timeBag-dataa.");
+  try
+  {
+    bool is1TimeBag = !theTimeDescriptor1.UseTimeList();
+    bool is2TimeBag = !theTimeDescriptor2.UseTimeList();
+    if (is1TimeBag ^ is2TimeBag)
+      throw Fmi::Exception(
+          BCP,
+          "NFmiQueryDataUtil::MakeWantedTimeDescriptor: Ei osaa yhdistää timeList- ja "
+          "timeBag-dataa.");
 
-  NFmiMetTime origTime(theOriginTimeFunction == 1 ? theTimeDescriptor1.OriginTime()
-                                                  : theTimeDescriptor2.OriginTime());
-  if (fMakeChangingTimeResolution && is1TimeBag && is2TimeBag)
-  {
-    NFmiTimeList times1(*theTimeDescriptor1.ValidTimeBag());
-    NFmiTimeList times2(*theTimeDescriptor2.ValidTimeBag());
-    NFmiTimeList timesTotal = times1.Combine(times2, theStartTimeFunction, theEndTimeFunction);
-    return NFmiTimeDescriptor(origTime, timesTotal);
-  }
-  else
-  {
+    NFmiMetTime origTime(theOriginTimeFunction == 1 ? theTimeDescriptor1.OriginTime()
+                                                    : theTimeDescriptor2.OriginTime());
+    if (fMakeChangingTimeResolution && is1TimeBag && is2TimeBag)
+    {
+      NFmiTimeList times1(*theTimeDescriptor1.ValidTimeBag());
+      NFmiTimeList times2(*theTimeDescriptor2.ValidTimeBag());
+      NFmiTimeList timesTotal = times1.Combine(times2, theStartTimeFunction, theEndTimeFunction);
+      return NFmiTimeDescriptor(origTime, timesTotal);
+    }
+
     NFmiTimeDescriptor timeDesc(
         theTimeDescriptor1.Combine(theTimeDescriptor2, theStartTimeFunction, theEndTimeFunction));
     timeDesc.OriginTime(origTime);
     return timeDesc;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2168,271 +2526,367 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(NFmiFastQueryInfo &theSourceInfo1
                                                int theOriginTimeFunction,
                                                bool fMakeChangingTimeResolution)
 {
-  NFmiQueryData *destData = nullptr;
-
-  NFmiTimeDescriptor newTimeDesc = ::MakeWantedTimeDescriptor(theSourceInfo1.TimeDescriptor(),
-                                                              theSourceInfo2.TimeDescriptor(),
-                                                              theStartTimeFunction,
-                                                              theEndTimeFunction,
-                                                              theOriginTimeFunction,
-                                                              fMakeChangingTimeResolution);
-  if (newTimeDesc.Resolution() == 0)
-    throw runtime_error(
-        "NFmiQueryDataUtil::CombineTimes: Aikaresoluutioksi tuli 0, tarkista onko alkuperäisissä "
-        "datoissa aikaresoluutiota.");
-
-  unsigned long oldSize = newTimeDesc.Size();
-  newTimeDesc.PruneTimes(theMaxTimeBagSizeInNewData, true);
-  if (oldSize != newTimeDesc.Size())
-    cerr << "Warning: max allowed time steps is " << theMaxTimeBagSizeInNewData
-         << " and now there would have been " << newTimeDesc.Size()
-         << ".\nUse m-option to increase max time steps." << endl;
-  //  if(newTimeDesc.Size() < static_cast<unsigned int>(theMaxTimeBagSizeInNewData))
+  try
   {
-    NFmiQueryInfo tmpInfo(theSourceInfo1.ParamDescriptor(),
-                          newTimeDesc,
-                          theSourceInfo1.HPlaceDescriptor(),
-                          theSourceInfo1.VPlaceDescriptor());
-    tmpInfo.InfoVersion(
-        theSourceInfo1
-            .InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
-    destData = CreateEmptyData(tmpInfo);
-    if (destData)
+    NFmiQueryData *destData = nullptr;
+
+    NFmiTimeDescriptor newTimeDesc = ::MakeWantedTimeDescriptor(theSourceInfo1.TimeDescriptor(),
+                                                                theSourceInfo2.TimeDescriptor(),
+                                                                theStartTimeFunction,
+                                                                theEndTimeFunction,
+                                                                theOriginTimeFunction,
+                                                                fMakeChangingTimeResolution);
+    if (newTimeDesc.Resolution() == 0)
+      throw Fmi::Exception(BCP,
+                           "NFmiQueryDataUtil::CombineTimes: Aikaresoluutioksi tuli 0, tarkista "
+                           "onko alkuperäisissä "
+                           "datoissa aikaresoluutiota.");
+
+    unsigned long oldSize = newTimeDesc.Size();
+    newTimeDesc.PruneTimes(theMaxTimeBagSizeInNewData, true);
+    if (oldSize != newTimeDesc.Size())
+      cerr << "Warning: max allowed time steps is " << theMaxTimeBagSizeInNewData
+           << " and now there would have been " << newTimeDesc.Size()
+           << ".\nUse m-option to increase max time steps." << endl;
+    //  if(newTimeDesc.Size() < static_cast<unsigned int>(theMaxTimeBagSizeInNewData))
     {
-      NFmiFastQueryInfo destInfo(destData);
-      for (destInfo.ResetTime(); destInfo.NextTime();)
+      NFmiQueryInfo tmpInfo(theSourceInfo1.ParamDescriptor(),
+                            newTimeDesc,
+                            theSourceInfo1.HPlaceDescriptor(),
+                            theSourceInfo1.VPlaceDescriptor());
+      tmpInfo.InfoVersion(theSourceInfo1.InfoVersion());  // pidetään infoversio samana, muuten
+                                                          // menee interpoloinnit pieleen!
+      destData = CreateEmptyData(tmpInfo);
+      if (destData)
       {
-        bool useInfo1 = true;
-        bool useInfo2 = true;
-        if (!theSourceInfo1.Time(destInfo.Time()))
-          useInfo1 = false;
-        if (!theSourceInfo2.Time(destInfo.Time()))
-          useInfo2 = false;
-        if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-          continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-
-        for (destInfo.ResetParam(), theSourceInfo1.ResetParam(), theSourceInfo2.ResetParam();
-             destInfo.NextParam() && theSourceInfo1.NextParam() && theSourceInfo2.NextParam();)
+        NFmiFastQueryInfo destInfo(destData);
+        for (destInfo.ResetTime(); destInfo.NextTime();)
         {
-          for (destInfo.ResetLocation(),
-               theSourceInfo1.ResetLocation(),
-               theSourceInfo2.ResetLocation();
-               destInfo.NextLocation() && theSourceInfo1.NextLocation() &&
-               theSourceInfo2.NextLocation();)
+          bool useInfo1 = true;
+          bool useInfo2 = true;
+          if (!theSourceInfo1.Time(destInfo.Time()))
+            useInfo1 = false;
+          if (!theSourceInfo2.Time(destInfo.Time()))
+            useInfo2 = false;
+          if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+            continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+
+          for (destInfo.ResetParam(), theSourceInfo1.ResetParam(), theSourceInfo2.ResetParam();
+               destInfo.NextParam() && theSourceInfo1.NextParam() && theSourceInfo2.NextParam();)
           {
-            for (destInfo.ResetLevel(), theSourceInfo1.ResetLevel(), theSourceInfo2.ResetLevel();
-                 destInfo.NextLevel() && theSourceInfo1.NextLevel() && theSourceInfo2.NextLevel();)
+            for (destInfo.ResetLocation(),
+                 theSourceInfo1.ResetLocation(),
+                 theSourceInfo2.ResetLocation();
+                 destInfo.NextLocation() && theSourceInfo1.NextLocation() &&
+                 theSourceInfo2.NextLocation();)
             {
-              float value = kFloatMissing;
-              if (useInfo1)
-                value = theSourceInfo1.FloatValue();
+              for (destInfo.ResetLevel(), theSourceInfo1.ResetLevel(), theSourceInfo2.ResetLevel();
+                   destInfo.NextLevel() && theSourceInfo1.NextLevel() &&
+                   theSourceInfo2.NextLevel();)
+              {
+                float value = kFloatMissing;
+                if (useInfo1)
+                  value = theSourceInfo1.FloatValue();
 
-              if (value == kFloatMissing && useInfo2)
-                value = theSourceInfo2.FloatValue();
+                if (value == kFloatMissing && useInfo2)
+                  value = theSourceInfo2.FloatValue();
 
-              destInfo.FloatValue(value);
+                destInfo.FloatValue(value);
+              }
             }
           }
         }
       }
     }
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryDataUtil::SignificantSoundingLevels NFmiQueryDataUtil::GetSignificantSoundingLevelIndices(
     NFmiFastQueryInfo &theInfo)
 {
-  if (theInfo.Param(kFmiVerticalSoundingSignificance))
+  try
   {
-    std::unique_ptr<SoundingLevelContainer> indexVector(new SoundingLevelContainer());
-    for (theInfo.ResetLevel(); theInfo.NextLevel();)
+    if (theInfo.Param(kFmiVerticalSoundingSignificance))
     {
-      auto value = theInfo.FloatValue();
-      if (value != kFloatMissing && value > 0)
-        indexVector->push_back(theInfo.LevelIndex());
+      std::unique_ptr<SoundingLevelContainer> indexVector(new SoundingLevelContainer());
+      for (theInfo.ResetLevel(); theInfo.NextLevel();)
+      {
+        auto value = theInfo.FloatValue();
+        if (value != kFloatMissing && value > 0)
+          indexVector->push_back(theInfo.LevelIndex());
+      }
+      if (indexVector->size())
+        return indexVector;
     }
-    if (indexVector->size())
-      return indexVector;
+    return SignificantSoundingLevels();
   }
-  return SignificantSoundingLevels();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiQueryDataUtil::DestroyGridRecordData(GridDataVector &theGridRecordDatas)
 {
-  auto it = theGridRecordDatas.begin();
-  auto endIter = theGridRecordDatas.end();
-  for (; it != endIter; ++it)
-    delete *it;
+  try
+  {
+    auto it = theGridRecordDatas.begin();
+    auto endIter = theGridRecordDatas.end();
+    for (; it != endIter; ++it)
+      delete *it;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void FillWithGribData(GridRecordData &theGridData, NFmiFastQueryInfo &theInfo)
 {
-  if (theInfo.Grid())
+  try
   {
-    theInfo.First();  // HUOM! toimii siis vain 1. ajalle, paramille ja levelille
-    theGridData.itsOrigTime = theInfo.OriginTime();
-    theGridData.itsValidTime = theInfo.ValidTime();
-    theGridData.itsParam = theInfo.Param();
-    theGridData.itsLevel = *theInfo.Level();
+    if (theInfo.Grid())
+    {
+      theInfo.First();  // HUOM! toimii siis vain 1. ajalle, paramille ja levelille
+      theGridData.itsOrigTime = theInfo.OriginTime();
+      theGridData.itsValidTime = theInfo.ValidTime();
+      theGridData.itsParam = theInfo.Param();
+      theGridData.itsLevel = *theInfo.Level();
 
-    theGridData.itsGrid =
-        MyGrid(theInfo.Area(), theInfo.Grid()->XNumber(), theInfo.Grid()->YNumber());
-    theGridData.itsGridData = theInfo.Values();
+      theGridData.itsGrid =
+          MyGrid(theInfo.Area(), theInfo.Grid()->XNumber(), theInfo.Grid()->YNumber());
+      theGridData.itsGridData = theInfo.Values();
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 static const NFmiLevel &FindFirstLevel(float theLevelValue,
                                        NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 0; i < gribCount; i++)
-    if (static_cast<unsigned int>(theLevelValue) == theGridRecordDatas[i]->itsLevel.LevelValue())
-      return theGridRecordDatas[i]->itsLevel;
-  throw runtime_error("Error in FindFirstLevel-function.");
+  try
+  {
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 0; i < gribCount; i++)
+    {
+      if (static_cast<unsigned int>(theLevelValue) == theGridRecordDatas[i]->itsLevel.LevelValue())
+        return theGridRecordDatas[i]->itsLevel;
+    }
+    throw Fmi::Exception(BCP, "Error in FindFirstLevel-function.");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static const NFmiDataIdent &FindFirstParam(int theParId,
                                            NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 0; i < gribCount; i++)
-    if (static_cast<unsigned int>(theParId) == theGridRecordDatas[i]->itsParam.GetParamIdent())
-      return theGridRecordDatas[i]->itsParam;
-  throw runtime_error("Error in FindFirstParam-function.");
+  try
+  {
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 0; i < gribCount; i++)
+    {
+      if (static_cast<unsigned int>(theParId) == theGridRecordDatas[i]->itsParam.GetParamIdent())
+        return theGridRecordDatas[i]->itsParam;
+    }
+    throw Fmi::Exception(BCP, "Error in FindFirstParam-function.");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiVPlaceDescriptor GetVPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  // set:in avulla selvitetaan kuinka monta erilaista level valueta loytyy,
-  // ei oteta huomioon, etta voi olla eri tyyppisia leveleita
-  set<float> levelValues;
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 0; i < gribCount; i++)
-    levelValues.insert(theGridRecordDatas[i]->itsLevel.LevelValue());
+  try
+  {
+    // set:in avulla selvitetaan kuinka monta erilaista level valueta loytyy,
+    // ei oteta huomioon, etta voi olla eri tyyppisia leveleita
+    set<float> levelValues;
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 0; i < gribCount; i++)
+      levelValues.insert(theGridRecordDatas[i]->itsLevel.LevelValue());
 
-  NFmiLevelBag levelBag;
-  auto it = levelValues.begin();
-  for (; it != levelValues.end(); ++it)
-    levelBag.AddLevel(NFmiLevel(FindFirstLevel(*it, theGridRecordDatas)));
+    NFmiLevelBag levelBag;
+    auto it = levelValues.begin();
+    for (; it != levelValues.end(); ++it)
+      levelBag.AddLevel(NFmiLevel(FindFirstLevel(*it, theGridRecordDatas)));
 
-  return NFmiVPlaceDescriptor(levelBag);
+    return NFmiVPlaceDescriptor(levelBag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiParamDescriptor GetParamDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  set<int> parIds;  // set:in avulla selvitetaan kuinka monta erilaista identtia loytyy
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 0; i < gribCount; i++)
-    parIds.insert(theGridRecordDatas[i]->itsParam.GetParamIdent());
+  try
+  {
+    set<int> parIds;  // set:in avulla selvitetaan kuinka monta erilaista identtia loytyy
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 0; i < gribCount; i++)
+      parIds.insert(theGridRecordDatas[i]->itsParam.GetParamIdent());
 
-  NFmiParamBag parBag;
-  auto it = parIds.begin();
-  for (; it != parIds.end(); ++it)
-    parBag.Add(FindFirstParam(*it, theGridRecordDatas));
+    NFmiParamBag parBag;
+    auto it = parIds.begin();
+    for (; it != parIds.end(); ++it)
+      parBag.Add(FindFirstParam(*it, theGridRecordDatas));
 
-  return NFmiParamDescriptor(parBag);
+    return NFmiParamDescriptor(parBag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static bool ConvertTimeList2TimeBag(NFmiTimeList &theTimeList, NFmiTimeBag &theTimeBag)
-{                                       // tutkitaan onko mahdollista tehda listasta bagi
-                                        // eli ajat ovat peräkkäisiä ja tasavälisiä
-  if (theTimeList.NumberOfItems() > 1)  // ei  tehdä yhdestä ajasta bagiä vaikka se on mahdollista
-  {
-    theTimeList.First();
-    theTimeList.Next();
-    int resolution = theTimeList.CurrentResolution();
-    for (; theTimeList.Next();)
+{
+  try                                     // tutkitaan onko mahdollista tehda listasta bagi
+  {                                       // eli ajat ovat peräkkäisiä ja tasavälisiä
+    if (theTimeList.NumberOfItems() > 1)  // ei  tehdä yhdestä ajasta bagiä vaikka se on mahdollista
     {
-      if (resolution != theTimeList.CurrentResolution())
-        return false;  // jos yhdenkin aikavälin resoluutio poikkeaa, ei voida tehdä bagia
+      theTimeList.First();
+      theTimeList.Next();
+      int resolution = theTimeList.CurrentResolution();
+      for (; theTimeList.Next();)
+      {
+        if (resolution != theTimeList.CurrentResolution())
+          return false;  // jos yhdenkin aikavälin resoluutio poikkeaa, ei voida tehdä bagia
+      }
+      theTimeBag = NFmiTimeBag(theTimeList.FirstTime(), theTimeList.LastTime(), resolution);
+      return true;
     }
-    theTimeBag = NFmiTimeBag(theTimeList.FirstTime(), theTimeList.LastTime(), resolution);
-    return true;
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiHPlaceDescriptor GetHPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  // Oletus, vain yhdenlainen gridi descriptori loytyy,
-  // muuten lahtee poikkeus
+  try
+  {
+    // Oletus, vain yhdenlainen gridi descriptori loytyy,
+    // muuten lahtee poikkeus
 
-  MyGrid &tmpGrid = theGridRecordDatas[0]->itsGrid;
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 1; i < gribCount; i++)
-    if (!(tmpGrid == theGridRecordDatas[i]->itsGrid))
-      throw runtime_error("Kaikki grid-määritykset eivät olleet samanlaisia! Lopetetaan...");
+    MyGrid &tmpGrid = theGridRecordDatas[0]->itsGrid;
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 1; i < gribCount; i++)
+      if (!(tmpGrid == theGridRecordDatas[i]->itsGrid))
+        throw Fmi::Exception(BCP,
+                             "Kaikki grid-määritykset eivät olleet samanlaisia! Lopetetaan...");
 
-  NFmiGrid grid(tmpGrid.itsArea, tmpGrid.itsNX, tmpGrid.itsNY);
+    NFmiGrid grid(tmpGrid.itsArea, tmpGrid.itsNX, tmpGrid.itsNY);
 
-  return NFmiHPlaceDescriptor(grid);
+    return NFmiHPlaceDescriptor(grid);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiTimeDescriptor GetTimeDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  // set:in avulla selvitetaan kuinka monta erilaista timea loytyy.
-  set<NFmiMetTime> timesSet;
-  size_t gribCount = theGridRecordDatas.size();
-  for (size_t i = 0; i < gribCount; i++)
-    timesSet.insert(theGridRecordDatas[i]->itsValidTime);
+  try
+  {
+    // set:in avulla selvitetaan kuinka monta erilaista timea loytyy.
+    set<NFmiMetTime> timesSet;
+    size_t gribCount = theGridRecordDatas.size();
+    for (size_t i = 0; i < gribCount; i++)
+      timesSet.insert(theGridRecordDatas[i]->itsValidTime);
 
-  // Tehdaan aluksi timelist, koska se on helpompi,
-  // myohemmin voi miettia saisiko aikaan timebagin.
-  NFmiTimeList timeList;
-  auto it = timesSet.begin();
-  for (; it != timesSet.end(); ++it)
-    timeList.Add(new NFmiMetTime(*it));
+    // Tehdaan aluksi timelist, koska se on helpompi,
+    // myohemmin voi miettia saisiko aikaan timebagin.
+    NFmiTimeList timeList;
+    auto it = timesSet.begin();
+    for (; it != timesSet.end(); ++it)
+      timeList.Add(new NFmiMetTime(*it));
 
-  NFmiTimeBag timeBag;
-  bool fUseTimeBag = ConvertTimeList2TimeBag(timeList, timeBag);  // jos mahd.
+    NFmiTimeBag timeBag;
+    bool fUseTimeBag = ConvertTimeList2TimeBag(timeList, timeBag);  // jos mahd.
 
-  // Oletus kaikki origintimet ovat samoja, en tutki niita nyt yhtaan.
-  if (fUseTimeBag)
-    return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeBag);
-  else
+    // Oletus kaikki origintimet ovat samoja, en tutki niita nyt yhtaan.
+    if (fUseTimeBag)
+      return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeBag);
+
     return NFmiTimeDescriptor(theGridRecordDatas[0]->itsOrigTime, timeList);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void FillQDataWithGribRecords(NFmiQueryData &theQData,
                                      NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
-  NFmiFastQueryInfo info(&theQData);
-  size_t gribCount = theGridRecordDatas.size();
-  GridRecordData *tmp = nullptr;
-  for (size_t i = 0; i < gribCount; i++)
+  try
   {
-    tmp = theGridRecordDatas[i];
-    if (info.Time(tmp->itsValidTime) && info.Level(tmp->itsLevel) && info.Param(tmp->itsParam))
+    NFmiFastQueryInfo info(&theQData);
+    size_t gribCount = theGridRecordDatas.size();
+    GridRecordData *tmp = nullptr;
+    for (size_t i = 0; i < gribCount; i++)
     {
-      if (!info.SetValues(tmp->itsGridData))
-        throw runtime_error("qdatan täyttö gribi datalla epäonnistui, lopetetaan...");
+      tmp = theGridRecordDatas[i];
+      if (info.Time(tmp->itsValidTime) && info.Level(tmp->itsLevel) && info.Param(tmp->itsParam))
+      {
+        if (!info.SetValues(tmp->itsGridData))
+          throw Fmi::Exception(BCP, "qdatan täyttö gribi datalla epäonnistui, lopetetaan...");
+      }
+      else
+        throw Fmi::Exception(
+            BCP, "qdatan täyttö ohjelma ei saanut asetettua aikaa/paikkaa/leveliä, lopetetaan...");
     }
-    else
-      throw runtime_error(
-          "qdatan täyttö ohjelma ei saanut asetettua aikaa/paikkaa/leveliä, lopetetaan...");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 static NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas,
                                       int theMaxTimesInNewData)
 {
-  NFmiQueryData *qdata = nullptr;
-  size_t gridCount = theGridRecordDatas.size();
-  if (gridCount > 0)
+  try
   {
-    NFmiParamDescriptor params(GetParamDesc(theGridRecordDatas));
-    NFmiVPlaceDescriptor levels(GetVPlaceDesc(theGridRecordDatas));
-    NFmiTimeDescriptor times(GetTimeDesc(theGridRecordDatas));
-    if (times.Size() > static_cast<unsigned int>(theMaxTimesInNewData))
-      times.PruneTimes(theMaxTimesInNewData);
-    NFmiHPlaceDescriptor hplace(GetHPlaceDesc(theGridRecordDatas));
-    NFmiQueryInfo innerInfo(params, times, hplace, levels);
-    //		CheckInfoSize(innerInfo, theMaxQDataSizeInBytes);
-    qdata = NFmiQueryDataUtil::CreateEmptyData(innerInfo);
-    FillQDataWithGribRecords(*qdata, theGridRecordDatas);
+    NFmiQueryData *qdata = nullptr;
+    size_t gridCount = theGridRecordDatas.size();
+    if (gridCount > 0)
+    {
+      NFmiParamDescriptor params(GetParamDesc(theGridRecordDatas));
+      NFmiVPlaceDescriptor levels(GetVPlaceDesc(theGridRecordDatas));
+      NFmiTimeDescriptor times(GetTimeDesc(theGridRecordDatas));
+      if (times.Size() > static_cast<unsigned int>(theMaxTimesInNewData))
+        times.PruneTimes(theMaxTimesInNewData);
+      NFmiHPlaceDescriptor hplace(GetHPlaceDesc(theGridRecordDatas));
+      NFmiQueryInfo innerInfo(params, times, hplace, levels);
+      //		CheckInfoSize(innerInfo, theMaxQDataSizeInBytes);
+      qdata = NFmiQueryDataUtil::CreateEmptyData(innerInfo);
+      FillQDataWithGribRecords(*qdata, theGridRecordDatas);
+    }
+    return qdata;
   }
-  return qdata;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -2453,25 +2907,32 @@ static NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGrid
 NFmiQueryData *NFmiQueryDataUtil::CombineTimes(std::vector<std::string> &theFileNames,
                                                int theMaxTimesInNewData)
 {
-  NFmiQueryData *data = nullptr;
-  NFmiStreamQueryData sData;
-  GridDataVector gridRecordDatas;
-  auto it = theFileNames.begin();
-  auto endIt = theFileNames.end();
-  for (; it != endIt; ++it)
+  try
   {
-    if (sData.ReadData(*it))
+    NFmiQueryData *data = nullptr;
+    NFmiStreamQueryData sData;
+    GridDataVector gridRecordDatas;
+    auto it = theFileNames.begin();
+    auto endIt = theFileNames.end();
+    for (; it != endIt; ++it)
     {
-      auto *tmpData = new GridRecordData;
-      FillWithGribData(*tmpData, *sData.QueryInfoIter());
-      gridRecordDatas.push_back(
-          tmpData);  // taman voisi optimoida, luomalla aluksi niin iso vektori kuin tarvitaan
-    }
-  }  // for-loop
+      if (sData.ReadData(*it))
+      {
+        auto *tmpData = new GridRecordData;
+        FillWithGribData(*tmpData, *sData.QueryInfoIter());
+        gridRecordDatas.push_back(
+            tmpData);  // taman voisi optimoida, luomalla aluksi niin iso vektori kuin tarvitaan
+      }
+    }  // for-loop
 
-  data = CreateQueryData(gridRecordDatas, theMaxTimesInNewData);
-  DestroyGridRecordData(gridRecordDatas);
-  return data;
+    data = CreateQueryData(gridRecordDatas, theMaxTimesInNewData);
+    DestroyGridRecordData(gridRecordDatas);
+    return data;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -2484,32 +2945,39 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(std::vector<std::string> &theFile
 static void WeatherAndCloudinessFromHessaa(NFmiFastQueryInfo &theSourceInfo,
                                            NFmiFastQueryInfo &theDestInfo)
 {
-  double destInfoVersion = theDestInfo.InfoVersion();
-  NFmiWeatherAndCloudiness weather(destInfoVersion);
-  if (theSourceInfo.Param(kFmiWeatherSymbol3) && theDestInfo.Param(kFmiWeatherAndCloudiness))
+  try
   {
-    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+    double destInfoVersion = theDestInfo.InfoVersion();
+    NFmiWeatherAndCloudiness weather(destInfoVersion);
+    if (theSourceInfo.Param(kFmiWeatherSymbol3) && theDestInfo.Param(kFmiWeatherAndCloudiness))
     {
-      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
       {
-        float f1 = theSourceInfo.FloatValue();
-        if (f1 != kFloatMissing)
-          weather = NFmiWeatherAndCloudiness(
-              static_cast<unsigned long>(f1), kFmiHessaaWeather, kFloatMissing, destInfoVersion);
-        else
-          weather = NFmiWeatherAndCloudiness(destInfoVersion);
+        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+        {
+          float f1 = theSourceInfo.FloatValue();
+          if (f1 != kFloatMissing)
+            weather = NFmiWeatherAndCloudiness(
+                static_cast<unsigned long>(f1), kFmiHessaaWeather, kFloatMissing, destInfoVersion);
+          else
+            weather = NFmiWeatherAndCloudiness(destInfoVersion);
 
-        float temp = kFloatMissing;
-        if (theSourceInfo.Param(kFmiTemperature))
-          temp = theSourceInfo.FloatValue();
-        theSourceInfo.Param(kFmiWeatherSymbol3);
-        weather.Temperature(temp);
+          float temp = kFloatMissing;
+          if (theSourceInfo.Param(kFmiTemperature))
+            temp = theSourceInfo.FloatValue();
+          theSourceInfo.Param(kFmiWeatherSymbol3);
+          weather.Temperature(temp);
 
-        theDestInfo.FloatValue(weather.TransformedFloatValue());
+          theDestInfo.FloatValue(weather.TransformedFloatValue());
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2518,31 +2986,45 @@ static void SetSubParamValue(NFmiFastQueryInfo &theSourceInfo,
                              const std::vector<unsigned long> &theParamIndexVector,
                              FmiParameterName wantedSubParam)
 {
-  float subParamValue = kFloatMissing;
-  for (unsigned long i : theParamIndexVector)
+  try
   {
-    theSourceInfo.ParamIndex(i);  // asetetaan hetkeksi precipForm parametri päälle
-    if (theSourceInfo.FloatValue() != kFloatMissing)
+    float subParamValue = kFloatMissing;
+    for (unsigned long i : theParamIndexVector)
     {
-      subParamValue = theSourceInfo.FloatValue();
-      break;
+      theSourceInfo.ParamIndex(i);  // asetetaan hetkeksi precipForm parametri päälle
+      if (theSourceInfo.FloatValue() != kFloatMissing)
+      {
+        subParamValue = theSourceInfo.FloatValue();
+        break;
+      }
     }
-  }
 
-  if (subParamValue != kFloatMissing)
-    theWeather.SubValue(subParamValue, wantedSubParam);
+    if (subParamValue != kFloatMissing)
+      theWeather.SubValue(subParamValue, wantedSubParam);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSourceInfo,
                                                       const std::vector<int> &theParamIds)
 {
-  std::vector<unsigned long> paramIndexVector;
-  for (size_t i = 0; i < theParamIds.size(); i++)
+  try
   {
-    theSourceInfo.Param(static_cast<FmiParameterName>(std::abs(theParamIds[i])));
-    paramIndexVector.push_back(theSourceInfo.ParamIndex());
+    std::vector<unsigned long> paramIndexVector;
+    for (size_t i = 0; i < theParamIds.size(); i++)
+    {
+      theSourceInfo.Param(static_cast<FmiParameterName>(std::abs(theParamIds[i])));
+      paramIndexVector.push_back(theSourceInfo.ParamIndex());
+    }
+    return paramIndexVector;
   }
-  return paramIndexVector;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -2560,225 +3042,234 @@ static void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
                                                const std::vector<int> &theFogParIds,
                                                const std::vector<int> &thePotParIds)
 {
-  double destInfoVersion = theDestInfo.InfoVersion();
-  NFmiWeatherAndCloudiness weather(destInfoVersion);
-  float clouds = kFloatMissing;
-  float hSade = kFloatMissing;
-  float fog = kFloatMissing;
-
-  float temperature = kFloatMissing;
-  theSourceInfo.Param(kFmiTemperature);
-  unsigned long temperatureIndex = theSourceInfo.ParamIndex();
-
-  float totalClouds = kFloatMissing;
-  float precipitation = kFloatMissing;
-  theSourceInfo.Param(kFmiPrecipitationRate);
-  unsigned long precipitationIndex = theSourceInfo.ParamIndex();
-  float precipitation1h = kFloatMissing;
-  theSourceInfo.Param(kFmiPrecipitation1h);
-  unsigned long precipitation1hIndex = theSourceInfo.ParamIndex();
-  float precipitation3h = kFloatMissing;
-  theSourceInfo.Param(kFmiPrecipitation3h);
-  unsigned long precipitation3hIndex = theSourceInfo.ParamIndex();
-  float precipitation6h = kFloatMissing;
-  theSourceInfo.Param(kFmiPrecipitation6h);
-  unsigned long precipitation6hIndex = theSourceInfo.ParamIndex();
-
-  theSourceInfo.Param(kFmiLowCloudCover);
-  unsigned long clParIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(kFmiMediumCloudCover);
-  unsigned long cmParIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(kFmiHighCloudCover);
-  unsigned long chParIndex = theSourceInfo.ParamIndex();
-
-  theSourceInfo.Param(kFmiHumidity);
-  unsigned long rhIndex = theSourceInfo.ParamIndex();
-
-  theDestInfo.Param(kFmiWeatherAndCloudiness);
-  unsigned long destWeatherAndcloudinessParIndex = theDestInfo.ParamIndex();
-
-  theDestInfo.Param(kFmiPrecipitationRate);
-  unsigned long destAccurePrecipParIndex = theDestInfo.ParamIndex();
-
-  std::vector<unsigned long> precipFormParamIndexVector =
-      ::GetParamIndexVector(theSourceInfo, thePrecipFormParIds);
-  std::vector<unsigned long> fogParamIndexVector =
-      ::GetParamIndexVector(theSourceInfo, theFogParIds);
-  std::vector<unsigned long> potParamIndexVector =
-      ::GetParamIndexVector(theSourceInfo, thePotParIds);
-
-  // käydään läpi infon Paramit kFmiWeatherSymbol1, kFmiCloudSymbol, kFmiFogSymbol ja
-  // kFmiTotalCloudCover
-  if (theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex))
+  try
   {
-    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+    double destInfoVersion = theDestInfo.InfoVersion();
+    NFmiWeatherAndCloudiness weather(destInfoVersion);
+    float clouds = kFloatMissing;
+    float hSade = kFloatMissing;
+    float fog = kFloatMissing;
+
+    float temperature = kFloatMissing;
+    theSourceInfo.Param(kFmiTemperature);
+    unsigned long temperatureIndex = theSourceInfo.ParamIndex();
+
+    float totalClouds = kFloatMissing;
+    float precipitation = kFloatMissing;
+    theSourceInfo.Param(kFmiPrecipitationRate);
+    unsigned long precipitationIndex = theSourceInfo.ParamIndex();
+    float precipitation1h = kFloatMissing;
+    theSourceInfo.Param(kFmiPrecipitation1h);
+    unsigned long precipitation1hIndex = theSourceInfo.ParamIndex();
+    float precipitation3h = kFloatMissing;
+    theSourceInfo.Param(kFmiPrecipitation3h);
+    unsigned long precipitation3hIndex = theSourceInfo.ParamIndex();
+    float precipitation6h = kFloatMissing;
+    theSourceInfo.Param(kFmiPrecipitation6h);
+    unsigned long precipitation6hIndex = theSourceInfo.ParamIndex();
+
+    theSourceInfo.Param(kFmiLowCloudCover);
+    unsigned long clParIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(kFmiMediumCloudCover);
+    unsigned long cmParIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(kFmiHighCloudCover);
+    unsigned long chParIndex = theSourceInfo.ParamIndex();
+
+    theSourceInfo.Param(kFmiHumidity);
+    unsigned long rhIndex = theSourceInfo.ParamIndex();
+
+    theDestInfo.Param(kFmiWeatherAndCloudiness);
+    unsigned long destWeatherAndcloudinessParIndex = theDestInfo.ParamIndex();
+
+    theDestInfo.Param(kFmiPrecipitationRate);
+    unsigned long destAccurePrecipParIndex = theDestInfo.ParamIndex();
+
+    std::vector<unsigned long> precipFormParamIndexVector =
+        ::GetParamIndexVector(theSourceInfo, thePrecipFormParIds);
+    std::vector<unsigned long> fogParamIndexVector =
+        ::GetParamIndexVector(theSourceInfo, theFogParIds);
+    std::vector<unsigned long> potParamIndexVector =
+        ::GetParamIndexVector(theSourceInfo, thePotParIds);
+
+    // käydään läpi infon Paramit kFmiWeatherSymbol1, kFmiCloudSymbol, kFmiFogSymbol ja
+    // kFmiTotalCloudCover
+    if (theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex))
     {
-      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
       {
-        theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex);
-        hSade = kFloatMissing;
-        // float precipDividor = 1;
-        if (theSourceInfo.Param(kFmiWeatherSymbol1))
+        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
         {
-          hSade = theSourceInfo.FloatValue();
-          if (hSade == kFloatMissing)
+          theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex);
+          hSade = kFloatMissing;
+          // float precipDividor = 1;
+          if (theSourceInfo.Param(kFmiWeatherSymbol1))
           {
-            if (theSourceInfo.Param(kFmiWeatherSymbol2))
+            hSade = theSourceInfo.FloatValue();
+            if (hSade == kFloatMissing)
             {
-              hSade = theSourceInfo.FloatValue();
-            }
-          }
-        }
-
-        precipitation = kFloatMissing;
-        precipitation1h = kFloatMissing;
-        precipitation3h = kFloatMissing;
-        precipitation6h = kFloatMissing;
-        if (theSourceInfo.ParamIndex(precipitationIndex))
-        {
-          precipitation = theSourceInfo.FloatValue();
-        }
-        if (theSourceInfo.ParamIndex(precipitation1hIndex))
-        {
-          precipitation1h = theSourceInfo.FloatValue();
-        }
-        if (theSourceInfo.ParamIndex(precipitation3hIndex))
-        {
-          float tmp = theSourceInfo.FloatValue();
-          precipitation3h =
-              (tmp == kFloatMissing)
-                  ? kFloatMissing
-                  : tmp / 3.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
-        }
-        if (theSourceInfo.ParamIndex(precipitation6hIndex))
-        {
-          float tmp = theSourceInfo.FloatValue();
-          precipitation6h =
-              (tmp == kFloatMissing)
-                  ? kFloatMissing
-                  : tmp / 6.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
-        }
-
-        if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
-          precipitation = precipitation1h;
-        else if (precipitation == kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
-        {
-          if (precipitation3h != kFloatMissing)  // 3. priority 3h sateelle
-          {
-            precipitation = precipitation3h;
-            // precipDividor = 3;
-          }
-          else if (precipitation6h != kFloatMissing)  // 4. priority 6h sateelle
-          {
-            precipitation = precipitation6h;
-            // precipDividor = 6;
-          }
-        }
-
-        if (theSourceInfo.Param(kFmiCloudSymbol))
-          clouds = theSourceInfo.FloatValue();
-        if (theSourceInfo.Param(kFmiFogSymbol))
-          fog = theSourceInfo.FloatValue();
-        if (theSourceInfo.Param(kFmiTotalCloudCover))
-          totalClouds = theSourceInfo.FloatValue();
-        if (theSourceInfo.Param(kFmiTemperature))
-          temperature = theSourceInfo.FloatValue();
-
-        bool doHSade1Fix = false;
-        if (hSade == kFloatMissing && precipitation != kFloatMissing)
-          doHSade1Fix = true;
-        bool doHSade1ZeroOnRainFix = false;
-        if (hSade == 0 && precipitation > 0)
-          doHSade1ZeroOnRainFix = true;
-
-        if (fAllowLessParamsWhenCreatingWeather || doHSade1Fix || doHSade1ZeroOnRainFix)
-        {  // nyt pitää säveltää muutamat parametrit, jos on sallittu tehdä w&C parametri
-           // vähemmistä
-          // aineksista
-          if (clouds == kFloatMissing && totalClouds != kFloatMissing)
-          {
-            const int defaultCloudType = 302;  // tämä on alapilveä pilvityyppiä 2 (kumpupilvi?)
-            if (totalClouds <= 30)
-              clouds = 1000 + defaultCloudType;
-            else if (totalClouds <= 70)
-              clouds = 2000 + defaultCloudType;
-            else
-              clouds = 3000 + defaultCloudType;
-          }
-
-          // lasketaan tarvittaessa sateenolomuoto tutkaryhmän käyttämästa T ja RH kaavasta
-          if (hSade == kFloatMissing || doHSade1ZeroOnRainFix)
-          {
-            if (precipitation <= 0)
-              hSade = 0;
-            else if ((precipitation != kFloatMissing && precipitation > 0) || doHSade1ZeroOnRainFix)
-            {
-              hSade = 62;  // alustetaan sade vesisateeksi
-              theSourceInfo.ParamIndex(temperatureIndex);
-              temperature = theSourceInfo.FloatValue();
-              theSourceInfo.ParamIndex(rhIndex);
-              float rh = theSourceInfo.FloatValue();
-              if (temperature != kFloatMissing && rh != kFloatMissing)
+              if (theSourceInfo.Param(kFmiWeatherSymbol2))
               {
-                auto xFactor = static_cast<float>(
-                    1.0 - 1.0 / (1.0 + ::exp(22.0 - 2.7 * temperature - 0.2 * rh)));
-                if (xFactor >= 0.8f)
-                  hSade = 72;  // 72 = lumisadetta
-                else if (xFactor >= 0.2f && xFactor < 0.8f)
-                  hSade = 68;  // 68 = räntää
+                hSade = theSourceInfo.FloatValue();
               }
             }
           }
-          fog = 0;
-        }
-        if (hSade == kFloatMissing && clouds != kFloatMissing && totalClouds != kFloatMissing)
-          hSade = 0;  // pika fixi, en korjaa weatherandcloudiness konstruktoria, vaan korjaan
-                      // parametreja tässä
-        weather = NFmiWeatherAndCloudiness(clouds,
-                                           hSade,
-                                           temperature,
-                                           totalClouds,
-                                           fog,
-                                           precipitation,
-                                           destInfoVersion);  //, true);
 
-        // asetetaan vielä mahdolliset ala-, keski- ja yläpilvet
-        if (clParIndex != gMissingIndex)
-        {
-          theSourceInfo.ParamIndex(clParIndex);
-          weather.SubValue(theSourceInfo.FloatValue(), kFmiLowCloudCover);
-        }
-        if (cmParIndex != gMissingIndex)
-        {
-          theSourceInfo.ParamIndex(cmParIndex);
-          weather.SubValue(theSourceInfo.FloatValue(), kFmiMediumCloudCover);
-        }
-        if (chParIndex != gMissingIndex)
-        {
-          theSourceInfo.ParamIndex(chParIndex);
-          weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
-        }
-        // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
-        if (precipFormParamIndexVector.size())
-          ::SetSubParamValue(
-              theSourceInfo, weather, precipFormParamIndexVector, kFmiPrecipitationForm);
-        if (fogParamIndexVector.size())
-          ::SetSubParamValue(theSourceInfo, weather, fogParamIndexVector, kFmiFogIntensity);
-        if (potParamIndexVector.size())
-          ::SetSubParamValue(
-              theSourceInfo, weather, potParamIndexVector, kFmiProbabilityThunderstorm);
+          precipitation = kFloatMissing;
+          precipitation1h = kFloatMissing;
+          precipitation3h = kFloatMissing;
+          precipitation6h = kFloatMissing;
+          if (theSourceInfo.ParamIndex(precipitationIndex))
+          {
+            precipitation = theSourceInfo.FloatValue();
+          }
+          if (theSourceInfo.ParamIndex(precipitation1hIndex))
+          {
+            precipitation1h = theSourceInfo.FloatValue();
+          }
+          if (theSourceInfo.ParamIndex(precipitation3hIndex))
+          {
+            float tmp = theSourceInfo.FloatValue();
+            precipitation3h =
+                (tmp == kFloatMissing)
+                    ? kFloatMissing
+                    : tmp / 3.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
+          }
+          if (theSourceInfo.ParamIndex(precipitation6hIndex))
+          {
+            float tmp = theSourceInfo.FloatValue();
+            precipitation6h =
+                (tmp == kFloatMissing)
+                    ? kFloatMissing
+                    : tmp / 6.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
+          }
 
-        theDestInfo.FloatValue(weather.TransformedFloatValue());
+          if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
+            precipitation = precipitation1h;
+          else if (precipitation ==
+                   kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
+          {
+            if (precipitation3h != kFloatMissing)  // 3. priority 3h sateelle
+            {
+              precipitation = precipitation3h;
+              // precipDividor = 3;
+            }
+            else if (precipitation6h != kFloatMissing)  // 4. priority 6h sateelle
+            {
+              precipitation = precipitation6h;
+              // precipDividor = 6;
+            }
+          }
 
-        if (fDoaccuratePrecip && precipitation != kFloatMissing &&
-            theDestInfo.ParamIndex(destAccurePrecipParIndex))
-        {
-          theDestInfo.FloatValue(precipitation);
+          if (theSourceInfo.Param(kFmiCloudSymbol))
+            clouds = theSourceInfo.FloatValue();
+          if (theSourceInfo.Param(kFmiFogSymbol))
+            fog = theSourceInfo.FloatValue();
+          if (theSourceInfo.Param(kFmiTotalCloudCover))
+            totalClouds = theSourceInfo.FloatValue();
+          if (theSourceInfo.Param(kFmiTemperature))
+            temperature = theSourceInfo.FloatValue();
+
+          bool doHSade1Fix = false;
+          if (hSade == kFloatMissing && precipitation != kFloatMissing)
+            doHSade1Fix = true;
+          bool doHSade1ZeroOnRainFix = false;
+          if (hSade == 0 && precipitation > 0)
+            doHSade1ZeroOnRainFix = true;
+
+          if (fAllowLessParamsWhenCreatingWeather || doHSade1Fix || doHSade1ZeroOnRainFix)
+          {  // nyt pitää säveltää muutamat parametrit, jos on sallittu tehdä w&C parametri
+             // vähemmistä
+            // aineksista
+            if (clouds == kFloatMissing && totalClouds != kFloatMissing)
+            {
+              const int defaultCloudType = 302;  // tämä on alapilveä pilvityyppiä 2 (kumpupilvi?)
+              if (totalClouds <= 30)
+                clouds = 1000 + defaultCloudType;
+              else if (totalClouds <= 70)
+                clouds = 2000 + defaultCloudType;
+              else
+                clouds = 3000 + defaultCloudType;
+            }
+
+            // lasketaan tarvittaessa sateenolomuoto tutkaryhmän käyttämästa T ja RH kaavasta
+            if (hSade == kFloatMissing || doHSade1ZeroOnRainFix)
+            {
+              if (precipitation <= 0)
+                hSade = 0;
+              else if ((precipitation != kFloatMissing && precipitation > 0) ||
+                       doHSade1ZeroOnRainFix)
+              {
+                hSade = 62;  // alustetaan sade vesisateeksi
+                theSourceInfo.ParamIndex(temperatureIndex);
+                temperature = theSourceInfo.FloatValue();
+                theSourceInfo.ParamIndex(rhIndex);
+                float rh = theSourceInfo.FloatValue();
+                if (temperature != kFloatMissing && rh != kFloatMissing)
+                {
+                  auto xFactor = static_cast<float>(
+                      1.0 - 1.0 / (1.0 + ::exp(22.0 - 2.7 * temperature - 0.2 * rh)));
+                  if (xFactor >= 0.8f)
+                    hSade = 72;  // 72 = lumisadetta
+                  else if (xFactor >= 0.2f && xFactor < 0.8f)
+                    hSade = 68;  // 68 = räntää
+                }
+              }
+            }
+            fog = 0;
+          }
+          if (hSade == kFloatMissing && clouds != kFloatMissing && totalClouds != kFloatMissing)
+            hSade = 0;  // pika fixi, en korjaa weatherandcloudiness konstruktoria, vaan korjaan
+                        // parametreja tässä
+          weather = NFmiWeatherAndCloudiness(clouds,
+                                             hSade,
+                                             temperature,
+                                             totalClouds,
+                                             fog,
+                                             precipitation,
+                                             destInfoVersion);  //, true);
+
+          // asetetaan vielä mahdolliset ala-, keski- ja yläpilvet
+          if (clParIndex != gMissingIndex)
+          {
+            theSourceInfo.ParamIndex(clParIndex);
+            weather.SubValue(theSourceInfo.FloatValue(), kFmiLowCloudCover);
+          }
+          if (cmParIndex != gMissingIndex)
+          {
+            theSourceInfo.ParamIndex(cmParIndex);
+            weather.SubValue(theSourceInfo.FloatValue(), kFmiMediumCloudCover);
+          }
+          if (chParIndex != gMissingIndex)
+          {
+            theSourceInfo.ParamIndex(chParIndex);
+            weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
+          }
+          // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
+          if (precipFormParamIndexVector.size())
+            ::SetSubParamValue(
+                theSourceInfo, weather, precipFormParamIndexVector, kFmiPrecipitationForm);
+          if (fogParamIndexVector.size())
+            ::SetSubParamValue(theSourceInfo, weather, fogParamIndexVector, kFmiFogIntensity);
+          if (potParamIndexVector.size())
+            ::SetSubParamValue(
+                theSourceInfo, weather, potParamIndexVector, kFmiProbabilityThunderstorm);
+
+          theDestInfo.FloatValue(weather.TransformedFloatValue());
+
+          if (fDoaccuratePrecip && precipitation != kFloatMissing &&
+              theDestInfo.ParamIndex(destAccurePrecipParIndex))
+          {
+            theDestInfo.FloatValue(precipitation);
+          }
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2793,35 +3284,42 @@ void TotalWindFromWindVector(NFmiFastQueryInfo &theSourceInfo,
                              NFmiFastQueryInfo &theDestInfo,
                              FmiParameterName theWindGustParId)
 {
-  double destInfoVersion = theDestInfo.InfoVersion();
-  bool windGustFound = theSourceInfo.Param(theWindGustParId);
-  unsigned long gustParamIndex = theSourceInfo.ParamIndex();
-  unsigned long windVectorParamIndex = 0;
-  float windGustValue = kFloatMissing;
-
-  NFmiTotalWind wind(destInfoVersion);
-  if (theSourceInfo.Param(kFmiWindVectorMS) && theDestInfo.Param(kFmiTotalWindMS))
+  try
   {
-    windVectorParamIndex = theSourceInfo.ParamIndex();
-    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
-    {
-      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
-      {
-        float f1 = theSourceInfo.FloatValue();
-        if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
-        {
-          theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
-          windGustValue = theSourceInfo.FloatValue();
-          theSourceInfo.ParamIndex(
-              windVectorParamIndex);  // laitetaan sitten tuulivektori takaisin päälle
-        }
+    double destInfoVersion = theDestInfo.InfoVersion();
+    bool windGustFound = theSourceInfo.Param(theWindGustParId);
+    unsigned long gustParamIndex = theSourceInfo.ParamIndex();
+    unsigned long windVectorParamIndex = 0;
+    float windGustValue = kFloatMissing;
 
-        wind = NFmiTotalWind(f1, kFmiWindVector, destInfoVersion, windGustValue);
-        theDestInfo.FloatValue(wind.TransformedFloatValue());
+    NFmiTotalWind wind(destInfoVersion);
+    if (theSourceInfo.Param(kFmiWindVectorMS) && theDestInfo.Param(kFmiTotalWindMS))
+    {
+      windVectorParamIndex = theSourceInfo.ParamIndex();
+      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+      {
+        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+        {
+          float f1 = theSourceInfo.FloatValue();
+          if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
+          {
+            theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
+            windGustValue = theSourceInfo.FloatValue();
+            theSourceInfo.ParamIndex(
+                windVectorParamIndex);  // laitetaan sitten tuulivektori takaisin päälle
+          }
+
+          wind = NFmiTotalWind(f1, kFmiWindVector, destInfoVersion, windGustValue);
+          theDestInfo.FloatValue(wind.TransformedFloatValue());
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2836,41 +3334,48 @@ void TotalWindFromWindSpeedAndDirection(NFmiFastQueryInfo &theSourceInfo,
                                         NFmiFastQueryInfo &theDestInfo,
                                         FmiParameterName theWindGustParId)
 {
-  double destInfoVersion = theDestInfo.InfoVersion();
-  NFmiTotalWind wind(destInfoVersion);
-  bool windGustFound = theSourceInfo.Param(theWindGustParId);
-  unsigned long gustParamIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(
-      kFmiWindSpeedMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
-  unsigned long WSParamIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(
-      kFmiWindDirection);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
-  unsigned long WDParamIndex = theSourceInfo.ParamIndex();
-  float windGustValue = kFloatMissing;
-
-  if (theSourceInfo.Param(kFmiWindSpeedMS) && theDestInfo.Param(kFmiTotalWindMS))
+  try
   {
-    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+    double destInfoVersion = theDestInfo.InfoVersion();
+    NFmiTotalWind wind(destInfoVersion);
+    bool windGustFound = theSourceInfo.Param(theWindGustParId);
+    unsigned long gustParamIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(
+        kFmiWindSpeedMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
+    unsigned long WSParamIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(
+        kFmiWindDirection);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
+    unsigned long WDParamIndex = theSourceInfo.ParamIndex();
+    float windGustValue = kFloatMissing;
+
+    if (theSourceInfo.Param(kFmiWindSpeedMS) && theDestInfo.Param(kFmiTotalWindMS))
     {
-      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
       {
-        theSourceInfo.ParamIndex(WSParamIndex);
-        float f1 = theSourceInfo.FloatValue();
-        theSourceInfo.ParamIndex(WDParamIndex);
-        float f2 = theSourceInfo.FloatValue();
-
-        if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
+        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
         {
-          theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
-          windGustValue = theSourceInfo.FloatValue();
-        }
+          theSourceInfo.ParamIndex(WSParamIndex);
+          float f1 = theSourceInfo.FloatValue();
+          theSourceInfo.ParamIndex(WDParamIndex);
+          float f2 = theSourceInfo.FloatValue();
 
-        wind = NFmiTotalWind(f2, f1, kFmiDirectionAndSpeed, destInfoVersion, windGustValue);
-        theDestInfo.FloatValue(wind.TransformedFloatValue());
+          if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
+          {
+            theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
+            windGustValue = theSourceInfo.FloatValue();
+          }
+
+          wind = NFmiTotalWind(f2, f1, kFmiDirectionAndSpeed, destInfoVersion, windGustValue);
+          theDestInfo.FloatValue(wind.TransformedFloatValue());
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2885,62 +3390,67 @@ void TotalWindFromUandVcomponents(NFmiFastQueryInfo &theSourceInfo,
                                   NFmiFastQueryInfo &theDestInfo,
                                   FmiParameterName theWindGustParId)
 {
-  double destInfoVersion = theDestInfo.InfoVersion();
-  NFmiTotalWind wind(destInfoVersion);
-  bool windGustFound = theSourceInfo.Param(theWindGustParId);
-  unsigned long gustParamIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(kFmiWindUMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
-  unsigned long uParamIndex = theSourceInfo.ParamIndex();
-  theSourceInfo.Param(kFmiWindVMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
-  unsigned long vParamIndex = theSourceInfo.ParamIndex();
-  float windGustValue = kFloatMissing;
-
-  // U- and V-component directions depend on the grid projection. The azimuth
-  // may change at each grid point separately, but is the same for both the
-  // source and destination infos
-
-  const NFmiArea *area = theSourceInfo.Area();
-
-  if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS) &&
-      theDestInfo.Param(kFmiTotalWindMS))
+  try
   {
-    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+    double destInfoVersion = theDestInfo.InfoVersion();
+    NFmiTotalWind wind(destInfoVersion);
+    bool windGustFound = theSourceInfo.Param(theWindGustParId);
+    unsigned long gustParamIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(kFmiWindUMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
+    unsigned long uParamIndex = theSourceInfo.ParamIndex();
+    theSourceInfo.Param(kFmiWindVMS);  // oletus, että tämä löytyy, muuten tätä funktiota ei kutsuta
+    unsigned long vParamIndex = theSourceInfo.ParamIndex();
+    float windGustValue = kFloatMissing;
+
+    // U- and V-component directions depend on the grid projection. The azimuth
+    // may change at each grid point separately, but is the same for both the
+    // source and destination infos
+
+    const NFmiArea *area = theSourceInfo.Area();
+
+    if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS) &&
+        theDestInfo.Param(kFmiTotalWindMS))
     {
-      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
       {
-        theSourceInfo.ParamIndex(uParamIndex);
-        float u = theSourceInfo.FloatValue();
-        theSourceInfo.ParamIndex(vParamIndex);
-        float v = theSourceInfo.FloatValue();
-        if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
+        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
         {
-          theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
-          windGustValue = theSourceInfo.FloatValue();
+          theSourceInfo.ParamIndex(uParamIndex);
+          float u = theSourceInfo.FloatValue();
+          theSourceInfo.ParamIndex(vParamIndex);
+          float v = theSourceInfo.FloatValue();
+          if (windGustFound)  // tässä on optimoitu mahd. puuska arvojen hakua
+          {
+            theSourceInfo.ParamIndex(gustParamIndex);  // asetetaan hetkeksi puuska parametri päälle
+            windGustValue = theSourceInfo.FloatValue();
+          }
+
+          // Rotate the components so that they are in normal latlon coordinates, since we needs
+          // to construct the speed and direction in them. Note that NFmiTotalWind::CalcU and
+          // CalcV are wrong in not taking the TrueNorthAzimuth as input
+
+          if (u == kFloatMissing || v == kFloatMissing)
+            wind = NFmiTotalWind(
+                kFloatMissing, kFloatMissing, kFmiUVComponents, destInfoVersion, windGustValue);
+          else
+          {
+            double azimuth = (!area ? 0.0 : area->TrueNorthAzimuth(theSourceInfo.LatLon()).ToRad());
+
+            auto uu = static_cast<float>(u * cos(azimuth) + v * sin(azimuth));
+            auto vv = static_cast<float>(v * cos(azimuth) - u * sin(azimuth));
+            wind = NFmiTotalWind(uu, vv, kFmiUVComponents, destInfoVersion, windGustValue);
+          }
+
+          theDestInfo.FloatValue(wind.TransformedFloatValue());
         }
-
-        // Rotate the components so that they are in normal latlon coordinates, since we needs to
-        // construct
-        // the speed and direction in them. Note that NFmiTotalWind::CalcU and CalcV are wrong in
-        // not
-        // taking the TrueNorthAzimuth as input
-
-        if (u == kFloatMissing || v == kFloatMissing)
-          wind = NFmiTotalWind(
-              kFloatMissing, kFloatMissing, kFmiUVComponents, destInfoVersion, windGustValue);
-        else
-        {
-          double azimuth = (!area ? 0.0 : area->TrueNorthAzimuth(theSourceInfo.LatLon()).ToRad());
-
-          auto uu = static_cast<float>(u * cos(azimuth) + v * sin(azimuth));
-          auto vv = static_cast<float>(v * cos(azimuth) - u * sin(azimuth));
-          wind = NFmiTotalWind(uu, vv, kFmiUVComponents, destInfoVersion, windGustValue);
-        }
-
-        theDestInfo.FloatValue(wind.TransformedFloatValue());
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -2954,34 +3464,41 @@ static void FillCombineParamsOneTime(NFmiFastQueryInfo &theSourceInfo,
                                      const std::vector<int> &theFogParIds,
                                      const std::vector<int> &thePotParIds)
 {
-  for (theDestInfo.ResetParam(); theDestInfo.NextParam();)
+  try
   {
-    if (theSourceInfo.Param(*theDestInfo.Param().GetParam()))
+    for (theDestInfo.ResetParam(); theDestInfo.NextParam();)
     {
-      for (theDestInfo.ResetLocation(), theSourceInfo.ResetLocation();
-           theDestInfo.NextLocation() && theSourceInfo.NextLocation();)
-        for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
-             theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
-          theDestInfo.FloatValue(theSourceInfo.FloatValue());
+      if (theSourceInfo.Param(*theDestInfo.Param().GetParam()))
+      {
+        for (theDestInfo.ResetLocation(), theSourceInfo.ResetLocation();
+             theDestInfo.NextLocation() && theSourceInfo.NextLocation();)
+          for (theDestInfo.ResetLevel(), theSourceInfo.ResetLevel();
+               theDestInfo.NextLevel() && theSourceInfo.NextLevel();)
+            theDestInfo.FloatValue(theSourceInfo.FloatValue());
+      }
     }
-  }
-  if (theCombinedParamStruct.weather1)
-    WeatherAndCloudinessFromManyParams(theSourceInfo,
-                                       theDestInfo,
-                                       fAllowLessParamsWhenCreatingWeather,
-                                       fDoaccuratePrecip,
-                                       thePrecipFormParIds,
-                                       theFogParIds,
-                                       thePotParIds);
-  else if (theCombinedParamStruct.weather2)
-    WeatherAndCloudinessFromHessaa(theSourceInfo, theDestInfo);
+    if (theCombinedParamStruct.weather1)
+      WeatherAndCloudinessFromManyParams(theSourceInfo,
+                                         theDestInfo,
+                                         fAllowLessParamsWhenCreatingWeather,
+                                         fDoaccuratePrecip,
+                                         thePrecipFormParIds,
+                                         theFogParIds,
+                                         thePotParIds);
+    else if (theCombinedParamStruct.weather2)
+      WeatherAndCloudinessFromHessaa(theSourceInfo, theDestInfo);
 
-  if (theCombinedParamStruct.wind1)
-    TotalWindFromWindVector(theSourceInfo, theDestInfo, theWindGustParId);
-  else if (theCombinedParamStruct.wind2)
-    TotalWindFromWindSpeedAndDirection(theSourceInfo, theDestInfo, theWindGustParId);
-  else if (theCombinedParamStruct.wind3)
-    TotalWindFromUandVcomponents(theSourceInfo, theDestInfo, theWindGustParId);
+    if (theCombinedParamStruct.wind1)
+      TotalWindFromWindVector(theSourceInfo, theDestInfo, theWindGustParId);
+    else if (theCombinedParamStruct.wind2)
+      TotalWindFromWindSpeedAndDirection(theSourceInfo, theDestInfo, theWindGustParId);
+    else if (theCombinedParamStruct.wind3)
+      TotalWindFromUandVcomponents(theSourceInfo, theDestInfo, theWindGustParId);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Piti luoda uusi luokka että saatoin sitoa muutaman parametrin yhteen nippuun.
@@ -3011,41 +3528,55 @@ static void MakeCombineParamsOneThread(NFmiFastQueryInfo &theSourceInfo,
                                        bool fDoaccuratePrecip,
                                        const OptionalParamIdHolder &theParamHolder)
 {
-  unsigned long workedTimeIndex = 0;
-  for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
+  try
   {
-    if (theSourceInfo.TimeIndex(workedTimeIndex) && theDestInfo.TimeIndex(workedTimeIndex))
+    unsigned long workedTimeIndex = 0;
+    for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
     {
-      FillCombineParamsOneTime(theSourceInfo,
-                               theDestInfo,
-                               theCombinedParamStruct,
-                               theWindGustParId,
-                               fAllowLessParamsWhenCreatingWeather,
-                               fDoaccuratePrecip,
-                               theParamHolder.itsPrecipFormParIds,
-                               theParamHolder.itsFogParIds,
-                               theParamHolder.itsPotParIds);
+      if (theSourceInfo.TimeIndex(workedTimeIndex) && theDestInfo.TimeIndex(workedTimeIndex))
+      {
+        FillCombineParamsOneTime(theSourceInfo,
+                                 theDestInfo,
+                                 theCombinedParamStruct,
+                                 theWindGustParId,
+                                 fAllowLessParamsWhenCreatingWeather,
+                                 fDoaccuratePrecip,
+                                 theParamHolder.itsPrecipFormParIds,
+                                 theParamHolder.itsFogParIds,
+                                 theParamHolder.itsPotParIds);
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 static bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
                                                   bool fAllowLessParamsWhenCreatingWeather)
 {
-  if (fAllowLessParamsWhenCreatingWeather)
+  try
   {
-    if (theInfo.Param(kFmiTotalCloudCover) &&
-        (theInfo.Param(kFmiPrecipitationRate) || theInfo.Param(kFmiPrecipitation1h) ||
-         theInfo.Param(kFmiPrecipitation3h) || theInfo.Param(kFmiPrecipitation6h)))
-      return true;
+    if (fAllowLessParamsWhenCreatingWeather)
+    {
+      if (theInfo.Param(kFmiTotalCloudCover) &&
+          (theInfo.Param(kFmiPrecipitationRate) || theInfo.Param(kFmiPrecipitation1h) ||
+           theInfo.Param(kFmiPrecipitation3h) || theInfo.Param(kFmiPrecipitation6h)))
+        return true;
+    }
+    else
+    {
+      if (theInfo.Param(kFmiWeatherSymbol1) && theInfo.Param(kFmiTotalCloudCover) &&
+          theInfo.Param(kFmiCloudSymbol) && theInfo.Param(kFmiFogSymbol))
+        return true;
+    }
+    return false;
   }
-  else
+  catch (...)
   {
-    if (theInfo.Param(kFmiWeatherSymbol1) && theInfo.Param(kFmiTotalCloudCover) &&
-        theInfo.Param(kFmiCloudSymbol) && theInfo.Param(kFmiFogSymbol))
-      return true;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return false;
 }
 
 static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
@@ -3054,21 +3585,28 @@ static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
                                      bool *theWeather2,
                                      const std::vector<int> &theOptionalParamIds)
 {
-  if (theOptionalParamIds.size() && (*theWeather1 || *theWeather2))
+  try
   {
-    for (size_t i = 0; i < theOptionalParamIds.size(); i++)
+    if (theOptionalParamIds.size() && (*theWeather1 || *theWeather2))
     {
-      if (theOptionalParamIds[i] > 0)
+      for (size_t i = 0; i < theOptionalParamIds.size(); i++)
       {
-        FmiParameterName precipFormParId = static_cast<FmiParameterName>(theOptionalParamIds[i]);
-        if (theSourceInfo.Param(precipFormParId))
+        if (theOptionalParamIds[i] > 0)
         {
-          // poista precipForm parametri uudesta parambagistä, koska sillä rakennetaan Weatheria
-          if (adjustedParambag.SetCurrent(precipFormParId))
-            adjustedParambag.Remove();
+          FmiParameterName precipFormParId = static_cast<FmiParameterName>(theOptionalParamIds[i]);
+          if (theSourceInfo.Param(precipFormParId))
+          {
+            // poista precipForm parametri uudesta parambagistä, koska sillä rakennetaan Weatheria
+            if (adjustedParambag.SetCurrent(precipFormParId))
+              adjustedParambag.Remove();
+          }
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -3101,142 +3639,149 @@ static NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInf
                                                  bool fAllowLessParamsWhenCreatingWeather,
                                                  bool fDoaccuratePrecip)
 {
-  *theWeather1 = false;
-  *theWeather2 = false;
-  *theWind1 = false;
-  *theWind2 = false;
-  *theWind3 = false;
-  NFmiParamBag bag(theSourceInfo.ParamBag());
-
-  if (fDoTotalWind)
+  try
   {
-    if (theSourceInfo.Param(kFmiWindVectorMS))
+    *theWeather1 = false;
+    *theWeather2 = false;
+    *theWind1 = false;
+    *theWind2 = false;
+    *theWind3 = false;
+    NFmiParamBag bag(theSourceInfo.ParamBag());
+
+    if (fDoTotalWind)
     {
-      *theWind1 = true;
-
-      // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-      if (bag.SetCurrent(kFmiWindVectorMS))
-        bag.Remove();
-
-      NFmiTotalWind tmp;
-      NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-      bag.Add(*saaParam);
-      delete saaParam;
-    }
-    else if (theSourceInfo.Param(kFmiWindDirection) && theSourceInfo.Param(kFmiWindSpeedMS))
-    {
-      *theWind2 = true;
-
-      // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-      if (bag.SetCurrent(kFmiWindDirection))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiWindSpeedMS))
-        bag.Remove();
-
-      NFmiTotalWind tmp;
-      NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-      bag.Add(*saaParam);
-      delete saaParam;
-    }
-    else if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS))
-    {
-      *theWind3 = true;
-
-      // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-      if (bag.SetCurrent(kFmiWindUMS))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiWindVMS))
-        bag.Remove();
-
-      NFmiTotalWind tmp;
-      NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-      bag.Add(*saaParam);
-      delete saaParam;
-    }
-
-    // katsotaan vielä windGust tilanne
-    if (theWindGustParId != kFmiBadParameter && (*theWind1 || *theWind2 || *theWind3))
-    {
-      if (theSourceInfo.Param(theWindGustParId))
+      if (theSourceInfo.Param(kFmiWindVectorMS))
       {
-        // poista windgust parametri uudesta parambagistä, koska sillä rakennetaan totalwindia
-        if (bag.SetCurrent(theWindGustParId))
+        *theWind1 = true;
+
+        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
+        if (bag.SetCurrent(kFmiWindVectorMS))
           bag.Remove();
+
+        NFmiTotalWind tmp;
+        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+        bag.Add(*saaParam);
+        delete saaParam;
       }
-    }
-  }
-  if (fDoWeatherAndCloudiness)
-  {
-    if (WantedWeatherAndCloudinessParamsFound(theSourceInfo, fAllowLessParamsWhenCreatingWeather))
-    {
-      *theWeather1 = true;
-
-      // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
-      // weatherandcloudiness
-      if (bag.SetCurrent(kFmiWeatherSymbol1))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiTotalCloudCover))
-        bag.Remove();
-      if ((!fKeepCloudSymbolParameter) && bag.SetCurrent(kFmiCloudSymbol))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiFogSymbol))
-        bag.Remove();
-
-      // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
-      if (bag.SetCurrent(kFmiWeatherSymbol2))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiPrecipitationRate))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiPrecipitation1h))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiPrecipitation3h))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiPrecipitation6h))
-        bag.Remove();
-      // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
-      if (bag.SetCurrent(kFmiLowCloudCover))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiMediumCloudCover))
-        bag.Remove();
-      if (bag.SetCurrent(kFmiHighCloudCover))
-        bag.Remove();
-
-      NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
-      NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-      bag.Add(*saaParam);
-      delete saaParam;
-      if (fDoaccuratePrecip)
+      else if (theSourceInfo.Param(kFmiWindDirection) && theSourceInfo.Param(kFmiWindSpeedMS))
       {
-        NFmiDataIdent accuratePrecip(
-            NFmiParam(
-                kFmiPrecipitationRate, "exact rr1h", 0, kFloatMissing, 1, 0, "%.2f", kLinearly),
-            *theSourceInfo.Producer());
-        bag.Add(accuratePrecip);
+        *theWind2 = true;
+
+        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
+        if (bag.SetCurrent(kFmiWindDirection))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiWindSpeedMS))
+          bag.Remove();
+
+        NFmiTotalWind tmp;
+        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+        bag.Add(*saaParam);
+        delete saaParam;
+      }
+      else if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS))
+      {
+        *theWind3 = true;
+
+        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
+        if (bag.SetCurrent(kFmiWindUMS))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiWindVMS))
+          bag.Remove();
+
+        NFmiTotalWind tmp;
+        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+        bag.Add(*saaParam);
+        delete saaParam;
+      }
+
+      // katsotaan vielä windGust tilanne
+      if (theWindGustParId != kFmiBadParameter && (*theWind1 || *theWind2 || *theWind3))
+      {
+        if (theSourceInfo.Param(theWindGustParId))
+        {
+          // poista windgust parametri uudesta parambagistä, koska sillä rakennetaan totalwindia
+          if (bag.SetCurrent(theWindGustParId))
+            bag.Remove();
+        }
       }
     }
-    else if (theSourceInfo.Param(kFmiWeatherSymbol3))
+    if (fDoWeatherAndCloudiness)
     {
-      *theWeather2 = true;
+      if (WantedWeatherAndCloudinessParamsFound(theSourceInfo, fAllowLessParamsWhenCreatingWeather))
+      {
+        *theWeather1 = true;
 
-      // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
-      // weatherandcloudiness
-      if (bag.SetCurrent(kFmiWeatherSymbol3))
-        bag.Remove();
+        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
+        // weatherandcloudiness
+        if (bag.SetCurrent(kFmiWeatherSymbol1))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiTotalCloudCover))
+          bag.Remove();
+        if ((!fKeepCloudSymbolParameter) && bag.SetCurrent(kFmiCloudSymbol))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiFogSymbol))
+          bag.Remove();
 
-      NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
-      NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-      bag.Add(*saaParam);
-      delete saaParam;
+        // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
+        if (bag.SetCurrent(kFmiWeatherSymbol2))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiPrecipitationRate))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiPrecipitation1h))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiPrecipitation3h))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiPrecipitation6h))
+          bag.Remove();
+        // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
+        if (bag.SetCurrent(kFmiLowCloudCover))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiMediumCloudCover))
+          bag.Remove();
+        if (bag.SetCurrent(kFmiHighCloudCover))
+          bag.Remove();
+
+        NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
+        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+        bag.Add(*saaParam);
+        delete saaParam;
+        if (fDoaccuratePrecip)
+        {
+          NFmiDataIdent accuratePrecip(
+              NFmiParam(
+                  kFmiPrecipitationRate, "exact rr1h", 0, kFloatMissing, 1, 0, "%.2f", kLinearly),
+              *theSourceInfo.Producer());
+          bag.Add(accuratePrecip);
+        }
+      }
+      else if (theSourceInfo.Param(kFmiWeatherSymbol3))
+      {
+        *theWeather2 = true;
+
+        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
+        // weatherandcloudiness
+        if (bag.SetCurrent(kFmiWeatherSymbol3))
+          bag.Remove();
+
+        NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
+        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+        bag.Add(*saaParam);
+        delete saaParam;
+      }
+
+      // katsotaan vielä precipitation form parametrin tilanne, onko niitä vektorissa ja
+      // poistetaanko niitä (positiiviset arvot) vai ei (negatiiviset arvot)
+      ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, thePrecipFormParIds);
+      ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, theFogParIds);
+      ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, thePotParIds);
     }
 
-    // katsotaan vielä precipitation form parametrin tilanne, onko niitä vektorissa ja
-    // poistetaanko niitä (positiiviset arvot) vai ei (negatiiviset arvot)
-    ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, thePrecipFormParIds);
-    ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, theFogParIds);
-    ::RemoveOptionalParameters(theSourceInfo, bag, theWeather1, theWeather2, thePotParIds);
+    return bag;
   }
-
-  return bag;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3274,18 +3819,25 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
                                                     bool fDoaccuratePrecip,
                                                     bool fForceTimeBag)
 {
-  std::vector<int> thePrecipFormParIds;
-  return MakeCombineParams(theSourceInfo,
-                           theWantedInfoVersion,
-                           fKeepCloudSymbolParameter,
-                           fDoTotalWind,
-                           fDoWeatherAndCloudiness,
-                           theWindGustParId,
-                           thePrecipFormParIds,
-                           fAllowLessParamsWhenCreatingWeather,
-                           theMaxUsedThreadCount,
-                           fDoaccuratePrecip,
-                           fForceTimeBag);
+  try
+  {
+    std::vector<int> thePrecipFormParIds;
+    return MakeCombineParams(theSourceInfo,
+                             theWantedInfoVersion,
+                             fKeepCloudSymbolParameter,
+                             fDoTotalWind,
+                             fDoWeatherAndCloudiness,
+                             theWindGustParId,
+                             thePrecipFormParIds,
+                             fAllowLessParamsWhenCreatingWeather,
+                             theMaxUsedThreadCount,
+                             fDoaccuratePrecip,
+                             fForceTimeBag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSourceInfo,
@@ -3300,21 +3852,28 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
                                                     bool fDoaccuratePrecip,
                                                     bool fForceTimeBag)
 {
-  const std::vector<int> theFogParIds;
-  const std::vector<int> thePotParIds;
-  return MakeCombineParams(theSourceInfo,
-                           theWantedInfoVersion,
-                           fKeepCloudSymbolParameter,
-                           fDoTotalWind,
-                           fDoWeatherAndCloudiness,
-                           theWindGustParId,
-                           thePrecipFormParIds,
-                           theFogParIds,
-                           thePotParIds,
-                           fAllowLessParamsWhenCreatingWeather,
-                           theMaxUsedThreadCount,
-                           fDoaccuratePrecip,
-                           fForceTimeBag);
+  try
+  {
+    const std::vector<int> theFogParIds;
+    const std::vector<int> thePotParIds;
+    return MakeCombineParams(theSourceInfo,
+                             theWantedInfoVersion,
+                             fKeepCloudSymbolParameter,
+                             fDoTotalWind,
+                             fDoWeatherAndCloudiness,
+                             theWindGustParId,
+                             thePrecipFormParIds,
+                             theFogParIds,
+                             thePotParIds,
+                             fAllowLessParamsWhenCreatingWeather,
+                             theMaxUsedThreadCount,
+                             fDoaccuratePrecip,
+                             fForceTimeBag);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSourceInfo,
@@ -3331,104 +3890,113 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
                                                     bool fDoaccuratePrecip,
                                                     bool fForceTimeBag)
 {
-  if (theWantedInfoVersion < 6.)
-    theWantedInfoVersion =
-        6.;  // 6 on pienin tunnustettu versio numero (muuten tulos data on turha kirjoittaa!)
-
-  NFmiQueryData *destData = nullptr;
-  CombinedParamStruct combinedParamStruct;
-  NFmiParamBag newParBag(CheckAndMakeCombinedParamBag(theSourceInfo,
-                                                      &combinedParamStruct.weather1,
-                                                      &combinedParamStruct.weather2,
-                                                      &combinedParamStruct.wind1,
-                                                      &combinedParamStruct.wind2,
-                                                      &combinedParamStruct.wind3,
-                                                      fKeepCloudSymbolParameter,
-                                                      fDoTotalWind,
-                                                      fDoWeatherAndCloudiness,
-                                                      theWindGustParId,
-                                                      thePrecipFormParIds,
-                                                      theFogParIds,
-                                                      thePotParIds,
-                                                      fAllowLessParamsWhenCreatingWeather,
-                                                      fDoaccuratePrecip));
-  NFmiParamDescriptor newParDesc(newParBag);
-
-  // Force timebag if so requested
-  NFmiTimeDescriptor tdesc = theSourceInfo.TimeDescriptor();
-  if (fForceTimeBag && tdesc.ValidTimeList() != nullptr)
+  try
   {
-    NFmiTimeBag tbag;
-    if (!ConvertTimeList2TimeBag(*tdesc.ValidTimeList(), tbag))
-      throw std::runtime_error("Unable to force a time bag version of the given querydata");
-    tdesc = NFmiTimeDescriptor(tdesc.OriginTime(), tbag);
-  }
+    if (theWantedInfoVersion < 6.)
+      theWantedInfoVersion =
+          6.;  // 6 on pienin tunnustettu versio numero (muuten tulos data on turha kirjoittaa!)
 
-  NFmiQueryInfo tmpInfo(
-      newParDesc, tdesc, theSourceInfo.HPlaceDescriptor(), theSourceInfo.VPlaceDescriptor());
-  tmpInfo.InfoVersion(theWantedInfoVersion);  // asetetaan haluttu infoversion
-  destData = CreateEmptyData(tmpInfo);
-  if (destData)
-  {
-    NFmiFastQueryInfo destInfo(destData);
+    NFmiQueryData *destData = nullptr;
+    CombinedParamStruct combinedParamStruct;
+    NFmiParamBag newParBag(CheckAndMakeCombinedParamBag(theSourceInfo,
+                                                        &combinedParamStruct.weather1,
+                                                        &combinedParamStruct.weather2,
+                                                        &combinedParamStruct.wind1,
+                                                        &combinedParamStruct.wind2,
+                                                        &combinedParamStruct.wind3,
+                                                        fKeepCloudSymbolParameter,
+                                                        fDoTotalWind,
+                                                        fDoWeatherAndCloudiness,
+                                                        theWindGustParId,
+                                                        thePrecipFormParIds,
+                                                        theFogParIds,
+                                                        thePotParIds,
+                                                        fAllowLessParamsWhenCreatingWeather,
+                                                        fDoaccuratePrecip));
+    NFmiParamDescriptor newParDesc(newParBag);
 
-    unsigned int usedThreadCount = NFmiQueryDataUtil::GetReasonableWorkingThreadCount();
-    if (theMaxUsedThreadCount > 0)
-      usedThreadCount = std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
-    if (usedThreadCount > destInfo.SizeTimes())
-      usedThreadCount = destInfo.SizeTimes();
-
-    NFmiPoint dummyPoint =
-        destInfo.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-    dummyPoint =
-        theSourceInfo.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-
-    if (usedThreadCount <= 1)
+    // Force timebag if so requested
+    NFmiTimeDescriptor tdesc = theSourceInfo.TimeDescriptor();
+    if (fForceTimeBag && tdesc.ValidTimeList() != nullptr)
     {
-      for (theSourceInfo.ResetTime(), destInfo.ResetTime();
-           theSourceInfo.NextTime() && destInfo.NextTime();)
+      NFmiTimeBag tbag;
+      if (!ConvertTimeList2TimeBag(*tdesc.ValidTimeList(), tbag))
+        throw Fmi::Exception(BCP, "Unable to force a time bag version of the given querydata");
+      tdesc = NFmiTimeDescriptor(tdesc.OriginTime(), tbag);
+    }
+
+    NFmiQueryInfo tmpInfo(
+        newParDesc, tdesc, theSourceInfo.HPlaceDescriptor(), theSourceInfo.VPlaceDescriptor());
+    tmpInfo.InfoVersion(theWantedInfoVersion);  // asetetaan haluttu infoversion
+    destData = CreateEmptyData(tmpInfo);
+    if (destData)
+    {
+      NFmiFastQueryInfo destInfo(destData);
+
+      unsigned int usedThreadCount = NFmiQueryDataUtil::GetReasonableWorkingThreadCount();
+      if (theMaxUsedThreadCount > 0)
+        usedThreadCount =
+            std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
+      if (usedThreadCount > destInfo.SizeTimes())
+        usedThreadCount = destInfo.SizeTimes();
+
+      NFmiPoint dummyPoint =
+          destInfo.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+      dummyPoint =
+          theSourceInfo.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+
+      if (usedThreadCount <= 1)
       {
-        FillCombineParamsOneTime(theSourceInfo,
-                                 destInfo,
-                                 combinedParamStruct,
-                                 theWindGustParId,
-                                 fAllowLessParamsWhenCreatingWeather,
-                                 fDoaccuratePrecip,
-                                 thePrecipFormParIds,
-                                 theFogParIds,
-                                 thePotParIds);
+        for (theSourceInfo.ResetTime(), destInfo.ResetTime();
+             theSourceInfo.NextTime() && destInfo.NextTime();)
+        {
+          FillCombineParamsOneTime(theSourceInfo,
+                                   destInfo,
+                                   combinedParamStruct,
+                                   theWindGustParId,
+                                   fAllowLessParamsWhenCreatingWeather,
+                                   fDoaccuratePrecip,
+                                   thePrecipFormParIds,
+                                   theFogParIds,
+                                   thePotParIds);
+        }
+      }
+      else
+      {
+        // pakko luoda dynaamisesti eri threadeille tarvittavat kopiot source ja target datoista
+        std::vector<boost::shared_ptr<NFmiFastQueryInfo>> targetInfos(usedThreadCount);
+        std::vector<boost::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
+        for (unsigned int i = 0; i < usedThreadCount; i++)
+        {
+          targetInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(destInfo));
+          sourceInfos[i] =
+              boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theSourceInfo));
+        }
+
+        unsigned long usedStartTimeIndex = 0;
+        unsigned long usedEndTimeIndex = destInfo.SizeTimes() - 1;
+        OptionalParamIdHolder paramHolder(thePrecipFormParIds, theFogParIds, thePotParIds);
+        NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
+        boost::thread_group calcParts;
+        for (unsigned int i = 0; i < usedThreadCount; i++)
+          calcParts.add_thread(new boost::thread(MakeCombineParamsOneThread,
+                                                 *(sourceInfos[i].get()),
+                                                 *(targetInfos[i].get()),
+                                                 combinedParamStruct,
+                                                 theWindGustParId,
+                                                 fAllowLessParamsWhenCreatingWeather,
+                                                 boost::ref(timeIndexCalculator),
+                                                 fDoaccuratePrecip,
+                                                 paramHolder));
+        calcParts.join_all();  // odotetaan että threadit lopettavat
       }
     }
-    else
-    {
-      // pakko luoda dynaamisesti eri threadeille tarvittavat kopiot source ja target datoista
-      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> targetInfos(usedThreadCount);
-      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
-      for (unsigned int i = 0; i < usedThreadCount; i++)
-      {
-        targetInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(destInfo));
-        sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theSourceInfo));
-      }
-
-      unsigned long usedStartTimeIndex = 0;
-      unsigned long usedEndTimeIndex = destInfo.SizeTimes() - 1;
-      OptionalParamIdHolder paramHolder(thePrecipFormParIds, theFogParIds, thePotParIds);
-      NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
-      boost::thread_group calcParts;
-      for (unsigned int i = 0; i < usedThreadCount; i++)
-        calcParts.add_thread(new boost::thread(MakeCombineParamsOneThread,
-                                               *(sourceInfos[i].get()),
-                                               *(targetInfos[i].get()),
-                                               combinedParamStruct,
-                                               theWindGustParId,
-                                               fAllowLessParamsWhenCreatingWeather,
-                                               boost::ref(timeIndexCalculator),
-                                               fDoaccuratePrecip,
-                                               paramHolder));
-      calcParts.join_all();  // odotetaan että threadit lopettavat
-    }
+    return destData;
   }
-  return destData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ********************************************************************************
@@ -3462,60 +4030,67 @@ bool NFmiQueryDataUtil::DoNowCastFiltering(const NFmiString &theData1FileName,
                                            const NFmiString &theOutputFileName,
                                            int theTimeRangeForPureData)
 {
-  NFmiStreamQueryData data1;  // kepa-data
-  NFmiStreamQueryData data2;  // shortrange-data
-
-  if (!data1.ReadData(theData1FileName))
-    return false;
-
-  if (!data2.ReadData(theData2FileName))
-    return false;
-
-  if (data1.QueryInfoIter() && data2.QueryInfoIter())
+  try
   {
-    NFmiFastQueryInfo *info1 = data1.QueryInfoIter();  // kepa
-    //	  double kepaDataVersionNumber = info1->InfoVersion();
-    NFmiFastQueryInfo *info2 = data2.QueryInfoIter();  // shortrange
-    //	  double shortRangeDataVersionNumber = info2->InfoVersion();
-    /*
-              if(kepaDataVersionNumber != shortRangeDataVersionNumber)
-              {
-                      if(kepaDataVersionNumber == 6. && shortRangeDataVersionNumber == 7.)
-                      {
-                      }
-                      else if(kepaDataVersionNumber == 7. && shortRangeDataVersionNumber == 6.)
-                      {
-                      }
-                      else
-                      {
-                              cerr << "Yhdistäminen ei onnistu, koska datoissa on oudot versiot:
-       kepa = " << kepaDataVersionNumber << " ja shortRange = " << shortRangeDataVersionNumber <<
-       endl;
-                              cerr << "Lopetetaan ohjelma." << endl;
-                              return false
-                      }
-              }
-    */
-    NFmiQueryData *newQueryData =
-        NFmiQueryDataUtil::DoNowCastFiltering(*info1, *info2, theTimeRangeForPureData);
+    NFmiStreamQueryData data1;  // kepa-data
+    NFmiStreamQueryData data2;  // shortrange-data
 
-    // Tulos tiedostoon
-    if (newQueryData)
+    if (!data1.ReadData(theData1FileName))
+      return false;
+
+    if (!data2.ReadData(theData2FileName))
+      return false;
+
+    if (data1.QueryInfoIter() && data2.QueryInfoIter())
     {
-      NFmiString realOutFileName(theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
-                                                      // outputFileName koska jakelija ei osaa
-      // hoitaa muuttunutta tiedoston nimeä vielä
-      ofstream out(realOutFileName, ios::binary);
-      if (out)
+      NFmiFastQueryInfo *info1 = data1.QueryInfoIter();  // kepa
+      //	  double kepaDataVersionNumber = info1->InfoVersion();
+      NFmiFastQueryInfo *info2 = data2.QueryInfoIter();  // shortrange
+      //	  double shortRangeDataVersionNumber = info2->InfoVersion();
+      /*
+                if(kepaDataVersionNumber != shortRangeDataVersionNumber)
+                {
+                        if(kepaDataVersionNumber == 6. && shortRangeDataVersionNumber == 7.)
+                        {
+                        }
+                        else if(kepaDataVersionNumber == 7. && shortRangeDataVersionNumber == 6.)
+                        {
+                        }
+                        else
+                        {
+                                cerr << "Yhdistäminen ei onnistu, koska datoissa on oudot versiot:
+         kepa = " << kepaDataVersionNumber << " ja shortRange = " << shortRangeDataVersionNumber <<
+         endl;
+                                cerr << "Lopetetaan ohjelma." << endl;
+                                return false
+                        }
+                }
+      */
+      NFmiQueryData *newQueryData =
+          NFmiQueryDataUtil::DoNowCastFiltering(*info1, *info2, theTimeRangeForPureData);
+
+      // Tulos tiedostoon
+      if (newQueryData)
       {
-        out << *newQueryData;  // 31.5.2001/Marko
-        out.close();
+        NFmiString realOutFileName(theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
+                                                        // outputFileName koska jakelija ei osaa
+        // hoitaa muuttunutta tiedoston nimeä vielä
+        ofstream out(realOutFileName, ios::binary);
+        if (out)
+        {
+          out << *newQueryData;  // 31.5.2001/Marko
+          out.close();
+        }
+        delete newQueryData;
+        return true;
       }
-      delete newQueryData;
-      return true;
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3539,35 +4114,43 @@ bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
                         NFmiFastQueryInfo &theInfo2,
                         int theWantedHoursFromStart)
 {
-  auto wantedTimeSteps = int(theWantedHoursFromStart / (theInfo1.ValidTimes().Resolution() / 60.));
-  float tmpValue = kFloatMissing;
-  for (theInfo2.ResetParam(); theInfo2.NextParam();)
+  try
   {
-    if (!theInfo1.Param(*theInfo2.Param().GetParam()))
-      continue;  // jos parametria ei löydy, jatketaan seuraavalla
-    int timeCounter = 0;
-    for (theInfo2.ResetTime(), theInfo1.ResetTime(); theInfo2.NextTime() && theInfo1.NextTime();
-         timeCounter++)
+    auto wantedTimeSteps =
+        int(theWantedHoursFromStart / (theInfo1.ValidTimes().Resolution() / 60.));
+    float tmpValue = kFloatMissing;
+    for (theInfo2.ResetParam(); theInfo2.NextParam();)
     {
-      if (timeCounter >= wantedTimeSteps)  // esim. jos halutaan 15 tuntia alusta, ehto ottaa mukaan
-                                           // ajat 0-15 eli periaatteessa 16 tunnin datan, mutta se
-                                           // on sama kuin 15 tuntia alusta eteenpäin.
-        continue;                          // kopioidaan dataa vain haluttu aikajakso alusta
-      for (theInfo2.ResetLocation(), theInfo1.ResetLocation();
-           theInfo2.NextLocation() && theInfo1.NextLocation();)
+      if (!theInfo1.Param(*theInfo2.Param().GetParam()))
+        continue;  // jos parametria ei löydy, jatketaan seuraavalla
+      int timeCounter = 0;
+      for (theInfo2.ResetTime(), theInfo1.ResetTime(); theInfo2.NextTime() && theInfo1.NextTime();
+           timeCounter++)
       {
-        for (theInfo2.ResetLevel(), theInfo1.ResetLevel();
-             theInfo2.NextLevel() && theInfo1.NextLevel();)
+        if (timeCounter >= wantedTimeSteps)  // esim. jos halutaan 15 tuntia alusta, ehto ottaa
+                                             // mukaan ajat 0-15 eli periaatteessa 16 tunnin datan,
+                                             // mutta se on sama kuin 15 tuntia alusta eteenpäin.
+          continue;                          // kopioidaan dataa vain haluttu aikajakso alusta
+        for (theInfo2.ResetLocation(), theInfo1.ResetLocation();
+             theInfo2.NextLocation() && theInfo1.NextLocation();)
         {
-          tmpValue = theInfo1.FloatValue();
-          if (!(tmpValue == kFloatMissing ||
-                tmpValue == kTCombinedWeatherFloatMissing))  // edellinen ehto oli aina true!
-            theInfo2.FloatValue(tmpValue);  // asetetaan data vain jos ei puuttuvaa!!
+          for (theInfo2.ResetLevel(), theInfo1.ResetLevel();
+               theInfo2.NextLevel() && theInfo1.NextLevel();)
+          {
+            tmpValue = theInfo1.FloatValue();
+            if (!(tmpValue == kFloatMissing ||
+                  tmpValue == kTCombinedWeatherFloatMissing))  // edellinen ehto oli aina true!
+              theInfo2.FloatValue(tmpValue);  // asetetaan data vain jos ei puuttuvaa!!
+          }
         }
       }
     }
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3583,59 +4166,66 @@ NFmiQueryData *NFmiQueryDataUtil::DoNowCastFiltering(NFmiFastQueryInfo &theInfo1
                                                      NFmiFastQueryInfo &theInfo2,
                                                      int theTimeRangeForPureData)
 {
-  theInfo1.First();
-  theInfo2.First();
-
-  // 31.5.2001/Marko Uusi versio tarkistaa datasta, löytyykö avainta SHORTRANGE_DATAHOURS2DB.
-  // Tällöin aluetoimisto on tehnyt editointia halutun määrän ja sen verran täytetään
-  // tietokantaan dataa.
-
-  NFmiString key("SHORTRANGE_DATAHOURS2DB");
-  if (theInfo2.FindFirstKey(key))
+  try
   {
-    NFmiValueString keyValueStr(theInfo2.GetCurrentKeyValue());
-    if (keyValueStr.IsNumeric())
+    theInfo1.First();
+    theInfo2.First();
+
+    // 31.5.2001/Marko Uusi versio tarkistaa datasta, löytyykö avainta SHORTRANGE_DATAHOURS2DB.
+    // Tällöin aluetoimisto on tehnyt editointia halutun määrän ja sen verran täytetään
+    // tietokantaan dataa.
+
+    NFmiString key("SHORTRANGE_DATAHOURS2DB");
+    if (theInfo2.FindFirstKey(key))
     {
-      theTimeRangeForPureData =
-          long(keyValueStr) + 1;  // todellisuudessa pituuteen lisätään yksi tunti
+      NFmiValueString keyValueStr(theInfo2.GetCurrentKeyValue());
+      if (keyValueStr.IsNumeric())
+      {
+        theTimeRangeForPureData =
+            long(keyValueStr) + 1;  // todellisuudessa pituuteen lisätään yksi tunti
 
-      int maxHours =
-          theInfo2.ValidTimes().LastTime().DifferenceInHours(theInfo2.ValidTimes().FirstTime());
-      if (theTimeRangeForPureData > maxHours)
-        theTimeRangeForPureData = maxHours;
+        int maxHours =
+            theInfo2.ValidTimes().LastTime().DifferenceInHours(theInfo2.ValidTimes().FirstTime());
+        if (theTimeRangeForPureData > maxHours)
+          theTimeRangeForPureData = maxHours;
+      }
     }
+
+    // Penan lisäykset
+    NFmiTimePerioid period(theInfo1.TimeResolution());
+    NFmiMetTime originTime = theInfo2.OriginTime();
+    NFmiMetTime firstTime = theInfo2.ValidTime();
+    NFmiMetTime lastTime = theInfo1.ValidTimes().LastTime();
+    NFmiTimeBag timeBag(firstTime, lastTime, period);
+    FmiTimeLocalzation localization = kUTC;
+    bool interpolation = false;
+
+    NFmiTimeDescriptor timeDescriptor(originTime, timeBag, localization, interpolation);
+
+    NFmiQueryData *newQueryData = NFmiQueryDataUtil::ExtractTimes(
+        theInfo1.RefQueryData(),
+        timeDescriptor);  // tämä on nopeampi ja toimii varmemmin kuin CreateSubQueryData
+
+    NFmiFastQueryInfo newFastInfo(newQueryData);
+    newFastInfo.First();
+
+    CopyData1OverData2(theInfo2, newFastInfo, theTimeRangeForPureData);
+
+    NFmiProducerIdLister shortProdIds(theInfo2);
+    NFmiProducerIdLister longProdIds(theInfo1);
+    NFmiProducerIdLister newProdIds;
+    //  newProdIds.GenerateNowCastCombination(shortProdIds, theTimeRangeForPureData, longProdIds);
+    if (newProdIds.MakeProducerIdString() != string(""))
+      newFastInfo.AddKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey(),
+                         newProdIds.MakeProducerIdString(),
+                         true);
+
+    return newQueryData;
   }
-
-  // Penan lisäykset
-  NFmiTimePerioid period(theInfo1.TimeResolution());
-  NFmiMetTime originTime = theInfo2.OriginTime();
-  NFmiMetTime firstTime = theInfo2.ValidTime();
-  NFmiMetTime lastTime = theInfo1.ValidTimes().LastTime();
-  NFmiTimeBag timeBag(firstTime, lastTime, period);
-  FmiTimeLocalzation localization = kUTC;
-  bool interpolation = false;
-
-  NFmiTimeDescriptor timeDescriptor(originTime, timeBag, localization, interpolation);
-
-  NFmiQueryData *newQueryData = NFmiQueryDataUtil::ExtractTimes(
-      theInfo1.RefQueryData(),
-      timeDescriptor);  // tämä on nopeampi ja toimii varmemmin kuin CreateSubQueryData
-
-  NFmiFastQueryInfo newFastInfo(newQueryData);
-  newFastInfo.First();
-
-  CopyData1OverData2(theInfo2, newFastInfo, theTimeRangeForPureData);
-
-  NFmiProducerIdLister shortProdIds(theInfo2);
-  NFmiProducerIdLister longProdIds(theInfo1);
-  NFmiProducerIdLister newProdIds;
-  //  newProdIds.GenerateNowCastCombination(shortProdIds, theTimeRangeForPureData, longProdIds);
-  if (newProdIds.MakeProducerIdString() != string(""))
-    newFastInfo.AddKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey(),
-                       newProdIds.MakeProducerIdString(),
-                       true);
-
-  return newQueryData;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3652,47 +4242,54 @@ NFmiQueryData *NFmiQueryDataUtil::DoNowCastFiltering(NFmiFastQueryInfo &theInfo1
 bool FqdV6ToV7WeatherAndCloudinessModification(NFmiFastQueryInfo &theSourceInfoV6,
                                                NFmiFastQueryInfo &theDestInfoV7)
 {
-  if (theDestInfoV7.Param(
-          kFmiWeatherAndCloudiness))  // tarkistetaan vielä onko mitään konvertoitavaa
+  try
   {
-    for (theSourceInfoV6.ResetLocation(), theDestInfoV7.ResetLocation();
-         theSourceInfoV6.NextLocation() && theDestInfoV7.NextLocation();)
+    if (theDestInfoV7.Param(
+            kFmiWeatherAndCloudiness))  // tarkistetaan vielä onko mitään konvertoitavaa
     {
-      for (theSourceInfoV6.ResetLevel(), theDestInfoV7.ResetLevel();
-           theSourceInfoV6.NextLevel() && theDestInfoV7.NextLevel();)
+      for (theSourceInfoV6.ResetLocation(), theDestInfoV7.ResetLocation();
+           theSourceInfoV6.NextLocation() && theDestInfoV7.NextLocation();)
       {
-        for (theSourceInfoV6.ResetTime(), theDestInfoV7.ResetTime();
-             theSourceInfoV6.NextTime() && theDestInfoV7.NextTime();)
+        for (theSourceInfoV6.ResetLevel(), theDestInfoV7.ResetLevel();
+             theSourceInfoV6.NextLevel() && theDestInfoV7.NextLevel();)
         {
-          // jouduin laittamaan tähän totalclouds quickfixin, koska muuten
-          // kun asetellaan yläpilviä, totalcloudiness lasketaan ja se voi
-          // muuttaa haluttua dataa (muutos pitää tehdä, koska metkut eivät
-          // editoi muuta kuin kok. pilvisyyttä)
-          theSourceInfoV6.Param(kFmiTotalCloudCover);
-          float totalClouds = theSourceInfoV6.FloatValue();
+          for (theSourceInfoV6.ResetTime(), theDestInfoV7.ResetTime();
+               theSourceInfoV6.NextTime() && theDestInfoV7.NextTime();)
+          {
+            // jouduin laittamaan tähän totalclouds quickfixin, koska muuten
+            // kun asetellaan yläpilviä, totalcloudiness lasketaan ja se voi
+            // muuttaa haluttua dataa (muutos pitää tehdä, koska metkut eivät
+            // editoi muuta kuin kok. pilvisyyttä)
+            theSourceInfoV6.Param(kFmiTotalCloudCover);
+            float totalClouds = theSourceInfoV6.FloatValue();
 
-          // asetetaan ensin v6:sta ylä pilvet v7:aan
-          theSourceInfoV6.Param(kFmiHighCloudCover);
-          float highClouds = theSourceInfoV6.FloatValue();
-          theDestInfoV7.Param(kFmiHighCloudCover);
-          theDestInfoV7.FloatValue(highClouds);
+            // asetetaan ensin v6:sta ylä pilvet v7:aan
+            theSourceInfoV6.Param(kFmiHighCloudCover);
+            float highClouds = theSourceInfoV6.FloatValue();
+            theDestInfoV7.Param(kFmiHighCloudCover);
+            theDestInfoV7.FloatValue(highClouds);
 
-          // sitten asetetaan sademäärä v6:sta v7:ään
-          theSourceInfoV6.Param(kFmiPrecipitation1h);
-          float precipitation = theSourceInfoV6.FloatValue();
-          theDestInfoV7.Param(kFmiPrecipitation1h);
-          theDestInfoV7.FloatValue(precipitation);
+            // sitten asetetaan sademäärä v6:sta v7:ään
+            theSourceInfoV6.Param(kFmiPrecipitation1h);
+            float precipitation = theSourceInfoV6.FloatValue();
+            theDestInfoV7.Param(kFmiPrecipitation1h);
+            theDestInfoV7.FloatValue(precipitation);
 
-          // lopuksi asetetaan totalcloudiness siihen mihin se alunperin oli
-          theDestInfoV7.Param(kFmiTotalCloudCover);
-          theDestInfoV7.FloatValue(totalClouds);
+            // lopuksi asetetaan totalcloudiness siihen mihin se alunperin oli
+            theDestInfoV7.Param(kFmiTotalCloudCover);
+            theDestInfoV7.FloatValue(totalClouds);
+          }
         }
       }
-    }
 
-    return true;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3706,47 +4303,54 @@ bool FqdV6ToV7WeatherAndCloudinessModification(NFmiFastQueryInfo &theSourceInfoV
 bool FqdV7ToV6WeatherAndCloudinessModification(NFmiFastQueryInfo &theSourceInfoV7,
                                                NFmiFastQueryInfo &theDestInfoV6)
 {
-  if (theDestInfoV6.Param(
-          kFmiWeatherAndCloudiness))  // tarkistetaan vielä onko mitään konvertoitavaa
+  try
   {
-    for (theSourceInfoV7.ResetLocation(), theDestInfoV6.ResetLocation();
-         theSourceInfoV7.NextLocation() && theDestInfoV6.NextLocation();)
+    if (theDestInfoV6.Param(
+            kFmiWeatherAndCloudiness))  // tarkistetaan vielä onko mitään konvertoitavaa
     {
-      for (theSourceInfoV7.ResetLevel(), theDestInfoV6.ResetLevel();
-           theSourceInfoV7.NextLevel() && theDestInfoV6.NextLevel();)
+      for (theSourceInfoV7.ResetLocation(), theDestInfoV6.ResetLocation();
+           theSourceInfoV7.NextLocation() && theDestInfoV6.NextLocation();)
       {
-        for (theSourceInfoV7.ResetTime(), theDestInfoV6.ResetTime();
-             theSourceInfoV7.NextTime() && theDestInfoV6.NextTime();)
+        for (theSourceInfoV7.ResetLevel(), theDestInfoV6.ResetLevel();
+             theSourceInfoV7.NextLevel() && theDestInfoV6.NextLevel();)
         {
-          // jouduin laittamaan tähän totalclouds quickfixin, koska muuten
-          // kun asetellaan yläpilviä, totalcloudiness lasketaan ja se voi
-          // muuttaa haluttua dataa (muutos pitää tehdä, koska metkut eivät
-          // editoi muuta kuin kok. pilvisyyttä)
-          theSourceInfoV7.Param(kFmiTotalCloudCover);
-          float totalClouds = theSourceInfoV7.FloatValue();
+          for (theSourceInfoV7.ResetTime(), theDestInfoV6.ResetTime();
+               theSourceInfoV7.NextTime() && theDestInfoV6.NextTime();)
+          {
+            // jouduin laittamaan tähän totalclouds quickfixin, koska muuten
+            // kun asetellaan yläpilviä, totalcloudiness lasketaan ja se voi
+            // muuttaa haluttua dataa (muutos pitää tehdä, koska metkut eivät
+            // editoi muuta kuin kok. pilvisyyttä)
+            theSourceInfoV7.Param(kFmiTotalCloudCover);
+            float totalClouds = theSourceInfoV7.FloatValue();
 
-          // asetetaan ensin v7:sta ylä pilvet v6:aan
-          theSourceInfoV7.Param(kFmiHighCloudCover);
-          float highClouds = theSourceInfoV7.FloatValue();
-          theDestInfoV6.Param(kFmiHighCloudCover);
-          theDestInfoV6.FloatValue(highClouds);
+            // asetetaan ensin v7:sta ylä pilvet v6:aan
+            theSourceInfoV7.Param(kFmiHighCloudCover);
+            float highClouds = theSourceInfoV7.FloatValue();
+            theDestInfoV6.Param(kFmiHighCloudCover);
+            theDestInfoV6.FloatValue(highClouds);
 
-          // sitten asetetaan sademäärä v7:sta v6:een
-          theSourceInfoV7.Param(kFmiPrecipitation1h);
-          float precipitation = theSourceInfoV7.FloatValue();
-          theDestInfoV6.Param(kFmiPrecipitation1h);
-          theDestInfoV6.FloatValue(precipitation);
+            // sitten asetetaan sademäärä v7:sta v6:een
+            theSourceInfoV7.Param(kFmiPrecipitation1h);
+            float precipitation = theSourceInfoV7.FloatValue();
+            theDestInfoV6.Param(kFmiPrecipitation1h);
+            theDestInfoV6.FloatValue(precipitation);
 
-          // lopuksi asetetaan totalcloudiness siihen mihin se alunperin oli
-          theDestInfoV6.Param(kFmiTotalCloudCover);
-          theDestInfoV6.FloatValue(totalClouds);
+            // lopuksi asetetaan totalcloudiness siihen mihin se alunperin oli
+            theDestInfoV6.Param(kFmiTotalCloudCover);
+            theDestInfoV6.FloatValue(totalClouds);
+          }
         }
       }
-    }
 
-    return true;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3760,35 +4364,42 @@ bool FqdV7ToV6WeatherAndCloudinessModification(NFmiFastQueryInfo &theSourceInfoV
 bool FqdV6ToV7TotalWindModification(NFmiFastQueryInfo &theSourceInfoV6,
                                     NFmiFastQueryInfo &theDestInfoV7)
 {
-  if (theDestInfoV7.Param(kFmiTotalWindMS))  // tarkistetaan vielä onko mitään konvertoitavaa
+  try
   {
-    for (theSourceInfoV6.ResetLocation(), theDestInfoV7.ResetLocation();
-         theSourceInfoV6.NextLocation() && theDestInfoV7.NextLocation();)
+    if (theDestInfoV7.Param(kFmiTotalWindMS))  // tarkistetaan vielä onko mitään konvertoitavaa
     {
-      for (theSourceInfoV6.ResetLevel(), theDestInfoV7.ResetLevel();
-           theSourceInfoV6.NextLevel() && theDestInfoV7.NextLevel();)
+      for (theSourceInfoV6.ResetLocation(), theDestInfoV7.ResetLocation();
+           theSourceInfoV6.NextLocation() && theDestInfoV7.NextLocation();)
       {
-        for (theSourceInfoV6.ResetTime(), theDestInfoV7.ResetTime();
-             theSourceInfoV6.NextTime() && theDestInfoV7.NextTime();)
+        for (theSourceInfoV6.ResetLevel(), theDestInfoV7.ResetLevel();
+             theSourceInfoV6.NextLevel() && theDestInfoV7.NextLevel();)
         {
-          // asetetaan WS V6:sta V7 dataan
-          theSourceInfoV6.Param(kFmiWindSpeedMS);
-          float spd = theSourceInfoV6.FloatValue();
-          theDestInfoV7.Param(kFmiWindSpeedMS);
-          theDestInfoV7.FloatValue(spd);
+          for (theSourceInfoV6.ResetTime(), theDestInfoV7.ResetTime();
+               theSourceInfoV6.NextTime() && theDestInfoV7.NextTime();)
+          {
+            // asetetaan WS V6:sta V7 dataan
+            theSourceInfoV6.Param(kFmiWindSpeedMS);
+            float spd = theSourceInfoV6.FloatValue();
+            theDestInfoV7.Param(kFmiWindSpeedMS);
+            theDestInfoV7.FloatValue(spd);
 
-          // sitten asetetaan gustIndex V6:sta V7:aan
-          theSourceInfoV6.Param(kFmiWindGust);
-          float gustIndex = theSourceInfoV6.FloatValue();
-          theDestInfoV7.Param(kFmiWindGust);
-          theDestInfoV7.FloatValue(gustIndex);
+            // sitten asetetaan gustIndex V6:sta V7:aan
+            theSourceInfoV6.Param(kFmiWindGust);
+            float gustIndex = theSourceInfoV6.FloatValue();
+            theDestInfoV7.Param(kFmiWindGust);
+            theDestInfoV7.FloatValue(gustIndex);
+          }
         }
       }
-    }
 
-    return true;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3802,35 +4413,42 @@ bool FqdV6ToV7TotalWindModification(NFmiFastQueryInfo &theSourceInfoV6,
 bool FqdV7ToV6TotalWindModification(NFmiFastQueryInfo &theSourceInfoV7,
                                     NFmiFastQueryInfo &theDestInfoV6)
 {
-  if (theDestInfoV6.Param(kFmiTotalWindMS))  // tarkistetaan vielä onko mitään konvertoitavaa
+  try
   {
-    for (theSourceInfoV7.ResetLevel(), theDestInfoV6.ResetLevel();
-         theSourceInfoV7.NextLevel() && theDestInfoV6.NextLevel();)
+    if (theDestInfoV6.Param(kFmiTotalWindMS))  // tarkistetaan vielä onko mitään konvertoitavaa
     {
-      for (theSourceInfoV7.ResetLocation(), theDestInfoV6.ResetLocation();
-           theSourceInfoV7.NextLocation() && theDestInfoV6.NextLocation();)
+      for (theSourceInfoV7.ResetLevel(), theDestInfoV6.ResetLevel();
+           theSourceInfoV7.NextLevel() && theDestInfoV6.NextLevel();)
       {
-        for (theSourceInfoV7.ResetTime(), theDestInfoV6.ResetTime();
-             theSourceInfoV7.NextTime() && theDestInfoV6.NextTime();)
+        for (theSourceInfoV7.ResetLocation(), theDestInfoV6.ResetLocation();
+             theSourceInfoV7.NextLocation() && theDestInfoV6.NextLocation();)
         {
-          // asetetaan ensin WS V7 datasta V6:een
-          theSourceInfoV7.Param(kFmiWindSpeedMS);
-          float spd = theSourceInfoV7.FloatValue();
-          theDestInfoV6.Param(kFmiWindSpeedMS);
-          theDestInfoV6.FloatValue(spd);
+          for (theSourceInfoV7.ResetTime(), theDestInfoV6.ResetTime();
+               theSourceInfoV7.NextTime() && theDestInfoV6.NextTime();)
+          {
+            // asetetaan ensin WS V7 datasta V6:een
+            theSourceInfoV7.Param(kFmiWindSpeedMS);
+            float spd = theSourceInfoV7.FloatValue();
+            theDestInfoV6.Param(kFmiWindSpeedMS);
+            theDestInfoV6.FloatValue(spd);
 
-          // sitten asetetaan gustIndex V7:sta V6:een
-          theSourceInfoV7.Param(kFmiWindGust);
-          float gustIndex = theSourceInfoV7.FloatValue();
-          theDestInfoV6.Param(kFmiWindGust);
-          theDestInfoV6.FloatValue(gustIndex);
+            // sitten asetetaan gustIndex V7:sta V6:een
+            theSourceInfoV7.Param(kFmiWindGust);
+            float gustIndex = theSourceInfoV7.FloatValue();
+            theDestInfoV6.Param(kFmiWindGust);
+            theDestInfoV6.FloatValue(gustIndex);
+          }
         }
       }
-    }
 
-    return true;
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3844,18 +4462,25 @@ bool FqdV7ToV6TotalWindModification(NFmiFastQueryInfo &theSourceInfoV7,
 
 NFmiQueryData *NFmiQueryDataUtil::FqdV6ToV7(NFmiFastQueryInfo &theSourceInfo)
 {
-  NFmiQueryData *data = nullptr;
-  if (theSourceInfo.RefQueryData())
+  try
   {
-    data = new NFmiQueryData(*theSourceInfo.RefQueryData());  // tehdään ensin kopio datasta
-    data->InfoVersion(7);  // vaihdetaan vielä destination datan versio 7:ksi
-    NFmiFastQueryInfo destInfo(data);
-    FqdV6ToV7WeatherAndCloudinessModification(
-        theSourceInfo, destInfo);  // tehdään tarpeelliset weatherandCloudiness-muutokset
-    FqdV6ToV7TotalWindModification(theSourceInfo,
-                                   destInfo);  // tehdään tarpeelliset totalwind-muutokset
+    NFmiQueryData *data = nullptr;
+    if (theSourceInfo.RefQueryData())
+    {
+      data = new NFmiQueryData(*theSourceInfo.RefQueryData());  // tehdään ensin kopio datasta
+      data->InfoVersion(7);  // vaihdetaan vielä destination datan versio 7:ksi
+      NFmiFastQueryInfo destInfo(data);
+      FqdV6ToV7WeatherAndCloudinessModification(
+          theSourceInfo, destInfo);  // tehdään tarpeelliset weatherandCloudiness-muutokset
+      FqdV6ToV7TotalWindModification(theSourceInfo,
+                                     destInfo);  // tehdään tarpeelliset totalwind-muutokset
+    }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3867,18 +4492,25 @@ NFmiQueryData *NFmiQueryDataUtil::FqdV6ToV7(NFmiFastQueryInfo &theSourceInfo)
 
 NFmiQueryData *NFmiQueryDataUtil::FqdV7ToV6(NFmiFastQueryInfo &theSourceInfo)
 {
-  NFmiQueryData *data = nullptr;
-  if (theSourceInfo.RefQueryData())
+  try
   {
-    data = new NFmiQueryData(*theSourceInfo.RefQueryData());  // tehdään ensin kopio datasta
-    data->InfoVersion(6);  // vaihdetaan vielä destination datan versio 6:ksi
-    NFmiFastQueryInfo destInfo(data);
-    FqdV7ToV6WeatherAndCloudinessModification(
-        theSourceInfo, destInfo);  // tehdään tarpeelliset weatherandCloudiness-muutokset
-    FqdV7ToV6TotalWindModification(theSourceInfo,
-                                   destInfo);  // tehdään tarpeelliset totalwind-muutokset
+    NFmiQueryData *data = nullptr;
+    if (theSourceInfo.RefQueryData())
+    {
+      data = new NFmiQueryData(*theSourceInfo.RefQueryData());  // tehdään ensin kopio datasta
+      data->InfoVersion(6);  // vaihdetaan vielä destination datan versio 6:ksi
+      NFmiFastQueryInfo destInfo(data);
+      FqdV7ToV6WeatherAndCloudinessModification(
+          theSourceInfo, destInfo);  // tehdään tarpeelliset weatherandCloudiness-muutokset
+      FqdV7ToV6TotalWindModification(theSourceInfo,
+                                     destInfo);  // tehdään tarpeelliset totalwind-muutokset
+    }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3905,63 +4537,70 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
                                            int theSmootherMethod,
                                            double theFactor)
 {
-  NFmiQueryData *data = nullptr;
-  if (theSourceData)
+  try
   {
-    data = theSourceData->Clone();
-    NFmiFastQueryInfo destInfo(data);
-    NFmiFastQueryInfo sourceInfo(theSourceData);
-    int stepNumber =
-        static_cast<int>(round((theTimeOffsetEndInMinutes - theTimeOffsetStartInMinutes) /
-                               sourceInfo.TimeResolution())) +
-        1;
-
-    // HUOM! ei osaa hoitaa hommaa oikein jos datassa on aikalista jossa erilaiset aikavälit
-    int sizeTimes = sourceInfo.SizeTimes();
-    std::vector<float> relTimeLocation(
-        sizeTimes);  // x on aika eli eri aika-askelten suhteelliset sijainnit (0,
-                     // 1, 2, 3, ...)
-                     //		std::accumulate(relTimeLocation.begin(),
-                     // relTimeLocation.end(), 0); // 0
-    // tarkoittaa
-    // että
-    // täytetään vektori luvuilla jotka alkavat 0:sta ja kasvavat aina yhdellä
-    for (int j = 0; j < sizeTimes; j++)
-      relTimeLocation[j] = static_cast<float>(j);  // tarkoittaa että täytetään vektori luvuilla
-    // jotka alkavat 0:sta ja kasvavat aina yhdellä
-
-    std::vector<float> values(sizeTimes);
-    std::vector<float> result;
-    NFmiSmoother smoother(static_cast<NFmiSmoother::NFmiSmootherMethod>(theSmootherMethod),
-                          static_cast<int>(theFactor),
-                          static_cast<float>(stepNumber / 2));  // NFmiSmoother tasoittaa dataa
-                                                                // laskien mukaan arvoja +n:n ja
-                                                                // -n:n aika-askeleen yli
-    // laskettavasta kohdasta joten jaan
-    // stepit kahdella.
-
-    for (destInfo.ResetParam(), sourceInfo.ResetParam();
-         destInfo.NextParam() && sourceInfo.NextParam();)
+    NFmiQueryData *data = nullptr;
+    if (theSourceData)
     {
-      for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-           destInfo.NextLocation() && sourceInfo.NextLocation();)
-      {
-        for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-             destInfo.NextLevel() && sourceInfo.NextLevel();)
-        {
-          int i = 0;
-          for (sourceInfo.ResetTime(); sourceInfo.NextTime(); i++)
-            values[i] = sourceInfo.FloatValue();  // täytetään ensin aikasarjavektori datalla
+      data = theSourceData->Clone();
+      NFmiFastQueryInfo destInfo(data);
+      NFmiFastQueryInfo sourceInfo(theSourceData);
+      int stepNumber =
+          static_cast<int>(round((theTimeOffsetEndInMinutes - theTimeOffsetStartInMinutes) /
+                                 sourceInfo.TimeResolution())) +
+          1;
 
-          result = smoother.Smoothen(relTimeLocation, values);
-          i = 0;
-          for (destInfo.ResetTime(); destInfo.NextTime(); i++)
-            destInfo.FloatValue(result[i]);  // täytetään tulosdata tasoitetulla aikasarjalla
+      // HUOM! ei osaa hoitaa hommaa oikein jos datassa on aikalista jossa erilaiset aikavälit
+      int sizeTimes = sourceInfo.SizeTimes();
+      std::vector<float> relTimeLocation(
+          sizeTimes);  // x on aika eli eri aika-askelten suhteelliset sijainnit (0,
+                       // 1, 2, 3, ...)
+                       //		std::accumulate(relTimeLocation.begin(),
+                       // relTimeLocation.end(), 0); // 0
+      // tarkoittaa
+      // että
+      // täytetään vektori luvuilla jotka alkavat 0:sta ja kasvavat aina yhdellä
+      for (int j = 0; j < sizeTimes; j++)
+        relTimeLocation[j] = static_cast<float>(j);  // tarkoittaa että täytetään vektori luvuilla
+      // jotka alkavat 0:sta ja kasvavat aina yhdellä
+
+      std::vector<float> values(sizeTimes);
+      std::vector<float> result;
+      NFmiSmoother smoother(static_cast<NFmiSmoother::NFmiSmootherMethod>(theSmootherMethod),
+                            static_cast<int>(theFactor),
+                            static_cast<float>(stepNumber / 2));  // NFmiSmoother tasoittaa dataa
+                                                                  // laskien mukaan arvoja +n:n ja
+                                                                  // -n:n aika-askeleen yli
+      // laskettavasta kohdasta joten jaan
+      // stepit kahdella.
+
+      for (destInfo.ResetParam(), sourceInfo.ResetParam();
+           destInfo.NextParam() && sourceInfo.NextParam();)
+      {
+        for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+             destInfo.NextLocation() && sourceInfo.NextLocation();)
+        {
+          for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+               destInfo.NextLevel() && sourceInfo.NextLevel();)
+          {
+            int i = 0;
+            for (sourceInfo.ResetTime(); sourceInfo.NextTime(); i++)
+              values[i] = sourceInfo.FloatValue();  // täytetään ensin aikasarjavektori datalla
+
+            result = smoother.Smoothen(relTimeLocation, values);
+            i = 0;
+            for (destInfo.ResetTime(); destInfo.NextTime(); i++)
+              destInfo.FloatValue(result[i]);  // täytetään tulosdata tasoitetulla aikasarjalla
+          }
         }
       }
     }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -3974,22 +4613,29 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
 
 NFmiDataModifier *CreateModifier(int theFilterId)
 {
-  switch (theFilterId)
+  try
   {
-    case 0:
-      return new NFmiDataModifierAvg;
-    case 1:
-      return new NFmiDataModifierMax;
-    case 2:
-      return new NFmiDataModifierMin;
-    case 5:
-      return new NFmiDataModifierSum;
-    case 4:  // jouduin laittamaan id:ksi 4:n, koska editorin filtteröinti funktion valinta on
-             // tehty
-             // niin köpösti ja siellä tämän on pakko olla 4
-      return new NFmiDataModifierMedian;
-    default:
-      return nullptr;
+    switch (theFilterId)
+    {
+      case 0:
+        return new NFmiDataModifierAvg;
+      case 1:
+        return new NFmiDataModifierMax;
+      case 2:
+        return new NFmiDataModifierMin;
+      case 5:
+        return new NFmiDataModifierSum;
+      case 4:  // jouduin laittamaan id:ksi 4:n, koska editorin filtteröinti funktion valinta on
+               // tehty
+               // niin köpösti ja siellä tämän on pakko olla 4
+        return new NFmiDataModifierMedian;
+      default:
+        return nullptr;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -4033,55 +4679,63 @@ NFmiQueryData *NFmiQueryDataUtil::DoTimeFiltering(NFmiQueryData *theSourceData,
                                                   double theAdditionalParam1,
                                                   double theAdditionalParam2)
 {
-  if (theFilterId ==
-      4)  // 4= tehdään operaatiot NFmiSmootherluokan avulla esim. pseudogaussian-tasoitus jne.
-    return DoTimeFilteringWithSmoother(theSourceData,
-                                       theTimeOffsetStartInMinutes,
-                                       theTimeOffsetEndInMinutes,
-                                       static_cast<int>(theAdditionalParam1),
-                                       theAdditionalParam2);
-
-  NFmiQueryData *data = nullptr;
-  if (theSourceData)
+  try
   {
-    data = theSourceData->Clone();
-    NFmiDataModifier *modifier = CreateModifier(theFilterId);
-    boost::shared_ptr<NFmiDataModifier> modifierPtr(
-        modifier);  // tuhoaa automaattisesti modifier:in kun scoopista poistutaan
-    if (modifier)
-    {
-      NFmiFastQueryInfo destInfo(data);
-      NFmiSuperSmartInfo sourceInfo(theSourceData);
-      int stepNumber =
-          static_cast<int>(round((theTimeOffsetEndInMinutes - theTimeOffsetStartInMinutes) /
-                                 static_cast<int>(sourceInfo.TimeResolution()))) +
-          1;
-      int startShift = theTimeOffsetStartInMinutes / static_cast<int>(sourceInfo.TimeResolution());
-      NFmiRelativeTimeIntegrationIterator2 timeIterator(&sourceInfo, stepNumber, startShift);
-      NFmiCalculator calculator(&timeIterator, modifier);
-      sourceInfo.TimeIntegrationCalculator(&calculator);
+    if (theFilterId ==
+        4)  // 4= tehdään operaatiot NFmiSmootherluokan avulla esim. pseudogaussian-tasoitus jne.
+      return DoTimeFilteringWithSmoother(theSourceData,
+                                         theTimeOffsetStartInMinutes,
+                                         theTimeOffsetEndInMinutes,
+                                         static_cast<int>(theAdditionalParam1),
+                                         theAdditionalParam2);
 
-      for (destInfo.ResetParam(), sourceInfo.ResetParam();
-           destInfo.NextParam() && sourceInfo.NextParam();)
+    NFmiQueryData *data = nullptr;
+    if (theSourceData)
+    {
+      data = theSourceData->Clone();
+      NFmiDataModifier *modifier = CreateModifier(theFilterId);
+      boost::shared_ptr<NFmiDataModifier> modifierPtr(
+          modifier);  // tuhoaa automaattisesti modifier:in kun scoopista poistutaan
+      if (modifier)
       {
-        for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-             destInfo.NextLocation() && sourceInfo.NextLocation();)
+        NFmiFastQueryInfo destInfo(data);
+        NFmiSuperSmartInfo sourceInfo(theSourceData);
+        int stepNumber =
+            static_cast<int>(round((theTimeOffsetEndInMinutes - theTimeOffsetStartInMinutes) /
+                                   static_cast<int>(sourceInfo.TimeResolution()))) +
+            1;
+        int startShift =
+            theTimeOffsetStartInMinutes / static_cast<int>(sourceInfo.TimeResolution());
+        NFmiRelativeTimeIntegrationIterator2 timeIterator(&sourceInfo, stepNumber, startShift);
+        NFmiCalculator calculator(&timeIterator, modifier);
+        sourceInfo.TimeIntegrationCalculator(&calculator);
+
+        for (destInfo.ResetParam(), sourceInfo.ResetParam();
+             destInfo.NextParam() && sourceInfo.NextParam();)
         {
-          for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-               destInfo.NextLevel() && sourceInfo.NextLevel();)
+          for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+               destInfo.NextLocation() && sourceInfo.NextLocation();)
           {
-            for (destInfo.ResetTime(), sourceInfo.ResetTime();
-                 destInfo.NextTime() && sourceInfo.NextTime();)
+            for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+                 destInfo.NextLevel() && sourceInfo.NextLevel();)
             {
-              float value = sourceInfo.FloatValue(false, false, true, false);
-              destInfo.FloatValue(value);
+              for (destInfo.ResetTime(), sourceInfo.ResetTime();
+                   destInfo.NextTime() && sourceInfo.NextTime();)
+              {
+                float value = sourceInfo.FloatValue(false, false, true, false);
+                destInfo.FloatValue(value);
+              }
             }
           }
         }
       }
     }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -4127,82 +4781,111 @@ NFmiQueryData *NFmiQueryDataUtil::DoAreaFiltering(NFmiQueryData *theSourceData,
                                                   double theAdditionalParam1,
                                                   double theAdditionalParam2)
 {
-  if (theAreaType != 2)
-    return nullptr;
-  NFmiQueryData *data = nullptr;
-  if (theSourceData)
+  try
   {
-    data = theSourceData->Clone();
-    NFmiDataModifier *modifier = CreateModifier(theFilterId);
-    boost::shared_ptr<NFmiDataModifier> modifierPtr(
-        modifier);  // tuhoaa automaattisesti modifier:in kun scoopista poistutaan
-    if (modifier)
-    {
-      NFmiFastQueryInfo destInfo(data);
-      NFmiSuperSmartInfo sourceInfo(theSourceData);
-      auto xCount = static_cast<int>(theAdditionalParam1 / 2);
-      auto yCount = static_cast<int>(theAdditionalParam2 / 2);
-      NFmiRelativeDataIterator areaIterator(&sourceInfo, xCount, yCount);
-      NFmiCalculator calculator(&areaIterator, modifier);
-      sourceInfo.SetCalculator(&calculator);
+    if (theAreaType != 2)
+      return nullptr;
 
-      for (destInfo.ResetParam(), sourceInfo.ResetParam();
-           destInfo.NextParam() && sourceInfo.NextParam();)
+    NFmiQueryData *data = nullptr;
+    if (theSourceData)
+    {
+      data = theSourceData->Clone();
+      NFmiDataModifier *modifier = CreateModifier(theFilterId);
+      boost::shared_ptr<NFmiDataModifier> modifierPtr(
+          modifier);  // tuhoaa automaattisesti modifier:in kun scoopista poistutaan
+      if (modifier)
       {
-        for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-             destInfo.NextLocation() && sourceInfo.NextLocation();)
+        NFmiFastQueryInfo destInfo(data);
+        NFmiSuperSmartInfo sourceInfo(theSourceData);
+        auto xCount = static_cast<int>(theAdditionalParam1 / 2);
+        auto yCount = static_cast<int>(theAdditionalParam2 / 2);
+        NFmiRelativeDataIterator areaIterator(&sourceInfo, xCount, yCount);
+        NFmiCalculator calculator(&areaIterator, modifier);
+        sourceInfo.SetCalculator(&calculator);
+
+        for (destInfo.ResetParam(), sourceInfo.ResetParam();
+             destInfo.NextParam() && sourceInfo.NextParam();)
         {
-          for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-               destInfo.NextLevel() && sourceInfo.NextLevel();)
+          for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+               destInfo.NextLocation() && sourceInfo.NextLocation();)
           {
-            for (destInfo.ResetTime(), sourceInfo.ResetTime();
-                 destInfo.NextTime() && sourceInfo.NextTime();)
+            for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+                 destInfo.NextLevel() && sourceInfo.NextLevel();)
             {
-              float value = sourceInfo.FloatValue(false, true, false, false);
-              destInfo.FloatValue(value);
+              for (destInfo.ResetTime(), sourceInfo.ResetTime();
+                   destInfo.NextTime() && sourceInfo.NextTime();)
+              {
+                float value = sourceInfo.FloatValue(false, true, false, false);
+                destInfo.FloatValue(value);
+              }
             }
           }
         }
       }
     }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
 
 const NFmiString &NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()
 {
-  static const NFmiString officialKey("ProdIds");
-  return officialKey;
+  try
+  {
+    static const NFmiString officialKey("ProdIds");
+    return officialKey;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void CheckCropLimits(int nx, int ny, int theLeft, int theTop, int theRight, int theBottom)
 {
-  // Tarkastellaan, että annetut croppi rajat olivat järkeviä.
-  if (theLeft < 0 || theLeft >= nx)
-    throw runtime_error("cropin vasen-reuna oli yli originaali hilan rajojen.");
-  if (theRight < 0 || theRight >= nx)
-    throw runtime_error("cropin oikea-reuna oli yli originaali hilan rajojen.");
-  if (theBottom < 0 || theBottom >= ny)
-    throw runtime_error("cropin ala-reuna oli yli originaali hilan rajojen.");
-  if (theTop < 0 || theTop >= ny)
-    throw runtime_error("cropin ylä-reuna oli yli originaali hilan rajojen.");
-  if (theLeft > theRight)
-    throw runtime_error("cropin vasen-reuna oli yli oikean reunan.");
-  if (theBottom > theTop)
-    throw runtime_error("cropin ala-reuna oli yli ylä-reunan.");
+  try
+  {
+    // Tarkastellaan, että annetut croppi rajat olivat järkeviä.
+    if (theLeft < 0 || theLeft >= nx)
+      throw Fmi::Exception(BCP, "cropin vasen-reuna oli yli originaali hilan rajojen.");
+    if (theRight < 0 || theRight >= nx)
+      throw Fmi::Exception(BCP, "cropin oikea-reuna oli yli originaali hilan rajojen.");
+    if (theBottom < 0 || theBottom >= ny)
+      throw Fmi::Exception(BCP, "cropin ala-reuna oli yli originaali hilan rajojen.");
+    if (theTop < 0 || theTop >= ny)
+      throw Fmi::Exception(BCP, "cropin ylä-reuna oli yli originaali hilan rajojen.");
+    if (theLeft > theRight)
+      throw Fmi::Exception(BCP, "cropin vasen-reuna oli yli oikean reunan.");
+    if (theBottom > theTop)
+      throw Fmi::Exception(BCP, "cropin ala-reuna oli yli ylä-reunan.");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiArea *CreateCropArea(const NFmiGrid *theGrid,
                                 const NFmiPoint &theBLXY,
                                 const NFmiPoint &theTRXY)
 {
-  NFmiArea *area = nullptr;
-  NFmiPoint blLatlon(theGrid->GridToLatLon(theBLXY));
-  NFmiPoint trLatlon(theGrid->GridToLatLon(theTRXY));
-  area = theGrid->Area()->CreateNewArea(blLatlon, trLatlon);
-  return area;
+  try
+  {
+    NFmiArea *area = nullptr;
+    NFmiPoint blLatlon(theGrid->GridToLatLon(theBLXY));
+    NFmiPoint trLatlon(theGrid->GridToLatLon(theTRXY));
+    area = theGrid->Area()->CreateNewArea(blLatlon, trLatlon);
+    return area;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // sitten päästään itse croppaukseen!!!!
@@ -4211,30 +4894,37 @@ static void CropData(NFmiFastQueryInfo &theSource,
                      int theLeft,
                      int theBottom)
 {
-  for (theResult.ResetParam(), theSource.ResetParam();
-       theResult.NextParam() && theSource.NextParam();)
+  try
   {
-    for (theResult.ResetLevel(), theSource.ResetLevel();
-         theResult.NextLevel() && theSource.NextLevel();)
+    for (theResult.ResetParam(), theSource.ResetParam();
+         theResult.NextParam() && theSource.NextParam();)
     {
-      for (theResult.ResetTime(), theSource.ResetTime();
-           theResult.NextTime() && theSource.NextTime();)
+      for (theResult.ResetLevel(), theSource.ResetLevel();
+           theResult.NextLevel() && theSource.NextLevel();)
       {
-        theResult.Bottom();
-        theSource.Bottom();
-        theSource.MoveUp(theBottom);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
-        do
+        for (theResult.ResetTime(), theSource.ResetTime();
+             theResult.NextTime() && theSource.NextTime();)
         {
-          theResult.Left();
-          theSource.Left();
-          theSource.MoveRight(theLeft);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
+          theResult.Bottom();
+          theSource.Bottom();
+          theSource.MoveUp(theBottom);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
           do
           {
-            theResult.FloatValue(theSource.FloatValue());
-          } while (theResult.MoveRight() && theSource.MoveRight());
-        } while (theResult.MoveUp() && theSource.MoveUp());
+            theResult.Left();
+            theSource.Left();
+            theSource.MoveRight(theLeft);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
+            do
+            {
+              theResult.FloatValue(theSource.FloatValue());
+            } while (theResult.MoveRight() && theSource.MoveRight());
+          } while (theResult.MoveUp() && theSource.MoveUp());
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -4264,35 +4954,44 @@ static void CropData(NFmiFastQueryInfo &theSource,
 NFmiQueryData *NFmiQueryDataUtil::QDCrop(
     NFmiFastQueryInfo &theInfo, int theLeft, int theTop, int theRight, int theBottom)
 {
-  NFmiQueryData *data = nullptr;
-  if (theInfo.Grid())
+  try
   {
-    int nx = theInfo.Grid()->XNumber();
-    int ny = theInfo.Grid()->YNumber();
-    if (theRight == kShortMissing)  // tämä oli defaultti arvo
-      theRight = nx - 1;
-    if (theTop == kShortMissing)  // tämä oli defaultti arvo
-      theTop = ny - 1;
-    CheckCropLimits(nx, ny, theLeft, theTop, theRight, theBottom);
-    NFmiPoint blXY(theLeft, theBottom);
-    NFmiPoint trXY(theRight, theTop);
-    NFmiArea *area = CreateCropArea(theInfo.Grid(), blXY, trXY);
-    boost::shared_ptr<NFmiArea> areaPtr(area);
-    if (area)
+    NFmiQueryData *data = nullptr;
+    if (theInfo.Grid())
     {
-      NFmiGrid grid(area, theRight - theLeft + 1, theTop - theBottom + 1);
-      NFmiHPlaceDescriptor hPlace(grid);
-      NFmiQueryInfo innerInfo(
-          theInfo.ParamDescriptor(), theInfo.TimeDescriptor(), hPlace, theInfo.VPlaceDescriptor());
-      data = NFmiQueryDataUtil::CreateEmptyData(innerInfo);
-      if (data)
+      int nx = theInfo.Grid()->XNumber();
+      int ny = theInfo.Grid()->YNumber();
+      if (theRight == kShortMissing)  // tämä oli defaultti arvo
+        theRight = nx - 1;
+      if (theTop == kShortMissing)  // tämä oli defaultti arvo
+        theTop = ny - 1;
+      CheckCropLimits(nx, ny, theLeft, theTop, theRight, theBottom);
+      NFmiPoint blXY(theLeft, theBottom);
+      NFmiPoint trXY(theRight, theTop);
+      NFmiArea *area = CreateCropArea(theInfo.Grid(), blXY, trXY);
+      boost::shared_ptr<NFmiArea> areaPtr(area);
+      if (area)
       {
-        NFmiFastQueryInfo tulosInfo(data);
-        CropData(theInfo, tulosInfo, theLeft, theBottom);
+        NFmiGrid grid(area, theRight - theLeft + 1, theTop - theBottom + 1);
+        NFmiHPlaceDescriptor hPlace(grid);
+        NFmiQueryInfo innerInfo(theInfo.ParamDescriptor(),
+                                theInfo.TimeDescriptor(),
+                                hPlace,
+                                theInfo.VPlaceDescriptor());
+        data = NFmiQueryDataUtil::CreateEmptyData(innerInfo);
+        if (data)
+        {
+          NFmiFastQueryInfo tulosInfo(data);
+          CropData(theInfo, tulosInfo, theLeft, theBottom);
+        }
       }
     }
+    return data;
   }
-  return data;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // tämä on ulkopuolisen callback-olion tarkistus. Eli jos toisesta säikeestä on
@@ -4306,6 +5005,7 @@ void NFmiQueryDataUtil::CheckIfStopped(NFmiStopFunctor *theStopFunctor)  // täm
   if (theStopFunctor && theStopFunctor->Stop())
     throw NFmiStopThreadException();
 }
+
 void NFmiQueryDataUtil::CheckIfStopped(NFmiThreadCallBacks *theThreadCallBacks)  // tämä versio on
                                                                                  // GUI ohjelman
                                                                                  // funktiolle,
@@ -4322,8 +5022,15 @@ void NFmiQueryDataUtil::CheckIfStopped(NFmiThreadCallBacks *theThreadCallBacks) 
 // Tällä juoksutetaan mahdollisen ulkopuolisen callback-olion edistymistä.
 void NFmiQueryDataUtil::DoStepIt(NFmiThreadCallBacks *theThreadCallBacks)
 {
-  if (theThreadCallBacks)
-    theThreadCallBacks->StepIt();
+  try
+  {
+    if (theThreadCallBacks)
+      theThreadCallBacks->StepIt();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tällä asetetaan mahdollisen ulkopuolisen callback-olion edistymisrajat ja steppi.
@@ -4332,15 +5039,29 @@ void NFmiQueryDataUtil::SetRange(NFmiThreadCallBacks *theThreadCallBacks,
                                  int high,
                                  int stepCount)
 {
-  if (theThreadCallBacks)
-    theThreadCallBacks->SetRange(low, high, stepCount);
+  try
+  {
+    if (theThreadCallBacks)
+      theThreadCallBacks->SetRange(low, high, stepCount);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tällä lisätään mahdollisen ulkopuolisen callback-olion edistymisrajaan loppuarvoa.
 void NFmiQueryDataUtil::AddRange(NFmiThreadCallBacks *theThreadCallBacks, int value)
 {
-  if (theThreadCallBacks)
-    theThreadCallBacks->AddRange(value);
+  try
+  {
+    if (theThreadCallBacks)
+      theThreadCallBacks->AddRange(value);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Oletuksia: theFilesIn on tiedostojen uutuus järjestyksessä.
@@ -4353,54 +5074,68 @@ static void ReadQueryDataFiles(boost::shared_ptr<NFmiQueryData> theBaseQData,
                                NFmiStopFunctor *theStopFunctor,
                                bool fDoRebuildCheck)
 {
-  bool doTimeCheck = false;
-  NFmiMetTime lastBaseTime;
-  if (fDoRebuildCheck == false && theBaseQData)
+  try
   {
-    doTimeCheck = true;
-    lastBaseTime = theBaseQData->Info()->TimeDescriptor().LastTime();
-  }
-
-  for (const auto &i : theFilesIn)
-  {
-    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-    std::string totalFileName = theDirName + i;
-    if (NFmiFileSystem::FileReadable(totalFileName))
+    bool doTimeCheck = false;
+    NFmiMetTime lastBaseTime;
+    if (fDoRebuildCheck == false && theBaseQData)
     {
-      boost::shared_ptr<NFmiQueryData> qDataPtr;
-      try
-      {
-        qDataPtr = boost::shared_ptr<NFmiQueryData>(new NFmiQueryData(totalFileName, true));
-      }
-      catch (...)
-      {
-        // pakkko tehdä try-catch -blokki korruptoituneiden tiedostojen varalle
-      }
+      doTimeCheck = true;
+      lastBaseTime = theBaseQData->Info()->TimeDescriptor().LastTime();
+    }
 
-      if (qDataPtr)
+    for (const auto &i : theFilesIn)
+    {
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      std::string totalFileName = theDirName + i;
+      if (NFmiFileSystem::FileReadable(totalFileName))
       {
-        if (doTimeCheck)
+        boost::shared_ptr<NFmiQueryData> qDataPtr;
+        try
         {
-          if (qDataPtr->Info()->TimeDescriptor().FirstTime() <= lastBaseTime)
-            break;
+          qDataPtr = boost::shared_ptr<NFmiQueryData>(new NFmiQueryData(totalFileName, true));
         }
-        theQDataVectorOut.push_back(qDataPtr);
+        catch (...)
+        {
+          // pakkko tehdä try-catch -blokki korruptoituneiden tiedostojen varalle
+        }
+
+        if (qDataPtr)
+        {
+          if (doTimeCheck)
+          {
+            if (qDataPtr->Info()->TimeDescriptor().FirstTime() <= lastBaseTime)
+              break;
+          }
+          theQDataVectorOut.push_back(qDataPtr);
+        }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
     std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfos;
-  for (auto &i : theQDataVector)
+  try
   {
-    auto *fInfo = new NFmiFastQueryInfo(i.get());
-    if (fInfo)
-      fastInfos.emplace_back(fInfo);
+    std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfos;
+    for (auto &i : theQDataVector)
+    {
+      auto *fInfo = new NFmiFastQueryInfo(i.get());
+      if (fInfo)
+        fastInfos.emplace_back(fInfo);
+    }
+    return fastInfos;
   }
-  return fastInfos;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFastInfoVector(
@@ -4408,13 +5143,20 @@ std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFa
     boost::shared_ptr<NFmiQueryData> &theBaseQData,
     bool fDoRebuild)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfos = ::MakeFastInfos(theQDataVector);
-  if (fDoRebuild == false && theBaseQData)
+  try
   {
-    fastInfos.push_back(
-        boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theBaseQData.get())));
+    std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfos = ::MakeFastInfos(theQDataVector);
+    if (fDoRebuild == false && theBaseQData)
+    {
+      fastInfos.push_back(
+          boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theBaseQData.get())));
+    }
+    return fastInfos;
   }
-  return fastInfos;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tekee uniikki listan validTimeista, jotka on annetussa fastInfo vektorissa. sorttaa ne
@@ -4424,38 +5166,52 @@ std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFa
 std::vector<NFmiMetTime> NFmiQueryDataUtil::MakeValidTimesList(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector, int theMaxTimeStepsInData)
 {
-  std::set<NFmiMetTime> uniqueValidTimes;
-  for (auto &infoPtr : theFastInfoVector)
+  try
   {
-    NFmiFastQueryInfo *fInfo = infoPtr.get();
-    if (fInfo)
+    std::set<NFmiMetTime> uniqueValidTimes;
+    for (auto &infoPtr : theFastInfoVector)
     {
-      for (fInfo->ResetTime(); fInfo->NextTime();)
+      NFmiFastQueryInfo *fInfo = infoPtr.get();
+      if (fInfo)
       {
-        uniqueValidTimes.insert(fInfo->Time());
+        for (fInfo->ResetTime(); fInfo->NextTime();)
+        {
+          uniqueValidTimes.insert(fInfo->Time());
+        }
       }
     }
+
+    if (uniqueValidTimes.empty())
+      return std::vector<NFmiMetTime>();
+
+    std::list<NFmiMetTime> selectedTimes(uniqueValidTimes.begin(), uniqueValidTimes.end());
+    selectedTimes.reverse();  // käännetään järjestys, että uusimmat on ensin
+    if (theMaxTimeStepsInData > 0 && static_cast<int>(selectedTimes.size()) > theMaxTimeStepsInData)
+      selectedTimes.resize(theMaxTimeStepsInData);
+    selectedTimes.reverse();  // käännetään taas järjestys, että lopullinen määrä aikoja
+                              // nousevaan järjestykseen
+    return std::vector<NFmiMetTime>(selectedTimes.begin(), selectedTimes.end());
   }
-
-  if (uniqueValidTimes.empty())
-    return std::vector<NFmiMetTime>();
-
-  std::list<NFmiMetTime> selectedTimes(uniqueValidTimes.begin(), uniqueValidTimes.end());
-  selectedTimes.reverse();  // käännetään järjestys, että uusimmat on ensin
-  if (theMaxTimeStepsInData > 0 && static_cast<int>(selectedTimes.size()) > theMaxTimeStepsInData)
-    selectedTimes.resize(theMaxTimeStepsInData);
-  selectedTimes.reverse();  // käännetään taas järjestys, että lopullinen määrä aikoja nousevaan
-                            // järjestykseen
-  return std::vector<NFmiMetTime>(selectedTimes.begin(), selectedTimes.end());
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiTimeList MakeTimeList(const std::vector<NFmiMetTime> &theValidTimesIn)
 {
-  NFmiTimeList timeList;
-  for (const auto &i : theValidTimesIn)
-    timeList.Add(new NFmiMetTime(i), false, false);
+  try
+  {
+    NFmiTimeList timeList;
+    for (const auto &i : theValidTimesIn)
+      timeList.Add(new NFmiMetTime(i), false, false);
 
-  return timeList;
+    return timeList;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 namespace std
@@ -4465,7 +5221,14 @@ struct less<NFmiDataIdent>
 {
   bool operator()(const NFmiDataIdent &lhs, const NFmiDataIdent &rhs) const
   {
-    return lhs.GetParamIdent() < rhs.GetParamIdent();
+    try
+    {
+      return lhs.GetParamIdent() < rhs.GetParamIdent();
+    }
+    catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    }
   }
 };
 }  // namespace std
@@ -4473,20 +5236,27 @@ struct less<NFmiDataIdent>
 static NFmiParamDescriptor MakeParamDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
 {
-  std::set<NFmiDataIdent> paramSet;
-  for (auto &i : theFInfoVectorIn)
+  try
   {
-    for (i->ResetParam(); i->NextParam();)
-      paramSet.insert(i->Param());
+    std::set<NFmiDataIdent> paramSet;
+    for (auto &i : theFInfoVectorIn)
+    {
+      for (i->ResetParam(); i->NextParam();)
+        paramSet.insert(i->Param());
+    }
+    if (paramSet.empty())
+      throw Fmi::Exception(BCP, "Error in MakeParamDesc, no parameters were found.");
+
+    std::vector<NFmiDataIdent> paramVec(paramSet.begin(), paramSet.end());
+
+    NFmiParamBag parBag(&paramVec[0], static_cast<unsigned long>(paramVec.size()));
+    NFmiParamDescriptor parDesc(parBag);
+    return parDesc;
   }
-  if (paramSet.empty())
-    throw std::runtime_error("Error in MakeParamDesc, no parameters were found.");
-
-  std::vector<NFmiDataIdent> paramVec(paramSet.begin(), paramSet.end());
-
-  NFmiParamBag parBag(&paramVec[0], static_cast<unsigned long>(paramVec.size()));
-  NFmiParamDescriptor parDesc(parBag);
-  return parDesc;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiParamDescriptor MakeParamDescriptor(
@@ -4494,8 +5264,15 @@ static NFmiParamDescriptor MakeParamDescriptor(
     boost::shared_ptr<NFmiFastQueryInfo> &theFirstFastInfo,
     bool fFirstInfoDefines)
 {
-  return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor()
-                           : ::MakeParamDesc(theFastInfoVector);
+  try
+  {
+    return fFirstInfoDefines ? theFirstFastInfo->ParamDescriptor()
+                             : ::MakeParamDesc(theFastInfoVector);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 namespace std
@@ -4505,7 +5282,14 @@ struct less<NFmiLevel>
 {
   bool operator()(const NFmiLevel &lhs, const NFmiLevel &rhs) const
   {
-    return lhs.LevelValue() < rhs.LevelValue();
+    try
+    {
+      return lhs.LevelValue() < rhs.LevelValue();
+    }
+    catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    }
   }
 };
 }  // namespace std
@@ -4513,21 +5297,28 @@ struct less<NFmiLevel>
 static NFmiVPlaceDescriptor MakeVPlaceDesc(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
 {
-  std::set<NFmiLevel> levelSet;
-  for (auto &i : theFInfoVectorIn)
+  try
   {
-    for (i->ResetLevel(); i->NextLevel();)
-      levelSet.insert(*(i->Level()));
+    std::set<NFmiLevel> levelSet;
+    for (auto &i : theFInfoVectorIn)
+    {
+      for (i->ResetLevel(); i->NextLevel();)
+        levelSet.insert(*(i->Level()));
+    }
+    if (levelSet.empty())
+      throw Fmi::Exception(BCP, "Error in MakeVPlaceDesc, no levels were found.");
+
+    std::vector<NFmiLevel> levelVec(levelSet.begin(), levelSet.end());
+
+    NFmiLevelBag levBag(&levelVec[0], static_cast<unsigned long>(levelVec.size()));
+
+    NFmiVPlaceDescriptor levDesc(levBag);
+    return levDesc;
   }
-  if (levelSet.empty())
-    throw std::runtime_error("Error in MakeVPlaceDesc, no levels were found.");
-
-  std::vector<NFmiLevel> levelVec(levelSet.begin(), levelSet.end());
-
-  NFmiLevelBag levBag(&levelVec[0], static_cast<unsigned long>(levelVec.size()));
-
-  NFmiVPlaceDescriptor levDesc(levBag);
-  return levDesc;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Tässä rakennetaan yhdistelmä dataa varten meta-info.
@@ -4542,12 +5333,14 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
     const std::vector<NFmiMetTime> &theValidTimesIn,
     bool fFirstInfoDefines)
 {
-  if (theFInfoVectorIn.size() == 0)
-    throw std::runtime_error(
-        "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
-  auto &firstInfo = theFInfoVectorIn[0];
-  if (firstInfo == nullptr)
-    throw std::runtime_error("Error in MakeCombinedDatasMetaInfo, 1. fastInfo was 0-pointer.");
+  try
+  {
+    if (theFInfoVectorIn.size() == 0)
+      throw Fmi::Exception(BCP,
+                           "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
+    auto &firstInfo = theFInfoVectorIn[0];
+    if (firstInfo == nullptr)
+      throw Fmi::Exception(BCP, "Error in MakeCombinedDatasMetaInfo, 1. fastInfo was 0-pointer.");
 
   auto paramDescriptor = ::MakeParamDescriptor(theFInfoVectorIn, firstInfo, fFirstInfoDefines);
   NFmiMetTime origTime = firstInfo->OriginTime();
@@ -4563,19 +5356,31 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
   else
     vPlaceDesc = ::MakeVPlaceDesc(theFInfoVectorIn);
 
-  NFmiQueryInfo qInfo(paramDescriptor, timeDesc, hPlaceDesc, vPlaceDesc);
-  return qInfo;
+    NFmiQueryInfo qInfo(paramDescriptor, timeDesc, hPlaceDesc, vPlaceDesc);
+    return qInfo;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static NFmiFastQueryInfo *FindWantedInfo(
     const NFmiMetTime &theTime, std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
 {
-  for (auto &i : theFInfoVectorIn)
+  try
   {
-    if (i->Time(theTime))
-      return i.get();
+    for (auto &i : theFInfoVectorIn)
+    {
+      if (i->Time(theTime))
+        return i.get();
+    }
+    return nullptr;  // tänne ei pitäisi mennä, pitäisikö heittää poikkeus?
   }
-  return nullptr;  // tänne ei pitäisi mennä, pitäisikö heittää poikkeus?
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static bool StationDataHasSameStructure(NFmiFastQueryInfo &info1,
@@ -4635,99 +5440,122 @@ static void FillDataToCurrentTime(
     std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn,
     NFmiStopFunctor *theStopFunctor)
 {
-  NFmiFastQueryInfo *sourceInfo = ::FindWantedInfo(theFilledInfo.Time(), theFInfoVectorIn);
-  if (sourceInfo)  // aina pitäisi löytyä sourceInfo, mutta tarkistetaan kuitenkin
+  try
   {
-    if (theFilledInfo.Grid() && sourceInfo->Grid() &&
-        *(theFilledInfo.Grid()) == *(sourceInfo->Grid()) ||
-        ::StationDataHasSameStructure(theFilledInfo, *sourceInfo))
+    NFmiFastQueryInfo *sourceInfo = ::FindWantedInfo(theFilledInfo.Time(), theFInfoVectorIn);
+    if (sourceInfo)  // aina pitäisi löytyä sourceInfo, mutta tarkistetaan kuitenkin
     {
-      std::vector<float> values;
-      for (theFilledInfo.ResetLevel(); theFilledInfo.NextLevel();)
+      if (theFilledInfo.Grid() && sourceInfo->Grid() &&
+          *(theFilledInfo.Grid()) == *(sourceInfo->Grid()) ||
+          ::StationDataHasSameStructure(theFilledInfo, *sourceInfo))
       {
-        if (sourceInfo->Level(*theFilledInfo.Level()))
+        std::vector<float> values;
+        for (theFilledInfo.ResetLevel(); theFilledInfo.NextLevel();)
         {
-          for (theFilledInfo.ResetParam(); theFilledInfo.NextParam();)
+          if (sourceInfo->Level(*theFilledInfo.Level()))
           {
-            if (sourceInfo->Param(theFilledInfo.Param()))
+            for (theFilledInfo.ResetParam(); theFilledInfo.NextParam();)
             {
-              NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);  // tarkistetaan lopetus ehtoa
-                                                                  // aina yhden kentän täytön
-                                                                  // välein...
-              // oletus vielä nyt että hpalceDesc:it samanlaisia
-              sourceInfo->GetLevelToVec(values);
-              theFilledInfo.SetLevelFromVec(values);
+              if (sourceInfo->Param(theFilledInfo.Param()))
+              {
+                NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);  // tarkistetaan lopetus ehtoa
+                                                                    // aina yhden kentän täytön
+                                                                    // välein...
+                // oletus vielä nyt että hpalceDesc:it samanlaisia
+                sourceInfo->GetLevelToVec(values);
+                theFilledInfo.SetLevelFromVec(values);
+              }
             }
           }
         }
       }
+      else if (::HasStationData(theFilledInfo, *sourceInfo))
+      {
+        ::FillStationDataToCurrentTimeWithDifferentStationStructure(theFilledInfo, *sourceInfo);
+      }
     }
-    else if (::HasStationData(theFilledInfo, *sourceInfo))
-    {
-      ::FillStationDataToCurrentTimeWithDifferentStationStructure(theFilledInfo, *sourceInfo);
-    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 std::string NFmiQueryDataUtil::GetFileFilterDirectory(const std::string &theFileFilter)
 {
-  NFmiFileString fileStr(theFileFilter);
-  NFmiString str;
-  str += fileStr.Device();
-  str += fileStr.Path();
+  try
+  {
+    NFmiFileString fileStr(theFileFilter);
+    NFmiString str;
+    str += fileStr.Device();
+    str += fileStr.Path();
 
-  return static_cast<char *>(str);
+    return static_cast<char *>(str);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void CombineTimeStepDatas(NFmiQueryData &theData,
                                  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVector,
                                  NFmiStopFunctor *theStopFunctor)
 {
-  NFmiFastQueryInfo combFastInfo(&theData);
-  combFastInfo.LastTime();
-  do
+  try
   {
-    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-    ::FillDataToCurrentTime(combFastInfo, theFInfoVector, theStopFunctor);
-  } while (combFastInfo.PreviousTime());
+    NFmiFastQueryInfo combFastInfo(&theData);
+    combFastInfo.LastTime();
+    do
+    {
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      ::FillDataToCurrentTime(combFastInfo, theFInfoVector, theStopFunctor);
+    } while (combFastInfo.PreviousTime());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 static void CombineSliceDatas(NFmiQueryData &theData,
                               std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFInfoVector,
                               NFmiStopFunctor *theStopFunctor)
 {
-  NFmiFastQueryInfo combFastInfo(&theData);
-  // käydään kaikki fInfot läpi ja katsotaan mihin rakoihin data saadaan tungettua
-  for (auto &i : theFInfoVector)
+  try
   {
-    NFmiFastQueryInfo &fInfo = *(i.get());
-
-    // ainakin aluksi pitää olla hila dataa ja hilojenkin samanlaisia, TODO tämän voisi muuttaa
-    // tulevaisuudessa
-    if (fInfo.Grid() && combFastInfo.Grid() && *(fInfo.Grid()) == *(combFastInfo.Grid()))
+    NFmiFastQueryInfo combFastInfo(&theData);
+    // käydään kaikki fInfot läpi ja katsotaan mihin rakoihin data saadaan tungettua
+    for (auto &i : theFInfoVector)
     {
-      // luultavasti fInfo on vain yksi slice (= yksi aika,level,param), mutta joudumme
-      // käymään sen läpi varmuuden vuoksi kokonaan ja katsomaan jokaisen slicen kohdalla meneekö
-      // se
-      // tulos dataan
-      for (fInfo.ResetTime(); fInfo.NextTime();)
+      NFmiFastQueryInfo &fInfo = *(i.get());
+
+      // ainakin aluksi pitää olla hila dataa ja hilojenkin samanlaisia, TODO tämän voisi muuttaa
+      // tulevaisuudessa
+      if (fInfo.Grid() && combFastInfo.Grid() && *(fInfo.Grid()) == *(combFastInfo.Grid()))
       {
-        NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-        if (combFastInfo.Time(fInfo.Time()))
+        // luultavasti fInfo on vain yksi slice (= yksi aika,level,param), mutta joudumme
+        // käymään sen läpi varmuuden vuoksi kokonaan ja katsomaan jokaisen slicen kohdalla
+        // meneekö se tulos dataan
+        for (fInfo.ResetTime(); fInfo.NextTime();)
         {
-          for (fInfo.ResetLevel(); fInfo.NextLevel();)
+          NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+          if (combFastInfo.Time(fInfo.Time()))
           {
-            if (combFastInfo.Level(*fInfo.Level()))
+            for (fInfo.ResetLevel(); fInfo.NextLevel();)
             {
-              for (fInfo.ResetParam(); fInfo.NextParam();)
+              if (combFastInfo.Level(*fInfo.Level()))
               {
-                if (combFastInfo.Param(
-                        static_cast<FmiParameterName>(fInfo.Param().GetParamIdent())))
+                for (fInfo.ResetParam(); fInfo.NextParam();)
                 {
-                  NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-                  // oletus vielä nyt että hpalceDesc:it samanlaisia
-                  auto values = fInfo.Values();
-                  combFastInfo.SetValues(values);
+                  if (combFastInfo.Param(
+                          static_cast<FmiParameterName>(fInfo.Param().GetParamIdent())))
+                  {
+                    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+                    // oletus vielä nyt että hpalceDesc:it samanlaisia
+                    auto values = fInfo.Values();
+                    combFastInfo.SetValues(values);
+                  }
                 }
               }
             }
@@ -4735,6 +5563,10 @@ static void CombineSliceDatas(NFmiQueryData &theData,
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -4784,6 +5616,7 @@ static void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunctio
 // yksi pitkä aikajakso. Mutta jos se on false, on tarkoitus vain liittää joukko
 // 'sliceja' yhdeksi isoksi dataksi eli viipaleita 3D-dataksi.
 // Jos theBaseQData sisältää dataa, käytetään se ensin pohjaksi uudelle datalle.
+
 NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     bool fDoRebuild,
     boost::shared_ptr<NFmiQueryData> &theBaseQData,
@@ -4794,47 +5627,88 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     LoggingFunction *loggingFunction,
     const std::string *theFileFilterPtr)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
-      MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
-
-  std::vector<NFmiMetTime> foundValidTimes =
-      MakeValidTimesList(fastInfoVector, theMaxTimeStepsInData);
-  if (foundValidTimes.size() > 0)
+  try
   {
-    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-    NFmiQueryInfo combinedDataMetaInfo =
-        ::MakeCombinedDatasMetaInfo(fastInfoVector, foundValidTimes, fDoTimeStepCombine);
-    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-    // SmartMet kaatuu jossain tilanteissa tähän (CreateEmptyData:ssa luodaan dynaamisesti float
-    // taulukko new:lla), laitetaan lokitusta luotavasta datasta, jos funktio on annettu
-    ::DoMetaInfoLogging(loggingFunction, combinedDataMetaInfo, theFileFilterPtr);
-    std::unique_ptr<NFmiQueryData> data(CreateEmptyData(combinedDataMetaInfo));
-    if (data)
+    std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
+        MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
+
+    std::vector<NFmiMetTime> foundValidTimes =
+        MakeValidTimesList(fastInfoVector, theMaxTimeStepsInData);
+    if (foundValidTimes.size() > 0)
     {
-      if (fDoTimeStepCombine)
-        ::CombineTimeStepDatas(*data, fastInfoVector, theStopFunctor);
-      else
-        ::CombineSliceDatas(*data, fastInfoVector, theStopFunctor);
-      return data.release();
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      NFmiQueryInfo combinedDataMetaInfo =
+          ::MakeCombinedDatasMetaInfo(fastInfoVector, foundValidTimes, fDoTimeStepCombine);
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      // SmartMet kaatuu jossain tilanteissa tähän (CreateEmptyData:ssa luodaan dynaamisesti float
+      // taulukko new:lla), laitetaan lokitusta luotavasta datasta, jos funktio on annettu
+      ::DoMetaInfoLogging(loggingFunction, combinedDataMetaInfo, theFileFilterPtr);
+      std::unique_ptr<NFmiQueryData> data(CreateEmptyData(combinedDataMetaInfo));
+      if (data)
+      {
+        if (fDoTimeStepCombine)
+          ::CombineTimeStepDatas(*data, fastInfoVector, theStopFunctor);
+        else
+          ::CombineSliceDatas(*data, fastInfoVector, theStopFunctor);
+        return data.release();
+      }
     }
+    return nullptr;
   }
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theBaseDataFileFilter)
+static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter)
 {
-  boost::shared_ptr<NFmiQueryData> qDataPtr;
-  std::string fileName = NFmiFileSystem::NewestPatternFileName(theBaseDataFileFilter);
-  if (fileName.empty() == false)
+  try
   {
-    if (NFmiFileSystem::FileReadable(fileName))
+    try
     {
-      auto *qData = new NFmiQueryData(fileName, true);
-      if (qData)
-        qDataPtr = boost::shared_ptr<NFmiQueryData>(qData);
+      std::string fileName = NFmiFileSystem::NewestPatternFileName(theFileFilter);
+      if (fileName.empty() == false)
+      {
+        if (NFmiFileSystem::FileReadable(fileName))
+        {
+          return boost::make_shared<NFmiQueryData>(fileName, true);
+        }
+      }
     }
+    catch (...)
+    {
+      // Otetaan vain kiinni poikkeukset, on ok, jos vaikka luetaan korruptoitunut tiedosto ja
+      // palautetaan nullptr
+    }
+    return nullptr;
   }
-  return qDataPtr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// Haetaan annetun theFileFilter:in mukaiset pelkät tiedostonimet (ei polkua) vector:iin.
+// Tiedostot laitetaan oikeaan aikajärjestykseen yhdistelytyötä varten.
+std::vector<std::string> NFmiQueryDataUtil::GetFileNamesForCombinationWork(
+    const std::string &theFileFilter)
+{
+  try
+  {
+    std::list<std::string> fileList = NFmiFileSystem::PatternFiles(theFileFilter);
+    fileList.sort();
+    // käännetään järjestys, jolloin jos käytetty YYYYMMDDHHmmss aikaleimaa tiedoston alussa,
+    // tulee uusimmat tiedostot alkuun
+    fileList.reverse();
+
+    // Tehdään tiedosto-lista vektoriksi.
+    return std::vector<std::string>(fileList.begin(), fileList.end());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // Luo queryDatan annetun filefilterin avulla. Niistä tiedostoista mitä tulee annetulla
@@ -4878,7 +5752,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
   std::list<std::string> fileList = NFmiFileSystem::PatternFiles(theFileFilter);
   fileList.sort();     // sortataan
   fileList.reverse();  // käännetään järjestys, jolloin jos käytetty YYYYMMDDHHmmss aikaleimaa
-                       // tiedoston alussa, tulee uusimmat tiedostot alkuun
+  // tiedoston alussa, tulee uusimmat tiedostot alkuun
 
   // Oletus, jokaisessa tiedostossa on yksi aika, ja tiedostot ovat oikeassa aikajärjestyksessä.
   // Tehdään tiedosto-lista vektoriksi.
@@ -4886,7 +5760,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
 
   std::string dirName =
       GetFileFilterDirectory(theFileFilter);  // fileFilteristä pitää ottaa hakemisto irti, koska
-                                              // PatternFiles-funktio palautta vain tiedostojen
+  // PatternFiles-funktio palautta vain tiedostojen
   // nimet, ei polkua mukana
   std::vector<boost::shared_ptr<NFmiQueryData>> qDataVector;
   ::ReadQueryDataFiles(baseQData, dirName, files, qDataVector, theStopFunctor, fDoRebuildCheck);
@@ -4900,58 +5774,63 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
                            &theFileFilter);
 }
 
-static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
-                                 NFmiFastQueryInfo &theTargetInfo,
-                                 NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-                                 std::vector<NFmiTimeCache> &theTimeCacheVector,
-                                 unsigned long theStartTimeIndex,
-                                 unsigned long theEndTimeIndex,
-                                 int theThreadNumber,
-                                 NFmiLogger *theLogger)
+NFmiQueryData *NFmiQueryDataUtil::CombineAcceptedTimeStepQueryData(
+    bool fDoRebuild,
+    boost::shared_ptr<NFmiQueryData> &theBaseQData,
+    std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
+    const std::vector<NFmiMetTime> &theAcceptedTimes,
+    NFmiStopFunctor *theStopFunctor)
 {
-  if (theStartTimeIndex == gMissingIndex || theEndTimeIndex == gMissingIndex)
-    return;
-
-  NFmiDataMatrix<float> gridValues;
-  const bool doGroundData =
-      (theSourceInfo.SizeLevels() == 1) &&
-      (theTargetInfo.SizeLevels() ==
-       1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
-  const bool doLocationInterpolation =
-      (NFmiQueryDataUtil::AreGridsEqual(theSourceInfo.Grid(), theTargetInfo.Grid()) == false);
-
-  unsigned long targetXSize = theTargetInfo.GridXNumber();
-
-  // Establish output timeindexes up front for speed. -1 implies time is not available
-  std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
-
-  bool doTimeInterpolations = false;
-  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  try
   {
-    if (theTargetInfo.TimeIndex(i))
+    if (theAcceptedTimes.size() > 0)
     {
-      if (theSourceInfo.Time(theTargetInfo.Time()))
-        timeindexes[i] = theSourceInfo.TimeIndex();
-      else if (!doTimeInterpolations && theSourceInfo.IsInside(theTargetInfo.Time()))
-        doTimeInterpolations = true;
+      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
+          MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      NFmiQueryInfo combinedDataMetaInfo =
+          ::MakeCombinedDatasMetaInfo(fastInfoVector, theAcceptedTimes, true);
+      NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+      std::unique_ptr<NFmiQueryData> data(CreateEmptyData(combinedDataMetaInfo));
+      if (data)
+      {
+        ::CombineTimeStepDatas(*data, fastInfoVector, theStopFunctor);
+        return data.release();
+      }
     }
+    return nullptr;
   }
-
-  // Fast special case if there are no location or time interpolations
-
-  if (!doLocationInterpolation && !doTimeInterpolations)
+  catch (...)
   {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+static void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
+                                             NFmiFastQueryInfo &theTargetInfo,
+                                             unsigned long theStartTimeIndex,
+                                             unsigned long theEndTimeIndex)
+{
+  try
+  {
+    // Establish output timeindexes up front for speed. -1 implies time is not available
+    std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
+
+    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+      if (theTargetInfo.TimeIndex(i))
+        if (theSourceInfo.Time(theTargetInfo.Time()))
+          timeindexes[i] = theSourceInfo.TimeIndex();
+
     for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
     {
       if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
       {
-        for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+        for (theTargetInfo.ResetLocation(), theSourceInfo.ResetLocation();
+             theTargetInfo.NextLocation() && theSourceInfo.NextLocation();)
         {
-          // if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
-          if (theSourceInfo.Level(*theTargetInfo.Level()))
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
-            for (theTargetInfo.ResetLocation(), theSourceInfo.ResetLocation();
-                 theTargetInfo.NextLocation() && theSourceInfo.NextLocation();)
+            if (theSourceInfo.Level(*theTargetInfo.Level()))
             {
               for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
               {
@@ -4968,55 +5847,64 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
       }
     }
   }
-  else
+  catch (...)
   {
-    // There are location or time interpolations
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+static void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
+                                              NFmiFastQueryInfo &theTargetInfo,
+                                              std::vector<NFmiTimeCache> &theTimeCacheVector,
+                                              unsigned long theStartTimeIndex,
+                                              unsigned long theEndTimeIndex)
+{
+  try
+  {
+    // Establish output timeindexes up front for speed. -1 implies time is not available
+    std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
+    std::vector<bool> timeinterpolation(theEndTimeIndex + 1, false);
+
+    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+    {
+      if (theTargetInfo.TimeIndex(i))
+      {
+        if (theSourceInfo.Time(theTargetInfo.Time()))
+          timeindexes[i] = theSourceInfo.TimeIndex();
+        else
+          timeinterpolation[i] = theSourceInfo.IsInside(theTargetInfo.Time());
+      }
+    }
 
     for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
     {
       if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
       {
-        for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+        for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
         {
-          if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
-            for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+            if (theSourceInfo.Level(*theTargetInfo.Level()))
             {
-              if (theTargetInfo.TimeIndex(i) == false)
-                continue;
-              NFmiMetTime targetTime = theTargetInfo.Time();
-              bool doTimeInterpolation =
-                  false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
-              if (theSourceInfo.Time(theTargetInfo.Time()) ||
-                  (doTimeInterpolation =
-                       theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) == true)
+              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
               {
-                NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-                if (doLocationInterpolation == false)
-                {
-                  if (doTimeInterpolation)
-                    gridValues = theSourceInfo.Values(targetTime);
-                  else
-                    gridValues = theSourceInfo.Values();
+                if (!theTargetInfo.TimeIndex(i))
+                  continue;
 
-                  theTargetInfo.SetValues(gridValues);
-                }
-                else
-                {  // interpoloidaan paikan suhteen
-                  for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+                if (!timeinterpolation[i])
+                {
+                  if (timeindexes[i] >= 0)
                   {
-                    float value = kFloatMissing;
-                    NFmiLocationCache &locCache =
-                        theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
-                                              [theTargetInfo.LocationIndex() / targetXSize];
-                    if (doLocationInterpolation && doTimeInterpolation)
-                      value = theSourceInfo.CachedInterpolation(locCache, timeCache);
-                    else if (doLocationInterpolation)
-                    {
-                      value = theSourceInfo.CachedInterpolation(locCache);
-                    }
+                    theSourceInfo.TimeIndex(timeindexes[i]);
+                    auto value = theSourceInfo.FloatValue();
                     theTargetInfo.FloatValue(value);
                   }
+                }
+                else
+                {
+                  const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+                  auto value = theSourceInfo.CachedInterpolation(timeCache);
+                  theTargetInfo.FloatValue(value);
                 }
               }
             }
@@ -5024,6 +5912,293 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
         }
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+struct IndexMapping
+{
+  unsigned long source;
+  unsigned long target;
+};
+
+static void FillGridDataWithLocationInterpolation(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+    unsigned long theStartTimeIndex,
+    unsigned long theEndTimeIndex)
+{
+  try
+  {
+    // Establish output timeindexes up front for speed. -1 implies time is not available
+    std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
+
+    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+    {
+      if (theTargetInfo.TimeIndex(i))
+      {
+        if (theSourceInfo.Time(theTargetInfo.Time()))
+          timeindexes[i] = theSourceInfo.TimeIndex();
+      }
+    }
+
+    const auto targetXSize = theTargetInfo.GridXNumber();
+
+    // Process interpolation in source data order to prevent cache trashing, the file may be
+    // huge and memory mapped. Split processing based on parameter, their respecive data is in
+    // continous disk blocks. Then we sort based on the XY-location, and then process their
+    // levels and times.
+
+    // Build the location to location mapping
+    std::vector<IndexMapping> index_mappings;
+
+    theSourceInfo.First();
+    theTargetInfo.First();
+    for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+    {
+      const auto target_idx = theTargetInfo.LocationIndex();
+
+      const auto &locCache =
+          theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
+
+      const auto source_idx = locCache.itsLocationIndex;
+      IndexMapping idxmap{source_idx, target_idx};
+      index_mappings.push_back(std::move(idxmap));
+    }
+
+    // Sort based on source data grid ordering
+
+    std::sort(index_mappings.begin(),
+              index_mappings.end(),
+              [](const IndexMapping &lhs, const IndexMapping &rhs)
+              { return lhs.source < rhs.source; });
+
+    // Then process each param, location, level and time
+
+    for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
+    {
+      if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
+      {
+        for (const auto &idxmap : index_mappings)
+        {
+          theSourceInfo.LocationIndex(idxmap.source);
+          theTargetInfo.LocationIndex(idxmap.target);
+
+          const auto &locCache =
+              theLocationCacheMatrix[idxmap.target % targetXSize][idxmap.target / targetXSize];
+
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+          {
+            if (theSourceInfo.Level(*theTargetInfo.Level()))
+            {
+              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+              {
+                if (!theTargetInfo.TimeIndex(i) || timeindexes[i] < 0)
+                  continue;
+
+                theSourceInfo.TimeIndex(timeindexes[i]);
+                auto value = theSourceInfo.CachedInterpolation(locCache);
+                theTargetInfo.FloatValue(value);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+static void FillGridDataWithTimeAndLocationInterpolation(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+    std::vector<NFmiTimeCache> &theTimeCacheVector,
+    unsigned long theStartTimeIndex,
+    unsigned long theEndTimeIndex)
+{
+  try
+  {
+    // Establish output timeindexes up front for speed. -1 implies time is not available
+    std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
+    std::vector<bool> timeinterpolation(theEndTimeIndex + 1, false);
+
+    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+    {
+      if (theTargetInfo.TimeIndex(i))
+      {
+        if (theSourceInfo.Time(theTargetInfo.Time()))
+          timeindexes[i] = theSourceInfo.TimeIndex();
+        else
+          timeinterpolation[i] = theSourceInfo.IsInside(theTargetInfo.Time());
+      }
+    }
+
+    const auto targetXSize = theTargetInfo.GridXNumber();
+
+    // Process interpolation in source data order to prevent cache trashing, the file may be
+    // huge and memory mapped. Split processing based on parameter, their respecive data is in
+    // continous disk blocks. Then we sort based on the XY-location, and then process their
+    // levels and times.
+
+    // Build the location to location mapping
+    std::vector<IndexMapping> index_mappings;
+
+    theSourceInfo.First();
+    theTargetInfo.First();
+    for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+    {
+      const auto target_idx = theTargetInfo.LocationIndex();
+
+      const auto &locCache =
+          theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
+
+      const auto source_idx = locCache.itsLocationIndex;
+      IndexMapping idxmap{source_idx, target_idx};
+      index_mappings.push_back(std::move(idxmap));
+    }
+
+    // Sort based on source data grid ordering
+
+    std::sort(index_mappings.begin(),
+              index_mappings.end(),
+              [](const IndexMapping &lhs, const IndexMapping &rhs)
+              { return lhs.source < rhs.source; });
+
+    // Then process each param, location, level and time
+
+    for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
+    {
+      if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
+      {
+        for (const auto &idxmap : index_mappings)
+        {
+          theSourceInfo.LocationIndex(idxmap.source);
+          theTargetInfo.LocationIndex(idxmap.target);
+
+          const auto &locCache =
+              theLocationCacheMatrix[idxmap.target % targetXSize][idxmap.target / targetXSize];
+
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+          {
+            if (theSourceInfo.Level(*theTargetInfo.Level()))
+            {
+              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+              {
+                if (!theTargetInfo.TimeIndex(i))
+                  continue;
+
+                if (!timeinterpolation[i])
+                {
+                  // location interpolation but no time interpolation
+                  if (timeindexes[i] >= 0)
+                  {
+                    theSourceInfo.TimeIndex(timeindexes[i]);
+                    auto value = theSourceInfo.CachedInterpolation(locCache);
+                    theTargetInfo.FloatValue(value);
+                  }
+                }
+                else
+                {
+                  // location and time interpolation
+                  const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+                  auto value = theSourceInfo.CachedInterpolation(locCache, timeCache);
+                  theTargetInfo.FloatValue(value);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// If source does not have target time but spans the range, we need time interpolation
+static bool NeedsTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
+                                   NFmiFastQueryInfo &theTargetInfo,
+                                   unsigned long theStartTimeIndex,
+                                   unsigned long theEndTimeIndex)
+{
+  try
+  {
+    for (auto i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+    {
+      if (theTargetInfo.TimeIndex(i))
+      {
+        if (!theSourceInfo.Time(theTargetInfo.Time()))
+        {
+          if (theSourceInfo.IsInside(theTargetInfo.Time()))
+            return true;
+        }
+      }
+    }
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
+                                 NFmiFastQueryInfo &theTargetInfo,
+                                 NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+                                 std::vector<NFmiTimeCache> &theTimeCacheVector,
+                                 unsigned long theStartTimeIndex,
+                                 unsigned long theEndTimeIndex,
+                                 int theThreadNumber,
+                                 NFmiLogger *theLogger)
+{
+  try
+  {
+    if (theStartTimeIndex == gMissingIndex || theEndTimeIndex == gMissingIndex)
+      return;
+
+    const bool doLocationInterpolation =
+        !NFmiQueryDataUtil::AreGridsEqual(theSourceInfo.Grid(), theTargetInfo.Grid());
+
+    if (NeedsTimeInterpolation(theSourceInfo, theTargetInfo, theStartTimeIndex, theEndTimeIndex))
+    {
+      if (!doLocationInterpolation)
+        FillGridDataWithTimeInterpolation(
+            theSourceInfo, theTargetInfo, theTimeCacheVector, theStartTimeIndex, theEndTimeIndex);
+      else
+        FillGridDataWithTimeAndLocationInterpolation(theSourceInfo,
+                                                     theTargetInfo,
+                                                     theLocationCacheMatrix,
+                                                     theTimeCacheVector,
+                                                     theStartTimeIndex,
+                                                     theEndTimeIndex);
+    }
+    else
+    {
+      if (!doLocationInterpolation)
+        FillGridDataWithoutInterpolation(
+            theSourceInfo, theTargetInfo, theStartTimeIndex, theEndTimeIndex);
+      else
+        FillGridDataWithLocationInterpolation(theSourceInfo,
+                                              theTargetInfo,
+                                              theLocationCacheMatrix,
+                                              theStartTimeIndex,
+                                              theEndTimeIndex);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -5038,59 +6213,67 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
                                      unsigned long &theStartInd3,
                                      unsigned long &theEndInd3)
 {
-  if (theStartInd > theEndInd)
-    throw std::runtime_error(
-        "Error in NFmiQueryDataUtil::CalcTimeIndexiesForThreeThreads: time-indexies given wrong "
-        "way?");
+  try
+  {
+    if (theStartInd > theEndInd)
+      throw Fmi::Exception(BCP,
+                           "Error in NFmiQueryDataUtil::CalcTimeIndexiesForThreeThreads: "
+                           "time-indexies given wrong "
+                           "way?");
 
-  unsigned long totalSize =
-      theEndInd - theStartInd +
-      1;  // pitää lisätä lukuun yksi, jos alku ja loppu indeksi ovat samoja, on lukumäärä 1 jne.
-  unsigned long partSize = totalSize / 3;
+    unsigned long totalSize =
+        theEndInd - theStartInd + 1;  // pitää lisätä lukuun yksi, jos alku ja loppu indeksi
+                                      // ovat samoja, on lukumäärä 1 jne.
+    unsigned long partSize = totalSize / 3;
 
-  if (totalSize == 0)
-  {
-    theStartInd1 = theEndInd1 = theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 =
-        gMissingIndex;
-    return;
+    if (totalSize == 0)
+    {
+      theStartInd1 = theEndInd1 = theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 =
+          gMissingIndex;
+      return;
+    }
+    else if (totalSize == 1)
+    {
+      theStartInd1 = theEndInd1 = theStartInd;
+      theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 = gMissingIndex;
+      return;
+    }
+    else if (totalSize == 2)
+    {
+      theStartInd1 = theEndInd1 = theStartInd;
+      theStartInd2 = theEndInd2 = theStartInd + 1;
+      theStartInd3 = theEndInd3 = gMissingIndex;
+      return;
+    }
+    else if (totalSize % 3 == 0)
+    {
+      theStartInd1 = theStartInd;
+      theStartInd2 = theStartInd + partSize;
+      theStartInd3 = theStartInd + partSize * 2;
+    }
+    else if (totalSize % 3 == 1)
+    {
+      theStartInd1 = theStartInd;
+      theStartInd2 = theStartInd + partSize;
+      theStartInd3 = theStartInd +
+                     partSize * 2;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
+    }
+    else if (totalSize % 3 == 2)
+    {
+      theStartInd1 = theStartInd;
+      theStartInd2 =
+          theStartInd + partSize;  // toinen threadi saa tehdä yhden ylimääräisen aika-askeleen
+      theStartInd3 = theStartInd + partSize * 2 +
+                     1;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
+    }
+    theEndInd1 = theStartInd2 - 1;
+    theEndInd2 = theStartInd3 - 1;
+    theEndInd3 = theEndInd;
   }
-  else if (totalSize == 1)
+  catch (...)
   {
-    theStartInd1 = theEndInd1 = theStartInd;
-    theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 = gMissingIndex;
-    return;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  else if (totalSize == 2)
-  {
-    theStartInd1 = theEndInd1 = theStartInd;
-    theStartInd2 = theEndInd2 = theStartInd + 1;
-    theStartInd3 = theEndInd3 = gMissingIndex;
-    return;
-  }
-  else if (totalSize % 3 == 0)
-  {
-    theStartInd1 = theStartInd;
-    theStartInd2 = theStartInd + partSize;
-    theStartInd3 = theStartInd + partSize * 2;
-  }
-  else if (totalSize % 3 == 1)
-  {
-    theStartInd1 = theStartInd;
-    theStartInd2 = theStartInd + partSize;
-    theStartInd3 =
-        theStartInd + partSize * 2;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
-  }
-  else if (totalSize % 3 == 2)
-  {
-    theStartInd1 = theStartInd;
-    theStartInd2 =
-        theStartInd + partSize;  // toinen threadi saa tehdä yhden ylimääräisen aika-askeleen
-    theStartInd3 = theStartInd + partSize * 2 +
-                   1;  // viimeinen threadi saa tehdä yhden ylimääräisen aika-askeleen
-  }
-  theEndInd1 = theStartInd2 - 1;
-  theEndInd2 = theStartInd3 - 1;
-  theEndInd3 = theEndInd;
 }
 
 //#define BOOST_DISABLE_THREADS 1
@@ -5110,24 +6293,26 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                                      NFmiLogger *theLogger,
                                      bool fUseOnlyOneThread)
 {
-  if (theSource && theTarget && theSource->IsGrid() && theTarget->IsGrid())
+  try
   {
-    NFmiFastQueryInfo source1(theSource);
-    NFmiFastQueryInfo target1(theTarget);
-    bool doLocationInterpolation =
-        (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
-    NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
-    if (doLocationInterpolation)
-      source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
-    std::vector<NFmiTimeCache> timeCacheVector;
-    source1.CalcTimeCache(target1, timeCacheVector);
+    if (theSource && theTarget && theSource->IsGrid() && theTarget->IsGrid())
+    {
+      NFmiFastQueryInfo source1(theSource);
+      NFmiFastQueryInfo target1(theTarget);
+      bool doLocationInterpolation =
+          (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
+      NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
+      if (doLocationInterpolation)
+        source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
+      std::vector<NFmiTimeCache> timeCacheVector;
+      source1.CalcTimeCache(target1, timeCacheVector);
 
-    unsigned long usedStartTimeIndex = theStartTimeIndex;
-    unsigned long usedEndTimeIndex = theEndTimeIndex;
-    if (usedStartTimeIndex == gMissingIndex)
-      usedStartTimeIndex = 0;
-    if (usedEndTimeIndex == gMissingIndex)
-      usedEndTimeIndex = target1.SizeTimes() - 1;
+      unsigned long usedStartTimeIndex = theStartTimeIndex;
+      unsigned long usedEndTimeIndex = theEndTimeIndex;
+      if (usedStartTimeIndex == gMissingIndex)
+        usedStartTimeIndex = 0;
+      if (usedEndTimeIndex == gMissingIndex)
+        usedEndTimeIndex = target1.SizeTimes() - 1;
 
 #ifdef UNIX
 #define DISABLE_THIS_THREAD 1
@@ -5139,19 +6324,6 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
 
 #ifdef DISABLE_THIS_THREAD
 
-    ::FillGridDataInThread(source1,
-                           target1,
-                           locationCacheMatrix,
-                           timeCacheVector,
-                           usedStartTimeIndex,
-                           usedEndTimeIndex,
-                           1,
-                           theLogger);
-
-#else   // DISABLE_THIS_THREAD
-
-    if (fUseOnlyOneThread || target1.SizeTimes() < 3)
-    {  // jos aikoja oli alle kolme, tai ei haluta jakaa työtä, lasketaan data yhdessä säikeessä
       ::FillGridDataInThread(source1,
                              target1,
                              locationCacheMatrix,
@@ -5160,159 +6332,98 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                              usedEndTimeIndex,
                              1,
                              theLogger);
-    }
-    else
-    {
-      unsigned long timeStart1 = gMissingIndex;
-      unsigned long timeStart2 = gMissingIndex;
-      unsigned long timeStart3 = gMissingIndex;
-      unsigned long timeEnd1 = gMissingIndex;
-      unsigned long timeEnd2 = gMissingIndex;
-      unsigned long timeEnd3 = gMissingIndex;
-      // jaetaan aika indeksi kolmeen osaa ja käynnistetään kolme worker threadia, jotka laskevat
-      // eri osia datasta
-      CalcTimeIndexiesForThreeThreads(usedStartTimeIndex,
-                                      usedEndTimeIndex,
-                                      timeStart1,
-                                      timeEnd1,
-                                      timeStart2,
-                                      timeEnd2,
-                                      timeStart3,
-                                      timeEnd3);
 
-      NFmiFastQueryInfo source2(theSource);
-      NFmiFastQueryInfo target2(theTarget);
-      NFmiFastQueryInfo source3(theSource);
-      NFmiFastQueryInfo target3(theTarget);
+#else   // DISABLE_THIS_THREAD
 
-      // HUOM! multi threaddauksessa otettava huomioon!!!!
-      // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla
-      // erillisillä Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan
-      // kerran
-      // tarvittaessa. Nyt samoihin datoihin tehdään kolme info-iteraattoria ja tässä kutsumalla
-      // yhdelle niistä
-      // LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen kuin mennään
-      // suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme thtreadia kutsui
-      // Latlon:ia
-      // ja cache-data ei oltu vielä initialisoitu, jolloin sitä initialisoitiin kolme kertaa
-      // päällekkäin.
-      // Ongelma oli varsinkin isommille datoille (esim. mbe), joille kyseisen cachen rakentaminen
-      // kestää kauemmin.
-      NFmiPoint dummyPoint =
-          target3.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-      dummyPoint =
-          source3.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-
-      boost::thread_group calcParts;
-      calcParts.add_thread(new boost::thread(::FillGridDataInThread,
-                                             source3,
-                                             target3,
-                                             locationCacheMatrix,
-                                             timeCacheVector,
-                                             timeStart3,
-                                             timeEnd3,
-                                             3,
-                                             theLogger));
-      calcParts.add_thread(new boost::thread(::FillGridDataInThread,
-                                             source2,
-                                             target2,
-                                             locationCacheMatrix,
-                                             timeCacheVector,
-                                             timeStart2,
-                                             timeEnd2,
-                                             2,
-                                             theLogger));
-      calcParts.add_thread(new boost::thread(::FillGridDataInThread,
-                                             source1,
-                                             target1,
-                                             locationCacheMatrix,
-                                             timeCacheVector,
-                                             timeStart1,
-                                             timeEnd1,
-                                             1,
-                                             theLogger));
-      calcParts.join_all();  // odotetaan että threadit lopettavat
-    }
-#endif  // BOOST_DISABLE_THREADS
-  }
-}
-
-static void FillSingleTimeGridDataInThread(
-    NFmiFastQueryInfo &theSourceInfo,
-    NFmiFastQueryInfo &theTargetInfo,
-    bool fDoLocationInterpolation,
-    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-    const std::vector<NFmiTimeCache> &theTimeCacheVector,
-    NFmiTimeIndexCalculator &theTimeIndexCalculator,
-    int theThreadNumber,
-    NFmiLogger *theDebugLogger)
-{
-  NFmiDataMatrix<float> gridValues;
-  bool doGroundData =
-      (theSourceInfo.SizeLevels() == 1) &&
-      (theTargetInfo.SizeLevels() ==
-       1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
-  unsigned long targetXSize = theTargetInfo.GridXNumber();
-  unsigned long workedTimeIndex = 0;
-  for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
-  {
-    if (theDebugLogger)
-    {
-      std::string logStr("FillSingleTimeGridDataInThread - thread no: ");
-      logStr += NFmiStringTools::Convert(theThreadNumber);
-      logStr += " started timeIndex: ";
-      logStr += NFmiStringTools::Convert(workedTimeIndex);
-      theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
-    }
-
-    if (theTargetInfo.TimeIndex(workedTimeIndex) == false)
-      continue;
-    NFmiMetTime targetTime = theTargetInfo.Time();
-    bool doTimeInterpolation =
-        false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
-    if (theSourceInfo.Time(theTargetInfo.Time()) ||
-        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) ==
-            true)
-    {
-      const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-      for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
-      {
-        if (theSourceInfo.Param(
-                static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
-        {
-          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
-          {
-            if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              if (fDoLocationInterpolation == false)
-              {
-                if (doTimeInterpolation)
-                  gridValues = theSourceInfo.Values(targetTime);
-                else
-                  gridValues = theSourceInfo.Values();
-
-                theTargetInfo.SetValues(gridValues);
-              }
-              else
-              {  // interpoloidaan paikan suhteen
-                for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
-                {
-                  float value = kFloatMissing;
-                  const NFmiLocationCache &locCache =
-                      theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
-                                            [theTargetInfo.LocationIndex() / targetXSize];
-                  if (fDoLocationInterpolation && doTimeInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache, timeCache);
-                  else if (fDoLocationInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache);
-                  theTargetInfo.FloatValue(value);
-                }
-              }
-            }
-          }
-        }
+      if (fUseOnlyOneThread || target1.SizeTimes() < 3)
+      {  // jos aikoja oli alle kolme, tai ei haluta jakaa työtä, lasketaan data yhdessä säikeessä
+        ::FillGridDataInThread(source1,
+                               target1,
+                               locationCacheMatrix,
+                               timeCacheVector,
+                               usedStartTimeIndex,
+                               usedEndTimeIndex,
+                               1,
+                               theLogger);
       }
+      else
+      {
+        unsigned long timeStart1 = gMissingIndex;
+        unsigned long timeStart2 = gMissingIndex;
+        unsigned long timeStart3 = gMissingIndex;
+        unsigned long timeEnd1 = gMissingIndex;
+        unsigned long timeEnd2 = gMissingIndex;
+        unsigned long timeEnd3 = gMissingIndex;
+        // jaetaan aika indeksi kolmeen osaa ja käynnistetään kolme worker threadia, jotka
+        // laskevat eri osia datasta
+        CalcTimeIndexiesForThreeThreads(usedStartTimeIndex,
+                                        usedEndTimeIndex,
+                                        timeStart1,
+                                        timeEnd1,
+                                        timeStart2,
+                                        timeEnd2,
+                                        timeStart3,
+                                        timeEnd3);
+
+        NFmiFastQueryInfo source2(theSource);
+        NFmiFastQueryInfo target2(theTarget);
+        NFmiFastQueryInfo source3(theSource);
+        NFmiFastQueryInfo target3(theTarget);
+
+        // HUOM! multi threaddauksessa otettava huomioon!!!!
+        // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla
+        // erillisillä Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan
+        // kerran
+        // tarvittaessa. Nyt samoihin datoihin tehdään kolme info-iteraattoria ja tässä kutsumalla
+        // yhdelle niistä
+        // LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen kuin mennään
+        // suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme thtreadia kutsui
+        // Latlon:ia
+        // ja cache-data ei oltu vielä initialisoitu, jolloin sitä initialisoitiin kolme kertaa
+        // päällekkäin.
+        // Ongelma oli varsinkin isommille datoille (esim. mbe), joille kyseisen cachen
+        // rakentaminen kestää kauemmin.
+        NFmiPoint dummyPoint =
+            target3.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+        dummyPoint =
+            source3.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+
+        boost::thread_group calcParts;
+        calcParts.add_thread(new boost::thread(::FillGridDataInThread,
+                                               source3,
+                                               target3,
+                                               locationCacheMatrix,
+                                               timeCacheVector,
+                                               timeStart3,
+                                               timeEnd3,
+                                               3,
+                                               theLogger));
+        calcParts.add_thread(new boost::thread(::FillGridDataInThread,
+                                               source2,
+                                               target2,
+                                               locationCacheMatrix,
+                                               timeCacheVector,
+                                               timeStart2,
+                                               timeEnd2,
+                                               2,
+                                               theLogger));
+        calcParts.add_thread(new boost::thread(::FillGridDataInThread,
+                                               source1,
+                                               target1,
+                                               locationCacheMatrix,
+                                               timeCacheVector,
+                                               timeStart1,
+                                               timeEnd1,
+                                               1,
+                                               theLogger));
+        calcParts.join_all();  // odotetaan että threadit lopettavat
+      }
+#endif  // BOOST_DISABLE_THREADS
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -5329,176 +6440,218 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
                                            unsigned int usedThreadCount,
                                            NFmiLogger *theDebugLogger)
 {
-  if (theSource && theTarget && theSource->IsGrid() && theTarget->IsGrid())
+  try
   {
-    NFmiFastQueryInfo source1(theSource);
-    NFmiFastQueryInfo target1(theTarget);
-    bool doLocationInterpolation =
-        (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
-    NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
-    if (doLocationInterpolation)
-      source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
-    std::vector<NFmiTimeCache> timeCacheVector;
-    source1.CalcTimeCache(target1, timeCacheVector);
-
-    unsigned long usedStartTimeIndex = theStartTimeIndex;
-    unsigned long usedEndTimeIndex = theEndTimeIndex;
-    if (usedStartTimeIndex == gMissingIndex)
-      usedStartTimeIndex = 0;
-    if (usedEndTimeIndex == gMissingIndex)
-      usedEndTimeIndex = target1.SizeTimes() - 1;
-
-    if (usedThreadCount == 0)
+    if (theSource && theTarget && theSource->IsGrid() && theTarget->IsGrid())
     {
-    double threadCountPercentage = 50.; // Linux side wants to use 1/2 the cores here
-#ifdef _MSC_VER
-    // With SmartMet side more core power is needed for the parallel job
-    threadCountPercentage = 75.; 
-#endif
-    usedThreadCount =
-        NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
-    }
-
-    if (usedThreadCount > target1.SizeTimes())
-      usedThreadCount = target1.SizeTimes();
-
-    if (usedThreadCount <= 1)
-    {  // käytetään vanhaa simppelimpää funktiota kun threadauksesta ei ole hyötyä
-      ::FillGridDataInThread(source1,
-                             target1,
-                             locationCacheMatrix,
-                             timeCacheVector,
-                             usedStartTimeIndex,
-                             usedEndTimeIndex,
-                             1,
-                             theDebugLogger);
-    }
-    else
-    {
-      // HUOM! multi threaddauksessa otettava huomioon!!!!
-      // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla
-      // erillisillä Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan
-      // kerran
-      // tarvittaessa. Nyt samoihin datoihin tehdään kolme info-iteraattoria ja tässä kutsumalla
-      // yhdelle niistä
-      // LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen kuin mennään
-      // suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme thtreadia kutsui
-      // Latlon:ia
-      // ja cache-data ei oltu vielä initialisoitu, jolloin sitä initialisoitiin kolme kertaa
-      // päällekkäin.
-      // Ongelma oli varsinkin isommille datoille (esim. mbe), joille kyseisen cachen rakentaminen
-      // kestää kauemmin.
-      NFmiPoint dummyPoint =
-          target1.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-      dummyPoint =
-          source1.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
-
-      // pakko luoda dynaamisesti eri threadeille tarvittavat kopiot source ja target datoista
-      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> targetInfos(usedThreadCount);
-      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
-      for (unsigned int i = 0; i < usedThreadCount; i++)
+      NFmiFastQueryInfo source1(theSource);
+      NFmiFastQueryInfo target1(theTarget);
+      bool doLocationInterpolation =
+          (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
+      NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
+      if (doLocationInterpolation)
+        source1.CalcLatlonCachePoints(target1, locationCacheMatrix);
+      std::vector<NFmiTimeCache> timeCacheVector;
+      source1.CalcTimeCache(target1, timeCacheVector);
+  
+      unsigned long usedStartTimeIndex = theStartTimeIndex;
+      unsigned long usedEndTimeIndex = theEndTimeIndex;
+      if (usedStartTimeIndex == gMissingIndex)
+        usedStartTimeIndex = 0;
+      if (usedEndTimeIndex == gMissingIndex)
+        usedEndTimeIndex = target1.SizeTimes() - 1;
+  
+      if (usedThreadCount == 0)
       {
-        targetInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(target1));
-        sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(source1));
+      double threadCountPercentage = 50.; // Linux side wants to use 1/2 the cores here
+#ifdef _MSC_VER
+      // With SmartMet side more core power is needed for the parallel job
+      threadCountPercentage = 75.; 
+#endif
+      usedThreadCount =
+          NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
       }
-
-      NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
-      boost::thread_group calcParts;
-      for (unsigned int i = 0; i < usedThreadCount; i++)
-        calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
-                                               *(sourceInfos[i].get()),
-                                               *(targetInfos[i].get()),
-                                               doLocationInterpolation,
-                                               locationCacheMatrix,
-                                               timeCacheVector,
-                                               boost::ref(timeIndexCalculator),
-                                               i,
-                                               theDebugLogger));
-      calcParts.join_all();  // odotetaan että threadit lopettavat
+  
+      if (usedThreadCount > target1.SizeTimes())
+        usedThreadCount = target1.SizeTimes();
+  
+      if (usedThreadCount <= 1)
+      {  // käytetään vanhaa simppelimpää funktiota kun threadauksesta ei ole hyötyä
+        ::FillGridDataInThread(source1,
+                               target1,
+                               locationCacheMatrix,
+                               timeCacheVector,
+                               usedStartTimeIndex,
+                               usedEndTimeIndex,
+                               1,
+                               theDebugLogger);
+      }
+      else
+      {
+        // HUOM! multi threaddauksessa otettava huomioon!!!!
+        // NFmiQueryData-luokassa on itsLatLonCache, joka on samalla käytössä kaikilla
+        // erillisillä Info-iteraattoreilla. Tämä on ns. lazy-init dataa, joka initialisoidaan
+        // kerran
+        // tarvittaessa. Nyt samoihin datoihin tehdään kolme info-iteraattoria ja tässä kutsumalla
+        // yhdelle niistä
+        // LatLon-metodia, varmistetaan että itsLatLonCache on initialisoitu, ennen kuin mennään
+        // suorittamaan kolmea threadia yhtäaikaa. Tämä oli kaato bugi, kun kolme thtreadia kutsui
+        // Latlon:ia
+        // ja cache-data ei oltu vielä initialisoitu, jolloin sitä initialisoitiin kolme kertaa
+        // päällekkäin.
+        // Ongelma oli varsinkin isommille datoille (esim. mbe), joille kyseisen cachen rakentaminen
+        // kestää kauemmin.
+        NFmiPoint dummyPoint =
+            target1.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+        dummyPoint =
+            source1.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
+  
+        // pakko luoda dynaamisesti eri threadeille tarvittavat kopiot source ja target datoista
+        std::vector<boost::shared_ptr<NFmiFastQueryInfo>> targetInfos(usedThreadCount);
+        std::vector<boost::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
+        for (unsigned int i = 0; i < usedThreadCount; i++)
+        {
+          targetInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(target1));
+          sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(source1));
+        }
+  
+        NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
+        boost::thread_group calcParts;
+        for (unsigned int i = 0; i < usedThreadCount; i++)
+          calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
+                                                 *(sourceInfos[i].get()),
+                                                 *(targetInfos[i].get()),
+                                                 doLocationInterpolation,
+                                                 locationCacheMatrix,
+                                                 timeCacheVector,
+                                                 boost::ref(timeIndexCalculator),
+                                                 i,
+                                                 theDebugLogger));
+        calcParts.join_all();  // odotetaan että threadit lopettavat
+      }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
 bool NFmiQueryDataUtil::AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *theGrid2)
 {
-  if (theGrid1 && theGrid2)
+  try
   {
-    if (AreAreasEqual(theGrid1->Area(), theGrid2->Area()))
+    if (theGrid1 && theGrid2)
     {
-      if (theGrid1->XNumber() == theGrid2->XNumber() && theGrid1->YNumber() == theGrid2->YNumber())
-        return true;
+      if (AreAreasEqual(theGrid1->Area(), theGrid2->Area()))
+      {
+        if (theGrid1->XNumber() == theGrid2->XNumber() &&
+            theGrid1->YNumber() == theGrid2->YNumber())
+          return true;
+      }
     }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // tutkii onko area-tyypit samoja, ovatko nurkka pisteet samoja ja
 // vielä erikoistapauksena onko orientaatio sama
 bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2)
 {
-  if (theArea1 && theArea2)
 #ifdef WGS84
-    return (theArea1 == theArea2);
+  if (theArea1 && theArea2)
+    return (*theArea1 == *theArea2);
+  return false;
 #else
+  try
   {
-    if (theArea1->ClassId() == theArea2->ClassId())
+    if (theArea1 && theArea2)
     {
-      // pitääkö pisteille antaa liikkuma varaa epätarkkuuden takia?
-      if (theArea1->BottomLeftLatLon() == theArea2->BottomLeftLatLon() &&
-          theArea1->TopRightLatLon() == theArea2->TopRightLatLon())
+      if (theArea1->ClassId() == theArea2->ClassId())
       {
-        if (theArea1->ClassId() == kNFmiStereographicArea ||
-            theArea1->ClassId() == kNFmiEquiDistArea)
+        // pitääkö pisteille antaa liikkuma varaa epätarkkuuden takia?
+        if (theArea1->BottomLeftLatLon() == theArea2->BottomLeftLatLon() &&
+            theArea1->TopRightLatLon() == theArea2->TopRightLatLon())
         {
-          if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-              static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
-            return true;
+          if (theArea1->ClassId() == kNFmiStereographicArea ||
+              theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
+          {
+            if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+                static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
+              return true;
+            else
+              return false;
+          }
           else
-            return false;
+            return true;
         }
-        else
-          return true;
       }
     }
+    return false;
   }
+}
+catch (...)
+{
+  throw Fmi::Exception::Trace(BCP, "Operation failed!");
+}
 #endif
-  return false;
 }
 
 bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiArea *theArea2)
 {
-  if (theArea1 && theArea2)
+  try
   {
 #ifdef WGS84
     return theArea1->SpatialReference().get()->IsSameGeogCS(theArea2->SpatialReference().get());
 #else
-    if (theArea1->ClassId() == kNFmiStereographicArea || theArea1->ClassId() == kNFmiEquiDistArea)
+    if (theArea1 && theArea2)
     {
-      if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
-          static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
+      if (theArea1->ClassId() == kNFmiStereographicArea ||
+          theArea1->ClassId() == kNFmiEquiDistArea || theArea1->ClassId() == kNFmiGnomonicArea)
+      {
+        if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
+            static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
+          return true;
+        else
+          return false;
+      }
+      else if (theArea1->ClassId() == theArea2->ClassId())
         return true;
-      else
-        return false;
     }
     else if (theArea1->ClassId() == theArea2->ClassId())
       return true;
+    return false;
 #endif
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiQueryData *NFmiQueryDataUtil::ReadNewestData(const std::string &theFileFilter)
 {
-  std::string tmpFileName;
-  std::time_t timeOfFile = NFmiFileSystem::FindFile(theFileFilter, true, &tmpFileName);
-  if (timeOfFile == 0)
-    return nullptr;
-  std::string foundFileName = NFmiFileSystem::PathFromPattern(theFileFilter);
-  if (foundFileName.empty() == false)
-    foundFileName += kFmiDirectorySeparator;
-  foundFileName += tmpFileName;
-  auto *data = new NFmiQueryData(foundFileName, true);
-  return data;
+  try
+  {
+    std::string tmpFileName;
+    std::time_t timeOfFile = NFmiFileSystem::FindFile(theFileFilter, true, &tmpFileName);
+    if (timeOfFile == 0)
+      return nullptr;
+    std::string foundFileName = NFmiFileSystem::PathFromPattern(theFileFilter);
+    if (foundFileName.empty() == false)
+      foundFileName += kFmiDirectorySeparator;
+    foundFileName += tmpFileName;
+    auto *data = new NFmiQueryData(foundFileName, true);
+    return data;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 template<typename T>
@@ -5523,41 +6676,48 @@ static void CheckThreadCountLimits(T &threadCountInOut, T maxThreadCount)
 // CPU:lla ei olisi yli kuormitettu turhaa kahden ensimmäisen työskentely syklin aikana.
 int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separateTaskCount)
 {
-  if (maxAvailableThreads >= separateTaskCount) return separateTaskCount;
-  if (maxAvailableThreads <= 2) return maxAvailableThreads;
-
-  double ratio = static_cast<double>(separateTaskCount) / maxAvailableThreads;
-  auto wantedIntegerPart = static_cast<int>(ratio);
-  // Jos jakosuhteeksi tuli kokonaisluku, käytetään kaikkia annettuja threadeja
-  if (ratio == wantedIntegerPart)
-    return maxAvailableThreads;
-
-  // Jos ei löytynyt tasalukuja, pitää iteroida semmoinen ratio, jolla saadaan mahdollisimman iso
-  // kokonaisluku,
-  // jossa on mahdollisimman iso murto-osa siis esim. 6.92 (6.92 on parempi kuin vaikka 6.34)
-  // double maxRatio = ratio;
-  int maxRatioThreadCount = maxAvailableThreads;
-  for (int threadCount = maxAvailableThreads - 1; threadCount > 1; threadCount--)
+  try
   {
-    double ratio2 = static_cast<double>(separateTaskCount) / threadCount;
-    auto wantedIntegerPart2 = static_cast<int>(ratio2);
-    if (wantedIntegerPart2 == wantedIntegerPart && ratio2 > ratio)
+    if (maxAvailableThreads >= separateTaskCount) return separateTaskCount;
+    if (maxAvailableThreads <= 2) return maxAvailableThreads;
+  
+    double ratio = static_cast<double>(separateTaskCount) / maxAvailableThreads;
+    auto wantedIntegerPart = static_cast<int>(ratio);
+    // Jos jakosuhteeksi tuli kokonaisluku, käytetään kaikkia annettuja threadeja
+    if (ratio == wantedIntegerPart)
+      return maxAvailableThreads;
+  
+    // Jos ei löytynyt tasalukuja, pitää iteroida semmoinen ratio, jolla saadaan mahdollisimman iso
+    // kokonaisluku,
+    // jossa on mahdollisimman iso murto-osa siis esim. 6.92 (6.92 on parempi kuin vaikka 6.34)
+    // double maxRatio = ratio;
+    int maxRatioThreadCount = maxAvailableThreads;
+    for (int threadCount = maxAvailableThreads - 1; threadCount > 1; threadCount--)
     {
-      // maxRatio = ratio2;
-      maxRatioThreadCount = threadCount;
+      double ratio2 = static_cast<double>(separateTaskCount) / threadCount;
+      auto wantedIntegerPart2 = static_cast<int>(ratio2);
+      if (wantedIntegerPart2 == wantedIntegerPart && ratio2 > ratio)
+      {
+        // maxRatio = ratio2;
+        maxRatioThreadCount = threadCount;
+      }
+      if (wantedIntegerPart2 == wantedIntegerPart + 1 && ratio2 == wantedIntegerPart2)
+      {  // löydettiin jakosuhde, joka käyttää vajaata threadi määrää täysillä esim. maxThread = 4,
+        // taskcount = 6, tällöin optimaali on 3 threadia
+        // maxRatio = ratio2;
+        maxRatioThreadCount = threadCount;
+        break;
+      }
+      if (wantedIntegerPart2 > wantedIntegerPart) break;
     }
-    if (wantedIntegerPart2 == wantedIntegerPart + 1 && ratio2 == wantedIntegerPart2)
-    {  // löydettiin jakosuhde, joka käyttää vajaata threadi määrää täysillä esim. maxThread = 4,
-      // taskcount = 6, tällöin optimaali on 3 threadia
-      // maxRatio = ratio2;
-      maxRatioThreadCount = threadCount;
-      break;
-    }
-    if (wantedIntegerPart2 > wantedIntegerPart) break;
+  
+    ::CheckThreadCountLimits(maxRatioThreadCount, maxAvailableThreads);
+    return maxRatioThreadCount;
   }
-
-  ::CheckThreadCountLimits(maxRatioThreadCount, maxAvailableThreads);
-  return maxRatioThreadCount;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // By default this function returns count of half of the hardware threads in the system.
@@ -5574,12 +6734,19 @@ int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separ
 unsigned int NFmiQueryDataUtil::GetReasonableWorkingThreadCount(double wantedHardwareThreadPercent,
                                                                 unsigned int separateTaskCount)
 {
-  auto maxThreadCount = std::thread::hardware_concurrency();
-  auto threadCount =
-      static_cast<unsigned int>(boost::math::iround(maxThreadCount * (wantedHardwareThreadPercent / 100.)));
-  ::CheckThreadCountLimits(threadCount, maxThreadCount);
-  if (separateTaskCount == 0)
-    return threadCount;
-  else
-    return CalcOptimalThreadCount(threadCount, separateTaskCount);
+  try
+  {
+    auto maxThreadCount = std::thread::hardware_concurrency();
+    auto threadCount =
+        static_cast<unsigned int>(boost::math::iround(maxThreadCount * (wantedHardwareThreadPercent / 100.)));
+    ::CheckThreadCountLimits(threadCount, maxThreadCount);
+    if (separateTaskCount == 0)
+      return threadCount;
+    else
+      return CalcOptimalThreadCount(threadCount, separateTaskCount);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

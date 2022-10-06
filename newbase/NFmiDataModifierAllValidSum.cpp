@@ -47,9 +47,11 @@ void NFmiDataModifierAllValidSum::Calculate(float theValue)
 {
   if (CheckMissingValues(theValue))
   {
-    if (itsCounter == 0) fCalculationResultOk = true;
+    if (itsCounter == 0)
+      fCalculationResultOk = true;
 
-    if (IsInside(theValue)) itsSum += theValue;
+    if (IsInside(theValue))
+      itsSum += theValue;
   }
   itsCounter++;
 }
@@ -66,7 +68,8 @@ void NFmiDataModifierAllValidSum::Calculate(NFmiQueryInfo* theQI)
   // kaikki pitää olla jotta ok
   if (CheckMissingValues(value))
   {
-    if (itsCounter == 0) fCalculationResultOk = true;
+    if (itsCounter == 0)
+      fCalculationResultOk = true;
 
     // sadetta -1 ei saa ottaa
     if (!(theQI && ((theQI->Param().GetParam()->MinValue() != kFloatMissing &&

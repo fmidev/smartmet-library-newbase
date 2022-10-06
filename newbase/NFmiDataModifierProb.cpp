@@ -94,7 +94,8 @@ void NFmiDataModifierProb::Clear()
 
 bool NFmiDataModifierProb::CheckParams(double theValue)
 {
-  if (theValue == kFloatMissing || its1Limit == kFloatMissing) return false;
+  if (theValue == kFloatMissing || its1Limit == kFloatMissing)
+    return false;
   return true;
 }
 
@@ -106,7 +107,8 @@ bool NFmiDataModifierProb::CheckParams(double theValue)
 
 void NFmiDataModifierProb::AddCounter(bool theCondition)
 {
-  if (theCondition) itsCounter++;
+  if (theCondition)
+    itsCounter++;
 
   itsTotalCounter++;
 }
@@ -133,7 +135,8 @@ float NFmiDataModifierProb::CalculationResult()
 
 void NFmiDataModifierProb::Calculate(float theValue)
 {
-  if (!CheckParams(theValue)) return;
+  if (!CheckParams(theValue))
+    return;
   switch (itsCondition)
   {
     case kValueLessThanLimit:

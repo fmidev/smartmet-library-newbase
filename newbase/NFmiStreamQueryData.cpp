@@ -16,7 +16,7 @@
 
 #include "NFmiFileSystem.h"
 #include "NFmiValueString.h"
-
+#include <macgyver/Exception.h>
 #include <cstdio>
 #include <fcntl.h>
 #include <fstream>
@@ -40,35 +40,44 @@ using namespace std;
 
 const string find_newest_querydata(const string &thePath)
 {
-  if (!NFmiFileSystem::DirectoryExists(thePath)) return "";
-
-  list<string> files = NFmiFileSystem::DirectoryFiles(thePath);
-  if (files.empty()) return "";
-
-  string newestfile;
-  time_t newesttime = 0;
-
-  for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+  try
   {
-    string filename = thePath + '/' + *f;
-    if (NFmiFileSystem::FileReadable(filename))
-    {
-      string suffix = NFmiStringTools::Suffix(*f);
-      NFmiStringTools::LowerCase(suffix);
+    if (!NFmiFileSystem::DirectoryExists(thePath))
+      return "";
 
-      if (suffix == "sqd" || suffix == "fqd")
+    list<string> files = NFmiFileSystem::DirectoryFiles(thePath);
+    if (files.empty())
+      return "";
+
+    string newestfile;
+    time_t newesttime = 0;
+
+    for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+    {
+      string filename = thePath + '/' + *f;
+      if (NFmiFileSystem::FileReadable(filename))
       {
-        time_t modtime = NFmiFileSystem::FileModificationTime(filename);
-        if (modtime > newesttime)
+        string suffix = NFmiStringTools::Suffix(*f);
+        NFmiStringTools::LowerCase(suffix);
+
+        if (suffix == "sqd" || suffix == "fqd")
         {
-          newesttime = modtime;
-          newestfile = *f;
+          time_t modtime = NFmiFileSystem::FileModificationTime(filename);
+          if (modtime > newesttime)
+          {
+            newesttime = modtime;
+            newestfile = *f;
+          }
         }
       }
     }
-  }
 
-  return newestfile;
+    return newestfile;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -79,8 +88,19 @@ const string find_newest_querydata(const string &thePath)
 
 NFmiStreamQueryData::~NFmiStreamQueryData()
 {
-  if (!itsOwnerData && itsQueryData) delete itsQueryData;
-  if (itsQueryDataIter) delete itsQueryDataIter;
+  try
+  {
+    if (!itsOwnerData && itsQueryData)
+      delete itsQueryData;
+
+    if (itsQueryDataIter)
+      delete itsQueryDataIter;
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -115,15 +135,22 @@ NFmiStreamQueryData::NFmiStreamQueryData(NFmiQueryData *theQueryData, bool isOwn
 
 NFmiFastQueryInfo *NFmiStreamQueryData::QueryInfoIter()
 {
-  if (itsQueryData)
+  try
   {
-    if (!itsQueryDataIter)
+    if (itsQueryData)
     {
-      itsQueryDataIter = new NFmiFastQueryInfo(itsQueryData);
+      if (!itsQueryDataIter)
+      {
+        itsQueryDataIter = new NFmiFastQueryInfo(itsQueryData);
+      }
     }
-  }
 
-  return itsQueryDataIter;
+    return itsQueryDataIter;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -135,13 +162,20 @@ NFmiFastQueryInfo *NFmiStreamQueryData::QueryInfoIter()
 
 NFmiQueryData *NFmiStreamQueryData::QueryData(bool theOwnerData)
 {
-  NFmiQueryData *tmp = itsQueryData;  // otetaan väliaikaismuuttujaan talteen siltä varalta jos
-                                      // omistajuus vaihtuu ja itsQueryData nollataan
-  itsOwnerData = theOwnerData;
-  if (itsOwnerData)
-    itsQueryData = nullptr;  // pitää nollata pointteri, muuten voi tapahtua kauheita jos luetaan
-                             // uusi data sisään
-  return tmp;
+  try
+  {
+    NFmiQueryData *tmp = itsQueryData;  // otetaan väliaikaismuuttujaan talteen siltä varalta jos
+                                        // omistajuus vaihtuu ja itsQueryData nollataan
+    itsOwnerData = theOwnerData;
+    if (itsOwnerData)
+      itsQueryData = nullptr;  // pitää nollata pointteri, muuten voi tapahtua kauheita jos luetaan
+                               // uusi data sisään
+    return tmp;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -152,9 +186,17 @@ NFmiQueryData *NFmiStreamQueryData::QueryData(bool theOwnerData)
 
 bool NFmiStreamQueryData::IsData()
 {
-  if (itsQueryData) return true;
+  try
+  {
+    if (itsQueryData)
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -170,36 +212,44 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
                                     NFmiQueryData *theQueryData,
                                     long theLibVersion) const
 {
-  auto version = static_cast<unsigned short>(theLibVersion);
-  if (version < 5) version = 5;
-
-  ofstream dataFile(theFileName, ios::binary | ios::out);
-  if (dataFile)
+  try
   {
-    if (theQueryData)
+    auto version = static_cast<unsigned short>(theLibVersion);
+    if (version < 5)
+      version = 5;
+
+    ofstream dataFile(theFileName, ios::binary | ios::out);
+    if (dataFile)
     {
-      theQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
-      theQueryData->InfoVersion(version);
-      dataFile << *theQueryData;
-    }
-    else
-    {
-      if (itsQueryData)
+      if (theQueryData)
       {
-        itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
-        itsQueryData->InfoVersion(version);
-        dataFile << *itsQueryData;
+        theQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+        theQueryData->InfoVersion(version);
+        dataFile << *theQueryData;
       }
       else
       {
-        cerr << "QueryData-object not found" << endl;
-        return false;
+        if (itsQueryData)
+        {
+          itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+          itsQueryData->InfoVersion(version);
+          dataFile << *itsQueryData;
+        }
+        else
+        {
+          cerr << "QueryData-object not found" << endl;
+          return false;
+        }
       }
+      return true;
     }
-    return true;
-  }
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -213,18 +263,26 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
 bool NFmiStreamQueryData::ReadLatestData(const NFmiString &theFileName,
                                          NFmiQueryData **theQueryData)
 {
-  // If the file is a plain file, read it directly
-  if (!NFmiFileSystem::DirectoryExists(theFileName.CharPtr()))
-    return ReadData(theFileName, theQueryData);
+  try
+  {
+    // If the file is a plain file, read it directly
+    if (!NFmiFileSystem::DirectoryExists(theFileName.CharPtr()))
+      return ReadData(theFileName, theQueryData);
 
-  string newestfile = NFmiFileSystem::NewestFile(theFileName.CharPtr());
-  if (newestfile.empty()) return false;
+    string newestfile = NFmiFileSystem::NewestFile(theFileName.CharPtr());
+    if (newestfile.empty())
+      return false;
 
-  string fullname = theFileName.CharPtr();
-  fullname += '/';
-  fullname += newestfile;
+    string fullname = theFileName.CharPtr();
+    fullname += '/';
+    fullname += newestfile;
 
-  return ReadData(NFmiString(fullname), theQueryData);
+    return ReadData(NFmiString(fullname), theQueryData);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -238,18 +296,26 @@ bool NFmiStreamQueryData::ReadLatestData(const NFmiString &theFileName,
 bool NFmiStreamQueryData::SafeReadLatestData(const NFmiString &theFileName,
                                              NFmiQueryData **theQueryData)
 {
-  // If the file is a plain file, read it directly
-  if (!NFmiFileSystem::DirectoryExists(theFileName.CharPtr()))
-    return ReadData(theFileName, theQueryData);
+  try
+  {
+    // If the file is a plain file, read it directly
+    if (!NFmiFileSystem::DirectoryExists(theFileName.CharPtr()))
+      return ReadData(theFileName, theQueryData);
 
-  string newestfile = find_newest_querydata(theFileName.CharPtr());
-  if (newestfile.empty()) return false;
+    string newestfile = find_newest_querydata(theFileName.CharPtr());
+    if (newestfile.empty())
+      return false;
 
-  string fullname = theFileName.CharPtr();
-  fullname += '/';
-  fullname += newestfile;
+    string fullname = theFileName.CharPtr();
+    fullname += '/';
+    fullname += newestfile;
 
-  return ReadData(NFmiString(fullname), theQueryData);
+    return ReadData(NFmiString(fullname), theQueryData);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -262,80 +328,88 @@ bool NFmiStreamQueryData::SafeReadLatestData(const NFmiString &theFileName,
 
 bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData **theQueryData)
 {
-  if (theFileName ==
-      NFmiString(""))  // pitää tarkistaa, ettei tyhjä stringi, muuten kaatuu open:issa
-    return false;
-
-  ifstream dataFile;
-
-  dataFile.open(theFileName, ios::in | ios::binary);
-  if (!dataFile)
-  {
-    cerr << "File not found: '" << theFileName.CharPtr() << "'" << endl;
-    return false;
-  }
-
-  NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
-
   try
   {
-    dataFile >> *theTempData;
-  }
-  // TODO tämä poikkeus käsittely on surkea surkea, koska se tunkee tekstiä vain cerr:iin.
-  // Pitäisi tehdä fiksummin (esim. heittää runtime-poikkeus), mutta uskaltaako muuttaa enää tätä
-  // toiminnallisuutta?
-  catch (char *msg)
-  {
-    cerr << msg << endl;
-    cerr << "Could not open file: " << static_cast<char *>(theFileName) << " for reading." << endl;
-    dataFile.close();
-    delete theTempData;  // siivotaan jäljet kun ongelmia tuli
-    theTempData = nullptr;
-    return false;
-  }
+    if (theFileName ==
+        NFmiString(""))  // pitää tarkistaa, ettei tyhjä stringi, muuten kaatuu open:issa
+      return false;
+
+    ifstream dataFile;
+
+    dataFile.open(theFileName, ios::in | ios::binary);
+    if (!dataFile)
+    {
+      cerr << "File not found: '" << theFileName.CharPtr() << "'" << endl;
+      return false;
+    }
+
+    NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
+
+    try
+    {
+      dataFile >> *theTempData;
+    }
+    // TODO tämä poikkeus käsittely on surkea surkea, koska se tunkee tekstiä vain cerr:iin.
+    // Pitäisi tehdä fiksummin (esim. heittää runtime-poikkeus), mutta uskaltaako muuttaa enää tätä
+    // toiminnallisuutta?
+    catch (char *msg)
+    {
+      cerr << msg << endl;
+      cerr << "Could not open file: " << static_cast<char *>(theFileName) << " for reading."
+           << endl;
+      dataFile.close();
+      delete theTempData;  // siivotaan jäljet kun ongelmia tuli
+      theTempData = nullptr;
+      return false;
+    }
 #ifdef FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
-  catch (double eDataMBSize)
-  {
-    // tee metEditori spesifinen virheilmoitus!!!
-    std::string errStr("SmartMet: cannot create large enough continuous array (");
-    errStr += NFmiValueString::GetStringWithMaxDecimalsSmartWay(eDataMBSize, 1);
-    errStr += " MB) for wanted data.";
-    dataFile.close();
-    delete theTempData;  // siivotaan jäljet kun ongelmia tuli
-    theTempData = 0;
-    throw std::runtime_error(errStr);
-  }
+    catch (double eDataMBSize)
+    {
+      // tee metEditori spesifinen virheilmoitus!!!
+      std::string errStr("SmartMet: cannot create large enough continuous array (");
+      errStr += NFmiValueString::GetStringWithMaxDecimalsSmartWay(eDataMBSize, 1);
+      errStr += " MB) for wanted data.";
+      dataFile.close();
+      delete theTempData;  // siivotaan jäljet kun ongelmia tuli
+      theTempData = 0;
+      throw Fmi::Exception(BCP, errStr);
+    }
 #endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
+    catch (...)
+    {
+      dataFile.close();
+      delete theTempData;  // siivotaan jäljet kun ongelmia tuli
+      theTempData = nullptr;
+      throw;
+    }
+
+    dataFile.close();
+
+    itsOwnerData = false;
+
+    delete itsQueryData;
+    delete itsQueryDataIter;
+
+    itsQueryData = nullptr;
+    itsQueryDataIter = nullptr;
+
+    if (theQueryData)
+    {
+      itsOwnerData = true;
+      *theQueryData =
+          theTempData;  // Data ja sen omistus siirtyy argumenttina annettuun qdata-pointteriin.
+    }
+    else
+    {
+      itsQueryData = theTempData;
+    }
+
+    return true;
+  }
   catch (...)
   {
-    dataFile.close();
-    delete theTempData;  // siivotaan jäljet kun ongelmia tuli
-    theTempData = nullptr;
-    throw;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  dataFile.close();
-
-  itsOwnerData = false;
-
-  delete itsQueryData;
-  delete itsQueryDataIter;
-
-  itsQueryData = nullptr;
-  itsQueryDataIter = nullptr;
-
-  if (theQueryData)
-  {
-    itsOwnerData = true;
-    *theQueryData =
-        theTempData;  // Data ja sen omistus siirtyy argumenttina annettuun qdata-pointteriin.
-  }
-  else
-  {
-    itsQueryData = theTempData;
-  }
-
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -347,25 +421,32 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
 
 bool NFmiStreamQueryData::ReadIn(NFmiQueryInfo *theQueryInfo)
 {
-#ifndef UNIX
-  int result = ::_setmode(_fileno(stdin), _O_BINARY);
-  if (result == -1)
-  {
-    cerr << "Could not set standard input into binary mode!";
-    return false;
-  }
-#endif
-
   try
   {
-    cin >> *theQueryInfo;
+#ifndef UNIX
+    int result = ::_setmode(_fileno(stdin), _O_BINARY);
+    if (result == -1)
+    {
+      cerr << "Could not set standard input into binary mode!";
+      return false;
+    }
+#endif
+
+    try
+    {
+      cin >> *theQueryInfo;
+    }
+    catch (char *msg)
+    {
+      cerr << msg << endl;
+      return false;
+    }
+    return true;
   }
-  catch (char *msg)
+  catch (...)
   {
-    cerr << msg << endl;
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -377,47 +458,54 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryInfo *theQueryInfo)
 
 bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
 {
-// Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
-#ifndef UNIX
-  int result = ::_setmode(_fileno(stdin), _O_BINARY);
-  if (result == -1)
-  {
-    cerr << "Could not set standard input into binary mode!";
-    return false;
-  }
-#endif
-
-  NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
-
   try
   {
-    cin >> *theTempData;
+    // Muunnetaan "stdin" binääri moodiin --> pystyy lukemaan binääriä
+#ifndef UNIX
+    int result = ::_setmode(_fileno(stdin), _O_BINARY);
+    if (result == -1)
+    {
+      cerr << "Could not set standard input into binary mode!";
+      return false;
+    }
+#endif
+
+    NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
+
+    try
+    {
+      cin >> *theTempData;
+    }
+    catch (char *msg)
+    {
+      delete theTempData;
+      cerr << msg << endl;
+      return false;
+    }
+
+    itsOwnerData = false;
+
+    delete itsQueryData;
+    delete itsQueryDataIter;
+    itsQueryData = nullptr;
+    itsQueryDataIter = nullptr;
+
+    if (theQueryData)
+    {
+      itsOwnerData = true;
+      theQueryData = theTempData;
+    }
+    else
+    {
+      itsQueryData = theTempData;
+    }
+
+    return true;
   }
-  catch (char *msg)
+  catch (...)
   {
-    delete theTempData;
-    cerr << msg << endl;
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  itsOwnerData = false;
-
-  delete itsQueryData;
-  delete itsQueryDataIter;
-  itsQueryData = nullptr;
-  itsQueryDataIter = nullptr;
-
-  if (theQueryData)
-  {
-    itsOwnerData = true;
-    theQueryData = theTempData;
-  }
-  else
-  {
-    itsQueryData = theTempData;
-  }
-
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -429,19 +517,28 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
 
 bool NFmiStreamQueryData::WriteCout(NFmiQueryData *theQueryData) const
 {
-  NFmiQueryData *tempData = theQueryData ? theQueryData : itsQueryData;
-  tempData->UseBinaryStorage(true);
-  if (tempData->InfoVersion() < 6.) tempData->InfoVersion(DefaultFmiInfoVersion);
+  try
+  {
+    NFmiQueryData *tempData = theQueryData ? theQueryData : itsQueryData;
+    tempData->UseBinaryStorage(true);
+    if (tempData->InfoVersion() < 6.)
+      tempData->InfoVersion(DefaultFmiInfoVersion);
 
-// Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
+      // Asetetaan 'stdout' binääri moodiin --> kirjoittaa binääriä
 #ifndef UNIX
-  int result = ::_setmode(_fileno(stdout), _O_BINARY);
-  if (result == -1) cerr << "Could not set standard input into binary mode!";
+    int result = ::_setmode(_fileno(stdout), _O_BINARY);
+    if (result == -1)
+      cerr << "Could not set standard input into binary mode!";
 #endif
 
-  cout << *tempData;
+    cout << *tempData;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

@@ -112,6 +112,7 @@
 #include "NFmiPreProcessor.h"
 
 #include "NFmiStringTools.h"
+#include <macgyver/Exception.h>
 
 #include <fstream>
 #include <iostream>
@@ -198,7 +199,14 @@ NFmiPreProcessor::NFmiPreProcessor(const std::string &theFileName,
       fUseReplace(false),
       itsCurNumOfIncludes(0)
 {
-  ReadAndStripFile(theFileName);
+  try
+  {
+    ReadAndStripFile(theFileName);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -236,30 +244,42 @@ NFmiPreProcessor::NFmiPreProcessor(const NFmiPreProcessor &theStripper)
 
 bool NFmiPreProcessor::Strip()
 {
-  if (!NFmiCommentStripper::Strip()) return false;
+  try
+  {
+    if (!NFmiCommentStripper::Strip())
+      return false;
 
-  if (IsConditional())
-  {
-    if (!StripConditionally()) return false;
-  }
-  // Note: In replace mode ReplaceAll() is expected to be called by the calling module
-  // after the main file (and thus all include files) is loaded
-  //
-  if ((!fUseReplace) /* Yes, naming not too clear here. */ && IsReplace())
-  {
-    if (!Replace()) return false;
-  }
-  if (IsInclude())
-  {
-    if (!Include()) return false;
-  }
+    if (IsConditional())
+    {
+      if (!StripConditionally())
+        return false;
+    }
+    // Note: In replace mode ReplaceAll() is expected to be called by the calling module
+    // after the main file (and thus all include files) is loaded
+    //
+    if ((!fUseReplace) /* Yes, naming not too clear here. */ && IsReplace())
+    {
+      if (!Replace())
+        return false;
+    }
+    if (IsInclude())
+    {
+      if (!Include())
+        return false;
+    }
 
-  if (IsDefine())
-  {
-    if (!Define()) return false;
-  }
+    if (IsDefine())
+    {
+      if (!Define())
+        return false;
+    }
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -275,16 +295,32 @@ bool NFmiPreProcessor::IncludeFiles(const string &theIncludeDirective,
                                     const string &theIncludePath,
                                     const string &theIncludeExtension)
 {
-  SetIncluding(theIncludeDirective, theIncludePath, theIncludeExtension);
-  return Include();
+  try
+  {
+    SetIncluding(theIncludeDirective, theIncludePath, theIncludeExtension);
+    return Include();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // tämä poistaa halutun merkin stringin alusta ja lopusta, jos merkki on molemmissa päissä
 static void RemovePossibleCharactersFromStartAndEnd(std::string &theString, char theChar)
 {
-  if (theString.size() < 2) return;
-  if (theString[0] == theChar && theString[theString.size() - 1] == theChar)
-    theString = string(theString.begin() + 1, theString.end() - 1);
+  try
+  {
+    if (theString.size() < 2)
+      return;
+
+    if (theString[0] == theChar && theString[theString.size() - 1] == theChar)
+      theString = string(theString.begin() + 1, theString.end() - 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -295,57 +331,64 @@ static void RemovePossibleCharactersFromStartAndEnd(std::string &theString, char
 
 bool NFmiPreProcessor::Include()
 {
-  if (itsCurNumOfIncludes >= kMaxNumOfStripperIncludes)
+  try
   {
-    itsMessage = "ERROR in " + itsFileName + ": max number of Include directives exceeded";
-    return false;
-  }
-  itsCurNumOfIncludes++;
-  string newString = "";
-  string oldString(itsString);
-  string fileContents, fileName;
-  std::string::size_type lenDef = itsIncludeDirective.length();
-  std::string::size_type posHelp;
-  std::string::size_type pos = oldString.find(itsIncludeDirective);
-  if (pos == string::npos)
-  {
-    fNoFilesIncluded = true;
-    return true;  // HUOM
-  }
-
-  while (pos != string::npos)
-  {
-    newString += oldString.substr(0, pos);
-    posHelp = oldString.find_first_of("\n", pos + lenDef + 1);
-    fileName = oldString.substr(pos + lenDef + 1, posHelp - pos - lenDef - 1);
-    NFmiStringTools::TrimR(fileName);  // tämä viritys johtuu metkun editorin smarttool dialogista,
-                                       // poistetaan mahd. white spacet nimen lopusta
-    RemovePossibleCharactersFromStartAndEnd(fileName, '"');  // tämä poistaa nimestä ""-merkit jos
-                                                             // include:ssa on laitettu tiedoston
-                                                             // nimi heittomerkkeihin
-    CompleteFileName(fileName);
-    if (IncludeFile(fileName, fileContents))
+    if (itsCurNumOfIncludes >= kMaxNumOfStripperIncludes)
     {
-      newString += fileContents;
-      fNoFilesIncluded = false;
-    }
-    else
-    {
+      itsMessage = "ERROR in " + itsFileName + ": max number of Include directives exceeded";
       return false;
     }
-    if (posHelp == string::npos)
+    itsCurNumOfIncludes++;
+    string newString = "";
+    string oldString(itsString);
+    string fileContents, fileName;
+    std::string::size_type lenDef = itsIncludeDirective.length();
+    std::string::size_type posHelp;
+    std::string::size_type pos = oldString.find(itsIncludeDirective);
+    if (pos == string::npos)
     {
-      itsString = newString;
-      return true;
-      // ollaan tultu jo loppuun, lopetetaan, muuten jää ikilooppiin, jos include-lauseen jälkeen
-      // ei ole newlineä
+      fNoFilesIncluded = true;
+      return true;  // HUOM
     }
-    oldString = oldString.substr(posHelp + 1);
-    pos = oldString.find(itsIncludeDirective);
+
+    while (pos != string::npos)
+    {
+      newString += oldString.substr(0, pos);
+      posHelp = oldString.find_first_of("\n", pos + lenDef + 1);
+      fileName = oldString.substr(pos + lenDef + 1, posHelp - pos - lenDef - 1);
+      NFmiStringTools::TrimR(fileName);  // tämä viritys johtuu metkun editorin smarttool
+                                         // dialogista, poistetaan mahd. white spacet nimen lopusta
+      RemovePossibleCharactersFromStartAndEnd(fileName, '"');  // tämä poistaa nimestä ""-merkit jos
+                                                               // include:ssa on laitettu tiedoston
+                                                               // nimi heittomerkkeihin
+      CompleteFileName(fileName);
+      if (IncludeFile(fileName, fileContents))
+      {
+        newString += fileContents;
+        fNoFilesIncluded = false;
+      }
+      else
+      {
+        return false;
+      }
+      if (posHelp == string::npos)
+      {
+        itsString = newString;
+        return true;
+        // ollaan tultu jo loppuun, lopetetaan, muuten jää ikilooppiin, jos include-lauseen jälkeen
+        // ei ole newlineä
+      }
+      oldString = oldString.substr(posHelp + 1);
+      pos = oldString.find(itsIncludeDirective);
+    }
+    newString += oldString;
+    itsString = newString;
+    return true;
   }
-  newString += oldString;
-  itsString = newString;
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -357,21 +400,28 @@ bool NFmiPreProcessor::Include()
 
 bool NFmiPreProcessor::CompleteFileName(string &theFileName)
 {
-  if (theFileName.find(".") == string::npos)
+  try
   {
-    if (!itsIncludeExtension.empty())
+    if (theFileName.find(".") == string::npos)
     {
-      theFileName += ".";
-      theFileName += itsIncludeExtension;
+      if (!itsIncludeExtension.empty())
+      {
+        theFileName += ".";
+        theFileName += itsIncludeExtension;
+      }
     }
+    if (theFileName.find(":") == string::npos && !itsIncludePath.empty())
+    {
+      string prefix = itsIncludePath;
+      prefix += kFmiDirectorySeparator;
+      theFileName = prefix + theFileName;
+    }
+    return true;
   }
-  if (theFileName.find(":") == string::npos && !itsIncludePath.empty())
+  catch (...)
   {
-    string prefix = itsIncludePath;
-    prefix += kFmiDirectorySeparator;
-    theFileName = prefix + theFileName;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -384,32 +434,41 @@ bool NFmiPreProcessor::CompleteFileName(string &theFileName)
 
 bool NFmiPreProcessor::IncludeFile(const string &theFileName, string &theFileContentsToInclude)
 {
-  NFmiPreProcessor stripper(fStripPound, fStripDoubleSlash, fStripSlashAst, fStripNested);
-  stripper.SetNumOfIncludes(itsCurNumOfIncludes);
-  if (IsConditional())
-    stripper.SetConditionalStripping(fConditionValue,
-                                     itsConditionalBeginDirective,
-                                     itsConditionalNotBeginDirective,
-                                     itsConditionalEndDirective,
-                                     itsConditionalElseDirective);
-  if (IsInclude()) stripper.SetIncluding(itsIncludeDirective, itsIncludePath, itsIncludeExtension);
-
-  if (fUseReplace) stripper.SetDefine(itsDefineDirective, true);
-
-  if (!stripper.ReadAndStripFile(theFileName))
+  try
   {
-    itsMessage = stripper.GetMessage();
-    return false;
+    NFmiPreProcessor stripper(fStripPound, fStripDoubleSlash, fStripSlashAst, fStripNested);
+    stripper.SetNumOfIncludes(itsCurNumOfIncludes);
+    if (IsConditional())
+      stripper.SetConditionalStripping(fConditionValue,
+                                       itsConditionalBeginDirective,
+                                       itsConditionalNotBeginDirective,
+                                       itsConditionalEndDirective,
+                                       itsConditionalElseDirective);
+    if (IsInclude())
+      stripper.SetIncluding(itsIncludeDirective, itsIncludePath, itsIncludeExtension);
+
+    if (fUseReplace)
+      stripper.SetDefine(itsDefineDirective, true);
+
+    if (!stripper.ReadAndStripFile(theFileName))
+    {
+      itsMessage = stripper.GetMessage();
+      return false;
+    }
+    theFileContentsToInclude = stripper.GetString();
+
+    if (fUseReplace)
+      // Add included definitions to replace map, overwriting existing values
+      //
+      for (auto &iterMap : stripper.itsReplaceMap)
+        AddReplaceString(iterMap.first, iterMap.second);
+
+    return true;
   }
-  theFileContentsToInclude = stripper.GetString();
-
-  if (fUseReplace)
-    // Add included definitions to replace map, overwriting existing values
-    //
-    for (auto &iterMap : stripper.itsReplaceMap)
-      AddReplaceString(iterMap.first, iterMap.second);
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -425,65 +484,72 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
                                        const string &theEndDirective,
                                        const string &theEndDirective2)
 {
-  string oldString(itsString);
-  string newString = "";
-  string::size_type posbigalku = oldString.find(theBeginDirective);
-  string::size_type posbigloppu, posbigloppu2;
-  string::size_type len = theEndDirective.length();
-  string::size_type len2 = theEndDirective2.length();
-  string::size_type curLen;
-
-  if (posbigalku == string::npos)
-    itsString = oldString;
-  else
+  try
   {
-    while (posbigalku != string::npos)
+    string oldString(itsString);
+    string newString = "";
+    string::size_type posbigalku = oldString.find(theBeginDirective);
+    string::size_type posbigloppu, posbigloppu2;
+    string::size_type len = theEndDirective.length();
+    string::size_type len2 = theEndDirective2.length();
+    string::size_type curLen;
+
+    if (posbigalku == string::npos)
+      itsString = oldString;
+    else
     {
-      posbigalku = oldString.find(theBeginDirective);
-
-      if (posbigalku == string::npos)
-        posbigloppu = string::npos;
-      else
-        posbigloppu = oldString.find(theEndDirective, posbigalku);
-
-      if (posbigloppu == string::npos && posbigalku != string::npos)
+      while (posbigalku != string::npos)
       {
-        itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
-        return false;
-      }
-      else if (posbigalku == string::npos && posbigloppu != string::npos)
-      {
-        itsMessage = "ERROR in " + itsFileName + ": " + theBeginDirective + " missing";
-        return false;
-      }
+        posbigalku = oldString.find(theBeginDirective);
 
-      if (posbigalku != string::npos)
-        posbigloppu2 = oldString.find(theEndDirective2, posbigalku);
-      else
-        posbigloppu2 = string::npos;
+        if (posbigalku == string::npos)
+          posbigloppu = string::npos;
+        else
+          posbigloppu = oldString.find(theEndDirective, posbigalku);
 
-      if (posbigalku == string::npos)
-      {
-        newString += oldString;
-      }
-      else
-      {
-        if (posbigloppu < posbigloppu2 || posbigloppu2 == string::npos)
+        if (posbigloppu == string::npos && posbigalku != string::npos)
         {
-          curLen = len;
+          itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
+          return false;
+        }
+        else if (posbigalku == string::npos && posbigloppu != string::npos)
+        {
+          itsMessage = "ERROR in " + itsFileName + ": " + theBeginDirective + " missing";
+          return false;
+        }
+
+        if (posbigalku != string::npos)
+          posbigloppu2 = oldString.find(theEndDirective2, posbigalku);
+        else
+          posbigloppu2 = string::npos;
+
+        if (posbigalku == string::npos)
+        {
+          newString += oldString;
         }
         else
         {
-          posbigloppu = posbigloppu2;
-          curLen = len2;
+          if (posbigloppu < posbigloppu2 || posbigloppu2 == string::npos)
+          {
+            curLen = len;
+          }
+          else
+          {
+            posbigloppu = posbigloppu2;
+            curLen = len2;
+          }
+          newString += oldString.substr(0, posbigalku);
+          oldString = oldString.substr(posbigloppu + curLen);
         }
-        newString += oldString.substr(0, posbigalku);
-        oldString = oldString.substr(posbigloppu + curLen);
       }
+      itsString = newString;
     }
-    itsString = newString;
+    return true;
   }
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -503,12 +569,19 @@ bool NFmiPreProcessor::StripConditionally(bool theCondValue,
                                           const string &theConditionalEndDirective,
                                           const string &theConditionalElseDirective)
 {
-  SetConditionalStripping(theCondValue,
-                          theConditionalBeginDirective,
-                          theConditionalNotBeginDirective,
-                          theConditionalEndDirective,
-                          theConditionalElseDirective);
-  return StripConditionally();
+  try
+  {
+    SetConditionalStripping(theCondValue,
+                            theConditionalBeginDirective,
+                            theConditionalNotBeginDirective,
+                            theConditionalEndDirective,
+                            theConditionalElseDirective);
+    return StripConditionally();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -519,32 +592,47 @@ bool NFmiPreProcessor::StripConditionally(bool theCondValue,
 
 bool NFmiPreProcessor::StripConditionally()
 {
-  if (!fConditionValue)
+  try
   {
-    if (!StripDoubleEnds(
-            itsConditionalBeginDirective, itsConditionalEndDirective, itsConditionalElseDirective))
-      return false;
-
-    if (!itsConditionalNotBeginDirective.empty())
+    if (!fConditionValue)
     {
-      if (!StripSubStrings(itsConditionalNotBeginDirective)) return false;
-    }
-  }
-  else
-  {
-    if (!itsConditionalNotBeginDirective.empty())
-    {
-      if (!StripDoubleEnds(itsConditionalNotBeginDirective,
+      if (!StripDoubleEnds(itsConditionalBeginDirective,
                            itsConditionalEndDirective,
                            itsConditionalElseDirective))
         return false;
+
+      if (!itsConditionalNotBeginDirective.empty())
+      {
+        if (!StripSubStrings(itsConditionalNotBeginDirective))
+          return false;
+      }
     }
-    if (!StripSubStrings(itsConditionalBeginDirective)) return false;
+    else
+    {
+      if (!itsConditionalNotBeginDirective.empty())
+      {
+        if (!StripDoubleEnds(itsConditionalNotBeginDirective,
+                             itsConditionalEndDirective,
+                             itsConditionalElseDirective))
+          return false;
+      }
+      if (!StripSubStrings(itsConditionalBeginDirective))
+        return false;
+    }
+    if (!StripBlocks(itsConditionalElseDirective, itsConditionalEndDirective))
+      return false;
+
+    if (!StripSubStrings(itsConditionalEndDirective))
+      return false;
+
+    return true;
   }
-  if (!StripBlocks(itsConditionalElseDirective, itsConditionalEndDirective)) return false;
-  if (!StripSubStrings(itsConditionalEndDirective)) return false;
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -553,23 +641,30 @@ bool NFmiPreProcessor::StripConditionally()
 
 bool NFmiPreProcessor::Replace()
 {
-  //  itsReplaceMap.insert(pair<string, string>("5vrk", "9vrk"));
-  //  itsReplaceMap.insert(pair<string, string>("Summa", "Hop"));
-  string newString(itsString);
-
-  map<string, string>::iterator iterMap;
-  for (iterMap = itsReplaceMap.begin(); iterMap != itsReplaceMap.end(); iterMap++)
+  try
   {
-    string::size_type iterString = newString.find(iterMap->first);
-    while (iterString != string::npos)
+    //  itsReplaceMap.insert(pair<string, string>("5vrk", "9vrk"));
+    //  itsReplaceMap.insert(pair<string, string>("Summa", "Hop"));
+    string newString(itsString);
+
+    map<string, string>::iterator iterMap;
+    for (iterMap = itsReplaceMap.begin(); iterMap != itsReplaceMap.end(); iterMap++)
     {
-      newString.replace(iterString, iterMap->first.length(), iterMap->second);
-      itsNumOfReplacesDone++;
-      iterString = newString.find(iterMap->first);
+      string::size_type iterString = newString.find(iterMap->first);
+      while (iterString != string::npos)
+      {
+        newString.replace(iterString, iterMap->first.length(), iterMap->second);
+        itsNumOfReplacesDone++;
+        iterString = newString.find(iterMap->first);
+      }
     }
+    itsString = newString;
+    return true;
   }
-  itsString = newString;
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -578,7 +673,18 @@ bool NFmiPreProcessor::Replace()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiPreProcessor::ReplaceAll() { return Replace(); }
+bool NFmiPreProcessor::ReplaceAll()
+{
+  try
+  {
+    return Replace();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theIncludeDirective Undocumented
@@ -593,10 +699,17 @@ bool NFmiPreProcessor::SetIncluding(const std::string &theIncludeDirective,
                                     const std::string &theIncludePath,
                                     const std::string &theIncludeExtension)
 {
-  itsIncludeDirective = theIncludeDirective;
-  itsIncludePath = theIncludePath;
-  itsIncludeExtension = theIncludeExtension;
-  return true;
+  try
+  {
+    itsIncludeDirective = theIncludeDirective;
+    itsIncludePath = theIncludePath;
+    itsIncludeExtension = theIncludeExtension;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -607,9 +720,16 @@ bool NFmiPreProcessor::SetIncluding(const std::string &theIncludeDirective,
 
 bool NFmiPreProcessor::SetDefine(const std::string &theDirective, bool useReplace)
 {
-  itsDefineDirective = theDirective;
-  fUseReplace = useReplace;
-  return true;
+  try
+  {
+    itsDefineDirective = theDirective;
+    fUseReplace = useReplace;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -629,12 +749,19 @@ bool NFmiPreProcessor::SetConditionalStripping(bool theCondValue,
                                                const std::string &theConditionalEndDirective,
                                                const std::string &theConditionalElseDirective)
 {
-  fConditionValue = theCondValue;
-  itsConditionalBeginDirective = theConditionalBeginDirective;
-  itsConditionalNotBeginDirective = theConditionalNotBeginDirective;
-  itsConditionalEndDirective = theConditionalEndDirective;
-  itsConditionalElseDirective = theConditionalElseDirective;
-  return true;
+  try
+  {
+    fConditionValue = theCondValue;
+    itsConditionalBeginDirective = theConditionalBeginDirective;
+    itsConditionalNotBeginDirective = theConditionalNotBeginDirective;
+    itsConditionalEndDirective = theConditionalEndDirective;
+    itsConditionalElseDirective = theConditionalElseDirective;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -645,10 +772,18 @@ bool NFmiPreProcessor::SetConditionalStripping(bool theCondValue,
 
 bool NFmiPreProcessor::SetReplaceMap(const std::map<std::string, std::string> &theMap)
 {
-  itsReplaceMap = theMap;
-  itsNumOfReplacesDone = 0;
-  return true;
+  try
+  {
+    itsReplaceMap = theMap;
+    itsNumOfReplacesDone = 0;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -657,14 +792,22 @@ bool NFmiPreProcessor::SetReplaceMap(const std::map<std::string, std::string> &t
 
 bool NFmiPreProcessor::AddReplaceString(const std::string fromString, const std::string toString)
 {
-  auto ret = itsReplaceMap.insert(std::pair<std::string, std::string>(fromString, toString));
+  try
+  {
+    auto ret = itsReplaceMap.insert(std::pair<std::string, std::string>(fromString, toString));
 
-  // Overwrite existing values in replace mode
+    // Overwrite existing values in replace mode
 
-  if (fUseReplace && (!ret.second)) ret.first->second = toString;
+    if (fUseReplace && (!ret.second))
+      ret.first->second = toString;
 
-  itsNumOfReplacesDone = 0;
-  return true;
+    itsNumOfReplacesDone = 0;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -677,70 +820,77 @@ bool NFmiPreProcessor::AddReplaceString(const std::string fromString, const std:
 
 bool NFmiPreProcessor::Define()
 {
-  if (!IsDefine()) return false;
-
-  typedef map<string, string> Defines;
-  Defines defines;
-  bool fUseDefine = (!fUseReplace);
-
-  ostringstream output;
-  istringstream input(itsString);
-
-  string line;
-  while (getline(input, line))
+  try
   {
-    istringstream lineinput(line);
-    string token;
-    lineinput >> token;
-    if (token != itsDefineDirective)
-    {
-      // First token on line was not define directive, process the line
-      // and then output it
+    if (!IsDefine())
+      return false;
 
-      for (Defines::const_iterator it = defines.begin(); it != defines.end(); ++it)
+    typedef map<string, string> Defines;
+    Defines defines;
+    bool fUseDefine = (!fUseReplace);
+
+    ostringstream output;
+    istringstream input(itsString);
+
+    string line;
+    while (getline(input, line))
+    {
+      istringstream lineinput(line);
+      string token;
+      lineinput >> token;
+      if (token != itsDefineDirective)
       {
-        int count = 0;
-        string::size_type pos;
-        while ((pos = line.find(it->first)) != string::npos)
+        // First token on line was not define directive, process the line
+        // and then output it
+
+        for (Defines::const_iterator it = defines.begin(); it != defines.end(); ++it)
         {
-          line.replace(pos, it->first.size(), it->second);
+          int count = 0;
+          string::size_type pos;
+          while ((pos = line.find(it->first)) != string::npos)
+          {
+            line.replace(pos, it->first.size(), it->second);
 
-          // Safety against eternal loop
-          if (++count > 100) return false;
+            // Safety against eternal loop
+            if (++count > 100)
+              return false;
+          }
         }
+
+        output << line << endl;
       }
-
-      output << line << endl;
-    }
-    else
-    {
-      // Extract the variable name and value
-      string name, value;
-      lineinput >> name;
-      getline(lineinput, value);
-      NFmiStringTools::TrimL(value);
-      NFmiStringTools::TrimR(value);
-
-      // Store the definition for local substitution (current file) or to the replace map.
-      //
-      // Local substitution ('define' mode) is used for upcoming definitions in replace mode too if
-      // definition
-      // for the define directive having itself as the value is encountered. Local substitution
-      // stays in effect
-      // for the rest of the current file (not to the files included) or until a definition with any
-      // other value is made.
-
-      if (fUseReplace && (name == itsDefineDirective))
-        fUseDefine = (value == itsDefineDirective);
-      else if (fUseDefine)
-        defines[name] = value;
       else
-        AddReplaceString(name, value);
-    }
-  }
-  itsString = output.str();
+      {
+        // Extract the variable name and value
+        string name, value;
+        lineinput >> name;
+        getline(lineinput, value);
+        NFmiStringTools::TrimL(value);
+        NFmiStringTools::TrimR(value);
 
-  return true;
+        // Store the definition for local substitution (current file) or to the replace map.
+        //
+        // Local substitution ('define' mode) is used for upcoming definitions in replace mode too
+        // if definition for the define directive having itself as the value is encountered. Local
+        // substitution stays in effect for the rest of the current file (not to the files included)
+        // or until a definition with any other value is made.
+
+        if (fUseReplace && (name == itsDefineDirective))
+          fUseDefine = (value == itsDefineDirective);
+        else if (fUseDefine)
+          defines[name] = value;
+        else
+          AddReplaceString(name, value);
+      }
+    }
+    itsString = output.str();
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

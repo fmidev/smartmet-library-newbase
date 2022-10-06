@@ -15,10 +15,12 @@ REQUIRES += fmt
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-DEFINES = -DUNIX -DWGS84 -D_REENTRANT -DBOOST -DFMI_COMPRESSION
+RPMBUILD_OPT ?=
+
+DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
 
 
-CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
+CFLAGS0 = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 
 LIBS += -lsmartmet-gis \
 	-lboost_regex \
@@ -61,8 +63,10 @@ profile: all
 $(LIBFILE): $(OBJS)
 	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
 	@echo Checking $(LIBFILE) for unresolved references
-	@if ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol; \
-		then rm -v $(LIBFILE); \
+	@if ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol |\
+			grep -Pv ':\ __(?:(?:a|t|ub)san_|sanitizer_)'; \
+	then \
+		rm -v $(LIBFILE); \
 		exit 1; \
 	fi
 
@@ -94,13 +98,10 @@ install:
 test:
 	+cd test && make test
 
-objdir:
-	@mkdir -p $(objdir)
-
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
-	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
-	rpmbuild -tb $(SPEC).tar.gz
+	tar -czvf $(SPEC).tar.gz --exclude-vcs --transform "s,^,$(SPEC)/," *
+	rpmbuild -tb $(SPEC).tar.gz $(RPMBUILD_OPT)
 	rm -f $(SPEC).tar.gz
 
 .SUFFIXES: $(SUFFIXES) .cpp
@@ -108,8 +109,12 @@ rpm: clean $(SPEC).spec
 modernize:
 	for F in newbase/*.cpp; do echo $$F; clang-tidy $$F -fix -checks=-*,modernize-* -- $(CFLAGS) $(DEFINES) $(INCLUDES); done
 
-obj/%.o: %.cpp
-	$(CXX) $(CFLAGS) $(INCLUDES) -c -o $@ $<
+objdir:
+	mkdir -p $(objdir)
+
+obj/%.o : %.cpp
+	@mkdir -p $(objdir)
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $<
 
 ifneq ($(USE_CLANG), yes)
 obj/NFmiEnumConverterInit.o: CFLAGS += -O0
@@ -118,3 +123,5 @@ endif
 ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)
 endif
+
+-include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile-abicheck.inc

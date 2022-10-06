@@ -19,6 +19,7 @@
 #include "NFmiTimeDescriptor.h"
 #include "NFmiVPlaceDescriptor.h"
 #include "NFmiVersion.h"
+#include <memory>
 
 class NFmiQueryData;
 class NFmiCombinedParam;
@@ -143,7 +144,7 @@ class NFmiQueryInfo
 
   virtual const NFmiLocation *Location() const;
   virtual NFmiPoint LatLon() const;
-  virtual NFmiPoint RelativePoint() const;  // relative point in grid
+  virtual NFmiPoint RelativePoint();  // relative point in grid
   virtual const NFmiLevel *Level() const;
   virtual NFmiProducer *Producer();
 
@@ -195,17 +196,16 @@ class NFmiQueryInfo
   float CachedInterpolation(const NFmiTimeCache &theTimeCache);
   void GetCachedValues(const NFmiLocationCache &theLocationCache,
                        const NFmiTimeCache &theTimeCache,
-                       std::array<float,4> &theValues1,
-                       std::array<float,4> &theValues2);
-  void GetCachedValues(const NFmiLocationCache &theLocationCache,
-                       std::array<float,4> &theValues);
-  void GetCachedValues(const NFmiTimeCache &theTimeCache, std::array<float,2> &theValues);
+                       std::array<float, 4> &theValues1,
+                       std::array<float, 4> &theValues2);
+  void GetCachedValues(const NFmiLocationCache &theLocationCache, std::array<float, 4> &theValues);
+  void GetCachedValues(const NFmiTimeCache &theTimeCache, std::array<float, 2> &theValues);
   float CachedTimeInterpolatedValue(float theValue1,
                                     float theValue2,
                                     const NFmiTimeCache &theTimeCache,
                                     FmiInterpolationMethod theInterpolatioMethod,
                                     FmiParameterName theParId);
-  float CachedLocationInterpolatedValue(std::array<float,4> &theValues,
+  float CachedLocationInterpolatedValue(std::array<float, 4> &theValues,
                                         const NFmiLocationCache &theLocationCache,
                                         FmiInterpolationMethod theInterpolatioMethod,
                                         FmiParameterName theParId);
@@ -216,15 +216,15 @@ class NFmiQueryInfo
   float CachedPressureLevelValue(float P, const NFmiTimeCache &theTimeCache);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiLocationCache &theLocationCache,
-                                    std::array<float,4> &theValues);
+                                    std::array<float, 4> &theValues);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiTimeCache &theTimeCache,
-                                    std::array<float,2> &theValues);
+                                    std::array<float, 2> &theValues);
   void GetCachedPressureLevelValues(float P,
                                     const NFmiLocationCache &theLocationCache,
                                     const NFmiTimeCache &theTimeCache,
-                                    std::array<float,4> &theValues1,
-                                    std::array<float,4> &theValues2);
+                                    std::array<float, 4> &theValues1,
+                                    std::array<float, 4> &theValues2);
   // ****** Cached interpolation methods ***********************
 
   void SetLocalTimes(const float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi
@@ -629,13 +629,13 @@ class NFmiQueryInfo
     NFmiBitMask * itsStaticDataMask;
   */
   // data
-  NFmiParamDescriptor *itsParamDescriptor;
-  NFmiHPlaceDescriptor *itsHPlaceDescriptor;
-  NFmiVPlaceDescriptor *itsVPlaceDescriptor;
-  NFmiTimeDescriptor *itsTimeDescriptor;
+  std::unique_ptr<NFmiParamDescriptor> itsParamDescriptor;
+  std::unique_ptr<NFmiHPlaceDescriptor> itsHPlaceDescriptor;
+  std::unique_ptr<NFmiVPlaceDescriptor> itsVPlaceDescriptor;
+  std::unique_ptr<NFmiTimeDescriptor> itsTimeDescriptor;
 
-  NFmiStringList *itsHeaderText;
-  NFmiStringList *itsPostProc;
+  std::unique_ptr<NFmiStringList> itsHeaderText;
+  std::unique_ptr<NFmiStringList> itsPostProc;
 
   unsigned long itsNewClassIdent;
 
@@ -698,14 +698,20 @@ class NFmiQueryInfo
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::ResetParam() { itsParamDescriptor->Reset(); }
+inline void NFmiQueryInfo::ResetParam()
+{
+  itsParamDescriptor->Reset();
+}
 // ----------------------------------------------------------------------
 /*!
  *
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::ResetLocation() { itsHPlaceDescriptor->Reset(); }
+inline void NFmiQueryInfo::ResetLocation()
+{
+  itsHPlaceDescriptor->Reset();
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -714,7 +720,8 @@ inline void NFmiQueryInfo::ResetLocation() { itsHPlaceDescriptor->Reset(); }
 
 inline void NFmiQueryInfo::ResetLevel()
 {
-  if (itsVPlaceDescriptor) itsVPlaceDescriptor->Reset();
+  if (itsVPlaceDescriptor)
+    itsVPlaceDescriptor->Reset();
 }
 
 // ----------------------------------------------------------------------
@@ -723,14 +730,20 @@ inline void NFmiQueryInfo::ResetLevel()
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::ResetTime() { itsTimeDescriptor->Reset(); }
+inline void NFmiQueryInfo::ResetTime()
+{
+  itsTimeDescriptor->Reset();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsLocation() const { return (itsHPlaceDescriptor->IsLocation()); }
+inline bool NFmiQueryInfo::IsLocation() const
+{
+  return (itsHPlaceDescriptor->IsLocation());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -748,56 +761,80 @@ inline bool NFmiQueryInfo::IsLevel() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsArea() const { return (itsHPlaceDescriptor->IsArea()); }
+inline bool NFmiQueryInfo::IsArea() const
+{
+  return (itsHPlaceDescriptor->IsArea());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsGrid() const { return (itsHPlaceDescriptor->IsGrid()); }
+inline bool NFmiQueryInfo::IsGrid() const
+{
+  return (itsHPlaceDescriptor->IsGrid());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsValidTime() const { return (itsTimeDescriptor->IsValidTime()); }
+inline bool NFmiQueryInfo::IsValidTime() const
+{
+  return (itsTimeDescriptor->IsValidTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsOriginTime() const { return (itsTimeDescriptor->IsOriginTime()); }
+inline bool NFmiQueryInfo::IsOriginTime() const
+{
+  return (itsTimeDescriptor->IsOriginTime());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiArea *NFmiQueryInfo::Area() const { return (itsHPlaceDescriptor->Area()); }
+inline const NFmiArea *NFmiQueryInfo::Area() const
+{
+  return (itsHPlaceDescriptor->Area());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiGrid *NFmiQueryInfo::Grid() const { return (itsHPlaceDescriptor->Grid()); }
+inline const NFmiGrid *NFmiQueryInfo::Grid() const
+{
+  return (itsHPlaceDescriptor->Grid());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::NextLocation() { return (itsHPlaceDescriptor->Next()); }
+inline bool NFmiQueryInfo::NextLocation()
+{
+  return (itsHPlaceDescriptor->Next());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::PreviousLocation() { return (itsHPlaceDescriptor->Previous()); }
+inline bool NFmiQueryInfo::PreviousLocation()
+{
+  return (itsHPlaceDescriptor->Previous());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -826,35 +863,50 @@ inline bool NFmiQueryInfo::PreviousLevel()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::NextTime() { return (itsTimeDescriptor->Next()); }
+inline bool NFmiQueryInfo::NextTime()
+{
+  return (itsTimeDescriptor->Next());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::PreviousTime() { return (itsTimeDescriptor->Previous()); }
+inline bool NFmiQueryInfo::PreviousTime()
+{
+  return (itsTimeDescriptor->Previous());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::PreviousActiveTime() { return (itsTimeDescriptor->PreviousActive()); }
+inline bool NFmiQueryInfo::PreviousActiveTime()
+{
+  return (itsTimeDescriptor->PreviousActive());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::NextActiveParam() { return (itsParamDescriptor->NextActive()); }
+inline bool NFmiQueryInfo::NextActiveParam()
+{
+  return (itsParamDescriptor->NextActive());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::NextActiveLocation() { return (itsHPlaceDescriptor->NextActive()); }
+inline bool NFmiQueryInfo::NextActiveLocation()
+{
+  return (itsHPlaceDescriptor->NextActive());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -883,14 +935,20 @@ inline bool NFmiQueryInfo::PreviousActiveLevel()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::NextActiveTime() { return (itsTimeDescriptor->NextActive()); }
+inline bool NFmiQueryInfo::NextActiveTime()
+{
+  return (itsTimeDescriptor->NextActive());
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsActiveParam() { return itsParamDescriptor->IsActive(); }
+inline bool NFmiQueryInfo::IsActiveParam()
+{
+  return itsParamDescriptor->IsActive();
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theLocation Undocumented
@@ -1017,7 +1075,10 @@ inline bool NFmiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::ForecastPeriod() { return itsTimeDescriptor->ForecastPeriod(); }
+inline unsigned long NFmiQueryInfo::ForecastPeriod()
+{
+  return itsTimeDescriptor->ForecastPeriod();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1178,35 +1239,50 @@ inline const NFmiTimeBag NFmiQueryInfo::GetActiveTimePeriod()
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::ParamIndex() const { return itsParamDescriptor->Index(); }
+inline unsigned long NFmiQueryInfo::ParamIndex() const
+{
+  return itsParamDescriptor->Index();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::LocationIndex() const { return itsHPlaceDescriptor->Index(); }
+inline unsigned long NFmiQueryInfo::LocationIndex() const
+{
+  return itsHPlaceDescriptor->Index();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::LevelIndex() const { return itsVPlaceDescriptor->Index(); }
+inline unsigned long NFmiQueryInfo::LevelIndex() const
+{
+  return itsVPlaceDescriptor->Index();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::TimeIndex() const { return itsTimeDescriptor->Index(); }
+inline unsigned long NFmiQueryInfo::TimeIndex() const
+{
+  return itsTimeDescriptor->Index();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiQueryInfo::LatLon() const { return itsHPlaceDescriptor->LatLon(); }
+inline NFmiPoint NFmiQueryInfo::LatLon() const
+{
+  return itsHPlaceDescriptor->LatLon();
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -1214,7 +1290,7 @@ inline NFmiPoint NFmiQueryInfo::LatLon() const { return itsHPlaceDescriptor->Lat
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPoint NFmiQueryInfo::RelativePoint() const
+inline NFmiPoint NFmiQueryInfo::RelativePoint()
 {
   return itsHPlaceDescriptor->RelativePoint();
 }
@@ -1240,28 +1316,40 @@ inline size_t NFmiQueryInfo::Size() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::SizeParams() const { return itsParamDescriptor->Size(); }
+inline unsigned long NFmiQueryInfo::SizeParams() const
+{
+  return itsParamDescriptor->Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::SizeLocations() const { return itsHPlaceDescriptor->Size(); }
+inline unsigned long NFmiQueryInfo::SizeLocations() const
+{
+  return itsHPlaceDescriptor->Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::SizeLevels() const { return itsVPlaceDescriptor->Size(); }
+inline unsigned long NFmiQueryInfo::SizeLevels() const
+{
+  return itsVPlaceDescriptor->Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::SizeTimes() const { return itsTimeDescriptor->Size(); }
+inline unsigned long NFmiQueryInfo::SizeTimes() const
+{
+  return itsTimeDescriptor->Size();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1315,7 +1403,10 @@ inline NFmiStation &NFmiQueryInfo::EditStation()
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLevel &NFmiQueryInfo::EditLevel() { return *(itsVPlaceDescriptor->Level()); }
+inline NFmiLevel &NFmiQueryInfo::EditLevel()
+{
+  return *(itsVPlaceDescriptor->Level());
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented
@@ -1348,7 +1439,10 @@ inline float NFmiQueryInfo::IndexFloatValue(size_t theIndex) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsSubParamUsed() const { return itsParamDescriptor->IsSubParamUsed(); }
+inline bool NFmiQueryInfo::IsSubParamUsed() const
+{
+  return itsParamDescriptor->IsSubParamUsed();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1431,28 +1525,40 @@ inline bool NFmiQueryInfo::Param(FmiParameterName theParam)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsParamUsable() const { return true; }
+inline bool NFmiQueryInfo::IsParamUsable() const
+{
+  return true;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsLocationUsable() const { return true; }
+inline bool NFmiQueryInfo::IsLocationUsable() const
+{
+  return true;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsLevelUsable() const { return true; }
+inline bool NFmiQueryInfo::IsLevelUsable() const
+{
+  return true;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::IsTimeUsable() const { return true; }
+inline bool NFmiQueryInfo::IsTimeUsable() const
+{
+  return true;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1504,7 +1610,10 @@ inline const NFmiParamDescriptor &NFmiQueryInfo::ParamDescriptor() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::ClassId() const { return kNFmiQueryInfo; }
+inline unsigned long NFmiQueryInfo::ClassId() const
+{
+  return kNFmiQueryInfo;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1512,7 +1621,10 @@ inline unsigned long NFmiQueryInfo::ClassId() const { return kNFmiQueryInfo; }
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::NewClassId() { return itsNewClassIdent; }
+inline unsigned long NFmiQueryInfo::NewClassId()
+{
+  return itsNewClassIdent;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -1520,49 +1632,70 @@ inline unsigned long NFmiQueryInfo::NewClassId() { return itsNewClassIdent; }
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiQueryInfo::ClassName() const { return "NFmiQueryInfo"; }
+inline const char *NFmiQueryInfo::ClassName() const
+{
+  return "NFmiQueryInfo";
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRawData *NFmiQueryInfo::RefRawData() const { return itsRefRawData; }
+inline const NFmiRawData *NFmiQueryInfo::RefRawData() const
+{
+  return itsRefRawData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiQueryData *NFmiQueryInfo::RefQueryData() const { return itsRefQueryData; }
+inline const NFmiQueryData *NFmiQueryInfo::RefQueryData() const
+{
+  return itsRefQueryData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::UseSubParam() { return IsSubParamUsed(); }
+inline bool NFmiQueryInfo::UseSubParam()
+{
+  return IsSubParamUsed();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiCombinedParam *NFmiQueryInfo::CombinedParam() { return itsCombinedParamParser; }
+inline const NFmiCombinedParam *NFmiQueryInfo::CombinedParam()
+{
+  return itsCombinedParamParser;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::TimeResolution() { return itsTimeDescriptor->Resolution(); }
+inline unsigned long NFmiQueryInfo::TimeResolution()
+{
+  return itsTimeDescriptor->Resolution();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::TimeUnCertaintyStart() { return itsTimeUnCertaintyStart; }
+inline long NFmiQueryInfo::TimeUnCertaintyStart()
+{
+  return itsTimeUnCertaintyStart;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
@@ -1580,21 +1713,30 @@ inline void NFmiQueryInfo::TimeUnCertaintyStart(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::TimeUnCertaintyEnd() { return itsTimeUnCertaintyEnd; }
+inline long NFmiQueryInfo::TimeUnCertaintyEnd()
+{
+  return itsTimeUnCertaintyEnd;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::TimeUnCertaintyEnd(long newValue) { itsTimeUnCertaintyEnd = newValue; }
+inline void NFmiQueryInfo::TimeUnCertaintyEnd(long newValue)
+{
+  itsTimeUnCertaintyEnd = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::AreaUnCertaintyStart() { return itsAreaUnCertaintyStart; }
+inline long NFmiQueryInfo::AreaUnCertaintyStart()
+{
+  return itsAreaUnCertaintyStart;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
@@ -1612,35 +1754,50 @@ inline void NFmiQueryInfo::AreaUnCertaintyStart(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::AreaUnCertaintyEnd() { return itsAreaUnCertaintyEnd; }
+inline long NFmiQueryInfo::AreaUnCertaintyEnd()
+{
+  return itsAreaUnCertaintyEnd;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::AreaUnCertaintyEnd(long newValue) { itsAreaUnCertaintyEnd = newValue; }
+inline void NFmiQueryInfo::AreaUnCertaintyEnd(long newValue)
+{
+  itsAreaUnCertaintyEnd = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::DoEndianByteSwap() { return fDoEndianByteSwap; }
+inline bool NFmiQueryInfo::DoEndianByteSwap()
+{
+  return fDoEndianByteSwap;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline double NFmiQueryInfo::InfoVersion() const { return itsInfoVersion; }
+inline double NFmiQueryInfo::InfoVersion() const
+{
+  return itsInfoVersion;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param newValue Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiQueryInfo::InfoVersion(double newValue) const { itsInfoVersion = newValue; }
+inline void NFmiQueryInfo::InfoVersion(double newValue) const
+{
+  itsInfoVersion = newValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param file The output stream to write to
@@ -1649,7 +1806,10 @@ inline void NFmiQueryInfo::InfoVersion(double newValue) const { itsInfoVersion =
  */
 // ----------------------------------------------------------------------
 
-inline std::ostream &operator<<(std::ostream &file, NFmiQueryInfo &ob) { return ob.Write(file); }
+inline std::ostream &operator<<(std::ostream &file, NFmiQueryInfo &ob)
+{
+  return ob.Write(file);
+}
 // ----------------------------------------------------------------------
 /*!
  * \param file The input stream to read from
@@ -1658,6 +1818,9 @@ inline std::ostream &operator<<(std::ostream &file, NFmiQueryInfo &ob) { return 
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiQueryInfo &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiQueryInfo &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

@@ -20,18 +20,16 @@
 #endif
 
 #include "NFmiMultiQueryInfo.h"
-
 #include "NFmiCombinedParam.h"
 #include "NFmiFileSystem.h"
 #include "NFmiInterpolation.h"
 #include "NFmiMetTime.h"
 #include "NFmiQueryData.h"
-
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
+#include <macgyver/Exception.h>
 #include <cassert>
 #include <utility>
 
@@ -43,14 +41,22 @@
 
 std::size_t find_newest_data(std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theInfos)
 {
-  assert(!theInfos.empty());
-
-  std::size_t best = 0;
-  for (std::size_t i = 1; i < theInfos.size(); i++)
+  try
   {
-    if (theInfos[i]->OriginTime() > theInfos[best]->OriginTime()) best = i;
+    assert(!theInfos.empty());
+
+    std::size_t best = 0;
+    for (std::size_t i = 1; i < theInfos.size(); i++)
+    {
+      if (theInfos[i]->OriginTime() > theInfos[best]->OriginTime())
+        best = i;
+    }
+    return best;
   }
-  return best;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -65,35 +71,44 @@ std::size_t find_newest_data(std::vector<boost::shared_ptr<NFmiFastQueryInfo> > 
 NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
     : itsDatas(), itsInfos(), itsMultiIndexes(), itsMultiTimeIndex(kUnsignedLongMissing)
 {
-  std::list<std::string> files;
-
-  if (!NFmiFileSystem::DirectoryExists(thePath))
+  try
   {
-    if (!NFmiFileSystem::FileReadable(thePath))
-      throw std::runtime_error("File '" + thePath + "' is not readable");
+    std::list<std::string> files;
 
-    files.push_back(thePath);
-  }
-  else
-  {
-    // Construct from multiple querydatas
-    std::list<std::string> dirfiles = NFmiFileSystem::DirectoryFiles(thePath);
-
-    for (const std::string &name : dirfiles)
+    if (!NFmiFileSystem::DirectoryExists(thePath))
     {
-      if (name.empty() || name[0] == '.') continue;
+      if (!NFmiFileSystem::FileReadable(thePath))
+        throw Fmi::Exception(BCP, "File '" + thePath + "' is not readable");
 
-      if (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd") ||
-          boost::iends_with(name, ".sqd.gz") || boost::iends_with(name, ".fqd.gz") ||
-          boost::iends_with(name, ".sqd.bz2") || boost::iends_with(name, ".fqd.bz2"))
+      files.push_back(thePath);
+    }
+    else
+    {
+      // Construct from multiple querydatas
+      std::list<std::string> dirfiles = NFmiFileSystem::DirectoryFiles(thePath);
+
+      for (const std::string &name : dirfiles)
       {
-        std::string filename = thePath + '/' + name;
-        if (NFmiFileSystem::FileSize(filename) != 0) files.push_back(filename);
+        if (name.empty() || name[0] == '.')
+          continue;
+
+        if (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd") ||
+            boost::iends_with(name, ".sqd.gz") || boost::iends_with(name, ".fqd.gz") ||
+            boost::iends_with(name, ".sqd.bz2") || boost::iends_with(name, ".fqd.bz2"))
+        {
+          std::string filename = thePath + '/' + name;
+          if (NFmiFileSystem::FileSize(filename) != 0)
+            files.push_back(filename);
+        }
       }
     }
-  }
 
-  Init(files);
+    Init(files);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -105,7 +120,14 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
 NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string> &theFiles)
     : itsDatas(), itsInfos(), itsMultiIndexes(), itsMultiTimeIndex(kUnsignedLongMissing)
 {
-  Init(theFiles);
+  try
+  {
+    Init(theFiles);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -121,10 +143,17 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQue
       itsMultiIndexes(),
       itsMultiTimeIndex(kUnsignedLongMissing)
 {
-  if (theInfos.size() == 0)
-    throw std::runtime_error("Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
+  try
+  {
+    if (theInfos.size() == 0)
+      throw Fmi::Exception(BCP, "Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
 
-  Init();
+    Init();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -135,17 +164,24 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQue
 
 void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
 {
-  for (const std::string &filename : theFiles)
+  try
   {
-    boost::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
-    itsDatas.push_back(qd);
-    boost::shared_ptr<NFmiFastQueryInfo> qi(new NFmiFastQueryInfo(qd.get()));
-    itsInfos.push_back(qi);
+    for (const std::string &filename : theFiles)
+    {
+      boost::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
+      itsDatas.push_back(qd);
+      boost::shared_ptr<NFmiFastQueryInfo> qi(new NFmiFastQueryInfo(qd.get()));
+      itsInfos.push_back(qi);
 
-    itsFileModificationTimes.push_back(NFmiFileSystem::FileModificationTime(filename));
+      itsFileModificationTimes.push_back(NFmiFileSystem::FileModificationTime(filename));
+    }
+
+    Init();
   }
-
-  Init();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -156,75 +192,83 @@ void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
 
 void NFmiMultiQueryInfo::Init()
 {
-  // Establish the info which refers to data with the newest origin time
-
-  std::size_t ref_index = find_newest_data(itsInfos);
-
-  // Use it as a reference for acceptable parameters etc
-
-  NFmiFastQueryInfo::operator=(*itsInfos[ref_index]);
-
-  // Now collect all unique times from data which has acceptable descriptors.
-  // For each unique time choose the data with the latest origin time, and
-  // store the respective index into the query infos and the time index
-  // inside that data. Note that if there are multiple equal origintimes
-  // we must compare the modification time of the respective files.
-  // Otherwise we may miss fixes to model data etc.
-
-  typedef std::set<MultiIndex> MultiIndexSet;
-  MultiIndexSet time_index;
-
-  for (std::size_t i = 0; i < itsInfos.size(); i++)
+  try
   {
-    // Comparing the indices first avoids a descriptor comparison when the reference data is
-    // encountered
-    bool acceptable = (i == ref_index || (ParamDescriptor() == itsInfos[i]->ParamDescriptor() &&
-                                          HPlaceDescriptor() == itsInfos[i]->HPlaceDescriptor() &&
-                                          VPlaceDescriptor() == itsInfos[i]->VPlaceDescriptor()));
+    // Establish the info which refers to data with the newest origin time
 
-    if (acceptable)
+    std::size_t ref_index = find_newest_data(itsInfos);
+
+    // Use it as a reference for acceptable parameters etc
+
+    NFmiFastQueryInfo::operator=(*itsInfos[ref_index]);
+
+    // Now collect all unique times from data which has acceptable descriptors.
+    // For each unique time choose the data with the latest origin time, and
+    // store the respective index into the query infos and the time index
+    // inside that data. Note that if there are multiple equal origintimes
+    // we must compare the modification time of the respective files.
+    // Otherwise we may miss fixes to model data etc.
+
+    typedef std::set<MultiIndex> MultiIndexSet;
+    MultiIndexSet time_index;
+
+    for (std::size_t i = 0; i < itsInfos.size(); i++)
     {
-      // Try to insert all times into the set of unique times
-      NFmiFastQueryInfo &qi = *itsInfos[i];
-      for (qi.ResetTime(); qi.NextTime();)
+      // Comparing the indices first avoids a descriptor comparison when the reference data is
+      // encountered
+      bool acceptable = (i == ref_index || (ParamDescriptor() == itsInfos[i]->ParamDescriptor() &&
+                                            HPlaceDescriptor() == itsInfos[i]->HPlaceDescriptor() &&
+                                            VPlaceDescriptor() == itsInfos[i]->VPlaceDescriptor()));
+
+      if (acceptable)
       {
-        const NFmiMetTime &t = qi.ValidTime();
-        MultiIndex idx(t, i, qi.TimeIndex());
-
-        auto res = time_index.insert(idx);
-
-        // Resolve conflict when multiple datas provide the same valid time
-        if (res.second == false)
+        // Try to insert all times into the set of unique times
+        NFmiFastQueryInfo &qi = *itsInfos[i];
+        for (qi.ResetTime(); qi.NextTime();)
         {
-          std::size_t old_index = res.first->info_index;
+          const NFmiMetTime &t = qi.ValidTime();
+          MultiIndex idx(t, i, qi.TimeIndex());
 
-          bool replace_data = false;
+          auto res = time_index.insert(idx);
 
-          if (itsInfos[i]->OriginTime() > itsInfos[old_index]->OriginTime())
-            replace_data = true;
-          else if (itsInfos[i]->OriginTime() == itsInfos[old_index]->OriginTime())
+          // Resolve conflict when multiple datas provide the same valid time
+          if (res.second == false)
           {
-            if (!itsFileModificationTimes.empty())  // may not be available
-              if (itsFileModificationTimes[i] > itsFileModificationTimes[old_index])
-                replace_data = true;
-          }
+            std::size_t old_index = res.first->info_index;
 
-          if (replace_data)
-          {
-            time_index.erase(res.first);
-            time_index.insert(idx);
+            bool replace_data = false;
+
+            if (itsInfos[i]->OriginTime() > itsInfos[old_index]->OriginTime())
+              replace_data = true;
+            else if (itsInfos[i]->OriginTime() == itsInfos[old_index]->OriginTime())
+            {
+              if (!itsFileModificationTimes.empty())  // may not be available
+                if (itsFileModificationTimes[i] > itsFileModificationTimes[old_index])
+                  replace_data = true;
+            }
+
+            if (replace_data)
+            {
+              time_index.erase(res.first);
+              time_index.insert(idx);
+            }
           }
         }
       }
     }
+
+    // time -> index set correspondance is now established, initialize the data structures
+    // accordingly
+
+    // int j = 0;
+    for (const auto &idx : time_index)
+    {
+      itsMultiIndexes.push_back(idx);
+    }
   }
-
-  // time -> index set correspondance is now established, initialize the data structures accordingly
-
-  // int j = 0;
-  for (const auto &idx : time_index)
+  catch (...)
   {
-    itsMultiIndexes.push_back(idx);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -236,13 +280,20 @@ void NFmiMultiQueryInfo::Init()
 
 const NFmiMetTime &NFmiMultiQueryInfo::OriginTime() const
 {
-  // Origin time for selected time
-  if (itsMultiTimeIndex < itsMultiIndexes.size())
-    return itsInfos.at(itsMultiIndexes[itsMultiTimeIndex].info_index)->OriginTime();
+  try
+  {
+    // Origin time for selected time
+    if (itsMultiTimeIndex < itsMultiIndexes.size())
+      return itsInfos.at(itsMultiIndexes[itsMultiTimeIndex].info_index)->OriginTime();
 
-  // Otherwise the best guess is the last origin time
-  auto last_idx = itsMultiIndexes.size() - 1;
-  return itsInfos.at(itsMultiIndexes[last_idx].info_index)->OriginTime();
+    // Otherwise the best guess is the last origin time
+    auto last_idx = itsMultiIndexes.size() - 1;
+    return itsInfos.at(itsMultiIndexes[last_idx].info_index)->OriginTime();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -251,7 +302,17 @@ const NFmiMetTime &NFmiMultiQueryInfo::OriginTime() const
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiMultiQueryInfo::TimeIndex() const { return itsMultiTimeIndex; }
+unsigned long NFmiMultiQueryInfo::TimeIndex() const
+{
+  try
+  {
+    return itsMultiTimeIndex;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \brief Set the time index
@@ -260,22 +321,30 @@ unsigned long NFmiMultiQueryInfo::TimeIndex() const { return itsMultiTimeIndex; 
 
 bool NFmiMultiQueryInfo::TimeIndex(unsigned long theIndex)
 {
-  if (theIndex >= itsMultiIndexes.size()) return false;
+  try
+  {
+    if (theIndex >= itsMultiIndexes.size())
+      return false;
 
-  itsMultiTimeIndex = theIndex;
+    itsMultiTimeIndex = theIndex;
 
-  const MultiIndex &idx = itsMultiIndexes[itsMultiTimeIndex];
+    const MultiIndex &idx = itsMultiIndexes[itsMultiTimeIndex];
 
-  itsRefRawData = const_cast<NFmiRawData *>(itsInfos[idx.info_index]->RefRawData());
-  itsRefQueryData = const_cast<NFmiQueryData *>(itsInfos[idx.info_index]->RefQueryData());
+    itsRefRawData = const_cast<NFmiRawData *>(itsInfos[idx.info_index]->RefRawData());
+    itsRefQueryData = const_cast<NFmiQueryData *>(itsInfos[idx.info_index]->RefQueryData());
 
-  itsTimeIndex = idx.time_index;
+    itsTimeIndex = idx.time_index;
 
-  itsLocLevTimSize = itsInfos[idx.info_index]->itsLocLevTimSize;
-  itsLevTimSize = itsInfos[idx.info_index]->itsLevTimSize;
-  itsTimeSize = itsInfos[idx.info_index]->itsTimeSize;
+    itsLocLevTimSize = itsInfos[idx.info_index]->itsLocLevTimSize;
+    itsLevTimSize = itsInfos[idx.info_index]->itsLevTimSize;
+    itsTimeSize = itsInfos[idx.info_index]->itsTimeSize;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -286,10 +355,17 @@ bool NFmiMultiQueryInfo::TimeIndex(unsigned long theIndex)
 
 const NFmiMetTime &NFmiMultiQueryInfo::ValidTime() const
 {
-  if (itsMultiTimeIndex < itsMultiIndexes.size())
-    return itsMultiIndexes[itsMultiTimeIndex].valid_time;
+  try
+  {
+    if (itsMultiTimeIndex < itsMultiIndexes.size())
+      return itsMultiIndexes[itsMultiTimeIndex].valid_time;
 
-  throw std::runtime_error("Trying to access valid time for time index -1");
+    throw Fmi::Exception(BCP, "Trying to access valid time for time index -1");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -298,7 +374,17 @@ const NFmiMetTime &NFmiMultiQueryInfo::ValidTime() const
  */
 // ----------------------------------------------------------------------
 
-void NFmiMultiQueryInfo::ResetTime() { itsMultiTimeIndex = kUnsignedLongMissing; }
+void NFmiMultiQueryInfo::ResetTime()
+{
+  try
+  {
+    itsMultiTimeIndex = kUnsignedLongMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Next valid time
@@ -307,20 +393,27 @@ void NFmiMultiQueryInfo::ResetTime() { itsMultiTimeIndex = kUnsignedLongMissing;
 
 bool NFmiMultiQueryInfo::NextTime()
 {
-  if (itsMultiTimeIndex == kUnsignedLongMissing)
+  try
   {
-    TimeIndex(0);
+    if (itsMultiTimeIndex == kUnsignedLongMissing)
+    {
+      TimeIndex(0);
+      return true;
+    }
+
+    if (++itsMultiTimeIndex >= itsMultiIndexes.size())
+    {
+      itsMultiTimeIndex = kUnsignedLongMissing;
+      return false;
+    }
+
+    TimeIndex(itsMultiTimeIndex);
     return true;
   }
-
-  if (++itsMultiTimeIndex >= itsMultiIndexes.size())
+  catch (...)
   {
-    itsMultiTimeIndex = kUnsignedLongMissing;
-    return false;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  TimeIndex(itsMultiTimeIndex);
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -329,14 +422,36 @@ bool NFmiMultiQueryInfo::NextTime()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiMultiQueryInfo::LastTime() { return TimeIndex(itsMultiIndexes.size() - 1); }
+bool NFmiMultiQueryInfo::LastTime()
+{
+  try
+  {
+    return TimeIndex(itsMultiIndexes.size() - 1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return First valid time
  */
 // ----------------------------------------------------------------------
 
-bool NFmiMultiQueryInfo::FirstTime() { return TimeIndex(0); }
+bool NFmiMultiQueryInfo::FirstTime()
+{
+  try
+  {
+    return TimeIndex(0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Previous valid time
@@ -345,14 +460,21 @@ bool NFmiMultiQueryInfo::FirstTime() { return TimeIndex(0); }
 
 bool NFmiMultiQueryInfo::PreviousTime()
 {
-  if (itsMultiTimeIndex == kUnsignedLongMissing || itsMultiTimeIndex == 0)
+  try
   {
-    itsMultiTimeIndex = kUnsignedLongMissing;
-    return false;
-  }
+    if (itsMultiTimeIndex == kUnsignedLongMissing || itsMultiTimeIndex == 0)
+    {
+      itsMultiTimeIndex = kUnsignedLongMissing;
+      return false;
+    }
 
-  TimeIndex(itsMultiTimeIndex - 1);
-  return true;
+    TimeIndex(itsMultiTimeIndex - 1);
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -363,14 +485,21 @@ bool NFmiMultiQueryInfo::PreviousTime()
 
 bool NFmiMultiQueryInfo::Time(const NFmiMetTime &theTime)
 {
-  std::vector<MultiIndex>::const_iterator pos =
-      std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
+  try
+  {
+    std::vector<MultiIndex>::const_iterator pos =
+        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
-  if (pos != itsMultiIndexes.end() && pos->valid_time == theTime)
-    return TimeIndex(pos - itsMultiIndexes.begin());
+    if (pos != itsMultiIndexes.end() && pos->valid_time == theTime)
+      return TimeIndex(pos - itsMultiIndexes.begin());
 
-  itsMultiTimeIndex = kUnsignedLongMissing;
-  return false;
+    itsMultiTimeIndex = kUnsignedLongMissing;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -381,8 +510,15 @@ bool NFmiMultiQueryInfo::Time(const NFmiMetTime &theTime)
 
 bool NFmiMultiQueryInfo::IsInside(const NFmiMetTime &theTime) const
 {
-  return (itsMultiIndexes[0].valid_time <= theTime &&
-          itsMultiIndexes[itsMultiIndexes.size() - 1].valid_time >= theTime);
+  try
+  {
+    return (itsMultiIndexes[0].valid_time <= theTime &&
+            itsMultiIndexes[itsMultiIndexes.size() - 1].valid_time >= theTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -395,54 +531,62 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
                                            FmiDirection theDirection,
                                            long theTimeRangeInMinutes)
 {
-  std::vector<MultiIndex>::const_iterator pos =
-      std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
-
-  // Algorithm from NFmiTimeList::FindNearestTime
-
-  if (pos != itsMultiIndexes.end())
+  try
   {
-    if (theDirection == kBackward && theTime < pos->valid_time)
-    {
-      if (pos != itsMultiIndexes.begin())
-      {
-        --pos;
-        if (pos ==
-            itsMultiIndexes
-                .end())  // en tiedä toimiiko siten, että jos tekee startissa --, menee ohi vectorin
-          ++pos;
-      }
-    }
-    else if (theDirection == kCenter)
-    {
-      int index = pos - itsMultiIndexes.begin();
-      if (index > 0)
-      {
-        double diff1 = theTime.DifferenceInMinutes(itsMultiIndexes[index].valid_time);
-        double diff2 = theTime.DifferenceInMinutes(itsMultiIndexes[index - 1].valid_time);
-        if (fabs(diff2) < fabs(diff1)) --pos;
-      }
-    }
-    // HUOM! else eli muuten tai theDirection == kForward vaihtoehto puuttuu!!!!
+    std::vector<MultiIndex>::const_iterator pos =
+        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
-    int indexFinal = pos - itsMultiIndexes.begin();
-    if (indexFinal != -1 && theTimeRangeInMinutes != kLongMissing)
+    // Algorithm from NFmiTimeList::FindNearestTime
+
+    if (pos != itsMultiIndexes.end())
     {
-      double diffFinal = theTime.DifferenceInMinutes(itsMultiIndexes[indexFinal].valid_time);
-      if (fabs(diffFinal) > theTimeRangeInMinutes) return false;
+      if (theDirection == kBackward && theTime < pos->valid_time)
+      {
+        if (pos != itsMultiIndexes.begin())
+        {
+          --pos;
+          if (pos == itsMultiIndexes.end())  // en tiedä toimiiko siten, että jos tekee startissa
+                                             // --, menee ohi vectorin
+            ++pos;
+        }
+      }
+      else if (theDirection == kCenter)
+      {
+        int index = pos - itsMultiIndexes.begin();
+        if (index > 0)
+        {
+          double diff1 = theTime.DifferenceInMinutes(itsMultiIndexes[index].valid_time);
+          double diff2 = theTime.DifferenceInMinutes(itsMultiIndexes[index - 1].valid_time);
+          if (fabs(diff2) < fabs(diff1))
+            --pos;
+        }
+      }
+      // HUOM! else eli muuten tai theDirection == kForward vaihtoehto puuttuu!!!!
+
+      int indexFinal = pos - itsMultiIndexes.begin();
+      if (indexFinal != -1 && theTimeRangeInMinutes != kLongMissing)
+      {
+        double diffFinal = theTime.DifferenceInMinutes(itsMultiIndexes[indexFinal].valid_time);
+        if (fabs(diffFinal) > theTimeRangeInMinutes)
+          return false;
+      }
+      TimeIndex(indexFinal);
+      return true;
     }
-    TimeIndex(indexFinal);
-    return true;
+    if (theTimeRangeInMinutes == kLongMissing)
+    {
+      TimeIndex(itsMultiIndexes.size() - 1);
+      return true;
+    }
+
+    // tässä pitäisi olla vielä else haara, joka tarkistaa kelpaako aika jos se on listan
+    // ulkopuolöella, mutta tarpeeksi lähellä
+    return false;
   }
-  if (theTimeRangeInMinutes == kLongMissing)
+  catch (...)
   {
-    TimeIndex(itsMultiIndexes.size() - 1);
-    return true;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  // tässä pitäisi olla vielä else haara, joka tarkistaa kelpaako aika jos se on listan
-  // ulkopuolöella, mutta tarpeeksi lähellä
-  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -459,93 +603,110 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
 
 float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMinuteRange)
 {
-  std::size_t oldTimeIndex = itsMultiTimeIndex;
+  try
+  {
+    std::size_t oldTimeIndex = itsMultiTimeIndex;
 
-  MultiIndexes::const_iterator pos =
-      std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
+    MultiIndexes::const_iterator pos =
+        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
-  float value = InterpolatedValue(theTime, pos, theMaxMinuteRange);
+    float value = InterpolatedValue(theTime, pos, theMaxMinuteRange);
 
-  TimeIndex(oldTimeIndex);
+    TimeIndex(oldTimeIndex);
 
-  return value;
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime,
                                             const MultiIndexes::const_iterator &thePos,
                                             int theMaxMinuteRange)
 {
-  if (thePos == itsMultiIndexes.end()) return kFloatMissing;
-
-  if (thePos->valid_time == theTime)
+  try
   {
-    TimeIndex(thePos - itsMultiIndexes.begin());
-    return FloatValue();
-  }
+    if (thePos == itsMultiIndexes.end())
+      return kFloatMissing;
 
-  // Interpolate if possible
-
-  unsigned long idx2 = thePos - itsMultiIndexes.begin();
-  if (idx2 == 0) return kFloatMissing;
-
-  unsigned long idx1 = idx2 - 1;
-
-  // Find previous value to use in interpolation
-
-  float value1 = kFloatMissing;
-  while (true)
-  {
-    TimeIndex(idx1);
-    value1 = FloatValue();
-    if ((value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing) || idx1 == 0) break;
-    --idx1;
-  }
-
-  const NFmiMetTime &time1 = itsMultiIndexes[idx1].valid_time;
-
-  if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time1)) > theMaxMinuteRange)
-    return kFloatMissing;
-
-  // Find next value to use in interpolation
-
-  float value2 = kFloatMissing;
-  while (true)
-  {
-    TimeIndex(idx2);
-    value2 = FloatValue();
-    if ((value2 != kFloatMissing && value2 != kTCombinedWeatherFloatMissing) ||
-        idx2 == itsMultiIndexes.size() - 1)
-      break;
-    ++idx2;
-  }
-
-  const NFmiMetTime &time2 = itsMultiIndexes[idx2].valid_time;
-
-  if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time2)) > theMaxMinuteRange)
-    return kFloatMissing;
-
-  // Interpolate.
-
-  switch (Param().GetParamIdent())
-  {
-    case kFmiWindDirection:
+    if (thePos->valid_time == theTime)
     {
-      Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-      TimeIndex(idx1);  // otetaan 1. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
-      float ws1 = FloatValue();
-      TimeIndex(idx2);  // otetaan 2. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
-      float ws2 = FloatValue();
-      Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
-      NFmiInterpolation::WindInterpolator windInterpolator;
-      float offset1 = CalcTimeOffsetToLastTime(theTime, time1, time2);
-      windInterpolator.operator()(ws1, value1, offset1);
-      windInterpolator.operator()(ws2, value2, (1 - offset1));
-      return static_cast<float>(windInterpolator.Direction());
+      TimeIndex(thePos - itsMultiIndexes.begin());
+      return FloatValue();
     }
-    default:
+
+    // Interpolate if possible
+
+    unsigned long idx2 = thePos - itsMultiIndexes.begin();
+    if (idx2 == 0)
+      return kFloatMissing;
+
+    unsigned long idx1 = idx2 - 1;
+
+    // Find previous value to use in interpolation
+
+    float value1 = kFloatMissing;
+    while (true)
     {
-      return Interpolate(Param(), theTime, time1, time2, value1, value2);
+      TimeIndex(idx1);
+      value1 = FloatValue();
+      if ((value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing) || idx1 == 0)
+        break;
+      --idx1;
     }
+
+    const NFmiMetTime &time1 = itsMultiIndexes[idx1].valid_time;
+
+    if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time1)) > theMaxMinuteRange)
+      return kFloatMissing;
+
+    // Find next value to use in interpolation
+
+    float value2 = kFloatMissing;
+    while (true)
+    {
+      TimeIndex(idx2);
+      value2 = FloatValue();
+      if ((value2 != kFloatMissing && value2 != kTCombinedWeatherFloatMissing) ||
+          idx2 == itsMultiIndexes.size() - 1)
+        break;
+      ++idx2;
+    }
+
+    const NFmiMetTime &time2 = itsMultiIndexes[idx2].valid_time;
+
+    if (theMaxMinuteRange != 0 && abs(theTime.DifferenceInMinutes(time2)) > theMaxMinuteRange)
+      return kFloatMissing;
+
+    // Interpolate.
+
+    switch (Param().GetParamIdent())
+    {
+      case kFmiWindDirection:
+      {
+        Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
+        TimeIndex(idx1);  // otetaan 1. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
+        float ws1 = FloatValue();
+        TimeIndex(idx2);  // otetaan 2. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
+        float ws2 = FloatValue();
+        Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+        NFmiInterpolation::WindInterpolator windInterpolator;
+        float offset1 = CalcTimeOffsetToLastTime(theTime, time1, time2);
+        windInterpolator.operator()(ws1, value1, offset1);
+        windInterpolator.operator()(ws2, value2, (1 - offset1));
+        return static_cast<float>(windInterpolator.Direction());
+      }
+      default:
+      {
+        return Interpolate(Param(), theTime, time1, time2, value1, value2);
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

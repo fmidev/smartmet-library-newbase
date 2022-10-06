@@ -170,17 +170,10 @@ class NFmiLongitude : public NFmiAngle
 {
  public:
   //! Konstruktori
-#ifdef WGS84
   NFmiLongitude(double theAngle, FmiAngleUnit theUnit = kDeg);
-#else
   NFmiLongitude(double theAngle, bool usePacificView, FmiAngleUnit theUnit = kDeg);
-#endif
 
-#ifdef WGS84
-  NFmiLongitude() {}
-#else
   NFmiLongitude() : fPacificView(false) {}
-#endif
 
   //! Longitudin muutosmetodi
   void SetValue(double theValue, FmiAngleUnit theUnit = kDeg);
@@ -198,9 +191,7 @@ class NFmiLongitude : public NFmiAngle
   //! Longitudin lisäysoperaattori annetulla kulmalla
   NFmiLongitude &operator+=(const double &theAngle);
 
-#ifndef WGS84
   bool fPacificView;
-#endif
 };
 
 // ======================================================================

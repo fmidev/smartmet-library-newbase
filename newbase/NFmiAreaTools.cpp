@@ -13,13 +13,11 @@
 // ======================================================================
 
 #include "NFmiAreaTools.h"
-
 #include "NFmiArea.h"
 #include "NFmiPoint.h"
-
 #include <fmt/format.h>
 #include <gis/SpatialReference.h>
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <iostream>
 
@@ -45,10 +43,17 @@ void update_bbox(const NFmiPoint& thePoint,
                  double& theMaxLon,
                  double& theMaxLat)
 {
-  theMinLon = std::min(theMinLon, thePoint.X());
-  theMinLat = std::min(theMinLat, thePoint.Y());
-  theMaxLon = std::max(theMaxLon, thePoint.X());
-  theMaxLat = std::max(theMaxLat, thePoint.Y());
+  try
+  {
+    theMinLon = std::min(theMinLon, thePoint.X());
+    theMinLat = std::min(theMinLat, thePoint.Y());
+    theMaxLon = std::max(theMaxLon, thePoint.X());
+    theMaxLat = std::max(theMaxLat, thePoint.Y());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 }  // namespace
@@ -77,59 +82,66 @@ void LatLonBoundingBox(const NFmiArea& theArea,
                        double& theMaxLon,
                        double& theMaxLat)
 {
-  // Good initial values are obtained from the corners
-
-  theMinLon = theArea.TopLeftLatLon().X();
-  theMinLat = theArea.TopLeftLatLon().Y();
-  theMaxLon = theMinLon;
-  theMaxLat = theMinLat;
-
-  const unsigned int divisions = 500;
-
-  // Go through the top edge
-
-  const double left = theArea.Left();
-  const double right = theArea.Right();
-  const double bottom = theArea.Bottom();
-  const double top = theArea.Top();
-  const double width = right - left;
-  const double height = bottom - top;
-
-  // Go through the top edge
-
-  unsigned int i = 0;
-  for (i = 0; i <= divisions; i++)
+  try
   {
-    NFmiPoint xy(left + width * i / divisions, top);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    // Good initial values are obtained from the corners
+
+    theMinLon = theArea.TopLeftLatLon().X();
+    theMinLat = theArea.TopLeftLatLon().Y();
+    theMaxLon = theMinLon;
+    theMaxLat = theMinLat;
+
+    const unsigned int divisions = 500;
+
+    // Go through the top edge
+
+    const double left = theArea.Left();
+    const double right = theArea.Right();
+    const double bottom = theArea.Bottom();
+    const double top = theArea.Top();
+    const double width = right - left;
+    const double height = bottom - top;
+
+    // Go through the top edge
+
+    unsigned int i = 0;
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left + width * i / divisions, top);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the bottom edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left + width * i / divisions, bottom);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the left edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(left, top + height * i / divisions);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
+
+    // Go through the right edge
+
+    for (i = 0; i <= divisions; i++)
+    {
+      NFmiPoint xy(right, top + height * i / divisions);
+      NFmiPoint latlon(theArea.ToLatLon(xy));
+      update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    }
   }
-
-  // Go through the bottom edge
-
-  for (i = 0; i <= divisions; i++)
+  catch (...)
   {
-    NFmiPoint xy(left + width * i / divisions, bottom);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
-  }
-
-  // Go through the left edge
-
-  for (i = 0; i <= divisions; i++)
-  {
-    NFmiPoint xy(left, top + height * i / divisions);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
-  }
-
-  // Go through the right edge
-
-  for (i = 0; i <= divisions; i++)
-  {
-    NFmiPoint xy(right, top + height * i / divisions);
-    NFmiPoint latlon(theArea.ToLatLon(xy));
-    update_bbox(latlon, theMinLon, theMinLat, theMaxLon, theMaxLat);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -138,12 +150,28 @@ NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft, const NFmiPoint
   if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
   {
     // Pacific view
-    auto proj = fmt::format("+proj=eqc +datum=WGS84 +lon_0=180 +wktext +over +no_defs");
+    auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +lon_0=180 +wktext +over +no_defs");
     return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
   }
 
   // Atlantic  view
-  auto proj = fmt::format("+proj=eqc +datum=WGS84 +wktext +over +no_defs");
+  auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +wktext +over +no_defs");
+  return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyLatLonArea(const NFmiPoint& theBottomLeft,
+                                 const NFmiPoint& theTopRight,
+                                 bool fUsePacificView)
+{
+  if (fUsePacificView)
+  {
+    // Pacific view
+    auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +lon_0=180 +wktext +over +no_defs");
+    return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
+  }
+
+  // Atlantic  view
+  auto proj = fmt::format("+type=crs +proj=eqc +datum=WGS84 +wktext +over +no_defs");
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
@@ -163,22 +191,19 @@ NFmiArea* CreateLegacyRotatedLatLonArea(const NFmiPoint& theBottomLeft,
     lon_0 -= 360;
 
   auto proj = fmt::format(
-      "+proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
+      "+type=crs +proj=ob_tran +o_proj=eqc +o_lon_p={} +o_lat_p={} +lon_0={} +datum=WGS84",
       npole_lon,
       npole_lat,
-      lon_0,
-      kRearth);
+      lon_0);
 
   // the legacy corners are in rotated spherical latlon coordinate.
   // the +to_meter setting is necessary to avoid radians
   auto sphere = fmt::format(
-      "+to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} +lon_0={} "
-      "+R={:.0f} +wktext +towgs84=0,0,0 +no_defs",
+      "+type=crs +to_meter=.0174532925199433 +proj=ob_tran +o_proj=longlat +o_lon_p={} +o_lat_p={} "
+      "+lon_0={} +datum=WGS84",
       npole_lon,
       npole_lat,
-      lon_0,
-      kRearth);
+      lon_0);
 
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
 }
@@ -189,13 +214,10 @@ NFmiArea* CreateLegacyStereographicArea(const NFmiPoint& theBottomLeft,
                                         double theCentralLatitude,
                                         double theTrueLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=stere +lat_0={} +lat_ts={} +lon_0={} +R={:.0f} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs",
-      theCentralLatitude,
-      theTrueLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+type=crs +proj=stere +lat_0={} +lat_ts={} +lon_0={} +datum=WGS84",
+                          theCentralLatitude,
+                          theTrueLatitude,
+                          theCentralLongitude);
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
@@ -204,11 +226,9 @@ NFmiArea* CreateLegacyEquiDistArea(const NFmiPoint& theBottomLeft,
                                    double theCentralLongitude,
                                    double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=aeqd +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+type=crs +proj=aeqd +lat_0={} +lon_0={} +datum=WGS84",
+                          theCentralLatitude,
+                          theCentralLongitude);
 
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
@@ -218,13 +238,13 @@ NFmiArea* CreateLegacyMercatorArea(const NFmiPoint& theBottomLeft, const NFmiPoi
   if (theBottomLeft.X() < 180 && theTopRight.X() > 180)
   {
     // Pacific view
-    auto proj = fmt::format(
-        "+proj=merc +R={:.0f} +lon_0=180 +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+    auto proj = "+type=crs +proj=merc +datum=WGS84 +lon_0=180";
     return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
   }
 
   // Atlantic view
-  auto proj = fmt::format("+proj=merc +R={:.0f} +units=m +wktext +towgs84=0,0,0 +no_defs", kRearth);
+  auto proj = "+type=crs +proj=merc +datum=WGS84";
+
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
@@ -233,12 +253,10 @@ NFmiArea* CreateLegacyLambertEqualArea(const NFmiPoint& theBottomLeft,
                                        double theCentralLongitude,
                                        double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=laea +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+type=crs +proj=laea +lat_0={} +lon_0={} +datum=WGS84",
+                          theCentralLatitude,
+                          theCentralLongitude);
+
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
@@ -247,18 +265,15 @@ NFmiArea* CreateLegacyLambertConformalConicArea(const NFmiPoint& theBottomLeft,
                                                 double theCentralLongitude,
                                                 double theCentralLatitude,
                                                 double theTrueLatitude1,
-                                                double theTrueLatitude2,
-                                                double theRadius)
+                                                double theTrueLatitude2)
 {
-  auto proj = fmt::format(
-      "+proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +R={:.0f} +units=m +wktext "
-      "+towgs84=0,0,0 +no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      theTrueLatitude1,
-      theTrueLatitude2,
-      theRadius);
-  // auto sphere = fmt::format("+proj=longlat +R={:.0f} +over +no_defs +towgs84=0,0,0", theRadius);
+  auto proj =
+      fmt::format("+type=crs +proj=lcc +lat_0={} +lon_0={} +lat_1={} +lat_2={} +datum=WGS84",
+                  theCentralLatitude,
+                  theCentralLongitude,
+                  theTrueLatitude1,
+                  theTrueLatitude2);
+
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
@@ -267,25 +282,38 @@ NFmiArea* CreateLegacyGnomonicArea(const NFmiPoint& theBottomLeft,
                                    double theCentralLongitude,
                                    double theCentralLatitude)
 {
-  auto proj = fmt::format(
-      "+proj=gnom +lat_0={} +lon_0={} +R={:.0f} +units=m +wktext +towgs84=0,0,0 "
-      "+no_defs",
-      theCentralLatitude,
-      theCentralLongitude,
-      kRearth);
+  auto proj = fmt::format("+type=crs +proj=gnom +lat_0={} +lon_0={} +datum=WGS84",
+                          theCentralLatitude,
+                          theCentralLongitude);
+
   return NFmiArea::CreateFromWGS84Corners(proj, theBottomLeft, theTopRight);
 }
 
 NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight)
 {
   std::string proj =
-      "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +wktext "
+      "+type=crs +proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m "
+      "+wktext "
       "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
 
   std::string sphere =
-      "+proj=latlong +ellps=intl "
+      "+type=crs +proj=latlong +ellps=intl "
       "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964";
   return NFmiArea::CreateFromCorners(proj, sphere, theBottomLeft, theTopRight);
+}
+
+NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
+                              const NFmiPoint& theTopRight,
+                              bool fMeters)
+{
+  if (!fMeters)
+    return CreateLegacyYKJArea(theBottomLeft, theTopRight);
+
+  std::string proj =
+      "+type=crs +proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m "
+      "+wktext "
+      "+towgs84=-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964 +no_defs";
+  return NFmiArea::CreateFromBBox(proj, theBottomLeft, theTopRight);
 }
 
 }  // namespace NFmiAreaTools

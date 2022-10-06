@@ -23,7 +23,7 @@
 #include "NFmiQueryDataUtil.h"
 #include "NFmiQueryInfo.h"
 #include "NFmiTimeList.h"
-
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <sstream>
 
@@ -58,8 +58,15 @@ NFmiProducerIdLister::NFmiProducerIdLister(const std::string &theProducersString
       itsModelOriginTimes(),
       itsDefaultProducerId(-1)
 {
-  IntepretProducerIdString(theProducersString);
-  // pitäisikö paluuarvo tarkistaa ja jos epäonnistui, heittää poikkeus?
+  try
+  {
+    IntepretProducerIdString(theProducersString);
+    // pitäisikö paluuarvo tarkistaa ja jos epäonnistui, heittää poikkeus?
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiProducerIdLister::NFmiProducerIdLister(const NFmiProducerIdLister &theOther)
@@ -74,9 +81,17 @@ NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo &theInfo)
       itsModelOriginTimes(),
       itsDefaultProducerId(-1)
 {
-  if (theInfo.FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
-    IntepretProducerIdString(string(theInfo.GetCurrentKeyValue()));
+  try
+  {
+    if (theInfo.FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
+      IntepretProducerIdString(string(theInfo.GetCurrentKeyValue()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 //--------------------------------------------------------
 // GetProducerIdString
 //--------------------------------------------------------
@@ -87,38 +102,48 @@ NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo &theInfo)
  */
 const std::string NFmiProducerIdLister::MakeProducerIdString()
 {
-  if (itsProducerIds.size() != itsTimes.Size()) return "";
-  ostringstream out;
-  out << itsTimes.FirstTime() << " ";
-  int vsize = itsTimes.Size();  // tämä on myös id ja origintime vektoreiden koko
-  out << vsize << " ";
-  if (itsTimes.UseTimeList())
+  try
   {
-    out << "1 ";  // timelist-merkki
-    for (itsTimes.Reset(); itsTimes.Next();)
+    if (itsProducerIds.size() != itsTimes.Size())
+      return "";
+
+    ostringstream out;
+    out << itsTimes.FirstTime() << " ";
+    int vsize = itsTimes.Size();  // tämä on myös id ja origintime vektoreiden koko
+    out << vsize << " ";
+    if (itsTimes.UseTimeList())
+    {
+      out << "1 ";  // timelist-merkki
+      for (itsTimes.Reset(); itsTimes.Next();)
+        out << static_cast<long>(itsTimes.Resolution()) << " ";
+    }
+    else
+    {
+      out << "0 ";  // timebag-merkki
       out << static_cast<long>(itsTimes.Resolution()) << " ";
+    }
+    int i = 0;
+    for (i = 0; i < vsize; i++)
+    {
+      out << itsProducerIds[i];
+      out << " ";  // tässä laitetaan myös viimeisen perään space, koska jatketaan tämän perään
+                   // origintimeilla
+    }
+    for (i = 0; i < vsize; i++)
+    {
+      out << itsModelOriginTimes[i];
+      if (i < vsize - 1)  // viimeiseen ei enää laiteta spacea väliin
+        out << " ";
+    }
+    itsProducerString = out.str();
+    return itsProducerString;
   }
-  else
+  catch (...)
   {
-    out << "0 ";  // timebag-merkki
-    out << static_cast<long>(itsTimes.Resolution()) << " ";
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  int i = 0;
-  for (i = 0; i < vsize; i++)
-  {
-    out << itsProducerIds[i];
-    out << " ";  // tässä laitetaan myös viimeisen perään space, koska jatketaan tämän perään
-                 // origintimeilla
-  }
-  for (i = 0; i < vsize; i++)
-  {
-    out << itsModelOriginTimes[i];
-    if (i < vsize - 1)  // viimeiseen ei enää laiteta spacea väliin
-      out << " ";
-  }
-  itsProducerString = out.str();
-  return itsProducerString;
 }
+
 //--------------------------------------------------------
 // IntepretProducerIdString
 //--------------------------------------------------------
@@ -129,71 +154,82 @@ const std::string NFmiProducerIdLister::MakeProducerIdString()
  */
 bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString)
 {
-  istringstream in(theString);
-  NFmiMetTime firstTime;
-  in >> firstTime;
-  int vSize = 0;
-  in >> vSize;
-  int timeDescType = 0;  // 0=timebag ja 1=timelist
-  in >> timeDescType;
-  if (in.fail()) return false;
-  if (timeDescType == 0)
+  try
   {
-    int timeResolutionInMinutes = 0;
-    in >> timeResolutionInMinutes;
-    if (in.fail()) return false;
-    NFmiMetTime lastTime(firstTime);
-    lastTime.ChangeByMinutes(timeResolutionInMinutes * (vSize - 1));
-    NFmiTimeBag times(firstTime, lastTime, timeResolutionInMinutes);
-    NFmiTimeDescriptor timesDesc(firstTime, times);
-    itsTimes = timesDesc;
-  }
-  else
-  {
-    NFmiTimeList timeList;
-    int timeResolutionInMinutes = 0;
-    NFmiMetTime currentTime(firstTime);
-    timeList.Add(new NFmiMetTime(currentTime));
-    for (int i = 0; i < vSize - 1;
-         i++)  // tama menee yhta vajaa loppuun asti, koska viimeinen aika ero ei merkitse mitaan
+    istringstream in(theString);
+    NFmiMetTime firstTime;
+    in >> firstTime;
+    int vSize = 0;
+    in >> vSize;
+    int timeDescType = 0;  // 0=timebag ja 1=timelist
+    in >> timeDescType;
+    if (in.fail())
+      return false;
+    if (timeDescType == 0)
     {
-      if (i == 0)
-        in >>
-            timeResolutionInMinutes;  // 1. aikaresoluutio on turha ja se luetaan vain alta pois!!!
+      int timeResolutionInMinutes = 0;
       in >> timeResolutionInMinutes;
-      if (in.fail()) return false;
-      currentTime.ChangeByMinutes(timeResolutionInMinutes);
-      timeList.Add(new NFmiMetTime(currentTime));
+      if (in.fail())
+        return false;
+      NFmiMetTime lastTime(firstTime);
+      lastTime.ChangeByMinutes(timeResolutionInMinutes * (vSize - 1));
+      NFmiTimeBag times(firstTime, lastTime, timeResolutionInMinutes);
+      NFmiTimeDescriptor timesDesc(firstTime, times);
+      itsTimes = timesDesc;
     }
-    NFmiTimeDescriptor timesDesc(firstTime, timeList);
-    itsTimes = timesDesc;
-  }
+    else
+    {
+      NFmiTimeList timeList;
+      int timeResolutionInMinutes = 0;
+      NFmiMetTime currentTime(firstTime);
+      timeList.Add(new NFmiMetTime(currentTime));
+      for (int i = 0; i < vSize - 1;
+           i++)  // tama menee yhta vajaa loppuun asti, koska viimeinen aika ero ei merkitse mitaan
+      {
+        if (i == 0)
+          in >> timeResolutionInMinutes;  // 1. aikaresoluutio on turha ja se luetaan vain alta
+                                          // pois!!!
+        in >> timeResolutionInMinutes;
+        if (in.fail())
+          return false;
+        currentTime.ChangeByMinutes(timeResolutionInMinutes);
+        timeList.Add(new NFmiMetTime(currentTime));
+      }
+      NFmiTimeDescriptor timesDesc(firstTime, timeList);
+      itsTimes = timesDesc;
+    }
 
-  std::vector<int> prodIds(vSize, -1);
-  int prodId = -1;
-  int i = 0;
-  for (i = 0; i < vSize; i++)
-  {
-    in >> prodId;
-    prodIds[i] = prodId;
-  }
-  NFmiMetTime orgTime(1900, 1, 1, 0, 0);
-  std::vector<NFmiMetTime> originTimes(vSize, orgTime);
-  for (i = 0; i < vSize; i++)
-  {
-    in >> orgTime;
-    if (in.fail()) break;  // pieleen meni ei jatketa
-    originTimes[i] = orgTime;
-  }
+    std::vector<int> prodIds(vSize, -1);
+    int prodId = -1;
+    int i = 0;
+    for (i = 0; i < vSize; i++)
+    {
+      in >> prodId;
+      prodIds[i] = prodId;
+    }
+    NFmiMetTime orgTime(1900, 1, 1, 0, 0);
+    std::vector<NFmiMetTime> originTimes(vSize, orgTime);
+    for (i = 0; i < vSize; i++)
+    {
+      in >> orgTime;
+      if (in.fail())
+        break;  // pieleen meni ei jatketa
+      originTimes[i] = orgTime;
+    }
 
-  if (!in.fail())
-  {
-    itsProducerString = theString;
-    itsProducerIds.swap(prodIds);
-    itsModelOriginTimes.swap(originTimes);
-    return true;
+    if (!in.fail())
+    {
+      itsProducerString = theString;
+      itsProducerIds.swap(prodIds);
+      itsModelOriginTimes.swap(originTimes);
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //--------------------------------------------------------
@@ -211,36 +247,45 @@ bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString
  */
 bool NFmiProducerIdLister::ChangeTimeResolution(int theNewResolutionInMinutes)
 {
-  if (theNewResolutionInMinutes <= 0) return false;
-  int currentRes = itsTimes.Resolution();
-  double ratio = static_cast<double>(currentRes) / theNewResolutionInMinutes;
-  NFmiTimeBag newTimeBag(itsTimes.FirstTime(), itsTimes.LastTime(), theNewResolutionInMinutes);
-  if (ratio == 0)
-    return false;
-  else if (ratio == 1)
-    return true;  // ei tarvitse tehdä mitään!
-  else if (ratio > 1 && currentRes % theNewResolutionInMinutes != 0)
-    return false;
-  else if (ratio < 1 && theNewResolutionInMinutes % currentRes != 0)
-    return false;
-
-  int vSize = newTimeBag.GetSize();
-  std::vector<int> newProdIds(vSize, -1);
-  int i = 0;
-  std::vector<NFmiMetTime> newOriginTimes(vSize, NFmiMetTime(1900, 1, 1, 0, 0));
-  newTimeBag.Reset();
-  for (i = 0; i < vSize; i++)
+  try
   {
-    newTimeBag.Next();
-    newProdIds[i] = ProducerId(newTimeBag.CurrentTime(), true);
-    newOriginTimes[i] = ModelOriginTime(newTimeBag.CurrentTime(), true);
+    if (theNewResolutionInMinutes <= 0)
+      return false;
+
+    int currentRes = itsTimes.Resolution();
+    double ratio = static_cast<double>(currentRes) / theNewResolutionInMinutes;
+    NFmiTimeBag newTimeBag(itsTimes.FirstTime(), itsTimes.LastTime(), theNewResolutionInMinutes);
+    if (ratio == 0)
+      return false;
+    else if (ratio == 1)
+      return true;  // ei tarvitse tehdä mitään!
+    else if (ratio > 1 && currentRes % theNewResolutionInMinutes != 0)
+      return false;
+    else if (ratio < 1 && theNewResolutionInMinutes % currentRes != 0)
+      return false;
+
+    int vSize = newTimeBag.GetSize();
+    std::vector<int> newProdIds(vSize, -1);
+    int i = 0;
+    std::vector<NFmiMetTime> newOriginTimes(vSize, NFmiMetTime(1900, 1, 1, 0, 0));
+    newTimeBag.Reset();
+    for (i = 0; i < vSize; i++)
+    {
+      newTimeBag.Next();
+      newProdIds[i] = ProducerId(newTimeBag.CurrentTime(), true);
+      newOriginTimes[i] = ModelOriginTime(newTimeBag.CurrentTime(), true);
+    }
+
+    itsTimes = NFmiTimeDescriptor(newTimeBag.FirstTime(), newTimeBag);
+    itsProducerIds.swap(newProdIds);
+    itsModelOriginTimes.swap(newOriginTimes);
+
+    return true;
   }
-
-  itsTimes = NFmiTimeDescriptor(newTimeBag.FirstTime(), newTimeBag);
-  itsProducerIds.swap(newProdIds);
-  itsModelOriginTimes.swap(newOriginTimes);
-
-  return true;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //--------------------------------------------------------
@@ -248,10 +293,22 @@ bool NFmiProducerIdLister::ChangeTimeResolution(int theNewResolutionInMinutes)
 //--------------------------------------------------------
 int NFmiProducerIdLister::ProducerId(const NFmiMetTime &theTime, bool fAllowInterpolation)
 {
-  if (itsTimes.Time(theTime)) return itsProducerIds[itsTimes.Index()];
-  if (fAllowInterpolation)
-    if (itsTimes.TimeToNearestStep(theTime)) return itsProducerIds[itsTimes.Index()];
-  return -1;  // -1 on virhekoodi/puuttuva koodi
+  try
+  {
+    if (itsTimes.Time(theTime))
+      return itsProducerIds[itsTimes.Index()];
+
+    if (fAllowInterpolation)
+    {
+      if (itsTimes.TimeToNearestStep(theTime))
+        return itsProducerIds[itsTimes.Index()];
+    }
+    return -1;  // -1 on virhekoodi/puuttuva koodi
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //--------------------------------------------------------
@@ -259,19 +316,35 @@ int NFmiProducerIdLister::ProducerId(const NFmiMetTime &theTime, bool fAllowInte
 //--------------------------------------------------------
 int NFmiProducerIdLister::ProducerId(int theIndex) const
 {
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsProducerIds.size())
-    return itsProducerIds[theIndex];
-  return -1;  // -1 on virhekoodi
+  try
+  {
+    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsProducerIds.size())
+      return itsProducerIds[theIndex];
+
+    return -1;  // -1 on virhekoodi
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 //--------------------------------------------------------
 // ProducerId
 //--------------------------------------------------------
 void NFmiProducerIdLister::ProducerId(int theIndex, int theProducerId)
 {
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsProducerIds.size())
-    itsProducerIds[theIndex] = theProducerId;
-  //	else
-  // pitäisikö heittää poikkeus?
+  try
+  {
+    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsProducerIds.size())
+      itsProducerIds[theIndex] = theProducerId;
+    //	else
+    // pitäisikö heittää poikkeus?
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 //--------------------------------------------------------
@@ -279,39 +352,92 @@ void NFmiProducerIdLister::ProducerId(int theIndex, int theProducerId)
 //--------------------------------------------------------
 void NFmiProducerIdLister::ProducerId(const NFmiMetTime &theTime, int theProducerId)
 {
-  if (itsTimes.Time(theTime)) itsProducerIds[itsTimes.Index()] = theProducerId;
-  //	else
-  // pitäisikö heittää poikkeus?
+  try
+  {
+    if (itsTimes.Time(theTime))
+      itsProducerIds[itsTimes.Index()] = theProducerId;
+    //	else
+    // pitäisikö heittää poikkeus?
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime &NFmiProducerIdLister::ModelOriginTime(const NFmiMetTime &theTime,
                                                          bool fAllowInterpolation)
 {
-  static NFmiMetTime dummy(1900, 1, 1, 0, 0);
-  if (itsTimes.Time(theTime)) return itsModelOriginTimes[itsTimes.Index()];
-  if (fAllowInterpolation)
-    if (itsTimes.TimeToNearestStep(theTime)) return itsModelOriginTimes[itsTimes.Index()];
-  return dummy;
+  try
+  {
+    static NFmiMetTime dummy(1900, 1, 1, 0, 0);
+    if (itsTimes.Time(theTime))
+      return itsModelOriginTimes[itsTimes.Index()];
+
+    if (fAllowInterpolation)
+    {
+      if (itsTimes.TimeToNearestStep(theTime))
+        return itsModelOriginTimes[itsTimes.Index()];
+    }
+    return dummy;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 const NFmiMetTime &NFmiProducerIdLister::ModelOriginTime(int theIndex) const
 {
-  static NFmiMetTime dummy(1900, 1, 1, 0, 0);
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsModelOriginTimes.size())
-    return itsModelOriginTimes[theIndex];
-  return dummy;
+  try
+  {
+    static NFmiMetTime dummy(1900, 1, 1, 0, 0);
+    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsModelOriginTimes.size())
+      return itsModelOriginTimes[theIndex];
+
+    return dummy;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiProducerIdLister::ModelOriginTime(const NFmiMetTime &theTime,
                                            const NFmiMetTime &theOriginTime)
 {
-  if (itsTimes.Time(theTime)) itsModelOriginTimes[itsTimes.Index()] = theOriginTime;
+  try
+  {
+    if (itsTimes.Time(theTime))
+      itsModelOriginTimes[itsTimes.Index()] = theOriginTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiProducerIdLister::ModelOriginTime(int theIndex, const NFmiMetTime &theOriginTime)
 {
-  if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsModelOriginTimes.size())
-    itsModelOriginTimes[theIndex] = theOriginTime;
+  try
+  {
+    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsModelOriginTimes.size())
+      itsModelOriginTimes[theIndex] = theOriginTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-bool NFmiProducerIdLister::IsEmpty() const { return itsProducerIds.empty(); }
+bool NFmiProducerIdLister::IsEmpty() const
+{
+  try
+  {
+    return itsProducerIds.empty();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}

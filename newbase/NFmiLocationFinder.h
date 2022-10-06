@@ -75,6 +75,9 @@ inline void NFmiLocationFinder::Clear()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLocationFinder::LastSearchFailed() { return itsLastSearchFailed; }
+inline bool NFmiLocationFinder::LastSearchFailed()
+{
+  return itsLastSearchFailed;
+}
 
 // ======================================================================

@@ -83,21 +83,33 @@ class NFmiDataModifier : public NFmiDataModifierBase
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifier::operator double() { return FloatValue(); }
+inline NFmiDataModifier::operator double()
+{
+  return FloatValue();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiDataModifier::ClassId() const { return 0; }
+inline unsigned long NFmiDataModifier::ClassId() const
+{
+  return 0;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char* NFmiDataModifier::ClassName() const { return "NFmiDataModifier"; }
+inline const char* NFmiDataModifier::ClassName() const
+{
+  return "NFmiDataModifier";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -105,7 +117,10 @@ inline const char* NFmiDataModifier::ClassName() const { return "NFmiDataModifie
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataModifier::BoolOperation(float /* theValue */) { return false; }
+inline bool NFmiDataModifier::BoolOperation(float /* theValue */)
+{
+  return false;
+}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -113,14 +128,21 @@ inline bool NFmiDataModifier::BoolOperation(float /* theValue */) { return false
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifier::FloatOperation(float theValue) { return theValue; }
+inline float NFmiDataModifier::FloatOperation(float theValue)
+{
+  return theValue;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline float NFmiDataModifier::CalculationResult() { return kFloatMissing; }
+inline float NFmiDataModifier::CalculationResult()
+{
+  return kFloatMissing;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theSomeValueThatAffectsResults
@@ -153,7 +175,11 @@ inline void NFmiDataModifier::Calculate(NFmiQueryInfo* /* theQI */) {}
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifier::Clear() { itsNumberOfMissingValues = 0; }
+inline void NFmiDataModifier::Clear()
+{
+  itsNumberOfMissingValues = 0;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumenetd
@@ -172,6 +198,9 @@ inline bool NFmiDataModifier::IsAllowedValue(float theValue)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiDataModifier::SetMissingAllowed(bool OnOff) { fMissingValuesAllowed = OnOff; }
+inline void NFmiDataModifier::SetMissingAllowed(bool OnOff)
+{
+  fMissingValuesAllowed = OnOff;
+}
 
 // ======================================================================

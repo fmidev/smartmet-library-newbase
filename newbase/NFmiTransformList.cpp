@@ -130,7 +130,7 @@
 // ======================================================================
 
 #include "NFmiTransformList.h"
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
@@ -149,22 +149,30 @@ using namespace std;
 
 NFmiTransformList::~NFmiTransformList()
 {
-  if (itsFirstPair)
+  try
   {
-    delete[] itsFirstPair;
-    itsFirstPair = nullptr;
-  }
+    if (itsFirstPair)
+    {
+      delete[] itsFirstPair;
+      itsFirstPair = nullptr;
+    }
 
-  if (itsLastPair)
-  {
-    delete[] itsLastPair;
-    itsLastPair = nullptr;
-  }
+    if (itsLastPair)
+    {
+      delete[] itsLastPair;
+      itsLastPair = nullptr;
+    }
 
-  if (itsOutputInputRatio)
+    if (itsOutputInputRatio)
+    {
+      delete[] itsOutputInputRatio;
+      itsOutputInputRatio = nullptr;
+    }
+  }
+  catch (...)
   {
-    delete[] itsOutputInputRatio;
-    itsOutputInputRatio = nullptr;
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
   }
 }
 
@@ -193,7 +201,14 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
       itsEps(NFmiPoint(0.0000001, 0.0000001)),
       itsOutputInputRatio(nullptr)
 {
-  Allocate(theMaxPairNumber);
+  try
+  {
+    Allocate(theMaxPairNumber);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -208,63 +223,71 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
 
 NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList)
 {
-  // Copy FirstPair array
-  if (itsFirstPair)
+  try
   {
-    if (itsMaxPairNumber != theList.itsMaxPairNumber)
+    // Copy FirstPair array
+    if (itsFirstPair)
     {
-      delete[] itsFirstPair;
+      if (itsMaxPairNumber != theList.itsMaxPairNumber)
+      {
+        delete[] itsFirstPair;
+        itsFirstPair = new NFmiPoint[theList.itsMaxPairNumber];
+      }
+    }
+    else
       itsFirstPair = new NFmiPoint[theList.itsMaxPairNumber];
-    }
-  }
-  else
-    itsFirstPair = new NFmiPoint[theList.itsMaxPairNumber];
 
-  memcpy(itsFirstPair, theList.itsFirstPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
+    memcpy(itsFirstPair, theList.itsFirstPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
 
-  // Copy LastPair array
-  if (itsLastPair)
-  {
-    if (itsMaxPairNumber != theList.itsMaxPairNumber)
+    // Copy LastPair array
+    if (itsLastPair)
     {
-      delete[] itsLastPair;
+      if (itsMaxPairNumber != theList.itsMaxPairNumber)
+      {
+        delete[] itsLastPair;
+        itsLastPair = new NFmiPoint[theList.itsMaxPairNumber];
+      }
+    }
+    else
       itsLastPair = new NFmiPoint[theList.itsMaxPairNumber];
-    }
-  }
-  else
-    itsLastPair = new NFmiPoint[theList.itsMaxPairNumber];
 
-  memcpy(itsLastPair, theList.itsLastPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
+    memcpy(itsLastPair, theList.itsLastPair, theList.itsMaxPairNumber * sizeof(NFmiPoint));
 
-  // Copy OutputInputRatio array
-  if (itsOutputInputRatio)
-  {
-    if (itsMaxPairNumber != theList.itsMaxPairNumber)
+    // Copy OutputInputRatio array
+    if (itsOutputInputRatio)
     {
-      delete[] itsOutputInputRatio;
-      itsOutputInputRatio = new double[theList.itsMaxPairNumber];
+      if (itsMaxPairNumber != theList.itsMaxPairNumber)
+      {
+        delete[] itsOutputInputRatio;
+        itsOutputInputRatio = new double[theList.itsMaxPairNumber];
+      }
     }
+    else
+      itsOutputInputRatio = new double[theList.itsMaxPairNumber];
+
+    memcpy(itsOutputInputRatio,
+           theList.itsOutputInputRatio,
+           theList.itsMaxPairNumber * sizeof(double));
+
+    // Copy the very first and last pairs from the input list
+    itsVeryFirstPair = theList.itsVeryFirstPair;
+    itsVeryLastPair = theList.itsVeryLastPair;
+
+    // 5.10.98/EL <--
+
+    itsMaxPairNumber = theList.itsMaxPairNumber;
+    itsIncrementSize = theList.itsIncrementSize;
+    itsCurrentIndex = theList.itsCurrentIndex;
+    itsCurrentMaxIndex = theList.itsCurrentMaxIndex;
+    itsInputValue = theList.itsInputValue;
+    itsOutputValue = theList.itsOutputValue;
+
+    return *this;
   }
-  else
-    itsOutputInputRatio = new double[theList.itsMaxPairNumber];
-
-  memcpy(
-      itsOutputInputRatio, theList.itsOutputInputRatio, theList.itsMaxPairNumber * sizeof(double));
-
-  // Copy the very first and last pairs from the input list
-  itsVeryFirstPair = theList.itsVeryFirstPair;
-  itsVeryLastPair = theList.itsVeryLastPair;
-
-  // 5.10.98/EL <--
-
-  itsMaxPairNumber = theList.itsMaxPairNumber;
-  itsIncrementSize = theList.itsIncrementSize;
-  itsCurrentIndex = theList.itsCurrentIndex;
-  itsCurrentMaxIndex = theList.itsCurrentMaxIndex;
-  itsInputValue = theList.itsInputValue;
-  itsOutputValue = theList.itsOutputValue;
-
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -278,34 +301,44 @@ NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList
 
 bool NFmiTransformList::operator==(const NFmiTransformList& theList)
 {
-  // NOTE: Currently doesn't check for 'itsOutputInputRatio' equality !
-
-  if (!((itsMaxPairNumber == theList.itsMaxPairNumber) &&
-        (itsIncrementSize == theList.itsIncrementSize) &&
-        (itsCurrentIndex == theList.itsCurrentIndex) &&
-        (itsCurrentMaxIndex == theList.itsCurrentMaxIndex)))
-    return false;
-
-  // No pairs inserted in lists ?
-  // If so, lists can be taken as identical lists
-  if ((!itsFirstPair) && (!theList.itsFirstPair) && (!itsLastPair) && (!theList.itsLastPair))
-    return true;
-
-  // Pairwise list item comparison
-  int ind = 0;
-
-  if (itsFirstPair && theList.itsFirstPair && itsLastPair && theList.itsLastPair)
+  try
   {
-    do
-    {
-      if (!Equal(itsFirstPair[ind], theList.itsFirstPair[ind])) return false;
-      if (!Equal(itsLastPair[ind], theList.itsLastPair[ind])) return false;
-    } while (++ind <= itsCurrentMaxIndex);
-  }
-  else
-    return false;
+    // NOTE: Currently doesn't check for 'itsOutputInputRatio' equality !
 
-  return true;
+    if (!((itsMaxPairNumber == theList.itsMaxPairNumber) &&
+          (itsIncrementSize == theList.itsIncrementSize) &&
+          (itsCurrentIndex == theList.itsCurrentIndex) &&
+          (itsCurrentMaxIndex == theList.itsCurrentMaxIndex)))
+      return false;
+
+    // No pairs inserted in lists ?
+    // If so, lists can be taken as identical lists
+    if ((!itsFirstPair) && (!theList.itsFirstPair) && (!itsLastPair) && (!theList.itsLastPair))
+      return true;
+
+    // Pairwise list item comparison
+    int ind = 0;
+
+    if (itsFirstPair && theList.itsFirstPair && itsLastPair && theList.itsLastPair)
+    {
+      do
+      {
+        if (!Equal(itsFirstPair[ind], theList.itsFirstPair[ind]))
+          return false;
+        if (!Equal(itsLastPair[ind], theList.itsLastPair[ind]))
+          return false;
+      } while (++ind <= itsCurrentMaxIndex);
+    }
+    else
+      return false;
+
+    // koskelam: This point is never reached
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -318,14 +351,22 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
 
 bool NFmiTransformList::Equal(NFmiPoint& p1, NFmiPoint& p2)
 {
-  double diffX, diffY;
+  try
+  {
+    double diffX, diffY;
 
-  diffX = fabs(p1.X() - p2.X());
-  diffY = fabs(p1.Y() - p2.Y());
+    diffX = fabs(p1.X() - p2.X());
+    diffY = fabs(p1.Y() - p2.Y());
 
-  if ((diffX < itsEps.X()) && (diffY < itsEps.Y())) return true;
+    if ((diffX < itsEps.X()) && (diffY < itsEps.Y()))
+      return true;
 
-  return false;
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -334,7 +375,11 @@ bool NFmiTransformList::Equal(NFmiPoint& p1, NFmiPoint& p2)
  */
 // ----------------------------------------------------------------------
 
-void NFmiTransformList::First() { itsCurrentIndex = 0; }
+void NFmiTransformList::First()
+{
+  itsCurrentIndex = 0;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theMaxPairNumber Undocumented
@@ -343,18 +388,25 @@ void NFmiTransformList::First() { itsCurrentIndex = 0; }
 
 void NFmiTransformList::Init(int theMaxPairNumber)
 {
-  First();
-  itsMaxPairNumber = theMaxPairNumber;
-  itsIncrementSize = itsMaxPairNumber;
-  itsCurrentMaxIndex = itsCurrentIndex;
-  itsInputValue = itsOutputValue = kFloatMissing;
-  itsFirstPair = nullptr;
-  itsLastPair = nullptr;
-  itsOutputInputRatio = nullptr;
-  itsPreviousInputRangeIndex = 0;
-  itsPreviousInputValue = itsPreviousOutputValue = kMaxDouble;
-  itsVeryFirstPair = NFmiPoint(kMaxDouble, kMaxDouble);
-  itsVeryLastPair = NFmiPoint(kMinDouble, kMaxDouble);
+  try
+  {
+    First();
+    itsMaxPairNumber = theMaxPairNumber;
+    itsIncrementSize = itsMaxPairNumber;
+    itsCurrentMaxIndex = itsCurrentIndex;
+    itsInputValue = itsOutputValue = kFloatMissing;
+    itsFirstPair = nullptr;
+    itsLastPair = nullptr;
+    itsOutputInputRatio = nullptr;
+    itsPreviousInputRangeIndex = 0;
+    itsPreviousInputValue = itsPreviousOutputValue = kMaxDouble;
+    itsVeryFirstPair = NFmiPoint(kMaxDouble, kMaxDouble);
+    itsVeryLastPair = NFmiPoint(kMinDouble, kMaxDouble);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -366,31 +418,43 @@ void NFmiTransformList::Init(int theMaxPairNumber)
 
 bool NFmiTransformList::Allocate(int theMaxPairNumber)
 {
-  Init(theMaxPairNumber);
-
-  if (itsCurrentIndex >= itsMaxPairNumber)
+  try
   {
-    /* TÄÄ PITÄS TEHDÄ REMALLOCILLA TAI JOLLAIN!!!!
+    Init(theMaxPairNumber);
 
-    // Allocate space for more pair data
-    **/
+    if (itsCurrentIndex >= itsMaxPairNumber)
+    {
+      /* TÄÄ PITÄS TEHDÄ REMALLOCILLA TAI JOLLAIN!!!!
 
-    // Prevent crash in AddDataMapping since itsFirstPair is nullptr
-    throw std::runtime_error("Unable to allocate more memory for transform list");
-    
+      // Allocate space for more pair data
+      **/
+
+      // Prevent crash in AddDataMapping since itsFirstPair is nullptr
+      throw Fmi::Exception(BCP, "Unable to allocate more memory for transform list");
+    }
+    else
+    {
+      if (itsFirstPair)
+        delete[] itsFirstPair;
+
+      itsFirstPair = new NFmiPoint[itsMaxPairNumber];
+
+      if (itsLastPair)
+        delete[] itsLastPair;
+
+      itsLastPair = new NFmiPoint[itsMaxPairNumber];
+
+      if (itsOutputInputRatio)
+        delete[] itsOutputInputRatio;
+
+      itsOutputInputRatio = new double[itsMaxPairNumber];
+
+      return true;
+    }
   }
-  else
+  catch (...)
   {
-    if (itsFirstPair) delete[] itsFirstPair;
-    itsFirstPair = new NFmiPoint[itsMaxPairNumber];
-
-    if (itsLastPair) delete[] itsLastPair;
-    itsLastPair = new NFmiPoint[itsMaxPairNumber];
-
-    if (itsOutputInputRatio) delete[] itsOutputInputRatio;
-    itsOutputInputRatio = new double[itsMaxPairNumber];
-
-    return true;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -404,40 +468,48 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
 
 bool NFmiTransformList::AddDataMapping(const NFmiPoint& firstPair, const NFmiPoint& lastPair)
 {
-  if (itsCurrentIndex >= itsMaxPairNumber) Allocate(itsMaxPairNumber);
+  try
+  {
+    if (itsCurrentIndex >= itsMaxPairNumber)
+      Allocate(itsMaxPairNumber);
 
-  // Create current range [firstPair .. lastPair]
+    // Create current range [firstPair .. lastPair]
 
-  itsFirstPair[itsCurrentIndex] = firstPair;
-  itsLastPair[itsCurrentIndex] = lastPair;
+    itsFirstPair[itsCurrentIndex] = firstPair;
+    itsLastPair[itsCurrentIndex] = lastPair;
 
-  double firstInputValue = firstPair.X();
-  double lastInputValue = lastPair.X();
+    double firstInputValue = firstPair.X();
+    double lastInputValue = lastPair.X();
 
-  double firstOutputValue = firstPair.Y();
-  double lastOutputValue = lastPair.Y();
+    double firstOutputValue = firstPair.Y();
+    double lastOutputValue = lastPair.Y();
 
-  // Update the very first and last data pairs in the list
+    // Update the very first and last data pairs in the list
 
-  if (firstInputValue < itsVeryFirstPair.X())
-    itsVeryFirstPair = NFmiPoint(firstInputValue, firstOutputValue);
+    if (firstInputValue < itsVeryFirstPair.X())
+      itsVeryFirstPair = NFmiPoint(firstInputValue, firstOutputValue);
 
-  if (lastInputValue > itsVeryLastPair.X())
-    itsVeryLastPair = NFmiPoint(lastInputValue, lastOutputValue);
+    if (lastInputValue > itsVeryLastPair.X())
+      itsVeryLastPair = NFmiPoint(lastInputValue, lastOutputValue);
 
-  // Pre-calculate the data mapping constant for the current range  [firstPair .. lastPair].
-  // This constant can be used later on when transforming data values.
+    // Pre-calculate the data mapping constant for the current range  [firstPair .. lastPair].
+    // This constant can be used later on when transforming data values.
 
-  if (lastInputValue - firstInputValue == 0.)
-    itsOutputInputRatio[itsCurrentIndex] = kMaxDouble;
-  else
-    itsOutputInputRatio[itsCurrentIndex] =
-        (lastOutputValue - firstOutputValue) / (lastInputValue - firstInputValue);
+    if (lastInputValue - firstInputValue == 0.)
+      itsOutputInputRatio[itsCurrentIndex] = kMaxDouble;
+    else
+      itsOutputInputRatio[itsCurrentIndex] =
+          (lastOutputValue - firstOutputValue) / (lastInputValue - firstInputValue);
 
-  itsCurrentMaxIndex = itsCurrentIndex;
-  itsCurrentIndex++;
+    itsCurrentMaxIndex = itsCurrentIndex;
+    itsCurrentIndex++;
 
-  return true;
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -450,25 +522,33 @@ bool NFmiTransformList::AddDataMapping(const NFmiPoint& firstPair, const NFmiPoi
 
 double NFmiTransformList::Transform(const double value, int theRangeIndex)
 {
-  // Transforms 'value' into 'itsOutputValue'.
-
-  if (value == itsPreviousInputValue) return itsPreviousOutputValue;
-
-  itsPreviousInputValue = value;  // A new value encountered
-
-  if (theRangeIndex >= 0)
-    itsPreviousInputRangeIndex =
-        theRangeIndex;  // Try to transform the 'value' on the input range 'theRangeIndex'
-  else
-    itsPreviousInputRangeIndex = RangeIndex(value);  // Brute force, then ...
-
-  if (Interpolate(itsPreviousInputRangeIndex, value))
+  try
   {
-    itsPreviousOutputValue = itsOutputValue;
-    return itsOutputValue;  // Input range found in list and interpolated value will be returned
-  }
+    // Transforms 'value' into 'itsOutputValue'.
 
-  return itsOutputValue;
+    if (value == itsPreviousInputValue)
+      return itsPreviousOutputValue;
+
+    itsPreviousInputValue = value;  // A new value encountered
+
+    if (theRangeIndex >= 0)
+      itsPreviousInputRangeIndex =
+          theRangeIndex;  // Try to transform the 'value' on the input range 'theRangeIndex'
+    else
+      itsPreviousInputRangeIndex = RangeIndex(value);  // Brute force, then ...
+
+    if (Interpolate(itsPreviousInputRangeIndex, value))
+    {
+      itsPreviousOutputValue = itsOutputValue;
+      return itsOutputValue;  // Input range found in list and interpolated value will be returned
+    }
+
+    return itsOutputValue;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -481,46 +561,53 @@ double NFmiTransformList::Transform(const double value, int theRangeIndex)
 
 bool NFmiTransformList::Interpolate(const NFmiPoint& firstPair, const NFmiPoint& lastPair)
 {
-  double firstInputValue = firstPair.X();
-  double lastInputValue = lastPair.X();
-
-  double firstOutputValue = firstPair.Y();
-  double lastOutputValue = lastPair.Y();
-
-  double inputValue = itsInputValue;
-
-  if (inputValue <= firstInputValue)
+  try
   {
-    // Clamp value
-    itsOutputValue = firstOutputValue;
+    double firstInputValue = firstPair.X();
+    double lastInputValue = lastPair.X();
 
-    if (inputValue == firstInputValue)
-      return true;  // This is the starting point for input range
-    else
+    double firstOutputValue = firstPair.Y();
+    double lastOutputValue = lastPair.Y();
+
+    double inputValue = itsInputValue;
+
+    if (inputValue <= firstInputValue)
+    {
+      // Clamp value
+      itsOutputValue = firstOutputValue;
+
+      if (inputValue == firstInputValue)
+        return true;  // This is the starting point for input range
+
       return false;  // Outside of input range
-  }
+    }
 
-  if (inputValue >= lastInputValue)
-  {
-    // Clamp value
-    itsOutputValue = lastOutputValue;
+    if (inputValue >= lastInputValue)
+    {
+      // Clamp value
+      itsOutputValue = lastOutputValue;
 
-    if (inputValue == lastInputValue)
-      return true;  // This is the ending point for input range
-    else
+      if (inputValue == lastInputValue)
+        return true;  // This is the ending point for input range
+
       return false;  // Outside of input range
-  }
+    }
 
-  if ((firstInputValue < inputValue) && (inputValue < lastInputValue))
+    if ((firstInputValue < inputValue) && (inputValue < lastInputValue))
+    {
+      // Interpolate
+      itsOutputValue = firstOutputValue +
+                       ((lastOutputValue - firstOutputValue) * (inputValue - firstInputValue)) /
+                           (lastInputValue - firstInputValue);
+      return true;
+    }
+
+    return false;
+  }
+  catch (...)
   {
-    // Interpolate
-    itsOutputValue =
-        firstOutputValue + ((lastOutputValue - firstOutputValue) * (inputValue - firstInputValue)) /
-                               (lastInputValue - firstInputValue);
-    return true;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return false;
 }
 
 // ----------------------------------------------------------------------
@@ -533,44 +620,52 @@ bool NFmiTransformList::Interpolate(const NFmiPoint& firstPair, const NFmiPoint&
 
 bool NFmiTransformList::Interpolate(const int theRangeIndex, double theValue)
 {
-  // Find the sub-range of current NFmiTransformList 'value' belongs to.
-  // This done, linearly interpolate the output value on this sub-range
-
-  if (theRangeIndex < 0) return false;
-
-  itsInputValue = theValue;
-
-  double firstInputValue = itsFirstPair[theRangeIndex].X();
-  double lastInputValue = itsLastPair[theRangeIndex].X();
-
-  double firstOutputValue = itsFirstPair[theRangeIndex].Y();
-  double lastOutputValue = itsLastPair[theRangeIndex].Y();
-
-  double inputValue = itsInputValue;
-
-  if (IsConstantRange(theRangeIndex))
+  try
   {
-    itsOutputValue = firstOutputValue;  // Constant valued output range
-    return true;                        // - no interpolation required
-  }
+    // Find the sub-range of current NFmiTransformList 'value' belongs to.
+    // This done, linearly interpolate the output value on this sub-range
 
-  if (inputValue < firstInputValue)
+    if (theRangeIndex < 0)
+      return false;
+
+    itsInputValue = theValue;
+
+    double firstInputValue = itsFirstPair[theRangeIndex].X();
+    double lastInputValue = itsLastPair[theRangeIndex].X();
+
+    double firstOutputValue = itsFirstPair[theRangeIndex].Y();
+    double lastOutputValue = itsLastPair[theRangeIndex].Y();
+
+    double inputValue = itsInputValue;
+
+    if (IsConstantRange(theRangeIndex))
+    {
+      itsOutputValue = firstOutputValue;  // Constant valued output range
+      return true;                        // - no interpolation required
+    }
+
+    if (inputValue < firstInputValue)
+    {
+      itsOutputValue = firstOutputValue;  // Out of input value range -  clamp input value
+      return true;                        // - no interpolation required
+    }
+
+    if (inputValue > lastInputValue)
+    {
+      itsOutputValue = lastOutputValue;  // Out of input value range -  clamp input value
+      return true;                       // - no interpolation required
+    }
+
+    // Interpolate
+    itsOutputValue =
+        firstOutputValue + itsOutputInputRatio[theRangeIndex] * (inputValue - firstInputValue);
+
+    return true;
+  }
+  catch (...)
   {
-    itsOutputValue = firstOutputValue;  // Out of input value range -  clamp input value
-    return true;                        // - no interpolation required
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  if (inputValue > lastInputValue)
-  {
-    itsOutputValue = lastOutputValue;  // Out of input value range -  clamp input value
-    return true;                       // - no interpolation required
-  }
-
-  // Interpolate
-  itsOutputValue =
-      firstOutputValue + itsOutputInputRatio[theRangeIndex] * (inputValue - firstInputValue);
-
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -582,36 +677,45 @@ bool NFmiTransformList::Interpolate(const int theRangeIndex, double theValue)
 
 int NFmiTransformList::RangeIndex(double theValue)
 {
-  // Finds out the input range number where the input data value 'theValue' belongs to
-
-  itsInputValue = theValue;
-
-  // At first, try to transform the 'value' on the previous time range 'itsPreviousInputRangeIndex'
-  itsPreviousInputRangeIndex =
-      std::min(itsCurrentMaxIndex, std::max(0, itsPreviousInputRangeIndex));
-
-  double firstInputValue = itsFirstPair[itsPreviousInputRangeIndex].X();
-  double lastInputValue = itsLastPair[itsPreviousInputRangeIndex].X();
-
-  if ((firstInputValue <= itsInputValue) && (itsInputValue <= lastInputValue))
-    return itsPreviousInputRangeIndex;
-
-  if (itsInputValue < FirstInputValue())  // Range not found, use lowest range index
-    return 0;
-
-  if (itsInputValue > LastInputValue())  // Range not found, use highest range index
-    return itsCurrentMaxIndex;
-
-  // Okay, brute force, then ...
-  for (int rangeIndex = 0; rangeIndex <= itsCurrentMaxIndex; rangeIndex++)
+  try
   {
-    firstInputValue = itsFirstPair[rangeIndex].X();
-    lastInputValue = itsLastPair[rangeIndex].X();
+    // Finds out the input range number where the input data value 'theValue' belongs to
 
-    if ((firstInputValue <= itsInputValue) && (itsInputValue <= lastInputValue)) return rangeIndex;
+    itsInputValue = theValue;
+
+    // At first, try to transform the 'value' on the previous time range
+    // 'itsPreviousInputRangeIndex'
+    itsPreviousInputRangeIndex =
+        std::min(itsCurrentMaxIndex, std::max(0, itsPreviousInputRangeIndex));
+
+    double firstInputValue = itsFirstPair[itsPreviousInputRangeIndex].X();
+    double lastInputValue = itsLastPair[itsPreviousInputRangeIndex].X();
+
+    if ((firstInputValue <= itsInputValue) && (itsInputValue <= lastInputValue))
+      return itsPreviousInputRangeIndex;
+
+    if (itsInputValue < FirstInputValue())  // Range not found, use lowest range index
+      return 0;
+
+    if (itsInputValue > LastInputValue())  // Range not found, use highest range index
+      return itsCurrentMaxIndex;
+
+    // Okay, brute force, then ...
+    for (int rangeIndex = 0; rangeIndex <= itsCurrentMaxIndex; rangeIndex++)
+    {
+      firstInputValue = itsFirstPair[rangeIndex].X();
+      lastInputValue = itsLastPair[rangeIndex].X();
+
+      if ((firstInputValue <= itsInputValue) && (itsInputValue <= lastInputValue))
+        return rangeIndex;
+    }
+
+    return -1;  // Range not found!
   }
-
-  return -1;  // Range not found!
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -625,19 +729,26 @@ int NFmiTransformList::RangeIndex(double theValue)
 
 std::ostream& NFmiTransformList::Write(std::ostream& file) const
 {
-  file << itsMaxPairNumber << std::endl;
-  file << itsIncrementSize << std::endl;
-  file << itsCurrentIndex << std::endl;
-  file << itsCurrentMaxIndex << std::endl;
-  file << itsInputValue << std::endl;
-  file << itsOutputValue << std::endl << std::endl;
-  for (int i = 0; i < itsMaxPairNumber; i++)
+  try
   {
-    file << itsFirstPair[i];
-    file << itsLastPair[i] << std::endl;
-  }
+    file << itsMaxPairNumber << std::endl;
+    file << itsIncrementSize << std::endl;
+    file << itsCurrentIndex << std::endl;
+    file << itsCurrentMaxIndex << std::endl;
+    file << itsInputValue << std::endl;
+    file << itsOutputValue << std::endl << std::endl;
+    for (int i = 0; i < itsMaxPairNumber; i++)
+    {
+      file << itsFirstPair[i];
+      file << itsLastPair[i] << std::endl;
+    }
 
-  return file;
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -651,35 +762,42 @@ std::ostream& NFmiTransformList::Write(std::ostream& file) const
 
 std::istream& NFmiTransformList::Read(std::istream& file)
 {
-  file >> itsMaxPairNumber;
-  file >> itsIncrementSize;
-  file >> itsCurrentIndex;
-  file >> itsCurrentMaxIndex;
-  file >> itsInputValue;
-  file >> itsOutputValue;
-
-  if (itsFirstPair)
+  try
   {
-    delete[] itsFirstPair;
-    itsFirstPair = nullptr;
-  }
+    file >> itsMaxPairNumber;
+    file >> itsIncrementSize;
+    file >> itsCurrentIndex;
+    file >> itsCurrentMaxIndex;
+    file >> itsInputValue;
+    file >> itsOutputValue;
 
-  if (itsLastPair)
+    if (itsFirstPair)
+    {
+      delete[] itsFirstPair;
+      itsFirstPair = nullptr;
+    }
+
+    if (itsLastPair)
+    {
+      delete[] itsLastPair;
+      itsLastPair = nullptr;
+    }
+
+    itsFirstPair = new NFmiPoint[itsMaxPairNumber];
+    itsLastPair = new NFmiPoint[itsMaxPairNumber];
+
+    for (int i = 0; i < itsMaxPairNumber; i++)
+    {
+      file >> itsFirstPair[i];
+      file >> itsLastPair[i];
+    }
+
+    return file;
+  }
+  catch (...)
   {
-    delete[] itsLastPair;
-    itsLastPair = nullptr;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  itsFirstPair = new NFmiPoint[itsMaxPairNumber];
-  itsLastPair = new NFmiPoint[itsMaxPairNumber];
-
-  for (int i = 0; i < itsMaxPairNumber; i++)
-  {
-    file >> itsFirstPair[i];
-    file >> itsLastPair[i];
-  }
-
-  return file;
 }
 
 // ======================================================================

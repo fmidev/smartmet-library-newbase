@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiFileString.h"
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 
 // ----------------------------------------------------------------------
@@ -40,7 +40,14 @@ NFmiFileString::NFmiFileString() = default;
 
 NFmiFileString::NFmiFileString(const NFmiString &theStr) : NFmiString(theStr)
 {
-  NormalizeDelimiter();
+  try
+  {
+    NormalizeDelimiter();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -50,7 +57,14 @@ NFmiFileString::NFmiFileString(const NFmiString &theStr) : NFmiString(theStr)
 
 NFmiFileString::NFmiFileString(const NFmiFileString &theFileStr) : NFmiString(theFileStr)
 {
-  NormalizeDelimiter();
+  try
+  {
+    NormalizeDelimiter();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 // ----------------------------------------------------------------------
 /*!
@@ -60,21 +74,37 @@ NFmiFileString::NFmiFileString(const NFmiFileString &theFileStr) : NFmiString(th
 
 bool NFmiFileString::HasExtension() const
 {
-  unsigned char find[2] = ".";
+  try
+  {
+    unsigned char find[2] = ".";
 #ifndef UNIX
-  unsigned char slash[2] = "\\";
+    unsigned char slash[2] = "\\";
 #else
-  unsigned char slash[2] = "/";
+    unsigned char slash[2] = "/";
 #endif
 
-  unsigned long lastSlash = SearchLast(slash);
-  return Search(find, std::max(lastSlash, 1ul)) > 0 ? true : false;
+    unsigned long lastSlash = SearchLast(slash);
+    return Search(find, std::max(lastSlash, 1ul)) > 0 ? true : false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 bool NFmiFileString::IsAbsolutePath() const
 {
-  if (fChar[0] == '/' || fChar[0] == '\\' || Device() != NFmiString("")) return true;
-  return false;
+  try
+  {
+    if (fChar[0] == '/' || fChar[0] == '\\' || Device() != NFmiString(""))
+      return true;
+
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -85,14 +115,21 @@ bool NFmiFileString::IsAbsolutePath() const
 
 const NFmiString NFmiFileString::Extension() const
 {
-  unsigned long last;
-  unsigned char find[2] = ".";
+  try
+  {
+    unsigned long last;
+    unsigned char find[2] = ".";
 
-  last = SearchLast(find);
-  if (last)
-    return GetChars(last + 1, GetLen() - last);
-  else
-    return "";  // jos last oli 0, ei löytynyt .-merkkiä  ja ei ole extensiota
+    last = SearchLast(find);
+    if (last)
+      return GetChars(last + 1, GetLen() - last);
+    else
+      return "";  // jos last oli 0, ei löytynyt .-merkkiä  ja ei ole extensiota
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -103,12 +140,19 @@ const NFmiString NFmiFileString::Extension() const
 
 const NFmiString NFmiFileString::FileName() const
 {
-  unsigned long last;
-  unsigned char find[2] = {kFmiDirectorySeparator, '\0'};
+  try
+  {
+    unsigned long last;
+    unsigned char find[2] = {kFmiDirectorySeparator, '\0'};
 
-  last = SearchLast(find);
+    last = SearchLast(find);
 
-  return GetChars(last + 1, GetLen() - last);
+    return GetChars(last + 1, GetLen() - last);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -119,18 +163,26 @@ const NFmiString NFmiFileString::FileName() const
 
 const NFmiString NFmiFileString::Header() const
 {
-  unsigned long first, last;
-  unsigned char find1[2] = {kFmiDirectorySeparator, '\0'};
-  unsigned char find2[2] = ".";
+  try
+  {
+    unsigned long first, last;
+    unsigned char find1[2] = {kFmiDirectorySeparator, '\0'};
+    unsigned char find2[2] = ".";
 
-  first = SearchLast(find1);
+    first = SearchLast(find1);
 
-  last = HasExtension() ? SearchLast(find2) : 0;
-  // last  = SearchLast(find2);
+    last = HasExtension() ? SearchLast(find2) : 0;
+    // last  = SearchLast(find2);
 
-  if (last == 0) last = GetLen() + 1;
+    if (last == 0)
+      last = GetLen() + 1;
 
-  return GetChars(first + 1, last - (first + 1));
+    return GetChars(first + 1, last - (first + 1));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -143,30 +195,37 @@ const NFmiString NFmiFileString::Header() const
 
 const NFmiString NFmiFileString::Path() const
 {
-  unsigned long first, last;
-  unsigned char find[2] = R"(\)";
-  unsigned char find2[2] = "/";
-
-  first = Search(find);
-  last = SearchLast(find);
-
-  if (first == 0 && last == 0)  // kokeillaan vielä kenoja toisin päin
+  try
   {
-    first = Search(find2);
-    last = SearchLast(find2);
-  }
+    unsigned long first, last;
+    unsigned char find[2] = R"(\)";
+    unsigned char find2[2] = "/";
 
-  if (first)
+    first = Search(find);
+    last = SearchLast(find);
+
+    if (first == 0 && last == 0)  // kokeillaan vielä kenoja toisin päin
+    {
+      first = Search(find2);
+      last = SearchLast(find2);
+    }
+
+    if (first)
+    {
+      if (fChar[0] == '.')  // Lasse 23.9.98 suht polku
+        return GetChars(1, last);
+      else if (IsAbsolutePath() == false)  // suhteellinen polku ilman .-merkkiä alussa
+        return GetChars(1, last);
+      else
+        return GetChars(first, (last + 1) - first);
+    }
+
+    return NFmiString();
+  }
+  catch (...)
   {
-    if (fChar[0] == '.')  // Lasse 23.9.98 suht polku
-      return GetChars(1, last);
-    else if (IsAbsolutePath() == false)  // suhteellinen polku ilman .-merkkiä alussa
-      return GetChars(1, last);
-    else
-      return GetChars(first, (last + 1) - first);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return NFmiString();
 }
 
 // ----------------------------------------------------------------------
@@ -177,18 +236,26 @@ const NFmiString NFmiFileString::Path() const
 
 const NFmiString NFmiFileString::Device() const
 {
+  try
+  {
 #ifdef UNIX
-  return NFmiString();  // linux/unix/mac ei ole devicea, joten palautetaan tyhjä
-#else                   // windowsissa on device
-  unsigned long last;
-  unsigned char find[2] = ":";
+    return NFmiString();  // linux/unix/mac ei ole devicea, joten palautetaan tyhjä
+#else                     // windowsissa on device
+    unsigned long last;
+    unsigned char find[2] = ":";
 
-  last = Search(find);
+    last = Search(find);
 
-  if (last) return GetChars(1, last);
+    if (last)
+      return GetChars(1, last);
 
-  return NFmiString();
+    return NFmiString();
 #endif
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -199,29 +266,36 @@ const NFmiString NFmiFileString::Device() const
 
 const NFmiString NFmiFileString::PathWithoutLastDirectory()
 {
-  unsigned long first, last, nextLast, pos;
-  unsigned char find[2] = {kFmiDirectorySeparator, '\0'};
-
-  first = Search(find);
-  last = first;
-  nextLast = last;
-  pos = Search(find, first + 1);
-  while (pos > 0)
+  try
   {
+    unsigned long first, last, nextLast, pos;
+    unsigned char find[2] = {kFmiDirectorySeparator, '\0'};
+
+    first = Search(find);
+    last = first;
     nextLast = last;
-    last = pos;
-    pos = Search(find, ++pos);
-  }
+    pos = Search(find, first + 1);
+    while (pos > 0)
+    {
+      nextLast = last;
+      last = pos;
+      pos = Search(find, ++pos);
+    }
 
-  if (first)
+    if (first)
+    {
+      if (fChar[0] == '.')
+        return GetChars(1, nextLast);
+      else
+        return GetChars(first, (nextLast + 1) - first);
+    }
+
+    return NFmiString();
+  }
+  catch (...)
   {
-    if (fChar[0] == '.')
-      return GetChars(1, nextLast);
-    else
-      return GetChars(first, (nextLast + 1) - first);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-
-  return NFmiString();
 }
 
 // ----------------------------------------------------------------------
@@ -232,24 +306,31 @@ const NFmiString NFmiFileString::PathWithoutLastDirectory()
 
 const NFmiString NFmiFileString::Directory() const
 {
-  unsigned long first, last;
-  unsigned char backSlash[2] = {kFmiDirectorySeparator, '\0'};
-
-  unsigned long pos = 1;
-  pos = Search(backSlash, pos);
-  first = pos;
-  last = pos;
-  pos = Search(backSlash, pos);
-  while (pos > 0)
+  try
   {
-    first = last;
+    unsigned long first, last;
+    unsigned char backSlash[2] = {kFmiDirectorySeparator, '\0'};
+
+    unsigned long pos = 1;
+    pos = Search(backSlash, pos);
+    first = pos;
     last = pos;
-    pos = Search(backSlash, ++pos);
+    pos = Search(backSlash, pos);
+    while (pos > 0)
+    {
+      first = last;
+      last = pos;
+      pos = Search(backSlash, ++pos);
+    }
+    if (last > first)
+      return GetChars(first + 1, last - (first + 1));
+    else
+      return NFmiString();
   }
-  if (last > first)
-    return GetChars(first + 1, last - (first + 1));
-  else
-    return NFmiString();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -260,12 +341,19 @@ const NFmiString NFmiFileString::Directory() const
 
 void NFmiFileString::NormalizeDelimiter()
 {
+  try
+  {
 // 31.8.98 Lehtiohjelmassa on ainakin tarvetta/LW
 #ifndef UNIX
-  unsigned char slash[2] = "/";
-  unsigned char backSlash[2] = "\\";
-  ReplaceChars(slash, backSlash);
+    unsigned char slash[2] = "/";
+    unsigned char backSlash[2] = "\\";
+    ReplaceChars(slash, backSlash);
 #endif
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -276,19 +364,26 @@ void NFmiFileString::NormalizeDelimiter()
 
 void NFmiFileString::AddDirectory(const NFmiString &theDirectory)
 {
-  NFmiString newStr(40);
-
-  newStr = Device();
-  newStr += Path();
-  newStr += theDirectory;
-  newStr += kFmiDirectorySeparator;
-  newStr += Header();
-  if (HasExtension())
+  try
   {
-    newStr += NFmiString(".");
-    newStr += Extension();
+    NFmiString newStr(40);
+
+    newStr = Device();
+    newStr += Path();
+    newStr += theDirectory;
+    newStr += kFmiDirectorySeparator;
+    newStr += Header();
+    if (HasExtension())
+    {
+      newStr += NFmiString(".");
+      newStr += Extension();
+    }
+    *this = newStr;
   }
-  *this = newStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -299,17 +394,24 @@ void NFmiFileString::AddDirectory(const NFmiString &theDirectory)
 
 void NFmiFileString::DeleteDirectory()
 {
-  NFmiString newStr(40);
-
-  newStr = Device();
-  newStr += PathWithoutLastDirectory();
-  newStr += Header();
-  if (HasExtension())
+  try
   {
-    newStr += NFmiString(".");
-    newStr += Extension();
+    NFmiString newStr(40);
+
+    newStr = Device();
+    newStr += PathWithoutLastDirectory();
+    newStr += Header();
+    if (HasExtension())
+    {
+      newStr += NFmiString(".");
+      newStr += Extension();
+    }
+    *this = newStr;
   }
-  *this = newStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -320,19 +422,26 @@ void NFmiFileString::DeleteDirectory()
 
 void NFmiFileString::ReplaceDirectory(const NFmiString &theDirectory)
 {
-  NFmiString newStr(60);
-
-  newStr = Device();
-  newStr += PathWithoutLastDirectory();
-  newStr += theDirectory;
-  newStr += kFmiDirectorySeparator;
-  newStr += Header();
-  if (HasExtension())
+  try
   {
-    newStr += NFmiString(".");
-    newStr += Extension();
+    NFmiString newStr(60);
+
+    newStr = Device();
+    newStr += PathWithoutLastDirectory();
+    newStr += theDirectory;
+    newStr += kFmiDirectorySeparator;
+    newStr += Header();
+    if (HasExtension())
+    {
+      newStr += NFmiString(".");
+      newStr += Extension();
+    }
+    *this = newStr;
   }
-  *this = newStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -343,14 +452,21 @@ void NFmiFileString::ReplaceDirectory(const NFmiString &theDirectory)
 
 void NFmiFileString::Extension(const char *theExt)
 {
-  NFmiString newStr(40);
+  try
+  {
+    NFmiString newStr(40);
 
-  newStr = Device();
-  newStr += Path();
-  newStr += Header();
-  newStr += ".";
-  newStr += theExt;
-  *this = newStr;
+    newStr = Device();
+    newStr += Path();
+    newStr += Header();
+    newStr += ".";
+    newStr += theExt;
+    *this = newStr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -361,7 +477,14 @@ void NFmiFileString::Extension(const char *theExt)
 
 void NFmiFileString::FileName(const NFmiString &theExtension)
 {
-  FileName(static_cast<char *>(theExtension));
+  try
+  {
+    FileName(static_cast<char *>(theExtension));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -372,12 +495,19 @@ void NFmiFileString::FileName(const NFmiString &theExtension)
 
 void NFmiFileString::FileName(const char *theFileName)
 {
-  NFmiString newStr(40);
+  try
+  {
+    NFmiString newStr(40);
 
-  newStr = Device();
-  newStr += Path();
-  newStr += theFileName;
-  *this = newStr;
+    newStr = Device();
+    newStr += Path();
+    newStr += theFileName;
+    *this = newStr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -386,20 +516,38 @@ void NFmiFileString::FileName(const char *theFileName)
  */
 // ----------------------------------------------------------------------
 
-void NFmiFileString::Header(const NFmiString &theExtension) { Header(theExtension.CharPtr()); }
+void NFmiFileString::Header(const NFmiString &theExtension)
+{
+  try
+  {
+    Header(theExtension.CharPtr());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 void NFmiFileString::Header(const char *theHeader)
 {
-  NFmiString newStr(40);
-
-  newStr = Device();
-  newStr += Path();
-  newStr += theHeader;
-  if (HasExtension())
+  try
   {
-    newStr += ".";
-    newStr += Extension();
+    NFmiString newStr(40);
+
+    newStr = Device();
+    newStr += Path();
+    newStr += theHeader;
+    if (HasExtension())
+    {
+      newStr += ".";
+      newStr += Extension();
+    }
+    *this = newStr;
   }
-  *this = newStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -410,14 +558,22 @@ void NFmiFileString::Header(const char *theHeader)
 
 void NFmiFileString::Path(const char *thePath)
 {
-  NFmiString newStr(40);
+  try
+  {
+    NFmiString newStr(40);
 
-  newStr = Device();
-  newStr += thePath;
-  if (newStr.GetChars(newStr.GetLen(), 1) != NFmiString(kFmiDirectorySeparator))
-    newStr += kFmiDirectorySeparator;
-  newStr += FileName();
-  *this = newStr;
+    newStr = Device();
+    newStr += thePath;
+    if (newStr.GetChars(newStr.GetLen(), 1) != NFmiString(kFmiDirectorySeparator))
+      newStr += kFmiDirectorySeparator;
+
+    newStr += FileName();
+    *this = newStr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -428,15 +584,32 @@ void NFmiFileString::Path(const char *thePath)
 
 void NFmiFileString::Device(const char *theDevice)
 {
-  NFmiString newStr(40);
+  try
+  {
+    NFmiString newStr(40);
 
-  newStr = theDevice;
-  newStr += Path();
-  newStr += FileName();
-  *this = newStr;
+    newStr = theDevice;
+    newStr += Path();
+    newStr += FileName();
+    *this = newStr;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
-void NFmiFileString::Device(const NFmiString &theExtension) { Device(theExtension.CharPtr()); }
+void NFmiFileString::Device(const NFmiString &theExtension)
+{
+  try
+  {
+    Device(theExtension.CharPtr());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 // ----------------------------------------------------------------------
 /*!
  *
@@ -445,11 +618,18 @@ void NFmiFileString::Device(const NFmiString &theExtension) { Device(theExtensio
 
 void NFmiFileString::ChangeScandinavian()
 {
-  NFmiString skand("äöåÄÖÅ");
-  NFmiString notSkand("aoaAOA");
-  for (unsigned int ind = 1; ind <= skand.GetLen(); ind++)
-    ReplaceChars(reinterpret_cast<unsigned char *>(skand.GetCharsPtr(ind, 1)),
-                 reinterpret_cast<unsigned char *>(notSkand.GetCharsPtr(ind, 1)));
+  try
+  {
+    NFmiString skand("äöåÄÖÅ");
+    NFmiString notSkand("aoaAOA");
+    for (unsigned int ind = 1; ind <= skand.GetLen(); ind++)
+      ReplaceChars(reinterpret_cast<unsigned char *>(skand.GetCharsPtr(ind, 1)),
+                   reinterpret_cast<unsigned char *>(notSkand.GetCharsPtr(ind, 1)));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

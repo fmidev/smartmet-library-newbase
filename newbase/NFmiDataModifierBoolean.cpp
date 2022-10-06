@@ -52,7 +52,10 @@ NFmiDataModifierBoolean::NFmiDataModifierBoolean(FmiModifierBoolOperations theCo
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierBoolean::operator bool() { return BooleanValue(); }
+NFmiDataModifierBoolean::operator bool()
+{
+  return BooleanValue();
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

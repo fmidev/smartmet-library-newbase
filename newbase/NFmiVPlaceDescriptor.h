@@ -66,7 +66,11 @@ class NFmiVPlaceDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels() const { return itsLevelBag; }
+inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels() const
+{
+  return itsLevelBag;
+}
+
 // ----------------------------------------------------------------------
 /*!
  *
@@ -75,7 +79,8 @@ inline const NFmiLevelBag *NFmiVPlaceDescriptor::Levels() const { return itsLeve
 
 inline void NFmiVPlaceDescriptor::Reset()
 {
-  if (itsLevelBag) itsLevelBag->Reset();
+  if (itsLevelBag)
+    itsLevelBag->Reset();
 }
 
 // ----------------------------------------------------------------------
@@ -84,21 +89,33 @@ inline void NFmiVPlaceDescriptor::Reset()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiVPlaceDescriptor::IsStep() const { return itsLevelBag->IsStep(); }
+inline bool NFmiVPlaceDescriptor::IsStep() const
+{
+  return itsLevelBag->IsStep();
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiVPlaceDescriptor::IsActive() const { return (itsActivity[Index()]); }
+inline bool NFmiVPlaceDescriptor::IsActive() const
+{
+  return (itsActivity[Index()]);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiVPlaceDescriptor::ClassName() const { return "NFmiVPlaceDescriptor"; }
+inline const char *NFmiVPlaceDescriptor::ClassName() const
+{
+  return "NFmiVPlaceDescriptor";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiVPlaceDescriptor

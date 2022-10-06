@@ -17,13 +17,11 @@
 // ======================================================================
 
 #include "NFmiTime.h"
-
 #include "NFmiLocation.h"
 #include "NFmiSettings.h"
 #include "NFmiValueString.h"
-
+#include <macgyver/Exception.h>
 #include <sys/timeb.h>
-
 #include <ctime>
 #include <iostream>
 
@@ -287,26 +285,33 @@ const char *reldays[] =  // OBS also in NFmiPressTime ??
 NFmiTime::NFmiTime(const long datePart, const long timePart)
     : NFmiStaticTime(), itsZoneDifferenceHour()
 {
-  SetZoneDifferenceHour();
-  _setCurrent();
-
-  if (datePart <= 10)
-    ChangeByDays(static_cast<short>(
-        datePart));  // Persa lisÃ¤si shortin jottei tulisi varoituksia kÃ¤Ã¤ntÃ¤essÃ¤
-  else
+  try
   {
-    if (datePart > 101)
-      SetDate(static_cast<short>(datePart / 10000),
-              static_cast<short>((datePart / 100) % 100),
-              static_cast<short>(datePart % 100));
-  }
+    SetZoneDifferenceHour();
+    _setCurrent();
 
-  if (timePart < 24)
-    SetTime(static_cast<short>(timePart), 0, 0);
-  else
-    SetTime(static_cast<short>(timePart / 100),
-            static_cast<short>(timePart % 100),
-            static_cast<short>(0));
+    if (datePart <= 10)
+      ChangeByDays(static_cast<short>(
+          datePart));  // Persa lisÃ¤si shortin jottei tulisi varoituksia kÃ¤Ã¤ntÃ¤essÃ¤
+    else
+    {
+      if (datePart > 101)
+        SetDate(static_cast<short>(datePart / 10000),
+                static_cast<short>((datePart / 100) % 100),
+                static_cast<short>(datePart % 100));
+    }
+
+    if (timePart < 24)
+      SetTime(static_cast<short>(timePart), 0, 0);
+    else
+      SetTime(static_cast<short>(timePart / 100),
+              static_cast<short>(timePart % 100),
+              static_cast<short>(0));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -319,7 +324,14 @@ NFmiTime::NFmiTime(const long datePart, const long timePart)
 
 NFmiTime::NFmiTime(time_t theTime) : NFmiStaticTime(theTime, true), itsZoneDifferenceHour()
 {
-  SetZoneDifferenceHour();
+  try
+  {
+    SetZoneDifferenceHour();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -329,25 +341,40 @@ NFmiTime::NFmiTime(time_t theTime) : NFmiStaticTime(theTime, true), itsZoneDiffe
 // ----------------------------------------------------------------------
 
 NFmiTime::NFmiTime(const boost::posix_time::ptime &thePosixTime)
-    : NFmiStaticTime(static_cast<short>(thePosixTime.date().year()),
-                     static_cast<short>(thePosixTime.date().month()),
-                     static_cast<short>(thePosixTime.date().day()),
-                     static_cast<short>(thePosixTime.time_of_day().hours()),
-                     static_cast<short>(thePosixTime.time_of_day().minutes()),
-                     static_cast<short>(thePosixTime.time_of_day().seconds())),
-      itsZoneDifferenceHour()
+    : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
-  SetZoneDifferenceHour();
+  try
+  {
+    // Use these accessors only once for speed. Hence the fixed dummy time above.
+    auto d = thePosixTime.date();
+    auto t = thePosixTime.time_of_day();
+
+    SetDate(d.year(), d.month(), d.day());
+    SetTime(t.hours(), t.minutes(), t.seconds());
+
+    SetZoneDifferenceHour();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 NFmiTime &NFmiTime::operator=(const NFmiTime &theTime)
 {
-  if (this != &theTime)
+  try
   {
-    NFmiStaticTime::operator=(theTime);
-    itsZoneDifferenceHour = theTime.itsZoneDifferenceHour;
+    if (this != &theTime)
+    {
+      NFmiStaticTime::operator=(theTime);
+      itsZoneDifferenceHour = theTime.itsZoneDifferenceHour;
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -357,121 +384,138 @@ NFmiTime &NFmiTime::operator=(const NFmiTime &theTime)
 // ----------------------------------------------------------------------
 
 NFmiTime::NFmiTime(const boost::local_time::local_date_time &theLocalTime)
-    : NFmiStaticTime(static_cast<short>(theLocalTime.date().year()),
-                     static_cast<short>(theLocalTime.date().month()),
-                     static_cast<short>(theLocalTime.date().day()),
-                     static_cast<short>(theLocalTime.time_of_day().hours()),
-                     static_cast<short>(theLocalTime.time_of_day().minutes()),
-                     static_cast<short>(theLocalTime.time_of_day().seconds())),
-      itsZoneDifferenceHour()
+    : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
-  boost::posix_time::time_duration offset = theLocalTime.zone()->base_utc_offset();
-  if (theLocalTime.is_dst()) offset += theLocalTime.zone()->dst_offset();
-  itsZoneDifferenceHour = offset.hours();
+  try
+  {
+    // Use these accessors only once for speed. Hence the fixed dummy time above.
+    auto d = theLocalTime.date();
+    auto t = theLocalTime.time_of_day();
+
+    SetDate(d.year(), d.month(), d.day());
+    SetTime(t.hours(), t.minutes(), t.seconds());
+
+    boost::posix_time::time_duration offset = theLocalTime.zone()->base_utc_offset();
+    if (theLocalTime.is_dst())
+      offset += theLocalTime.zone()->dst_offset();
+
+    itsZoneDifferenceHour = offset.hours();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 void NFmiTime::Init(const FmiLanguage theLanguage)
 {
-  // Check if localized strings are defined
-  std::string baseWords = "MetEditor::Dictionary::";
+  try
+  {
+    // Check if localized strings are defined
+    std::string baseWords = "MetEditor::Dictionary::";
 
-  // Read localized weekday strings
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_MONDAY))
-  {
-    weekdayStrings[0] = GetDictionaryString(DICT_WEEKDAY_MONDAY);
-    weekdays[(theLanguage - 1) * 7 + 0] = weekdayStrings[0].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_TUESDAY))
-  {
-    weekdayStrings[1] = GetDictionaryString(DICT_WEEKDAY_TUESDAY);
-    weekdays[(theLanguage - 1) * 7 + 1] = weekdayStrings[1].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_WEDNESDAY))
-  {
-    weekdayStrings[2] = GetDictionaryString(DICT_WEEKDAY_WEDNESDAY);
-    weekdays[(theLanguage - 1) * 7 + 2] = weekdayStrings[2].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_THURSDAY))
-  {
-    weekdayStrings[3] = GetDictionaryString(DICT_WEEKDAY_THURSDAY);
-    weekdays[(theLanguage - 1) * 7 + 3] = weekdayStrings[3].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_FRIDAY))
-  {
-    weekdayStrings[4] = GetDictionaryString(DICT_WEEKDAY_FRIDAY);
-    weekdays[(theLanguage - 1) * 7 + 4] = weekdayStrings[4].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_SATURDAY))
-  {
-    weekdayStrings[5] = GetDictionaryString(DICT_WEEKDAY_SATURDAY);
-    weekdays[(theLanguage - 1) * 7 + 5] = weekdayStrings[5].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_SUNDAY))
-  {
-    weekdayStrings[6] = GetDictionaryString(DICT_WEEKDAY_SUNDAY);
-    weekdays[(theLanguage - 1) * 7 + 6] = weekdayStrings[6].c_str();
-  }
+    // Read localized weekday strings
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_MONDAY))
+    {
+      weekdayStrings[0] = GetDictionaryString(DICT_WEEKDAY_MONDAY);
+      weekdays[(theLanguage - 1) * 7 + 0] = weekdayStrings[0].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_TUESDAY))
+    {
+      weekdayStrings[1] = GetDictionaryString(DICT_WEEKDAY_TUESDAY);
+      weekdays[(theLanguage - 1) * 7 + 1] = weekdayStrings[1].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_WEDNESDAY))
+    {
+      weekdayStrings[2] = GetDictionaryString(DICT_WEEKDAY_WEDNESDAY);
+      weekdays[(theLanguage - 1) * 7 + 2] = weekdayStrings[2].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_THURSDAY))
+    {
+      weekdayStrings[3] = GetDictionaryString(DICT_WEEKDAY_THURSDAY);
+      weekdays[(theLanguage - 1) * 7 + 3] = weekdayStrings[3].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_FRIDAY))
+    {
+      weekdayStrings[4] = GetDictionaryString(DICT_WEEKDAY_FRIDAY);
+      weekdays[(theLanguage - 1) * 7 + 4] = weekdayStrings[4].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_SATURDAY))
+    {
+      weekdayStrings[5] = GetDictionaryString(DICT_WEEKDAY_SATURDAY);
+      weekdays[(theLanguage - 1) * 7 + 5] = weekdayStrings[5].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_WEEKDAY_SUNDAY))
+    {
+      weekdayStrings[6] = GetDictionaryString(DICT_WEEKDAY_SUNDAY);
+      weekdays[(theLanguage - 1) * 7 + 6] = weekdayStrings[6].c_str();
+    }
 
-  // Read localized month strings
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JANUARY))
-  {
-    monthStrings[0] = GetDictionaryString(DICT_MONTH_JANUARY);
-    months[(theLanguage - 1) * 12 + 0] = monthStrings[0].c_str();
+    // Read localized month strings
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JANUARY))
+    {
+      monthStrings[0] = GetDictionaryString(DICT_MONTH_JANUARY);
+      months[(theLanguage - 1) * 12 + 0] = monthStrings[0].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_FEBRUARY))
+    {
+      monthStrings[1] = GetDictionaryString(DICT_MONTH_FEBRUARY);
+      months[(theLanguage - 1) * 12 + 1] = monthStrings[1].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_MARCH))
+    {
+      monthStrings[2] = GetDictionaryString(DICT_MONTH_MARCH);
+      months[(theLanguage - 1) * 12 + 2] = monthStrings[2].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_APRIL))
+    {
+      monthStrings[3] = GetDictionaryString(DICT_MONTH_APRIL);
+      months[(theLanguage - 1) * 12 + 3] = monthStrings[3].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_MAY))
+    {
+      monthStrings[4] = GetDictionaryString(DICT_MONTH_MAY);
+      months[(theLanguage - 1) * 12 + 4] = monthStrings[4].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JUNE))
+    {
+      monthStrings[5] = GetDictionaryString(DICT_MONTH_JUNE);
+      months[(theLanguage - 1) * 12 + 5] = monthStrings[5].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JULY))
+    {
+      monthStrings[6] = GetDictionaryString(DICT_MONTH_JULY);
+      months[(theLanguage - 1) * 12 + 6] = monthStrings[6].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_AUGUST))
+    {
+      monthStrings[7] = GetDictionaryString(DICT_MONTH_AUGUST);
+      months[(theLanguage - 1) * 12 + 7] = monthStrings[7].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_SEPTEMPER))
+    {
+      monthStrings[8] = GetDictionaryString(DICT_MONTH_SEPTEMPER);
+      months[(theLanguage - 1) * 12 + 8] = monthStrings[8].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_OCTOBER))
+    {
+      monthStrings[9] = GetDictionaryString(DICT_MONTH_OCTOBER);
+      months[(theLanguage - 1) * 12 + 9] = monthStrings[9].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_NOVEMBER))
+    {
+      monthStrings[10] = GetDictionaryString(DICT_MONTH_NOVEMBER);
+      months[(theLanguage - 1) * 12 + 10] = monthStrings[10].c_str();
+    }
+    if (NFmiSettings::IsSet(baseWords + DICT_MONTH_DECEMBER))
+    {
+      monthStrings[11] = GetDictionaryString(DICT_MONTH_DECEMBER);
+      months[(theLanguage - 1) * 12 + 11] = monthStrings[11].c_str();
+    }
   }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_FEBRUARY))
+  catch (...)
   {
-    monthStrings[1] = GetDictionaryString(DICT_MONTH_FEBRUARY);
-    months[(theLanguage - 1) * 12 + 1] = monthStrings[1].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_MARCH))
-  {
-    monthStrings[2] = GetDictionaryString(DICT_MONTH_MARCH);
-    months[(theLanguage - 1) * 12 + 2] = monthStrings[2].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_APRIL))
-  {
-    monthStrings[3] = GetDictionaryString(DICT_MONTH_APRIL);
-    months[(theLanguage - 1) * 12 + 3] = monthStrings[3].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_MAY))
-  {
-    monthStrings[4] = GetDictionaryString(DICT_MONTH_MAY);
-    months[(theLanguage - 1) * 12 + 4] = monthStrings[4].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JUNE))
-  {
-    monthStrings[5] = GetDictionaryString(DICT_MONTH_JUNE);
-    months[(theLanguage - 1) * 12 + 5] = monthStrings[5].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_JULY))
-  {
-    monthStrings[6] = GetDictionaryString(DICT_MONTH_JULY);
-    months[(theLanguage - 1) * 12 + 6] = monthStrings[6].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_AUGUST))
-  {
-    monthStrings[7] = GetDictionaryString(DICT_MONTH_AUGUST);
-    months[(theLanguage - 1) * 12 + 7] = monthStrings[7].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_SEPTEMPER))
-  {
-    monthStrings[8] = GetDictionaryString(DICT_MONTH_SEPTEMPER);
-    months[(theLanguage - 1) * 12 + 8] = monthStrings[8].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_OCTOBER))
-  {
-    monthStrings[9] = GetDictionaryString(DICT_MONTH_OCTOBER);
-    months[(theLanguage - 1) * 12 + 9] = monthStrings[9].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_NOVEMBER))
-  {
-    monthStrings[10] = GetDictionaryString(DICT_MONTH_NOVEMBER);
-    months[(theLanguage - 1) * 12 + 10] = monthStrings[10].c_str();
-  }
-  if (NFmiSettings::IsSet(baseWords + DICT_MONTH_DECEMBER))
-  {
-    monthStrings[11] = GetDictionaryString(DICT_MONTH_DECEMBER);
-    months[(theLanguage - 1) * 12 + 11] = monthStrings[11].c_str();
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -483,18 +527,25 @@ void NFmiTime::Init(const FmiLanguage theLanguage)
 
 void NFmiTime::ChangeBySeconds(long seconds)
 {
-  long theSeconds = seconds + GetSec();
-  int secLeft = theSeconds % 60;
+  try
+  {
+    long theSeconds = seconds + GetSec();
+    int secLeft = theSeconds % 60;
 
-  if (secLeft >= 0)
-  {
-    ChangeByMinutes(theSeconds / 60);
-    SetSec(static_cast<short>(secLeft));
+    if (secLeft >= 0)
+    {
+      ChangeByMinutes(theSeconds / 60);
+      SetSec(static_cast<short>(secLeft));
+    }
+    else  // if(secLeft<0)
+    {
+      ChangeByMinutes(theSeconds / 60 - 1);
+      SetSec(static_cast<short>(secLeft + 60));
+    }
   }
-  else  // if(secLeft<0)
+  catch (...)
   {
-    ChangeByMinutes(theSeconds / 60 - 1);
-    SetSec(static_cast<short>(secLeft + 60));
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -506,10 +557,18 @@ void NFmiTime::ChangeBySeconds(long seconds)
 
 short NFmiTime::GetWeekday() const
 {
-  NFmiTime Sunday(
-      static_cast<short>(1830), static_cast<short>(1), static_cast<short>(4));  // toimiikohan?????
+  try
+  {
+    NFmiTime Sunday(static_cast<short>(1830),
+                    static_cast<short>(1),
+                    static_cast<short>(4));  // toimiikohan?????
 
-  return static_cast<short>(1 + DifferenceInDays(Sunday) % 7);
+    return static_cast<short>(1 + DifferenceInDays(Sunday) % 7);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -521,7 +580,14 @@ short NFmiTime::GetWeekday() const
 
 const NFmiString NFmiTime::MonthName(const FmiLanguage theLanguage) const
 {
-  return NFmiString(months[(theLanguage - 1) * 12 + GetMonth() - 1]);
+  try
+  {
+    return NFmiString(months[(theLanguage - 1) * 12 + GetMonth() - 1]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -533,8 +599,15 @@ const NFmiString NFmiTime::MonthName(const FmiLanguage theLanguage) const
 
 const NFmiString NFmiTime::Weekday(const FmiLanguage theLanguage) const
 {
-  // TODO JL: tÃ¤tÃ¤ kÃ¤ytetÃ¤Ã¤n datan latauksessa
-  return NFmiString(weekdays[(theLanguage - 1) * 7 + GetWeekday() - 1]);
+  try
+  {
+    // TODO JL: tÃ¤tÃ¤ kÃ¤ytetÃ¤Ã¤n datan latauksessa
+    return NFmiString(weekdays[(theLanguage - 1) * 7 + GetWeekday() - 1]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -543,7 +616,18 @@ const NFmiString NFmiTime::Weekday(const FmiLanguage theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-void NFmiTime::PrintWeekday() const { std::cout << weekdays[GetWeekday() - 1]; }
+void NFmiTime::PrintWeekday() const
+{
+  try
+  {
+    std::cout << weekdays[GetWeekday() - 1];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Returns time in minutes since 01.01.2001 00:00
@@ -561,15 +645,22 @@ void NFmiTime::PrintWeekday() const { std::cout << weekdays[GetWeekday() - 1]; }
 
 long NFmiTime::GetCompareValue() const
 {
-  long a = (14 - GetMonth()) / 12;
-  long y = GetYear() + 4800 - a;
-  long m = GetMonth() + 12 * a - 3;
-  long day = GetDay() + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045;
+  try
+  {
+    long a = (14 - GetMonth()) / 12;
+    long y = GetYear() + 4800 - a;
+    long m = GetMonth() + 12 * a - 3;
+    long day = GetDay() + (153 * m + 2) / 5 + 365 * y + y / 4 - y / 100 + y / 400 - 32045;
 
-  // 1.1.2002 00:00 = Gregorian day 2452276
+    // 1.1.2002 00:00 = Gregorian day 2452276
 
-  long result = (day - 2452276) * 24 * 60 + 60 * GetHour() + GetMin();
-  return result;
+    long result = (day - 2452276) * 24 * 60 + 60 * GetHour() + GetMin();
+    return result;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -580,45 +671,52 @@ long NFmiTime::GetCompareValue() const
 
 void NFmiTime::DecodeCompareValue(long aCompareValue)
 {
-  long d = aCompareValue;
-
-  int min = d % 60;
-  d /= 60;
-  int hour = d % 24;
-  d /= 24;
-
-  if (min < 0)
+  try
   {
-    min += 60;
-    --hour;
-  }
-  if (hour < 0)
-  {
-    hour += 24;
-    --d;
-  }
+    long d = aCompareValue;
 
-  d += 731156;
-  long t = (((4 * (d + 36525)) / 146097) | 0) - 1;
-  int y = 100 * t;
-  d -= 36524 * t + (t >> 2);
-  t = (((4 * (d + 366)) / 1461) | 0) - 1;
-  y += t;
-  d -= 365 * t + (t >> 2);
-  int m = ((5 * d + 2) / 153) | 0;
-  d -= (((2 + m * 153) / 5) | 0);
-  if (m > 9)
-  {
-    m -= 12;
-    y++;
-  }
+    int min = d % 60;
+    d /= 60;
+    int hour = d % 24;
+    d /= 24;
 
-  SetYear(static_cast<short>(y));
-  SetMonth(static_cast<short>(m + 3));
-  SetDay(static_cast<short>(d + 1));
-  SetMin(static_cast<short>(min));
-  SetHour(static_cast<short>(hour));
-  SetSec(0);
+    if (min < 0)
+    {
+      min += 60;
+      --hour;
+    }
+    if (hour < 0)
+    {
+      hour += 24;
+      --d;
+    }
+
+    d += 731156;
+    long t = (((4 * (d + 36525)) / 146097) | 0) - 1;
+    int y = 100 * t;
+    d -= 36524 * t + (t >> 2);
+    t = (((4 * (d + 366)) / 1461) | 0) - 1;
+    y += t;
+    d -= 365 * t + (t >> 2);
+    int m = ((5 * d + 2) / 153) | 0;
+    d -= (((2 + m * 153) / 5) | 0);
+    if (m > 9)
+    {
+      m -= 12;
+      y++;
+    }
+
+    SetYear(static_cast<short>(y));
+    SetMonth(static_cast<short>(m + 3));
+    SetDay(static_cast<short>(d + 1));
+    SetMin(static_cast<short>(min));
+    SetHour(static_cast<short>(hour));
+    SetSec(0);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -630,14 +728,23 @@ void NFmiTime::DecodeCompareValue(long aCompareValue)
 
 short NFmiTime::DaysInYear(const short aYear)
 {
-  if (aYear % 4 != 0)
-    return 365;
-  else if (aYear % 400 == 0)
+  try
+  {
+    if (aYear % 4 != 0)
+      return 365;
+
+    if (aYear % 400 == 0)
+      return 366;
+
+    if (aYear % 100 == 0)
+      return 365;
+
     return 366;
-  else if (aYear % 100 == 0)
-    return 365;
-  else
-    return 366;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -650,10 +757,17 @@ short NFmiTime::DaysInYear(const short aYear)
 
 short NFmiTime::DaysInMonth(const short aMonth, const short aYear)
 {
-  if (aMonth == 2)
-    return static_cast<short>(monthLength[1] + DaysInYear(aYear) - 365);
-  else
+  try
+  {
+    if (aMonth == 2)
+      return static_cast<short>(monthLength[1] + DaysInYear(aYear) - 365);
+
     return static_cast<short>(monthLength[aMonth - 1]);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -664,14 +778,22 @@ short NFmiTime::DaysInMonth(const short aMonth, const short aYear)
 
 short NFmiTime::GetJulianDay() const
 {
-  // Juliaaninen pÃ¤ivÃ¤ on pÃ¤ivÃ¤n jÃ¤rjestysnumero kuluvana vuonna,
-  // esim. tammikuun 1:nÃ¤ palautetaan 1, helmikuun 1:nÃ¤ 32
+  try
+  {
+    // Juliaaninen pÃ¤ivÃ¤ on pÃ¤ivÃ¤n jÃ¤rjestysnumero kuluvana vuonna,
+    // esim. tammikuun 1:nÃ¤ palautetaan 1, helmikuun 1:nÃ¤ 32
 
-  long days = 0;
-  for (short month = 1; month < GetMonth(); month++)
-    days += DaysInMonth(month, GetYear());
-  days += GetDay();
-  return static_cast<short>(days);
+    long days = 0;
+    for (short month = 1; month < GetMonth(); month++)
+      days += DaysInMonth(month, GetYear());
+
+    days += GetDay();
+    return static_cast<short>(days);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -686,9 +808,16 @@ short NFmiTime::GetJulianDay() const
 
 const NFmiTime NFmiTime::UTCTime(const float theLongitude) const
 {
-  NFmiTime theTime(*this);
-  theTime.ChangeByHours(CalcZoneDifferenceHour(theLongitude));
-  return theTime;
+  try
+  {
+    NFmiTime theTime(*this);
+    theTime.ChangeByHours(CalcZoneDifferenceHour(theLongitude));
+    return theTime;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -700,7 +829,14 @@ const NFmiTime NFmiTime::UTCTime(const float theLongitude) const
 
 const NFmiTime NFmiTime::UTCTime(const NFmiLocation &theLocation) const
 {
-  return UTCTime(static_cast<float>(theLocation.GetLongitude()));
+  try
+  {
+    return UTCTime(static_cast<float>(theLocation.GetLongitude()));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -712,9 +848,20 @@ const NFmiTime NFmiTime::UTCTime(const NFmiLocation &theLocation) const
 
 const NFmiTime NFmiTime::LocalTime(const float theLongitude) const
 {
-  if (theLongitude != kFloatMissing) return *this;
+  try
+  {
+    // koskelam: What's the idea of this function? It always returns
+    // the same result.
 
-  return *this;
+    if (theLongitude != kFloatMissing)
+      return *this;
+
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -726,9 +873,20 @@ const NFmiTime NFmiTime::LocalTime(const float theLongitude) const
 
 const NFmiTime NFmiTime::LocalTime(const NFmiLocation &theLocation) const
 {
-  if (theLocation.GetLongitude() != kFloatMissing) return *this;
+  try
+  {
+    // koskelam: What's the idea of this function? It always returns
+    // the same result.
 
-  return *this;
+    if (theLocation.GetLongitude() != kFloatMissing)
+      return *this;
+
+    return *this;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -741,43 +899,50 @@ const NFmiTime NFmiTime::LocalTime(const NFmiLocation &theLocation) const
 
 void NFmiTime::SetZoneDifferenceHour()
 {
-  // time  returns the time since the Epoch (00:00:00 UTC, JanÂ­
-  // uary 1, 1970), measured in seconds.
+  try
+  {
+    // time  returns the time since the Epoch (00:00:00 UTC, JanÂ­
+    // uary 1, 1970), measured in seconds.
 
-  const time_t now = time(nullptr);
+    const time_t now = time(nullptr);
 
-  // The localtime() function converts the calendar time  timep
-  // to  broken-time  representation, expressed relative to the
-  // user's specified  time  zone.     The  function  sets  the
-  // external  variables tzname with information about the curÂ­
-  // rent time zone, timezone with the difference between CoorÂ­
-  // dinated  Universal  Time  (UTC) and local standard time in
-  // seconds, and daylight to a non-zero value if  standard  US
-  // daylight savings time rules apply.
+    // The localtime() function converts the calendar time  timep
+    // to  broken-time  representation, expressed relative to the
+    // user's specified  time  zone.     The  function  sets  the
+    // external  variables tzname with information about the curÂ­
+    // rent time zone, timezone with the difference between CoorÂ­
+    // dinated  Universal  Time  (UTC) and local standard time in
+    // seconds, and daylight to a non-zero value if  standard  US
+    // daylight savings time rules apply.
 
-  struct tm nowparts;
+    struct tm nowparts;
 
 #ifdef _MSC_VER
-  // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-  // Closest things available are some what safer (but not thread safe) and with almost same
-  // function
-  // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-  // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
-  ::localtime_s(&nowparts, &now);
+    ::localtime_s(&nowparts, &now);
 
 #else
-  ::localtime_r(&now, &nowparts);
+    ::localtime_r(&now, &nowparts);
 #endif
 
 #ifdef _MSC_VER
-  itsZoneDifferenceHour = static_cast<short>(
-      _timezone / 3600 - nowparts.tm_isdst);  // Visual C++ 2015 ei enää tye epäturvallista globaali
-// muuttujaa timezone:a, siksi pitää käyttää _timezone
-// makroa (löytyy myös vanhemmista VC++ versioista)
+    itsZoneDifferenceHour = static_cast<short>(
+        _timezone / 3600 -
+        nowparts.tm_isdst);  // Visual C++ 2015 ei enää tye epäturvallista globaali
+                             // muuttujaa timezone:a, siksi pitää käyttää _timezone
+                             // makroa (löytyy myös vanhemmista VC++ versioista)
 #else
-  itsZoneDifferenceHour = static_cast<short>(timezone / 3600 - nowparts.tm_isdst);
+    itsZoneDifferenceHour = static_cast<short>(timezone / 3600 - nowparts.tm_isdst);
 #endif
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -788,10 +953,17 @@ void NFmiTime::SetZoneDifferenceHour()
 
 void NFmiTime::SetLocalPlace(float theLongitude)
 {
-  // virhetuilanteessÃ¤ palauttaa nollan  // 6.9.2001/Marko Muutin funktion kÃ¤yttÃ¤mÃ¤Ã¤n
-  // uutta CalcZoneDifferenceHour-metodia, joka on const-metodi ja sitÃ¤ voi kÃ¤yttÃ¤Ã¤
-  // mm. constiksi muutetussa UTCTime-metodissa
-  itsZoneDifferenceHour = CalcZoneDifferenceHour(theLongitude);
+  try
+  {
+    // virhetuilanteessÃ¤ palauttaa nollan  // 6.9.2001/Marko Muutin funktion kÃ¤yttÃ¤mÃ¤Ã¤n
+    // uutta CalcZoneDifferenceHour-metodia, joka on const-metodi ja sitÃ¤ voi kÃ¤yttÃ¤Ã¤
+    // mm. constiksi muutetussa UTCTime-metodissa
+    itsZoneDifferenceHour = CalcZoneDifferenceHour(theLongitude);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -803,34 +975,40 @@ void NFmiTime::SetLocalPlace(float theLongitude)
 
 short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
 {
-  if (theLongitude == kFloatMissing)
-    return itsZoneDifferenceHour;  // tÃ¤mÃ¤ on virhetilanne, mutta ei tehdÃ¤ muuta kuin palautetaan
-                                   // vanha arvo
+  try
+  {
+    if (theLongitude == kFloatMissing)
+      return itsZoneDifferenceHour;  // tÃ¤mÃ¤ on virhetilanne, mutta ei tehdÃ¤ muuta kuin
+                                     // palautetaan vanha arvo
 
-  struct tm newtime;
-  time_t aclock;
+    struct tm newtime;
+    time_t aclock;
 
-  time(&aclock);
+    time(&aclock);
 
 #ifdef _MSC_VER
-  // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or before).
-  // Closest things available are some what safer (but not thread safe) and with almost same
-  // function
-  // definitions are the localtime_s and gmtime_s -functions. Parameters are ordered otherway round
-  // and their return value is success status, not struct tm pointer.
+    // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
+    // before). Closest things available are some what safer (but not thread safe) and with almost
+    // same function definitions are the localtime_s and gmtime_s -functions. Parameters are ordered
+    // otherway round and their return value is success status, not struct tm pointer.
 
-  ::localtime_s(&newtime, &aclock);
+    ::localtime_s(&newtime, &aclock);
 
 #else
-  ::localtime_r(&aclock, &newtime);
+    ::localtime_r(&aclock, &newtime);
 #endif
 
-  auto theWinterTimeDiff = short(newtime.tm_isdst);
+    auto theWinterTimeDiff = short(newtime.tm_isdst);
 
-  if (theLongitude < 0)
-    return static_cast<short>((((-1 * theLongitude) + 7.5) / 15) + theWinterTimeDiff);
-  else
-    return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
+    if (theLongitude < 0)
+      return static_cast<short>((((-1 * theLongitude) + 7.5) / 15) + theWinterTimeDiff);
+    else
+      return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -843,9 +1021,16 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
 
 bool NFmiTime::IsDay(const NFmiLocation &theLocation, unsigned short theResolution)
 {
-  int halfResolution = theResolution / 2;
-  short hour = LocalTime(theLocation).GetHour();
-  return hour > halfResolution && hour <= 24 - halfResolution;
+  try
+  {
+    int halfResolution = theResolution / 2;
+    short hour = LocalTime(theLocation).GetHour();
+    return hour > halfResolution && hour <= 24 - halfResolution;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -858,10 +1043,17 @@ bool NFmiTime::IsDay(const NFmiLocation &theLocation, unsigned short theResoluti
 
 bool NFmiTime::IsNight(const NFmiLocation &theLocation, unsigned short theResolution)
 {
-  int halfResolution = theResolution / 2;
+  try
+  {
+    int halfResolution = theResolution / 2;
 
-  short hour = LocalTime(theLocation).GetHour();
-  return hour > 24 - halfResolution || hour <= halfResolution;
+    short hour = LocalTime(theLocation).GetHour();
+    return hour > 24 - halfResolution || hour <= halfResolution;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================
@@ -922,163 +1114,171 @@ bool NFmiTime::IsNight(const NFmiLocation &theLocation, unsigned short theResolu
 
 const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage theLanguage) const
 {
-  bool noConversion = false;
-  int ind = 1;
-  int len = theTimeCode.GetLen();
-  NFmiString str6, str4, str3, str2, str1, strh;
-  NFmiValueString theString;
-  int plusInd, subPlusInd;
-
-  while (ind <= len)
+  try
   {
-    str1 = theTimeCode.GetChars(ind, 1);
-    // %:ien vÃ¤liset merkit sellaisenaan
-    if (str1 == NFmiString("%"))
+    bool noConversion = false;
+    int ind = 1;
+    int len = theTimeCode.GetLen();
+    NFmiString str6, str4, str3, str2, str1, strh;
+    NFmiValueString theString;
+    int plusInd, subPlusInd;
+
+    while (ind <= len)
     {
-      str1 = theTimeCode.GetChars(ind + 1, 1);
-      // kahdella perÃ¤kkÃ¤isellÃ¤ prosentilla saadaan prosentti
+      str1 = theTimeCode.GetChars(ind, 1);
+      // %:ien vÃ¤liset merkit sellaisenaan
       if (str1 == NFmiString("%"))
       {
-        theString += NFmiString("%");
-        ind++;
-        continue;
-      }
-      else
-      {
-        noConversion = !noConversion;
-        ind++;
-        continue;
-      }
-    }
-    else if (noConversion)
-    {
-      theString += str1;
-      ind++;
-      continue;
-    }
-
-    str4 = theTimeCode.GetChars(ind, 4);
-    plusInd = 4;
-    if (str4 == NFmiString("YYYY") || str4 == NFmiString("yyyy"))
-      theString += NFmiValueString(GetYear(), "%04d");
-    else if (str4 == NFmiString("Wwww"))
-      theString += Weekday(theLanguage);
-    else if (str4 == NFmiString("wwww"))
-    {
-      strh = Weekday(theLanguage);
-      strh.LowerCase();
-      theString += strh;
-    }
-    else if (str4 == NFmiString("WWWW"))
-    {
-      strh = Weekday(theLanguage);
-      strh.UpperCase();
-      theString += strh;
-    }
-    else if (str4 == NFmiString("Nnnn"))
-      theString += MonthName(theLanguage);
-    else if (str4 == NFmiString("nnnn"))
-    {
-      strh = MonthName(theLanguage);
-      strh.LowerCase();
-      theString += strh;
-    }
-    else if (str4 == NFmiString("NNNN"))
-    {
-      strh = MonthName(theLanguage);
-      strh.UpperCase();
-      theString += strh;
-    }
-    else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") || str4 == NFmiString("TTTT"))
-    {
-      str6 = theTimeCode.GetChars(ind, 6);
-      theString += RelativeDay(theLanguage, str6, subPlusInd);
-      plusInd += subPlusInd;
-    }
-    else
-    {
-      str3 = theTimeCode.GetChars(ind, 3);
-      plusInd += -1;
-      if (str3 == NFmiString("Nnn"))
-        theString += MonthName(theLanguage).GetChars(1, 3);
-      else if (str3 == NFmiString("nnn"))
-      {
-        strh = MonthName(theLanguage).GetChars(1, 3);
-        strh.LowerCase();
-        theString += strh;
-      }
-      else if (str3 == NFmiString("NNN"))
-      {
-        strh = MonthName(theLanguage).GetChars(1, 3);
-        strh.UpperCase();
-        theString += strh;
-      }
-      else if (str3 == NFmiString("Www"))
-        theString += Weekday(theLanguage).GetChars(1, 3);
-      else if (str3 == NFmiString("www"))
-      {
-        strh = Weekday(theLanguage).GetChars(1, 3);
-        strh.LowerCase();
-        theString += strh;
-      }
-      else if (str3 == NFmiString("WWW"))
-      {
-        strh = Weekday(theLanguage).GetChars(1, 3);
-        strh.UpperCase();
-        theString += strh;
-      }
-      else
-      {
-        str2 = theTimeCode.GetChars(ind, 2);
-        plusInd += -1;
-        if (str2 == NFmiString("YY") || str2 == NFmiString("yy"))
-          theString += NFmiValueString(GetYear(), "%02d").GetChars(3, 2);
-        else if (str2 == NFmiString("MM"))
-          theString += NFmiValueString(GetMonth(), "%02d");
-        else if (str2 == NFmiString("DD") || str2 == NFmiString("dd"))
-          theString += NFmiValueString(GetDay(), "%02d");
-        else if (str2 == NFmiString("HH") || str2 == NFmiString("hh"))
-          theString += NFmiValueString(GetHour(), "%02d");
-        else if (str2 == NFmiString("mm"))
-          theString += NFmiValueString(GetMin(), "%02d");
-        else if (str2 == NFmiString("SS"))
-          theString += NFmiValueString(GetSec(), "%02d");
-        else if (str2 == NFmiString("Ww"))
-          theString += Weekday(theLanguage).GetChars(1, 2);
-        else if (str2 == NFmiString("ww"))
+        str1 = theTimeCode.GetChars(ind + 1, 1);
+        // kahdella perÃ¤kkÃ¤isellÃ¤ prosentilla saadaan prosentti
+        if (str1 == NFmiString("%"))
         {
-          strh = Weekday(theLanguage).GetChars(1, 2);
+          theString += NFmiString("%");
+          ind++;
+          continue;
+        }
+        else
+        {
+          noConversion = !noConversion;
+          ind++;
+          continue;
+        }
+      }
+      else if (noConversion)
+      {
+        theString += str1;
+        ind++;
+        continue;
+      }
+
+      str4 = theTimeCode.GetChars(ind, 4);
+      plusInd = 4;
+      if (str4 == NFmiString("YYYY") || str4 == NFmiString("yyyy"))
+        theString += NFmiValueString(GetYear(), "%04d");
+      else if (str4 == NFmiString("Wwww"))
+        theString += Weekday(theLanguage);
+      else if (str4 == NFmiString("wwww"))
+      {
+        strh = Weekday(theLanguage);
+        strh.LowerCase();
+        theString += strh;
+      }
+      else if (str4 == NFmiString("WWWW"))
+      {
+        strh = Weekday(theLanguage);
+        strh.UpperCase();
+        theString += strh;
+      }
+      else if (str4 == NFmiString("Nnnn"))
+        theString += MonthName(theLanguage);
+      else if (str4 == NFmiString("nnnn"))
+      {
+        strh = MonthName(theLanguage);
+        strh.LowerCase();
+        theString += strh;
+      }
+      else if (str4 == NFmiString("NNNN"))
+      {
+        strh = MonthName(theLanguage);
+        strh.UpperCase();
+        theString += strh;
+      }
+      else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") ||
+               str4 == NFmiString("TTTT"))
+      {
+        str6 = theTimeCode.GetChars(ind, 6);
+        theString += RelativeDay(theLanguage, str6, subPlusInd);
+        plusInd += subPlusInd;
+      }
+      else
+      {
+        str3 = theTimeCode.GetChars(ind, 3);
+        plusInd += -1;
+        if (str3 == NFmiString("Nnn"))
+          theString += MonthName(theLanguage).GetChars(1, 3);
+        else if (str3 == NFmiString("nnn"))
+        {
+          strh = MonthName(theLanguage).GetChars(1, 3);
           strh.LowerCase();
           theString += strh;
         }
-        else if (str2 == NFmiString("WW"))
+        else if (str3 == NFmiString("NNN"))
         {
-          strh = Weekday(theLanguage).GetChars(1, 2);
+          strh = MonthName(theLanguage).GetChars(1, 3);
           strh.UpperCase();
           theString += strh;
         }
-        else if (str2 == NFmiString("kk"))
-          theString += atNotation[theLanguage - 1];
+        else if (str3 == NFmiString("Www"))
+          theString += Weekday(theLanguage).GetChars(1, 3);
+        else if (str3 == NFmiString("www"))
+        {
+          strh = Weekday(theLanguage).GetChars(1, 3);
+          strh.LowerCase();
+          theString += strh;
+        }
+        else if (str3 == NFmiString("WWW"))
+        {
+          strh = Weekday(theLanguage).GetChars(1, 3);
+          strh.UpperCase();
+          theString += strh;
+        }
         else
         {
+          str2 = theTimeCode.GetChars(ind, 2);
           plusInd += -1;
-          if (str1 == NFmiString("M"))
-            theString += NFmiValueString(GetMonth(), "%d");
-          else if (str1 == NFmiString("D"))
-            theString += NFmiValueString(GetDay(), "%d");
-          else if (str1 == NFmiString("H"))
-            theString += NFmiValueString(GetHour(), "%d");
-          else if (str1 == NFmiString("I"))
-            theString += NFmiValueString(GetWeekday(), "%01d");
+          if (str2 == NFmiString("YY") || str2 == NFmiString("yy"))
+            theString += NFmiValueString(GetYear(), "%02d").GetChars(3, 2);
+          else if (str2 == NFmiString("MM"))
+            theString += NFmiValueString(GetMonth(), "%02d");
+          else if (str2 == NFmiString("DD") || str2 == NFmiString("dd"))
+            theString += NFmiValueString(GetDay(), "%02d");
+          else if (str2 == NFmiString("HH") || str2 == NFmiString("hh"))
+            theString += NFmiValueString(GetHour(), "%02d");
+          else if (str2 == NFmiString("mm"))
+            theString += NFmiValueString(GetMin(), "%02d");
+          else if (str2 == NFmiString("SS"))
+            theString += NFmiValueString(GetSec(), "%02d");
+          else if (str2 == NFmiString("Ww"))
+            theString += Weekday(theLanguage).GetChars(1, 2);
+          else if (str2 == NFmiString("ww"))
+          {
+            strh = Weekday(theLanguage).GetChars(1, 2);
+            strh.LowerCase();
+            theString += strh;
+          }
+          else if (str2 == NFmiString("WW"))
+          {
+            strh = Weekday(theLanguage).GetChars(1, 2);
+            strh.UpperCase();
+            theString += strh;
+          }
+          else if (str2 == NFmiString("kk"))
+            theString += atNotation[theLanguage - 1];
           else
-            theString += str1;
-          // pitÃ¤isi ottaa ruotsista pÃ¤ivÃ¤n jÃ¤lkeinen piste pois
+          {
+            plusInd += -1;
+            if (str1 == NFmiString("M"))
+              theString += NFmiValueString(GetMonth(), "%d");
+            else if (str1 == NFmiString("D"))
+              theString += NFmiValueString(GetDay(), "%d");
+            else if (str1 == NFmiString("H"))
+              theString += NFmiValueString(GetHour(), "%d");
+            else if (str1 == NFmiString("I"))
+              theString += NFmiValueString(GetWeekday(), "%01d");
+            else
+              theString += str1;
+            // pitÃ¤isi ottaa ruotsista pÃ¤ivÃ¤n jÃ¤lkeinen piste pois
+          }
         }
       }
+      ind += plusInd;
     }
-    ind += plusInd;
+    return theString;
   }
-  return theString;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1096,37 +1296,56 @@ const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
                                        NFmiString theFormat,
                                        int &thePlusInd) const
 {
-  NFmiTime currentTime;
-  NFmiString retString;
-  thePlusInd = 0;
-
-  int diff = GetJulianDay() - currentTime.GetJulianDay();
-  if (diff < -100)  // vuodenvaihde ja karkausvuosi hoidettu, voisi viedÃ¤ NFmiTime:een; ei tastattu
-    diff += DaysInYear(currentTime.GetYear());
-  if (diff > 100) diff -= DaysInYear(GetYear());
-
-  if (theFormat.GetChars(5, 1) == NFmiString("+") || theFormat.GetChars(5, 1) == NFmiString("-"))
+  try
   {
-    int addDiff;
-    NFmiValueString vString = NFmiValueString(theFormat);
-    vString.ConvertToInt(addDiff, 5, 2);
-    diff += -addDiff;
-    thePlusInd = 2;
+    NFmiTime currentTime;
+    NFmiString retString;
+    thePlusInd = 0;
+
+    int diff = GetJulianDay() - currentTime.GetJulianDay();
+    if (diff <
+        -100)  // vuodenvaihde ja karkausvuosi hoidettu, voisi viedÃ¤ NFmiTime:een; ei tastattu
+      diff += DaysInYear(currentTime.GetYear());
+    if (diff > 100)
+      diff -= DaysInYear(GetYear());
+
+    if (theFormat.GetChars(5, 1) == NFmiString("+") || theFormat.GetChars(5, 1) == NFmiString("-"))
+    {
+      int addDiff;
+      NFmiValueString vString = NFmiValueString(theFormat);
+      vString.ConvertToInt(addDiff, 5, 2);
+      diff += -addDiff;
+      thePlusInd = 2;
+    }
+    diff = std::min(std::max(diff, -3), 3);  // pysÃ¤ytetÃ¤Ã¤n ali/ylivuotoon
+    retString = NFmiString(reldays[(theLanguage - 1) * 7 + diff + 3]);
+    if (theFormat.GetChars(1, 4) == NFmiString("tttt"))
+      retString.LowerCase();
+    if (theFormat.GetChars(1, 4) == NFmiString("TTTT"))
+      retString.UpperCase();
+
+    return retString;
   }
-  diff = std::min(std::max(diff, -3), 3);  // pysÃ¤ytetÃ¤Ã¤n ali/ylivuotoon
-  retString = NFmiString(reldays[(theLanguage - 1) * 7 + diff + 3]);
-  if (theFormat.GetChars(1, 4) == NFmiString("tttt")) retString.LowerCase();
-  if (theFormat.GetChars(1, 4) == NFmiString("TTTT")) retString.UpperCase();
-  return retString;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // HUOM! TÃ¤mÃ¤ on kopio NFmiEditMapGeneralDataDoc-luokan metodista, kun en voinut antaa tÃ¤nne
 // dokumenttia
 std::string NFmiTime::GetDictionaryString(const char *theMagicWord)
 {
-  const std::string baseWords = "MetEditor::Dictionary::";
+  try
+  {
+    const std::string baseWords = "MetEditor::Dictionary::";
 
-  std::string finalMagicWord(baseWords);
-  finalMagicWord += theMagicWord;
-  return NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string("XXXXX"));
+    std::string finalMagicWord(baseWords);
+    finalMagicWord += theMagicWord;
+    return NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string("XXXXX"));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }

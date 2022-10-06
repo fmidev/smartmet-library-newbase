@@ -22,6 +22,7 @@
 #include "NFmiGrid.h"
 #include "NFmiParamDataModifier.h"
 #include "NFmiRelativeDataIterator.h"
+#include <macgyver/Exception.h>
 
 using namespace std;
 
@@ -207,9 +208,16 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiSuperSmartInfo& theInfo)
       itsHelperBinaryMaskList()  // tämä alustetaan (virheellisesti)
                                  // CopyHelperBinaryMasksAndInfo:issa
 {
-  //	InitHelperBinaryMasks(); // tämä on väärin kopi-konstruktorissa, mutta
-  //  en jaksa tehdä todellista kopiota itsHelperBinaryMaskList:ta ja muista
-  CopyHelperBinaryMasksAndInfo(theInfo);
+  try
+  {
+    //	InitHelperBinaryMasks(); // tämä on väärin kopi-konstruktorissa, mutta
+    //  en jaksa tehdä todellista kopiota itsHelperBinaryMaskList:ta ja muista
+    CopyHelperBinaryMasksAndInfo(theInfo);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -218,7 +226,19 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiSuperSmartInfo& theInfo)
  */
 // ----------------------------------------------------------------------
 
-NFmiSuperSmartInfo::~NFmiSuperSmartInfo() { Destroy(); }
+NFmiSuperSmartInfo::~NFmiSuperSmartInfo()
+{
+  try
+  {
+    Destroy();
+  }
+  catch (...)
+  {
+    Fmi::Exception exception(BCP, "Destructor failed", nullptr);
+    exception.printError();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Kopioi helperbinarymaskit omaan käyttöönsä
@@ -229,20 +249,29 @@ NFmiSuperSmartInfo::~NFmiSuperSmartInfo() { Destroy(); }
 
 void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& theSSInfo)
 {
-  fUseHelperBinaryMasks = theSSInfo.fUseHelperBinaryMasks;
-  itsXYMaskBoundingBox = theSSInfo.itsXYMaskBoundingBox;
+  try
+  {
+    fUseHelperBinaryMasks = theSSInfo.fUseHelperBinaryMasks;
+    itsXYMaskBoundingBox = theSSInfo.itsXYMaskBoundingBox;
 
-  const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList = theSSInfo.itsHelperBinaryMaskList;
-  size_t size = helperBinaryMaskList.size();
-  itsHelperBinaryMaskList.resize(size);
+    const std::vector<NFmiBitmapAreaMask*>& helperBinaryMaskList =
+        theSSInfo.itsHelperBinaryMaskList;
+    size_t size = helperBinaryMaskList.size();
+    itsHelperBinaryMaskList.resize(size);
 
-  // poikkeustapauksessa voi olla 0-pointteri, pitää tarkistaa kloonattaessa
-  for (size_t i = 0; i < size; i++)
-    if (helperBinaryMaskList[i])
-      itsHelperBinaryMaskList[i] =
-          static_cast<NFmiBitmapAreaMask*>(helperBinaryMaskList[i]->Clone());
-  SetCurrentHelperBinaryMask();
+    // poikkeustapauksessa voi olla 0-pointteri, pitää tarkistaa kloonattaessa
+    for (size_t i = 0; i < size; i++)
+      if (helperBinaryMaskList[i])
+        itsHelperBinaryMaskList[i] =
+            static_cast<NFmiBitmapAreaMask*>(helperBinaryMaskList[i]->Clone());
+    SetCurrentHelperBinaryMask();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -251,9 +280,16 @@ void NFmiSuperSmartInfo::CopyHelperBinaryMasksAndInfo(const NFmiSuperSmartInfo& 
 
 bool NFmiSuperSmartInfo::FirstLocation()
 {
-  // asettaa 1. maskatun locationin
-  ResetLocation();
-  return NextLocation();
+  try
+  {
+    // asettaa 1. maskatun locationin
+    ResetLocation();
+    return NextLocation();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -267,13 +303,21 @@ bool NFmiSuperSmartInfo::FirstLocation()
 
 bool NFmiSuperSmartInfo::NextLocation()
 {
-  if (!fUseAreaMask) return NFmiFastQueryInfo::NextLocation();
+  try
+  {
+    if (!fUseAreaMask)
+      return NFmiFastQueryInfo::NextLocation();
 
-  bool status = false;
-  do
-    status = NFmiFastQueryInfo::NextLocation();
-  while (status && !IsLocationMasked(LocationIndex()));
-  return status;
+    bool status = false;
+    do
+      status = NFmiFastQueryInfo::NextLocation();
+    while (status && !IsLocationMasked(LocationIndex()));
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -287,13 +331,21 @@ bool NFmiSuperSmartInfo::NextLocation()
 
 bool NFmiSuperSmartInfo::PreviousLocation()
 {
-  if (!fUseAreaMask) return NFmiFastQueryInfo::PreviousLocation();
+  try
+  {
+    if (!fUseAreaMask)
+      return NFmiFastQueryInfo::PreviousLocation();
 
-  bool status = false;
-  do
-    status = NFmiFastQueryInfo::PreviousLocation();
-  while (status && IsLocationMasked(LocationIndex()));
-  return status;
+    bool status = false;
+    do
+      status = NFmiFastQueryInfo::PreviousLocation();
+    while (status && IsLocationMasked(LocationIndex()));
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -309,7 +361,14 @@ bool NFmiSuperSmartInfo::PreviousLocation()
 
 bool NFmiSuperSmartInfo::NearestLocation(const NFmiLocation& theLocation, double theMaxDistance)
 {
-  return NFmiFastQueryInfo::NearestLocation(theLocation, theMaxDistance);
+  try
+  {
+    return NFmiFastQueryInfo::NearestLocation(theLocation, theMaxDistance);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -324,7 +383,14 @@ bool NFmiSuperSmartInfo::NearestLocation(const NFmiLocation& theLocation, double
 
 bool NFmiSuperSmartInfo::NearestPoint(const NFmiPoint& theLatLonPoint)
 {
-  return NFmiFastQueryInfo::NearestPoint(theLatLonPoint);
+  try
+  {
+    return NFmiFastQueryInfo::NearestPoint(theLatLonPoint);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -337,7 +403,14 @@ bool NFmiSuperSmartInfo::NearestPoint(const NFmiPoint& theLatLonPoint)
 
 unsigned long NFmiSuperSmartInfo::SizeLocations() const
 {
-  return NFmiFastQueryInfo::SizeLocations();
+  try
+  {
+    return NFmiFastQueryInfo::SizeLocations();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -350,7 +423,14 @@ unsigned long NFmiSuperSmartInfo::SizeLocations() const
 
 unsigned long NFmiSuperSmartInfo::SizeActiveLocations() const
 {
-  return NFmiFastQueryInfo::SizeActiveLocations();
+  try
+  {
+    return NFmiFastQueryInfo::SizeActiveLocations();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -361,27 +441,39 @@ unsigned long NFmiSuperSmartInfo::SizeActiveLocations() const
 
 float NFmiSuperSmartInfo::FloatValue() const
 {
-  // Käyttäjä on etukäteen määrännyt millä tasolla haluaa dataa
-  // määrämällä itsFloatValueAccessLevel.
-  // HUOM!! tätä ei kannata optimoida switch-lauseella, koska
-  // eniten päädytään kuitenkin normalaccessiin!!!
+  try
+  {
+    // Käyttäjä on etukäteen määrännyt millä tasolla haluaa dataa
+    // määrämällä itsFloatValueAccessLevel.
+    // HUOM!! tätä ei kannata optimoida switch-lauseella, koska
+    // eniten päädytään kuitenkin normalaccessiin!!!
 
-  // 'normal' == raw-access eli FastInfo:n vastaava
-  if (itsFloatValueAccessLevel == kNormalAccess) return RawFloatValue();
+    // 'normal' == raw-access eli FastInfo:n vastaava
+    if (itsFloatValueAccessLevel == kNormalAccess)
+      return RawFloatValue();
 
-  // pyydetään varianssia
-  if (itsFloatValueAccessLevel == kVarianceAccess) return VarianceFloatValue();
+    // pyydetään varianssia
+    if (itsFloatValueAccessLevel == kVarianceAccess)
+      return VarianceFloatValue();
 
-  // pyydetään aikaintegraatiota
-  if (itsFloatValueAccessLevel == kTimeIntegrationAccess) return TimeIntegrationFloatValue();
+    // pyydetään aikaintegraatiota
+    if (itsFloatValueAccessLevel == kTimeIntegrationAccess)
+      return TimeIntegrationFloatValue();
 
-  // epävarmuus laatikko laskut
-  if (itsFloatValueAccessLevel == kVariationAccess) return VariationFloatValue();
+    // epävarmuus laatikko laskut
+    if (itsFloatValueAccessLevel == kVariationAccess)
+      return VariationFloatValue();
 
-  // 'integraattori'/calculaattori (korkeimman tason kutsu)
-  if (itsFloatValueAccessLevel == kCalculatorAccess) return CalculationFloatValue();
+    // 'integraattori'/calculaattori (korkeimman tason kutsu)
+    if (itsFloatValueAccessLevel == kCalculatorAccess)
+      return CalculationFloatValue();
 
-  return kFloatMissing;
+    return kFloatMissing;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -392,37 +484,46 @@ float NFmiSuperSmartInfo::FloatValue() const
 
 NFmiCombinedParam* NFmiSuperSmartInfo::CombinedValue()
 {
-  // Käyttäjä on etukäteen määrännyt millä tasolla haluaa dataa
-  // määrämällä itsFloatValueAccessLevel.
-  // kommenteissa on oikea käyntijärjestys. Jos joku lisää jonkun
-  // haaran käyttöön (esim. TimeIntegrationCombinedValue:n), pitää
-  // se kommentoida esiin että 'vesiputous' toimisi oikeassa järjestyksessä.
+  try
+  {
+    // Käyttäjä on etukäteen määrännyt millä tasolla haluaa dataa
+    // määrämällä itsFloatValueAccessLevel.
+    // kommenteissa on oikea käyntijärjestys. Jos joku lisää jonkun
+    // haaran käyttöön (esim. TimeIntegrationCombinedValue:n), pitää
+    // se kommentoida esiin että 'vesiputous' toimisi oikeassa järjestyksessä.
 
 #if 0
-  if(itsFloatValueAccessLevel == kNormalAccess)
-	return 0;//RawFloatValue();
-  if(itsFloatValueAccessLevel == kVarianceAccess)
-	return 0;//VarianceCombinedValue();
-  if(itsFloatValueAccessLevel == kTimeIntegrationAccess)
-	return 0;//TimeIntegrationCombinedValue();
+    if(itsFloatValueAccessLevel == kNormalAccess)
+    return 0;//RawFloatValue();
+    if(itsFloatValueAccessLevel == kVarianceAccess)
+    return 0;//VarianceCombinedValue();
+    if(itsFloatValueAccessLevel == kTimeIntegrationAccess)
+    return 0;//TimeIntegrationCombinedValue();
 #endif
 
-  if (itsFloatValueAccessLevel == kVariationAccess) return VariationCombinedValue();
-  if (itsFloatValueAccessLevel == kCalculatorAccess) return CalculationCombinedValue();
-  return nullptr;
+    if (itsFloatValueAccessLevel == kVariationAccess)
+      return VariationCombinedValue();
+    if (itsFloatValueAccessLevel == kCalculatorAccess)
+      return CalculationCombinedValue();
+    return nullptr;
 
 #if 0
-  if(itsFloatValueAccessLevel == kCalculatorAccess)
-	return CalculationCombinedValue();
-  if(itsFloatValueAccessLevel == kVariationAccess)
-	return VariationCombinedValue();
-  if(itsFloatValueAccessLevel == kTimeIntegrationAccess)
-	return 0;//TimeIntegrationCombinedValue();
-  if(itsFloatValueAccessLevel == kVarianceAccess)
-	return 0;//VarianceCombinedValue();
-  return 0;//RawFloatValue();
+    if(itsFloatValueAccessLevel == kCalculatorAccess)
+    return CalculationCombinedValue();
+    if(itsFloatValueAccessLevel == kVariationAccess)
+    return VariationCombinedValue();
+    if(itsFloatValueAccessLevel == kTimeIntegrationAccess)
+    return 0;//TimeIntegrationCombinedValue();
+    if(itsFloatValueAccessLevel == kVarianceAccess)
+    return 0;//VarianceCombinedValue();
+    return 0;//RawFloatValue();
 
 #endif
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -440,27 +541,34 @@ float NFmiSuperSmartInfo::FloatValue(bool doVariationCalculation,
                                      bool doTimeIntegration,
                                      bool doVarianceCalculation)
 {
-  bool oldUseCalc = fUseCalculator;
-  bool oldUseVari = fUseVariationCalculator;
-  bool oldUseTimeIntegration = fUseTimeIntegrationCalculator;
-  bool oldUseVariance = fUseVarianceCalculator;
-  DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+  try
+  {
+    bool oldUseCalc = fUseCalculator;
+    bool oldUseVari = fUseVariationCalculator;
+    bool oldUseTimeIntegration = fUseTimeIntegrationCalculator;
+    bool oldUseVariance = fUseVarianceCalculator;
+    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
 
-  itsFloatValueAccessLevel = kCalculatorAccess;
+    itsFloatValueAccessLevel = kCalculatorAccess;
 
-  fUseCalculator = doCalculation;
-  fUseVariationCalculator = doVariationCalculation;
-  fUseTimeIntegrationCalculator = doTimeIntegration;
-  fUseVarianceCalculator = doVarianceCalculation;
+    fUseCalculator = doCalculation;
+    fUseVariationCalculator = doVariationCalculation;
+    fUseTimeIntegrationCalculator = doTimeIntegration;
+    fUseVarianceCalculator = doVarianceCalculation;
 
-  float value = FloatValue();
+    float value = FloatValue();
 
-  fUseCalculator = oldUseCalc;
-  fUseVariationCalculator = oldUseVari;
-  fUseTimeIntegrationCalculator = oldUseTimeIntegration;
-  fUseVarianceCalculator = oldUseVariance;
-  itsFloatValueAccessLevel = oldAccessLevel;
-  return value;
+    fUseCalculator = oldUseCalc;
+    fUseVariationCalculator = oldUseVari;
+    fUseTimeIntegrationCalculator = oldUseTimeIntegration;
+    fUseVarianceCalculator = oldUseVariance;
+    itsFloatValueAccessLevel = oldAccessLevel;
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -478,27 +586,34 @@ NFmiCombinedParam* NFmiSuperSmartInfo::CombinedValue(bool doVariationCalculation
                                                      bool doTimeIntegration,
                                                      bool doVarianceCalculation)
 {
-  bool oldUseCalc = fUseCalculator;
-  bool oldUseVari = fUseVariationCalculator;
-  bool oldUseTimeIntegration = fUseTimeIntegrationCalculator;
-  bool oldUseVariance = fUseVarianceCalculator;
-  DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-  itsFloatValueAccessLevel = kCalculatorAccess;
+  try
+  {
+    bool oldUseCalc = fUseCalculator;
+    bool oldUseVari = fUseVariationCalculator;
+    bool oldUseTimeIntegration = fUseTimeIntegrationCalculator;
+    bool oldUseVariance = fUseVarianceCalculator;
+    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+    itsFloatValueAccessLevel = kCalculatorAccess;
 
-  fUseCalculator = doCalculation;
-  fUseVariationCalculator = doVariationCalculation;
-  fUseTimeIntegrationCalculator = doTimeIntegration;
-  fUseVarianceCalculator = doVarianceCalculation;
+    fUseCalculator = doCalculation;
+    fUseVariationCalculator = doVariationCalculation;
+    fUseTimeIntegrationCalculator = doTimeIntegration;
+    fUseVarianceCalculator = doVarianceCalculation;
 
-  NFmiCombinedParam* value = nullptr;
-  value = CombinedValue();
+    NFmiCombinedParam* value = nullptr;
+    value = CombinedValue();
 
-  fUseCalculator = oldUseCalc;
-  fUseVariationCalculator = oldUseVari;
-  fUseTimeIntegrationCalculator = oldUseTimeIntegration;
-  fUseVarianceCalculator = oldUseVariance;
-  itsFloatValueAccessLevel = oldAccessLevel;
-  return value;
+    fUseCalculator = oldUseCalc;
+    fUseVariationCalculator = oldUseVari;
+    fUseTimeIntegrationCalculator = oldUseTimeIntegration;
+    fUseVarianceCalculator = oldUseVariance;
+    itsFloatValueAccessLevel = oldAccessLevel;
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -511,20 +626,28 @@ NFmiCombinedParam* NFmiSuperSmartInfo::CombinedValue(bool doVariationCalculation
 
 float NFmiSuperSmartInfo::PeekLocationValue(int theXOffset, int theYOffset) const
 {
-  // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
-  // indeksit otetaan talteen, että tilanne voidaan palauttaa
-  // datan kyselyn jälkeen.
-  // Eri access-tasoisia Calculaattoreita varten paikka pitää
-  // asettaa ensin kohdalleen, että Calculaattorit toimisivat oikein.
+  try
+  {
+    // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
+    // indeksit otetaan talteen, että tilanne voidaan palauttaa
+    // datan kyselyn jälkeen.
+    // Eri access-tasoisia Calculaattoreita varten paikka pitää
+    // asettaa ensin kohdalleen, että Calculaattorit toimisivat oikein.
 
-  unsigned long oldLocationIndex = LocationIndex();
-  int wantedIndex = CalcPeekLocationIndex(oldLocationIndex, theXOffset, theYOffset);
-  if (!const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(wantedIndex)) return kFloatMissing;
+    unsigned long oldLocationIndex = LocationIndex();
+    int wantedIndex = CalcPeekLocationIndex(oldLocationIndex, theXOffset, theYOffset);
+    if (!const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(wantedIndex))
+      return kFloatMissing;
 
-  float value = FloatValue();  // FloatValue hoitaa nyt 'peekkauksen'
-  const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(
-      oldLocationIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
-  return value;
+    float value = FloatValue();  // FloatValue hoitaa nyt 'peekkauksen'
+    const_cast<NFmiSuperSmartInfo*>(this)->LocationIndex(
+        oldLocationIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -536,23 +659,30 @@ float NFmiSuperSmartInfo::PeekLocationValue(int theXOffset, int theYOffset) cons
 
 float NFmiSuperSmartInfo::PeekTimeValue(int theTimeOffset)
 {
-  // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
-  // indeksit otetaan talteen, että tilanne voidaan palauttaa datan
-  // kyselyn jälkeen. Eri access-tasoisia Calculaattoreita varten
-  // paikka pitää asettaa ensin kohdalleen, että Calculaattorit
-  // toimisivat oikein.
-
-  unsigned long oldTimeIndex = TimeIndex();
-
-  // jos epäonnistui, palauta missing arvo, ei tarvitse asettaa oldTimeIndex:iä
-  if (!TimeIndex(oldTimeIndex + theTimeOffset))
+  try
   {
-    TimeIndex(oldTimeIndex);  // aseta vanhat indeksit paikoilleen
-    return kFloatMissing;
+    // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
+    // indeksit otetaan talteen, että tilanne voidaan palauttaa datan
+    // kyselyn jälkeen. Eri access-tasoisia Calculaattoreita varten
+    // paikka pitää asettaa ensin kohdalleen, että Calculaattorit
+    // toimisivat oikein.
+
+    unsigned long oldTimeIndex = TimeIndex();
+
+    // jos epäonnistui, palauta missing arvo, ei tarvitse asettaa oldTimeIndex:iä
+    if (!TimeIndex(oldTimeIndex + theTimeOffset))
+    {
+      TimeIndex(oldTimeIndex);  // aseta vanhat indeksit paikoilleen
+      return kFloatMissing;
+    }
+    float value = FloatValue();  // FloatValue hoitaa nyt 'peekkauksen'
+    TimeIndex(oldTimeIndex);     // aseta vanhat indeksit paikoilleen
+    return value;
   }
-  float value = FloatValue();  // FloatValue hoitaa nyt 'peekkauksen'
-  TimeIndex(oldTimeIndex);     // aseta vanhat indeksit paikoilleen
-  return value;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -566,22 +696,30 @@ float NFmiSuperSmartInfo::PeekTimeValue(int theTimeOffset)
 
 float NFmiSuperSmartInfo::PeekValue(int theTimeOffset, int theXOffset, int theYOffset)
 {
-  // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
-  // indeksit otetaan talteen,että tilanne voidaan palauttaa datan
-  // kyselyn jälkeen. Eri access-tasoisia Calculaattoreita varten
-  // paikka pitää asettaa ensin kohdalleen, että Calculaattorit
-  // toimisivat oikein.
+  try
+  {
+    // Peek...Value()-metodit pitää tehdä niin, että alkuperäiset
+    // indeksit otetaan talteen,että tilanne voidaan palauttaa datan
+    // kyselyn jälkeen. Eri access-tasoisia Calculaattoreita varten
+    // paikka pitää asettaa ensin kohdalleen, että Calculaattorit
+    // toimisivat oikein.
 
-  unsigned long oldLocationIndex = LocationIndex();
-  unsigned long oldTimeIndex = TimeIndex();
-  int wantedIndex = CalcPeekLocationIndex(oldLocationIndex, theXOffset, theYOffset);
-  bool status1 = LocationIndex(wantedIndex);
-  bool status2 = TimeIndex(oldTimeIndex + theTimeOffset);
-  float value =
-      (status1 && status2) ? FloatValue() : kFloatMissing;  // FloatValue hoitaa nyt 'peekkauksen'
-  LocationIndex(oldLocationIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
-  TimeIndex(oldTimeIndex);          // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
-  return value;
+    unsigned long oldLocationIndex = LocationIndex();
+    unsigned long oldTimeIndex = TimeIndex();
+    int wantedIndex = CalcPeekLocationIndex(oldLocationIndex, theXOffset, theYOffset);
+    bool status1 = LocationIndex(wantedIndex);
+    bool status2 = TimeIndex(oldTimeIndex + theTimeOffset);
+    float value =
+        (status1 && status2) ? FloatValue() : kFloatMissing;  // FloatValue hoitaa nyt 'peekkauksen'
+    LocationIndex(
+        oldLocationIndex);    // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
+    TimeIndex(oldTimeIndex);  // aseta vanhat indeksit paikoilleen eli info vanhaan 'asentoon'
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -597,21 +735,29 @@ unsigned long NFmiSuperSmartInfo::CalcPeekLocationIndex(unsigned long currentInd
                                                         int theXOffset,
                                                         int theYOffset) const
 {
-  if (!IsGrid()) return (currentIndex + theXOffset);
+  try
+  {
+    if (!IsGrid())
+      return (currentIndex + theXOffset);
 
-  int currentXIndex = (currentIndex % itsGridXNumber) + theXOffset;
-  int currentYIndex = (currentIndex / itsGridXNumber) + theYOffset;
+    int currentXIndex = (currentIndex % itsGridXNumber) + theXOffset;
+    int currentYIndex = (currentIndex / itsGridXNumber) + theYOffset;
 
-  // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi
-  // tarkistetaan kuitenkin Index-metodissa??
+    // voiko tämän seuraavan tarkistuksen poistaa, kun indeksi
+    // tarkistetaan kuitenkin Index-metodissa??
 
-  // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
-  if (currentXIndex >= 0 && currentYIndex >= 0 && currentXIndex < int(itsGridXNumber) &&
-      currentYIndex < int(itsGridYNumber))
-    return (currentYIndex * itsGridXNumber + currentXIndex);
+    // x- ja y-indeksien pitää pysyä gridin sisällä offsettien kera!
+    if (currentXIndex >= 0 && currentYIndex >= 0 && currentXIndex < int(itsGridXNumber) &&
+        currentYIndex < int(itsGridYNumber))
+      return (currentYIndex * itsGridXNumber + currentXIndex);
 
-  // palauttaa -1 indeksin, jos peek menee hilaruudukon ulkopuolelle
-  return static_cast<unsigned long>(-1);
+    // palauttaa -1 indeksin, jos peek menee hilaruudukon ulkopuolelle
+    return static_cast<unsigned long>(-1);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -631,23 +777,30 @@ bool NFmiSuperSmartInfo::LocationIndex2XYPosition(unsigned long theIndex,
                                                   int* theXOffset,
                                                   int* theYOffset)
 {
-  if (theIndex > itsLocationSize)
+  try
   {
-    *theXOffset = -1;
-    *theYOffset = -1;
-    return false;
+    if (theIndex > itsLocationSize)
+    {
+      *theXOffset = -1;
+      *theYOffset = -1;
+      return false;
+    }
+    else if (IsGrid())
+    {
+      *theXOffset = (theIndex % itsGridXNumber);
+      *theYOffset = (theIndex / itsGridXNumber);
+    }
+    else
+    {
+      *theXOffset = theIndex;
+      *theYOffset = -1;
+    }
+    return true;
   }
-  else if (IsGrid())
+  catch (...)
   {
-    *theXOffset = (theIndex % itsGridXNumber);
-    *theYOffset = (theIndex / itsGridXNumber);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-  else
-  {
-    *theXOffset = theIndex;
-    *theYOffset = -1;
-  }
-  return true;
 }
 
 // ----------------------------------------------------------------------
@@ -657,7 +810,18 @@ bool NFmiSuperSmartInfo::LocationIndex2XYPosition(unsigned long theIndex,
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfo* NFmiSuperSmartInfo::Clone() const { return new NFmiSuperSmartInfo(*this); }
+NFmiQueryInfo* NFmiSuperSmartInfo::Clone() const
+{
+  try
+  {
+    return new NFmiSuperSmartInfo(*this);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Write the object to the given output stream
@@ -669,8 +833,15 @@ NFmiQueryInfo* NFmiSuperSmartInfo::Clone() const { return new NFmiSuperSmartInfo
 
 std::ostream& NFmiSuperSmartInfo::Write(std::ostream& file) const
 {
-  NFmiFastQueryInfo::Write(file);
-  return file;
+  try
+  {
+    NFmiFastQueryInfo::Write(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -684,8 +855,15 @@ std::ostream& NFmiSuperSmartInfo::Write(std::ostream& file) const
 
 std::istream& NFmiSuperSmartInfo::Read(std::istream& file)
 {
-  NFmiFastQueryInfo::Read(file);
-  return file;
+  try
+  {
+    NFmiFastQueryInfo::Read(file);
+    return file;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -699,30 +877,37 @@ std::istream& NFmiSuperSmartInfo::Read(std::istream& file)
 
 NFmiSuperSmartInfo& NFmiSuperSmartInfo::operator=(const NFmiSuperSmartInfo& theInfo)
 {
-  if (this != &theInfo)
+  try
   {
-    NFmiFastQueryInfo::operator=(theInfo);
+    if (this != &theInfo)
+    {
+      NFmiFastQueryInfo::operator=(theInfo);
 
-    itsFloatValueAccessLevel = theInfo.itsFloatValueAccessLevel;
-    fUseCalculator = theInfo.fUseCalculator;
-    fUseVarianceCalculator = theInfo.fUseVarianceCalculator;
-    fUseVariationCalculator = theInfo.fUseVariationCalculator;
-    fUseTimeIntegrationCalculator = theInfo.fUseTimeIntegrationCalculator;
-    itsCalculator = theInfo.itsCalculator;
-    itsVariationCalculator = theInfo.itsVariationCalculator;
+      itsFloatValueAccessLevel = theInfo.itsFloatValueAccessLevel;
+      fUseCalculator = theInfo.fUseCalculator;
+      fUseVarianceCalculator = theInfo.fUseVarianceCalculator;
+      fUseVariationCalculator = theInfo.fUseVariationCalculator;
+      fUseTimeIntegrationCalculator = theInfo.fUseTimeIntegrationCalculator;
+      itsCalculator = theInfo.itsCalculator;
+      itsVariationCalculator = theInfo.itsVariationCalculator;
 
-    // HUOM!!!! TÄMÄ PITÄÄ HOITAA SITTEN KUNTOON
-    // itsCurrentVarianceCalculator = theInfo.itsCurrentVarianceCalculator;
+      // HUOM!!!! TÄMÄ PITÄÄ HOITAA SITTEN KUNTOON
+      // itsCurrentVarianceCalculator = theInfo.itsCurrentVarianceCalculator;
 
-    itsDataModifierDescriptor = theInfo.itsDataModifierDescriptor;
-    itsAreaMask = theInfo.itsAreaMask;
-    fUseAreaMask = theInfo.fUseAreaMask;
+      itsDataModifierDescriptor = theInfo.itsDataModifierDescriptor;
+      itsAreaMask = theInfo.itsAreaMask;
+      fUseAreaMask = theInfo.fUseAreaMask;
 
-    // tämä alustetaan (virheellisesti) CopyHelperBinaryMasksAndInfo:issa
-    itsCurrentHelperBinaryMask = nullptr;
-    CopyHelperBinaryMasksAndInfo(theInfo);
+      // tämä alustetaan (virheellisesti) CopyHelperBinaryMasksAndInfo:issa
+      itsCurrentHelperBinaryMask = nullptr;
+      CopyHelperBinaryMasksAndInfo(theInfo);
+    }
+    return *this;
   }
-  return *this;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -733,10 +918,17 @@ NFmiSuperSmartInfo& NFmiSuperSmartInfo::operator=(const NFmiSuperSmartInfo& theI
 
 void NFmiSuperSmartInfo::Destroy()
 {
-  delete itsCurrentVarianceCalculator;
-  ClearHelperBinaryMasks();
+  try
+  {
+    delete itsCurrentVarianceCalculator;
+    ClearHelperBinaryMasks();
 
-  NFmiFastQueryInfo::Destroy();
+    NFmiFastQueryInfo::Destroy();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -747,10 +939,17 @@ void NFmiSuperSmartInfo::Destroy()
 
 size_t NFmiSuperSmartInfo::Index() const
 {
-  // tämä saattaa muuttua, jos datan järjestystä muutetaan
-  // (locationit sisimmäiseen looppiin!)
+  try
+  {
+    // tämä saattaa muuttua, jos datan järjestystä muutetaan
+    // (locationit sisimmäiseen looppiin!)
 
-  return NFmiFastQueryInfo::Index();
+    return NFmiFastQueryInfo::Index();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -762,15 +961,22 @@ size_t NFmiSuperSmartInfo::Index() const
 
 bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
 {
-  if (fUseAreaMask && itsAreaMask)
+  try
   {
-    if (fUseHelperBinaryMasks && itsCurrentHelperBinaryMask)
-      return itsCurrentHelperBinaryMask->IsMasked(theLocationIndex);
-    else
-      return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
-  }
+    if (fUseAreaMask && itsAreaMask)
+    {
+      if (fUseHelperBinaryMasks && itsCurrentHelperBinaryMask)
+        return itsCurrentHelperBinaryMask->IsMasked(theLocationIndex);
+      else
+        return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
+    }
 
-  return true;  // jos ei maskia käytössä, on maski aina päällä!!!
+    return true;  // jos ei maskia käytössä, on maski aina päällä!!!
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -781,21 +987,28 @@ bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
 
 float NFmiSuperSmartInfo::VarianceFloatValue() const
 {
-  if (fUseVarianceCalculator && itsCurrentVarianceCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kNormalAccess;
+    if (fUseVarianceCalculator && itsCurrentVarianceCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kNormalAccess;
 
-    auto value = static_cast<float>(itsCurrentVarianceCalculator->FloatValue());
+      auto value = static_cast<float>(itsCurrentVarianceCalculator->FloatValue());
 
-    // palautetaan accesslevel
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      // palautetaan accesslevel
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    return RawFloatValue();
   }
-
-  return RawFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -806,23 +1019,30 @@ float NFmiSuperSmartInfo::VarianceFloatValue() const
 
 float NFmiSuperSmartInfo::VariationFloatValue() const
 {
-  if (fUseVariationCalculator && itsVariationCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kTimeIntegrationAccess;
+    if (fUseVariationCalculator && itsVariationCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kTimeIntegrationAccess;
 
-    auto value = static_cast<float>(itsVariationCalculator->FloatValue());
+      auto value = static_cast<float>(itsVariationCalculator->FloatValue());
 
-    // palautetaan accesslevel
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      // palautetaan accesslevel
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
+    // ei löydy calculaattoria
+    return TimeIntegrationFloatValue();
   }
-
-  // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
-  // ei löydy calculaattoria
-  return TimeIntegrationFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -833,22 +1053,29 @@ float NFmiSuperSmartInfo::VariationFloatValue() const
 
 float NFmiSuperSmartInfo::TimeIntegrationFloatValue() const
 {
-  if (fUseTimeIntegrationCalculator && itsTimeIntegrationCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kVarianceAccess;
+    if (fUseTimeIntegrationCalculator && itsTimeIntegrationCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kVarianceAccess;
 
-    auto value = static_cast<float>(itsTimeIntegrationCalculator->FloatValue());
+      auto value = static_cast<float>(itsTimeIntegrationCalculator->FloatValue());
 
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
+    // ei löydy calculaattoria
+    return VarianceFloatValue();
   }
-
-  // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
-  // ei löydy calculaattoria
-  return VarianceFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -859,23 +1086,30 @@ float NFmiSuperSmartInfo::TimeIntegrationFloatValue() const
 
 NFmiCombinedParam* NFmiSuperSmartInfo::VariationCombinedValue()
 {
-  if (fUseVariationCalculator && itsVariationCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kVarianceAccess;
+    if (fUseVariationCalculator && itsVariationCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kVarianceAccess;
 
-    NFmiCombinedParam* value = itsVariationCalculator->CombinedValue();
+      NFmiCombinedParam* value = itsVariationCalculator->CombinedValue();
 
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
+    // ei löydy calculaattoria
+
+    return nullptr;  // VarianceFloatValue();
   }
-
-  // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
-  // ei löydy calculaattoria
-
-  return nullptr;  // VarianceFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -886,23 +1120,30 @@ NFmiCombinedParam* NFmiSuperSmartInfo::VariationCombinedValue()
 
 NFmiCombinedParam* NFmiSuperSmartInfo::CalculationCombinedValue()
 {
-  if (fUseCalculator && itsCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kVariationAccess;
+    if (fUseCalculator && itsCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kVariationAccess;
 
-    NFmiCombinedParam* value = itsCalculator->CombinedValue();
+      NFmiCombinedParam* value = itsCalculator->CombinedValue();
 
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
+    // ei löydy calculaattoria
+
+    return VariationCombinedValue();  // VarianceFloatValue();
   }
-
-  // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
-  // ei löydy calculaattoria
-
-  return VariationCombinedValue();  // VarianceFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -913,23 +1154,30 @@ NFmiCombinedParam* NFmiSuperSmartInfo::CalculationCombinedValue()
 
 float NFmiSuperSmartInfo::CalculationFloatValue() const
 {
-  if (fUseCalculator && itsCalculator)
+  try
   {
-    // accessleveliä pitää säätää tässä väliaikaisesti, että
-    // calculator pääsee käsiksi 'alemman' tason dataan
-    DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
-    itsFloatValueAccessLevel = kVariationAccess;
+    if (fUseCalculator && itsCalculator)
+    {
+      // accessleveliä pitää säätää tässä väliaikaisesti, että
+      // calculator pääsee käsiksi 'alemman' tason dataan
+      DataAccessLevel oldAccessLevel = itsFloatValueAccessLevel;
+      itsFloatValueAccessLevel = kVariationAccess;
 
-    auto value = static_cast<float>(itsCalculator->FloatValue());
+      auto value = static_cast<float>(itsCalculator->FloatValue());
 
-    itsFloatValueAccessLevel = oldAccessLevel;
-    return value;
+      itsFloatValueAccessLevel = oldAccessLevel;
+      return value;
+    }
+
+    // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
+    // ei löydy calculaattoria
+
+    return VariationFloatValue();
   }
-
-  // mielestäni pitää kutsua seuraavaa tasoa, jos tältä tasolta
-  // ei löydy calculaattoria
-
-  return VariationFloatValue();
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -941,11 +1189,18 @@ float NFmiSuperSmartInfo::CalculationFloatValue() const
 
 void NFmiSuperSmartInfo::SetCalculator(NFmiCalculator* theCalculator, bool useCalculator)
 {
-  itsCalculator = theCalculator;
-  if (theCalculator)
-    fUseCalculator = useCalculator;
-  else  // jos 0-pointteri, otetaan pois käytöstä!!!
-    fUseCalculator = false;
+  try
+  {
+    itsCalculator = theCalculator;
+    if (theCalculator)
+      fUseCalculator = useCalculator;
+    else  // jos 0-pointteri, otetaan pois käytöstä!!!
+      fUseCalculator = false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -956,8 +1211,15 @@ void NFmiSuperSmartInfo::SetCalculator(NFmiCalculator* theCalculator, bool useCa
 
 void NFmiSuperSmartInfo::SetDataModifierDescriptor(NFmiDataModifierDescriptor* theDescriptor)
 {
-  itsDataModifierDescriptor = theDescriptor;  // HUOM!! Ei omista, pitäisikö???
-  UpdateVarianceCalculator();
+  try
+  {
+    itsDataModifierDescriptor = theDescriptor;  // HUOM!! Ei omista, pitäisikö???
+    UpdateVarianceCalculator();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -968,8 +1230,15 @@ void NFmiSuperSmartInfo::SetDataModifierDescriptor(NFmiDataModifierDescriptor* t
 
 void NFmiSuperSmartInfo::UseVarianceCalculator(bool value)
 {
-  fUseVarianceCalculator = value;
-  UpdateVarianceCalculator();
+  try
+  {
+    fUseVarianceCalculator = value;
+    UpdateVarianceCalculator();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -980,9 +1249,16 @@ void NFmiSuperSmartInfo::UseVarianceCalculator(bool value)
 
 bool NFmiSuperSmartInfo::FirstParam(bool fIgnoreSubParam)
 {
-  bool status = NFmiFastQueryInfo::FirstParam(fIgnoreSubParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::FirstParam(fIgnoreSubParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -994,9 +1270,16 @@ bool NFmiSuperSmartInfo::FirstParam(bool fIgnoreSubParam)
 
 bool NFmiSuperSmartInfo::NextParam(bool fIgnoreSubParam)
 {
-  bool status = NFmiFastQueryInfo::NextParam(fIgnoreSubParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::NextParam(fIgnoreSubParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1008,9 +1291,16 @@ bool NFmiSuperSmartInfo::NextParam(bool fIgnoreSubParam)
 
 bool NFmiSuperSmartInfo::PreviousParam(bool fIgnoreSubParam)
 {
-  bool status = NFmiFastQueryInfo::PreviousParam(fIgnoreSubParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::PreviousParam(fIgnoreSubParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1021,9 +1311,16 @@ bool NFmiSuperSmartInfo::PreviousParam(bool fIgnoreSubParam)
 
 bool NFmiSuperSmartInfo::LastParam(bool fIgnoreSubParam)
 {
-  bool status = NFmiFastQueryInfo::LastParam(fIgnoreSubParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::LastParam(fIgnoreSubParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1035,9 +1332,16 @@ bool NFmiSuperSmartInfo::LastParam(bool fIgnoreSubParam)
 
 bool NFmiSuperSmartInfo::Param(const NFmiParam& theParam)
 {
-  bool status = NFmiFastQueryInfo::Param(theParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::Param(theParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1050,9 +1354,16 @@ bool NFmiSuperSmartInfo::Param(const NFmiParam& theParam)
 
 bool NFmiSuperSmartInfo::Param(const NFmiParam& theParam, const NFmiParam& theSubParam)
 {
-  bool status = NFmiFastQueryInfo::Param(theParam, theSubParam);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::Param(theParam, theSubParam);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1064,9 +1375,16 @@ bool NFmiSuperSmartInfo::Param(const NFmiParam& theParam, const NFmiParam& theSu
 
 bool NFmiSuperSmartInfo::Param(const NFmiDataIdent& theDataIdent)
 {
-  bool status = NFmiFastQueryInfo::Param(theDataIdent);
-  UpdateVarianceCalculator();
-  return status;
+  try
+  {
+    bool status = NFmiFastQueryInfo::Param(theDataIdent);
+    UpdateVarianceCalculator();
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1077,11 +1395,18 @@ bool NFmiSuperSmartInfo::Param(const NFmiDataIdent& theDataIdent)
 
 bool NFmiSuperSmartInfo::FirstTime()
 {
-  // Ajansiirto-funktioissa pitää päivittää myös maskin aikaa
-  unsigned long oldTimeIndex = itsTimeIndex;
-  bool status = NFmiFastQueryInfo::FirstTime();
-  TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    // Ajansiirto-funktioissa pitää päivittää myös maskin aikaa
+    unsigned long oldTimeIndex = itsTimeIndex;
+    bool status = NFmiFastQueryInfo::FirstTime();
+    TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1092,10 +1417,17 @@ bool NFmiSuperSmartInfo::FirstTime()
 
 bool NFmiSuperSmartInfo::NextTime()
 {
-  unsigned long oldTimeIndex = itsTimeIndex;
-  bool status = NFmiFastQueryInfo::NextTime();
-  TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    unsigned long oldTimeIndex = itsTimeIndex;
+    bool status = NFmiFastQueryInfo::NextTime();
+    TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1106,10 +1438,17 @@ bool NFmiSuperSmartInfo::NextTime()
 
 bool NFmiSuperSmartInfo::LastTime()
 {
-  unsigned long oldTimeIndex = itsTimeIndex;
-  bool status = NFmiFastQueryInfo::LastTime();
-  TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    unsigned long oldTimeIndex = itsTimeIndex;
+    bool status = NFmiFastQueryInfo::LastTime();
+    TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1120,10 +1459,17 @@ bool NFmiSuperSmartInfo::LastTime()
 
 bool NFmiSuperSmartInfo::PreviousTime()
 {
-  unsigned long oldTimeIndex = itsTimeIndex;
-  bool status = NFmiFastQueryInfo::PreviousTime();
-  TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    unsigned long oldTimeIndex = itsTimeIndex;
+    bool status = NFmiFastQueryInfo::PreviousTime();
+    TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1135,11 +1481,19 @@ bool NFmiSuperSmartInfo::PreviousTime()
 
 bool NFmiSuperSmartInfo::Time(const NFmiMetTime& theTime)
 {
-  unsigned long oldTimeIndex = itsTimeIndex;
-  // TimeChanged metodia ei saa kutsua, jos asetus feilaa
-  bool status = NFmiFastQueryInfo::Time(theTime);
-  if (status) TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    unsigned long oldTimeIndex = itsTimeIndex;
+    // TimeChanged metodia ei saa kutsua, jos asetus feilaa
+    bool status = NFmiFastQueryInfo::Time(theTime);
+    if (status)
+      TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1151,10 +1505,17 @@ bool NFmiSuperSmartInfo::Time(const NFmiMetTime& theTime)
 
 bool NFmiSuperSmartInfo::TimeIndex(unsigned long theIndex)
 {
-  unsigned long oldTimeIndex = itsTimeIndex;
-  bool status = NFmiFastQueryInfo::TimeIndex(theIndex);
-  TimeChanged(oldTimeIndex);
-  return status;
+  try
+  {
+    unsigned long oldTimeIndex = itsTimeIndex;
+    bool status = NFmiFastQueryInfo::TimeIndex(theIndex);
+    TimeChanged(oldTimeIndex);
+    return status;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1164,13 +1525,20 @@ bool NFmiSuperSmartInfo::TimeIndex(unsigned long theIndex)
 // ----------------------------------------------------------------------
 void NFmiSuperSmartInfo::UpdateVarianceCalculator()
 {
-  if (itsDataModifierDescriptor)
+  try
   {
-    const NFmiDataIdent& param = NFmiFastQueryInfo::Param();
-    const NFmiLevel* level = Level();
-    itsCurrentVarianceCalculator->SetData(this);
-    NFmiParamDataModifier* modifier = itsDataModifierDescriptor->VarianceModifier(param, level);
-    itsCurrentVarianceCalculator->SetDataModifier(modifier);
+    if (itsDataModifierDescriptor)
+    {
+      const NFmiDataIdent& param = NFmiFastQueryInfo::Param();
+      const NFmiLevel* level = Level();
+      itsCurrentVarianceCalculator->SetData(this);
+      NFmiParamDataModifier* modifier = itsDataModifierDescriptor->VarianceModifier(param, level);
+      itsCurrentVarianceCalculator->SetDataModifier(modifier);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1182,9 +1550,16 @@ void NFmiSuperSmartInfo::UpdateVarianceCalculator()
 
 void NFmiSuperSmartInfo::UpdateAreaMaskTime()
 {
-  if (fUseAreaMask && itsAreaMask)
+  try
   {
-    SetCurrentHelperBinaryMask();
+    if (fUseAreaMask && itsAreaMask)
+    {
+      SetCurrentHelperBinaryMask();
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1196,7 +1571,14 @@ void NFmiSuperSmartInfo::UpdateAreaMaskTime()
 
 void NFmiSuperSmartInfo::SetCurrentHelperBinaryMask()
 {
-  itsCurrentHelperBinaryMask = HelperBinaryMask(CalcAreaUnCertainty());
+  try
+  {
+    itsCurrentHelperBinaryMask = HelperBinaryMask(CalcAreaUnCertainty());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1208,11 +1590,18 @@ void NFmiSuperSmartInfo::SetCurrentHelperBinaryMask()
 
 NFmiBitmapAreaMask* NFmiSuperSmartInfo::HelperBinaryMask(int theUsedVariationFactor)
 {
-  size_t size = itsHelperBinaryMaskList.size();
-  if (theUsedVariationFactor < 0 || static_cast<std::size_t>(theUsedVariationFactor) >= size)
-    return nullptr;
-  else
-    return itsHelperBinaryMaskList[theUsedVariationFactor];
+  try
+  {
+    size_t size = itsHelperBinaryMaskList.size();
+    if (theUsedVariationFactor < 0 || static_cast<std::size_t>(theUsedVariationFactor) >= size)
+      return nullptr;
+    else
+      return itsHelperBinaryMaskList[theUsedVariationFactor];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1223,8 +1612,15 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::HelperBinaryMask(int theUsedVariationFac
 
 void NFmiSuperSmartInfo::UseHelperBinaryMasks(bool newStatus)
 {
-  fUseHelperBinaryMasks = newStatus;
-  InitHelperBinaryMasks();  // pitää varmuuden vuoksi aina alustaa (voisi optimoida)
+  try
+  {
+    fUseHelperBinaryMasks = newStatus;
+    InitHelperBinaryMasks();  // pitää varmuuden vuoksi aina alustaa (voisi optimoida)
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1238,18 +1634,25 @@ void NFmiSuperSmartInfo::UseHelperBinaryMasks(bool newStatus)
 
 bool NFmiSuperSmartInfo::InitHelperBinaryMasks()
 {
-  if (fUseHelperBinaryMasks)
+  try
   {
-    ClearHelperBinaryMasks();
-    CalcXYMaskBoundingBox();
-    // int start = AreaUnCertaintyStart();
-    int end = AreaUnCertaintyEnd();
-    itsHelperBinaryMaskList.resize(end + 1);
-    for (int i = 0; i <= end; i++)
-      itsHelperBinaryMaskList[i] = CreateHelperBinaryMask(i);
-    return true;
+    if (fUseHelperBinaryMasks)
+    {
+      ClearHelperBinaryMasks();
+      CalcXYMaskBoundingBox();
+      // int start = AreaUnCertaintyStart();
+      int end = AreaUnCertaintyEnd();
+      itsHelperBinaryMaskList.resize(end + 1);
+      for (int i = 0; i <= end; i++)
+        itsHelperBinaryMaskList[i] = CreateHelperBinaryMask(i);
+      return true;
+    }
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1261,44 +1664,53 @@ bool NFmiSuperSmartInfo::InitHelperBinaryMasks()
 
 NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateHelperBinaryMask(int theUsedVariationFactor)
 {
-  if (theUsedVariationFactor == 0) return CreateZeroVariationHelperBinaryMask();
-
-  auto* helperMask = new NFmiBitmapAreaMask(
-      itsGridXNumber, itsGridYNumber, Area(), &Param(), Level(), NFmiAreaMask::kNoValue);
-  if (!helperMask) return nullptr;
-
-  int moveByX = theUsedVariationFactor * 2 + 1;
-  int moveByY = theUsedVariationFactor * 2 + 1;
-  auto left = static_cast<int>(itsXYMaskBoundingBox.Left());
-  auto right = static_cast<int>(itsXYMaskBoundingBox.Right());
-
-  int moveXFromStart = 0;
-  int moveXFactor = (right - left) % (moveByX);
-  bool specialXCase = ((moveByX > 3) && ((moveByX - moveXFactor) ==
-                                         1));  // jos totta, tihennetään harvennushilaa yhdellä
-  if (specialXCase)
-    moveByX--;
-  else if (moveXFactor > 1)
-    moveXFromStart = moveXFactor / 2;
-  auto top = static_cast<int>(itsXYMaskBoundingBox.Top());
-  auto bottom = static_cast<int>(itsXYMaskBoundingBox.Bottom());
-  int moveYFromStart = 0;
-  int moveYFactor = (bottom - top) % (moveByY);
-  bool specialYCase = ((moveByY > 3) && ((moveByY - moveYFactor) == 1));
-  if (specialYCase)
-    moveByY--;
-  else if (moveYFactor > 1)
-    moveYFromStart = moveYFactor / 2;
-  helperMask->Mask((bottom + top) / 2 * itsGridXNumber + (right + left) / 2, true);
-  for (int j = top + moveYFromStart; j <= bottom; j += moveByY)
+  try
   {
-    for (int i = left + moveXFromStart; i <= right; i += moveByX)
+    if (theUsedVariationFactor == 0)
+      return CreateZeroVariationHelperBinaryMask();
+
+    auto* helperMask = new NFmiBitmapAreaMask(
+        itsGridXNumber, itsGridYNumber, Area(), &Param(), Level(), NFmiAreaMask::kNoValue);
+    if (!helperMask)
+      return nullptr;
+
+    int moveByX = theUsedVariationFactor * 2 + 1;
+    int moveByY = theUsedVariationFactor * 2 + 1;
+    auto left = static_cast<int>(itsXYMaskBoundingBox.Left());
+    auto right = static_cast<int>(itsXYMaskBoundingBox.Right());
+
+    int moveXFromStart = 0;
+    int moveXFactor = (right - left) % (moveByX);
+    bool specialXCase = ((moveByX > 3) && ((moveByX - moveXFactor) ==
+                                           1));  // jos totta, tihennetään harvennushilaa yhdellä
+    if (specialXCase)
+      moveByX--;
+    else if (moveXFactor > 1)
+      moveXFromStart = moveXFactor / 2;
+    auto top = static_cast<int>(itsXYMaskBoundingBox.Top());
+    auto bottom = static_cast<int>(itsXYMaskBoundingBox.Bottom());
+    int moveYFromStart = 0;
+    int moveYFactor = (bottom - top) % (moveByY);
+    bool specialYCase = ((moveByY > 3) && ((moveByY - moveYFactor) == 1));
+    if (specialYCase)
+      moveByY--;
+    else if (moveYFactor > 1)
+      moveYFromStart = moveYFactor / 2;
+    helperMask->Mask((bottom + top) / 2 * itsGridXNumber + (right + left) / 2, true);
+    for (int j = top + moveYFromStart; j <= bottom; j += moveByY)
     {
-      int idx = j * itsGridXNumber + i;
-      helperMask->Mask(idx, true);
+      for (int i = left + moveXFromStart; i <= right; i += moveByX)
+      {
+        int idx = j * itsGridXNumber + i;
+        helperMask->Mask(idx, true);
+      }
     }
+    return helperMask;
   }
-  return helperMask;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1310,24 +1722,31 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateHelperBinaryMask(int theUsedVariat
 
 NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateZeroVariationHelperBinaryMask()
 {
-  NFmiAreaMask* mask = AreaMask();
-  auto* helperMask = new NFmiBitmapAreaMask;
-  if (mask && mask->Info() && helperMask)
+  try
   {
-    unsigned int oldLocationIndex = LocationIndex();
-    bool oldUseAreaMaskStatus = UseAreaMask();
-    // laitetaan maski pois päältä, niin bitmapmaski voi tehdä hommansa
-    UseAreaMask(false);
+    NFmiAreaMask* mask = AreaMask();
+    auto* helperMask = new NFmiBitmapAreaMask;
+    if (mask && mask->Info() && helperMask)
+    {
+      unsigned int oldLocationIndex = LocationIndex();
+      bool oldUseAreaMaskStatus = UseAreaMask();
+      // laitetaan maski pois päältä, niin bitmapmaski voi tehdä hommansa
+      UseAreaMask(false);
 
-    helperMask->Init(mask->Info(), AreaMask()->Condition());
+      helperMask->Init(mask->Info(), AreaMask()->Condition());
 
-    LocationIndex(oldLocationIndex);
-    UseAreaMask(oldUseAreaMaskStatus);
+      LocationIndex(oldLocationIndex);
+      UseAreaMask(oldUseAreaMaskStatus);
 
-    return helperMask;
+      return helperMask;
+    }
+    delete helperMask;
+    return nullptr;
   }
-  delete helperMask;
-  return nullptr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1338,10 +1757,18 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::CreateZeroVariationHelperBinaryMask()
 
 void NFmiSuperSmartInfo::ClearHelperBinaryMasks()
 {
-  size_t size = itsHelperBinaryMaskList.size();
-  for (size_t i = 0; i < size; i++)
-    delete itsHelperBinaryMaskList[i];
-  itsHelperBinaryMaskList.clear();
+  try
+  {
+    size_t size = itsHelperBinaryMaskList.size();
+    for (size_t i = 0; i < size; i++)
+      delete itsHelperBinaryMaskList[i];
+
+    itsHelperBinaryMaskList.clear();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1354,30 +1781,37 @@ void NFmiSuperSmartInfo::ClearHelperBinaryMasks()
 
 void NFmiSuperSmartInfo::CalcXYMaskBoundingBox()
 {
-  unsigned int oldLocationIndex = LocationIndex();
-  bool oldUseAreaMaskStatus = UseAreaMask();
-  // laitetaan maski päälle, niin liikutaan vain maskatuissa paikoissa
-  UseAreaMask(true);
-  bool oldUseHelperBinaryMasksState = fUseHelperBinaryMasks;
-  fUseHelperBinaryMasks = false;
-  NFmiDataModifierMinMax xMinMax;
-  NFmiDataModifierMinMax yMinMax;
-  int xOffset = -1, yOffset = -1;
-  for (ResetLocation(); NextLocation();)
+  try
   {
-    // tämän pitäisi olla turha testi
-    if (LocationIndex2XYPosition(LocationIndex(), &xOffset, &yOffset))
+    unsigned int oldLocationIndex = LocationIndex();
+    bool oldUseAreaMaskStatus = UseAreaMask();
+    // laitetaan maski päälle, niin liikutaan vain maskatuissa paikoissa
+    UseAreaMask(true);
+    bool oldUseHelperBinaryMasksState = fUseHelperBinaryMasks;
+    fUseHelperBinaryMasks = false;
+    NFmiDataModifierMinMax xMinMax;
+    NFmiDataModifierMinMax yMinMax;
+    int xOffset = -1, yOffset = -1;
+    for (ResetLocation(); NextLocation();)
     {
-      xMinMax.Calculate(static_cast<float>(xOffset));
-      yMinMax.Calculate(static_cast<float>(yOffset));
+      // tämän pitäisi olla turha testi
+      if (LocationIndex2XYPosition(LocationIndex(), &xOffset, &yOffset))
+      {
+        xMinMax.Calculate(static_cast<float>(xOffset));
+        yMinMax.Calculate(static_cast<float>(yOffset));
+      }
     }
-  }
-  itsXYMaskBoundingBox =
-      NFmiRect(xMinMax.MinValue(), yMinMax.MaxValue(), xMinMax.MaxValue(), yMinMax.MinValue());
+    itsXYMaskBoundingBox =
+        NFmiRect(xMinMax.MinValue(), yMinMax.MaxValue(), xMinMax.MaxValue(), yMinMax.MinValue());
 
-  LocationIndex(oldLocationIndex);
-  UseAreaMask(oldUseAreaMaskStatus);
-  fUseHelperBinaryMasks = oldUseHelperBinaryMasksState;
+    LocationIndex(oldLocationIndex);
+    UseAreaMask(oldUseAreaMaskStatus);
+    fUseHelperBinaryMasks = oldUseHelperBinaryMasksState;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1400,68 +1834,75 @@ void NFmiSuperSmartInfo::CalcXYMaskBoundingBox()
 
 NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFactor)
 {
-  NFmiString returnStr;
-  NFmiAreaMask* mask = AreaMask();
-  NFmiBitmapAreaMask* helperMask = HelperBinaryMask(theUsedVariationFactor);
-  if (mask && helperMask)
+  try
   {
-    unsigned int oldLocationIndex = LocationIndex();
-    bool oldUseAreaMaskStatus = UseAreaMask();
-    UseAreaMask(false);  // laitetaan maski pois päältä, niin liikutaan kaikissa paikoissa
-
-    int locIndex = 0;
-    int i = 0;
-    string rowStr;
-    std::vector<string> lines;
-    int x = 0, y = 0;
-    for (ResetLocation(); NextLocation();)
+    NFmiString returnStr;
+    NFmiAreaMask* mask = AreaMask();
+    NFmiBitmapAreaMask* helperMask = HelperBinaryMask(theUsedVariationFactor);
+    if (mask && helperMask)
     {
-      locIndex = LocationIndex();
-      bool status1 = mask->IsMasked(locIndex);
-      bool status2 = helperMask->IsMasked(locIndex);
-      if (status1 && status2)
-        rowStr += "@";
-      else if (status1)
-        rowStr += "a";
-      else if (status2)
-        rowStr += "C";
-      else
+      unsigned int oldLocationIndex = LocationIndex();
+      bool oldUseAreaMaskStatus = UseAreaMask();
+      UseAreaMask(false);  // laitetaan maski pois päältä, niin liikutaan kaikissa paikoissa
+
+      int locIndex = 0;
+      int i = 0;
+      string rowStr;
+      std::vector<string> lines;
+      int x = 0, y = 0;
+      for (ResetLocation(); NextLocation();)
       {
-        if (LocationIndex2XYPosition(locIndex, &x, &y))
+        locIndex = LocationIndex();
+        bool status1 = mask->IsMasked(locIndex);
+        bool status2 = helperMask->IsMasked(locIndex);
+        if (status1 && status2)
+          rowStr += "@";
+        else if (status1)
+          rowStr += "a";
+        else if (status2)
+          rowStr += "C";
+        else
         {
-          if ((x == itsXYMaskBoundingBox.Left() || x == itsXYMaskBoundingBox.Right()) &&
-              (y <= itsXYMaskBoundingBox.Bottom() && y >= itsXYMaskBoundingBox.Top()))
-            rowStr += "|";
-          else if ((x >= itsXYMaskBoundingBox.Left() && x <= itsXYMaskBoundingBox.Right()) &&
-                   (y == itsXYMaskBoundingBox.Bottom() || y == itsXYMaskBoundingBox.Top()))
-            rowStr += "-";
+          if (LocationIndex2XYPosition(locIndex, &x, &y))
+          {
+            if ((x == itsXYMaskBoundingBox.Left() || x == itsXYMaskBoundingBox.Right()) &&
+                (y <= itsXYMaskBoundingBox.Bottom() && y >= itsXYMaskBoundingBox.Top()))
+              rowStr += "|";
+            else if ((x >= itsXYMaskBoundingBox.Left() && x <= itsXYMaskBoundingBox.Right()) &&
+                     (y == itsXYMaskBoundingBox.Bottom() || y == itsXYMaskBoundingBox.Top()))
+              rowStr += "-";
+            else
+              rowStr += ",";
+          }
           else
             rowStr += ",";
         }
-        else
-          rowStr += ",";
+        i++;
+        if (i % itsGridXNumber == 0)
+        {
+          rowStr += "\n";
+          lines.push_back(rowStr);
+          rowStr = "";
+        }
       }
-      i++;
-      if (i % itsGridXNumber == 0)
-      {
-        rowStr += "\n";
-        lines.push_back(rowStr);
-        rowStr = "";
-      }
+      rowStr += "\n";  // lisätään vielä viimeinen rivi vectoriin
+      lines.push_back(rowStr);
+
+      LocationIndex(oldLocationIndex);
+      UseAreaMask(oldUseAreaMaskStatus);
+      for (i = lines.size() - 1; i >= 0;
+           i--)  // laitetaan rivit käänteisessä järjestyksessä, että 'kuva' tulee oikein päin
+        returnStr += lines[i];
     }
-    rowStr += "\n";  // lisätään vielä viimeinen rivi vectoriin
-    lines.push_back(rowStr);
+    else
+      returnStr += "Ei ollut maskia tai harvennusmaskia käytettävissä";
 
-    LocationIndex(oldLocationIndex);
-    UseAreaMask(oldUseAreaMaskStatus);
-    for (i = lines.size() - 1; i >= 0;
-         i--)  // laitetaan rivit käänteisessä järjestyksessä, että 'kuva' tulee oikein päin
-      returnStr += lines[i];
+    return returnStr;
   }
-  else
-    returnStr += "Ei ollut maskia tai harvennusmaskia käytettävissä";
-
-  return returnStr;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1472,8 +1913,15 @@ NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFa
 
 void NFmiSuperSmartInfo::UpdateHelperBinaryMasks()
 {
-  InitHelperBinaryMasks();
-  SetCurrentHelperBinaryMask();
+  try
+  {
+    InitHelperBinaryMasks();
+    SetCurrentHelperBinaryMask();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1487,13 +1935,21 @@ void NFmiSuperSmartInfo::UpdateHelperBinaryMasks()
 
 void NFmiSuperSmartInfo::TimeChanged(unsigned long theOldTimeIndex)
 {
-  if (theOldTimeIndex != itsTimeIndex)
-    UpdateAreaMaskTime();  // hoitaa myös SetCurrentHelperBinaryMask-kutsun
-  if (itsVariationCalculator)
+  try
   {
-    int uncertainty = CalcAreaUnCertainty();
-    itsVariationCalculator->DataIterator()->SetDimensions(
-        uncertainty, uncertainty, 0);  // dt toistaiseksi 0
+    if (theOldTimeIndex != itsTimeIndex)
+      UpdateAreaMaskTime();  // hoitaa myös SetCurrentHelperBinaryMask-kutsun
+
+    if (itsVariationCalculator)
+    {
+      int uncertainty = CalcAreaUnCertainty();
+      itsVariationCalculator->DataIterator()->SetDimensions(
+          uncertainty, uncertainty, 0);  // dt toistaiseksi 0
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1505,10 +1961,17 @@ void NFmiSuperSmartInfo::TimeChanged(unsigned long theOldTimeIndex)
 
 void NFmiSuperSmartInfo::InitEmptyAreaMask()
 {
-  NFmiDataIdent dummyParam;
-  NFmiLevel dummyLevel;
-  delete itsAreaMask;
-  itsAreaMask = new NFmiBitmapAreaMask(*Grid(), &dummyParam, &dummyLevel, NFmiAreaMask::kNoValue);
+  try
+  {
+    NFmiDataIdent dummyParam;
+    NFmiLevel dummyLevel;
+    delete itsAreaMask;
+    itsAreaMask = new NFmiBitmapAreaMask(*Grid(), &dummyParam, &dummyLevel, NFmiAreaMask::kNoValue);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1524,19 +1987,27 @@ bool NFmiSuperSmartInfo::SetNearestPointMask(const NFmiPoint& theLatLonPoint,
                                              bool newValue,
                                              bool fClearFirst)
 {
-  if (itsAreaMask)
+  try
   {
-    unsigned long oldIndex = LocationIndex();
-    bool status = Location(theLatLonPoint);
-    if (status)
+    if (itsAreaMask)
     {
-      if (fClearFirst) itsAreaMask->SetAll(false);
-      itsAreaMask->Mask(LocationIndex(), newValue);
+      unsigned long oldIndex = LocationIndex();
+      bool status = Location(theLatLonPoint);
+      if (status)
+      {
+        if (fClearFirst)
+          itsAreaMask->SetAll(false);
+        itsAreaMask->Mask(LocationIndex(), newValue);
+      }
+      LocationIndex(oldIndex);
+      return status;
     }
-    LocationIndex(oldIndex);
-    return status;
+    return false;
   }
-  return false;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ======================================================================

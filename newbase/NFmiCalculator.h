@@ -70,7 +70,10 @@ inline void NFmiCalculator::DataIterator(NFmiDataIterator* theIterator)
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiCalculator::SetData(NFmiQueryInfo* theData) { itsData = theData; }
+inline void NFmiCalculator::SetData(NFmiQueryInfo* theData)
+{
+  itsData = theData;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -78,7 +81,11 @@ inline void NFmiCalculator::SetData(NFmiQueryInfo* theData) { itsData = theData;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataIterator* NFmiCalculator::DataIterator() { return itsDataIterator; }
+inline NFmiDataIterator* NFmiCalculator::DataIterator()
+{
+  return itsDataIterator;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -86,6 +93,9 @@ inline NFmiDataIterator* NFmiCalculator::DataIterator() { return itsDataIterator
  */
 // ----------------------------------------------------------------------
 
-inline NFmiDataModifier* NFmiCalculator::DataModifier() { return itsDataModifier; }
+inline NFmiDataModifier* NFmiCalculator::DataModifier()
+{
+  return itsDataModifier;
+}
 
 // ======================================================================

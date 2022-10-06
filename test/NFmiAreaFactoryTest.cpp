@@ -18,7 +18,8 @@ void latlon()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -29,7 +30,8 @@ void invrotlatlon()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -40,7 +42,8 @@ void mercator()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -51,7 +54,8 @@ void ykj()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -62,7 +66,8 @@ void stereographic()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -73,7 +78,8 @@ void lcc()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }
@@ -84,7 +90,8 @@ void equidist()
   auto area = NFmiAreaFactory::Create(proj);
   auto str = area->AreaFactoryStr();
 
-  if (str != proj) TEST_FAILED("Output " + str + " != expected " + proj);
+  if (str != proj)
+    TEST_FAILED("Output " + str + " != expected " + proj);
 
   TEST_PASSED();
 }

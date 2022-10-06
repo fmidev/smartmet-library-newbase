@@ -122,28 +122,20 @@ inline NFmiTimeBag::NFmiTimeBag(const NFmiTimeBag &theBag)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime &NFmiTimeBag::FirstTime() const { return itsFirstTime; }
+inline const NFmiMetTime &NFmiTimeBag::FirstTime() const
+{
+  return itsFirstTime;
+}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiMetTime &NFmiTimeBag::LastTime() const { return itsLastTime; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline const NFmiMetTime &NFmiTimeBag::CurrentTime() const { return itsCurrentTime; }
-// ----------------------------------------------------------------------
-/*!
- * \return Undocumented
- */
-// ----------------------------------------------------------------------
-
-inline unsigned long NFmiTimeBag::TimeFromStart() const { return CurrentIndex() * itsResolution; }
+inline const NFmiMetTime &NFmiTimeBag::LastTime() const
+{
+  return itsLastTime;
+}
 
 // ----------------------------------------------------------------------
 /*!
@@ -151,14 +143,44 @@ inline unsigned long NFmiTimeBag::TimeFromStart() const { return CurrentIndex() 
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiTimePerioid &NFmiTimeBag::Resolution() const { return itsResolution; }
+inline const NFmiMetTime &NFmiTimeBag::CurrentTime() const
+{
+  return itsCurrentTime;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline const char *NFmiTimeBag::ClassName() const { return "NFmiTimeBag"; }
+inline unsigned long NFmiTimeBag::TimeFromStart() const
+{
+  return CurrentIndex() * itsResolution;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline const NFmiTimePerioid &NFmiTimeBag::Resolution() const
+{
+  return itsResolution;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \return Undocumented
+ */
+// ----------------------------------------------------------------------
+
+inline const char *NFmiTimeBag::ClassName() const
+{
+  return "NFmiTimeBag";
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Output operator for class NFmiTimeBag
@@ -184,6 +206,9 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiTimeBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline std::istream &operator>>(std::istream &file, NFmiTimeBag &ob) { return ob.Read(file); }
+inline std::istream &operator>>(std::istream &file, NFmiTimeBag &ob)
+{
+  return ob.Read(file);
+}
 
 // ======================================================================

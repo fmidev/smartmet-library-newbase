@@ -10,10 +10,8 @@
 #include "NFmiAngle.h"
 #include "NFmiDef.h"
 #include "NFmiRect.h"
-
 #include <boost/shared_ptr.hpp>
 #include <gis/SpatialReference.h>
-
 #include <memory>
 #include <string>
 
@@ -34,7 +32,7 @@ class NFmiArea
 {
  public:
   // These are defined since implementation is hidden
-  ~NFmiArea();
+  virtual ~NFmiArea();
   NFmiArea(const NFmiArea &theArea);
   NFmiArea &operator=(const NFmiArea &theArea);
 
@@ -71,48 +69,72 @@ class NFmiArea
   double Height() const;
   double Width() const;
 
-  const NFmiRect &XYArea() const;
-  void SetXYArea(const NFmiRect &newArea);
   NFmiRect XYArea(const NFmiArea *theArea) const;
-
-  const NFmiRect &WorldRect() const;
-
-  NFmiPoint WorldXYPlace() const;
-  NFmiPoint WorldXYSize() const;
-  double WorldXYWidth() const;
-  double WorldXYHeight() const;
-  double WorldXYAspectRatio() const;
-
-  NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
-                             double theLatitudeEpsilon = 0.001) const;
-
-  NFmiArea *Clone() const;
-
-  NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
-  NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
-  NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
-  NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXY) const;
-  NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
-  NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
 
 #ifdef WGS84
   NFmiPoint ToNativeLatLon(const NFmiPoint &theXY) const;
   NFmiPoint WorldXYToNativeLatLon(const NFmiPoint &theWorldXY) const;
   NFmiPoint NativeLatLonToWorldXY(const NFmiPoint &theLatLon) const;
   NFmiPoint NativeToXY(const NFmiPoint &theLatLon) const;
-  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon, const NFmiPoint &theTopRightLatLon) const;
 #endif
 
-  NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
-  NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
-                          const NFmiPoint &theTopRightLatLon) const;
-  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect) const;
-  NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
-                          FmiDirection theFixedPoint,
-                          bool fShrinkArea);
+  virtual NFmiArea *Clone() const;
+  virtual NFmiArea *CreateNewArea(const NFmiRect &theRect) const;
+  virtual void Init(bool fKeepWorldRect = false);  // For backwards compatibility
+  virtual void SetXYArea(const NFmiRect &newArea);
+  virtual const NFmiRect &XYArea() const;
+  virtual NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
+  virtual NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
+  virtual NFmiPoint XYToWorldXY(const NFmiPoint &theXYPoint) const;
+  virtual NFmiPoint WorldXYToXY(const NFmiPoint &theWorldXY) const;
+  virtual NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
+  virtual NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
+
+  virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
+                            const NFmiPoint &theTopRightLatLon,
+                            bool allowPacificFix = true) const;
+  virtual NFmiArea *CreateNewArea(const NFmiPoint &theBottomLeftLatLon,
+                                  const NFmiPoint &theTopRightLatLon) const;
+  virtual NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
+  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside);
+  virtual NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
+                                  FmiDirection theFixedPoint,
+                                  bool fShrinkArea);
+
+  virtual const NFmiRect WorldRect() const;  // not a reference for ABI compability with master
+
+  virtual NFmiPoint WorldXYPlace() const;
+  virtual NFmiPoint WorldXYSize() const;
+  virtual double WorldXYWidth() const;
+  virtual double WorldXYHeight() const;
+  virtual double WorldXYAspectRatio() const;
+
+  virtual NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
+                                     double theLatitudeEpsilon = 0.001) const;
+
+  Fmi::CoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const;
+
+  virtual unsigned long ClassId() const;
+  virtual const char *ClassName() const;
+  virtual std::string AreaStr() const;
+  virtual std::string WKT() const;
+  std::string SimpleWKT() const;
+
+  virtual std::ostream &Write(std::ostream &file) const;
+  virtual std::istream &Read(std::istream &file);
+
+  virtual bool operator==(const NFmiArea &theArea) const;
+  virtual bool operator!=(const NFmiArea &theArea) const;
+
+  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon);
+  static bool IsPacificLongitude(double theLongitude);
+
+  std::string PrettyWKT() const;
+  std::string ProjStr() const;
+  std::string AreaFactoryStr() const;
+  std::string AreaFactoryProjStr() const;
 
 #ifdef WGS84
-  Fmi::CoordinateMatrix CoordinateMatrix(std::size_t nx, std::size_t ny, bool wrap) const;
   void ToLatLon(Fmi::CoordinateMatrix &theMatrix) const;
   void ToXY(Fmi::CoordinateMatrix &theMatrix) const;
   void XYToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
@@ -124,43 +146,17 @@ class NFmiArea
   void WorldXYToNativeLatLon(Fmi::CoordinateMatrix &theMatrix) const;
   void NativeLatLonToWorldXY(Fmi::CoordinateMatrix &theMatrix) const;
   void NativeToXY(Fmi::CoordinateMatrix &theMatrix) const;
+
+  static bool BilinearInterpolationEnabled();
+  static void EnableBilinearInterpolation();
+  static void DisableBilinearInterpolation();
 #endif
-
-  unsigned long ClassId() const;
-  const std::string &ClassName() const;
-  std::string WKT() const;
-  std::string PrettyWKT() const;
-  std::string ProjStr() const;
-  std::string AreaFactoryStr() const;
-  std::string AreaFactoryProjStr() const;
-
-  std::ostream &Write(std::ostream &file) const;
-  std::istream &Read(std::istream &file);
-
-  bool operator==(const NFmiArea &theArea) const;
-  bool operator!=(const NFmiArea &theArea) const;
 
   // Some legacy pacific functions, that just return false or do nothing.
   // Remove these and their usage, if proven that they are no longer needed with new wgs84 systems.
   bool PacificView_legacy(void) const { return false; }
   void PacificView_legacy(bool) {}
-  static bool IsPacificView(const NFmiPoint &bottomleftLatlon, const NFmiPoint &toprightLatlon)
-  {
-    // Obvious case
-    if (bottomleftLatlon.X() >= 0 && toprightLatlon.X() < 0) return true;
-    // 0...360 coordinate system is used
-    if (IsPacificLongitude(bottomleftLatlon.X()) || IsPacificLongitude(toprightLatlon.X()))
-      return true;
-    return false;
-  }
-
-  static bool IsPacificLongitude(double theLongitude)
-  {
-    if (theLongitude > 180 && theLongitude <= 360)
-      return true;
-    else
-      return false;
-  }
+  bool PacificView(void) const { return false; }
 
   std::size_t HashValue() const;
 
@@ -233,14 +229,14 @@ class NFmiArea
  protected:
   int Sign(double theValue) const;
   double FixLongitude(double theLongitude) const;
-
- public:
-  void Init(bool fKeepWorldRect = false);
-  NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                    const NFmiPoint &theTopRightLatLon,
-                    bool allowPacificFix = true) const;
 #endif
 };  // class NFmiArea
 
-inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob) { return ob.Write(file); }
-inline std::istream &operator>>(std::istream &file, NFmiArea &ob) { return ob.Read(file); }
+inline std::ostream &operator<<(std::ostream &file, const NFmiArea &ob)
+{
+  return ob.Write(file);
+}
+inline std::istream &operator>>(std::istream &file, NFmiArea &ob)
+{
+  return ob.Read(file);
+}
