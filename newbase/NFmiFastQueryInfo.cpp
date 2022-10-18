@@ -6235,7 +6235,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
     for (usedGrid.Reset(); usedGrid.Next();)
     {
       float value = timeInterpolationNeeded
-                        ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, theTimeRangeInMinutes)
+                        ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
                         : InterpolatedValue(usedGrid.LatLon());
       values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] = value;
     }

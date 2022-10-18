@@ -6427,6 +6427,85 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
   }
 }
 
+static void FillSingleTimeGridDataInThread(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    bool fDoLocationInterpolation,
+    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+    const std::vector<NFmiTimeCache> &theTimeCacheVector,
+    NFmiTimeIndexCalculator &theTimeIndexCalculator,
+    int theThreadNumber,
+    NFmiLogger *theDebugLogger)
+{
+  NFmiDataMatrix<float> gridValues;
+  bool doGroundData =
+      (theSourceInfo.SizeLevels() == 1) &&
+      (theTargetInfo.SizeLevels() ==
+       1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
+  unsigned long targetXSize = theTargetInfo.GridXNumber();
+  unsigned long workedTimeIndex = 0;
+  for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
+  {
+    if (theDebugLogger)
+    {
+      std::string logStr("FillSingleTimeGridDataInThread - thread no: ");
+      logStr += NFmiStringTools::Convert(theThreadNumber);
+      logStr += " started timeIndex: ";
+      logStr += NFmiStringTools::Convert(workedTimeIndex);
+      theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
+    }
+
+    if (theTargetInfo.TimeIndex(workedTimeIndex) == false)
+      continue;
+    NFmiMetTime targetTime = theTargetInfo.Time();
+    bool doTimeInterpolation =
+        false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
+    if (theSourceInfo.Time(theTargetInfo.Time()) ||
+        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) ==
+            true)
+    {
+      const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+      for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
+      {
+        if (theSourceInfo.Param(
+                static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
+        {
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+          {
+            if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
+            {
+              if (fDoLocationInterpolation == false)
+              {
+                if (doTimeInterpolation)
+                  gridValues = theSourceInfo.Values(targetTime);
+                else
+                  gridValues = theSourceInfo.Values();
+
+                theTargetInfo.SetValues(gridValues);
+              }
+              else
+              {  // interpoloidaan paikan suhteen
+                for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+                {
+                  float value = kFloatMissing;
+                  const NFmiLocationCache &locCache =
+                      theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
+                                            [theTargetInfo.LocationIndex() / targetXSize];
+                  if (fDoLocationInterpolation && doTimeInterpolation)
+                    value = theSourceInfo.CachedInterpolation(locCache, timeCache);
+                  else if (fDoLocationInterpolation)
+                    value = theSourceInfo.CachedInterpolation(locCache);
+                  theTargetInfo.FloatValue(value);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 // Tämä on FillGridData-funktion viritetty versio, joka tekee työtä koneen kaikilla
 // kone-threadeilla.
 // Luodaan tarvittavat threadit jotka sitten pyytävät aina seuraavan käsiteltävän ajan indeksin.

@@ -1650,7 +1650,6 @@ double NFmiInfoAreaMaskPeekXY3::Value(const NFmiCalculationParams &theCalculatio
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
->>>>>>> WGS84
 }
 
 double NFmiInfoAreaMaskPeekXY3::PressureValue(double thePressure,
@@ -4214,8 +4213,8 @@ static bool IsSynopDataCase(const boost::shared_ptr<NFmiFastQueryInfo>& info)
 double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
     const NFmiCalculationParams &theCalculationParams)
 {
-  auto infoVector = NFmiInfoAreaMask::GetMultiSourceData(
-      itsInfo, boost::shared_ptr<NFmiArea>(nullptr), ::IsSynopDataCase(itsInfo));
+  auto nullptrArea = boost::shared_ptr<NFmiArea>(nullptr);
+  auto infoVector = NFmiInfoAreaMask::GetMultiSourceData(itsInfo, nullptrArea, ::IsSynopDataCase(itsInfo));
   for (auto &info : infoVector)
   {
     NFmiCalculationParams simpleConditionCalculationPointParams(theCalculationParams);
