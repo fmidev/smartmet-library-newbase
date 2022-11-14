@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.8.29
+Version: 22.11.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -29,13 +29,13 @@ BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
-BuildRequires: smartmet-library-gis-devel >= 22.6.16
+BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
+BuildRequires: smartmet-library-gis-devel >= 22.9.28
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 22.6.16
-Requires: smartmet-library-gis >= 22.6.16
+Requires: smartmet-library-macgyver >= 22.10.20
+Requires: smartmet-library-gis >= 22.9.28
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,8 +51,8 @@ Requires: geos310
 #TestRequires: gdal34-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 22.6.16
-#TestRequires: smartmet-library-macgyver-devel >= 22.6.16
+#TestRequires: smartmet-library-gis-devel >= 22.9.28
+#TestRequires: smartmet-library-macgyver-devel >= 22.10.20
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
@@ -93,8 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 22.5.4
-Requires: smartmet-library-macgyver-devel >= 22.3.28
+Requires: smartmet-library-gis-devel >= 22.9.28
+Requires: smartmet-library-macgyver-devel >= 22.10.20
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Nov 14 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.14-1.fmi
+- New parameter LLFCloudTopFL
+
 * Mon Aug 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.29-1.fmi
 - New parameter AtmosphericIceGrowth
 
