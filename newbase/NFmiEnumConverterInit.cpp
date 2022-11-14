@@ -432,6 +432,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "LargeScaleSnowFallRate", kFmiLargeScaleSnowFallRate},
       { "LatentHeatFlux", kFmiLatentHeatFlux},
       { "Latitude", kFmiLatitude},
+      { "LLFCloudTopFL", kFmiLLFCloudTopFL },
       { "LocationId", kFmiLocationId},
       { "LogNatOfPressure", kFmiLogNatOfPressure},
       { "Longitude", kFmiLongitude},
