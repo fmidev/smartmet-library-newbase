@@ -1430,6 +1430,7 @@ enum FmiParameterName
 
   // MEPS
   kFmiAtmosphericIcGrowth,
+  kFmiLLFCloudTopFL,
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
