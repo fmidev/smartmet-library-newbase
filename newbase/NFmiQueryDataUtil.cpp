@@ -43,10 +43,9 @@
 #include "NFmiTotalWind.h"
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
+#include <boost/math/special_functions/round.hpp>
 #include <macgyver/Exception.h>
-
 #include <gis/SpatialReference.h>
-
 #include <algorithm>
 #include <cassert>
 #include <fstream>
