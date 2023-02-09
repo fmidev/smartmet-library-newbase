@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 22.8.29
+Version: 23.2.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,12 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Feb  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.9-1.fmi
+- New probability parameters for AtmosphericIceGrowth (STU-20797)
+
+* Mon Nov 14 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.14-1.fmi
+- New parameter LLFCloudTopFL
+
 * Mon Aug 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.29-1.fmi
 - New parameter AtmosphericIceGrowth
 

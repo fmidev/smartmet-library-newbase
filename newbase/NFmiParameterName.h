@@ -1429,7 +1429,12 @@ enum FmiParameterName
   kFmiEffectiveCloudiness,
 
   // MEPS
-  kFmiAtmosphericIcGrowth,
+  kFmiAtmosphericIceGrowth,
+  kFmiLLFCloudTopFL,
+  kFmiProbabilityOfAtmosphericIceGrowthLimit1,
+  kFmiProbabilityOfAtmosphericIceGrowthLimit2,
+  kFmiProbabilityOfAtmosphericIceGrowthLimit3,
+  kFmiProbabilityOfAtmosphericIceGrowthLimit4,
 
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
