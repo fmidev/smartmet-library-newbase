@@ -222,7 +222,8 @@ class NFmiAreaMask
     ModAvg, //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
     ModMin,  //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
     ModMax,   //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
-    WorkingThreadCount //!< Jos käyttäjä haluaa optimoida laskentoja ja käyttää tietyn määrän loogisia coreja laskennoissa
+    WorkingThreadCount, //!< Jos käyttäjä haluaa optimoida laskentoja ja käyttää tietyn määrän loogisia coreja laskennoissa
+    FixedBaseData //!< Jos käyttäjä haluaa fiksata käytetyn laskenta hilan johonkin olemassa olevan datan hilaan
   };
 
   //! Function direction, e.g. with 'met'-functions x- and/or y-direction
@@ -348,7 +349,7 @@ class NFmiAreaMask
   // (käytössä ainakin uusille vertikaali funktioille)
   virtual void SetArguments(std::vector<float> &theArgumentVector) = 0;
   virtual int FunctionArgumentCount(
-      void) const = 0;  // käytössä ainakin uusille vertikaali funktioille
+      ) const = 0;  // käytössä ainakin uusille vertikaali funktioille
   virtual void FunctionArgumentCount(
       int newValue) = 0;  // käytössä ainakin uusille vertikaali funktioille
 
