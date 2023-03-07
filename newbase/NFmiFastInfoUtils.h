@@ -49,6 +49,12 @@ class MetaWindParamUsage
   bool fHasWindComponents = false;
 
  public:
+  MetaWindParamUsage();
+  MetaWindParamUsage(bool hasTotalWind,
+                     bool hasWindVectorParam,
+                     bool hasWsAndWd,
+                     bool hasWindComponents);
+
   bool ParamNeedsMetaCalculations(unsigned long paramId) const;
   bool NoWindMetaParamsNeeded() const;
   bool MakeMetaWindVectorParam() const;
