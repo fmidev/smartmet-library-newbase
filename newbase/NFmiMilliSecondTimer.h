@@ -31,6 +31,7 @@ class NFmiNanoSecondTimer
 
  public:
   NFmiNanoSecondTimer();
+  NFmiNanoSecondTimer(int moveStartByMS);
 
   void restart();
   double elapsedTimeInSeconds() const;
