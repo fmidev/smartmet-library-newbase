@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.2.9
+Version: 23.6.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -29,13 +29,13 @@ BuildRequires: gdal34-devel
 BuildRequires: geos310-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
-BuildRequires: smartmet-library-gis-devel >= 22.9.28
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.15
+BuildRequires: smartmet-library-gis-devel >= 23.6.7
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 22.10.20
-Requires: smartmet-library-gis >= 22.9.28
+Requires: smartmet-library-macgyver >= 23.6.15
+Requires: smartmet-library-gis >= 23.6.7
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,8 +51,8 @@ Requires: geos310
 #TestRequires: gdal34-libs
 #TestRequires: make
 #TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 22.9.28
-#TestRequires: smartmet-library-macgyver-devel >= 22.10.20
+#TestRequires: smartmet-library-gis-devel >= 23.6.7
+#TestRequires: smartmet-library-macgyver-devel >= 23.6.15
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
 #TestRequires: smartmet-library-regression
@@ -93,8 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 22.9.28
-Requires: smartmet-library-macgyver-devel >= 22.10.20
+Requires: smartmet-library-gis-devel >= 23.6.7
+Requires: smartmet-library-macgyver-devel >= 23.6.15
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jun 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.15-1.fmi
+- Fixed NFmiLocationBag::CoordinateMatrix to return all station coordinates
+
 * Thu Feb  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.9-1.fmi
 - New probability parameters for AtmosphericIceGrowth (STU-20797)
 
