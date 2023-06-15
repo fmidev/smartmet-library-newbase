@@ -826,9 +826,9 @@ Fmi::CoordinateMatrix NFmiLocationBag::CoordinateMatrix() const
     for (const auto *location : itsLocations)
     {
       if (location == nullptr)
-        matrix.set(i, j, HUGE_VAL, HUGE_VAL);  // as done by PROJ.6
+        ++i;
       else
-        matrix.set(i, j, location->GetLocation());
+        matrix.set(i++, j, location->GetLocation());
     }
     return matrix;
   }
