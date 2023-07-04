@@ -158,7 +158,8 @@ enum FmiAdvice
   kFmiAdviceSequential,  // prefetch after only and more
   kFmiAdviceRandom,      // do not prefetch
   kFmiAdviceWillNeed,    // prefetch a lot
-  kFmiAdviceDontNeed     // not needed anymore
+  kFmiAdviceDontNeed,    // not needed anymore
+  kFmiAdviceDontDump     // exclude from coredump
 };
 
 // Mika: Mikäs tämä on?? Include suojaus keskellä tiedostoa?
