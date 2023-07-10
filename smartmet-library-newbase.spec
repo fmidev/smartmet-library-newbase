@@ -30,12 +30,12 @@ BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 23.6.15
-BuildRequires: smartmet-library-gis-devel >= 23.6.7
+BuildRequires: smartmet-library-gis-devel >= 23.7.10
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 23.6.15
-Requires: smartmet-library-gis >= 23.6.7
+Requires: smartmet-library-gis >= 23.7.10
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
