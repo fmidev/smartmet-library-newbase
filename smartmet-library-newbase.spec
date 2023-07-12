@@ -51,7 +51,7 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 23.6.7
+#TestRequires: smartmet-library-gis-devel >= 23.7.10
 #TestRequires: smartmet-library-macgyver-devel >= 23.6.15
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 23.6.7
+Requires: smartmet-library-gis-devel >= 23.7.10
 Requires: smartmet-library-macgyver-devel >= 23.6.15
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
