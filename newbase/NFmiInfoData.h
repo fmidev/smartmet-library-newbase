@@ -59,6 +59,7 @@ enum Type
   kWmsData = 27,
   kMapLayer = 28,  // Erilaiset karttaaineista datat ovat tämän tyyppisiä (background map,
                    // overlay-map, land borders, wms-map-layer, etc)
+  kTimeSerialMacroParam = 29,  // aikasarja makro-parametri eli esim. result = T_EC - T_HIR makrolla laskettu
   kSoundingParameterData = 1000  // HUOM! tästä on tarkoitus päästä eroon, mukana nyt siksi että on
                                  // olemassa näyttömakroja, joissa on käytetty tätä.
   // Vanha käyttö: luotaus parametrien (CAPE, CIN, jne.) erikois laskelmat tätä kautta, laitoin
