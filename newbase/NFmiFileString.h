@@ -18,6 +18,8 @@ class NFmiFileString : public NFmiString
   NFmiFileString(const NFmiFileString& theFileStr);
   NFmiFileString(const NFmiString& theStr);
 
+  NFmiFileString& operator = (const NFmiFileString&);
+
   const NFmiString Extension() const;
   const NFmiString FileName() const;
   const NFmiString Header() const;

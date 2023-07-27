@@ -30,6 +30,9 @@ NFmiFileString::~NFmiFileString() = default;
 // ----------------------------------------------------------------------
 
 NFmiFileString::NFmiFileString() = default;
+
+NFmiFileString& NFmiFileString::operator = (const NFmiFileString&) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * Constructor
