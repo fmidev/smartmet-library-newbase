@@ -19,6 +19,7 @@ class NFmiSize
   NFmiSize(const NFmiSize& theSize);
   NFmiSize(unsigned long theSize);
   NFmiSize(unsigned long theIndex, unsigned long theSize);
+  NFmiSize& operator = (const NFmiSize& theSize);
 
   virtual void Reset(FmiDirection directionToIter = kForward);
   virtual bool First();
