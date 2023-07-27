@@ -32,6 +32,8 @@ NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMa
 
 NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther) = default;
 
+NFmiAreaMaskList& NFmiAreaMaskList::operator = (const NFmiAreaMaskList&) = default;
+
 boost::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
     const boost::shared_ptr<NFmiAreaMaskList> &theOther)
 {
