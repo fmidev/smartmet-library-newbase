@@ -46,7 +46,7 @@ class NFmiTotalWind : public NFmiCombinedParam
                 FmiWindParamType theParamType,
                 double theInfoVersion = 7.,
                 float theWindGustValue = kFloatMissing);
-
+  NFmiTotalWind& operator = (const NFmiTotalWind&);
   virtual NFmiCombinedParam* Clone() const;
 
   bool CheckWindVector(unsigned long theValue);
