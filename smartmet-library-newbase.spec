@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.7.10
+Version: 23.7.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Jul 27 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.27-1.fmi
+- Fix compiler warnings
+
 * Mon Jul 10 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.10-1.fmi
 - Use postgresql 15, gdal 3.5, geos 3.11 and proj-9.0
 
