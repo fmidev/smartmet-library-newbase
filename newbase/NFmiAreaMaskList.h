@@ -17,6 +17,7 @@ class NFmiAreaMaskList
   NFmiAreaMaskList();
   NFmiAreaMaskList(const NFmiAreaMaskList &theOther);
   virtual ~NFmiAreaMaskList();
+  NFmiAreaMaskList& operator = (const NFmiAreaMaskList&);
   static boost::shared_ptr<NFmiAreaMaskList> CreateShallowCopy(
       const boost::shared_ptr<NFmiAreaMaskList> &theOther);
 
