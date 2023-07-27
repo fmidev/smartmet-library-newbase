@@ -23,6 +23,15 @@ using namespace std;
 // ----------------------------------------------------------------------
 
 NFmiValueString::~NFmiValueString() = default;
+
+// ----------------------------------------------------------------------
+/*!
+ * Assignment operator
+ */
+// ----------------------------------------------------------------------
+
+NFmiValueString& NFmiValueString::operator = (const NFmiValueString&) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * Void constructor

@@ -39,6 +39,8 @@ class NFmiValueString : public NFmiString
   NFmiValueString(const NFmiString &);
   NFmiValueString(const NFmiValueString &);
 
+  NFmiValueString& operator = (const NFmiValueString&);
+
   void SetValue(const short value, const char *format = "%hd");
   void SetValue(const int value, const char *format = "%d");
   void SetValue(const float value, const char *format = "%f");
