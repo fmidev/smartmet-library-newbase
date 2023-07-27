@@ -57,6 +57,8 @@ NFmiSize::NFmiSize(unsigned long theIndex, unsigned long theSize)
 
 NFmiSize::NFmiSize(const NFmiSize& theSize) = default;
 
+NFmiSize& NFmiSize::operator = (const NFmiSize& theSize) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
