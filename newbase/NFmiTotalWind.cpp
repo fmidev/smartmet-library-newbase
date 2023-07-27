@@ -43,6 +43,8 @@ NFmiTotalWind::NFmiTotalWind(const NFmiTotalWind &theWind)
 {
 }
 
+NFmiTotalWind& NFmiTotalWind::operator = (const NFmiTotalWind&) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * Apufunktio laskemaan 2-4 luvun painotettu keskiarvo
