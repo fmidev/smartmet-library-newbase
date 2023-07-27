@@ -239,6 +239,8 @@ NFmiLatLonAreaMask::NFmiLatLonAreaMask(const NFmiDataIdent& theParam,
 
 NFmiLatLonAreaMask::NFmiLatLonAreaMask(const NFmiLatLonAreaMask& theMask) = default;
 
+NFmiLatLonAreaMask& NFmiLatLonAreaMask::operator = (const NFmiLatLonAreaMask&) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -322,6 +324,10 @@ NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() : NFmiLatLonAreaMask(),
 // ----------------------------------------------------------------------
 
 NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiElevationAngleAreaMask& theMask) =
+    default;
+
+
+NFmiElevationAngleAreaMask& NFmiElevationAngleAreaMask::operator = (const NFmiElevationAngleAreaMask& theMask) =
     default;
 
 // ----------------------------------------------------------------------
@@ -475,6 +481,8 @@ NFmiJulianDayAreaMask::NFmiJulianDayAreaMask(const NFmiDataIdent& theParam,
 
 NFmiJulianDayAreaMask::NFmiJulianDayAreaMask(const NFmiJulianDayAreaMask& theMask) = default;
 
+NFmiJulianDayAreaMask& NFmiJulianDayAreaMask::operator = (const NFmiJulianDayAreaMask&) = default;
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -592,6 +600,8 @@ NFmiLocalHourAreaMask::NFmiLocalHourAreaMask(const NFmiDataIdent& theParam,
 // ----------------------------------------------------------------------
 
 NFmiLocalHourAreaMask::NFmiLocalHourAreaMask(const NFmiLocalHourAreaMask& theMask) = default;
+
+NFmiLocalHourAreaMask& NFmiLocalHourAreaMask::operator = (const NFmiLocalHourAreaMask&) = default;
 
 // ----------------------------------------------------------------------
 /*!
