@@ -74,7 +74,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
 
   //! Copy constructor
 
-  NFmiDataMatrix<T>(const NFmiDataMatrix<T>& other)
+  NFmiDataMatrix(const NFmiDataMatrix<T>& other)
       : Base(other), itsNX(other.NX()), itsNY(other.NY())
   {
   }
