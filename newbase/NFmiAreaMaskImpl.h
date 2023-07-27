@@ -25,6 +25,7 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
                    NFmiInfoData::Type theDataType,
                    BinaryOperator thePostBinaryOperator);
   NFmiAreaMaskImpl(const NFmiAreaMaskImpl &theOther);
+  NFmiAreaMaskImpl& operator = (const NFmiAreaMaskImpl&);
   void Initialize() override;
 
   bool IsMasked(int theIndex) const override;

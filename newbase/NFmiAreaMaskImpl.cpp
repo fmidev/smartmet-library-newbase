@@ -108,6 +108,8 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiAreaMaskImpl &theOther)
 
 NFmiAreaMaskImpl::~NFmiAreaMaskImpl() = default;
 
+NFmiAreaMaskImpl& NFmiAreaMaskImpl::operator = (const NFmiAreaMaskImpl&) = default;
+
 void NFmiAreaMaskImpl::Initialize()
 {
   try
