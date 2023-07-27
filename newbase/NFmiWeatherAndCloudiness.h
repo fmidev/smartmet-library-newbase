@@ -36,6 +36,7 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   NFmiWeatherAndCloudiness();
   NFmiWeatherAndCloudiness(double theInfoVersion);
   NFmiWeatherAndCloudiness(const NFmiWeatherAndCloudiness& theWeather);
+  NFmiWeatherAndCloudiness& operator = (const NFmiWeatherAndCloudiness&);
 
   NFmiWeatherAndCloudiness(unsigned long theValue,
                            FmiWeatherParamType theParamType,

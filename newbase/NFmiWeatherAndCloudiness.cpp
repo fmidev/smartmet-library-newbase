@@ -396,6 +396,9 @@ NFmiWeatherAndCloudiness::NFmiWeatherAndCloudiness(const NFmiWeatherAndCloudines
 
     = default;
 
+NFmiWeatherAndCloudiness& NFmiWeatherAndCloudiness::operator = (const NFmiWeatherAndCloudiness&) = default;
+
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
