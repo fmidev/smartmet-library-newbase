@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.2.9
+Version: 23.7.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,13 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jul 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.31-1.fmi
+- Add four new parameters from ICON model:
+- snow temperature (SnowTemperature)
+- mixing layer CAPE (CAPEMixingLayer)
+- fraction of lake (fresh) water (FreshWaterFraction)
+- direct short-wave radiation (RadiationSWDirect)
+
 * Thu Feb  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.9-1.fmi
 - New probability parameters for AtmosphericIceGrowth (STU-20797)
 
