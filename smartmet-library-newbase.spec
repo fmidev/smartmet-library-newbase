@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.7.28
+Version: 23.7.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -30,12 +30,12 @@ BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 23.7.28
-BuildRequires: smartmet-library-gis-devel >= 23.7.10
+BuildRequires: smartmet-library-gis-devel >= 23.7.28
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 23.7.28
-Requires: smartmet-library-gis >= 23.7.10
+Requires: smartmet-library-gis >= 23.7.28
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,7 +51,7 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 23.7.10
+#TestRequires: smartmet-library-gis-devel >= 23.7.28
 #TestRequires: smartmet-library-macgyver-devel >= 23.7.28
 #TestRequires: smartmet-library-macgyver
 #TestRequires: smartmet-library-gis
@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 23.7.10
+Requires: smartmet-library-gis-devel >= 23.7.28
 Requires: smartmet-library-macgyver-devel >= 23.7.28
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
@@ -116,6 +116,13 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Jul 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.31-1.fmi
+- Add four new parameters from ICON model
+- snow temperature (SnowTemperature)
+- mixing layer CAPE (CAPEMixingLayer)
+- fraction of lake (fresh) water (FreshWaterFraction)
+- direct short-wave radiation (RadiationSWDirect)
+
 * Fri Jul 28 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.28-1.fmi
 - Repackage due to bulk ABI changes in macgyver/newbase/spine
 
