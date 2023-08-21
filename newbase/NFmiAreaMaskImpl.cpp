@@ -185,7 +185,7 @@ double NFmiAreaMaskImpl::Value(const NFmiCalculationParams &theCalculationParams
   {
     // useimmille maskiluokille tämä riittää, koska ne eivät
     // ole riippuvaisia ajasta.
-    return CalcValueFromLocation(theCalculationParams.itsLatlon);
+  return CalcValueFromLocation(theCalculationParams.UsedLatlon());
   }
   catch (...)
   {

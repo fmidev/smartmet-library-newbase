@@ -2,6 +2,7 @@
 
 NFmiMacroParamValue::NFmiMacroParamValue() = default;
 
+
 NFmiCalculationParams::NFmiCalculationParams() = default;
 
 NFmiCalculationParams::NFmiCalculationParams(const NFmiPoint &theLatlon,
@@ -17,4 +18,24 @@ NFmiCalculationParams::NFmiCalculationParams(const NFmiPoint &theLatlon,
       fCrossSectionCase(crossSectionCase),
       itsPressureHeight(thePressureHeight)
 {
+}
+
+const NFmiPoint &NFmiCalculationParams::UsedLatlon(bool forceCalculationGridPoint) const
+{
+  if (fUseModifiedLatlon || forceCalculationGridPoint)
+  {
+    return itsLatlon;
+  }
+
+  return itsActualCalculationPoint ? *itsActualCalculationPoint : itsLatlon;
+}
+
+void NFmiCalculationParams::SetModifiedLatlon(const NFmiPoint &modifiedLatlon,
+                                              bool setUseModifiedFlag)
+{
+  itsLatlon = modifiedLatlon;
+  if (setUseModifiedFlag)
+  {
+    fUseModifiedLatlon = true;
+  }
 }
