@@ -148,18 +148,6 @@ enum FmiEnumSpace
   kPressRegions
 };
 
-//! Advice for memory mapping
-
-enum FmiAdvice
-{
-  kFmiAdviceNormal,      // prefetch before and after
-  kFmiAdviceSequential,  // prefetch after only and more
-  kFmiAdviceRandom,      // do not prefetch
-  kFmiAdviceWillNeed,    // prefetch a lot
-  kFmiAdviceDontNeed,    // not needed anymore
-  kFmiAdviceDontDump     // exclude from coredump
-};
-
 // Mika: Mikäs tämä on?? Include suojaus keskellä tiedostoa?
 
 #ifndef __FMITYPES_H__
