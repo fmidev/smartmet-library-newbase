@@ -20,11 +20,11 @@
 #include "NFmiVersion.h"
 
 #include <boost/filesystem/operations.hpp>
-#include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/Exception.h>
+#include <macgyver/MappedFile.h>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -48,7 +48,7 @@ using WriteLock = FooBar;
 #endif
 
 using MappedFileParams = boost::iostreams::mapped_file_params;
-using MappedFile = boost::iostreams::mapped_file;
+using MappedFile = Fmi::MappedFile;
 
 using namespace std;
 
