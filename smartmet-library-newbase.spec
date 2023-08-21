@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.7.31
+Version: 23.8.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Aug 21 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.8.21-1.fmi
+- Use Fmi::MappedFile and remove Advise methods
+
 * Mon Jul 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.31-1.fmi
 - Add four new parameters from ICON model
 - snow temperature (SnowTemperature)
