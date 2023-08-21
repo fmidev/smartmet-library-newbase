@@ -88,7 +88,6 @@ class NFmiRawData::Pimple
   ostream &Write(ostream &file) const;
   void Backup(char *ptr) const;
   void Undo(char *ptr);
-  bool Advise(FmiAdvice advice);
 
  private:
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
@@ -771,46 +770,6 @@ void NFmiRawData::Pimple::Undo(char *ptr)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Advice the memory mapping
- */
-// ----------------------------------------------------------------------
-
-bool NFmiRawData::Pimple::Advise(FmiAdvice advice)
-{
-  // was supported with boost::interprocess, not with boost::iostreams
-#ifndef _MSC_VER
-  if (itsMappedFile)
-  {
-    int adv;
-    char* addr = const_cast<char*>(itsMappedFile->data());
-    switch(advice)
-    {
-    case kFmiAdviceNormal:      adv = MADV_NORMAL; break;
-    case kFmiAdviceSequential:  adv = MADV_SEQUENTIAL; break;
-    case kFmiAdviceRandom:      adv = MADV_RANDOM; break;
-    case kFmiAdviceWillNeed:    adv = MADV_SEQUENTIAL; break;
-    case kFmiAdviceDontNeed:    adv = MADV_DONTNEED; break;
-    case kFmiAdviceDontDump:    adv = MADV_DONTDUMP; break;
-    default:
-      throw Fmi::Exception(BCP, "Invalid argument " + std::to_string(static_cast<int>(advice)));
-    }
-
-    int ret_val = madvise(addr, itsMappedFile->size(), adv);
-    if (ret_val < 0) {
-        const int err = errno;
-        Fmi::Exception exception(BCP, "madvice() failed");
-        exception.addParameter("errno", std::to_string(err));
-        exception.addParameter("description", std::strerror(err));
-        throw exception;
-    }
-    return true;
-  }
-#endif
-  return false;
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Destructor
  */
 // ----------------------------------------------------------------------
@@ -1093,23 +1052,4 @@ void NFmiRawData::Undo(char *ptr)
   }
 }
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Advise memory mapped region
- *
- * Returns false on failure.
- */
-// ----------------------------------------------------------------------
-
-bool NFmiRawData::Advise(FmiAdvice theAdvice)
-{
-  try
-  {
-    return itsPimple->Advise(theAdvice);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
 // ======================================================================

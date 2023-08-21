@@ -832,29 +832,6 @@ void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Advise memory mapped region
- *
- * Returns false on failure.
- */
-// ----------------------------------------------------------------------
-
-bool NFmiQueryData::Advise(FmiAdvice theAdvice)
-{
-  try
-  {
-    if (!itsRawData)
-      return false;
-
-    return itsRawData->Advise(theAdvice);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Unique hash value for the grid
  *
  * Used by smartmet-server to cache LatLonCache objects and set them

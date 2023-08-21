@@ -58,10 +58,6 @@ class NFmiRawData
 
   void Backup(char* ptr) const;
   void Undo(char* ptr);
-
-  // Advice memory mapping
-  bool Advise(FmiAdvice theAdvice);
-
 };  // class NFmiRawData
 
 // ======================================================================
