@@ -861,29 +861,6 @@ void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Advise memory mapped region
- *
- * Returns false on failure.
- */
-// ----------------------------------------------------------------------
-
-bool NFmiQueryData::Advise(FmiAdvice theAdvice)
-{
-  try
-  {
-    if (!itsRawData)
-      return false;
-
-    return itsRawData->Advise(theAdvice);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Return the latlon cache
  *
  * Note: This must not be done in constructors, since smartmet-server

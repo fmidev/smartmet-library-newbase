@@ -155,9 +155,6 @@ class NFmiQueryData
   // THIS IS NOT THREAD SAFE!!
   void SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc);
 
-  // Advise memory mapping
-  bool Advise(FmiAdvice theAdvice);
-
   void swap(NFmiQueryData &theOther);
 
  protected:
