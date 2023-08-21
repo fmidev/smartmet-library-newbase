@@ -25,36 +25,36 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: bzip2-devel
 BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel <= %{smartmet_fmt_max}
 BuildRequires: gcc-c++
-BuildRequires: gdal34-devel
-BuildRequires: geos310-devel
+BuildRequires: gdal35-devel
+BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
-BuildRequires: smartmet-library-gis-devel >= 22.6.16
+BuildRequires: smartmet-library-macgyver-devel >= 23.8.21
+BuildRequires: smartmet-library-gis-devel >= 23.7.28
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 22.6.16
-Requires: smartmet-library-gis >= 22.6.16
+Requires: smartmet-library-macgyver >= 23.8.21
+Requires: smartmet-library-gis >= 23.8.21
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
 Requires: fmt >= %{smartmet_fmt_min}, fmt <= %{smartmet_fmt_max}
-Requires: gdal34-libs
-Requires: geos310
+Requires: gdal35-libs
+Requires: geos311
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal34-devel
-#TestRequires: gdal34-libs
+#TestRequires: gdal35-devel
+#TestRequires: gdal35-libs
 #TestRequires: make
-#TestRequires: postgresql13-libs
-#TestRequires: smartmet-library-gis-devel >= 22.6.16
-#TestRequires: smartmet-library-macgyver-devel >= 22.6.16
-#TestRequires: smartmet-library-macgyver
-#TestRequires: smartmet-library-gis
+#TestRequires: postgresql15-libs
+#TestRequires: smartmet-library-gis-devel >= 23.8.21
+#TestRequires: smartmet-library-macgyver-devel >= 23.8.21
+#TestRequires: smartmet-library-macgyver >= 23.8.21
+#TestRequires: smartmet-library-gis >= 23.8.21
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -69,7 +69,7 @@ FMI newbase library
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q -n %{SPECNAME}
- 
+
 %build
 make %{_smp_mflags}
 %if %{with tests}
@@ -93,8 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 22.5.4
-Requires: smartmet-library-macgyver-devel >= 22.3.28
+Requires: smartmet-library-gis-devel >= 23.8.21
+Requires: smartmet-library-macgyver-devel >= 23.8.21
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
