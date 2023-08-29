@@ -1822,6 +1822,18 @@ enum FmiParameterName
 
   kFmiProbabilityOfRailRule5,
 
+  // New Himan parameters (BRAINSTORM-2335)
+  kFmiMaxProbabilityThunderstorm24h,      // percent
+  kFmiWindGustDuration24h,                // h/24h
+  kFmiMaxWindGust24h,                     // m/s
+  kFmiMaxSevereThunderstormPotential24h,  // index 0-3
+
+  // Updraft parameters (STU-22307)
+  kFmiUpdraftHelicity,
+  kFmiProbabilityOfUpdraftHelicityLimit1,  // > 10 m2/s2 in EPS
+  kFmiProbabilityOfUpdraftHelicityLimit2,  // > 25 m2/s2 in EPS
+  kFmiProbabilityOfUpdraftHelicityLimit3,  // > 75 m2/s2 in EPS
+
   // Meta parameters calculated on the fly. This list is not exhaustive, some parameters
   // already had numbers assigned to them.
   // This list starts intentionally at 9000 before the start of NetCDF parameters.
