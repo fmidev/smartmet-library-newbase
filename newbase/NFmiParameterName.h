@@ -1429,7 +1429,7 @@ enum FmiParameterName
   kFmiEffectiveCloudiness,
 
   // MEPS
-  kFmiAtmosphericIcGrowth,
+  kFmiAtmosphericIceGrowth,
   kFmiLLFCloudTopFL,
   kFmiProbabilityOfAtmosphericIceGrowthLimit1,
   kFmiProbabilityOfAtmosphericIceGrowthLimit2,
