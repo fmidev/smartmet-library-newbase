@@ -1834,6 +1834,11 @@ enum FmiParameterName
   kFmiProbabilityOfUpdraftHelicityLimit2,  // > 25 m2/s2 in EPS
   kFmiProbabilityOfUpdraftHelicityLimit3,  // > 75 m2/s2 in EPS
 
+  // SILAM parameters (BRAINSTORM-2649)
+
+  kFmiMassConcentrationOfSmoke,
+  kFmiOpticalColumnThicknessOfSmoke,
+
   // Meta parameters calculated on the fly. This list is not exhaustive, some parameters
   // already had numbers assigned to them.
   // This list starts intentionally at 9000 before the start of NetCDF parameters.
