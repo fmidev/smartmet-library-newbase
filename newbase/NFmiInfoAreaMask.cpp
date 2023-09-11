@@ -536,15 +536,16 @@ double NFmiInfoAreaMask::GetSearchRadiusInMetres(double observationRadiusInKm)
     return observationRadiusInKm * 1000.;
 }
 
-bool NFmiInfoAreaMask::FindClosestStationData(
-    const NFmiPoint &latlon,
-    double observationRadiusInKm,
+bool NFmiInfoAreaMask::FindClosestStationData(const NFmiCalculationParams &calculationParams,
     size_t &dataIndexOut,
     unsigned long &locationIndexOut)
 {
+  // Huom! Pitää käyttää macroParamin laskentahilan pistettä UsedLatlon(true),
+  // jotta itsObservationRadiusInKm juttu otetaan oikein huomioon.
+  auto latlon = calculationParams.UsedLatlon(true);
   NFmiLocation wantedLocation(latlon);
   double minDistanceInMetres = 99999999999;
-  double searchRadiusInMetres = GetSearchRadiusInMetres(observationRadiusInKm);
+  double searchRadiusInMetres = GetSearchRadiusInMetres(calculationParams.itsObservationRadiusInKm);
   for (size_t dataCounter = 0; dataCounter < itsInfoVector.size(); dataCounter++)
   {
     const auto &info = itsInfoVector[dataCounter];
@@ -1157,17 +1158,20 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
             switch (metaParamDataHolder.possibleMetaParamId())
             {
               case kFmiWindUMS:
-                theFunctionModifier->Calculate(
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
                     NFmiFastInfoUtils::CalcU(wsValues[index], wdValues[index]));
                 break;
               case kFmiWindVMS:
-                theFunctionModifier->Calculate(
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
                     NFmiFastInfoUtils::CalcV(wsValues[index], wdValues[index]));
                 break;
               case kFmiWindVectorMS:
-                theFunctionModifier->Calculate(
-                    NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(wsValues[index],
-                                                                           wdValues[index]));
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
+                                 NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(
+                                     wsValues[index], wdValues[index]));
                 break;
             }
           }
@@ -1185,15 +1189,19 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
             switch (metaParamDataHolder.possibleMetaParamId())
             {
               case kFmiWindSpeedMS:
-                theFunctionModifier->Calculate(
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
                     NFmiFastInfoUtils::CalcWS(uValues[index], vValues[index]));
                 break;
               case kFmiWindDirection:
-                theFunctionModifier->Calculate(
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
                     NFmiFastInfoUtils::CalcWD(uValues[index], vValues[index]));
                 break;
               case kFmiWindVectorMS:
-                theFunctionModifier->Calculate(NFmiFastInfoUtils::CalcWindVectorFromWindComponents(
+              AddValueToModifier(theInfo,
+                                 theFunctionModifier,
+                                 NFmiFastInfoUtils::CalcWindVectorFromWindComponents(
                     uValues[index], vValues[index]));
                 break;
             }
@@ -1205,14 +1213,24 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
         std::array<float, 4> values;
         theInfo->GetCachedValues(theLocationCache, values);
         for (float value : values)
-          theFunctionModifier->Calculate(value);
-      }
+        AddValueToModifier(theInfo, theFunctionModifier, value);
     }
   }
+}
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+void NFmiInfoAreaMask::AddValueToModifier(boost::shared_ptr<NFmiFastQueryInfo> & /* theInfo */,
+                                          boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+                                          float theValue)
+{
+    // In this base virtual method the value is just added to the 
+    // modifier, in child classes there will be overrides that will 
+    // keep record of the time of extreme value.
+  theFunctionModifier->Calculate(theValue);
 }
 
 // Method adds values to function modifier. In case of min/max we use
@@ -1229,8 +1247,9 @@ void NFmiInfoAreaMask::AddValuesToFunctionModifier(
   {
     if (integrationFunction == NFmiAreaMask::Max || integrationFunction == NFmiAreaMask::Min)
       AddExtremeValues(theInfo, theFunctionModifier, theLocationCache);
-
-    theFunctionModifier->Calculate(CalcCachedInterpolation(theInfo, theLocationCache, nullptr));
+  else
+    AddValueToModifier(
+        theInfo, theFunctionModifier, CalcCachedInterpolation(theInfo, theLocationCache, nullptr));
   }
   catch (...)
   {

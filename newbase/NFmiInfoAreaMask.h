@@ -184,8 +184,10 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   void AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                         boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                         const NFmiLocationCache &theLocationCache);
-  bool FindClosestStationData(const NFmiPoint &latlon,
-                              double observationRadiusInKm,
+  virtual void AddValueToModifier(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                        boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+                        float theValue);
+  bool FindClosestStationData(const NFmiCalculationParams &calculationParams,
                               size_t &dataIndexOut,
                               unsigned long &locationIndexOut);
   double GetSearchRadiusInMetres(double observationRadiusInKm);
