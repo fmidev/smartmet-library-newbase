@@ -173,17 +173,6 @@ std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSour
   return infoVector;
 }
 
-std::vector<boost::shared_ptr<NFmiFastQueryInfo>>
-NFmiInfoAreaMask::CreateShallowCopyOfInfoVector(
-    const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector)
-{
-  // tehdään matala kopio info-vektorista
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> shallowCopyVector;
-  for (const auto &info : infoVector)
-    shallowCopyVector.push_back(boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*info)));
-  return shallowCopyVector;
-}
-
 // Nyt synop ja salama datat ovat tälläisiä. Tämä on yritys tehdä vähän optimointia muutenkin jo
 // pirun raskaaseen koodiin.
 // HUOM! Tämä on riippuvainen NFmiEditMapGeneralDataDoc::MakeDrawedInfoVectorForMapView -metodin
@@ -321,7 +310,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther)
       metaParamDataHolder(theOther.metaParamDataHolder),
       fIsModelClimatologyData(theOther.fIsModelClimatologyData),
       fUseMultiSourceData(theOther.fUseMultiSourceData),
-      itsInfoVector(NFmiInfoAreaMask::CreateShallowCopyOfInfoVector(theOther.itsInfoVector))
+      itsInfoVector(NFmiAreaMask::DoShallowCopy(theOther.itsInfoVector))
 {
 }
 
@@ -582,8 +571,7 @@ bool NFmiInfoAreaMask::CheckPossibleObservationDistance(
       // laskentahilan pistettä (UsedLatlon kutsutaan true:lla) aina kun 
       // etsitään lähintä asemapistettä, jotta liian kaukana 
       // havaintopisteestä olevat laskenta pisteet hylätä.
-      if (FindClosestStationData(theCalculationParamsInOut.UsedLatlon(true),
-                                 theCalculationParamsInOut.itsObservationRadiusInKm,
+      if (FindClosestStationData(theCalculationParamsInOut,
                                  dataIndex,
                                  locationIndex))
       {
