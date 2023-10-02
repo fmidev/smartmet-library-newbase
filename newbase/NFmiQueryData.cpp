@@ -36,6 +36,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
+#include <boost/iostreams/filter/lzma.hpp>
+#include <boost/iostreams/filter/zstd.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #endif
 
@@ -290,6 +292,10 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
             filter.push(gzip_decompressor());
           else if (iends_with(filename, ".bz2"))
             filter.push(bzip2_decompressor());
+          else if (iends_with(filename, ".xz"))
+            filter.push(lzma_decompressor());
+          else if (iends_with(filename, ".zstd"))
+            filter.push(zstd_decompressor());
           filter.push(file);
           filter >> *itsQueryInfo;
           itsRawData =
