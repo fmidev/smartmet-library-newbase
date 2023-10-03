@@ -92,9 +92,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
         if (name.empty() || name[0] == '.')
           continue;
 
-        if (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd") ||
-            boost::iends_with(name, ".sqd.gz") || boost::iends_with(name, ".fqd.gz") ||
-            boost::iends_with(name, ".sqd.bz2") || boost::iends_with(name, ".fqd.bz2"))
+        if (NFmiFileSystem::IsQueryData(name))
         {
           std::string filename = thePath + '/' + name;
           if (NFmiFileSystem::FileSize(filename) != 0)
