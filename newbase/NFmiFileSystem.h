@@ -97,7 +97,9 @@ void CleanFilePattern(const std::string &theFilePattern,
                       std::list<std::string> *theDeletedFilesOut = 0);
 
 std::string FindQueryData(const std::string &thePath);
+bool IsQueryData(const std::string &theName);
 bool IsCompressed(const std::string &theName);
+bool SupportsCompression();
 std::string MakeAbsolutePath(const std::string &theOrigPath,
                              const std::string &theWorkingDirectory);
 bool IsAbsolutePath(const std::string &thePath);

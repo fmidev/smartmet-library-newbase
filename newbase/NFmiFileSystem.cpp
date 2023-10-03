@@ -1543,12 +1543,19 @@ void CleanFilePattern(const std::string &theFilePattern,
  * a) a file is OK as is
  * b) directory is scanned for newest file
  *    1. whose name does not start with "."
- *    2. whose suffix is fqd or sqd with optional .gz or .bz2 suffix  *
+ *    2. whose suffix is fqd or sqd with optional .gz, .bz2, .xz or .zstd suffix  *
  */
 // ----------------------------------------------------------------------
 
 string FindQueryData(const string &thePath)
 {
+#ifdef BOOST
+#ifdef FMI_COMPRESSION
+    static boost::regex r_qd("\\.(s|f)qd(\\.(gz|bz2|xz|zstd))?$");
+#else
+    static boost::regex r_qd("\\.(s|f)qd$");
+#endif
+#endif
   if (!DirectoryExists(thePath))
   {
     if (!FileReadable(thePath))
@@ -1568,18 +1575,8 @@ string FindQueryData(const string &thePath)
 
     if (!name.empty() && name[0] == '.')
       continue;
-#ifdef BOOST
-    bool ok = (boost::iends_with(name, ".sqd") || boost::iends_with(name, ".fqd"));
-#else
-    bool ok = true;
-#endif
 
-#ifdef FMI_COMPRESSION
-    if (!ok)
-      ok = (boost::iends_with(name, ".sqd.gz") || boost::iends_with(name, ".fqd.gz") ||
-            boost::iends_with(name, ".sqd.bz2") || boost::iends_with(name, ".fqd.bz2"));
-#endif
-    if (ok)
+    if (IsQueryData(name))
     {
       string fullpath = thePath + '/' + name;
 
@@ -1603,6 +1600,37 @@ string FindQueryData(const string &thePath)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test if filename has query data (or compressed query data) suffix
+ */
+// ----------------------------------------------------------------------
+
+bool IsQueryData(const string &theName)
+{
+#ifdef BOOST
+#ifdef FMI_COMPRESSION
+  static boost::regex r_qd("\\.(s|f)qd(\\.(gz|bz2|xz|zstd))?$");
+#else
+  static boost::regex r_qd("\\.(s|f)qd$");
+#endif
+  return boost::regex_search(theName, r_qd);
+#else
+  // FIXME: it would perhaps best to avoid using boost::regex here and
+  //        write own test fir suffixes
+  return true;
+#endif
+}
+
+bool SupportsCompression()
+{
+#if defined(BOOST) && defined(FMI_COMPRESSION)
+  return true;
+#else
+  return false;
+#endif
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Test if filename has compression suffix
  */
 // ----------------------------------------------------------------------
@@ -1610,7 +1638,8 @@ string FindQueryData(const string &thePath)
 bool IsCompressed(const string &theName)
 {
 #ifdef BOOST
-  return (boost::iends_with(theName, ".gz") || boost::iends_with(theName, ".bz2"));
+  static boost::regex r_compressed("\\.(gz|bz2|xz|zstd)$");
+  return boost::regex_search(theName, r_compressed);
 #else
   return false;
 #endif
