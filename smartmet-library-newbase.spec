@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.8.30
+Version: 23.10.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Oct  3 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.10.3-1.fmi
+- Add LZMA and ZSTD compressuion support for query data
+
 * Wed Aug 30 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.30-1.fmi
 - Added SILAM parameters for smoke (BRAINSTORM-2649)
 
