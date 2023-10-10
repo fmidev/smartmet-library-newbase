@@ -21,7 +21,7 @@
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiStationBag.h"
 #include <macgyver/Exception.h>
-
+#include <macgyver/FileSystem.h>
 #include <boost/make_shared.hpp>
 
 #include <fcntl.h>
@@ -30,15 +30,6 @@
 
 #ifndef UNIX
 #include <io.h>
-#endif
-
-#ifdef FMI_COMPRESSION
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/iostreams/filter/bzip2.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-#include <boost/iostreams/filter/lzma.hpp>
-#include <boost/iostreams/filter/zstd.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
 #endif
 
 using namespace std;
@@ -282,21 +273,9 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
 
         itsQueryInfo = new NFmiQueryInfo;
 
-#ifdef FMI_COMPRESSION
-        if (NFmiFileSystem::IsCompressed(filename))
+        if (Fmi::is_compressed(filename))
         {
-          using namespace boost;
-          using namespace boost::iostreams;
-          filtering_stream<input> filter;
-          if (iends_with(filename, ".gz"))
-            filter.push(gzip_decompressor());
-          else if (iends_with(filename, ".bz2"))
-            filter.push(bzip2_decompressor());
-          else if (iends_with(filename, ".xz"))
-            filter.push(lzma_decompressor());
-          else if (iends_with(filename, ".zstd"))
-            filter.push(zstd_decompressor());
-          filter.push(file);
+          Fmi::IStream filter(file, filename);
           filter >> *itsQueryInfo;
           itsRawData =
               new NFmiRawData(filter, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
@@ -304,7 +283,6 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
             throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
         }
         else
-#endif
         {
           // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
 

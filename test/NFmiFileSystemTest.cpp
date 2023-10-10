@@ -9,6 +9,7 @@
 #include "NFmiStringTools.h"
 #include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
+#include <macgyver/FileSystem.h>
 #include <list>
 #include <string>
 
@@ -406,21 +407,20 @@ void directories()
 void compression_detection()
 {
   const auto check = [](bool expected, const std::string& name) -> void {
-    bool ok =  NFmiFileSystem::IsCompressed(name);
+      bool ok =  Fmi::is_compressed(name);
     if (ok ^ expected)
       TEST_FAILED(name + " misdetected as " + (expected ? "not" : "") + " compressed");
   };
 
-  if (NFmiFileSystem::SupportsCompression())
-  {
-    check(true, "foo.gz");
-    check(true, "foo.bz2");
-    check(true, "foo.xz");
-    check(true, "foo.zstd");
-    check(false, "foo");
-    check(false, "foo.bar");
-    check(false, "");
-  }
+  check(true, "foo.gz");
+  check(true, "foo.bz2");
+#ifndef WIN32
+  check(true, "foo.xz");
+  check(true, "foo.zstd");
+#endif 
+  check(false, "foo");
+  check(false, "foo.bar");
+  check(false, "");
 
   TEST_PASSED();
 }
@@ -438,21 +438,20 @@ void query_data_detection()
   check(false, "foo.bar");
   check(true, "foo.sqd");
   check(true, "foo.fqd");
-  if (NFmiFileSystem::SupportsCompression())
-  {
-    check(false, "foo.gz");
-    check(false, "foo.bz2");
-    check(false, "foo.xz");
-    check(false, "foo.zstd");
-    check(true, "foo.sqd.gz");
-    check(true, "foo.sqd.bz2");
-    check(true, "foo.sqd.xz");
-    check(true, "foo.sqd.zstd");
-    check(true, "foo.fqd.gz");
-    check(true, "foo.fqd.bz2");
-    check(true, "foo.fqd.xz");
-    check(true, "foo.fqd.zstd");
-  }
+  check(false, "foo.gz");
+  check(false, "foo.bz2");
+  check(true, "foo.sqd.gz");
+  check(true, "foo.sqd.bz2");
+  check(true, "foo.fqd.gz");
+  check(true, "foo.fqd.bz2");
+#ifndef WIN32
+  check(false, "foo.xz");
+  check(false, "foo.zstd");
+  check(true, "foo.sqd.xz");
+  check(true, "foo.sqd.zstd");
+  check(true, "foo.fqd.xz");
+  check(true, "foo.fqd.zstd");
+#endif
 
   TEST_PASSED();
 }

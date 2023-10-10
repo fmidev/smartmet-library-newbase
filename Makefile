@@ -17,7 +17,7 @@ include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
 RPMBUILD_OPT ?=
 
-DEFINES = -DUNIX -D_REENTRANT -DBOOST -DFMI_COMPRESSION
+DEFINES = -DUNIX -D_REENTRANT -DBOOST
 
 
 CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g

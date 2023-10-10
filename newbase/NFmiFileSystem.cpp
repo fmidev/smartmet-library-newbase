@@ -9,6 +9,7 @@
 #include "NFmiFileString.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 
 #include <boost/filesystem.hpp>
 
@@ -1549,13 +1550,6 @@ void CleanFilePattern(const std::string &theFilePattern,
 
 string FindQueryData(const string &thePath)
 {
-#ifdef BOOST
-#ifdef FMI_COMPRESSION
-    static boost::regex r_qd("\\.(s|f)qd(\\.(gz|bz2|xz|zstd))?$");
-#else
-    static boost::regex r_qd("\\.(s|f)qd$");
-#endif
-#endif
   if (!DirectoryExists(thePath))
   {
     if (!FileReadable(thePath))
@@ -1607,41 +1601,21 @@ string FindQueryData(const string &thePath)
 bool IsQueryData(const string &theName)
 {
 #ifdef BOOST
-#ifdef FMI_COMPRESSION
-  static boost::regex r_qd("\\.(s|f)qd(\\.(gz|bz2|xz|zstd))?$");
-#else
   static boost::regex r_qd("\\.(s|f)qd$");
-#endif
-  return boost::regex_search(theName, r_qd);
+  if (Fmi::is_compressed(theName))
+  {
+    boost::filesystem::path p(theName);
+    p.replace_extension();
+    return boost::regex_search(p.string(), r_qd);
+  }
+  else
+  {
+    return boost::regex_search(theName, r_qd);
+  }
 #else
   // FIXME: it would perhaps best to avoid using boost::regex here and
   //        write own test fir suffixes
   return true;
-#endif
-}
-
-bool SupportsCompression()
-{
-#if defined(BOOST) && defined(FMI_COMPRESSION)
-  return true;
-#else
-  return false;
-#endif
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Test if filename has compression suffix
- */
-// ----------------------------------------------------------------------
-
-bool IsCompressed(const string &theName)
-{
-#ifdef BOOST
-  static boost::regex r_compressed("\\.(gz|bz2|xz|zstd)$");
-  return boost::regex_search(theName, r_compressed);
-#else
-  return false;
 #endif
 }
 

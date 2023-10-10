@@ -16,6 +16,7 @@
 #include "NFmiFileSystem.h"
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <cstdio>
 #include <fcntl.h>
 #include <fstream>
@@ -333,14 +334,16 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
         NFmiString(""))  // pitää tarkistaa, ettei tyhjä stringi, muuten kaatuu open:issa
       return false;
 
-    ifstream dataFile;
+    ifstream rawDataFile;
 
-    dataFile.open(theFileName, ios::in | ios::binary);
-    if (!dataFile)
+    rawDataFile.open(theFileName, ios::in | ios::binary);
+    if (!rawDataFile)
     {
       cerr << "File not found: '" << theFileName.CharPtr() << "'" << endl;
       return false;
     }
+
+    Fmi::IStream dataFile(rawDataFile, theFileName.CharPtr());
 
     NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
 
@@ -356,7 +359,6 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
       cerr << msg << endl;
       cerr << "Could not open file: " << static_cast<char *>(theFileName) << " for reading."
            << endl;
-      dataFile.close();
       delete theTempData;  // siivotaan jäljet kun ongelmia tuli
       theTempData = nullptr;
       return false;
@@ -368,7 +370,6 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
       std::string errStr("SmartMet: cannot create large enough continuous array (");
       errStr += NFmiValueString::GetStringWithMaxDecimalsSmartWay(eDataMBSize, 1);
       errStr += " MB) for wanted data.";
-      dataFile.close();
       delete theTempData;  // siivotaan jäljet kun ongelmia tuli
       theTempData = 0;
       throw Fmi::Exception(BCP, errStr);
@@ -376,13 +377,10 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
 #endif  // FMI_MET_EDITOR_CONTINUOIS_MEMORY_ALLOC_FAILED
     catch (...)
     {
-      dataFile.close();
       delete theTempData;  // siivotaan jäljet kun ongelmia tuli
       theTempData = nullptr;
       throw;
     }
-
-    dataFile.close();
 
     itsOwnerData = false;
 

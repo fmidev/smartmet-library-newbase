@@ -30,6 +30,7 @@
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <cassert>
 #include <utility>
 

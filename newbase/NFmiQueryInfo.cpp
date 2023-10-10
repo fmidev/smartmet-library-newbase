@@ -36,6 +36,7 @@
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -43,14 +44,6 @@
 // abort()
 
 #include <boost/math/special_functions.hpp>
-#ifdef FMI_COMPRESSION
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/iostreams/filter/bzip2.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-#include <boost/iostreams/filter/lzma.hpp>
-#include <boost/iostreams/filter/zstd.hpp>
-#include <boost/iostreams/filtering_stream.hpp>
-#endif
 
 // Mika: isspace on määritelty ctypessä
 #ifdef UNIX
@@ -599,21 +592,9 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
     if (!file)
       throw Fmi::Exception(BCP, "Could not open '" + filename + "' for reading");
 
-#ifdef FMI_COMPRESSION
-    if (NFmiFileSystem::IsCompressed(filename))
+    if (Fmi::is_compressed(filename))
     {
-      using namespace boost;
-      using namespace boost::iostreams;
-      filtering_stream<input> filter;
-      if (iends_with(filename, ".gz"))
-        filter.push(gzip_decompressor());
-      else if (iends_with(filename, ".bz2"))
-        filter.push(bzip2_decompressor());
-      else if (iends_with(filename, ".xz"))
-        filter.push(lzma_decompressor());
-      else if (iends_with(filename, ".zstd"))
-        filter.push(zstd_decompressor());
-      filter.push(file);
+      Fmi::IStream filter(file, filename);
       Read(filter);
       if (!filter.good())
         throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
@@ -624,11 +605,6 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
       if (!file.good())
         throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
     }
-#else
-    Read(file);
-    if (!file.good())
-      throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
-#endif
   }
   catch (...)
   {
