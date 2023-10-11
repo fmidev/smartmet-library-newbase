@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.10.3
+Version: 23.10.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Oct 11 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.10.11-1.fmi
+- Use Fmi::FileSystem for file compression support
+
 * Tue Oct  3 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.10.3-1.fmi
 - Add LZMA and ZSTD compressuion support for query data
 
