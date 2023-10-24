@@ -1561,6 +1561,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "WindVectorMS", kFmiWindVectorMS},
       { "WindVerticalDeviation", kFmiWindVerticalDeviation},
       { "WildFireIndex", kFmiWildFireIndex},
+      { "WildFireWarning", kFmiWildFireWarning },
       { "WmoBlockNumber", kFmiWmoBlockNumber},
       { "WmoStationNumber", kFmiWmoStationNumber},
       { "Year", kFmiYear},

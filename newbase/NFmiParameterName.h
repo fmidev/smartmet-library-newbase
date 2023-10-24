@@ -1449,6 +1449,8 @@ enum FmiParameterName
   kFmiCloudWaterDryAir,
   kFmiCloudIceDryAir,
 
+  kFmiWildFireWarning,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
