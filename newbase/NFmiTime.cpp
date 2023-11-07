@@ -336,11 +336,11 @@ NFmiTime::NFmiTime(time_t theTime) : NFmiStaticTime(theTime, true), itsZoneDiffe
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Construct from boost ptime
+ * \brief Construct from boost Fmi::DateTime
  */
 // ----------------------------------------------------------------------
 
-NFmiTime::NFmiTime(const boost::posix_time::ptime &thePosixTime)
+NFmiTime::NFmiTime(const Fmi::DateTime &thePosixTime)
     : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
   try
@@ -383,7 +383,7 @@ NFmiTime &NFmiTime::operator=(const NFmiTime &theTime)
  */
 // ----------------------------------------------------------------------
 
-NFmiTime::NFmiTime(const boost::local_time::local_date_time &theLocalTime)
+NFmiTime::NFmiTime(const Fmi::LocalDateTime &theLocalTime)
     : NFmiStaticTime(2000, 1, 1, 0, 0, 0), itsZoneDifferenceHour()
 {
   try
@@ -395,7 +395,7 @@ NFmiTime::NFmiTime(const boost::local_time::local_date_time &theLocalTime)
     SetDate(d.year(), d.month(), d.day());
     SetTime(t.hours(), t.minutes(), t.seconds());
 
-    boost::posix_time::time_duration offset = theLocalTime.zone()->base_utc_offset();
+    Fmi::TimeDuration offset = theLocalTime.zone()->base_utc_offset();
     if (theLocalTime.is_dst())
       offset += theLocalTime.zone()->dst_offset();
 

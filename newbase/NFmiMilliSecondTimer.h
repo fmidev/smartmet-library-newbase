@@ -17,7 +17,7 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiStringTools.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 
 //! Luokka koodin nopeusmittauksia varten
 
@@ -39,8 +39,8 @@ class NFmiMilliSecondTimer
   void SecondTime();
 
  private:
-  boost::posix_time::ptime itsTime1;  //!< The start time
-  boost::posix_time::ptime itsTime2;  //!< The end time
+  Fmi::DateTime itsTime1;  //!< The start time
+  Fmi::DateTime itsTime2;  //!< The end time
 
 };  // class NFmiMilliSecondTimer
 
@@ -54,7 +54,7 @@ class NFmiMilliSecondTimer
 
 inline void NFmiMilliSecondTimer::FirstTime()
 {
-  itsTime1 = boost::posix_time::microsec_clock::universal_time();
+  itsTime1 = Fmi::MicrosecClock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -66,7 +66,7 @@ inline void NFmiMilliSecondTimer::FirstTime()
 
 inline void NFmiMilliSecondTimer::SecondTime()
 {
-  itsTime2 = boost::posix_time::microsec_clock::universal_time();
+  itsTime2 = Fmi::MicrosecClock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -104,7 +104,7 @@ inline int NFmiMilliSecondTimer::TimeDiffInMSeconds() const
 
 inline int NFmiMilliSecondTimer::CurrentTimeDiffInMSeconds() const
 {
-  return (boost::posix_time::microsec_clock::universal_time() - itsTime1).total_milliseconds();
+  return (Fmi::MicrosecClock::universal_time() - itsTime1).total_milliseconds();
 }
 
 // ======================================================================

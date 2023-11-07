@@ -41,14 +41,14 @@ class NFmiMetTime : public NFmiTime
   // NfmiMetTime timestamp with seconds and minutes
   static NFmiMetTime now();
 
-  // Explicit conversion to boost::posix_time::ptime
-  boost::posix_time::ptime PosixTime() const;
+  // Explicit conversion to Fmi::DateTime
+  Fmi::DateTime PosixTime() const;
 
-  // Implicit conversion to and from boost::posix_time::ptime
-  NFmiMetTime(const boost::posix_time::ptime& thePosixTime);
-  operator boost::posix_time::ptime() const { return PosixTime(); }
-  // And local_date_time
-  NFmiMetTime(const boost::local_time::local_date_time& theLocalTime);
+  // Implicit conversion to and from Fmi::DateTime
+  NFmiMetTime(const Fmi::DateTime& thePosixTime);
+  operator Fmi::DateTime() const { return PosixTime(); }
+  // And Fmi::LocalDateTime
+  NFmiMetTime(const Fmi::LocalDateTime& theLocalTime);
 
   virtual bool IsEqual(const NFmiSortable& aFmiTest) const;
 

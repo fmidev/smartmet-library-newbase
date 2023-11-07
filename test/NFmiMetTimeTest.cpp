@@ -18,11 +18,11 @@ namespace NFmiMetTimeTest
 
 void construct_from_ptime()
 {
-  using boost::posix_time::ptime;
+  using Fmi::DateTime;
   using boost::posix_time::time_from_string;
 
   {
-    ptime pt = time_from_string("2015-10-25 03:00:00");
+    Fmi::DateTime pt = time_from_string("2015-10-25 03:00:00");
     NFmiMetTime t(pt);
     std::string res = t.ToStr(kYYYYMMDDHHMMSS).CharPtr();
     if (res != "20151025030000")
@@ -30,7 +30,7 @@ void construct_from_ptime()
   }
 
   {
-    ptime pt = time_from_string("2015-10-25 04:00:00");
+    Fmi::DateTime pt = time_from_string("2015-10-25 04:00:00");
     NFmiMetTime t(pt);
     std::string res = t.ToStr(kYYYYMMDDHHMMSS).CharPtr();
     if (res != "20151025040000")
@@ -38,7 +38,7 @@ void construct_from_ptime()
   }
 
   {
-    ptime pt = time_from_string("2015-10-25 05:00:00");
+    Fmi::DateTime pt = time_from_string("2015-10-25 05:00:00");
     NFmiMetTime t(pt);
     std::string res = t.ToStr(kYYYYMMDDHHMMSS).CharPtr();
     if (res != "20151025050000")
@@ -55,16 +55,16 @@ void construct_from_local_date_time()
   boost::local_time::tz_database db;
   db.load_from_file("/usr/share/smartmet/timezones/date_time_zonespec.csv");
 
-  using boost::local_time::local_date_time;
+  using Fmi::LocalDateTime;
   using boost::local_time::posix_time_zone;
-  using boost::local_time::time_zone_ptr;
-  using boost::posix_time::ptime;
+  using Fmi::TimeZonePtr;
+  using Fmi::DateTime;
   using boost::posix_time::time_from_string;
 
   {
-    ptime pt = time_from_string("2015-10-25 03:00:00");
-    time_zone_ptr zone = db.time_zone_from_region("Europe/Stockholm");
-    local_date_time ldt(pt, zone);
+    Fmi::DateTime pt = time_from_string("2015-10-25 03:00:00");
+    Fmi::TimeZonePtr zone = db.time_zone_from_region("Europe/Stockholm");
+    Fmi::LocalDateTime ldt(pt, zone);
 
     NFmiMetTime t(ldt);
     std::string res = t.ToStr(kYYYYMMDDHHMMSS).CharPtr();
@@ -73,9 +73,9 @@ void construct_from_local_date_time()
   }
 
   {
-    ptime pt = time_from_string("2015-10-25 05:00:00");
-    time_zone_ptr zone = db.time_zone_from_region("Europe/Helsinki");
-    local_date_time ldt(pt, zone);
+    Fmi::DateTime pt = time_from_string("2015-10-25 05:00:00");
+    Fmi::TimeZonePtr zone = db.time_zone_from_region("Europe/Helsinki");
+    Fmi::LocalDateTime ldt(pt, zone);
 
     NFmiMetTime t(ldt);
     std::string res = t.ToStr(kYYYYMMDDHHMMSS).CharPtr();
@@ -90,11 +90,11 @@ void construct_from_local_date_time()
 
 void posixtime()
 {
-  using boost::posix_time::ptime;
+  using Fmi::DateTime;
   using boost::posix_time::time_from_string;
 
   NFmiMetTime t(2013, 10, 25, 1, 2, 3, 0);
-  ptime res = t.PosixTime();
+  Fmi::DateTime res = t.PosixTime();
   if (res != time_from_string("2013-10-25 01:02:00"))
     TEST_FAILED("Incorrect result " + to_simple_string(res) + " for " +
                 t.ToStr(kYYYYMMDDHHMMSS).CharPtr());
@@ -106,11 +106,11 @@ void posixtime()
 
 void implicit_conversion()
 {
-  using boost::posix_time::ptime;
+  using Fmi::DateTime;
   using boost::posix_time::time_from_string;
 
   NFmiMetTime t(2013, 10, 25, 1, 2, 3, 0);
-  ptime res = t;
+  Fmi::DateTime res = t;
   if (res != time_from_string("2013-10-25 01:02:00"))
     TEST_FAILED("Incorrect result " + to_simple_string(res) + " for " +
                 t.ToStr(kYYYYMMDDHHMMSS).CharPtr());
