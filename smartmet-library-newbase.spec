@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.10.11
+Version: 23.11.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -30,12 +30,12 @@ BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 23.11.8
-BuildRequires: smartmet-library-gis-devel >= 23.8.28
+BuildRequires: smartmet-library-gis-devel >= 23.9.12
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 23.11.8
-Requires: smartmet-library-gis >= 23.8.28
+Requires: smartmet-library-gis >= 23.9.12
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,10 +51,10 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 23.8.28
+#TestRequires: smartmet-library-gis-devel >= 23.9.12
 #TestRequires: smartmet-library-macgyver-devel >= 23.11.8
 #TestRequires: smartmet-library-macgyver >= 23.11.8
-#TestRequires: smartmet-library-gis >= 23.8.28
+#TestRequires: smartmet-library-gis >= 23.9.12
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 23.8.28
+Requires: smartmet-library-gis-devel >= 23.9.12
 Requires: smartmet-library-macgyver-devel >= 23.11.8
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
@@ -116,6 +116,10 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Nov 14 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.14-1.fmi
+- Added parameters WildFireWarning, CloudWaterDryAri, CloudIceDryAir, WildFireIndex
+- Replaced boost date objects with macgyver DateTime and LocalDateTime
+
 * Wed Oct 11 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.10.11-1.fmi
 - Use Fmi::FileSystem for file compression support
 
