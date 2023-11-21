@@ -419,6 +419,8 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "IceSpeed", kFmiIceSpeed},
       { "IceThickness", kFmiIceThickness},
       { "Icing", kFmiIcing},
+      { "IcingGrowthRate", kFmiIcingGrowthRate},
+      { "IcingMassRate", kFmiIcingMassRate},
       { "IcingRate", kFmiIcingRate},
       { "IcingWarningIndex", kFmiIcingWarningIndex},
       { "InCloudTurbulence", kFmiInCloudTurbulence},
