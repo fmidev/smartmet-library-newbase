@@ -15,7 +15,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 23.11.21
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -29,12 +29,12 @@ BuildRequires: gdal35-devel
 BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 23.11.8
+BuildRequires: smartmet-library-macgyver-devel >= 23.11.21
 BuildRequires: smartmet-library-gis-devel >= 23.9.12
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 23.11.8
+Requires: smartmet-library-macgyver >= 23.11.21
 Requires: smartmet-library-gis >= 23.9.12
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -52,8 +52,8 @@ Requires: geos311
 #TestRequires: make
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 23.9.12
-#TestRequires: smartmet-library-macgyver-devel >= 23.11.8
-#TestRequires: smartmet-library-macgyver >= 23.11.8
+#TestRequires: smartmet-library-macgyver-devel >= 23.11.21
+#TestRequires: smartmet-library-macgyver >= 23.11.21
 #TestRequires: smartmet-library-gis >= 23.9.12
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
@@ -94,7 +94,7 @@ Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
 Requires: smartmet-library-gis-devel >= 23.9.12
-Requires: smartmet-library-macgyver-devel >= 23.11.8
+Requires: smartmet-library-macgyver-devel >= 23.11.21
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-2.fmi
+- Repackaged since MappedFile ABI changed
+
 * Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-1.fmi
 - New parameters: IcingMassRate and IcingGrowthRate (BRAINSTORM-2788)
 
