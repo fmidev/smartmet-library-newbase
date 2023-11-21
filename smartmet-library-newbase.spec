@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.11.14
+Version: 23.11.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-1.fmi
+- New parameters: IcingMassRate and IcingGrowthRate (BRAINSTORM-2788)
+
 * Tue Nov 14 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.14-1.fmi
 - Added parameters WildFireWarning, CloudWaterDryAri, CloudIceDryAir, WildFireIndex
 - Replaced boost date objects with macgyver DateTime and LocalDateTime
