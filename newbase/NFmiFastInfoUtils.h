@@ -3,6 +3,7 @@
 #include "NFmiDataIdent.h"
 #include "NFmiDataMatrix.h"
 #include "NFmiMetTime.h"
+
 #include <boost/shared_ptr.hpp>
 
 class NFmiFastQueryInfo;
@@ -16,13 +17,24 @@ namespace NFmiFastInfoUtils
 // juttu). Tila otetaan konstruktorissa ja palautetaan destruktorissa.
 class QueryInfoParamStateRestorer
 {
+ protected:
   NFmiQueryInfo &info_;
-  unsigned long paramIndex_;
-  unsigned long paramId_;
+  FmiParameterName paramId_;
 
  public:
   QueryInfoParamStateRestorer(NFmiQueryInfo &info);
-  ~QueryInfoParamStateRestorer();
+  virtual ~QueryInfoParamStateRestorer();
+};
+
+class QueryInfoTotalStateRestorer : public QueryInfoParamStateRestorer
+{
+  unsigned long locationIndex_;
+  unsigned long timeIndex_;
+  unsigned long levelIndex_;
+
+ public:
+  QueryInfoTotalStateRestorer(NFmiQueryInfo &info);
+  ~QueryInfoTotalStateRestorer();
 };
 
 class MetaWindParamUsage
@@ -37,6 +49,12 @@ class MetaWindParamUsage
   bool fHasWindComponents = false;
 
  public:
+  MetaWindParamUsage();
+  MetaWindParamUsage(bool hasTotalWind,
+                     bool hasWindVectorParam,
+                     bool hasWsAndWd,
+                     bool hasWindComponents);
+
   bool ParamNeedsMetaCalculations(unsigned long paramId) const;
   bool NoWindMetaParamsNeeded() const;
   bool MakeMetaWindVectorParam() const;
@@ -59,6 +77,7 @@ bool IsModelClimatologyData(const boost::shared_ptr<NFmiFastQueryInfo> &info);
 NFmiMetTime GetUsedTimeIfModelClimatologyData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                               const NFmiMetTime &theTime);
 bool IsMovingSoundingData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
+bool IsLightningTypeData(boost::shared_ptr<NFmiFastQueryInfo> &info);
 bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                       const NFmiMetTime &theStartTime,
                                       long minuteRange,
