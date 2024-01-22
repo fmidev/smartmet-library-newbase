@@ -45,11 +45,13 @@
 #include "NFmiWeatherAndCloudiness.h"
 #include <macgyver/Exception.h>
 
+#include <boost/math/special_functions/round.hpp>
 #include <algorithm>
 #include <cassert>
 #include <fstream>
 #include <numeric>
 #include <stdexcept>
+#include <thread>
 
 using namespace std;
 
@@ -3931,7 +3933,7 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
     {
       NFmiFastQueryInfo destInfo(destData);
 
-      unsigned int usedThreadCount = boost::thread::hardware_concurrency();
+      unsigned int usedThreadCount = NFmiQueryDataUtil::GetReasonableWorkingThreadCount();
       if (theMaxUsedThreadCount > 0)
         usedThreadCount =
             std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
@@ -5513,6 +5515,45 @@ static void CombineSliceDatas(NFmiQueryData &theData,
   }
 }
 
+static void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunction,
+                              NFmiQueryInfo &metaInfo,
+                              const std::string *theFileFilterPtr)
+{
+  if (loggingFunction)
+  {
+    std::string message = "Starting to combine data ";
+    if (theFileFilterPtr)
+    {
+      message += "for '";
+      message += *theFileFilterPtr;
+      message += "' ";
+    }
+
+    message += "total size: ";
+    auto sizeInGB = metaInfo.Size() * sizeof(float) / (1024l * 1024 * 1024.);
+    message += NFmiValueString::GetStringWithMaxDecimalsSmartWay(sizeInGB, 2);
+    message += " GB, params: " + std::to_string(metaInfo.SizeParams());
+    message += ", times: " + std::to_string(metaInfo.SizeTimes());
+    message += ", levels: " + std::to_string(metaInfo.SizeLevels());
+    message += ", points: " + std::to_string(metaInfo.SizeLocations());
+    if (metaInfo.IsGrid())
+    {
+      message += " (grid " + std::to_string(metaInfo.Grid()->XNumber()) + " x " +
+                 std::to_string(metaInfo.Grid()->YNumber()) + ")";
+    }
+
+    (*loggingFunction)(message);
+
+    std::string timeStepsStr;
+    for (metaInfo.ResetTime(); metaInfo.NextTime();)
+    {
+      if (!timeStepsStr.empty()) timeStepsStr += ", ";
+      timeStepsStr += metaInfo.Time().ToStr("YYYY.MM.DD HH:mm", kEnglish);
+    }
+    (*loggingFunction)(std::string("Combined data will have times: ") + timeStepsStr);
+  }
+}
+
 // fFirstInfoDefines määrää sekä rakennetaanko 'metaInfo' ensimmäisen infon avulla,
 // että miten lopullinen data täytetään.
 // Jos fDoTimeStepCombine on true, on tarkoitus liittää samanlaisista aika-askel-datoista
@@ -5525,7 +5566,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
     bool fDoTimeStepCombine,
     int theMaxTimeStepsInData,
-    NFmiStopFunctor *theStopFunctor)
+    NFmiStopFunctor *theStopFunctor,
+    LoggingFunction *loggingFunction,
+    const std::string *theFileFilterPtr)
 {
   try
   {
@@ -5540,6 +5583,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
       NFmiQueryInfo combinedDataMetaInfo =
           ::MakeCombinedDatasMetaInfo(fastInfoVector, foundValidTimes, fDoTimeStepCombine);
       NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+    // SmartMet kaatuu jossain tilanteissa tähän (CreateEmptyData:ssa luodaan dynaamisesti float
+    // taulukko new:lla), laitetaan lokitusta luotavasta datasta, jos funktio on annettu
+    ::DoMetaInfoLogging(loggingFunction, combinedDataMetaInfo, theFileFilterPtr);
       std::unique_ptr<NFmiQueryData> data(CreateEmptyData(combinedDataMetaInfo));
       if (data)
       {
@@ -5633,7 +5679,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
                                                     const std::string &theFileFilter,
                                                     bool fDoTimeStepCombine,
                                                     int theMaxTimeStepsInData,
-                                                    NFmiStopFunctor *theStopFunctor)
+                                                    NFmiStopFunctor *theStopFunctor,
+                                                    LoggingFunction *loggingFunction)
 {
   try
   {
@@ -5650,7 +5697,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
                              qDataVector,
                              fDoTimeStepCombine,
                              theMaxTimeStepsInData,
-                             theStopFunctor);
+                             theStopFunctor,
+                             loggingFunction,
+                             &theFileFilter);
   }
   catch (...)
   {
@@ -6309,9 +6358,90 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
   }
 }
 
+static void FillSingleTimeGridDataInThread(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    bool fDoLocationInterpolation,
+    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+    const std::vector<NFmiTimeCache> &theTimeCacheVector,
+    NFmiTimeIndexCalculator &theTimeIndexCalculator,
+    int theThreadNumber,
+    NFmiLogger *theDebugLogger)
+{
+  NFmiDataMatrix<float> gridValues;
+  bool doGroundData =
+      (theSourceInfo.SizeLevels() == 1) &&
+      (theTargetInfo.SizeLevels() ==
+       1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
+  unsigned long targetXSize = theTargetInfo.GridXNumber();
+  unsigned long workedTimeIndex = 0;
+  for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
+  {
+    if (theDebugLogger)
+    {
+      std::string logStr("FillSingleTimeGridDataInThread - thread no: ");
+      logStr += NFmiStringTools::Convert(theThreadNumber);
+      logStr += " started timeIndex: ";
+      logStr += NFmiStringTools::Convert(workedTimeIndex);
+      theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
+    }
+
+    if (theTargetInfo.TimeIndex(workedTimeIndex) == false) continue;
+    NFmiMetTime targetTime = theTargetInfo.Time();
+    bool doTimeInterpolation =
+        false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
+    if (theSourceInfo.Time(theTargetInfo.Time()) ||
+        (doTimeInterpolation = theSourceInfo.TimeDescriptor().IsInside(theTargetInfo.Time())) ==
+            true)
+    {
+      const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+      for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
+      {
+        if (theSourceInfo.Param(
+                static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
+        {
+          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+          {
+            if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
+            {
+              if (fDoLocationInterpolation == false)
+              {
+                if (doTimeInterpolation)
+                  gridValues = theSourceInfo.Values(targetTime);
+                else
+                  gridValues = theSourceInfo.Values();
+
+                theTargetInfo.SetValues(gridValues);
+              }
+              else
+              {  // interpoloidaan paikan suhteen
+                for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+                {
+                  float value = kFloatMissing;
+                  const NFmiLocationCache &locCache =
+                      theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
+                                            [theTargetInfo.LocationIndex() / targetXSize];
+                  if (fDoLocationInterpolation && doTimeInterpolation)
+                    value = theSourceInfo.CachedInterpolation(locCache, timeCache);
+                  else if (fDoLocationInterpolation)
+                    value = theSourceInfo.CachedInterpolation(locCache);
+                  theTargetInfo.FloatValue(value);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 // Tämä on FillGridData-funktion viritetty versio, joka tekee työtä koneen kaikilla
 // kone-threadeilla.
-
+// Luodaan tarvittavat threadit jotka sitten pyytävät aina seuraavan käsiteltävän ajan indeksin.
+// Työstö tapahtuu siis iksi aika kerrallaa omissa threadeissaan.
+// Optimoitu myös niin että lasketaan valmiiksi kaikki tarvittavat location ja time interpolaatio
+// cachet.
 void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
                                            NFmiQueryData *theTarget,
                                            unsigned long theStartTimeIndex,
@@ -6325,7 +6455,6 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
     {
       NFmiFastQueryInfo source1(theSource);
       NFmiFastQueryInfo target1(theTarget);
-
       bool doLocationInterpolation =
           (NFmiQueryDataUtil::AreGridsEqual(source1.Grid(), target1.Grid()) == false);
       NFmiDataMatrix<NFmiLocationCache> locationCacheMatrix;
@@ -6344,19 +6473,18 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
       if (usedEndTimeIndex == gMissingIndex)
         usedEndTimeIndex = target1.SizeTimes() - 1;
 
-      if (usedThreadCount == 0)
-      {
-        unsigned int usedThreadCount = boost::thread::hardware_concurrency();
-#ifdef UNIX
-        // Using all CPUs with the algorithm below leads to severe cache
-        // trashing and poor performance for all programs running simultaneously,
-        // since time is the innermost data element in the 4D data cube.
-        usedThreadCount /= 2;
+      double threadCountPercentage = 50.;  // Linux side wants to use 1/2 the cores here
+#ifdef _MSC_VER
+      // With SmartMet side more core power is needed for the parallel job
+      threadCountPercentage = 75.;
 #endif
-      }
+      unsigned int usedThreadCount =
+        NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
 
-      if (usedThreadCount > target1.SizeTimes())
+      if (usedThreadCount > target1.SizeTimes()) 
+      {
         usedThreadCount = target1.SizeTimes();
+      }
 
       if (usedThreadCount <= 1)
       {  // käytetään vanhaa simppelimpää funktiota kun threadauksesta ei ole hyötyä
@@ -6395,29 +6523,18 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
           sourceInfos[i] = boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(source1));
         }
 
+        NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
         boost::thread_group calcParts;
-
-        // We wish to share times evenly: 3-2-2 instead of 3-3-1 for 3 threads and 7 times
-
-        unsigned long start_index = 0;
-
         for (unsigned int i = 0; i < usedThreadCount; i++)
-        {
-          auto remaining_times = target1.SizeTimes() - start_index;
-          auto time_share = remaining_times / (usedThreadCount - i);  // divisor will reach 1
-          auto end_index = start_index + time_share - 1;
-
-          calcParts.add_thread(new boost::thread(::FillGridDataInThread,
+        calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
                                                  *(sourceInfos[i].get()),
                                                  *(targetInfos[i].get()),
+                                                 doLocationInterpolation,
                                                  locationCacheMatrix,
                                                  timeCacheVector,
-                                                 start_index,
-                                                 end_index,
+                                                 boost::ref(timeIndexCalculator),
                                                  i,
                                                  theDebugLogger));
-          start_index = end_index + 1;
-        }
         calcParts.join_all();  // odotetaan että threadit lopettavat
       }
     }
@@ -6532,6 +6649,14 @@ NFmiQueryData *NFmiQueryDataUtil::ReadNewestData(const std::string &theFileFilte
   }
 }
 
+template <typename T>
+static void CheckThreadCountLimits(T &threadCountInOut, T maxThreadCount)
+{
+  T minThreadCount = 1;
+  threadCountInOut = std::max(threadCountInOut, minThreadCount);
+  threadCountInOut = std::min(threadCountInOut, maxThreadCount);
+}
+
 // Halutaan laskea eri tehtäviä varten optimaalinen threadien käyttö.
 // Esim. soundingIndex laskut tehdään haluttaessa niin että otetaan käyttöön n kpl
 // työthreadeja jotka laskevat kerrallaa yksittäisen aika-askeleen.
@@ -6548,27 +6673,19 @@ int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separ
 {
   try
   {
-    if (maxAvailableThreads <= 1)
-      return 1;  // Esim. jos käyttäjä on pyytänyt maxthread-1::lla arvoa ja CPU:ssa on vain 1
-                 // threadi
-                 // käytössä
-    if (maxAvailableThreads >= separateTaskCount)
-      return separateTaskCount;
-    if (maxAvailableThreads == 2)
-      return 2;  // turha tälle oikeastaan laskea mitään
+    if (maxAvailableThreads >= separateTaskCount) return separateTaskCount;
+    if (maxAvailableThreads <= 2) return maxAvailableThreads;
 
     double ratio = static_cast<double>(separateTaskCount) / maxAvailableThreads;
     auto wantedIntegerPart = static_cast<int>(ratio);
-    if (ratio == wantedIntegerPart)
-      return maxAvailableThreads;  // jos jakosuhteeksi tuli kokonaisluku, käytetään kaikkia
-                                   // annettuja
-                                   // threadeja
+    // Jos jakosuhteeksi tuli kokonaisluku, käytetään kaikkia annettuja threadeja
+    if (ratio == wantedIntegerPart) return maxAvailableThreads;
 
     // Jos ei löytynyt tasalukuja, pitää iteroida semmoinen ratio, jolla saadaan mahdollisimman iso
     // kokonaisluku,
     // jossa on mahdollisimman iso murto-osa siis esim. 6.92 (6.92 on parempi kuin vaikka 6.34)
     // double maxRatio = ratio;
-    int maxRatioThreadcount = maxAvailableThreads;
+    int maxRatioThreadCount = maxAvailableThreads;
     for (int threadCount = maxAvailableThreads - 1; threadCount > 1; threadCount--)
     {
       double ratio2 = static_cast<double>(separateTaskCount) / threadCount;
@@ -6576,22 +6693,47 @@ int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separ
       if (wantedIntegerPart2 == wantedIntegerPart && ratio2 > ratio)
       {
         // maxRatio = ratio2;
-        maxRatioThreadcount = threadCount;
+        maxRatioThreadCount = threadCount;
       }
       if (wantedIntegerPart2 == wantedIntegerPart + 1 && ratio2 == wantedIntegerPart2)
       {  // löydettiin jakosuhde, joka käyttää vajaata threadi määrää täysillä esim. maxThread = 4,
         // taskcount = 6, tällöin optimaali on 3 threadia
         // maxRatio = ratio2;
-        maxRatioThreadcount = threadCount;
+        maxRatioThreadCount = threadCount;
         break;
       }
-      if (wantedIntegerPart2 > wantedIntegerPart)
-        break;
+      if (wantedIntegerPart2 > wantedIntegerPart) break;
     }
-    return maxRatioThreadcount;
+
+    ::CheckThreadCountLimits(maxRatioThreadCount, maxAvailableThreads);
+    return maxRatioThreadCount;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// By default this function returns count of half of the hardware threads in the system.
+// If you start a heavy parallel work, you shouldn't use all the threads in the machine
+// because it will freeze the system. also the modern CPU's use hyper-threading system
+// where actual CPU cores are duplicated and when one thread on one actual core is working,
+// the other thread on that core must just wait. Using full hyper-threading gives boost of
+// about 5-10 % depending of the work, but the system freezes. Using only half the threads
+// gives you almost full power, but much more responsive system otherwise.
+// Use wantedHardwareThreadPercent (0 - 100 %) to use more or less cores for the work threads.
+// Use separateTaskCount to calculate more balanced thread count, works only if separate
+// tasks takes to complete about the same amount of time. It's defaulted to 0 and then
+// it's ignored.
+unsigned int NFmiQueryDataUtil::GetReasonableWorkingThreadCount(double wantedHardwareThreadPercent,
+                                                                unsigned int separateTaskCount)
+{
+  auto maxThreadCount = std::thread::hardware_concurrency();
+  auto threadCount = static_cast<unsigned int>(
+      boost::math::iround(maxThreadCount * (wantedHardwareThreadPercent / 100.)));
+  ::CheckThreadCountLimits(threadCount, maxThreadCount);
+  if (separateTaskCount == 0)
+    return threadCount;
+  else
+    return CalcOptimalThreadCount(threadCount, separateTaskCount);
 }

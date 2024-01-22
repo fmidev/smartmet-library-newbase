@@ -524,20 +524,26 @@ class NFmiQueryDataUtil
       NFmiFastQueryInfo &theInfo, int theLeft, int theTop, int theRight, int theBottom);
 
   static std::string GetFileFilterDirectory(const std::string &theFileFilter);
+  using LoggingFunction = std::function<void(const std::string &)>;
   static NFmiQueryData *CombineQueryDatas(
       bool fDoRebuild,
       boost::shared_ptr<NFmiQueryData> &theBaseQData,
       std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
       bool fDoTimeStepCombine,
       int theMaxTimeStepsInData = 0,
-      NFmiStopFunctor *theStopFunctor = 0);
+      NFmiStopFunctor *theStopFunctor = nullptr,
+      LoggingFunction *loggingFunction = nullptr,
+      const std::string *theFileFilterPtr = nullptr);
   static NFmiQueryData *CombineQueryDatas(bool fDoRebuildCheck,
                                           const std::string &theBaseDataFileFilter,
                                           const std::string &theFileFilter,
                                           bool fDoTimeStepCombine,
                                           int theMaxTimeStepsInData = 0,
-                                          NFmiStopFunctor *theStopFunctor = 0);
+                                          NFmiStopFunctor *theStopFunctor = nullptr,
+                                          LoggingFunction *loggingFunction = nullptr);
   static int CalcOptimalThreadCount(int maxAvailableThreads, int separateTaskCount);
+  static unsigned int GetReasonableWorkingThreadCount(double wantedHardwareThreadPercent = 50.,
+                                                      unsigned int separateTaskCount = 0);
   static std::vector<std::string> GetFileNamesForCombinationWork(const std::string &theFileFilter);
   static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
   static std::vector<boost::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
