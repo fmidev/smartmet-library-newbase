@@ -487,6 +487,12 @@ NFmiMetTime GetUsedTimeIfModelClimatologyData(boost::shared_ptr<NFmiFastQueryInf
       usedTime.SetYear(theInfo->TimeDescriptor().FirstTime().GetYear());
       return usedTime;
     }
+    else if (theInfo->DataType() == NFmiInfoData::kStationary)
+    {
+      // Stationaarisissa datoissa (esim. topograafiset datat) on vain 1. aika, joka on fiksattu kun
+      // data on tehty
+      return theInfo->TimeDescriptor().FirstTime();
+    }
     return theTime;
   }
   catch (...)
@@ -512,6 +518,21 @@ bool IsMovingSoundingData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
   }
 }
 
+// Lightning eli salama tyyppi datalla on yksi feikki asema ja paljon aikoja, jos useita salamoita
+// tai vastaavia havaintoja on havaittu. Datassa pitää olla latitude ja longitude parametrit,
+// jotta jokaisella satunnaiselle havainnolle saadaan kulloiseenkin aikaan oikea lokaatio.
+bool IsLightningTypeData(boost::shared_ptr<NFmiFastQueryInfo> &info)
+{
+  if (info && !info->IsGrid())
+  {
+    if (info->SizeLocations() == 1 && info->HasLatlonInfoInData())
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                       const NFmiMetTime &theStartTime,
                                       long minuteRange,
@@ -529,16 +550,39 @@ bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo>
 
     if (timeIndex1 == gMissingIndex || timeIndex2 == gMissingIndex)
       return false;
-    else if (timeIndex1 == timeIndex2)  // pit�� testata erikois tapaus, koska
-                                        // TimeToNearestStep-palauttaa aina jotain, jos on dataa
+    else if (timeIndex1 == timeIndex2)
     {
+      // pitää testata erikoistapaus, koska TimeToNearestStep-palauttaa aina jotain, jos on dataa
       theInfo->TimeIndex(timeIndex1);
-      NFmiMetTime foundTime(theInfo->Time());
-      if (foundTime > endTime || foundTime < theStartTime)  // jos l�ydetty aika on alku ja loppu
-                                                            // ajan ulkopuolella ei piirret� salamaa
+      const auto &foundTime = theInfo->Time();
+      if (foundTime > endTime || foundTime < theStartTime)
+      {
+        // jos löydetty aika on alku ja loppu ajan ulkopuolella ei piirretä salamaa
         return false;
+      }
     }
+
+    // Vielä 2. erikoistapaus: Kyse timeList datasta, jossa loppuajalle löytyy useita peräkkäisiä
+    // aikoja, tällöin FindNearestTime palauttaa 1. löytämänsä halutun ajan. Huom! tässä käytetään
+    // FindNearestTime metodia, koska se käyttää timelist tapauksissa binary search hakua, Jos tämän
+    // funktion tekisi käymään läpi kaikki ajat järjestyksessä, tulisi siitä tietyille datoille
+    // tuskallisen hidas.
+    theInfo->TimeIndex(timeIndex2);
+    for (auto timeIndex = timeIndex2 + 1; timeIndex < theInfo->SizeTimes(); timeIndex++)
+    {
+      theInfo->TimeIndex(timeIndex);
+      if (theInfo->Time() == endTime)
+      {
+        timeIndex2 = timeIndex;
+      }
+      else
+      {
+        break;
+      }
+    }
+
     return true;
+
   }
   catch (...)
   {
@@ -617,7 +661,10 @@ bool FindMovingSoundingDataTime(const boost::shared_ptr<NFmiFastQueryInfo> &theI
 }
 
 QueryInfoParamStateRestorer::QueryInfoParamStateRestorer(NFmiQueryInfo &info)
-    : info_(info), paramIndex_(info.ParamIndex()), paramId_(info.Param().GetParamIdent())
+    : info_(info),
+      paramId_(info.ParamIndex() != gMissingIndex
+                   ? static_cast<FmiParameterName>(info.Param().GetParamIdent())
+                   : kFmiBadParameter)
 {
 }
 
@@ -625,10 +672,8 @@ QueryInfoParamStateRestorer::~QueryInfoParamStateRestorer()
 {
   try
   {
-    if (paramIndex_ != gMissingIndex)
-      info_.Param(static_cast<FmiParameterName>(paramId_));
-
-    info_.ParamIndex(paramIndex_);
+    // Parametrin asetuksella nollataan/asetetaan mahd. combinedParam jutut
+    info_.Param(paramId_);
   }
   catch (...)
   {
@@ -637,6 +682,33 @@ QueryInfoParamStateRestorer::~QueryInfoParamStateRestorer()
   }
 }
 
+QueryInfoTotalStateRestorer::QueryInfoTotalStateRestorer(NFmiQueryInfo &info)
+    : QueryInfoParamStateRestorer(info),
+      locationIndex_(info.LocationIndex()),
+      timeIndex_(info.TimeIndex()),
+      levelIndex_(info.LevelIndex())
+{
+}
+
+QueryInfoTotalStateRestorer::~QueryInfoTotalStateRestorer()
+{
+  info_.LocationIndex(locationIndex_);
+  info_.TimeIndex(timeIndex_);
+  info_.LevelIndex(levelIndex_);
+}
+
+MetaWindParamUsage::MetaWindParamUsage() = default;
+
+MetaWindParamUsage::MetaWindParamUsage(bool hasTotalWind,
+                                       bool hasWindVectorParam,
+                                       bool hasWsAndWd,
+                                       bool hasWindComponents)
+    : fHasTotalWind(hasTotalWind),
+      fHasWindVectorParam(hasWindVectorParam),
+      fHasWsAndWd(hasWsAndWd),
+      fHasWindComponents(hasWindComponents)
+{
+}
 bool MetaWindParamUsage::ParamNeedsMetaCalculations(unsigned long paramId) const
 {
   try
