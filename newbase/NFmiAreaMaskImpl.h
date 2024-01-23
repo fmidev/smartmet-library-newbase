@@ -25,7 +25,6 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
                    NFmiInfoData::Type theDataType,
                    BinaryOperator thePostBinaryOperator);
   NFmiAreaMaskImpl(const NFmiAreaMaskImpl &theOther);
-  NFmiAreaMaskImpl& operator = (const NFmiAreaMaskImpl&);
   void Initialize() override;
 
   bool IsMasked(int theIndex) const override;
@@ -38,9 +37,9 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   double HeightValue(double /* theHeight */,
                      const NFmiCalculationParams &theCalculationParams) override
   {
-    // Poikkileikkauslaskuissa pitää aina käyttää 'aikainterpolaatiota', muuten ei (koska laskussa
-    // käytetyt ajat on jo asetettu muualla)
-    bool useTimeInterpolationAlways = theCalculationParams.fCrossSectionCase;
+    // Poikkileikkaus/aikasarja laskuissa pitää aina käyttää 'aikainterpolaatiota', muuten ei (koska
+    // laskussa käytetyt ajat on jo asetettu muualla)
+    bool useTimeInterpolationAlways = theCalculationParams.fSpecialCalculationCase;
     return Value(theCalculationParams, useTimeInterpolationAlways);
   }
   // oletuksenä PressureValue palauttaa saman kuin Value-metodi, homma overridataan vain
@@ -48,9 +47,9 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   double PressureValue(double /* thePressure */,
                        const NFmiCalculationParams &theCalculationParams) override
   {
-    // Poikkileikkauslaskuissa pitää aina käyttää 'aikainterpolaatiota', muuten ei (koska laskussa
-    // käytetyt ajat on jo asetettu muualla)
-    bool useTimeInterpolationAlways = theCalculationParams.fCrossSectionCase;
+    // Poikkileikkaus/aikasarja laskuissa pitää aina käyttää 'aikainterpolaatiota', muuten ei (koska
+    // laskussa käytetyt ajat on jo asetettu muualla)
+    bool useTimeInterpolationAlways = theCalculationParams.fSpecialCalculationCase;
     return Value(theCalculationParams, useTimeInterpolationAlways);
   }
 
@@ -128,6 +127,12 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   {
     itsSimpleCondition = theSimpleCondition;
   }
+  float FunctionDataTimeOffsetInHours() const override { return itsFunctionDataTimeOffsetInHours; }
+  void FunctionDataTimeOffsetInHours(float newValue) override
+  {
+    itsFunctionDataTimeOffsetInHours = newValue;
+  }
+  bool CheckPossibleObservationDistance(const NFmiCalculationParams &) override { return true; }
 
  protected:
   virtual double CalcValueFromLocation(const NFmiPoint &theLatLon) const;
@@ -165,6 +170,10 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   bool fHasSubMasks;
   bool fEnabled;
   boost::shared_ptr<NFmiSimpleCondition> itsSimpleCondition;
+  // Jossain tilanteissa smarttool funktion datalle voidaan haluta tehdä aikasiirto,
+  // jolloin käytetään tämän arvoa tekemään siirto, esim. peekxy3(T_ec[-3h] 10 0)
+  // kutsussa tehdään funktiole annettavalle parametrille T_ec 3 tunnin siirto taaksepäin.
+  float itsFunctionDataTimeOffsetInHours = 0;
 };  // class NFmiAreaMaskImpl
 
 // ----------------------------------------------------------------------
@@ -299,8 +308,8 @@ inline NFmiAreaMaskImpl::BinaryOperator NFmiAreaMaskImpl::PostBinaryOperator() c
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAreaMaskImpl::CalculationOperationType NFmiAreaMaskImpl::GetCalculationOperationType(
-    void) const
+inline NFmiAreaMaskImpl::CalculationOperationType NFmiAreaMaskImpl::GetCalculationOperationType()
+    const
 {
   return itsCalculationOperationType;
 }
