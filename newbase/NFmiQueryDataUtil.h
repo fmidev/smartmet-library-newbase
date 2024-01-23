@@ -15,7 +15,6 @@
 #include "NFmiGrid.h"
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
-
 #include <boost/shared_ptr.hpp>
 
 #ifndef BOOST_DISABLE_THREADS
@@ -543,7 +542,8 @@ class NFmiQueryDataUtil
                                           NFmiStopFunctor *theStopFunctor = nullptr,
                                           LoggingFunction *loggingFunction = nullptr);
   static int CalcOptimalThreadCount(int maxAvailableThreads, int separateTaskCount);
-
+  static unsigned int GetReasonableWorkingThreadCount(double wantedHardwareThreadPercent = 50.,
+                                                      unsigned int separateTaskCount = 0);
   static std::vector<std::string> GetFileNamesForCombinationWork(const std::string &theFileFilter);
   static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
   static std::vector<boost::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
