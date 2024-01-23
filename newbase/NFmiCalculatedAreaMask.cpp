@@ -239,8 +239,6 @@ NFmiLatLonAreaMask::NFmiLatLonAreaMask(const NFmiDataIdent& theParam,
 
 NFmiLatLonAreaMask::NFmiLatLonAreaMask(const NFmiLatLonAreaMask& theMask) = default;
 
-NFmiLatLonAreaMask& NFmiLatLonAreaMask::operator = (const NFmiLatLonAreaMask&) = default;
-
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -327,9 +325,6 @@ NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiElevationAngleA
     default;
 
 
-NFmiElevationAngleAreaMask& NFmiElevationAngleAreaMask::operator = (const NFmiElevationAngleAreaMask& theMask) =
-    default;
-
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -402,7 +397,7 @@ double NFmiElevationAngleAreaMask::Value(const NFmiCalculationParams& theCalcula
                                                // SumT-tyyppisiä SmartTool-funktioita ja niiden
                                                // argumentteina on annettu tietyt argumentit jotka
                                                // ovat ajasta riippuvia.
-    return CalcValueFromLocation(theCalculationParams.itsLatlon);
+    return CalcValueFromLocation(theCalculationParams.UsedLatlon());
   }
   catch (...)
   {
@@ -480,8 +475,6 @@ NFmiJulianDayAreaMask::NFmiJulianDayAreaMask(const NFmiDataIdent& theParam,
 // ----------------------------------------------------------------------
 
 NFmiJulianDayAreaMask::NFmiJulianDayAreaMask(const NFmiJulianDayAreaMask& theMask) = default;
-
-NFmiJulianDayAreaMask& NFmiJulianDayAreaMask::operator = (const NFmiJulianDayAreaMask&) = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -600,8 +593,6 @@ NFmiLocalHourAreaMask::NFmiLocalHourAreaMask(const NFmiDataIdent& theParam,
 // ----------------------------------------------------------------------
 
 NFmiLocalHourAreaMask::NFmiLocalHourAreaMask(const NFmiLocalHourAreaMask& theMask) = default;
-
-NFmiLocalHourAreaMask& NFmiLocalHourAreaMask::operator = (const NFmiLocalHourAreaMask&) = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -988,7 +979,7 @@ double NFmiTimeStepAreaMask::Value(const NFmiCalculationParams& theCalculationPa
           theCalculationParams
               .itsTimeIndex);  // asetetaan ensin aikaindeksi kohdalleen ja sitten kysytään arvoa
     return CalcValueFromLocation(
-        theCalculationParams.itsLatlon);  // ollaan jo oikeassa ajassa, ei aikainterpolointia
+        theCalculationParams.UsedLatlon());  // ollaan jo oikeassa ajassa, ei aikainterpolointia
   }
   catch (...)
   {
@@ -1032,7 +1023,7 @@ double NFmiGridSizeAreaMask::Value(const NFmiCalculationParams& theCalculationPa
 {
   try
   {
-    return CalcValueFromLocation(theCalculationParams.itsLatlon);  // ajalla ei ole väliä
+    return CalcValueFromLocation(theCalculationParams.UsedLatlon());  // ajalla ei ole väliä
   }
   catch (...)
   {
