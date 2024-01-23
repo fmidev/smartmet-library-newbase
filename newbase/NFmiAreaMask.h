@@ -7,12 +7,13 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
 #include "NFmiInfoData.h"
 #include "NFmiMetTime.h"
 #include "NFmiPoint.h"
 #include "NFmiString.h"
+
 #include <boost/shared_ptr.hpp>
+
 #include <vector>
 
 class NFmiCalculationCondition;
@@ -22,6 +23,7 @@ class NFmiParam;
 class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
 class NFmiCalculationParams;
+class NFmiMacroParamValue;
 
 //! Undocumented class
 class NFmiAreaMask
@@ -213,8 +215,29 @@ class NFmiAreaMask
                     //!< ne ovat tarpeeksi 'merkittäviä'
     SymbolTooltipFile,  //!< Tällä määritetään mahdollinen tiedosto, josta haetaan tooltippiä varten
                         //!< aputekstejä eri symboleille
-    MacroParamDescription  //!< Jos tooltippiin halutaan tälle macroParmille yleisselite, se
-                           //!< annetaan tällä
+    MacroParamDescription,  //!< Jos tooltippiin halutaan tälle macroParmille yleisselite, se
+                            //!< annetaan tällä
+    CalculationType,  //!< Tällä voi määritellä että onko joku laskenta esim. indeksi tyyppinen vai
+                      //!< normi reaaliluku
+    PeekZ,  //!< 'Kurkistetaan' arvo vertikaali suunnassa halutussa yksikössä
+            //!< (hPa/m/FL/hybrid-level)
+    SimpleConditionUsedAsStationData,  //!< Jos pääfunktion (esim. area_sum funktion) datan tuottaja
+                                       //!< on sama kuin simple-condition tuottaja ja kyse on
+                                       //!< asemadatasta, pitää kyseistä simple-condition dataa
+                                       //!< käsitellä myös asemadatana.
+    ModAvg,  //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
+    ModMin,  //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
+    ModMax,  //!< Käytetään suunta parametrien kanssa, ottaa huomioon jatkuvuuden 0/360 kohdassa
+    WorkingThreadCount,  //!< Jos käyttäjä haluaa optimoida laskentoja ja käyttää tietyn määrän
+                         //!< loogisia coreja laskennoissa
+    FixedBaseData,  //!< Jos käyttäjä haluaa fiksata käytetyn laskenta hilan johonkin olemassa
+                    //!< olevan datan hilaan
+    MultiParamTooltipFile,  //!< Mahd. tiedosto, josta haetaan tooltippiä varten aputekstejä monen
+                            //!< parametrin avulla
+    MultiParam2,  //!< 2. käytetty multi-param, pakollinen, jos käytetty MultiParamTooltipFile:a
+    MultiParam3,  //!< 3. käytetty multi-param, mahdollinen, jos käytetty MultiParamTooltipFile:a
+    SecondParamFromExtremeTime  // Etsitään par1:n min/max ja siitä paikasta ja extreme ajasta
+                                // palautetaan toisen parametrin arvo
   };
 
   //! Function direction, e.g. with 'met'-functions x- and/or y-direction
@@ -339,8 +362,7 @@ class NFmiAreaMask
   // tämän avulla annetaan laskuissa tarvittavia eri pituisia argumenttilistaja
   // (käytössä ainakin uusille vertikaali funktioille)
   virtual void SetArguments(std::vector<float> &theArgumentVector) = 0;
-  virtual int FunctionArgumentCount(
-      void) const = 0;  // käytössä ainakin uusille vertikaali funktioille
+  virtual int FunctionArgumentCount() const = 0;  // käytössä ainakin uusille vertikaali funktioille
   virtual void FunctionArgumentCount(
       int newValue) = 0;  // käytössä ainakin uusille vertikaali funktioille
 
@@ -351,13 +373,24 @@ class NFmiAreaMask
   // käytetään mm. erilaisissa integraatiolaskuissa
   virtual const boost::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const = 0;
   virtual void SimpleCondition(boost::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) = 0;
+  virtual float FunctionDataTimeOffsetInHours() const = 0;
+  virtual void FunctionDataTimeOffsetInHours(float newValue) = 0;
+  // Jos kyse infoAreaMask:ista ja kyse on asemadatasta, ja on käytetty havaintoasemien etäisyys
+  // rajoitinta (observationradius = x), palautetaan false, jos lähin havaintoasema on liian kaukana
+  // laskentapisteestä. Kaikissa muissa tilanteissa palautetaan true.
+  // Jos kyse multi-data tapauksesta, asetetaan theCalculationParams.itsCurrentMultiInfoData
+  // osoittamaan oikeaan dataan.
+  virtual bool CheckPossibleObservationDistance(
+      const NFmiCalculationParams &theCalculationParamsInOut) = 0;
 
   static boost::shared_ptr<NFmiFastQueryInfo> DoShallowCopy(
       const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
+  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> DoShallowCopy(
+      const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector);
   static boost::shared_ptr<NFmiAreaMask> DoShallowCopy(
       const boost::shared_ptr<NFmiAreaMask> &theMask);
-  static std::vector<boost::shared_ptr<NFmiAreaMask> > DoShallowCopy(
-      const std::vector<boost::shared_ptr<NFmiAreaMask> > &theMaskVector);
+  static std::vector<boost::shared_ptr<NFmiAreaMask>> DoShallowCopy(
+      const std::vector<boost::shared_ptr<NFmiAreaMask>> &theMaskVector);
 
 };  // class NFmiAreaMask
 
