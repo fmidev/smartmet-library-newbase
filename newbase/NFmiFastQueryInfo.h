@@ -186,6 +186,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
 
   // 31.5.2017 Tavi high performance bulk query
   bool GetValues(size_t startIndex, size_t step, size_t count, std::vector<float> &values) const;
+  bool SetValues(size_t startIndex, size_t step, size_t count, const std::vector<float> &values);
   bool GetValuesPartial(size_t startIndex,
                         size_t rowCount,
                         size_t rowStep,
@@ -193,8 +194,10 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                         size_t columnStep,
                         std::vector<float> &values) const;
   bool GetLevelToVec(std::vector<float> &values);
+  bool SetLevelFromVec(const std::vector<float> &values);
   bool GetLevelToVecPartial(size_t x1, size_t y1, size_t x2, size_t y2, std::vector<float> &values);
   bool GetCube(std::vector<float> &values);
+  void DoSubParamConversions(std::vector<float> &values, std::string callingFunctionName) const;
 
   bool GetInterpolatedLevel(std::vector<float> &values, const NFmiMetTime &time);
   bool GetInterpolatedCube(std::vector<float> &values, const NFmiMetTime &t);
@@ -307,6 +310,10 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                      const NFmiMetTime &theTime,
                      double pressure,
                      double &pInd);
+  bool GetFixedPressureLevelIndex(const NFmiPoint &theLatlon,
+                                  const NFmiMetTime &theTime,
+                                  double &pressure,
+                                  double &pInd);
   float FastPressureLevelValue(double xInd, double yInd, double tInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd, double pInd);
   float FastPressureLevelValue(double xInd, double yInd);
@@ -490,6 +497,9 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
      // lopuksi datan (TÄMÄ siis overridataan lapsessa!)
   NFmiInfoData::Type DataType() const { return itsDataType; };
   void DataType(NFmiInfoData::Type newType) { itsDataType = newType; };
+  // ElapsedTimeFromLoadInSeconds toteutetaan vasta lapsiluokassa
+  // (SmartMet workstation koodeissa), negatiivisia arvoja pidetään puuttuvina
+  virtual double ElapsedTimeFromLoadInSeconds() const { return -1; }
   // Näillä Start/Restore -funktioilla otetaan nykyinen parametri tila talteen ja otetaan käyttöön
   // 'erikois' korkeus-parametri. Ja käytön jälkeen palautus.
   // HUOM! Jos Start-funktio palauttaa true:n, on kyseisen korkeus parametrin käyttö mahdollista ja
@@ -858,49 +868,6 @@ inline bool NFmiFastQueryInfo::FirstTime()
 inline float NFmiFastQueryInfo::IndexFloatValue(size_t theIndex) const
 {
   return itsRefRawData ? itsRefRawData->GetValue(theIndex) : kFloatMissing;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \param startIndex Undocumented
- * \param step Undocumented
- * \param count Undocumented
- * \param values Vector to fill (and resize to count elements) with values startIndex,
- * startIndex+step, startIndex+step*2, ..., startIndex+step*(count-1) - current iterators are
- * invalidated by the resizing! \return false if out-of-range, true otherwise
- */
-// ----------------------------------------------------------------------
-inline bool NFmiFastQueryInfo::GetValues(size_t startIndex,
-                                         size_t step,
-                                         size_t count,
-                                         std::vector<float> &values) const
-{
-  return itsRefRawData ? itsRefRawData->GetValues(startIndex, step, count, values) : false;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \param startIndex Undocumented
- * \param rowCount Undocumented
- * \param rowStep Undocumented
- * \param columCount Undocumented
- * \param columnStep Undocumented
- * \param values Vector to fill (and resize to count elements) with values startIndex,
- * startIndex+rowStep, startIndex+rowStep*2, ..., startIndex+rowStep*(count-1),
- * startIndex+columnStep, startIndex+columnStep+rowStep ... - current iterators are invalidated by
- * the resizing! \return false if out-of-range, true otherwise
- */
-// ----------------------------------------------------------------------
-inline bool NFmiFastQueryInfo::GetValuesPartial(size_t startIndex,
-                                                size_t rowCount,
-                                                size_t rowStep,
-                                                size_t columnCount,
-                                                size_t columnStep,
-                                                std::vector<float> &values) const
-{
-  return itsRefRawData ? itsRefRawData->GetValuesPartial(
-                             startIndex, rowCount, rowStep, columnCount, columnStep, values)
-                       : false;
 }
 
 // ----------------------------------------------------------------------
