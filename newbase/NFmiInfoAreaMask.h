@@ -62,6 +62,13 @@ class MetaParamDataHolderDoCheckStateRestorer
 class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 {
  public:
+  using MultiSourceDataGetterType =
+      std::function<void(std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &,
+                         const NFmiDataIdent &,
+                         const NFmiLevel &,
+                         NFmiInfoData::Type,
+                         const boost::shared_ptr<NFmiArea> &)>;
+
   virtual ~NFmiInfoAreaMask();
   NFmiInfoAreaMask();
   NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
@@ -77,6 +84,19 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther);
   NFmiAreaMask *Clone() const override;
   NFmiInfoAreaMask &operator=(const NFmiInfoAreaMask &theMask) = delete;
+
+  static void SetMultiSourceDataGetterCallback(
+      const MultiSourceDataGetterType &theCallbackFunction);
+  static MultiSourceDataGetterType &GetMultiSourceDataGetterCallback()
+  {
+    return itsMultiSourceDataGetter;
+  }
+  // Nyt ainakin synop ja salama datat ovat tälläisiä
+  static bool IsKnownMultiSourceData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
+  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> GetMultiSourceData(
+      const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+      boost::shared_ptr<NFmiArea> &calculationArea,
+      bool getStationarySynopDataOnly);
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
   double Value(const NFmiCalculationParams &theCalculationParams,
@@ -123,6 +143,9 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   }
   double UsedPressureLevelValue() const override { return itsUsedPressureLevelValue; }
   void UsedPressureLevelValue(double newValue) override { itsUsedPressureLevelValue = newValue; }
+  bool CheckPossibleObservationDistance(
+      const NFmiCalculationParams &theCalculationParamsInOut) override;
+  void Initialize() override;
 
   static boost::shared_ptr<NFmiDataModifier> CreateIntegrationFuction(
       NFmiAreaMask::FunctionType func);
@@ -161,6 +184,14 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   void AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
                         boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                         const NFmiLocationCache &theLocationCache);
+  virtual bool DoExtremeAddingSpecialCase() const { return true; }
+  virtual void AddValueToModifier(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                  boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+                                  float theValue);
+  bool FindClosestStationData(const NFmiCalculationParams &calculationParams,
+                              size_t &dataIndexOut,
+                              unsigned long &locationIndexOut);
+  double GetSearchRadiusInMetres(double observationRadiusInKm);
 
   void DoConstructorInitializations(unsigned long thePossibleMetaParamId);
 
@@ -178,6 +209,12 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   double itsUsedPressureLevelValue;
   MetaParamDataHolder metaParamDataHolder;
   bool fIsModelClimatologyData = false;
+  // Datan tuottajasta päätellään, voiko tuottajalla olla useita datoja (synop + salamat)
+  bool fUseMultiSourceData = false;
+  // Tähän laitetaan havainto laskuissa käytettävät datat, joko se joko on jo emoluokassa
+  // oleva itsInfo, tai multisource tapauksissa joukko datoja
+  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> itsInfoVector;
+  static MultiSourceDataGetterType itsMultiSourceDataGetter;
 
   template <typename GetFunction>
   float CalcMetaParamValueWithFunction(GetFunction getFunction)
@@ -377,7 +414,7 @@ class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
   bool Time(const NFmiMetTime &theTime) override;
 
  protected:
-  typedef std::vector<std::pair<int, float> > CalcFactorVector;
+  typedef std::vector<std::pair<int, float>> CalcFactorVector;
 
   virtual void SetDividers() = 0;
   virtual void InitCalcFactorVectors() = 0;
@@ -653,43 +690,41 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
     {
       if (itsInfo->LevelIndex(levelIndex))  // pitäisi olla aina totta
       {
-        if (IgnoreSimpleConditionWhileIteratingLevels() ||
-            VertFuncSimpleconditionCheck(theCalculationParams))
-          functionObject();
-        if (iterationBreakingData.BreakIteration())
-          break;
+        functionObject();
+        if (iterationBreakingData.BreakIteration()) break;
       }
     }
   }
 
   bool VertFuncSimpleconditionCheck(const NFmiCalculationParams &theCalculationParams);
-  bool IgnoreSimpleConditionWhileIteratingLevels() const;
 
-  NFmiAreaMask::FunctionType itsPrimaryFunc;    // esim. Avg, Max, Get, Find, jne.
-  NFmiAreaMask::FunctionType itsSecondaryFunc;  // esim. VertP, VertZ, jne.
+  // Esim. Avg, Max, Get, Find, jne.
+  NFmiAreaMask::FunctionType itsPrimaryFunc;
+  // Esim. VertP, VertZ, jne.
+  NFmiAreaMask::FunctionType itsSecondaryFunc;
   std::vector<float> itsArgumentVector;
-
-  boost::shared_ptr<NFmiDataModifier>
-      itsFunctionModifier;   // tämä luodaan itsPrimaryFunc-dataosan mukaan
-  float itsStartLevelValue;  // tähän otetaan annetusta argumentti listasta aloitus korkeus (missä
-                             // yksikössä onkaan)
-  float itsEndLevelValue;  // tähän otetaan annetusta argumentti listasta lopetus korkeus (missä
+  // tämä luodaan itsPrimaryFunc-dataosan mukaan
+  boost::shared_ptr<NFmiDataModifier> itsFunctionModifier;
+  // Tähän otetaan annetusta argumentti listasta aloitus korkeus (missä yksikössä onkaan)
+  float itsStartLevelValue;
+  // tähän otetaan annetusta argumentti listasta lopetus korkeus (missä
   // yksikössä onkaan), PAITSI, jos kyse on get-funktiosta, jolloin tämä on
   // puuttuva
+  float itsEndLevelValue;
   unsigned long itsStartLevelIndex;  // dataa käydään läpi alkaen tästä levelistä
   unsigned long itsEndLevelIndex;    // dataa käydään läpi tähän leveliin asti
 
   FmiParameterName itsUsedHeightParId;
   bool fReturnHeightValue;
-  int itsLevelIncrement;  // kun ollaan päätelty mihin suuntaan leveldata menee (ylös maanpinnasta
-                          // vai alas avaruudesta)
+  // Kun ollaan päätelty mihin suuntaan leveldata menee (ylös maanpinnasta vai alas avaruudesta)
   // tähän on tarkoitus laskea for-looppeja varten level incrementti (joko 1 tai -1)
   // Jos datan levelien suunta on maanpinnasta ylöspäin, on incrementti 1 ja käydään levelit
-  // normaali järjestyksessä läpi.
-  // Jos datan levelien suuntä on avaruudesta maanpintaa kohden, on incrementti -1 ja levelit
-  // käydään käänteisessä järjestyksessä.
-  bool fReverseLevels;  // Jos itsLevelIncrement on -1, tämä on true, jolloin for-loopitus tehdään
-                        // käänteisessä järjestyksessä
+  // normaali järjestyksessä läpi. Jos datan levelien suuntä on avaruudesta maanpintaa kohden, on
+  // incrementti -1 ja levelit käydään käänteisessä järjestyksessä.
+  int itsLevelIncrement;
+  // Jos itsLevelIncrement on -1, tämä on true, jolloin for-loopitus tehdään
+  // käänteisessä järjestyksessä
+  bool fReverseLevels;
 };
 
 class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
@@ -811,6 +846,9 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
                                            int theOffsetY,
                                            const NFmiMetTime &theInterpolationTime,
                                            bool useInterpolatedTime);
+  double DoObservationAreaMaskCalculations(const NFmiCalculationParams &theCalculationParams);
+  double CalcAreaProbability();
+  float CalculationPointValueForObservation(const boost::shared_ptr<NFmiFastQueryInfo> &info);
 
   // Esim. Over, Under, Between, Equal
   NFmiAreaMask::FunctionType itsPrimaryFunc;
