@@ -21,6 +21,8 @@
 #include "NFmiDataModifierMedian.h"  // 8.10.03/EL
 #include "NFmiDataModifierMin.h"
 #include "NFmiDataModifierMinMax.h"
+#include "NFmiDataModifierModAvg.h"
+#include "NFmiDataModifierModMinMax.h"
 #include "NFmiDataModifierMode.h"
 #include "NFmiDataModifierPrecFormUnion.h"
 #include "NFmiDataModifierReplace.h"
