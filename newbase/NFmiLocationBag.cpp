@@ -734,7 +734,7 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
     if (theMaxWantedLocations != -1)
     {
       auto usedMaxLocationCount =
-        (tempValues.size() >= theMaxWantedLocations) ? theMaxWantedLocations : tempValues.size();
+        (static_cast<int>(tempValues.size()) >= theMaxWantedLocations) ? theMaxWantedLocations : tempValues.size();
       auto maxWantedPos = tempValues.begin() + usedMaxLocationCount;
       if (pos > maxWantedPos) 
         pos = maxWantedPos;

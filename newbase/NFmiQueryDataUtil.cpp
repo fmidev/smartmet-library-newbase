@@ -6576,13 +6576,13 @@ bool NFmiQueryDataUtil::AreGridsEqual(const NFmiGrid *theGrid1, const NFmiGrid *
 // vielä erikoistapauksena onko orientaatio sama
 bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *theArea2)
 {
+  try
+  {
 #ifdef WGS84
   if (theArea1 && theArea2)
     return (*theArea1 == *theArea2);
   return false;
 #else
-  try
-  {
     if (theArea1 && theArea2)
     {
       if (theArea1->ClassId() == theArea2->ClassId())
@@ -6606,8 +6606,8 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
       }
     }
     return false;
+#endif    
   }
-}
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");

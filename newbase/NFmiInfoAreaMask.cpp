@@ -1592,6 +1592,7 @@ NFmiCalculationParams NFmiInfoAreaMaskPeekXY3::MakeModifiedCalculationParams(
   {
 #ifndef WGS84
     bool usePacificView = ::IsPacificViewData(itsInfo);
+#endif
     NFmiLocation loc(theCalculationParams.UsedLatlon());
     // x-suunnassa siirto ei mielestäni toimi oikein vaan piti laittaa positiiviselle ja
     // negatiiviselle tapauksille omat haarat
