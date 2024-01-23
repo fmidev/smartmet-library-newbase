@@ -17,11 +17,21 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiStringTools.h"
+#include <macgyver/DateTime.h>
+#include <chrono>
 
-extern "C"
+class NFmiNanoSecondTimer
 {
-#include <sys/timeb.h>
-}
+  std::chrono::time_point<std::chrono::steady_clock> startTime_;
+
+ public:
+  NFmiNanoSecondTimer();
+  NFmiNanoSecondTimer(int moveStartByMS);
+
+  void restart();
+  double elapsedTimeInSeconds() const;
+  std::string elapsedTimeInSecondsString(int precision = 3) const;
+};
 
 //! Luokka koodin nopeusmittauksia varten
 
@@ -43,10 +53,8 @@ class NFmiMilliSecondTimer
   void SecondTime();
 
  private:
-  int CalcTimeDiffInMS(const struct timeb &theTime1, const struct timeb &theTime2) const;
-
-  struct timeb itsTime1;  //!< The start time
-  struct timeb itsTime2;  //!< The end time
+  Fmi::DateTime itsTime1;  //!< The start time
+  Fmi::DateTime itsTime2;  //!< The end time
 
 };  // class NFmiMilliSecondTimer
 
@@ -60,7 +68,7 @@ class NFmiMilliSecondTimer
 
 inline void NFmiMilliSecondTimer::FirstTime()
 {
-  ftime(&itsTime1);
+  itsTime1 = Fmi::MicrosecClock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -72,7 +80,7 @@ inline void NFmiMilliSecondTimer::FirstTime()
 
 inline void NFmiMilliSecondTimer::SecondTime()
 {
-  ftime(&itsTime2);
+  itsTime2 = Fmi::MicrosecClock::universal_time();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -105,22 +113,12 @@ inline void NFmiMilliSecondTimer::StopTimer()
 
 inline int NFmiMilliSecondTimer::TimeDiffInMSeconds() const
 {
-  return CalcTimeDiffInMS(itsTime1, itsTime2);
-}
-
-inline int NFmiMilliSecondTimer::CalcTimeDiffInMS(const struct timeb &theTime1,
-                                                  const struct timeb &theTime2) const
-{
-  int seconds = static_cast<int>(theTime2.time - theTime1.time);
-  int mseconds = seconds * 1000 + (theTime2.millitm - theTime1.millitm);
-  return mseconds;
+  return (itsTime2 - itsTime1).total_milliseconds();
 }
 
 inline int NFmiMilliSecondTimer::CurrentTimeDiffInMSeconds() const
 {
-  struct timeb currentTime;
-  ftime(&currentTime);
-  return CalcTimeDiffInMS(itsTime1, currentTime);
+  return (Fmi::MicrosecClock::universal_time() - itsTime1).total_milliseconds();
 }
 
 // ======================================================================
