@@ -14,8 +14,8 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 23.11.21
-Release: 2%{?dist}.fmi
+Version: 24.1.30
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -116,6 +116,53 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Tue Jan 30 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.30-1.fmi
+- NFmiInfoAreaMask added multi-source data support (relates multiple synop and flash data usage).
+- NFmiInfoAreaMask added support for model-climatology-data (era5 type data).
+- NFmiInfoAreaMask added better observation station distance checking ability, new CheckPossibleObservationDistance method.
+- NFmiInfoAreaMaskVertFunc added DoPeekZFunction and CalculateUsedPeekZPressureLevel methods.
+- NFmiInfoAreaMaskVertFunc simplified IterateLevelsFromGroundUpward method.
+- NFmiInfoAreaMaskProbFunc added support for observation data for probability calculations.
+- Using NFmiCalculationParams UsedLatlon method to get wanted calculation point.
+- Added support for ModAvg, ModMin and ModMax integration functions.
+- Fixed NFmiInfoAreaMaskVertFunc::SearchLevels to handle also first level, previously skipped the 1st level.
+- For Simple condition calculation added support for -> comparison operator which is so called continuous-equal
+- Fixed level data height and pressure interpolation codes to work better in different data cases
+- Removed usage of assignment operator (operator=) in NFmiAreaMask class hierarchy. Removed operator= methods from the child classes
+- Now using NFmiCalculationParams's UsedLatlon method in calculations
+- NFmiMacroParamValue class now has support for time-serial based smarttools calculations.
+- NFmiCalculationParams has support for:
+-   special calculations (cross-section and time-serial).
+-   CalculationPoint type macroParam calculations (new member data itsActualCalculationPoint and new UsedLatlon and SetModifiedLatlon methods).
+-   Support for multi-data cases, like synop data has three queryData (Finland, Europe and World) with itsCurrentMultiInfoData data member.
+-   Support for observation max distance limiting (itsObservationRadiusInKm data member)
+- Added new methods relating to fast bulk get methods (SetValues, SetLevelFromVec, DoSubParamConversions)
+- Also simplified some of those fast bulk methods by using GetValues and GetPartialValues methods.
+- Added new GetFixedPressureLevelIndex which returns decimal value of level index of given pressure, which can be used in interpolations in vertical dimension.
+- Added ElapsedTimeFromLoadInSeconds virtual method that is not used in newbase classes, but in child classes in smarttools library. This is used detect if certain data is newly loaded or not.
+- Fixed HeightValue and PressureValue methods to handle correctly the cross-section and time-serial case and always use time interpolation with them.
+- Added FunctionDataTimeOffsetInHours and CheckPossibleObservationDistance implementations.
+- NFmiAreaMaskImpl::Value method now uses NFmiCalculationParams's UsedLatlon method for actual wanted calculation point (there are normal calculation grid-points and then there are CalculationPoint type observation points that are used in different cases).
+- Added several new Functiontype enum values for smarttools language.
+- Added better support for limiting used observation station in used calculation grid by introducing CheckPossibleObservationDistance method.
+- Moved some generally used DoShallowCopy functions in here to centralize them.
+- Added new data-modifier class's includes to this combined includes file.
+- Added couple new dataModifier classes to be used with smarttools language. These are used to calculate modular avg and min/max values. Modular parameters, lik
+e wind direction, must be handled a bit differently then normal continuous parameters.
+- Added couple new values to NFmiInfoData::Type enum, relating to SmartMet-workstation view layers.
+- Changed FmiMaskOperation enum: 1. removed numeric values from all values except from the first one, 2. Added new kFmiMaskContinuouslEqual for smarttools calculations.
+- New method SetValues, which is used to set e.g. one time-param-level grid values, using vector and startIndex and related step count
+- New method IsReadOnly tells if queryData has been read with memory-mapped style (read-only) or into memory, which means that data can be modified
+- Fixes to QueryInfoParamStateRestorer class
+- Added new QueryInfoTotalStateRestorer class (restores all the dimensions, not just parameter)
+- Added couple MetaWindParamUsage constructors
+- Added IsLightningTypeData function
+- Fixed GetUsedTimeIfModelClimatologyData function to handle also static queryData (like topography which have only one time)
+- Fixed FindTimeIndicesForGivenTimeRange function
+- Fixed theMaxWantedLocations parameter related crash bug in NFmiLocationBag::NearestLocations method.
+- Added new NFmiNanoSecondTimer helper class for more precise time measuring
+- Changed NFmiTimeDescriptor::GetIntersection method to const
+
 * Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-2.fmi
 - Repackaged since MappedFile ABI changed
 
