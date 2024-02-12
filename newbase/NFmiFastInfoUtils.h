@@ -4,6 +4,7 @@
 #include "NFmiDataMatrix.h"
 #include "NFmiMetTime.h"
 
+#include <deque>
 #include <boost/shared_ptr.hpp>
 
 class NFmiFastQueryInfo;
