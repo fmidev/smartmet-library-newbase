@@ -6,10 +6,10 @@
 // ======================================================================
 
 #include "NFmiMetTime.h"
-#include <boost/date_time/local_time/local_time.hpp>
 #include <regression/tframe.h>
 
 using namespace std;
+using Fmi::date_time::time_from_string;
 
 //! Protection against conflicts with global functions
 namespace NFmiMetTimeTest
@@ -19,7 +19,6 @@ namespace NFmiMetTimeTest
 void construct_from_ptime()
 {
   using Fmi::DateTime;
-  using boost::posix_time::time_from_string;
 
   {
     Fmi::DateTime pt = time_from_string("2015-10-25 03:00:00");
@@ -52,18 +51,13 @@ void construct_from_ptime()
 
 void construct_from_local_date_time()
 {
-  boost::local_time::tz_database db;
-  db.load_from_file("/usr/share/smartmet/timezones/date_time_zonespec.csv");
-
   using Fmi::LocalDateTime;
-  using boost::local_time::posix_time_zone;
   using Fmi::TimeZonePtr;
   using Fmi::DateTime;
-  using boost::posix_time::time_from_string;
 
   {
     Fmi::DateTime pt = time_from_string("2015-10-25 03:00:00");
-    Fmi::TimeZonePtr zone = db.time_zone_from_region("Europe/Stockholm");
+    Fmi::TimeZonePtr zone("Europe/Stockholm");
     Fmi::LocalDateTime ldt(pt, zone);
 
     NFmiMetTime t(ldt);
@@ -74,7 +68,7 @@ void construct_from_local_date_time()
 
   {
     Fmi::DateTime pt = time_from_string("2015-10-25 05:00:00");
-    Fmi::TimeZonePtr zone = db.time_zone_from_region("Europe/Helsinki");
+    Fmi::TimeZonePtr zone("Europe/Helsinki");
     Fmi::LocalDateTime ldt(pt, zone);
 
     NFmiMetTime t(ldt);
@@ -91,7 +85,6 @@ void construct_from_local_date_time()
 void posixtime()
 {
   using Fmi::DateTime;
-  using boost::posix_time::time_from_string;
 
   NFmiMetTime t(2013, 10, 25, 1, 2, 3, 0);
   Fmi::DateTime res = t.PosixTime();
@@ -107,7 +100,6 @@ void posixtime()
 void implicit_conversion()
 {
   using Fmi::DateTime;
-  using boost::posix_time::time_from_string;
 
   NFmiMetTime t(2013, 10, 25, 1, 2, 3, 0);
   Fmi::DateTime res = t;
