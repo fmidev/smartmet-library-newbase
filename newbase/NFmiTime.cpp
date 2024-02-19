@@ -395,10 +395,13 @@ NFmiTime::NFmiTime(const Fmi::LocalDateTime &theLocalTime)
     SetDate(d.year(), d.month(), d.day());
     SetTime(t.hours(), t.minutes(), t.seconds());
 
+#if defined(FMI_NEW_DATE_TIME)
+    Fmi::TimeDuration offset = theLocalTime.offset();
+#else
     Fmi::TimeDuration offset = theLocalTime.zone()->base_utc_offset();
     if (theLocalTime.is_dst())
       offset += theLocalTime.zone()->dst_offset();
-
+#endif
     itsZoneDifferenceHour = offset.hours();
   }
   catch (...)
