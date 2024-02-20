@@ -134,7 +134,7 @@ class tests : public tframe::tests
 int main(void)
 {
   using namespace std;
-  cout << endl << "NFmiAngle tester" << endl << "================" << endl;
+  cout << endl << "NFmiMetTime tester" << endl << "================" << endl;
   NFmiMetTimeTest::tests t;
   return t.run();
 }
