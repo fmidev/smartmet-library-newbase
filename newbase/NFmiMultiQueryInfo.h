@@ -77,14 +77,18 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiFastQueryInfo.h"
-
 #include <macgyver/DateTime.h>
-#include <boost/utility.hpp>
 
 //! Undocumented
-class NFmiMultiQueryInfo : public NFmiFastQueryInfo, private boost::noncopyable
+class NFmiMultiQueryInfo : public NFmiFastQueryInfo
 {
  public:
+  NFmiMultiQueryInfo(const NFmiMultiQueryInfo& other) = delete;
+  NFmiMultiQueryInfo& operator=(const NFmiMultiQueryInfo& other) = delete;
+  NFmiMultiQueryInfo(NFmiMultiQueryInfo&& other) = delete;
+  NFmiMultiQueryInfo& operator=(NFmiMultiQueryInfo&& other) = delete;
+
+  
   using NFmiFastQueryInfo::InterpolatedValue;
   using NFmiFastQueryInfo::Time;
 
