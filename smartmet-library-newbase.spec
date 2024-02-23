@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.1.30
+Version: 24.2.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -29,13 +29,13 @@ BuildRequires: gdal35-devel
 BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 23.11.21
-BuildRequires: smartmet-library-gis-devel >= 23.9.12
+BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
+BuildRequires: smartmet-library-gis-devel >= 24.1.3
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 23.11.21
-Requires: smartmet-library-gis >= 23.9.12
+Requires: smartmet-library-macgyver >= 24.1.17
+Requires: smartmet-library-gis >= 24.1.3
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,10 +51,10 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 23.9.12
-#TestRequires: smartmet-library-macgyver-devel >= 23.11.21
-#TestRequires: smartmet-library-macgyver >= 23.11.21
-#TestRequires: smartmet-library-gis >= 23.9.12
+#TestRequires: smartmet-library-gis-devel >= 24.1.3
+#TestRequires: smartmet-library-macgyver-devel >= 24.1.17
+#TestRequires: smartmet-library-macgyver >= 24.1.17
+#TestRequires: smartmet-library-gis >= 24.1.3
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -93,8 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 23.9.12
-Requires: smartmet-library-macgyver-devel >= 23.11.21
+Requires: smartmet-library-gis-devel >= 24.1.3
+Requires: smartmet-library-macgyver-devel >= 24.1.17
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Feb 23 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.2.23-1.fmi
+- Do not use boost::noncopyable
+- Added safety check to projection parser
 * Tue Jan 30 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.30-1.fmi
 - NFmiInfoAreaMask added multi-source data support (relates multiple synop and flash data usage).
 - NFmiInfoAreaMask added support for model-climatology-data (era5 type data).
