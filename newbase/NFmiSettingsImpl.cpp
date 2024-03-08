@@ -762,6 +762,8 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
                                true,  // "//" (double slash)
                                false,
                                false);  // "/*" and nested
+    processor.SetIncluding("include", "", "");
+    processor.SetDefine("#define");
 #else
     NFmiPreProcessor processor(strip_pound);
 #endif

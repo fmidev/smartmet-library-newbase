@@ -353,6 +353,8 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       }
 
       const vector<string> aparts = NFmiStringTools::Split<vector<string> >(parts[1], "/");
+      if (aparts.empty())
+        throw Fmi::Exception(BCP, "area specification must have 3-4 numbers");
       const vector<double> avec = NFmiStringTools::Split<vector<double> >(aparts[0]);
       double aspect = (aparts.size() == 1 ? 1 : NFmiStringTools::Convert<double>(aparts[1]));
 

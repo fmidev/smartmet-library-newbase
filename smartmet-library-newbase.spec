@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.1.30
+Version: 24.3.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -29,13 +29,14 @@ BuildRequires: gdal35-devel
 BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 23.11.21
-BuildRequires: smartmet-library-gis-devel >= 23.9.12
+BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
+BuildRequires: smartmet-library-gis-devel >= 24.1.3
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 23.11.21
 Requires: smartmet-library-gis >= 23.9.12
+Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
@@ -50,10 +51,10 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 23.9.12
-#TestRequires: smartmet-library-macgyver-devel >= 23.11.21
-#TestRequires: smartmet-library-macgyver >= 23.11.21
-#TestRequires: smartmet-library-gis >= 23.9.12
+#TestRequires: smartmet-library-gis-devel >= 24.1.3
+#TestRequires: smartmet-library-macgyver-devel >= 24.1.17
+#TestRequires: smartmet-library-macgyver >= 24.1.17
+#TestRequires: smartmet-library-gis >= 24.1.3
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -92,8 +93,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 23.9.12
-Requires: smartmet-library-macgyver-devel >= 23.11.21
+Requires: smartmet-library-gis-devel >= 24.1.3
+Requires: smartmet-library-macgyver-devel >= 24.1.17
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -115,6 +116,12 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Mar  7 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.7-1.fmi
+- Enable include and #define for NFmiSettings to make qdtext configuration simpler
+
+* Fri Feb 23 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.2.23-1.fmi
+- Do not use boost::noncopyable
+- Added safety check to projection parser
 * Tue Jan 30 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.30-1.fmi
 - NFmiInfoAreaMask added multi-source data support (relates multiple synop and flash data usage).
 - NFmiInfoAreaMask added support for model-climatology-data (era5 type data).
@@ -1049,7 +1056,7 @@ e wind direction, must be handled a bit differently then normal continuous param
 - Added WeatherSymbol parameter
 
 * Mon Apr 28 2014 Tuomo Lauri <tuomo.lauri@fmi.fi> - 14.4.28-1.fmi
-- Adjusted SYKE - related flooding parameters 
+- Adjusted SYKE - related flooding parameters
 - Fixed parameter conflicts due to simultaneous changes by two persons
 - 381 ConvectiveInhibition is now Roughness, parameter 66 is to be used for CIN
 
@@ -1276,7 +1283,7 @@ e wind direction, must be handled a bit differently then normal continuous param
 - Switched to use auto_ptr in NFmiAreaFactory interface
 
 * Fri Jun  1 2012 Tuomo Lauri <tuomo.lauri@fmi.fi> - 12.6.1-1.el6.fmi
-- Added Proj4-string support to NFmiAreaFactory 
+- Added Proj4-string support to NFmiAreaFactory
 
 * Wed Apr 18 2012 Mika Heiskanen <mika.heiskanen@fmi.fi> - 12.4.18-1.el5.fmi
 - Fixed a special case in interpolation to return kFloatMissing when appropriate
@@ -1447,7 +1454,7 @@ e wind direction, must be handled a bit differently then normal continuous param
 - Numerous small improvements and bug fixes
 
 * Tue Jul 14 2009 Mika Heiskanen <mika.heiskanen@fmi.fi> - 9.7.14-1.el5.fmi
-- Upgrade to boost 1.39 
+- Upgrade to boost 1.39
 
 * Tue Apr 21 2009 Mika Heiskanen <mika.heiskanen@fmi.fi> - 9.4.21-1.el5.fmi
 - Fixed bug in NFmiQueryInfo::InterpolatedValueForTimeBag
@@ -1544,8 +1551,8 @@ e wind direction, must be handled a bit differently then normal continuous param
 - Added PedestrianIndex and TimeToNextSalting parameter names
 
 * Wed Jan 16 2008 Mikko Rauhala <mikko.rauhala@fmi.fi> - 8.1.16-1.el5.fmi
-- Various fixes by Marko Pietarinen, 
-- Changed to Ubuntu style version numbering 
+- Various fixes by Marko Pietarinen,
+- Changed to Ubuntu style version numbering
 
 * Sat Jan 12 2008 mheiskan <mika.heiskanen@fmi.fi> - 1.0.8-1.el5.fmi
 - GRIB related updates
