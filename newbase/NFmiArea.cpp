@@ -74,7 +74,11 @@ int DetectClassId(const Fmi::ProjInfo &proj)
     if (*name == "eqc")
       return kNFmiLatLonArea;
     if (*name == "merc")
+    {
+      if (proj.getDouble("lat_ts") != 0.0 || proj.getDouble("lon_0") != 0.0)
+        return kNFmiGdalArea;
       return kNFmiMercatorArea;
+    }
     if (*name == "stere")
       return kNFmiStereographicArea;
     if (*name == "aeqd")

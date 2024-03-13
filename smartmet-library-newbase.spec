@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.3.7
+Version: 24.3.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon Mar 11 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.11-1.fmi
+- Use NFmiGdalArea instead of NFmiMercatorArea if lat_ts or lon_0 are not zero
+
 * Thu Mar  7 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.7-1.fmi
 - Enable include and #define for NFmiSettings to make qdtext configuration simpler
 
