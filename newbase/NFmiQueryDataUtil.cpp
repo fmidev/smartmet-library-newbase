@@ -5589,9 +5589,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
       NFmiQueryInfo combinedDataMetaInfo =
           ::MakeCombinedDatasMetaInfo(fastInfoVector, foundValidTimes, fDoTimeStepCombine);
       NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-    // SmartMet kaatuu jossain tilanteissa tähän (CreateEmptyData:ssa luodaan dynaamisesti float
-    // taulukko new:lla), laitetaan lokitusta luotavasta datasta, jos funktio on annettu
-    ::DoMetaInfoLogging(loggingFunction, combinedDataMetaInfo, theFileFilterPtr);
+      // SmartMet kaatuu jossain tilanteissa tähän (CreateEmptyData:ssa luodaan dynaamisesti float
+      // taulukko new:lla), laitetaan lokitusta luotavasta datasta, jos funktio on annettu
+      ::DoMetaInfoLogging(loggingFunction, combinedDataMetaInfo, theFileFilterPtr);
       std::unique_ptr<NFmiQueryData> data(CreateEmptyData(combinedDataMetaInfo));
       if (data)
       {
@@ -6392,7 +6392,8 @@ static void FillSingleTimeGridDataInThread(
       theDebugLogger->LogMessage(logStr, NFmiLogger::kDebugInfo);
     }
 
-    if (theTargetInfo.TimeIndex(workedTimeIndex) == false) continue;
+    if (theTargetInfo.TimeIndex(workedTimeIndex) == false)
+      continue;
     NFmiMetTime targetTime = theTargetInfo.Time();
     bool doTimeInterpolation =
         false;  // jos aikaa ei löydy suoraan, tarvittaessa tehdään aikainterpolaatio
@@ -6479,18 +6480,18 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
       if (usedEndTimeIndex == gMissingIndex)
         usedEndTimeIndex = target1.SizeTimes() - 1;
 
-      double threadCountPercentage = 50.;  // Linux side wants to use 1/2 the cores here
-#ifdef _MSC_VER
-      // With SmartMet side more core power is needed for the parallel job
-      threadCountPercentage = 75.;
-#endif
-      unsigned int usedThreadCount =
-        NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
-
-      if (usedThreadCount > target1.SizeTimes()) 
+      if (usedThreadCount == 0)
       {
-        usedThreadCount = target1.SizeTimes();
+        double threadCountPercentage = 25.;  // Linux side wants to use 25% of the cores here
+#ifdef _MSC_VER
+        // With SmartMet Editor side more core power is needed for the parallel job
+        threadCountPercentage = 75.;
+#endif
+        usedThreadCount = NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
       }
+
+      if (usedThreadCount > target1.SizeTimes())
+        usedThreadCount = target1.SizeTimes();
 
       if (usedThreadCount <= 1)
       {  // käytetään vanhaa simppelimpää funktiota kun threadauksesta ei ole hyötyä
@@ -6532,7 +6533,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
         NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);
         boost::thread_group calcParts;
         for (unsigned int i = 0; i < usedThreadCount; i++)
-        calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
+          calcParts.add_thread(new boost::thread(::FillSingleTimeGridDataInThread,
                                                  *(sourceInfos[i].get()),
                                                  *(targetInfos[i].get()),
                                                  doLocationInterpolation,
@@ -6579,9 +6580,9 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
   try
   {
 #ifdef WGS84
-  if (theArea1 && theArea2)
-    return (*theArea1 == *theArea2);
-  return false;
+    if (theArea1 && theArea2)
+      return (*theArea1 == *theArea2);
+    return false;
 #else
     if (theArea1 && theArea2)
     {
@@ -6606,7 +6607,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
       }
     }
     return false;
-#endif    
+#endif
   }
   catch (...)
   {
@@ -6689,13 +6690,16 @@ int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separ
 {
   try
   {
-    if (maxAvailableThreads >= separateTaskCount) return separateTaskCount;
-    if (maxAvailableThreads <= 2) return maxAvailableThreads;
+    if (maxAvailableThreads >= separateTaskCount)
+      return separateTaskCount;
+    if (maxAvailableThreads <= 2)
+      return maxAvailableThreads;
 
     double ratio = static_cast<double>(separateTaskCount) / maxAvailableThreads;
     auto wantedIntegerPart = static_cast<int>(ratio);
     // Jos jakosuhteeksi tuli kokonaisluku, käytetään kaikkia annettuja threadeja
-    if (ratio == wantedIntegerPart) return maxAvailableThreads;
+    if (ratio == wantedIntegerPart)
+      return maxAvailableThreads;
 
     // Jos ei löytynyt tasalukuja, pitää iteroida semmoinen ratio, jolla saadaan mahdollisimman iso
     // kokonaisluku,
@@ -6718,7 +6722,8 @@ int NFmiQueryDataUtil::CalcOptimalThreadCount(int maxAvailableThreads, int separ
         maxRatioThreadCount = threadCount;
         break;
       }
-      if (wantedIntegerPart2 > wantedIntegerPart) break;
+      if (wantedIntegerPart2 > wantedIntegerPart)
+        break;
     }
 
     ::CheckThreadCountLimits(maxRatioThreadCount, maxAvailableThreads);
