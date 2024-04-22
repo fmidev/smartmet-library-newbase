@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.3.11
+Version: 24.4.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -30,12 +30,12 @@ BuildRequires: geos311-devel
 BuildRequires: make
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
-BuildRequires: smartmet-library-gis-devel >= 24.1.3
+BuildRequires: smartmet-library-gis-devel >= 24.3.25
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 23.11.21
-Requires: smartmet-library-gis >= 23.9.12
+Requires: smartmet-library-macgyver >= 24.1.17
+Requires: smartmet-library-gis >= 24.3.25
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -51,10 +51,10 @@ Requires: geos311
 #TestRequires: gdal35-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 24.1.3
+#TestRequires: smartmet-library-gis-devel >= 24.3.25
 #TestRequires: smartmet-library-macgyver-devel >= 24.1.17
 #TestRequires: smartmet-library-macgyver >= 24.1.17
-#TestRequires: smartmet-library-gis >= 24.1.3
+#TestRequires: smartmet-library-gis >= 24.3.25
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 24.1.3
+Requires: smartmet-library-gis-devel >= 24.3.25
 Requires: smartmet-library-macgyver-devel >= 24.1.17
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
@@ -116,12 +116,12 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Wed Apr 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.17-1.fmi
+- Improved logic for parallel tasks
 * Mon Mar 11 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.11-1.fmi
 - Use NFmiGdalArea instead of NFmiMercatorArea if lat_ts or lon_0 are not zero
-
 * Thu Mar  7 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.7-1.fmi
 - Enable include and #define for NFmiSettings to make qdtext configuration simpler
-
 * Fri Feb 23 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.2.23-1.fmi
 - Do not use boost::noncopyable
 - Added safety check to projection parser
