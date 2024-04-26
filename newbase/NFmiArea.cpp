@@ -75,7 +75,11 @@ int DetectClassId(const Fmi::ProjInfo &proj)
       return kNFmiLatLonArea;
     if (*name == "merc")
     {
-      if (proj.getDouble("lat_ts") != 0.0 || proj.getDouble("lon_0") != 0.0)
+      auto lat_ts = proj.getDouble("lat_ts");
+      auto lon_0 = proj.getDouble("lon_0");
+      if (lat_ts && lat_ts != 0.0)
+        return kNFmiGdalArea;
+      if (lon_0 && lon_0 != 0.0)
         return kNFmiGdalArea;
       return kNFmiMercatorArea;
     }
