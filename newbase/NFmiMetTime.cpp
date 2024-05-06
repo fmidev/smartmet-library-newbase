@@ -64,7 +64,7 @@ NFmiMetTime::NFmiMetTime(const long timeStepInMinutes)
  */
 // ----------------------------------------------------------------------
 
-NFmiMetTime::NFmiMetTime(const boost::posix_time::ptime &theTime)
+NFmiMetTime::NFmiMetTime(const Fmi::DateTime &theTime)
     : NFmiTime(theTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
 {
   try
@@ -83,16 +83,16 @@ NFmiMetTime::NFmiMetTime(const boost::posix_time::ptime &theTime)
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::ptime NFmiMetTime::PosixTime() const
+Fmi::DateTime NFmiMetTime::PosixTime() const
 {
   try
   {
-    boost::gregorian::date date(GetYear(), GetMonth(), GetDay());
+    Fmi::Date date(GetYear(), GetMonth(), GetDay());
 
-    boost::posix_time::ptime utc(date,
-                                 boost::posix_time::hours(GetHour()) +
-                                     boost::posix_time::minutes(GetMin()) +
-                                     boost::posix_time::seconds(GetSec()));
+    Fmi::DateTime utc(date,
+                                 Fmi::Hours(GetHour()) +
+                                     Fmi::Minutes(GetMin()) +
+                                     Fmi::Seconds(GetSec()));
     return utc;
   }
   catch (...)
@@ -107,7 +107,7 @@ boost::posix_time::ptime NFmiMetTime::PosixTime() const
  */
 // ----------------------------------------------------------------------
 
-NFmiMetTime::NFmiMetTime(const boost::local_time::local_date_time &theLocalTime)
+NFmiMetTime::NFmiMetTime(const Fmi::LocalDateTime &theLocalTime)
     : NFmiTime(theLocalTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
 {
   try

@@ -4357,13 +4357,13 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
     else if ((isTimeInside = IsInside(theTime)) && (theTimeRangeInMinutes > 0))
     {
       NFmiMetTime refTime(theTime);
-      boost::posix_time::ptime rangeStartTime, rangeEndTime;
+      Fmi::DateTime rangeStartTime, rangeEndTime;
       float value1 = kFloatMissing;
 
       if (theTimeRangeInMinutes != kUnsignedLongMissing)
       {
-        rangeStartTime = theTime.PosixTime() - boost::posix_time::minutes(theTimeRangeInMinutes);
-        rangeEndTime = theTime.PosixTime() + boost::posix_time::minutes(theTimeRangeInMinutes);
+        rangeStartTime = theTime.PosixTime() - Fmi::Minutes(theTimeRangeInMinutes);
+        rangeEndTime = theTime.PosixTime() + Fmi::Minutes(theTimeRangeInMinutes);
       }
       else
       {
@@ -4378,7 +4378,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
               (Time().PosixTime() >= rangeStartTime));)
       {
         value1 = PressureLevelValue(P, theLatlon);
-        refTime = Time().PosixTime() - boost::posix_time::seconds(1);
+        refTime = Time().PosixTime() - Fmi::Seconds(1);
       }
 
       auto time1 = Time();
@@ -4391,7 +4391,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
         // Using minute step forwards because seconds get zeroed when constructing NFmiMetTime
 
         value2 = PressureLevelValue(P, theLatlon);
-        refTime = Time().PosixTime() + boost::posix_time::minutes(1);
+        refTime = Time().PosixTime() + Fmi::Minutes(1);
       }
 
       return Interpolate(Param(), theTime, time1, Time(), value1, value2);
@@ -4612,13 +4612,13 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
     else if ((isTimeInside = IsInside(theTime)) && (theTimeRangeInMinutes > 0))
     {
       NFmiMetTime refTime(theTime);
-      boost::posix_time::ptime rangeStartTime, rangeEndTime;
+      Fmi::DateTime rangeStartTime, rangeEndTime;
       float value1 = kFloatMissing;
 
       if (theTimeRangeInMinutes != kUnsignedLongMissing)
       {
-        rangeStartTime = theTime.PosixTime() - boost::posix_time::minutes(theTimeRangeInMinutes);
-        rangeEndTime = theTime.PosixTime() + boost::posix_time::minutes(theTimeRangeInMinutes);
+        rangeStartTime = theTime.PosixTime() - Fmi::Minutes(theTimeRangeInMinutes);
+        rangeEndTime = theTime.PosixTime() + Fmi::Minutes(theTimeRangeInMinutes);
       }
       else
       {
@@ -4633,7 +4633,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
               (Time().PosixTime() >= rangeStartTime));)
       {
         value1 = HeightValue(theHeight, theLatlon);
-        refTime = Time().PosixTime() - boost::posix_time::seconds(1);
+        refTime = Time().PosixTime() - Fmi::Seconds(1);
       }
 
       auto time1 = Time();
@@ -4646,7 +4646,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
         // Using minute step forwards because seconds get zeroed when constructing NFmiMetTime
 
         value2 = HeightValue(theHeight, theLatlon);
-        refTime = Time().PosixTime() + boost::posix_time::minutes(1);
+        refTime = Time().PosixTime() + Fmi::Minutes(1);
       }
 
       return Interpolate(Param(), theTime, time1, Time(), value1, value2);

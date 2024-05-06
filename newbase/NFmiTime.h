@@ -8,9 +8,8 @@
 #pragma once
 
 #include "NFmiStaticTime.h"
+#include <macgyver/LocalDateTime.h>
 
-#include <boost/date_time/local_time/local_date_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #define DICT_WEEKDAY_MONDAY "WeekdayMonday"
 #define DICT_WEEKDAY_TUESDAY "WeekdayTuesday"
@@ -46,8 +45,8 @@ class NFmiTime : public NFmiStaticTime
   NFmiTime(short year, short month, short day);
   NFmiTime(short year, short month, short day, short hour, short minute = 0, short sec = 0);
 
-  NFmiTime(const boost::posix_time::ptime &thePosixTime);
-  NFmiTime(const boost::local_time::local_date_time &theLocalTime);
+  NFmiTime(const Fmi::DateTime &thePosixTime);
+  NFmiTime(const Fmi::LocalDateTime &theLocalTime);
 
   NFmiTime &operator=(const NFmiTime &theTime);
 
