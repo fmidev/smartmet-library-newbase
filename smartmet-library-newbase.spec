@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.4.24
+Version: 24.5.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Mon May  6 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.6-1.fmi
+- Use Date library (https://github.com/HowardHinnant/date) instead of boost date_time
+
 * Wed Apr 24 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.24-1.fmi
 - Fixed creation of Mercator projections
 * Wed Apr 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.17-1.fmi
