@@ -5,6 +5,7 @@
 #include "NFmiMetTime.h"
 
 #include <boost/shared_ptr.hpp>
+#include <deque>
 
 class NFmiFastQueryInfo;
 class NFmiLevel;
