@@ -36,7 +36,6 @@ BuildRequires: smartmet-library-regression
 %endif
 Requires: smartmet-library-macgyver >= 24.5.6
 Requires: smartmet-library-gis >= 24.3.25
-Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
