@@ -26,9 +26,6 @@
 #include "NFmiMetTime.h"
 #include "NFmiQueryData.h"
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
 #include <cassert>

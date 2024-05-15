@@ -60,7 +60,7 @@ NFmiMetTime::NFmiMetTime(const long timeStepInMinutes)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Construct from a boost posix_time
+ * \brief Construct from a FMI datetime
  */
 // ----------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ NFmiMetTime::NFmiMetTime(const Fmi::DateTime &theTime)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Convert to a boost posix_time
+ * \brief Convert to a FMI datetime
  */
 // ----------------------------------------------------------------------
 
@@ -90,9 +90,7 @@ Fmi::DateTime NFmiMetTime::PosixTime() const
     Fmi::Date date(GetYear(), GetMonth(), GetDay());
 
     Fmi::DateTime utc(date,
-                                 Fmi::Hours(GetHour()) +
-                                     Fmi::Minutes(GetMin()) +
-                                     Fmi::Seconds(GetSec()));
+                      Fmi::Hours(GetHour()) + Fmi::Minutes(GetMin()) + Fmi::Seconds(GetSec()));
     return utc;
   }
   catch (...)
