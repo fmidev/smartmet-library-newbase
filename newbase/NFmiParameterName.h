@@ -1944,6 +1944,7 @@ enum FmiParameterName
   kFmiWindCompass32,
   kFmiWindCompass8,
   kFmiXMLTime,
+  kFmiWSI, // WIGOS station identifier
 
   // NetCDF parameters, last generated on 201X.MM.DD ????
 

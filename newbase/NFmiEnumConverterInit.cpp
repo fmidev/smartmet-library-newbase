@@ -1477,6 +1477,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "VorticityAdvectionRelative", kFmiVorticityAdvectionRelative},
       { "VorticityGeostrophic", kFmiVorticityGeostrophic},
       { "VorticityRelative", kFmiVorticityRelative},
+      { "WSI", kFmiWSI },
       { "WV", kFmiWV},
       { "WaterAccumulation", kFmiWaterAccumulation},
       { "WaterContent", kFmiWaterContent},

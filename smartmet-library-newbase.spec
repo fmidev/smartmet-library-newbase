@@ -15,7 +15,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 24.5.17
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -115,6 +115,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri May 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.17-2.fmi
+- Added parameter 'WSI' for WIGOS station identifiers
+
 * Fri May 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.17-1.fmi
 - Added -lsmartmet-macgyver
 * Thu May 16 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.16-1.fmi
