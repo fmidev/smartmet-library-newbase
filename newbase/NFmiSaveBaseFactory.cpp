@@ -21,7 +21,6 @@
 #include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-#include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
 
