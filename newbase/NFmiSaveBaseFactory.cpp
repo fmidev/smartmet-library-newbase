@@ -33,7 +33,7 @@
  *
  * \param classId The ID of the object to be created
  * \return Pointer to the new object
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

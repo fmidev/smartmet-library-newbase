@@ -128,7 +128,7 @@ NFmiBitmapAreaMask::NFmiBitmapAreaMask(const NFmiBitmapAreaMask& theMask)
  * Clone the object
  *
  * \return A new copy of the object
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 
@@ -172,10 +172,10 @@ void NFmiBitmapAreaMask::Destroy()
 
 #ifdef UNIX
 // RHEL6 compiler bug forces to omit the reference
-void NFmiBitmapAreaMask::Init(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
+void NFmiBitmapAreaMask::Init(std::shared_ptr<NFmiFastQueryInfo> theInfo,
                               const NFmiCalculationCondition& theOperation)
 #else
-void NFmiBitmapAreaMask::Init(boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+void NFmiBitmapAreaMask::Init(std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                               const NFmiCalculationCondition& theOperation)
 #endif
 {

@@ -444,7 +444,7 @@ bool NFmiQueryData::Init(const std::string &theHeader,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 
@@ -853,7 +853,7 @@ void NFmiQueryData::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
+std::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
 {
   try
   {
@@ -882,7 +882,7 @@ boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
  */
 // ----------------------------------------------------------------------
 
-void NFmiQueryData::SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache)
+void NFmiQueryData::SetLatLonCache(std::shared_ptr<std::vector<NFmiPoint> > newCache)
 {
   try
   {
@@ -906,9 +906,9 @@ void NFmiQueryData::MakeLatLonCache() const
 {
   try
   {
-    boost::shared_ptr<std::vector<NFmiPoint> > tmp = boost::make_shared<std::vector<NFmiPoint> >();
+    std::shared_ptr<std::vector<NFmiPoint> > tmp = std::make_shared<std::vector<NFmiPoint> >();
     HPlaceDesc()->CreateLatLonCache(*tmp);
-    boost::atomic_store(&itsLatLonCache, tmp);
+    std::atomic_store(&itsLatLonCache, tmp);
   }
   catch (...)
   {

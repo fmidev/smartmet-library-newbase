@@ -622,8 +622,8 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
 
     istringstream input(text);
 
-    boost::shared_ptr<NFmiTimeZonePolygon> poly;
-    boost::shared_ptr<NFmiTimeZoneRing> ring;
+    std::shared_ptr<NFmiTimeZonePolygon> poly;
+    std::shared_ptr<NFmiTimeZoneRing> ring;
 
     string command;
     while (input >> command)

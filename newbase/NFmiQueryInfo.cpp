@@ -906,7 +906,7 @@ size_t NFmiQueryInfo::Index(unsigned long theParamIndex,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -3233,8 +3233,8 @@ void NFmiQueryInfo::ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier
 
     LatLon();  // multi-thread koodin varmistus, että latlon-cachet on alustettu
     theModifier->InitLatlonCache();
-    std::vector<boost::shared_ptr<NFmiFastQueryInfo> > modifiedInfoVector(usedThreadCount);
-    std::vector<boost::shared_ptr<NFmiDataModifier> > dataModifierVector(usedThreadCount);
+    std::vector<std::shared_ptr<NFmiFastQueryInfo> > modifiedInfoVector(usedThreadCount);
+    std::vector<std::shared_ptr<NFmiDataModifier> > dataModifierVector(usedThreadCount);
     auto *thisFastInfo = dynamic_cast<NFmiFastQueryInfo *>(this);
     if (thisFastInfo == nullptr)
       return;  // ei voi edetä, koska this info ei ollutkaan oikeasti fastInfo
@@ -3243,8 +3243,8 @@ void NFmiQueryInfo::ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier
       // HUOM! pakko tehdä fastQueryInfo copioita, että ei menetetä nopeutta, eikä saa tehdä
       // Clone:ja, koska tällöin kopioituu myös data-osio!!!
       modifiedInfoVector[i] =
-          boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*thisFastInfo));
-      dataModifierVector[i] = boost::shared_ptr<NFmiDataModifier>(theModifier->Clone());
+          std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*thisFastInfo));
+      dataModifierVector[i] = std::shared_ptr<NFmiDataModifier>(theModifier->Clone());
     }
 
     TimeToModifyCalculator timeIndexCalculator(theTimeDescriptor);

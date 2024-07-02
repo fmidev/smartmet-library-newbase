@@ -94,7 +94,7 @@ class NFmiMultiQueryInfo : public NFmiFastQueryInfo
 
   NFmiMultiQueryInfo(const std::string& thePath);
   NFmiMultiQueryInfo(const std::list<std::string>& thePaths);
-  NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQueryInfo> >& theInfos);
+  NFmiMultiQueryInfo(std::vector<std::shared_ptr<NFmiFastQueryInfo> >& theInfos);
 
   using NFmiFastQueryInfo::OriginTime;
   const NFmiMetTime& OriginTime() const;  // we may have multiple origin times
@@ -128,11 +128,11 @@ class NFmiMultiQueryInfo : public NFmiFastQueryInfo
   // is used to construct the object. If NFmiFastQueryInfos are used,
   // the container is empty
 
-  std::list<boost::shared_ptr<NFmiQueryData> > itsDatas;
+  std::list<std::shared_ptr<NFmiQueryData> > itsDatas;
 
   // This is used by all constructors
 
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo> > itsInfos;
+  std::vector<std::shared_ptr<NFmiFastQueryInfo> > itsInfos;
 
   // We index NFmiFastQueryInfo objects and their time indexes through this struct
 
