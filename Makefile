@@ -25,7 +25,6 @@ CFLAGS0        = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O0 -g
 LIBS += -lsmartmet-gis \
 	-lsmartmet-macgyver \
 	-lboost_regex \
-	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread \
 	$(REQUIRED_LIBS)

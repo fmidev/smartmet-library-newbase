@@ -22,7 +22,6 @@
 #include "NFmiStationBag.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
-#include <boost/make_shared.hpp>
 
 #include <fcntl.h>
 #include <fstream>
