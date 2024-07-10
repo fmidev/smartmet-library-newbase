@@ -1091,9 +1091,10 @@ time_t FindFile(const string &theFileFilter,
   {
     if (boost::regex_match(it->path().filename().string().c_str(), reg))
     {
-      const std::optional<std::time_t> opt_last_write_time = Fmi::last_write_time(*it);
-      if (opt_last_write_time)
-        matches.insert(std::make_pair(*opt_last_write_time, it->path().filename().string().c_str()));
+      std::error_code ec;
+      const std::time_t lwt = Fmi::last_write_time(*it, ec);
+      if (!ec)
+        matches.insert(std::make_pair(lwt, it->path().filename().string().c_str()));
     }
   }
 
