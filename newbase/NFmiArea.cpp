@@ -437,7 +437,7 @@ double NFmiArea::WorldXYAspectRatio() const
  * \param theTopRightLatLon Undocumented
  * \return Undocumented
  *
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  * \todo Remove the unnecessary cast in the last return statement
  */
 // ----------------------------------------------------------------------

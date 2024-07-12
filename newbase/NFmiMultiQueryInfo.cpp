@@ -37,7 +37,7 @@
  */
 // ----------------------------------------------------------------------
 
-std::size_t find_newest_data(std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theInfos)
+std::size_t find_newest_data(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &theInfos)
 {
   try
   {
@@ -132,7 +132,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string> &theFiles)
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<boost::shared_ptr<NFmiFastQueryInfo> > &theInfos)
+NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &theInfos)
     : itsDatas()  // will remain empty
       ,
       itsInfos(theInfos),
@@ -164,9 +164,9 @@ void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
   {
     for (const std::string &filename : theFiles)
     {
-      boost::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
+      std::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
       itsDatas.push_back(qd);
-      boost::shared_ptr<NFmiFastQueryInfo> qi(new NFmiFastQueryInfo(qd.get()));
+      std::shared_ptr<NFmiFastQueryInfo> qi(new NFmiFastQueryInfo(qd.get()));
       itsInfos.push_back(qi);
 
       itsFileModificationTimes.push_back(NFmiFileSystem::FileModificationTime(filename));

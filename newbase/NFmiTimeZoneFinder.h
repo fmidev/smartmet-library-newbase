@@ -8,7 +8,7 @@
 #pragma once
 
 #include "NFmiDef.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 class NFmiPoint;
@@ -34,7 +34,7 @@ class NFmiTimeZoneFinder
 #endif
 
  private:
-  boost::shared_ptr<NFmiTimeZoneFinderPimple> itsPimple;
+  std::shared_ptr<NFmiTimeZoneFinderPimple> itsPimple;
 
 };  // class NFmiTimeZoneFinder
 

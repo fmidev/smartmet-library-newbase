@@ -519,7 +519,7 @@ const NFmiString NFmiString::GetChars(unsigned long firstChar, unsigned long len
  * \param firstChar Undocumented
  * \param length Undocumented
  * \return Undocumented
- * \todo Should return boost::shared_ptr
+ * \todo Should return std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

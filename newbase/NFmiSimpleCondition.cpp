@@ -4,7 +4,7 @@
 
 namespace
 {
-bool CheckForStationaryData(const boost::shared_ptr<NFmiAreaMask> &mask)
+bool CheckForStationaryData(const std::shared_ptr<NFmiAreaMask> &mask)
 {
   try
   {
@@ -82,7 +82,7 @@ double CalculateValue(double value1,
   }
 }
 
-double GetPressureValue(boost::shared_ptr<NFmiAreaMask> &mask,
+double GetPressureValue(std::shared_ptr<NFmiAreaMask> &mask,
                         double pressure,
                         const NFmiCalculationParams &calculationParams,
                         bool useTimeInterpolation)
@@ -96,7 +96,7 @@ double GetPressureValue(boost::shared_ptr<NFmiAreaMask> &mask,
     return mask->PressureValue(pressure, calculationParams);
 }
 
-double GetHeightValue(boost::shared_ptr<NFmiAreaMask> &mask,
+double GetHeightValue(std::shared_ptr<NFmiAreaMask> &mask,
                       double height,
                       const NFmiCalculationParams &calculationParams,
                       bool useTimeInterpolation)
@@ -119,9 +119,9 @@ double GetHeightValue(boost::shared_ptr<NFmiAreaMask> &mask,
 NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
 
 NFmiSimpleConditionPart::NFmiSimpleConditionPart(
-    boost::shared_ptr<NFmiAreaMask> &mask1,
+    std::shared_ptr<NFmiAreaMask> &mask1,
     NFmiAreaMask::CalculationOperator calculationOperator,
-    boost::shared_ptr<NFmiAreaMask> &mask2)
+    std::shared_ptr<NFmiAreaMask> &mask2)
     : itsMask1(mask1), itsCalculationOperator(calculationOperator), itsMask2(mask2)
 {
 }
@@ -236,11 +236,11 @@ void NFmiSimpleConditionPart::ResetPreviousValue() { itsPreviousValue = kFloatMi
 
 NFmiSingleCondition::~NFmiSingleCondition() = default;
 
-NFmiSingleCondition::NFmiSingleCondition(const boost::shared_ptr<NFmiSimpleConditionPart> &thePart1,
+NFmiSingleCondition::NFmiSingleCondition(const std::shared_ptr<NFmiSimpleConditionPart> &thePart1,
                                          FmiMaskOperation theConditionOperand1,
-                                         const boost::shared_ptr<NFmiSimpleConditionPart> &thePart2,
+                                         const std::shared_ptr<NFmiSimpleConditionPart> &thePart2,
                                          FmiMaskOperation theConditionOperand2,
-                                         const boost::shared_ptr<NFmiSimpleConditionPart> &thePart3)
+                                         const std::shared_ptr<NFmiSimpleConditionPart> &thePart3)
     : part1(thePart1),
       conditionOperand1(theConditionOperand1),
       part2(thePart2),
@@ -258,7 +258,7 @@ NFmiSingleCondition::NFmiSingleCondition(const NFmiSingleCondition &theOther)
 {
 }
 
-static void InitializePart(boost::shared_ptr<NFmiSimpleConditionPart> &part)
+static void InitializePart(std::shared_ptr<NFmiSimpleConditionPart> &part)
 {
   try
   {
@@ -471,9 +471,9 @@ void NFmiSingleCondition::ResetPreviousValue()
 NFmiSimpleCondition::~NFmiSimpleCondition() = default;
 
 NFmiSimpleCondition::NFmiSimpleCondition(
-    const boost::shared_ptr<NFmiSingleCondition> &theCondition1,
+    const std::shared_ptr<NFmiSingleCondition> &theCondition1,
     NFmiAreaMask::BinaryOperator theConditionOperator,
-    const boost::shared_ptr<NFmiSingleCondition> &theCondition2)
+    const std::shared_ptr<NFmiSingleCondition> &theCondition2)
     : condition1(theCondition1), conditionOperator(theConditionOperator), condition2(theCondition2)
 {
 }
@@ -485,7 +485,7 @@ NFmiSimpleCondition::NFmiSimpleCondition(const NFmiSimpleCondition &theOther)
 {
 }
 
-static void InitializePart(boost::shared_ptr<NFmiSingleCondition> &condition)
+static void InitializePart(std::shared_ptr<NFmiSingleCondition> &condition)
 {
   try
   {

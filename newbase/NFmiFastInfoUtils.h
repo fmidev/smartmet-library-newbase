@@ -5,7 +5,7 @@
 #include "NFmiMetTime.h"
 
 #include <deque>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class NFmiFastQueryInfo;
 class NFmiLevel;
@@ -72,37 +72,37 @@ class MetaWindParamUsage
 
 bool IsInfoShipTypeData(NFmiFastQueryInfo &theInfo);
 void SetSoundingDataLevel(const NFmiLevel &theWantedSoundingPressureLevel, NFmiFastQueryInfo &info);
-std::string GetTotalDataFilePath(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
-bool IsYearLongData(const boost::shared_ptr<NFmiFastQueryInfo> &info);
-bool IsModelClimatologyData(const boost::shared_ptr<NFmiFastQueryInfo> &info);
-NFmiMetTime GetUsedTimeIfModelClimatologyData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+std::string GetTotalDataFilePath(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
+bool IsYearLongData(const std::shared_ptr<NFmiFastQueryInfo> &info);
+bool IsModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo> &info);
+NFmiMetTime GetUsedTimeIfModelClimatologyData(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                               const NFmiMetTime &theTime);
-bool IsMovingSoundingData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
-bool IsLightningTypeData(boost::shared_ptr<NFmiFastQueryInfo> &info);
-bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool IsMovingSoundingData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
+bool IsLightningTypeData(std::shared_ptr<NFmiFastQueryInfo> &info);
+bool FindTimeIndicesForGivenTimeRange(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                       const NFmiMetTime &theStartTime,
                                       long minuteRange,
                                       unsigned long &timeIndex1,
                                       unsigned long &timeIndex2);
-bool FindMovingSoundingDataTime(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool FindMovingSoundingDataTime(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                 const NFmiMetTime &theTime,
                                 NFmiLocation &theLocation);
-MetaWindParamUsage CheckMetaWindParamUsage(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
+MetaWindParamUsage CheckMetaWindParamUsage(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
 MetaWindParamUsage CheckMetaWindParamUsage(NFmiQueryInfo &theInfo);
 std::vector<std::unique_ptr<NFmiDataIdent>> MakePossibleWindMetaParams(
     NFmiQueryInfo &theInfo, bool allowStreamlineParameter);
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId);
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiMetTime &theTime,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId);
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiPoint &theLatlon,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId);
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiMetTime &theTime,
                        const NFmiPoint &theLatlon,
                        const MetaWindParamUsage &metaWindParamUsage,
@@ -146,7 +146,7 @@ void CalcMatrixVcomponentFromSpeedAndDirection(const NFmiDataMatrix<float> &ws,
                                                const NFmiDataMatrix<float> &wd,
                                                NFmiDataMatrix<float> &vOut,
                                                unsigned int theStartColumnIndex = 0);
-bool SetInfoToGridPoint(boost::shared_ptr<NFmiFastQueryInfo> &info,
+bool SetInfoToGridPoint(std::shared_ptr<NFmiFastQueryInfo> &info,
                         unsigned long gridPointX,
                         unsigned long gridPointY);
 

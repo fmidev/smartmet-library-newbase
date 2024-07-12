@@ -362,7 +362,7 @@ int NFmiYKJArea::ZoneNumberByEasting(const double /* easting */) const
  * \param theBottomLeftLatLon Undocumented
  * \param theTopRightLatLon Undocumented
  * \result Undocumented
- * \todo Return boost::shared_ptr instead
+ * \todo Return std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -395,7 +395,7 @@ NFmiArea *NFmiYKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 // ----------------------------------------------------------------------
 /*!
  * \result Undocumented
- * \todo Return boost::shared_ptr instead
+ * \todo Return std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 

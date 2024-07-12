@@ -8,7 +8,7 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 
 class NFmiAreaMaskList
@@ -18,17 +18,17 @@ class NFmiAreaMaskList
   NFmiAreaMaskList(const NFmiAreaMaskList &theOther);
   virtual ~NFmiAreaMaskList();
   NFmiAreaMaskList& operator = (const NFmiAreaMaskList&);
-  static boost::shared_ptr<NFmiAreaMaskList> CreateShallowCopy(
-      const boost::shared_ptr<NFmiAreaMaskList> &theOther);
+  static std::shared_ptr<NFmiAreaMaskList> CreateShallowCopy(
+      const std::shared_ptr<NFmiAreaMaskList> &theOther);
 
-  void Add(boost::shared_ptr<NFmiAreaMask> &theMask);
+  void Add(std::shared_ptr<NFmiAreaMask> &theMask);
   bool Remove();
   void Clear();
   unsigned long NumberOfItems();
 
   bool Reset();
   bool Next();
-  boost::shared_ptr<NFmiAreaMask> Current();
+  std::shared_ptr<NFmiAreaMask> Current();
 
   bool UseMask() { return fMaskInUse; }
   bool IsMasked(const NFmiPoint &theLatLon);
@@ -46,7 +46,7 @@ class NFmiAreaMaskList
  private:
   bool IsValidIndex(int theIndex);
 
-  std::vector<boost::shared_ptr<NFmiAreaMask> > itsMaskVector;
+  std::vector<std::shared_ptr<NFmiAreaMask> > itsMaskVector;
   int itsCurrentIndex;  // Reset laittaa tämän -1:ksi, 1. maski löytyy 0:sta ja viimeinen size-1:stä
   bool fMaskInUse;      // Arvo asetetaan kun tarkastetaan onko mikään
 

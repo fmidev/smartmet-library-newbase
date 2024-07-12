@@ -12,7 +12,7 @@
 #include "NFmiPoint.h"
 #include "NFmiString.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 
@@ -315,8 +315,8 @@ class NFmiAreaMask
   virtual bool IsWantedParam(const NFmiDataIdent &theParam,
                              const NFmiLevel *theLevel = 0) const = 0;
   virtual const NFmiString MaskString() const = 0;
-  virtual boost::shared_ptr<NFmiFastQueryInfo> Info() = 0;
-  virtual void UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> &theInfo) = 0;
+  virtual std::shared_ptr<NFmiFastQueryInfo> Info() = 0;
+  virtual void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) = 0;
   virtual const NFmiDataIdent *DataIdent() const = 0;
   virtual const NFmiParam *Param() const = 0;
   virtual const NFmiLevel *Level() const = 0;
@@ -371,8 +371,8 @@ class NFmiAreaMask
   virtual void Mask(int theIndex, bool newStatus) = 0;
   // Joillain smarttool funktoilla voi olla simple-condition ehto (esim. "T_ec > T_hir"), jota
   // käytetään mm. erilaisissa integraatiolaskuissa
-  virtual const boost::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const = 0;
-  virtual void SimpleCondition(boost::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) = 0;
+  virtual const std::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const = 0;
+  virtual void SimpleCondition(std::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) = 0;
   virtual float FunctionDataTimeOffsetInHours() const = 0;
   virtual void FunctionDataTimeOffsetInHours(float newValue) = 0;
   // Jos kyse infoAreaMask:ista ja kyse on asemadatasta, ja on käytetty havaintoasemien etäisyys
@@ -383,14 +383,14 @@ class NFmiAreaMask
   virtual bool CheckPossibleObservationDistance(
       const NFmiCalculationParams &theCalculationParamsInOut) = 0;
 
-  static boost::shared_ptr<NFmiFastQueryInfo> DoShallowCopy(
-      const boost::shared_ptr<NFmiFastQueryInfo> &theInfo);
-  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> DoShallowCopy(
-      const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector);
-  static boost::shared_ptr<NFmiAreaMask> DoShallowCopy(
-      const boost::shared_ptr<NFmiAreaMask> &theMask);
-  static std::vector<boost::shared_ptr<NFmiAreaMask>> DoShallowCopy(
-      const std::vector<boost::shared_ptr<NFmiAreaMask>> &theMaskVector);
+  static std::shared_ptr<NFmiFastQueryInfo> DoShallowCopy(
+      const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
+  static std::vector<std::shared_ptr<NFmiFastQueryInfo>> DoShallowCopy(
+      const std::vector<std::shared_ptr<NFmiFastQueryInfo>> &infoVector);
+  static std::shared_ptr<NFmiAreaMask> DoShallowCopy(
+      const std::shared_ptr<NFmiAreaMask> &theMask);
+  static std::vector<std::shared_ptr<NFmiAreaMask>> DoShallowCopy(
+      const std::vector<std::shared_ptr<NFmiAreaMask>> &theMaskVector);
 
 };  // class NFmiAreaMask
 

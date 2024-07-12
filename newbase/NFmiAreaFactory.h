@@ -10,13 +10,13 @@
 #include "NFmiPoint.h"
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class NFmiArea;
 
 namespace NFmiAreaFactory
 {
-typedef boost::shared_ptr<NFmiArea> return_type;
+typedef std::shared_ptr<NFmiArea> return_type;
 
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
                           NFmiPoint &topRightLatlon,

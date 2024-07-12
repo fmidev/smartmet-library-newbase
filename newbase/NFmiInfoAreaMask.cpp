@@ -33,7 +33,7 @@
 // Kyseiset projektit menivät läpi vielä aiemmin, mutta kun lisäsin boostin iround -kutsut, ei enää.
 // SIKSI joudun käyttämään FmiRound -funktioita.
 
-void MetaParamDataHolder::initialize(const boost::shared_ptr<NFmiFastQueryInfo> &info,
+void MetaParamDataHolder::initialize(const std::shared_ptr<NFmiFastQueryInfo> &info,
                                      unsigned long possibleMetaParamId)
 {
   try
@@ -156,12 +156,12 @@ void NFmiInfoAreaMask::SetMultiSourceDataGetterCallback(
   itsMultiSourceDataGetter = theCallbackFunction;
 }
 
-std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSourceData(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    boost::shared_ptr<NFmiArea> &calculationArea,
+std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSourceData(
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    std::shared_ptr<NFmiArea> &calculationArea,
     bool getStationarySynopDataOnly)
 {
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> infoVector;
+  std::vector<std::shared_ptr<NFmiFastQueryInfo>> infoVector;
   NFmiDataIdent usedDataIdent = theInfo->Param();
   if (getStationarySynopDataOnly)
     usedDataIdent.GetProducer()->SetIdent(NFmiInfoData::kFmiSpSynoXProducer);
@@ -174,7 +174,7 @@ std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSour
 // pirun raskaaseen koodiin.
 // HUOM! Tämä on riippuvainen NFmiEditMapGeneralDataDoc::MakeDrawedInfoVectorForMapView -metodin
 // erikoistapauksista.
-bool NFmiInfoAreaMask::IsKnownMultiSourceData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+bool NFmiInfoAreaMask::IsKnownMultiSourceData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   if (theInfo)
   {
@@ -237,7 +237,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask()
 NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
                                    Type theMaskType,
                                    NFmiInfoData::Type theDataType,
-                                   const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                   const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                    unsigned long thePossibleMetaParamId,
                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
@@ -271,7 +271,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
  */
 // ----------------------------------------------------------------------
 
-NFmiInfoAreaMask::NFmiInfoAreaMask(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiInfoAreaMask::NFmiInfoAreaMask(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                    unsigned long thePossibleMetaParamId,
                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(
@@ -338,7 +338,7 @@ void NFmiInfoAreaMask::Initialize()
   NFmiAreaMaskImpl::Initialize();
   if (fUseMultiSourceData)
   {
-    boost::shared_ptr<NFmiArea> dummyArea;
+    std::shared_ptr<NFmiArea> dummyArea;
     bool getStationarySynopDataOnly = false;
     itsInfoVector =
         NFmiInfoAreaMask::GetMultiSourceData(itsInfo, dummyArea, getStationarySynopDataOnly);
@@ -772,7 +772,7 @@ float NFmiInfoAreaMask::CalcMetaParamPressureValue(
   }
 }
 
-float NFmiInfoAreaMask::CalcCachedInterpolation(boost::shared_ptr<NFmiFastQueryInfo> &theUsedInfo,
+float NFmiInfoAreaMask::CalcCachedInterpolation(std::shared_ptr<NFmiFastQueryInfo> &theUsedInfo,
                                                 const NFmiLocationCache &theLocationCache,
                                                 const NFmiTimeCache *theTimeCache)
 {
@@ -793,7 +793,7 @@ float NFmiInfoAreaMask::CalcCachedInterpolation(boost::shared_ptr<NFmiFastQueryI
 }
 
 float NFmiInfoAreaMask::CalcMetaParamCachedInterpolation(
-    boost::shared_ptr<NFmiFastQueryInfo> &theUsedInfo,
+    std::shared_ptr<NFmiFastQueryInfo> &theUsedInfo,
     const NFmiLocationCache &theLocationCache,
     const NFmiTimeCache *theTimeCache)
 {
@@ -919,7 +919,7 @@ bool NFmiInfoAreaMask::IsMasked(int theIndex) const
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
-void NFmiInfoAreaMask::Info(const boost::shared_ptr<NFmiFastQueryInfo> &newInfo)
+void NFmiInfoAreaMask::Info(const std::shared_ptr<NFmiFastQueryInfo> &newInfo)
 {
   try
   {
@@ -935,7 +935,7 @@ void NFmiInfoAreaMask::Info(const boost::shared_ptr<NFmiFastQueryInfo> &newInfo)
 
 // Tänne pitää antaa halutun infon matala kopio ja se laitetaan itsInfo:on.
 // Sitten siihen laitetaan maskissa olevat parametri ja leveli kohdalleen.
-void NFmiInfoAreaMask::UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+void NFmiInfoAreaMask::UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
@@ -952,12 +952,12 @@ void NFmiInfoAreaMask::UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
   }
 }
 
-boost::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
+std::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
     NFmiAreaMask::FunctionType func)
 {
   try
   {
-    boost::shared_ptr<NFmiDataModifier> modifier;
+    std::shared_ptr<NFmiDataModifier> modifier;
     // vertCondFunc tapauksia on paljon ja niille ei tehdä integraatiota, joten tein ehdon
     // vähentämään case -tapauksia
     if (!::IsFindConditionalFunction(func))
@@ -965,28 +965,28 @@ boost::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
       switch (func)
       {
         case NFmiAreaMask::Avg:
-          modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierAvg());
+          modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierAvg());
           break;
         case NFmiAreaMask::Min:
-          modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMin());
+          modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMin());
           break;
         case NFmiAreaMask::Max:
-          modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMax());
+          modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMax());
           break;
         case NFmiAreaMask::Sum:
-          modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierSum());
+          modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierSum());
           break;
         case NFmiAreaMask::Med:
-          modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMedian());
+          modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierMedian());
           break;
       case NFmiAreaMask::ModAvg:
-        modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModAvg());
+        modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModAvg());
         break;
       case NFmiAreaMask::ModMin:
-        modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModMinMax(true));
+        modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModMinMax(true));
         break;
       case NFmiAreaMask::ModMax:
-        modifier = boost::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModMinMax(false));
+        modifier = std::shared_ptr<NFmiDataModifier>(new NFmiDataModifierModMinMax(false));
         break;
         case NFmiAreaMask::Get:
         case NFmiAreaMask::FindH:
@@ -997,7 +997,7 @@ boost::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
         case NFmiAreaMask::FindHeightCond:
         case NFmiAreaMask::FindCountCond:
         case NFmiAreaMask::PeekZ:
-          modifier = boost::shared_ptr<NFmiDataModifier>();  // get- ja find -tapauksissa
+          modifier = std::shared_ptr<NFmiDataModifier>();  // get- ja find -tapauksissa
                                                              // palautetaan tyhjä-olio, koska niille
                                                              // ei tarvita erillistä integraattoria
           break;
@@ -1020,7 +1020,7 @@ boost::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
 
 // Etsii halutun aika loopituksen alku- ja loppuaika indeksejä annetusta infosta.
 // Jos startOffset ja endOffsetit ovat samoja, käytetään kyseistä aikaa aikainterpolaatiossa.
-bool NFmiInfoAreaMask::CalcTimeLoopIndexies(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool NFmiInfoAreaMask::CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                             const NFmiCalculationParams &theCalculationParams,
                                             double theStartTimeOffsetInHours,
                                             double theEndTimeOffsetInHours,
@@ -1052,7 +1052,7 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(boost::shared_ptr<NFmiFastQueryInfo>
   }
 }
 
-bool NFmiInfoAreaMask::CalcTimeLoopIndexies(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool NFmiInfoAreaMask::CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                             const NFmiCalculationParams &theCalculationParams,
                                             const NFmiMetTime &theStartTime,
                                             const NFmiMetTime &theEndTime,
@@ -1101,8 +1101,8 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(boost::shared_ptr<NFmiFastQueryInfo>
 // min ja max funktioille voidaan laskuissa ottaa interpoloidun arvon sijasta kaikki interpolaatio
 // pistettä ympäröivät arvot sellaisenaan. Interpolaatio kun muuttaa min/max arvoja ikävästi
 // neljästä luvusta lasketuksi painotetuksi keskiarvoksi.
-void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-                                        boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+void NFmiInfoAreaMask::AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                        std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                                         const NFmiLocationCache &theLocationCache)
 {
   try
@@ -1189,8 +1189,8 @@ void NFmiInfoAreaMask::AddExtremeValues(boost::shared_ptr<NFmiFastQueryInfo> &th
   }
 }
 
-void NFmiInfoAreaMask::AddValueToModifier(boost::shared_ptr<NFmiFastQueryInfo> & /* theInfo */,
-                                          boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+void NFmiInfoAreaMask::AddValueToModifier(std::shared_ptr<NFmiFastQueryInfo> & /* theInfo */,
+                                          std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                                           float theValue)
 {
   // In this base virtual method the value is just added to the
@@ -1204,8 +1204,8 @@ void NFmiInfoAreaMask::AddValueToModifier(boost::shared_ptr<NFmiFastQueryInfo> &
 // If values are just interpolated to a point, it will be sort of 4 values average
 // that is used in there.
 void NFmiInfoAreaMask::AddValuesToFunctionModifier(
-    boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    boost::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+    std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
     const NFmiLocationCache &theLocationCache,
     NFmiAreaMask::FunctionType integrationFunction)
 {
@@ -1247,7 +1247,7 @@ NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY()
 NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY(const NFmiCalculationCondition &theOperation,
                                                Type theMaskType,
                                                NFmiInfoData::Type theDataType,
-                                               const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                               const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                                int theXOffset,
                                                int theYOffset,
                                                unsigned long thePossibleMetaParamId,
@@ -1274,7 +1274,7 @@ NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY(const NFmiCalculationCondition &t
   }
 }
 
-NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                                int theXOffset,
                                                int theYOffset,
                                                unsigned long thePossibleMetaParamId,
@@ -1396,8 +1396,8 @@ NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
     int theXOffset,
     int theYOffset,
     unsigned long thePossibleMetaParamId,
@@ -1510,8 +1510,8 @@ NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
     double theXOffsetInKM,
     double theYOffsetInKM,
     unsigned long thePossibleMetaParamId,
@@ -1529,8 +1529,8 @@ NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
 }
 
 NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theEditedInfo,
     double theXOffsetInKM,
     double theYOffsetInKM,
     unsigned long thePossibleMetaParamId,
@@ -1562,7 +1562,7 @@ NFmiAreaMask *NFmiInfoAreaMaskPeekXY3::Clone() const
   }
 }
 
-static bool IsPacificViewData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+static bool IsPacificViewData(std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
@@ -1658,7 +1658,7 @@ NFmiInfoAreaMaskMetFuncBase::NFmiInfoAreaMaskMetFuncBase(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     bool thePeekAlongTudes,
     MetFunctionDirection theMetFuncDirection,
     unsigned long thePossibleMetaParamId,
@@ -1759,7 +1759,7 @@ void NFmiInfoAreaMaskMetFuncBase::SetGridSizeVariables()
 }
 
 bool NFmiInfoAreaMaskMetFuncBase::IsDataOperatable(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo) const
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo) const
 {
   try
   {
@@ -2047,7 +2047,7 @@ NFmiInfoAreaMaskGrad::~NFmiInfoAreaMaskGrad() = default;
 NFmiInfoAreaMaskGrad::NFmiInfoAreaMaskGrad(const NFmiCalculationCondition &theOperation,
                                            Type theMaskType,
                                            NFmiInfoData::Type theDataType,
-                                           const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                           const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                            bool thePeekAlongTudes,
                                            MetFunctionDirection theMetFuncDirection,
                                            unsigned long thePossibleMetaParamId,
@@ -2188,9 +2188,9 @@ NFmiInfoAreaMaskAdvection::NFmiInfoAreaMaskAdvection(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfoUwind,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfoVwind,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfoUwind,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfoVwind,
     bool thePeekAlongTudes,
     MetFunctionDirection theMetFuncDirection,
     unsigned long thePossibleMetaParamId,
@@ -2337,7 +2337,7 @@ NFmiInfoAreaMaskLaplace::NFmiInfoAreaMaskLaplace(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     bool thePeekAlongTudes,
     MetFunctionDirection theMetFuncDirection,
     unsigned long thePossibleMetaParamId,
@@ -2445,7 +2445,7 @@ NFmiInfoAreaMaskRotor::~NFmiInfoAreaMaskRotor() = default;
 NFmiInfoAreaMaskRotor::NFmiInfoAreaMaskRotor(const NFmiCalculationCondition &theOperation,
                                              Type theMaskType,
                                              NFmiInfoData::Type theDataType,
-                                             const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                             const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                              bool thePeekAlongTudes,
                                              MetFunctionDirection theMetFuncDirection,
                                              unsigned long thePossibleMetaParamId,
@@ -2531,7 +2531,7 @@ NFmiInfoAreaMaskVertFunc::NFmiInfoAreaMaskVertFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3042,10 +3042,10 @@ float NFmiInfoAreaMaskVertFunc::GetLevelHeightValue(const NFmiLocationCache &the
 
 class SimpleConditionPreviousValueResetter
 {
-  boost::shared_ptr<NFmiSimpleCondition> &simpleCondition_;
+  std::shared_ptr<NFmiSimpleCondition> &simpleCondition_;
 
  public:
-  SimpleConditionPreviousValueResetter(boost::shared_ptr<NFmiSimpleCondition> &simpleCondition)
+  SimpleConditionPreviousValueResetter(std::shared_ptr<NFmiSimpleCondition> &simpleCondition)
       : simpleCondition_(simpleCondition)
   {
   }
@@ -3416,7 +3416,7 @@ NFmiInfoAreaMaskVertConditionalFunc::NFmiInfoAreaMaskVertConditionalFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3584,7 +3584,7 @@ NFmiInfoAreaMaskTimeVertFunc::NFmiInfoAreaMaskTimeVertFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3723,7 +3723,7 @@ NFmiInfoAreaMaskProbFunc::NFmiInfoAreaMaskProbFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3894,7 +3894,7 @@ bool NFmiInfoAreaMaskProbFunc::CheckProbabilityCondition(double value)
 // Palauttaa mahdollisen interpolaatio ajan, jos startOffset ja endOffsetit ovat samoja, käytetään
 // kyseistä aikaa aikainterpolaatiossa.
 NFmiMetTime NFmiInfoAreaMaskProbFunc::CalcTimeLoopLimits(
-    boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiCalculationParams &theCalculationParams,
     double theStartTimeOffsetInHours,
     double theEndTimeOffsetInHours,
@@ -3956,7 +3956,7 @@ static void SetSimpleConditionCalculationTime(
     NFmiCalculationParams &simpleConditionCalculationPointParams,
     bool useInterpolatedTime,
     const NFmiMetTime &interpolationTime,
-    boost::shared_ptr<NFmiFastQueryInfo> &info)
+    std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   try
   {
@@ -4051,7 +4051,7 @@ double NFmiInfoAreaMaskProbFunc::Value(const NFmiCalculationParams &theCalculati
   }
 }
 
-static bool IsSynopDataCase(const boost::shared_ptr<NFmiFastQueryInfo> &info)
+static bool IsSynopDataCase(const std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   if (info)
   {
@@ -4063,7 +4063,7 @@ static bool IsSynopDataCase(const boost::shared_ptr<NFmiFastQueryInfo> &info)
 double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
     const NFmiCalculationParams &theCalculationParams)
 {
-  boost::shared_ptr<NFmiArea> emptyAreaPtr;
+  std::shared_ptr<NFmiArea> emptyAreaPtr;
   auto infoVector = NFmiInfoAreaMask::GetMultiSourceData(
       itsInfo, emptyAreaPtr, ::IsSynopDataCase(itsInfo));
   for (auto &info : infoVector)
@@ -4141,7 +4141,7 @@ double NFmiInfoAreaMaskProbFunc::CalcAreaProbability()
 }
 
 float NFmiInfoAreaMaskProbFunc::CalculationPointValueForObservation(
-    const boost::shared_ptr<NFmiFastQueryInfo> &info)
+    const std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   if (metaParamDataHolder.isMetaParameterCalculationNeeded())
   {
@@ -4320,7 +4320,7 @@ NFmiInfoTimeIntegrator::~NFmiInfoTimeIntegrator() = default;
 NFmiInfoTimeIntegrator::NFmiInfoTimeIntegrator(const NFmiCalculationCondition &theOperation,
                                                Type theMaskType,
                                                NFmiInfoData::Type theDataType,
-                                               const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                               const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                                NFmiAreaMask::FunctionType theIntegrationFunc,
                                                int theStartTimeOffset,
                                                int theEndTimeOffset,
@@ -4422,7 +4422,7 @@ NFmiInfoRectAreaIntegrator::NFmiInfoRectAreaIntegrator(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType theIntegrationFunc,
     int theStartXOffset,
     int theEndXOffset,
@@ -4522,7 +4522,7 @@ NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -4634,7 +4634,7 @@ NFmiInfoAreaMaskAreaProbFunc::NFmiInfoAreaMaskAreaProbFunc(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -4722,7 +4722,7 @@ NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask(
     const NFmiCalculationCondition &theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     float theTimeOffsetInHours,
     unsigned long thePossibleMetaParamId,
     BinaryOperator thePostBinaryOperator)

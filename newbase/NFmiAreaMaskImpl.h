@@ -63,8 +63,8 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   bool IsRampMask() const override;
   bool IsWantedParam(const NFmiDataIdent &theParam, const NFmiLevel *theLevel = 0) const override;
   const NFmiString MaskString() const override;
-  boost::shared_ptr<NFmiFastQueryInfo> Info() override;
-  void UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> &theInfo) override;
+  std::shared_ptr<NFmiFastQueryInfo> Info() override;
+  void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) override;
   const NFmiDataIdent *DataIdent() const override;
   const NFmiParam *Param() const override;
   const NFmiLevel *Level() const override;
@@ -119,11 +119,11 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   // toteutukset.
   void SetAll(bool /* theNewState */) override{};
   void Mask(int /* theIndex */, bool /* newStatus */) override{};
-  const boost::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const override
+  const std::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const override
   {
     return itsSimpleCondition;
   }
-  void SimpleCondition(boost::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) override
+  void SimpleCondition(std::shared_ptr<NFmiSimpleCondition> &theSimpleCondition) override
   {
     itsSimpleCondition = theSimpleCondition;
   }
@@ -169,7 +169,7 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   int itsFunctionArgumentCount;
   bool fHasSubMasks;
   bool fEnabled;
-  boost::shared_ptr<NFmiSimpleCondition> itsSimpleCondition;
+  std::shared_ptr<NFmiSimpleCondition> itsSimpleCondition;
   // Jossain tilanteissa smarttool funktion datalle voidaan haluta tehdä aikasiirto,
   // jolloin käytetään tämän arvoa tekemään siirto, esim. peekxy3(T_ec[-3h] 10 0)
   // kutsussa tehdään funktiole annettavalle parametrille T_ec 3 tunnin siirto taaksepäin.
@@ -224,12 +224,12 @@ inline const NFmiCalculationCondition &NFmiAreaMaskImpl::Condition() const
  */
 // ----------------------------------------------------------------------
 
-inline boost::shared_ptr<NFmiFastQueryInfo> NFmiAreaMaskImpl::Info()
+inline std::shared_ptr<NFmiFastQueryInfo> NFmiAreaMaskImpl::Info()
 {
-  return boost::shared_ptr<NFmiFastQueryInfo>();
+  return std::shared_ptr<NFmiFastQueryInfo>();
 }
 
-inline void NFmiAreaMaskImpl::UpdateInfo(boost::shared_ptr<NFmiFastQueryInfo> & /* theInfo */) {}
+inline void NFmiAreaMaskImpl::UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> & /* theInfo */) {}
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
