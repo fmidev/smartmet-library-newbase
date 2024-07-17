@@ -36,7 +36,7 @@ class NFmiTimeZoneFinder
 #endif
 
  private:
-  boost::shared_ptr<NFmiTimeZoneFinderPimple> itsPimple;
+  std::shared_ptr<NFmiTimeZoneFinderPimple> itsPimple;
 
 };  // class NFmiTimeZoneFinder
 

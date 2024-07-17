@@ -146,10 +146,10 @@ class NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiForecastHourAreaMask();
-  NFmiForecastHourAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo);
+  NFmiForecastHourAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo);
   NFmiForecastHourAreaMask(const NFmiForecastHourAreaMask& theMask);
   NFmiForecastHourAreaMask& operator=(const NFmiForecastHourAreaMask& theMask);
-  NFmiForecastHourAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiForecastHourAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                            const NFmiDataIdent& theParam,
                            const NFmiCalculationCondition& theOperation);
   NFmiAreaMask* Clone() const override;
@@ -159,7 +159,7 @@ class NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
   const NFmiString MakeSubMaskString() const override;
 
  private:
-  boost::shared_ptr<NFmiFastQueryInfo> itsInfo;  // kysyy vain editoitavan datan ajan
+  std::shared_ptr<NFmiFastQueryInfo> itsInfo;  // kysyy vain editoitavan datan ajan
 
 };  // class NFmiForecastHourAreaMask
 
@@ -168,10 +168,10 @@ class NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiTimeStepAreaMask();
-  NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo);
+  NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo);
   NFmiTimeStepAreaMask(const NFmiTimeStepAreaMask& theMask);
   NFmiTimeStepAreaMask& operator=(const NFmiTimeStepAreaMask& theMask);
-  NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                        const NFmiDataIdent& theParam,
                        const NFmiCalculationCondition& theOperation);
   NFmiAreaMask* Clone() const override;
@@ -183,7 +183,7 @@ class NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
   const NFmiString MakeSubMaskString() const override;
 
  private:
-  boost::shared_ptr<NFmiFastQueryInfo>
+  std::shared_ptr<NFmiFastQueryInfo>
       itsInfo;  // kysyy vain editoitavan datan currentin ajan aika-askeleen tunneissa
 
 };  // class NFmiForecastHourAreaMask
@@ -193,8 +193,8 @@ class NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
   ~NFmiGridSizeAreaMask();
-  NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo, bool calcXValue);
-  NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo, bool calcXValue);
+  NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                        const NFmiDataIdent& theParam,
                        const NFmiCalculationCondition& theOperation,
                        bool calcXValue);
@@ -208,7 +208,7 @@ class NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
   const NFmiString MakeSubMaskString() const override;
 
  private:
-  boost::shared_ptr<NFmiFastQueryInfo>
+  std::shared_ptr<NFmiFastQueryInfo>
       itsInfo;       // kysyy vain editoitavan datan currentin ajan aika-askeleen tunneissa
   bool fCalcXValue;  // siis jos true, laskee etäisyyden x-suunnassa, muuten y-suunnassa
 

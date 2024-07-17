@@ -376,10 +376,10 @@ std::vector<std::string> split_components(const std::string &theProjection)
 
 struct Bounds
 {
-  boost::optional<NFmiPoint> bottomleft;
-  boost::optional<NFmiPoint> topright;
+  std::optional<NFmiPoint> bottomleft;
+  std::optional<NFmiPoint> topright;
 
-  boost::optional<NFmiPoint> center;
+  std::optional<NFmiPoint> center;
   double scale = 1;
   double aspect = 1;
 };
@@ -425,7 +425,7 @@ Bounds parse_bounds(const std::string &theBounds)
 
 struct Grid
 {
-  boost::optional<double> units;
+  std::optional<double> units;
   double x1 = 0;
   double y1 = 0;
   double x2 = 0;
@@ -540,7 +540,7 @@ void set_grid(NFmiArea &theArea, const Grid &theGrid, const Bounds &theBounds)
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
+std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 {
   try
   {
@@ -567,7 +567,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     // Generate PROJ.4 string for the projection and the spatial reference used for the
     // corners, center coordinate or bottom left corner for GRIB stuff
 
-    boost::shared_ptr<NFmiArea> area;
+    std::shared_ptr<NFmiArea> area;
 
     if (!bounds.center)
       area.reset(NFmiArea::CreateFromCorners(
@@ -603,7 +603,7 @@ boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
+std::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
                                               const NFmiPoint &theBottomLeftLatLon,
                                               const NFmiPoint &theTopRightLatLon)
 {
@@ -616,7 +616,7 @@ boost::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
     // Generate PROJ.4 string for the projection and the spatial reference used for the
     // corners, center coordinate or bottom left corner for GRIB stuff
 
-    boost::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCorners(
+    std::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCorners(
         projstrings.proj4, projstrings.sphere, theBottomLeftLatLon, theTopRightLatLon)};
 
     return area;
@@ -634,7 +634,7 @@ boost::shared_ptr<NFmiArea> CreateFromCorners(const std::string &theProjection,
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<NFmiArea> CreateFromCenter(const std::string &theProjection,
+std::shared_ptr<NFmiArea> CreateFromCenter(const std::string &theProjection,
                                              const NFmiPoint &theCenterLatLon,
                                              double theWidthInMeters,
                                              double theHeightInMeters)
@@ -645,7 +645,7 @@ boost::shared_ptr<NFmiArea> CreateFromCenter(const std::string &theProjection,
 
     const ProjStrings projstrings = parse_projection(projection);
 
-    boost::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCenter(projstrings.proj4,
+    std::shared_ptr<NFmiArea> area{NFmiArea::CreateFromCenter(projstrings.proj4,
                                                                 projstrings.sphere,
                                                                 theCenterLatLon,
                                                                 theWidthInMeters,

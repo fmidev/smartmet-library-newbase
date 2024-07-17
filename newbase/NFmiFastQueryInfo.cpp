@@ -3413,7 +3413,7 @@ bool NFmiFastQueryInfo::SetValues(const NFmiDataMatrix<float> &theMatrix)
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 

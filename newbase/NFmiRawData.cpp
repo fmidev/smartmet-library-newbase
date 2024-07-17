@@ -19,13 +19,13 @@
 
 #include "NFmiVersion.h"
 
-#include <boost/filesystem/operations.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/MappedFile.h>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <stdexcept>
 #ifndef _MSC_VER
@@ -202,7 +202,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     // has an extra endl at the end, hence we must permit 2 extra
     // characters at the end for legacy data to work
 
-    std::size_t filesize = boost::filesystem::file_size(filename);
+    std::size_t filesize = std::filesystem::file_size(filename);
     itsOffset = file.tellg();
 
     if (itsOffset + poolsize > filesize)

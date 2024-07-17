@@ -10,14 +10,15 @@
 #include "NFmiFileString.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>  // uusi FileSize toteutus tarvitsee tätä
+#include <filesystem>
 
 #include <cctype>  // for isalpha
 #include <cstdio>
 #include <ctime>    // for time()
 #include <fstream>  // for time()
+#include <list>
 #include <sstream>
 #include <stdexcept>
 #include <vector>  // for time()
@@ -48,8 +49,6 @@
 #ifdef BOOST
 // Finding files is implemented in Linux using boost filesystem & regex
 #include <boost/algorithm/string/predicate.hpp>  //Lasse
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/path.hpp>
 #include <boost/regex.hpp>
 #endif
 
@@ -418,8 +417,8 @@ size_t FileSize(const string &theFile)
 {
   try
   {
-    boost::filesystem::path filePath(theFile);
-    return boost::filesystem::file_size(filePath);
+    std::filesystem::path filePath(theFile);
+    return std::filesystem::file_size(filePath);
   }
   catch (...)
   {
@@ -817,7 +816,7 @@ const list<string> DirectoryFiles(const string &thePath)
 {
   list<string> out;
 
-  namespace fs = boost::filesystem;
+  namespace fs = std::filesystem;
 
   fs::path p = thePath;
 
@@ -857,7 +856,7 @@ const std::list<std::string> PatternFiles(const std::string &thePattern)
 
 #ifdef BOOST
 
-  namespace fs = boost::filesystem;
+  namespace fs = std::filesystem;
 
   // Conversion to Boost type searching
 
@@ -961,7 +960,7 @@ const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::st
   {
     if (!::IsWinDir(fileinfo))  // ei ole hakemisto
       if (timeLimit < fileinfo.time_write)
-        out.push_back(make_pair(pathStr + fileinfo.name, fileinfo.time_write));
+        out.push_back(std::make_pair(pathStr + fileinfo.name, fileinfo.time_write));
   }
   else  // jos find_first ei löytänyt mitään ja mentiin silti find_next:iin, käätui XP:ssä
         // rakennettu juttu NT4:ssa
@@ -969,7 +968,7 @@ const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::st
   while (!FmiFindNext(handle, &fileinfo))
     if (!::IsWinDir(fileinfo))  // ei ole hakemisto
       if (timeLimit < fileinfo.time_write)
-        out.push_back(make_pair(pathStr + fileinfo.name, fileinfo.time_write));
+        out.push_back(std::make_pair(pathStr + fileinfo.name, fileinfo.time_write));
   FmiFindClose(handle);
 
   return out;
@@ -994,7 +993,7 @@ const std::list<std::string> Directories(const std::string &thePath)
   list<string> out;
 
 #ifdef BOOST
-  namespace fs = boost::filesystem;
+  namespace fs = std::filesystem;
 
   // Safety checks
 
@@ -1063,7 +1062,7 @@ time_t FindFile(const string &theFileFilter,
                 string *theFoundFileName /*RELATIVE, NO PATH!*/)
 {
 #ifdef BOOST
-  namespace fs = boost::filesystem;
+  namespace fs = std::filesystem;
 
   // Collect matches into a modification time sorted map
 
@@ -1091,7 +1090,7 @@ time_t FindFile(const string &theFileFilter,
   {
     if (boost::regex_match(it->path().filename().string().c_str(), reg))
     {
-      matches.insert(make_pair(fs::last_write_time(*it), it->path().filename().string().c_str()));
+      matches.insert(std::make_pair(Fmi::last_write_time(*it), it->path().filename().string().c_str()));
     }
   }
 

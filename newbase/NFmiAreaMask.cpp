@@ -23,13 +23,13 @@
 //! Destructor
 NFmiAreaMask::~NFmiAreaMask() = default;
 
-boost::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+std::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
     if (theInfo)
-      return boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
+      return std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
 
     return theInfo;
   }
@@ -39,25 +39,25 @@ boost::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
   }
 }
 
-std::vector<boost::shared_ptr<NFmiFastQueryInfo>> NFmiAreaMask::DoShallowCopy(
-    const std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &infoVector)
+std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiAreaMask::DoShallowCopy(
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>> &infoVector)
 {
   // tehd‰‰n matala kopio info-vektorista
-  std::vector<boost::shared_ptr<NFmiFastQueryInfo>> shallowCopyVector;
+  std::vector<std::shared_ptr<NFmiFastQueryInfo>> shallowCopyVector;
   for (const auto &info : infoVector)
   {
-    shallowCopyVector.push_back(boost::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*info)));
+    shallowCopyVector.push_back(std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*info)));
   }
   return shallowCopyVector;
 }
 
-boost::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
-    const boost::shared_ptr<NFmiAreaMask> &theMask)
+std::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
+    const std::shared_ptr<NFmiAreaMask> &theMask)
 {
   try
   {
     if (theMask)
-      return boost::shared_ptr<NFmiAreaMask>(theMask->Clone());
+      return std::shared_ptr<NFmiAreaMask>(theMask->Clone());
 
     return theMask;
   }
@@ -67,12 +67,12 @@ boost::shared_ptr<NFmiAreaMask> NFmiAreaMask::DoShallowCopy(
   }
 }
 
-std::vector<boost::shared_ptr<NFmiAreaMask>> NFmiAreaMask::DoShallowCopy(
-    const std::vector<boost::shared_ptr<NFmiAreaMask>> &theMaskVector)
+std::vector<std::shared_ptr<NFmiAreaMask>> NFmiAreaMask::DoShallowCopy(
+    const std::vector<std::shared_ptr<NFmiAreaMask>> &theMaskVector)
 {
   try
   {
-    std::vector<boost::shared_ptr<NFmiAreaMask>> returnVector(theMaskVector.size());
+    std::vector<std::shared_ptr<NFmiAreaMask>> returnVector(theMaskVector.size());
     for (size_t i = 0; i < theMaskVector.size(); i++)
       returnVector[i] = NFmiAreaMask::DoShallowCopy(theMaskVector[i]);
     return returnVector;

@@ -411,7 +411,7 @@ double NFmiGrid::Coverage(const NFmiGrid &theGrid, unsigned long theStep)
  * \param theStartingCorner Undocumented
  * \param theInterpolationMethod Undocumented
  * \return Undocumented
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

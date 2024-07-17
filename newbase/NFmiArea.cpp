@@ -129,8 +129,8 @@ struct NFmiArea::Impl
 
   NFmiPoint TopLeftCorner() const;
   NFmiPoint BottomRightCorner() const;
-  boost::optional<NFmiPoint> itsTopLeftCorner;
-  boost::optional<NFmiPoint> itsBottomRightCorner;
+  std::optional<NFmiPoint> itsTopLeftCorner;
+  std::optional<NFmiPoint> itsBottomRightCorner;
 
   // For speeding up coordinate conversions and to aid legacy parts of Write()
   double itsXScaleFactor = 0;

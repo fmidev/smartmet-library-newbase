@@ -36,9 +36,9 @@ void reading()
 
 void constructing()
 {
-  std::vector<boost::shared_ptr<NFmiQueryData> > qdv;
-  std::vector<boost::shared_ptr<NFmiQueryData> > qdv_gzipped;
-  std::vector<boost::shared_ptr<NFmiQueryData> > qdv_bzipped;
+  std::vector<std::shared_ptr<NFmiQueryData> > qdv;
+  std::vector<std::shared_ptr<NFmiQueryData> > qdv_gzipped;
+  std::vector<std::shared_ptr<NFmiQueryData> > qdv_bzipped;
   NFmiMultiQueryInfo qd("data/hiladata.sqd");
   NFmiMultiQueryInfo qd_gzipped("data/hiladata.sqd.gz");
   NFmiMultiQueryInfo qd_bzipped("data/hiladata.sqd.bz2");

@@ -527,8 +527,8 @@ class NFmiQueryDataUtil
   using LoggingFunction = std::function<void(const std::string &)>;
   static NFmiQueryData *CombineQueryDatas(
       bool fDoRebuild,
-      boost::shared_ptr<NFmiQueryData> &theBaseQData,
-      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
+      std::shared_ptr<NFmiQueryData> &theBaseQData,
+      std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
       bool fDoTimeStepCombine,
       int theMaxTimeStepsInData = 0,
       NFmiStopFunctor *theStopFunctor = nullptr,
@@ -545,25 +545,25 @@ class NFmiQueryDataUtil
   static unsigned int GetReasonableWorkingThreadCount(double wantedHardwareThreadPercent = 50.,
                                                       unsigned int separateTaskCount = 0);
   static std::vector<std::string> GetFileNamesForCombinationWork(const std::string &theFileFilter);
-  static boost::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
-  static std::vector<boost::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
-      boost::shared_ptr<NFmiQueryData> theBaseQData,
+  static std::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
+  static std::vector<std::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
+      std::shared_ptr<NFmiQueryData> theBaseQData,
       const std::string &theDirName,
       std::vector<std::string> &theFilesIn,
       NFmiStopFunctor *theStopFunctor,
       bool fDoRebuildCheck);
   static NFmiQueryData *CombineAcceptedTimeStepQueryData(
       bool fDoRebuild,
-      boost::shared_ptr<NFmiQueryData> &theBaseQData,
-      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
+      std::shared_ptr<NFmiQueryData> &theBaseQData,
+      std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
       const std::vector<NFmiMetTime> &theAcceptedTimes,
       NFmiStopFunctor *theStopFunctor = 0);
   static std::vector<NFmiMetTime> MakeValidTimesList(
-      std::vector<boost::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector,
+      std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector,
       int theMaxTimeStepsInData);
-  static std::vector<boost::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
-      std::vector<boost::shared_ptr<NFmiQueryData>> &theQDataVector,
-      boost::shared_ptr<NFmiQueryData> &theBaseQData,
+  static std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeTotalFastInfoVector(
+      std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
+      std::shared_ptr<NFmiQueryData> &theBaseQData,
       bool fDoRebuild);
 
 };  // class NFmiQueryDataUtil

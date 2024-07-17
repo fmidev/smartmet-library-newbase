@@ -251,7 +251,7 @@ NFmiLatLonAreaMask::~NFmiLatLonAreaMask() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Return an boost::shared_ptr instead
+ * \todo Return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -372,7 +372,7 @@ bool NFmiElevationAngleAreaMask::Time(const NFmiMetTime& theTime)
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -509,7 +509,7 @@ bool NFmiJulianDayAreaMask::Time(const NFmiMetTime& theTime)
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -606,7 +606,7 @@ NFmiLocalHourAreaMask::~NFmiLocalHourAreaMask() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -769,7 +769,7 @@ const NFmiString NFmiMinuteAreaMask::MakeSubMaskString() const
 // ----------------------------------------------------------------------
 
 NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
-    const boost::shared_ptr<NFmiFastQueryInfo>& theInfo)
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
     : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
 {
 }
@@ -785,7 +785,7 @@ NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
 // ----------------------------------------------------------------------
 
 NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
-    const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     const NFmiDataIdent& theParam,
     const NFmiCalculationCondition& theOperation)
     : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(theInfo)
@@ -841,7 +841,7 @@ NFmiForecastHourAreaMask::~NFmiForecastHourAreaMask() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -896,7 +896,7 @@ const NFmiString NFmiForecastHourAreaMask::MakeSubMaskString() const
 
 NFmiTimeStepAreaMask::~NFmiTimeStepAreaMask() = default;
 
-NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo)
+NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
     : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
 {
 }
@@ -923,7 +923,7 @@ NFmiTimeStepAreaMask& NFmiTimeStepAreaMask::operator=(const NFmiTimeStepAreaMask
   }
 }
 
-NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                            const NFmiDataIdent& theParam,
                                            const NFmiCalculationCondition& theOperation)
     : NFmiElevationAngleAreaMask(theParam, theOperation), itsInfo(theInfo)
@@ -994,13 +994,13 @@ double NFmiTimeStepAreaMask::Value(const NFmiCalculationParams& theCalculationPa
 
 NFmiGridSizeAreaMask::~NFmiGridSizeAreaMask() = default;
 
-NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                            bool calcXValue)
     : NFmiElevationAngleAreaMask(), itsInfo(theInfo), fCalcXValue(calcXValue)
 {
 }
 
-NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                            const NFmiDataIdent& theParam,
                                            const NFmiCalculationCondition& theOperation,
                                            bool calcXValue)

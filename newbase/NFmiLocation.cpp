@@ -764,7 +764,7 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return boost::shared_ptr
+ * \todo Should return std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

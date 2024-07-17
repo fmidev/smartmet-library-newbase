@@ -432,7 +432,7 @@ bool NFmiQueryData::Init(const std::string &theHeader,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 
@@ -853,9 +853,9 @@ std::size_t NFmiQueryData::GridHashValue() const
 }
 
 // Two dummy methods for backward ABI compatibility
-boost::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
+std::shared_ptr<std::vector<NFmiPoint> > NFmiQueryData::LatLonCache() const
 {
   return {};
 }
 
-void NFmiQueryData::SetLatLonCache(boost::shared_ptr<std::vector<NFmiPoint> > newCache) {}
+void NFmiQueryData::SetLatLonCache(std::shared_ptr<std::vector<NFmiPoint> > newCache) {}

@@ -11,11 +11,11 @@ class NFmiCalculationParams;
 // Tai siinä on kaksi maksia ja niiden välissä oleva lasku operaatio (esim. T_ec - Td_ec).
 class NFmiSimpleConditionPart
 {
-  boost::shared_ptr<NFmiAreaMask> itsMask1;
+  std::shared_ptr<NFmiAreaMask> itsMask1;
   // Jos stationaarista, ei saa tehdä aikainterpolaatiota
   bool isMask1StationaryData = false;
   NFmiAreaMask::CalculationOperator itsCalculationOperator = NFmiAreaMask::NotOperation;
-  boost::shared_ptr<NFmiAreaMask> itsMask2;
+  std::shared_ptr<NFmiAreaMask> itsMask2;
   // Jos stationaarista, ei saa tehdä aikainterpolaatiota
   bool isMask2StationaryData = false;
   // Tätä käytetään hyväksi -> vertailuoperaattorin kanssa eli ns. continuous-equal laskuissa
@@ -23,17 +23,17 @@ class NFmiSimpleConditionPart
 
  public:
   ~NFmiSimpleConditionPart();
-  NFmiSimpleConditionPart(boost::shared_ptr<NFmiAreaMask> &mask1,
+  NFmiSimpleConditionPart(std::shared_ptr<NFmiAreaMask> &mask1,
                           NFmiAreaMask::CalculationOperator calculationOperator,
-                          boost::shared_ptr<NFmiAreaMask> &mask2);
+                          std::shared_ptr<NFmiAreaMask> &mask2);
   NFmiSimpleConditionPart(const NFmiSimpleConditionPart &theOther);
   void Initialize();
   NFmiSimpleConditionPart *Clone() const;
   NFmiSimpleConditionPart &operator=(const NFmiSimpleConditionPart &) = delete;
 
-  boost::shared_ptr<NFmiAreaMask> Mask1() const { return itsMask1; }
+  std::shared_ptr<NFmiAreaMask> Mask1() const { return itsMask1; }
   NFmiAreaMask::CalculationOperator CalculationOperator() const { return itsCalculationOperator; }
-  boost::shared_ptr<NFmiAreaMask> Mask2() const { return itsMask2; }
+  std::shared_ptr<NFmiAreaMask> Mask2() const { return itsMask2; }
 
   // Eri tapauksia varten omat tarkastelu funktiot
   double Value(const NFmiCalculationParams &theCalculationParams, bool fUseTimeInterpolationAlways);
@@ -53,11 +53,11 @@ class NFmiSingleCondition
 {
  public:
   ~NFmiSingleCondition();
-  NFmiSingleCondition(const boost::shared_ptr<NFmiSimpleConditionPart> &thePart1,
+  NFmiSingleCondition(const std::shared_ptr<NFmiSimpleConditionPart> &thePart1,
                       FmiMaskOperation theConditionOperand1,
-                      const boost::shared_ptr<NFmiSimpleConditionPart> &thePart2,
+                      const std::shared_ptr<NFmiSimpleConditionPart> &thePart2,
                       FmiMaskOperation theConditionOperand2 = kFmiNoMaskOperation,
-                      const boost::shared_ptr<NFmiSimpleConditionPart> &thePart3 = nullptr);
+                      const std::shared_ptr<NFmiSimpleConditionPart> &thePart3 = nullptr);
   NFmiSingleCondition(const NFmiSingleCondition &theOther);
   // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
   // stationaaristä dataa
@@ -79,16 +79,16 @@ class NFmiSingleCondition
   // part1 condition part2 e.g. T_ec - x > RH_ec * 1.3 where T_ec would be NFmiInfoAreaMask object,
   // x would be variable (NFmiInfoAreaMask object) and 1.3 would be NFmiCalculationConstantValue
   // object.
-  boost::shared_ptr<NFmiSimpleConditionPart> part1;
+  std::shared_ptr<NFmiSimpleConditionPart> part1;
   // Condition between part1 and part2, always present
   FmiMaskOperation conditionOperand1;
-  boost::shared_ptr<NFmiSimpleConditionPart> part2;
+  std::shared_ptr<NFmiSimpleConditionPart> part2;
   // Condition between part2 and part3, present only if there is part3 and we are dealing with range
   // case. Range conditions could be inside (like -5 < T_ec < 0 meaning between values -5 and 0) or
   // outside (-5 > T_ec > 0 meaning under -5 and over 0)
   FmiMaskOperation conditionOperand2;
   // part3 is only present if there is range case.
-  boost::shared_ptr<NFmiSimpleConditionPart> part3;
+  std::shared_ptr<NFmiSimpleConditionPart> part3;
 };
 
 // Simple-condition koostuu yhdestä tai kahdesta single-conditionista. ne yhdistetään
@@ -98,9 +98,9 @@ class NFmiSimpleCondition
 {
  public:
   ~NFmiSimpleCondition();
-  NFmiSimpleCondition(const boost::shared_ptr<NFmiSingleCondition> &theCondition1,
+  NFmiSimpleCondition(const std::shared_ptr<NFmiSingleCondition> &theCondition1,
                       NFmiAreaMask::BinaryOperator theConditionOperator,
-                      const boost::shared_ptr<NFmiSingleCondition> &theCondition2);
+                      const std::shared_ptr<NFmiSingleCondition> &theCondition2);
   NFmiSimpleCondition(const NFmiSimpleCondition &theOther);
   // Tätä kutsutaan konstruktorin jälkeen, tässä alustetaan ainakin tieto siitä onko maski ns.
   // stationaaristä dataa
@@ -119,9 +119,9 @@ class NFmiSimpleCondition
 
  protected:
   // condition1 on aina mukana (esim. T_ec > 0)
-  boost::shared_ptr<NFmiSingleCondition> condition1;
+  std::shared_ptr<NFmiSingleCondition> condition1;
   // conditionOperator ja condition2 mukana tietyissä tapauksissa
   // Esim. "T_ec >0 and topo > 0", missä "and" on conditionOperator ja "topo > 0" on condition2
   NFmiAreaMask::BinaryOperator conditionOperator;
-  boost::shared_ptr<NFmiSingleCondition> condition2;
+  std::shared_ptr<NFmiSingleCondition> condition2;
 };

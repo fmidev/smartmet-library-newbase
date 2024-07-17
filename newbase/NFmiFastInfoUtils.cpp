@@ -91,7 +91,7 @@ bool AreWindComponentsOk(float u, float v)
 }
 
 template <typename GetFunction>
-float CalcMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float CalcMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                               const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage,
                               GetFunction getFunction)
 {
@@ -125,7 +125,7 @@ float CalcMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInf
 
 template <typename GetFunction>
 std::pair<float, float> GetMetaWsWdValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage,
     GetFunction getFunction)
 {
@@ -153,7 +153,7 @@ std::pair<float, float> GetMetaWsWdValues(
 
 template <typename GetFunction>
 std::pair<float, float> CalcMetaWindComponentsValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage,
     GetFunction getFunction)
 {
@@ -179,7 +179,7 @@ std::pair<float, float> CalcMetaWindComponentsValues(
   }
 }
 
-float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                              const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
   try
@@ -193,7 +193,7 @@ float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo
   }
 }
 
-float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                              const NFmiMetTime &theTime,
                              const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -208,7 +208,7 @@ float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo
   }
 }
 
-float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                              const NFmiPoint &theLatlon,
                              const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -223,7 +223,7 @@ float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo
   }
 }
 
-float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                              const NFmiMetTime &theTime,
                              const NFmiPoint &theLatlon,
                              const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
@@ -242,7 +242,7 @@ float GetMetaWindVectorValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo
 }
 
 std::pair<float, float> GetMetaWsWdValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
   try
@@ -257,7 +257,7 @@ std::pair<float, float> GetMetaWsWdValues(
 }
 
 std::pair<float, float> GetMetaWsWdValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiMetTime &theTime,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -273,7 +273,7 @@ std::pair<float, float> GetMetaWsWdValues(
 }
 
 std::pair<float, float> GetMetaWsWdValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiPoint &theLatlon,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -289,7 +289,7 @@ std::pair<float, float> GetMetaWsWdValues(
 }
 
 std::pair<float, float> GetMetaWsWdValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiMetTime &theTime,
     const NFmiPoint &theLatlon,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
@@ -307,7 +307,7 @@ std::pair<float, float> GetMetaWsWdValues(
 }
 
 std::pair<float, float> GetMetaWindComponentsValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
   try
@@ -322,7 +322,7 @@ std::pair<float, float> GetMetaWindComponentsValues(
 }
 
 std::pair<float, float> GetMetaWindComponentsValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiMetTime &theTime,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -338,7 +338,7 @@ std::pair<float, float> GetMetaWindComponentsValues(
 }
 
 std::pair<float, float> GetMetaWindComponentsValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiPoint &theLatlon,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
 {
@@ -354,7 +354,7 @@ std::pair<float, float> GetMetaWindComponentsValues(
 }
 
 std::pair<float, float> GetMetaWindComponentsValues(
-    const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
     const NFmiMetTime &theTime,
     const NFmiPoint &theLatlon,
     const NFmiFastInfoUtils::MetaWindParamUsage &metaWindParamUsage)
@@ -424,7 +424,7 @@ void SetSoundingDataLevel(const NFmiLevel &theWantedSoundingPressureLevel, NFmiF
   }
 }
 
-std::string GetTotalDataFilePath(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+std::string GetTotalDataFilePath(const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
@@ -438,7 +438,7 @@ std::string GetTotalDataFilePath(const boost::shared_ptr<NFmiFastQueryInfo> &the
   }
 }
 
-bool IsYearLongData(const boost::shared_ptr<NFmiFastQueryInfo> &info)
+bool IsYearLongData(const std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   try
   {
@@ -455,7 +455,7 @@ bool IsYearLongData(const boost::shared_ptr<NFmiFastQueryInfo> &info)
   }
 }
 
-bool IsModelClimatologyData(const boost::shared_ptr<NFmiFastQueryInfo> &info)
+bool IsModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   try
   {
@@ -475,7 +475,7 @@ bool IsModelClimatologyData(const boost::shared_ptr<NFmiFastQueryInfo> &info)
   }
 }
 
-NFmiMetTime GetUsedTimeIfModelClimatologyData(boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiMetTime GetUsedTimeIfModelClimatologyData(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                               const NFmiMetTime &theTime)
 {
   try
@@ -501,7 +501,7 @@ NFmiMetTime GetUsedTimeIfModelClimatologyData(boost::shared_ptr<NFmiFastQueryInf
   }
 }
 
-bool IsMovingSoundingData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+bool IsMovingSoundingData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
@@ -521,7 +521,7 @@ bool IsMovingSoundingData(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
 // Lightning eli salama tyyppi datalla on yksi feikki asema ja paljon aikoja, jos useita salamoita
 // tai vastaavia havaintoja on havaittu. Datassa pitää olla latitude ja longitude parametrit,
 // jotta jokaisella satunnaiselle havainnolle saadaan kulloiseenkin aikaan oikea lokaatio.
-bool IsLightningTypeData(boost::shared_ptr<NFmiFastQueryInfo> &info)
+bool IsLightningTypeData(std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   if (info && !info->IsGrid())
   {
@@ -533,7 +533,7 @@ bool IsLightningTypeData(boost::shared_ptr<NFmiFastQueryInfo> &info)
   return false;
 }
 
-bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool FindTimeIndicesForGivenTimeRange(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                       const NFmiMetTime &theStartTime,
                                       long minuteRange,
                                       unsigned long &timeIndex1,
@@ -590,7 +590,7 @@ bool FindTimeIndicesForGivenTimeRange(const boost::shared_ptr<NFmiFastQueryInfo>
   }
 }
 
-bool FindMovingSoundingDataTime(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool FindMovingSoundingDataTime(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                 const NFmiMetTime &theTime,
                                 NFmiLocation &theLocation)
 {
@@ -796,7 +796,7 @@ bool MetaWindParamUsage::IsStreamlinePossible() const
   }
 }
 
-MetaWindParamUsage CheckMetaWindParamUsage(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo)
+MetaWindParamUsage CheckMetaWindParamUsage(const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 {
   try
   {
@@ -941,7 +941,7 @@ std::vector<std::unique_ptr<NFmiDataIdent>> MakePossibleWindMetaParams(
   }
 }
 
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId)
 {
@@ -969,7 +969,7 @@ float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
   }
 }
 
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiMetTime &theTime,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId)
@@ -998,7 +998,7 @@ float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
   }
 }
 
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiPoint &theLatlon,
                        const MetaWindParamUsage &metaWindParamUsage,
                        unsigned long wantedParamId)
@@ -1027,7 +1027,7 @@ float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
   }
 }
 
-float GetMetaWindValue(const boost::shared_ptr<NFmiFastQueryInfo> &theInfo,
+float GetMetaWindValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                        const NFmiMetTime &theTime,
                        const NFmiPoint &theLatlon,
                        const MetaWindParamUsage &metaWindParamUsage,
@@ -1212,7 +1212,7 @@ void CalcMatrixVcomponentFromSpeedAndDirection(const NFmiDataMatrix<float> &ws,
   }
 }
 
-bool SetInfoToGridPoint(boost::shared_ptr<NFmiFastQueryInfo> &info,
+bool SetInfoToGridPoint(std::shared_ptr<NFmiFastQueryInfo> &info,
                         unsigned long gridPointX,
                         unsigned long gridPointY)
 {

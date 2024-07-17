@@ -17,7 +17,7 @@ class NFmiArea;
 
 namespace NFmiAreaFactory
 {
-typedef boost::shared_ptr<NFmiArea> return_type;
+typedef std::shared_ptr<NFmiArea> return_type;
 
 #ifndef WGS84
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,

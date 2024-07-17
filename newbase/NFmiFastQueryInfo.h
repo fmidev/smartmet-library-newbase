@@ -490,9 +490,9 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
     return dummy;
   }
   virtual void DataFilePattern(const std::string & /* theDataFilePattern */) {}
-  virtual boost::shared_ptr<NFmiQueryData> DataReference()
+  virtual std::shared_ptr<NFmiQueryData> DataReference()
   {
-    return boost::shared_ptr<NFmiQueryData>();
+    return std::shared_ptr<NFmiQueryData>();
   }  // HUOM! ei saa palauttaa itsRefQueryData -data osaa shared-pointterissa, koska se deletoisi
      // lopuksi datan (TÄMÄ siis overridataan lapsessa!)
   NFmiInfoData::Type DataType() const { return itsDataType; };
