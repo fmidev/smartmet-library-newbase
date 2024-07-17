@@ -103,7 +103,7 @@ class MyGrid
     itsNY = theGrid.YNumber();
     return *this;
   }
-  bool operator==(const MyGrid &theGrid)
+  bool operator==(const MyGrid &theGrid) const
   {
     if (itsNX == theGrid.itsNX)
       if (itsNY == theGrid.itsNY)
@@ -122,7 +122,7 @@ class MyGrid
 
   bool operator<(const MyGrid &theGrid) const;
 
-  bool operator==(const NFmiGrid &theGrid)
+  bool operator==(const NFmiGrid &theGrid) const
   {
     MyGrid tmpGrid(theGrid);
     return (*this == tmpGrid);
