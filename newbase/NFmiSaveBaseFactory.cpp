@@ -12,7 +12,6 @@
 #include "NFmiStationBag.h"
 #include "NFmiVersion.h"
 
-#include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
 
