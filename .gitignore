@@ -12,3 +12,4 @@ barfoo
 .project
 .settings/
 /smartmet-library-newbase.tar.gz
+/.vscode
