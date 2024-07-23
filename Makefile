@@ -27,7 +27,8 @@ LIBS += -lsmartmet-gis \
 	-lboost_regex \
 	-lboost_iostreams \
 	-lboost_thread \
-	$(REQUIRED_LIBS)
+	$(REQUIRED_LIBS) \
+	$(PREFIX_LDFLAGS)
 
 # What to install
 

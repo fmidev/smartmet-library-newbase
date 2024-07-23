@@ -26,7 +26,9 @@ LIBS +=  ../libsmartmet-newbase.so \
 	-lboost_thread \
 	-lboost_system \
 	$(REQUIRED_LIBS) \
-	-lpthread -lz -lbz2 -lrt
+	$(PREFIX_LDFLAGS) \
+	-lz -lbz2 \
+	-lpthread -lrt
 
 all: $(PROG)
 clean:
