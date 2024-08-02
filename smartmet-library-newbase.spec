@@ -9,8 +9,8 @@
 %define smartmet_boost boost
 %endif
 
-%define smartmet_fmt_min 8.1.1
-%define smartmet_fmt_max 8.2.0
+%define smartmet_fmt_min 11.0.0
+%define smartmet_fmt_max 12.0.0
 
 Summary: newbase library
 Name: %{SPECNAME}
@@ -39,7 +39,7 @@ Requires: smartmet-library-gis >= 24.7.12
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
-Requires: fmt >= %{smartmet_fmt_min}, fmt <= %{smartmet_fmt_max}
+Requires: fmt-libs >= %{smartmet_fmt_min}, fmt-libs <= %{smartmet_fmt_max}
 Requires: gdal38-libs
 Requires: geos312
 #TestRequires: %{smartmet_boost}-devel
