@@ -232,7 +232,7 @@ void NFmiParamBag::Destroy()
  * \param theBag Undocumented
  * \result Undocumented
  *
- * \todo Change to use either boost::shared_ptr or vectors for interval variables.
+ * \todo Change to use either std::shared_ptr or vectors for interval variables.
  */
 // ----------------------------------------------------------------------
 

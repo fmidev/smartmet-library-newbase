@@ -299,7 +299,7 @@ double NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() const
  * \param theBottomLeftLatLon Undocumented
  * \param theTopRightLatLon Undocumented
  * \return Undocumented
- * \todo Return an boost::shared_ptr instead
+ * \todo Return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -341,7 +341,7 @@ NFmiArea *NFmiGnomonicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Return and boost::shared_ptr instead
+ * \todo Return and std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 

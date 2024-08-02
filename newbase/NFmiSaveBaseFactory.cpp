@@ -21,7 +21,6 @@
 #include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-#include <boost/atomic.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
 
@@ -33,7 +32,7 @@
  *
  * \param classId The ID of the object to be created
  * \return Pointer to the new object
- * \todo Should return an boost::shared_ptr
+ * \todo Should return an std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

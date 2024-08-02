@@ -805,7 +805,7 @@ bool NFmiSuperSmartInfo::LocationIndex2XYPosition(unsigned long theIndex,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return boost::shared_ptr
+ * \todo Should return std::shared_ptr
  */
 // ----------------------------------------------------------------------
 

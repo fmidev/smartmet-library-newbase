@@ -389,7 +389,7 @@ double NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() cons
  * \param theBottomLeftLatLon Undocumented
  * \param theTopRightLatLon Undocumented
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -431,7 +431,7 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 

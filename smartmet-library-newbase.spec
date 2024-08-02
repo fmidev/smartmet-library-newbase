@@ -14,8 +14,8 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.5.17
-Release: 2%{?dist}.fmi
+Version: 24.7.12
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -29,14 +29,13 @@ BuildRequires: gdal38-devel
 BuildRequires: geos312-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 24.5.6
-BuildRequires: smartmet-library-gis-devel >= 24.3.25
+BuildRequires: smartmet-library-macgyver-devel >= 24.7.12
+BuildRequires: smartmet-library-gis-devel >= 24.7.12
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 24.5.6
-Requires: smartmet-library-gis >= 24.3.25
-Requires: %{smartmet_boost}-filesystem
+Requires: smartmet-library-macgyver >= 24.7.12
+Requires: smartmet-library-gis >= 24.7.12
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -50,10 +49,10 @@ Requires: geos312
 #TestRequires: gdal38-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 24.3.25
-#TestRequires: smartmet-library-macgyver-devel >= 24.5.6
-#TestRequires: smartmet-library-macgyver >= 24.5.6
-#TestRequires: smartmet-library-gis >= 24.3.25
+#TestRequires: smartmet-library-gis-devel >= 24.7.12
+#TestRequires: smartmet-library-macgyver-devel >= 24.7.12
+#TestRequires: smartmet-library-macgyver >= 24.7.12
+#TestRequires: smartmet-library-gis >= 24.7.12
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -92,8 +91,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME}
-Requires: smartmet-library-gis-devel >= 24.3.25
-Requires: smartmet-library-macgyver-devel >= 24.1.17
+Requires: smartmet-library-gis-devel >= 24.7.12
+Requires: smartmet-library-macgyver-devel >= 24.7.12
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -115,6 +114,9 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Fri Jul 12 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.12-1.fmi
+- Replace many boost library types with C++ standard library ones
+
 * Fri May 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.17-2.fmi
 - Added parameter 'WSI' for WIGOS station identifiers
 

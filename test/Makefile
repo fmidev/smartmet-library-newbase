@@ -20,14 +20,16 @@ INCLUDES += \
 	-I/usr/include/smartmet \
 	-I.
 
-LIBS +=  ../libsmartmet-newbase.so \
+LIBS +=  \
+     ../libsmartmet-newbase.so \
+	$(PREFIX_LDFLAGS) \
 	-lsmartmet-macgyver \
-	-lboost_filesystem \
 	-lboost_iostreams \
 	-lboost_thread \
 	-lboost_system \
 	$(REQUIRED_LIBS) \
-	-lpthread -lz -lbz2 -lrt
+	-lz -lbz2 \
+	-lpthread -lrt
 
 all: $(PROG)
 clean:

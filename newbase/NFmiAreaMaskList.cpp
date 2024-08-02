@@ -34,24 +34,24 @@ NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther) = default;
 
 NFmiAreaMaskList& NFmiAreaMaskList::operator = (const NFmiAreaMaskList&) = default;
 
-boost::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
-    const boost::shared_ptr<NFmiAreaMaskList> &theOther)
+std::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
+    const std::shared_ptr<NFmiAreaMaskList> &theOther)
 {
   try
   {
     if (theOther)
     {
-      boost::shared_ptr<NFmiAreaMaskList> copyMaskList(new NFmiAreaMaskList());
+      std::shared_ptr<NFmiAreaMaskList> copyMaskList(new NFmiAreaMaskList());
       for (theOther->Reset(); theOther->Next();)
       {
-        boost::shared_ptr<NFmiAreaMask> copyedMask(theOther->Current()->Clone());
+        std::shared_ptr<NFmiAreaMask> copyedMask(theOther->Current()->Clone());
         copyMaskList->Add(copyedMask);
       }
       copyMaskList->CheckIfMaskUsed();
       return copyMaskList;
     }
 
-    return boost::shared_ptr<NFmiAreaMaskList>();
+    return std::shared_ptr<NFmiAreaMaskList>();
   }
   catch (...)
   {
@@ -80,7 +80,7 @@ unsigned long NFmiAreaMaskList::NumberOfItems()
  */
 // ----------------------------------------------------------------------
 
-void NFmiAreaMaskList::Add(boost::shared_ptr<NFmiAreaMask> &theMask)
+void NFmiAreaMaskList::Add(std::shared_ptr<NFmiAreaMask> &theMask)
 {
   try
   {
@@ -158,7 +158,7 @@ bool NFmiAreaMaskList::IsValidIndex(int theIndex)
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
+std::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
 {
   try
   {
@@ -166,7 +166,7 @@ boost::shared_ptr<NFmiAreaMask> NFmiAreaMaskList::Current()
       return itsMaskVector[itsCurrentIndex];
 
     // jos indeksi on vektorin ulkopuolella, palautetaan 0-pointteri (shared_ptr tyhjänä)
-    static boost::shared_ptr<NFmiAreaMask> dummy;
+    static std::shared_ptr<NFmiAreaMask> dummy;
     return dummy;
   }
   catch (...)

@@ -40,10 +40,10 @@ class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
   NFmiAreaMask* Clone() const;
 #ifdef UNIX
   // RHEL6 compiler bug fails the reference
-  void Init(boost::shared_ptr<NFmiFastQueryInfo> theInfo,
+  void Init(std::shared_ptr<NFmiFastQueryInfo> theInfo,
             const NFmiCalculationCondition& theOperation);
 #else
-  void Init(boost::shared_ptr<NFmiFastQueryInfo>& theInfo,
+  void Init(std::shared_ptr<NFmiFastQueryInfo>& theInfo,
             const NFmiCalculationCondition& theOperation);
 #endif
 

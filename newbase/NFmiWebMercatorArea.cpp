@@ -89,7 +89,7 @@ NFmiWebMercatorArea::NFmiWebMercatorArea(const NFmiWebMercatorArea& theLatLonAre
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 
@@ -322,7 +322,7 @@ double NFmiWebMercatorArea::YScale() const
  * \param theBottomLeftLatLon Undocumented
  * \param theTopRightLatLon Undocumented
  * \return Undocumented
- * \todo Should return an boost::shared_ptr instead
+ * \todo Should return an std::shared_ptr instead
  */
 // ----------------------------------------------------------------------
 

@@ -281,11 +281,11 @@ bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon, NFmiPoint &topRightLatlon
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<NFmiArea> Create(const std::string &theProjection)
+std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 {
   try
   {
-    boost::shared_ptr<NFmiArea> area;
+    std::shared_ptr<NFmiArea> area;
 
     string projection = theProjection;
     NFmiStringTools::TrimAll(projection);  // siivotaan mahdolliset etu ja taka white spacet pois
