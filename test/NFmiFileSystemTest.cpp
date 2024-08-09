@@ -7,9 +7,9 @@
 
 #include "NFmiFileSystem.h"
 #include "NFmiStringTools.h"
-#include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
 #include <macgyver/FileSystem.h>
+#include <macgyver/StringConversion.h>
 #include <list>
 #include <string>
 
@@ -226,7 +226,7 @@ void directoryfiles()
 
   if (result.size() != 4)
     TEST_FAILED("Failed to find 4 regular files from the test directory, found " +
-                boost::lexical_cast<std::string>(result.size()));
+                Fmi::to_string(result.size()));
 
   // The following test was wrong
   // From

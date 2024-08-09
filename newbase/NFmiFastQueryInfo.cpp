@@ -31,6 +31,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -6122,7 +6123,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       if (!Param(id))
         throw Fmi::Exception(BCP,
                              "Internal error: could not switch to parameter " +
-                                 boost::lexical_cast<std::string>(id));
+                                 Fmi::to_string(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
 
@@ -6246,7 +6247,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       if (!Param(id))
         throw Fmi::Exception(BCP,
                              "Internal error: could not switch to parameter " +
-                                 boost::lexical_cast<std::string>(id));
+                                 Fmi::to_string(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
 
@@ -6393,7 +6394,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       if (!Param(id))
         throw Fmi::Exception(BCP,
                              "Internal error: could not switch to parameter " +
-                                 boost::lexical_cast<std::string>(id));
+                                 Fmi::to_string(id));
       SetIsSubParamUsed(isSubParamUsed);
     }
 

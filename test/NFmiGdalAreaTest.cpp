@@ -7,8 +7,8 @@
 
 #include "NFmiGdalArea.h"
 
-#include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
+#include <macgyver/StringConversion.h>
 #include <gdal_version.h>
 #include <stdexcept>
 #include <string>
@@ -177,13 +177,13 @@ void worldxyheight()
     NFmiGdalArea area("FMI", "EPSG:2393", NFmiPoint(20, 60), NFmiPoint(40, 70));
     double h = std::round(area.WorldXYHeight() / 1000.0);
     if (h != 1147)
-      TEST_FAILED("YKJ height should be 1147 km, got " + boost::lexical_cast<std::string>(h));
+      TEST_FAILED("YKJ height should be 1147 km, got " + Fmi::to_string(h));
   }
   {
     NFmiGdalArea area("FMI", "WGS84", NFmiPoint(20, 60), NFmiPoint(40, 70));
     double h = std::round(area.WorldXYHeight() / 1000.0);
     if (h != 1112)
-      TEST_FAILED("WGS84 height should be 1112, got " + boost::lexical_cast<std::string>(h));
+      TEST_FAILED("WGS84 height should be 1112, got " + Fmi::to_string(h));
   }
 
   TEST_PASSED();
@@ -198,13 +198,13 @@ void worldxywidth()
     NFmiGdalArea area("FMI", "EPSG:2393", NFmiPoint(20, 60), NFmiPoint(40, 70));
     int h = std::round(area.WorldXYWidth() / 1000.0);
     if (h != 883)
-      TEST_FAILED("YKJ width should be 883, got " + boost::lexical_cast<std::string>(h));
+      TEST_FAILED("YKJ width should be 883, got " + Fmi::to_string(h));
   }
   {
     NFmiGdalArea area("FMI", "WGS84", NFmiPoint(20, 60), NFmiPoint(40, 70));
     int h = std::round(area.WorldXYWidth() / 1000.0);
     if (h != 940)
-      TEST_FAILED("WGS84 width should be 940, got " + boost::lexical_cast<std::string>(h));
+      TEST_FAILED("WGS84 width should be 940, got " + Fmi::to_string(h));
   }
 
   TEST_PASSED();

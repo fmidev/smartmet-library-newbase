@@ -18,11 +18,11 @@
 #include "NFmiRawData.h"
 #include "NFmiVersion.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/MappedFile.h>
+#include <macgyver/StringConversion.h>
 #include <cstring>
 #include <filesystem>
 #include <iostream>
@@ -207,13 +207,13 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     if (itsOffset + poolsize > filesize)
       throw Fmi::Exception(BCP,
                            "Querydata file " +
-                               boost::lexical_cast<std::string>(itsOffset + poolsize - filesize) +
+                               Fmi::to_string(itsOffset + poolsize - filesize) +
                                " bytes too short: '" + filename + "'");
 
     else if (filesize - itsOffset - poolsize > 2)
       throw Fmi::Exception(BCP,
                            "Querydata file " +
-                               boost::lexical_cast<std::string>(filesize - itsOffset - poolsize) +
+                               Fmi::to_string(filesize - itsOffset - poolsize) +
                                " bytes too long: '" + filename + "'");
 
     // memory map starting from this file position
