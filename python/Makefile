@@ -22,7 +22,6 @@ LIBS += \
 	-lboost_thread \
 	-lboost_system \
 	$(REQUIRED_LIBS) \
-	-lz -lbz2 \
 	-lpthread -lrt
 
 all: newbase.so load-test
