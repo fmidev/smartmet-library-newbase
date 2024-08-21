@@ -1,2 +1,4 @@
-/newbase-bindig.cpp
-/newbase-bindig.o
+/newbase-binding.cpp
+/newbase-binding.o
+/newbase-binding.d
+/newwbase.so
