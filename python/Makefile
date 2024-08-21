@@ -30,6 +30,9 @@ all: newbase.so load-test
 load-test: newbase.so
 	@LD_LIBRARY_PATH=.. $(PYTHON) -c "import newbase; print(newbase.__file__)" >/dev/null
 
+test:
+	LD_LIBRARY_PATH=.. $(PYTHON) test_newbase.py
+
 install:
 	# NOTE: installs for current Python3 version only
 	install -D -m 644 newbase.so $(datadir)/smartmet/python/newbase.so

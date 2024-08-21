@@ -103,7 +103,8 @@ install:
 	$(MAKE) -C python $@
 
 test:
-	+cd test && make test
+	$(MAKE) -C test test
+	$(MAKE) -C python test
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
