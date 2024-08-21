@@ -56,6 +56,11 @@ Requires: geos312
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
+
+BuildRequires: python3
+BuildRequires: python3-devel
+BuildRequires: python-PyBindGen
+
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
 Obsoletes: libsmartmet-newbase-debuginfo < 16.12.19
@@ -87,10 +92,11 @@ rm -rf $RPM_BUILD_ROOT
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+####################################################################
 %package -n %{SPECNAME}-devel
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
-Requires: %{SPECNAME}
+Requires: %{SPECNAME} = %{version}-%{release}
 Requires: smartmet-library-gis-devel >= 24.8.7
 Requires: smartmet-library-macgyver-devel >= 24.8.7
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
@@ -102,6 +108,8 @@ FMI newbase development files
 %defattr(0664,root,root,0775)
 %{_includedir}/smartmet/%{DIRNAME}
 
+####################################################################
+
 %package -n %{SPECNAME}-static
 Summary: FMI newbase static library
 Provides: %{SPECNAME}-static
@@ -112,6 +120,20 @@ FMI newbase static library
 %files -n %{SPECNAME}-static
 %defattr(0664,root,root,0775)
 %{_libdir}/libsmartmet-%{DIRNAME}.a
+
+####################################################################
+
+%package -n %{SPECNAME}-python
+Summary: FMI newbase python bindings
+Requires: %{SPECNAME} = %{version}-%{release}
+Conflicts: python3-smartmet-library-newbase python36-smartmet-library-newbase
+Requires: python3
+
+%description -n %{SPECNAME}-python
+FMI newbase python bindings
+
+%files -n %{SPECNAME}-python
+%{python3_sitearch}/newbase.so
 
 %changelog
 * Wed Aug  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.7-1.fmi

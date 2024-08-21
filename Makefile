@@ -57,7 +57,7 @@ INCLUDES := -Iinclude $(INCLUDES)
 
 # The rules
 
-all: objdir $(LIBFILE) $(ALIBFILE)
+all: objdir $(LIBFILE) $(ALIBFILE) python-bindings
 debug: all
 release: all
 profile: all
@@ -79,6 +79,10 @@ clean:
 	rm -f $(LIBFILE) $(ALIBFILE) *~ $(SUBNAME)/*~
 	rm -rf $(objdir)
 	rm -f test/*Test
+	$(MAKE) -C python clean
+
+python-bindings: $(LIBFILE)
+	$(MAKE) -C python
 
 format:
 	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
@@ -96,6 +100,7 @@ install:
 	$(INSTALL_PROG) $(LIBFILE) $(libdir)/$(LIBFILE)
 	echo $(INSTALL_DATA) $(ALIBFILE) $(libdir)/$(ALIBFILE)
 	$(INSTALL_DATA) $(ALIBFILE) $(libdir)/$(ALIBFILE)
+	$(MAKE) -C python $@
 
 test:
 	+cd test && make test
