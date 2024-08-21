@@ -15,7 +15,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 24.8.21
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -146,6 +146,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Wed Aug 21 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.21-2.fmi
+- [python] Fix build and install for all installed Python3 versions
+
 * Wed Aug 21 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.21-1.fmi
 - Initial version of Python3 support integrated into smartmet-librar-newbase build instead of separate project
 
