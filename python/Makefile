@@ -31,9 +31,10 @@ load-test: newbase.so
 	@LD_LIBRARY_PATH=.. $(PYTHON) -c "import newbase; print(newbase.__file__)" >/dev/null
 
 install:
-	install -D -m 644 newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
-	# Due to unknown reason the newbase.so is not found not be stripped by rpmbuild
-	strip -g $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
+	# NOTE: installs for current Python3 version only
+	install -D -m 644 newbase.so $(datadir)/smartmet/python/newbase.so
+	install -d $(prefix)/..$(PYTHON_SITE_ARCH)
+	ln -sr $(datadir)/smartmet/python/newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
 
 clean:
 	rm -f newbase-binding.cpp *.o *.d $(LIBFILE)

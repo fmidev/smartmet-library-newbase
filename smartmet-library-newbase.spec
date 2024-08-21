@@ -81,6 +81,8 @@ make test %{_smp_mflags}
 
 %install
 %makeinstall
+rm -f $RPM_BUILD_ROOT%{python3_sitearch}/newbase.so
+strip $RPM_BUILD_ROOT%{_datadir}/smartmet/python/newbase.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -133,7 +135,15 @@ Requires: python3
 FMI newbase python bindings
 
 %files -n %{SPECNAME}-python
-%{python3_sitearch}/newbase.so
+%{_datadir}/smartmet/python/newbase.so
+
+%post -n %{SPECNAME}-python
+for dir in /usr/lib64/python3*/site-packages; do ln -srfv %{_datadir}/smartmet/python/newbase.so $dir/newbase.so; done
+
+%postun -n %{SPECNAME}-python
+if [ $1 -eq 0 ]; then
+for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; then rm -fv $dir/newbase.so; fi; done
+fi
 
 %changelog
 * Wed Aug 21 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.21-1.fmi
