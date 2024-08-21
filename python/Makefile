@@ -42,7 +42,7 @@ clean:
 $(LIBFILE): newbase-binding.o ../libsmartmet-newbase.so
 	$(CXX) -shared -Wl,--retain-symbols-file,newbase-binding.sym -o $@ newbase-binding.o $(LIBS)
 	@echo "Checking $(LIBFILE) for unresolved references (newbase ones only)"
-	@if ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol |\
+	@if LD_LIBRARY_PATH=.. ldd -r $(LIBFILE) 2>&1 | c++filt | grep ^undefined\ symbol |\
 			grep -P ':\ NFmi'; \
 	then \
 		rm -v $(LIBFILE); \
