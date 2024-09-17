@@ -14,8 +14,8 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.8.21
-Release: 3%{?dist}.fmi
+Version: 24.9.17
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -146,6 +146,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Tue Sep 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.17-1.fmi
+- Added cloud ceiling height (feet) fractiles parameters (QDTOOLS-216)
+
 * Wed Aug 21 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.21-3.fmi
 - [python] Fix build and add test
 
