@@ -1451,6 +1451,16 @@ enum FmiParameterName
 
   kFmiWildFireWarning,
 
+  // EC/MEPS enseble ceiling fractiles in feet (QDTOOLS-216)
+
+  kFmiCloudCeilingHFTF0 = 1520,
+  kFmiCloudCeilingHFTF10 = 1521,
+  kFmiCloudCeilingHFTF25 = 1522,
+  kFmiCloudCeilingHFTF50 = 1523,
+  kFmiCloudCeilingHFTF75 = 1524,
+  kFmiCloudCeilingHFTF90 = 1525,
+  kFmiCloudCeilingHFTF100 = 1526,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,
@@ -1944,7 +1954,7 @@ enum FmiParameterName
   kFmiWindCompass32,
   kFmiWindCompass8,
   kFmiXMLTime,
-  kFmiWSI, // WIGOS station identifier
+  kFmiWSI,  // WIGOS station identifier
 
   // NetCDF parameters, last generated on 201X.MM.DD ????
 
