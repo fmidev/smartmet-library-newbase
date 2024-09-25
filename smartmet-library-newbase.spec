@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.9.17
+Version: 24.9.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -146,6 +146,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Wed Sep 25 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.25-1.fmi
+- STU-24852: Add new parameters for MU CAPE and CIN
+
 * Tue Sep 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.17-1.fmi
 - Added cloud ceiling height (feet) fractiles parameters (QDTOOLS-216)
 
