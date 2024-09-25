@@ -1461,6 +1461,10 @@ enum FmiParameterName
   kFmiCloudCeilingHFTF90 = 1525,
   kFmiCloudCeilingHFTF100 = 1526,
 
+  // New ECMWF CAPE and CIN
+  kFmiMostUnstableCAPE = 1527,
+  kFmiMostUnstableCIN = 1528,
+
   // Add a bunch of extreme fractile parameters (on the high and low end of the distribution)
 
   kFmiTemperatureF99 = 4500,

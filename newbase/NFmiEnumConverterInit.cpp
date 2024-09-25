@@ -562,6 +562,8 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "MonthlyPrecipitationF75", kFmiMonthlyPrecipitationF75},
       { "MonthlyPrecipitationF90", kFmiMonthlyPrecipitationF90},
       { "MonthlyPrecipitationF97.5", kFmiMonthlyPrecipitationF97_5},
+      { "MostUnstableCAPE", kFmiMostUnstableCAPE},
+      { "MostUnstableCIN", kFmiMostUnstableCIN},
       { "MugwortPollenAvailable", kFmiMugwortPollenAvailable},
       { "MugwortPollenConcentration", kFmiMugwortPollenConcentration},
       { "MugwortPollenRemainingRatio", kFmiMugwortPollenRemainingRatio},
