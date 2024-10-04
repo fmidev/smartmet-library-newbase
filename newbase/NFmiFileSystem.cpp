@@ -21,8 +21,6 @@
 #include <stdexcept>
 #include <vector>  // for time()
 
-#include <boost/filesystem/operations.hpp>  // uusi FileSize toteutus tarvitsee tätä
-
 #ifndef _MSC_VER
 #include <dirent.h>
 #else
@@ -49,7 +47,6 @@
 #ifdef BOOST
 // Finding files is implemented in Linux using boost filesystem & regex
 #include <boost/algorithm/string/predicate.hpp>  //Lasse
-#include <boost/filesystem/convenience.hpp>
 #include <filesystem>
 #include <boost/regex.hpp>
 #endif
