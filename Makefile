@@ -82,7 +82,9 @@ clean:
 	$(MAKE) -C python clean
 
 python-bindings: $(LIBFILE)
+ifneq ($(ASAN),yes)
 	$(MAKE) -C python
+endif
 
 format:
 	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
@@ -104,7 +106,9 @@ install:
 
 test:
 	$(MAKE) -C test test
+ifneq ($(ASAN),yes)
 	$(MAKE) -C python test
+endif
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
