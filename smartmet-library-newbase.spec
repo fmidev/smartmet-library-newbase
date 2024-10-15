@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.9.25
+Version: 24.10.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -29,12 +29,12 @@ BuildRequires: gdal38-devel
 BuildRequires: geos312-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 24.8.7
+BuildRequires: smartmet-library-macgyver-devel >= 24.10.4
 BuildRequires: smartmet-library-gis-devel >= 24.8.7
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 24.8.7
+Requires: smartmet-library-macgyver >= 24.10.4
 Requires: smartmet-library-gis >= 24.8.7
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
@@ -50,8 +50,8 @@ Requires: geos312
 #TestRequires: make
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 24.8.7
-#TestRequires: smartmet-library-macgyver-devel >= 24.8.7
-#TestRequires: smartmet-library-macgyver >= 24.8.7
+#TestRequires: smartmet-library-macgyver-devel >= 24.10.4
+#TestRequires: smartmet-library-macgyver >= 24.10.4
 #TestRequires: smartmet-library-gis >= 24.8.7
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
@@ -100,7 +100,7 @@ Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
 Requires: smartmet-library-gis-devel >= 24.8.7
-Requires: smartmet-library-macgyver-devel >= 24.8.7
+Requires: smartmet-library-macgyver-devel >= 24.10.4
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -146,6 +146,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Tue Oct 15 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.15-1.fmi
+- Removed landscape interpolation as obsolete
+
 * Wed Sep 25 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.25-1.fmi
 - STU-24852: Add new parameters for MU CAPE and CIN
 
