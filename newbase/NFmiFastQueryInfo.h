@@ -9,8 +9,8 @@
 
 #include "NFmiDataMatrix.h"
 #include "NFmiQueryInfo.h"
-#include <memory>
 #include <boost/unordered_map.hpp>
+#include <memory>
 
 class NFmiRect;
 
@@ -199,43 +199,6 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
 
   bool GetInterpolatedLevel(std::vector<float> &values, const NFmiMetTime &time);
   bool GetInterpolatedCube(std::vector<float> &values, const NFmiMetTime &t);
-
-  NFmiDataMatrix<float> LandscapeValues(const NFmiDataMatrix<float> &theDEMMatrix,
-                                        const NFmiDataMatrix<bool> &theWaterFlagMatrix);
-  NFmiDataMatrix<float> LandscapeValues(const NFmiMetTime &theInterpolatedTime,
-                                        const NFmiDataMatrix<float> &theDEMMatrix,
-                                        const NFmiDataMatrix<bool> &theWaterFlagMatrix);
-  NFmiDataMatrix<float> LandscapeCroppedValues(
-      int x1,
-      int y1,
-      int x2,
-      int y2,
-      const NFmiDataMatrix<float> &theDEMMatrix,
-      const NFmiDataMatrix<bool> &theWaterFlagMatrix,
-      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
-          NFmiDataMatrix<NFmiLocationCache>());
-
-  NFmiDataMatrix<float> LandscapeCroppedValues(
-      const NFmiMetTime &theInterpolatedTime,
-      int x1,
-      int y1,
-      int x2,
-      int y2,
-      const NFmiDataMatrix<float> &theDEMMatrix,
-      const NFmiDataMatrix<bool> &theWaterFlagMatrix,
-      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
-          NFmiDataMatrix<NFmiLocationCache>());
-
-  NFmiDataMatrix<float> LandscapeCachedInterpolation(
-      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
-      const NFmiDataMatrix<float> &theDEMMatrix,
-      const NFmiDataMatrix<bool> &theWaterFlagMatrix);
-
-  NFmiDataMatrix<float> LandscapeCachedInterpolation(
-      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache,
-      const NFmiTimeCache &theTimeCache,
-      const NFmiDataMatrix<float> &theDEMMatrix,
-      const NFmiDataMatrix<bool> &theWaterFlagMatrix);
 
   NFmiDataMatrix<float> Values(NFmiDataModifier *theFunction,
                                const NFmiMetTime &theTime,
@@ -514,44 +477,6 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   float GetLevelHeightValue(FmiParameterName theParId,
                             const NFmiLocationCache &theLocationCache,
                             const NFmiTimeCache &theTimeCache);
-
-  // Interpolate taking lapse rate and land/sea mask into account
-  float LandscapeInterpolatedValue(float theHeight,
-                                   const NFmiPoint &theLatLon,
-                                   const NFmiMetTime &theTime,
-                                   int theMaxMinuteRange = 0);
-
-  float LandscapeInterpolatedValue(float theHeight,
-                                   bool theWaterFlag,
-                                   const NFmiPoint &theLatLon,
-                                   const NFmiMetTime &theTime,
-                                   int theMaxMinuteRange = 0);
-
-  float LandscapeInterpolatedValueDewPoint(float theHeight,
-                                           const NFmiPoint &theLatLon,
-                                           const NFmiMetTime &theTime,
-                                           int theMaxMinuteRange = 0);
-
-  float LandscapeInterpolatedValueDewPoint(float theHeight,
-                                           bool theWaterFlag,
-                                           const NFmiPoint &theLatLon,
-                                           const NFmiMetTime &theTime,
-                                           int theMaxMinuteRange = 0);
-
-  NFmiDataMatrix<float> LandscapeInterpolatedValuesDewPoint(
-      const NFmiDataMatrix<float> &tdewMatrix,
-      const NFmiDataMatrix<float> &temperatureMatrix,
-      NFmiDataMatrix<float> &humidityMatrix,
-      const NFmiDataMatrix<NFmiLocationCache> &theLocationCache =
-          NFmiDataMatrix<NFmiLocationCache>());
-
-  NFmiDataMatrix<float> LandscapeInterpolatedValues(const NFmiDataMatrix<float> &theMatrix,
-                                                    const Fmi::CoordinateMatrix &gridPointMatrix,
-                                                    const NFmiDataMatrix<float> &demMatrix,
-                                                    const NFmiDataMatrix<bool> &waterFlagMatrix,
-                                                    const NFmiDataMatrix<float> &heightMatrix,
-                                                    const NFmiDataMatrix<float> &lapseRateMatrix,
-                                                    const NFmiDataMatrix<float> &maskMatrix);
 
   float GetCurrentLevelPressure();
   float GetCurrentLevelPressure(const NFmiPoint &theLatlon);
