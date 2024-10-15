@@ -37,7 +37,7 @@ install:
 	# NOTE: installs for current Python3 version only
 	install -D -m 644 newbase.so $(datadir)/smartmet/python/newbase.so
 	install -d $(prefix)/..$(PYTHON_SITE_ARCH)
-	ln -sr $(datadir)/smartmet/python/newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
+	ln -srf $(datadir)/smartmet/python/newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
 
 clean:
 	rm -f newbase-binding.cpp *.o *.d $(LIBFILE)
