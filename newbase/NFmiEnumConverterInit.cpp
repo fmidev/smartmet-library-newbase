@@ -625,6 +625,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "PackedAviationCloud2", kFmiPackedAviationCloud2},
       { "PackedAviationCloud3", kFmiPackedAviationCloud3},
       { "PackedAviationCloud4", kFmiPackedAviationCloud4},
+      { "ParticleNumberConcentration", kFmiParticleNumberConcentration},
       { "PastWeather1", kFmiPastWeather1},
       { "PastWeather2", kFmiPastWeather2},
       { "PedestrianIndex", kFmiPedestrianIndex},

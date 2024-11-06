@@ -1816,7 +1816,8 @@ enum FmiParameterName
   kFmiVolumetricSoilWaterLayer28 = 4850,
   kFmiVolumetricSoilWaterLayerAnomaly28 = 4851,
 
-  kFmiLungDepositedSurfaceArea = 4898,  // Enfused model parameters
+  kFmiParticleNumberConcentration = 4897,  // (STU-25609)
+  kFmiLungDepositedSurfaceArea = 4898,     // Enfuser model parameters
   kFmiBlackCarbonConcentration = 4899,
   kFmiCOConcentration = 4900,
   kFmiNOConcentration,
