@@ -87,14 +87,12 @@ strip $RPM_BUILD_ROOT%{_datadir}/smartmet/python/newbase.so
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
 %files
 %defattr(0775,root,root,0775)
 %{_libdir}/libsmartmet-%{DIRNAME}.so
 
-%post -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
-####################################################################
 %package -n %{SPECNAME}-devel
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
