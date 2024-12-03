@@ -103,7 +103,8 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP,
+                                "Initializing NFmiMultiQueryInfo from " + thePath + " failed!");
   }
 }
 
@@ -162,6 +163,9 @@ void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
 {
   try
   {
+    if (theFiles.empty())
+      throw Fmi::Exception(BCP, "Cannot construct NFmiMultiQueryInfo from an empty list of files");
+
     for (const std::string &filename : theFiles)
     {
       std::shared_ptr<NFmiQueryData> qd(new NFmiQueryData(filename));
