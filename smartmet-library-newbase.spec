@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.11.6
+Version: 24.12.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -144,6 +144,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Tue Dec  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.12.3-1.fmi
+- Improved error checking for multiqueryinfo
+
 * Wed Nov  6 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.11.6-1.fmi
 - Added parameter ParticleNumberConcentration (STU-25609)
 
