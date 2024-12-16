@@ -666,6 +666,13 @@ enum FmiParameterName
   kFmiAverageTemperature,
   kFmiTemperatureDeviation = 683,
 
+  // QDTOOLS-235 and STU-25615 added the next five (StdDevHighCld already existed with number 483)
+  kFmiMeanLowCld = 684,
+  kFmiStdDevLowCld = 685,
+  kFmiMeanMiddleCld = 686,
+  kFmiStdDevMiddleCld = 687,
+  kFmiMeanHighCld = 689,
+
   kFmiHumidityCode = 690,
   kFmiHumidityVoltage,
   kFmiAverageHumidity,
