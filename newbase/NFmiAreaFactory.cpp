@@ -675,6 +675,8 @@ return_type CreateProj(const std::string &projString,
     // Build token map, while validating the proj-string
     for (auto &token : tokens)
     {
+      if (token.empty())
+        continue;
       // Split token into key->value pairs
       boost::split(splitToken, token, boost::is_any_of("="));
 
