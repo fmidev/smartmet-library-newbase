@@ -302,6 +302,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "FrostProbability", kFmiFrostProbability},
       { "FrostSum", kFmiFrostSum},
       { "FrozenSnowLoad", kFmiFrozenSnowLoad},
+      { "GeoMagneticRIndex", kFmiGeoMagneticRIndex},
       { "GeomHeight", kFmiGeomHeight},
       { "GeopHeight", kFmiGeopHeight},
       { "GeopHeightF0", kFmiGeopHeightF0},
