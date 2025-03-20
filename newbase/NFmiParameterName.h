@@ -227,6 +227,7 @@ enum FmiParameterName
 
   kFmiSkinTemperature = 235,
   kFmiFeelsLike = 236,
+  kFmiGeoMagneticRIndex = 237,
 
   kFmiOpenLandSnowDepth = 239,
 
