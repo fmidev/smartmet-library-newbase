@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 25.2.18
+Version: 25.3.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -144,6 +144,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Thu Mar 20 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.20-1.fmi
+- Added GeoMagneticRIndex
+
 * Tue Feb 18 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.2.18-1.fmi
 - Update to gdal-3.10, geos-3.13 and proj-9.5
 
