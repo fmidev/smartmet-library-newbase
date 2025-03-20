@@ -14,7 +14,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 24.4.24
+Version: 25.3.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,8 @@ FMI newbase static library
 %{_libdir}/libsmartmet-%{DIRNAME}.a
 
 %changelog
+* Thu Mar 20 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.20-1.fmi
+- Added GeoMagneticRIndex
 * Wed Apr 24 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.24-1.fmi
 - Fixed creation of Mercator projections
 * Wed Apr 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.17-1.fmi
