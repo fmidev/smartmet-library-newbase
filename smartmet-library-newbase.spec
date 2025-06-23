@@ -69,6 +69,7 @@ Requires: geos313
 
 BuildRequires: python3
 BuildRequires: python3-devel
+BuildRequires: python3-setuptools
 BuildRequires: python-PyBindGen
 
 Provides: %{LIBNAME}
