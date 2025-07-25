@@ -39,12 +39,12 @@ BuildRequires: gdal310-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 25.2.18
+BuildRequires: smartmet-library-macgyver-devel >= 25.7.25
 BuildRequires: smartmet-library-gis-devel >= 25.2.18
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 25.2.18
+Requires: smartmet-library-macgyver >= 25.7.25
 Requires: smartmet-library-gis >= 25.2.18
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
@@ -60,8 +60,8 @@ Requires: geos313
 #TestRequires: make
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 25.2.18
-#TestRequires: smartmet-library-macgyver-devel >= 25.2.18
-#TestRequires: smartmet-library-macgyver >= 25.2.18
+#TestRequires: smartmet-library-macgyver-devel >= 25.7.25
+#TestRequires: smartmet-library-macgyver >= 25.7.25
 #TestRequires: smartmet-library-gis >= 25.2.18
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
