@@ -14,7 +14,6 @@
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiAreaTools.h"
-#include <boost/functional/hash.hpp>
 
 // Needed until HashValue API is changed
 
@@ -36,6 +35,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/ProjInfo.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <iostream>
 
 // ----------------------------------------------------------------------
@@ -889,7 +889,7 @@ std::size_t NFmiArea::HashValue() const
   try
   {
     std::size_t hash = itsXYRectArea.HashValue();
-    boost::hash_combine(hash, boost::hash_value(fPacificView));
+    Fmi::hash_merge(hash, fPacificView);
     return hash;
   }
   catch (...)

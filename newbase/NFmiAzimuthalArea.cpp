@@ -87,7 +87,7 @@
 // ======================================================================
 
 #include "NFmiAzimuthalArea.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <cassert>
 #include <cmath>
@@ -1064,17 +1064,17 @@ std::size_t NFmiAzimuthalArea::HashValue() const
   try
   {
     std::size_t hash = NFmiArea::HashValue();
-    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-    boost::hash_combine(hash, itsBottomLeftWorldXY.HashValue());
-    boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
-    boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
-    boost::hash_combine(hash, itsWorldRect.HashValue());
-    boost::hash_combine(hash, boost::hash_value(itsRadialRange));
-    boost::hash_combine(hash, itsCentralLongitude.HashValue());
-    boost::hash_combine(hash, itsCentralLatitude.HashValue());
-    boost::hash_combine(hash, itsTrueLatitude.HashValue());
-    boost::hash_combine(hash, boost::hash_value(itsTrueLatScaleFactor));
+    Fmi::hash_combine(hash, itsTopRightLatLon.HashValue());
+    Fmi::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    Fmi::hash_combine(hash, itsBottomLeftWorldXY.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsXScaleFactor));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsYScaleFactor));
+    Fmi::hash_combine(hash, itsWorldRect.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsRadialRange));
+    Fmi::hash_combine(hash, itsCentralLongitude.HashValue());
+    Fmi::hash_combine(hash, itsCentralLatitude.HashValue());
+    Fmi::hash_combine(hash, itsTrueLatitude.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsTrueLatScaleFactor));
 
     return hash;
   }

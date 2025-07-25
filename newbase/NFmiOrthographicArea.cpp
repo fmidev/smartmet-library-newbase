@@ -65,7 +65,7 @@
 // ======================================================================
 
 #include "NFmiOrthographicArea.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
@@ -701,9 +701,9 @@ std::size_t NFmiOrthographicArea::HashValue() const
   try
   {
     std::size_t hash = NFmiAzimuthalArea::HashValue();
-    boost::hash_combine(hash, boost::hash_value(itsAzimuthAngle));
-    boost::hash_combine(hash, boost::hash_value(itsGlobeRadius));
-    boost::hash_combine(hash, itsCurrentLatlonPoint.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsAzimuthAngle));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsGlobeRadius));
+    Fmi::hash_combine(hash, itsCurrentLatlonPoint.HashValue());
     return hash;
   }
   catch (...)

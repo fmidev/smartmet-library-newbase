@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiRect.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
@@ -575,7 +575,7 @@ std::size_t NFmiRect::HashValue() const
   try
   {
     std::size_t hash = itsPlace.HashValue();
-    boost::hash_combine(hash, itsSize.HashValue());
+    Fmi::hash_combine(hash, itsSize.HashValue());
     return hash;
   }
   catch (...)

@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiRotatedLatLonArea.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
@@ -593,7 +593,7 @@ std::size_t NFmiRotatedLatLonArea::HashValue() const
   try
   {
     std::size_t hash = NFmiLatLonArea::HashValue();
-    boost::hash_combine(hash, itsSouthernPole.HashValue());
+    Fmi::hash_combine(hash, itsSouthernPole.HashValue());
     return hash;
   }
   catch (...)

@@ -24,7 +24,7 @@
 #include "NFmiAngle.h"
 #include "NFmiGeoTools.h"
 #include "NFmiMetTime.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
@@ -1064,7 +1064,7 @@ std::size_t NFmiLocation::HashValue() const
   try
   {
     std::size_t hash = NFmiIndividual::HashValue();
-    boost::hash_combine(hash, itsLatlon.HashValue());
+    Fmi::hash_combine(hash, itsLatlon.HashValue());
     return hash;
   }
   catch (...)

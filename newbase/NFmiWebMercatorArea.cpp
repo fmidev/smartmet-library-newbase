@@ -16,7 +16,7 @@
 // ======================================================================
 
 #include "NFmiWebMercatorArea.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <limits>
@@ -534,11 +534,11 @@ std::size_t NFmiWebMercatorArea::HashValue() const
   try
   {
     std::size_t hash = NFmiArea::HashValue();
-    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-    boost::hash_combine(hash, boost::hash_value(itsXScaleFactor));
-    boost::hash_combine(hash, boost::hash_value(itsYScaleFactor));
-    boost::hash_combine(hash, itsWorldRect.HashValue());
+    Fmi::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    Fmi::hash_combine(hash, itsTopRightLatLon.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsXScaleFactor));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsYScaleFactor));
+    Fmi::hash_combine(hash, itsWorldRect.HashValue());
     return hash;
   }
   catch (...)

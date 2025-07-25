@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiGridBase.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cstring>
@@ -1722,14 +1722,14 @@ std::size_t NFmiGridBase::HashValue() const
   {
     std::size_t hash = 0;
 
-    boost::hash_combine(hash, boost::hash_value(itsStartingCorner));
-    boost::hash_combine(hash, boost::hash_value(itsInterpolationMethod));
-    boost::hash_combine(hash, boost::hash_value(itsXNumber));
-    boost::hash_combine(hash, boost::hash_value(itsYNumber));
-    boost::hash_combine(hash, boost::hash_value(itsFirstX));
-    boost::hash_combine(hash, boost::hash_value(itsFirstY));
-    boost::hash_combine(hash, boost::hash_value(itsLastX));
-    boost::hash_combine(hash, boost::hash_value(itsLastY));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsStartingCorner));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsInterpolationMethod));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsXNumber));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsYNumber));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsFirstX));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsFirstY));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsLastX));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsLastY));
 
     return hash;
   }

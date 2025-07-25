@@ -17,7 +17,7 @@
 
 #include "NFmiIndividual.h"
 #include "NFmiVersion.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <fstream>
 
@@ -136,7 +136,7 @@ std::size_t NFmiIndividual::HashValue() const
   try
   {
     std::size_t hash = itsName.HashValue();
-    boost::hash_combine(hash, boost::hash_value(itsIdent));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsIdent));
     return hash;
   }
   catch (...)

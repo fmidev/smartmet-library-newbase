@@ -21,7 +21,7 @@
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
 
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 
 #include <cctype>
@@ -1118,7 +1118,7 @@ std::size_t NFmiString::HashValue() const
   try
   {
     std::string name(CharPtr());
-    return boost::hash_value(name);
+    return Fmi::hash_value(name);
   }
   catch (...)
   {

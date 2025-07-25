@@ -19,7 +19,7 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiWGS84.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
 
@@ -1449,10 +1449,10 @@ std::size_t NFmiHPlaceDescriptor::HashValue() const
       hash = Area()->HashValueKludge();
 
     if (itsLocationBag != nullptr)
-      boost::hash_combine(hash, itsLocationBag->HashValue());
+      Fmi::hash_combine(hash, itsLocationBag->HashValue());
 
     if (itsGrid != nullptr)
-      boost::hash_combine(hash, itsGrid->HashValue());
+      Fmi::hash_combine(hash, itsGrid->HashValue());
 
     return hash;
   }

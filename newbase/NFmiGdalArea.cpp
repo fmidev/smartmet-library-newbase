@@ -10,7 +10,7 @@
 #include "NFmiGdalArea.h"
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <boost/math/constants/constants.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
@@ -777,13 +777,13 @@ std::size_t NFmiGdalArea::HashValue() const
     std::size_t hash = NFmiArea::HashValue();
 
     // some of these may be redundant:
-    boost::hash_combine(hash, boost::hash_value(itsDatum));
-    boost::hash_combine(hash, boost::hash_value(itsDescription));
-    boost::hash_combine(hash, boost::hash_value(itsWKT));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsDatum));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsDescription));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsWKT));
 
-    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-    boost::hash_combine(hash, itsWorldRect.HashValue());
+    Fmi::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    Fmi::hash_combine(hash, itsTopRightLatLon.HashValue());
+    Fmi::hash_combine(hash, itsWorldRect.HashValue());
 
     return hash;
   }

@@ -20,7 +20,7 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
 #include <functional>
@@ -796,7 +796,7 @@ std::size_t NFmiLocationBag::HashValue() const
     for (NFmiLocation *location : itsLocations)
     {
       if (location != nullptr)
-        boost::hash_combine(hash, location->HashValue());
+        Fmi::hash_combine(hash, location->HashValue());
     }
 
     return hash;

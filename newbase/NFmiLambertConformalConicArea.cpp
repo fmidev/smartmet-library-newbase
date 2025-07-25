@@ -1,6 +1,6 @@
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiStringTools.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <cmath>
@@ -534,13 +534,13 @@ std::size_t NFmiLambertConformalConicArea::HashValue() const
   try
   {
     std::size_t hash = NFmiArea::HashValue();
-    boost::hash_combine(hash, itsBottomLeftLatLon.HashValue());
-    boost::hash_combine(hash, itsTopRightLatLon.HashValue());
-    boost::hash_combine(hash, boost::hash_value(itsCentralLongitude));
-    boost::hash_combine(hash, boost::hash_value(itsCentralLatitude));
-    boost::hash_combine(hash, boost::hash_value(itsTrueLatitude1));
-    boost::hash_combine(hash, boost::hash_value(itsTrueLatitude2));
-    boost::hash_combine(hash, boost::hash_value(itsRadius));
+    Fmi::hash_combine(hash, itsBottomLeftLatLon.HashValue());
+    Fmi::hash_combine(hash, itsTopRightLatLon.HashValue());
+    Fmi::hash_combine(hash, Fmi::hash_value(itsCentralLongitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsCentralLatitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsTrueLatitude1));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsTrueLatitude2));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsRadius));
     return hash;
   }
   catch (...)

@@ -26,7 +26,7 @@
 // ======================================================================
 
 #include "NFmiPoint.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <fstream>
 
@@ -231,8 +231,8 @@ std::size_t NFmiPoint::HashValue() const
 {
   try
   {
-    std::size_t hash = boost::hash_value(itsX);
-    boost::hash_combine(hash, boost::hash_value(itsY));
+    std::size_t hash = Fmi::hash_value(itsX);
+    Fmi::hash_combine(hash, Fmi::hash_value(itsY));
     return hash;
   }
   catch (...)

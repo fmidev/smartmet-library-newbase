@@ -15,7 +15,7 @@
 // ======================================================================
 
 #include "NFmiAngle.h"
-#include <boost/functional/hash.hpp>
+#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
 #include <iostream>
 
@@ -579,7 +579,7 @@ std::size_t NFmiAngle::HashValue() const
 {
   try
   {
-    return boost::hash_value(itsValue);
+    return Fmi::hash_value(itsValue);
   }
   catch (...)
   {
