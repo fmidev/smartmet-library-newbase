@@ -20,7 +20,6 @@ LIBS += \
 	-lsmartmet-macgyver \
 	-lboost_iostreams \
 	-lboost_thread \
-	-lboost_system \
 	$(REQUIRED_LIBS) \
 	-lpthread -lrt
 
