@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 25.3.20
+Version: 26.1.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -39,13 +39,13 @@ BuildRequires: gdal310-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 25.7.25
-BuildRequires: smartmet-library-gis-devel >= 25.2.18
+BuildRequires: smartmet-library-macgyver-devel >= 25.12.2
+BuildRequires: smartmet-library-gis-devel >= 25.12.29
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 25.7.25
-Requires: smartmet-library-gis >= 25.2.18
+Requires: smartmet-library-macgyver >= 25.12.2
+Requires: smartmet-library-gis >= 25.12.29
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -59,10 +59,10 @@ Requires: geos313
 #TestRequires: gdal310-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 25.2.18
-#TestRequires: smartmet-library-macgyver-devel >= 25.7.25
-#TestRequires: smartmet-library-macgyver >= 25.7.25
-#TestRequires: smartmet-library-gis >= 25.2.18
+#TestRequires: smartmet-library-gis-devel >= 25.12.29
+#TestRequires: smartmet-library-macgyver-devel >= 25.12.2
+#TestRequires: smartmet-library-macgyver >= 25.12.2
+#TestRequires: smartmet-library-gis >= 25.12.29
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -108,8 +108,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
-Requires: smartmet-library-gis-devel >= 25.2.18
-Requires: smartmet-library-macgyver-devel >= 25.2.18
+Requires: smartmet-library-gis-devel >= 25.12.29
+Requires: smartmet-library-macgyver-devel >= 25.12.2
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -155,6 +155,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Wed Jan  7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.1.7-1.fmi
+- Improved gnomonic projection support
+
 * Thu Mar 20 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.20-1.fmi
 - Added GeoMagneticRIndex
 
@@ -186,7 +189,7 @@ fi
 - [python] Fix build and install for all installed Python3 versions
 
 * Wed Aug 21 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.21-1.fmi
-- Initial version of Python3 support integrated into smartmet-librar-newbase build instead of separate project
+- Initial version of Python3 support integrated into smartmet-library-newbase build instead of separate project
 
 * Wed Aug  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.7-1.fmi
 - Update to gdal-3.8, geos-3.12, proj-94 and fmt-11
