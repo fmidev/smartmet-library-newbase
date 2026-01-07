@@ -91,6 +91,8 @@ int DetectClassId(const Fmi::ProjInfo &proj)
       return kNFmiLambertEqualArea;
     if (*name == "lcc")
       return kNFmiLambertConformalConicArea;
+    if (*name == "gnom")
+      return kNFmiGnomonicArea;
     if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
         proj.getDouble("o_lon_p") == 0.0)
       return kNFmiRotatedLatLonArea;
@@ -162,6 +164,12 @@ NFmiArea *Create(const Fmi::SpatialReference &theSR)
         lat1 = lat2;
       return NFmiAreaTools::CreateLegacyLambertConformalConicArea(
           bl, tr, clon ? *clon : 0, clat ? *clat : 0, lat1 ? *lat1 : 0, lat2 ? *lat2 : 0);
+    }
+    case kNFmiGnomonicArea:
+    {
+      auto clon = proj.getDouble("lon_0");
+      auto clat = proj.getDouble("lat_0");
+      return NFmiAreaTools::CreateLegacyGnomonicArea(bl, tr, clon ? *clon : 0, clat ? *clat : 90);
     }
     case kNFmiRotatedLatLonArea:
     {
