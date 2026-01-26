@@ -35,7 +35,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: bzip2-devel
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: gcc-c++
-BuildRequires: gdal310-devel
+BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
@@ -50,13 +50,13 @@ Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_fmt}
-Requires: gdal310-libs
+Requires: gdal312-libs
 Requires: geos313
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal310-devel
-#TestRequires: gdal310-libs
+#TestRequires: gdal312-devel
+#TestRequires: gdal312-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 25.12.29
