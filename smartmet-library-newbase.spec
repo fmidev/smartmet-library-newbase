@@ -12,6 +12,11 @@
 %define smartmet_boost boost
 %endif
 
+%if 0%{?rhel} == 8
+%global __python3 /usr/bin/python3.9
+%global python3_sitearch %{_libdir}/python3.9/site-packages
+%endif
+
 %define smartmet_fmt_min 12.0.0
 %define smartmet_fmt_max 13.0.0
 %define smartmet_fmt fmt-libs >= %{smartmet_fmt_min}, fmt-libs < %{smartmet_fmt_max}
