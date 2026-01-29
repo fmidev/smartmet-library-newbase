@@ -69,8 +69,8 @@ Requires: geos313
 
 %if 0%{?rhel} == 8
 BuildRequires: python3.9
-BuildRequires: python3.9-devel
-BuildRequires: python3.9-setuptools
+BuildRequires: python39-devel
+BuildRequires: python39-setuptools
 BuildRequires: python3.9-PyBindGen
 %else
 BuildRequires: python3
