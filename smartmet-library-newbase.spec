@@ -67,10 +67,17 @@ Requires: geos313
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
 
+%if 0%{?rhel} == 8
+BuildRequires: python3.9
+BuildRequires: python3.9-devel
+BuildRequires: python3.9-setuptools
+BuildRequires: python3.9-PyBindGen
+%else
 BuildRequires: python3
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
 BuildRequires: python-PyBindGen
+%endif
 
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
