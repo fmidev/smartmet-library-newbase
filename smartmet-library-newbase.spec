@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.1.7
+Version: 26.2.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -162,6 +162,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Wed Feb  4 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.4-1.fmi
+- Update to proj-9.7, gdal-3.12, fmt-12
+
 * Wed Jan  7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.1.7-1.fmi
 - Improved gnomonic projection support
 
