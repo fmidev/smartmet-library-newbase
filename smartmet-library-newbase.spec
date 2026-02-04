@@ -12,15 +12,15 @@
 %define smartmet_boost boost
 %endif
 
-%if 0%{?rhel} && 0%{rhel} <= 9
-%define smartmet_fmt_min 11.0.1
-%define smartmet_fmt_max 12.0.0
+%if 0%{?rhel} == 8
+%global __python3 /usr/bin/python3.9
+%global python3_sitearch %{_libdir}/python3.9/site-packages
+%endif
+
+%define smartmet_fmt_min 12.0.0
+%define smartmet_fmt_max 13.0.0
 %define smartmet_fmt fmt-libs >= %{smartmet_fmt_min}, fmt-libs < %{smartmet_fmt_max}
 %define smartmet_fmt_devel fmt-devel >= %{smartmet_fmt_min}, fmt-devel < %{smartmet_fmt_max}
-%else
-%define smartmet_fmt fmt
-%define smartmet_fmt_devel fmt-devel
-%endif
 
 Summary: newbase library
 Name: %{SPECNAME}
@@ -35,42 +35,49 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: bzip2-devel
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: gcc-c++
-BuildRequires: gdal310-devel
+BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 25.12.2
-BuildRequires: smartmet-library-gis-devel >= 25.12.29
+BuildRequires: smartmet-library-macgyver-devel >= 26.2.4
+BuildRequires: smartmet-library-gis-devel >= 26.2.4
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 25.12.2
-Requires: smartmet-library-gis >= 25.12.29
+Requires: smartmet-library-macgyver >= 26.2.4
+Requires: smartmet-library-gis >= 26.2.4
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
 Requires: %{smartmet_fmt}
-Requires: gdal310-libs
+Requires: gdal312-libs
 Requires: geos313
 #TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
-#TestRequires: gdal310-devel
-#TestRequires: gdal310-libs
+#TestRequires: gdal312-devel
+#TestRequires: gdal312-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 25.12.29
-#TestRequires: smartmet-library-macgyver-devel >= 25.12.2
-#TestRequires: smartmet-library-macgyver >= 25.12.2
-#TestRequires: smartmet-library-gis >= 25.12.29
+#TestRequires: smartmet-library-gis-devel >= 26.2.4
+#TestRequires: smartmet-library-macgyver-devel >= 26.2.4
+#TestRequires: smartmet-library-macgyver >= 26.2.4
+#TestRequires: smartmet-library-gis >= 26.2.4
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
 
+%if 0%{?rhel} == 8
+BuildRequires: python3.9
+BuildRequires: python39-devel
+BuildRequires: python39-setuptools
+BuildRequires: python3.9-PyBindGen
+%else
 BuildRequires: python3
 BuildRequires: python3-devel
 BuildRequires: python3-setuptools
 BuildRequires: python-PyBindGen
+%endif
 
 Provides: %{LIBNAME}
 Obsoletes: libsmartmet-newbase < 16.12.19
@@ -108,8 +115,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
-Requires: smartmet-library-gis-devel >= 25.12.29
-Requires: smartmet-library-macgyver-devel >= 25.12.2
+Requires: smartmet-library-gis-devel >= 26.2.4
+Requires: smartmet-library-macgyver-devel >= 26.2.4
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
