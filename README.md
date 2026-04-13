@@ -1,6 +1,6 @@
 # smartmet-library-newbase
 
-Part of [SmartMet Server](https://github.com/fmidev/smartmet-library-spine). See the [SmartMet Server documentation](https://github.com/fmidev/smartmet-library-spine) for an overview of the ecosystem.
+Part of [SmartMet Server](https://github.com/fmidev/smartmet-server). See the [SmartMet Server documentation](https://github.com/fmidev/smartmet-server) for an overview of the ecosystem.
 
 ## Overview
 
@@ -13,6 +13,10 @@ The newbase library defines the native FMI weather data format, **QueryData** (`
 - **Parameter definitions** — standardized FMI meteorological parameter IDs and metadata
 - **Grid operations** — area masking, interpolation, and data extraction
 - **Level handling** — pressure levels, height levels, hybrid levels
+
+## Documentation
+
+- [QueryData file format and usage guide](docs/querydata.md)
 
 ## Usage
 
