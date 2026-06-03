@@ -23,8 +23,18 @@
 using namespace std;
 
 // See also NFmiLatLonArea::WKT()
-std::string fmiwkt =
+//
+// Internal linkage is mandatory here: this string is only used within this
+// translation unit, and giving it external linkage lets ELF symbol
+// interposition collapse it with the identically-named definition in the
+// vendored copy inside gdal_querydata.so. Both DSOs would then register an
+// atexit destructor for the single interposed object, double-freeing it at
+// process exit.
+namespace
+{
+const std::string fmiwkt =
     R"(GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",6371220,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.0174532925199433]])";
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
