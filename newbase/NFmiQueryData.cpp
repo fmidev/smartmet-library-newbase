@@ -907,7 +907,7 @@ void NFmiQueryData::MakeLatLonCache() const
   {
     std::shared_ptr<std::vector<NFmiPoint> > tmp = std::make_shared<std::vector<NFmiPoint> >();
     HPlaceDesc()->CreateLatLonCache(*tmp);
-    std::atomic_store(&itsLatLonCache, tmp);
+    itsLatLonCache = tmp;
   }
   catch (...)
   {

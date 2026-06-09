@@ -44,6 +44,7 @@ class NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
   NFmiLatLonAreaMask();
   NFmiLatLonAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
   NFmiLatLonAreaMask(const NFmiLatLonAreaMask& theMask);
+  NFmiLatLonAreaMask& operator=(const NFmiLatLonAreaMask&) = default;
   NFmiAreaMask* Clone() const override;
 
  protected:
@@ -60,6 +61,7 @@ class NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
   ~NFmiElevationAngleAreaMask();
   NFmiElevationAngleAreaMask();
   NFmiElevationAngleAreaMask(const NFmiElevationAngleAreaMask& theMask);
+  NFmiElevationAngleAreaMask& operator=(const NFmiElevationAngleAreaMask&) = default;
   NFmiElevationAngleAreaMask(const NFmiDataIdent& theParam,
                              const NFmiCalculationCondition& theOperation);
   bool Time(const NFmiMetTime& theTime) override;
