@@ -7,7 +7,7 @@ LIBFILE = newbase.so
 PYTHON ?= python3
 
 PYTHON_SITE_ARCH=$(shell $(PYTHON) -Ic "from distutils.sysconfig import get_python_lib; print(get_python_lib(1))")
-PYTHON_INCLUDE_DIR=$(shell python3 -c "from sysconfig import get_paths as gp; print(gp()['include'])")
+PYTHON_INCLUDE_DIR=$(shell $(PYTHON) -c "from sysconfig import get_paths as gp; print(gp()['include'])")
 
 INCLUDES += -I../newbase
 INCLUDES += -I$(PYTHON_INCLUDE_DIR)

@@ -52,7 +52,7 @@ Requires: %{smartmet_boost}-system
 Requires: %{smartmet_fmt}
 Requires: gdal312-libs
 Requires: geos313
-#TestRequires: %{smartmet_boost}-devel
+#TestRequires: %%{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
 #TestRequires: gdal312-devel
@@ -92,14 +92,17 @@ rm -rf $RPM_BUILD_ROOT
 %setup -q -n %{SPECNAME}
 
 %build
-make %{_smp_mflags}
+make %{_smp_mflags} PYTHON=%{__python3}
 %if %{with tests}
-make test %{_smp_mflags}
+make test %{_smp_mflags} PYTHON=%{__python3}
 %endif
 
 %install
-%makeinstall
-rm -f $RPM_BUILD_ROOT%{python3_sitearch}/newbase.so
+%makeinstall PYTHON=%{__python3}
+# The site-packages symlink is recreated per-version by the -python %post
+# scriptlet, so drop whatever the Makefile dropped here (any python3.x dir),
+# not just %{python3_sitearch} — otherwise an unpackaged file aborts the build.
+rm -f $RPM_BUILD_ROOT%{_libdir}/python3*/site-packages/newbase.so
 strip $RPM_BUILD_ROOT%{_datadir}/smartmet/python/newbase.so
 
 %clean
