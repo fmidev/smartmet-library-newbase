@@ -52,7 +52,7 @@ Requires: %{smartmet_boost}-system
 Requires: %{smartmet_fmt}
 Requires: gdal312-libs
 Requires: geos313
-#TestRequires: %%{smartmet_boost}-devel
+#TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: gcc-c++
 #TestRequires: gdal312-devel
