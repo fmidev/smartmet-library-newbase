@@ -365,6 +365,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "GrowthPeriodPrecipitationSum", kFmiGrowthPeriodPrecipitationSum},
       { "GrowthPeriodPrecipitationSumDeviationInPrcnt", kFmiGrowthPeriodPrecipitationSumDeviationInPrcnt},
       { "GrowthPeriodStarted", kFmiGrowthPeriodStarted},
+      { "HailDiameter", kFmiHailDiameter},
       { "HaKeTaskCode", kFmiHaKeTaskCode},
       { "HakeMessageType", kFmiHakeMessageType},
       { "HardPackedSnowIndex", kFmiHardPackedSnowIndex},
