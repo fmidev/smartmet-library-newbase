@@ -44,7 +44,9 @@
 #include "NFmiValueString.h"
 #include "NFmiWeatherAndCloudiness.h"
 #include <macgyver/Exception.h>
+#include <macgyver/ThreadName.h>
 
+#include <fmt/format.h>
 #include <boost/math/special_functions/round.hpp>
 #include <algorithm>
 #include <cassert>
@@ -3528,6 +3530,7 @@ static void MakeCombineParamsOneThread(NFmiFastQueryInfo &theSourceInfo,
                                        bool fDoaccuratePrecip,
                                        const OptionalParamIdHolder &theParamHolder)
 {
+  Fmi::set_thread_name("qd-combine");
   try
   {
     unsigned long workedTimeIndex = 0;
@@ -6094,6 +6097,7 @@ static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
                                  int theThreadNumber,
                                  NFmiLogger *theLogger)
 {
+  Fmi::set_thread_name(fmt::format("qd-fillgrid-{}", theThreadNumber));
   try
   {
     if (theStartTimeIndex == gMissingIndex || theEndTimeIndex == gMissingIndex)
@@ -6369,6 +6373,7 @@ static void FillSingleTimeGridDataInThread(
     int theThreadNumber,
     NFmiLogger *theDebugLogger)
 {
+  Fmi::set_thread_name(fmt::format("qd-fillgrid-{}", theThreadNumber));
   NFmiDataMatrix<float> gridValues;
   bool doGroundData =
       (theSourceInfo.SizeLevels() == 1) &&

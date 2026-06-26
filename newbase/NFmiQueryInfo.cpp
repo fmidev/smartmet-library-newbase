@@ -37,6 +37,7 @@
 #include "NFmiWeatherAndCloudiness.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
+#include <macgyver/ThreadName.h>
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
@@ -3199,6 +3200,7 @@ static void ModifySingleTimeGridInThread(NFmiFastQueryInfo &theModifiedInfo,
                                          TimeToModifyCalculator &theTimeToModifyCalculator,
                                          NFmiDataModifier *theModifier)
 {
+  Fmi::set_thread_name("qd-modgrid");
   try
   {
     NFmiMetTime aTime;

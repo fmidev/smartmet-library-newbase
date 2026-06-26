@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.6.24
+Version: 26.6.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Fri Jun 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.6.26-1.fmi
+- Thread naming: Named the parallel grid calculation worker threads
+
 * Wed Jun 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.6.24-1.fmi
 - Added HailDiameter parameter (PAK-7304)
 
