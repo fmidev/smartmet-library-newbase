@@ -39,12 +39,12 @@ BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 26.6.15
+BuildRequires: smartmet-library-macgyver-devel >= 26.6.26
 BuildRequires: smartmet-library-gis-devel >= 26.6.15
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 26.6.15
+Requires: smartmet-library-macgyver >= 26.6.26
 Requires: smartmet-library-gis >= 26.6.15
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
@@ -60,8 +60,8 @@ Requires: geos313
 #TestRequires: make
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 26.6.15
-#TestRequires: smartmet-library-macgyver-devel >= 26.6.15
-#TestRequires: smartmet-library-macgyver >= 26.6.15
+#TestRequires: smartmet-library-macgyver-devel >= 26.6.26
+#TestRequires: smartmet-library-macgyver >= 26.6.26
 #TestRequires: smartmet-library-gis >= 26.6.15
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
@@ -119,7 +119,7 @@ Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
 Requires: smartmet-library-gis-devel >= 26.6.15
-Requires: smartmet-library-macgyver-devel >= 26.6.15
+Requires: smartmet-library-macgyver-devel >= 26.6.26
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
