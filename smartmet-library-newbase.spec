@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.6.26
+Version: 26.7.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Tue Jul 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.14-1.fmi
+- NFmiGdalArea: build the FMI datum spatial reference once via the cached OGRSpatialReferenceFactory instead of re-parsing its WKT (which names a custom datum and forces a proj.db lookup) on every area construction. Avoids hammering PROJ's SQLite database from worker threads.
+
 * Fri Jun 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.6.26-1.fmi
 - Thread naming: Named the parallel grid calculation worker threads
 

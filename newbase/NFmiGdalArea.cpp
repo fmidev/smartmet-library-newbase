@@ -14,6 +14,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <gis/OGRSpatialReferenceFactory.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <cmath>
@@ -191,15 +192,24 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
 
     // The needed spatial references
 
-    OGRErr err;
-    std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+    std::shared_ptr<OGRSpatialReference> datum;
     if (itsDatum == "FMI")
-      err = datum->SetFromUserInput(fmiwkt.c_str());
+    {
+      // The FMI datum WKT names a custom datum ("FMI_2007"), so parsing it forces a
+      // proj.db lookup (getOfficialNameFromAlias). Doing that on every area construction
+      // serialized worker threads on PROJ's SQLite mutex and could deadlock the qengine
+      // threads. The string is constant, so route it through the shared, cached factory
+      // to parse it only once. For this CRS traditional and authority-compliant axis order
+      // coincide (EPSGTreatsAsLatLong is false), so transformation results are unchanged.
+      datum = Fmi::OGRSpatialReferenceFactory::Create(fmiwkt);
+    }
     else
-      err = datum->SetFromUserInput(itsDatum.c_str());
-
-    if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
+    {
+      datum.reset(new OGRSpatialReference);
+      OGRErr err = datum->SetFromUserInput(itsDatum.c_str());
+      if (err != OGRERR_NONE)
+        throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
+    }
 
     // The needed coordinate transformations
 
@@ -691,15 +701,24 @@ void NFmiGdalArea::init()
       itsSpatialReference = std::make_shared<Fmi::SpatialReference>(itsProjStr);
     }
 
-    OGRErr err;
-    std::shared_ptr<OGRSpatialReference> datum(new OGRSpatialReference);
+    std::shared_ptr<OGRSpatialReference> datum;
     if (itsDatum == "FMI")
-      err = datum->SetFromUserInput(fmiwkt.c_str());
+    {
+      // The FMI datum WKT names a custom datum ("FMI_2007"), so parsing it forces a
+      // proj.db lookup (getOfficialNameFromAlias). Doing that on every area construction
+      // serialized worker threads on PROJ's SQLite mutex and could deadlock the qengine
+      // threads. The string is constant, so route it through the shared, cached factory
+      // to parse it only once. For this CRS traditional and authority-compliant axis order
+      // coincide (EPSGTreatsAsLatLong is false), so transformation results are unchanged.
+      datum = Fmi::OGRSpatialReferenceFactory::Create(fmiwkt);
+    }
     else
-      err = datum->SetFromUserInput(itsDatum.c_str());
-
-    if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
+    {
+      datum.reset(new OGRSpatialReference);
+      OGRErr err = datum->SetFromUserInput(itsDatum.c_str());
+      if (err != OGRERR_NONE)
+        throw Fmi::Exception(BCP, "Failed to set datum: '" + itsDatum + "'");
+    }
 
     // The needed coordinate transformations
 
