@@ -120,6 +120,7 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiStringTools.h"
+#include "NFmiTransverseMercatorArea.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
@@ -225,6 +226,56 @@ double degrees_from_projparam(const string &inParam)
       errStr += e.what();
       throw Fmi::Exception(BCP, errStr);
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// Map a proj-string's ellipsoid to (semi-major axis, inverse flattening). Recognizes the
+// common named ellipsoids and explicit +a with +rf / +f / +b; defaults to WGS84, which is
+// how FMI treats transverse mercator data (see NFmiTransverseMercatorArea).
+std::pair<double, double> ellipsoid_from_projparams(const map<string, string> &projParams)
+{
+  try
+  {
+    auto it = projParams.find("ellps");
+    if (it != projParams.end())
+    {
+      const string &e = it->second;
+      if (e == "WGS84")
+        return {6378137.0, 298.257223563};
+      if (e == "GRS80")
+        return {6378137.0, 298.257222101};
+      if (e == "intl")
+        return {6378388.0, 297.0};
+    }
+
+    auto ita = projParams.find("a");
+    if (ita != projParams.end())
+    {
+      double a = NFmiStringTools::Convert<double>(ita->second);
+      auto itrf = projParams.find("rf");
+      if (itrf != projParams.end())
+        return {a, NFmiStringTools::Convert<double>(itrf->second)};
+      auto itf = projParams.find("f");
+      if (itf != projParams.end())
+      {
+        double f = NFmiStringTools::Convert<double>(itf->second);
+        if (f != 0.0)
+          return {a, 1.0 / f};
+      }
+      auto itb = projParams.find("b");
+      if (itb != projParams.end())
+      {
+        double b = NFmiStringTools::Convert<double>(itb->second);
+        if (a != b)
+          return {a, a / (a - b)};
+      }
+    }
+
+    return {6378137.0, 298.257223563};  // WGS84
   }
   catch (...)
   {
@@ -854,139 +905,94 @@ return_type CreateProj(const std::string &projString,
         throw Fmi::Exception(BCP, "Datum " + map_it->second + " not supported for WebMercator");
     }
 
-    else if (projId == "tmerc")
+    else if (projId == "tmerc" || projId == "utm")
     {
-      // The only supported Transverse Mercator projection is YKJ-projection (EPSG:2393), must check
-      // that other proj-params are
-      // according to http://spatialreference.org/ref/epsg/2393/proj4/. Fails otherwise.
-      // Validates using string comparisons
-      map_it = projParams.find("lon_0");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "Central meridian 'lon_0' must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
+      // Generic ellipsoidal transverse mercator. This detects both YKJ (ellps=intl, k=1,
+      // x_0=3500000, lon_0=27) and generic WGS84-based transverse mercator such as
+      // ETRS-TM35FIN / EPSG:3067 (and UTM, which PROJ also emits for 3067), building a native
+      // NFmiTransverseMercatorArea in every case. No dependency on the deprecated
+      // NFmiYKJArea / NFmiKKJArea, and no reliance on a +towgs84 datum shift.
+      double lon_0 = 0;
+      double lat_0 = 0;
+      double k0 = 1.0;
+      double false_easting = 0;
+      double false_northing = 0;
 
-      if (map_it->second != "27")
+      if (projId == "utm")
       {
-        string errStr;
-        errStr += "Invalid lon_0 for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be 27";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
+        map_it = projParams.find("zone");
+        if (map_it == projParams.end())
+          throw Fmi::Exception(BCP, "zone must be specified for utm projection");
+        double zone = NFmiStringTools::Convert<double>(map_it->second);
+        usedParams.insert("zone");
 
-      map_it = projParams.find("lat_0");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "Center latitude 'lat_0' must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
-
-      if (map_it->second != "0")
-      {
-        string errStr;
-        errStr += "Invalid lat_0 for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be 0";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
-
-      map_it = projParams.find("k");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "k must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
-
-      if (map_it->second != "1")
-      {
-        string errStr;
-        errStr += "Invalid k for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be 1";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
-
-      map_it = projParams.find("x_0");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "x_0 must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
-
-      if (map_it->second != "3500000")
-      {
-        string errStr;
-        errStr += "Invalid k for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be 3500000";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
-
-      // y_0 can be left out as it is 0
-      map_it = projParams.find("y_0");
-      if (!(map_it == projParams.end()))
-      {
-        if (map_it->second != "0")
+        lon_0 = 6.0 * zone - 183.0;  // UTM zone central meridian
+        k0 = 0.9996;
+        false_easting = 500000.0;
+        if (projParams.find("south") != projParams.end())
         {
-          string errStr;
-          errStr += "Invalid y_0 for YKJ projection: ";
-          errStr += map_it->second;
-          errStr += ". Should be 0";
-          throw Fmi::Exception(BCP, errStr);
+          false_northing = 10000000.0;
+          usedParams.insert("south");
         }
       }
-      usedParams.insert(map_it->first);
-
-      map_it = projParams.find("ellps");
-      if (map_it == projParams.end())
+      else
       {
-        throw Fmi::Exception(BCP, "ellps must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
+        map_it = projParams.find("lon_0");
+        if (map_it == projParams.end())
+          throw Fmi::Exception(BCP,
+                               "Central meridian 'lon_0' must be specified for tmerc projection");
+        lon_0 = degrees_from_projparam(map_it->second);
+        usedParams.insert("lon_0");
 
-      if (map_it->second != "intl")
-      {
-        string errStr;
-        errStr += "Invalid ellps for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be intl";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
+        map_it = projParams.find("lat_0");
+        if (map_it != projParams.end())
+        {
+          lat_0 = degrees_from_projparam(map_it->second);
+          usedParams.insert("lat_0");
+        }
 
-      map_it = projParams.find("units");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "units must be specified for YKJ projection");
-      }
-      usedParams.insert(map_it->first);
+        map_it = projParams.find("k");
+        if (map_it == projParams.end())
+          map_it = projParams.find("k_0");
+        if (map_it != projParams.end())
+        {
+          k0 = NFmiStringTools::Convert<double>(map_it->second);
+          usedParams.insert(map_it->first);
+        }
 
-      if (map_it->second != "m")
-      {
-        string errStr;
-        errStr += "Invalid units for YKJ projection: ";
-        errStr += map_it->second;
-        errStr += ". Should be m";
-        throw Fmi::Exception(BCP, errStr);
-      }
-      usedParams.insert(map_it->first);
+        map_it = projParams.find("x_0");
+        if (map_it != projParams.end())
+        {
+          false_easting = NFmiStringTools::Convert<double>(map_it->second);
+          usedParams.insert("x_0");
+        }
 
-      map_it = projParams.find("no_defs");
-      if (map_it == projParams.end())
-      {
-        throw Fmi::Exception(BCP, "no_defs must be specified for YKJ projection");
+        map_it = projParams.find("y_0");
+        if (map_it != projParams.end())
+        {
+          false_northing = NFmiStringTools::Convert<double>(map_it->second);
+          usedParams.insert("y_0");
+        }
       }
-      usedParams.insert(map_it->first);
 
-      // If we are here the projection is valid YKJ (EPSG 2393)
-      result =
-          return_type(new NFmiYKJArea(bottomLeftLatLon, topRightLatLon, topLeftXY, bottomRightXY));
+      // The transverse mercator development used here measures northing from the equator;
+      // a latitude of origin other than zero is not supported.
+      if (lat_0 != 0.0)
+        throw Fmi::Exception(BCP, "Only lat_0=0 is supported for transverse mercator projections");
+
+      const auto ellipsoid = ellipsoid_from_projparams(projParams);
+      usedParams.insert("ellps");
+
+      result = return_type(new NFmiTransverseMercatorArea(bottomLeftLatLon,
+                                                          topRightLatLon,
+                                                          lon_0,
+                                                          k0,
+                                                          false_easting,
+                                                          false_northing,
+                                                          ellipsoid.first,
+                                                          ellipsoid.second,
+                                                          topLeftXY,
+                                                          bottomRightXY));
     }
 
     else

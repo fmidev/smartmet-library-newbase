@@ -56,6 +56,12 @@ NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft, const NFmiPoint& t
 NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
                               const NFmiPoint& theTopRight,
                               bool fMeters);
+NFmiArea* CreateLegacyTransverseMercatorArea(const NFmiPoint& theBottomLeft,
+                                             const NFmiPoint& theTopRight,
+                                             double theCentralMeridian,
+                                             double theScaleFactor,
+                                             double theFalseEasting,
+                                             double theFalseNorthing);
 
 }  // namespace NFmiAreaTools
 

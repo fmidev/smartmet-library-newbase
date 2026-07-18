@@ -18,6 +18,7 @@
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStationBag.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiTransverseMercatorArea.h"
 #include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
@@ -65,6 +66,8 @@ void *CreateSaveBase(unsigned int classId)
         return static_cast<void *>(new NFmiGnomonicArea);
       case kNFmiLambertConformalConicArea:
         return static_cast<void *>(new NFmiLambertConformalConicArea);
+      case kNFmiTransverseMercatorArea:
+        return static_cast<void *>(new NFmiTransverseMercatorArea);
 
       case kNFmiQueryData:
         return static_cast<void *>(new NFmiQueryData);

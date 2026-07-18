@@ -23,6 +23,7 @@ INCLUDES += \
 LIBS +=  \
      ../libsmartmet-newbase.so \
 	$(PREFIX_LDFLAGS) \
+	-lsmartmet-gis \
 	-lsmartmet-macgyver \
 	-lboost_iostreams \
 	-lboost_thread \

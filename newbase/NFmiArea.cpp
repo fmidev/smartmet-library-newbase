@@ -30,6 +30,7 @@
 #include "NFmiRect.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiTransverseMercatorArea.h"
 #include "NFmiYKJArea.h"
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
@@ -107,6 +108,33 @@ int DetectClassId(const Fmi::ProjInfo &proj)
             proj.getString("towgs84") ==
                 std::string("-96.062,-82.428,-121.753,4.801,0.345,-1.376,1.496")))
     return kNFmiYKJArea;
+
+  // ETRS-TM35FIN / EPSG:3067 (central meridian 27, scale 0.9996, false easting 500000).
+  // FMI treats this as a WGS84 transverse mercator, so route it to the native
+  // NFmiTransverseMercatorArea regardless of the datum/ellipsoid PROJ reports. This
+  // avoids the fragile NFmiGdalArea and does not rely on any +towgs84 datum shift.
+  //
+  // PROJ exports EPSG:3067 as UTM zone 35 (its projection is identical to UTM 35N:
+  // central meridian 27, k0=0.9996, false easting 500000), so accept that form too.
+  if (*name == "utm")
+  {
+    auto zone = proj.getDouble("zone");
+    auto south = proj.getString("south");
+    if (zone == 35.0 && !south)
+      return kNFmiTransverseMercatorArea;
+  }
+  if (*name == "tmerc")
+  {
+    auto lon_0 = proj.getDouble("lon_0");
+    auto lat_0 = proj.getDouble("lat_0");
+    auto x_0 = proj.getDouble("x_0");
+    auto y_0 = proj.getDouble("y_0");
+    auto k = proj.getDouble("k");
+    auto k_0 = proj.getDouble("k_0");
+    if (lon_0 == 27.0 && x_0 == 500000.0 && (k == 0.9996 || k_0 == 0.9996) &&
+        (!lat_0 || lat_0 == 0.0) && (!y_0 || y_0 == 0.0))
+      return kNFmiTransverseMercatorArea;
+  }
 
   // Not a legacy projection, use PROJ.x
   return kNFmiGdalArea;
@@ -191,6 +219,31 @@ NFmiArea *Create(const Fmi::SpatialReference &theSR)
     }
     case kNFmiYKJArea:
       return NFmiAreaTools::CreateLegacyYKJArea(bl, tr);
+    case kNFmiTransverseMercatorArea:
+    {
+      double lon_0 = 27.0;
+      double k0 = 0.9996;
+      double fe = 500000.0;
+      double fn = 0.0;
+      if (proj.getString("proj") == std::string("utm"))
+      {
+        auto zone = proj.getDouble("zone");
+        lon_0 = 6.0 * (zone ? *zone : 35.0) - 183.0;  // UTM zone central meridian
+      }
+      else
+      {
+        auto clon = proj.getDouble("lon_0");
+        auto k = proj.getDouble("k");
+        auto k_0 = proj.getDouble("k_0");
+        auto x_0 = proj.getDouble("x_0");
+        auto y_0 = proj.getDouble("y_0");
+        lon_0 = clon ? *clon : 27.0;
+        k0 = k ? *k : (k_0 ? *k_0 : 0.9996);
+        fe = x_0 ? *x_0 : 500000.0;
+        fn = y_0 ? *y_0 : 0.0;
+      }
+      return NFmiAreaTools::CreateLegacyTransverseMercatorArea(bl, tr, lon_0, k0, fe, fn);
+    }
     default:
       return new NFmiGdalArea("FMI", theSR, bl, tr);
   }
@@ -929,6 +982,9 @@ std::size_t NFmiArea::HashValueKludge() const
       return a->HashValue();
 
     if (const auto *a = dynamic_cast<const NFmiMercatorArea *>(this))
+      return a->HashValue();
+
+    if (const auto *a = dynamic_cast<const NFmiTransverseMercatorArea *>(this))
       return a->HashValue();
 
     // azimuthal is the base class
