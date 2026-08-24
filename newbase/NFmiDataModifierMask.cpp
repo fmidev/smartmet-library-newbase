@@ -89,6 +89,8 @@ bool NFmiDataModifierMask::BoolOperation(float theValue)
     case kFmiMaskDoubleRamp:
       return (theValue < its1Limit);  // tähän ei ole oikeastaan kunnon tarkastelua, todellinen
                                       // käyttö kun lasketaan maskikertoimia!
+    case kFmiMaskContinuousEqual:
+      return false;  // requires two consecutive values; cannot evaluate from a single value
   }
   return false;
 }

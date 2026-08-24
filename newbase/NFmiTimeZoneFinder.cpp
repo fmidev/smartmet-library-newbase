@@ -389,12 +389,10 @@ bool NFmiTimeZonePolygon::Inside(const NFmiPoint& thePoint) const
     if (itsRings.empty())
       return false;
 
-    int i = 0;
     for (const auto& itsRing : itsRings)
     {
       if (itsRing.Inside(thePoint))
         return itsRing.Clockwise();
-      i++;
     }
     return false;
   }
@@ -437,13 +435,10 @@ float NFmiTimeZoneFinderPimple::Find(const NFmiPoint& theLatLon) const
     if (theLatLon.X() == kFloatMissing || theLatLon.Y() == kFloatMissing)
       return kFloatMissing;
 
-    int i = 0;
     for (const auto& it : itsData)
     {
       if (it.Inside(theLatLon))
         return it.TimeZone();
-
-      i++;
     }
     return kFloatMissing;
   }

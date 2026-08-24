@@ -34,58 +34,6 @@
 #include <macgyver/StringConversion.h>
 #include <stdexcept>
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Utility peek functions for getting grid cell values
- */
-// ----------------------------------------------------------------------
-
-namespace
-{
-void PeekCellValues(NFmiFastQueryInfo &theInfo,
-                    long dx,
-                    long dy,
-                    float &bottomLeftValue,
-                    float &bottomRightValue,
-                    float &topLeftValue,
-                    float &topRightValue)
-{
-  try
-  {
-    bottomLeftValue = theInfo.PeekLocationValue(dx, dy);
-    bottomRightValue = theInfo.PeekLocationValue(dx + 1, dy);
-    topLeftValue = theInfo.PeekLocationValue(dx, dy + 1);
-    topRightValue = theInfo.PeekLocationValue(dx + 1, dy + 1);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-void PeekCellValues(NFmiFastQueryInfo &theInfo,
-                    long dx,
-                    long dy,
-                    const NFmiMetTime &theTime,
-                    float &bottomLeftValue,
-                    float &bottomRightValue,
-                    float &topLeftValue,
-                    float &topRightValue)
-{
-  try
-  {
-    bottomLeftValue = theInfo.PeekLocationValue(dx, dy, theTime);
-    bottomRightValue = theInfo.PeekLocationValue(dx + 1, dy, theTime);
-    topLeftValue = theInfo.PeekLocationValue(dx, dy + 1, theTime);
-    topRightValue = theInfo.PeekLocationValue(dx + 1, dy + 1, theTime);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -3829,10 +3777,9 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
         bool isUnderNow = isUnder;
         float lastPressure = firstPressureValue;
         float pressureValue = kFloatMissing;
-        int i = 0;
         bool foundWantedLevels = false;
-        for (ResetLevel(); NextLevel(); i++)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
-                                              // leveleita (>20 ?) ja käyttäisi binary searchia
+        for (ResetLevel(); NextLevel();)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
+                                          // leveleita (>20 ?) ja käyttäisi binary searchia
         {
           pressureValue = InterpolatedValue(theLatlon, theTime);
           if (pressureValue != kFloatMissing)
@@ -4259,10 +4206,9 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
         bool isUnderNow = isUnder;
         float lastPressure = firstPressureValue;
         float pressureValue = kFloatMissing;
-        int i = 0;
         bool foundWantedLevels = false;
-        for (ResetLevel(); NextLevel(); i++)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
-                                              // leveleita (>20 ?) ja käyttäisi binary searchia
+        for (ResetLevel(); NextLevel();)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
+                                          // leveleita (>20 ?) ja käyttäisi binary searchia
         {
           pressureValue = GetCurrentLevelPressure();
           if (pressureValue != kFloatMissing)

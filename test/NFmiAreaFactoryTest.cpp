@@ -14,11 +14,13 @@
 #include "NFmiOrthographicArea.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiTransverseMercatorArea.h"
 #include "NFmiYKJArea.h"
-#include <memory>
 #include <macgyver/Exception.h>
 #include <regression/tframe.h>
+#include <memory>
 
+#include <cmath>
 #include <stdexcept>
 #include <string>
 
@@ -444,14 +446,69 @@ void create_ykj_proj()
 {
   const NFmiPoint BottomLeftLatLon(10, 20), TopRightLatLon(30, 40), TopLeftXY(0, 0),
       BottomRightXY(1, 1);
+  // YKJ / EPSG:2393 is transverse mercator on the International 1924 ellipsoid. It is now
+  // detected and built as a native NFmiTransverseMercatorArea (no NFmiYKJArea/KKJ dependency,
+  // no +towgs84 datum shift).
   const std::string def =
       "+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=3500000 +y_0=0 +ellps=intl +units=m +no_defs";
-  NFmiYKJArea expected(BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
+  NFmiTransverseMercatorArea expected(BottomLeftLatLon,
+                                      TopRightLatLon,
+                                      27.0,
+                                      1.0,
+                                      3500000.0,
+                                      0.0,
+                                      6378388.0,
+                                      297.0,
+                                      TopLeftXY,
+                                      BottomRightXY);
 
   std::shared_ptr<NFmiArea> area =
       NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
+  if (area->ClassId() != kNFmiTransverseMercatorArea)
+    TEST_FAILED("YKJ tmerc string should yield a native NFmiTransverseMercatorArea");
   if (!(expected == *area))
     TEST_FAILED("Failed to create " + def);
+
+  TEST_PASSED();
+}
+
+void create_tm35fin_proj()
+{
+  const NFmiPoint BottomLeftLatLon(19, 59), TopRightLatLon(32, 71), TopLeftXY(0, 0),
+      BottomRightXY(1, 1);
+  // ETRS-TM35FIN / EPSG:3067 as an explicit transverse mercator string.
+  const std::string def =
+      "+proj=tmerc +lat_0=0 +lon_0=27 +k=0.9996 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs";
+
+  std::shared_ptr<NFmiArea> area =
+      NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
+  if (area->ClassId() != kNFmiTransverseMercatorArea)
+    TEST_FAILED("tmerc TM35FIN string should yield a native NFmiTransverseMercatorArea");
+
+  // A point on the central meridian must project to easting 500000.
+  NFmiPoint wxy = area->LatLonToWorldXY(NFmiPoint(27, 65));
+  if (std::fabs(wxy.X() - 500000.0) > 1e-3)
+    TEST_FAILED("Central meridian easting should be 500000");
+
+  TEST_PASSED();
+}
+
+void create_utm_proj()
+{
+  const NFmiPoint BottomLeftLatLon(19, 59), TopRightLatLon(32, 71), TopLeftXY(0, 0),
+      BottomRightXY(1, 1);
+  // PROJ exports EPSG:3067 as UTM zone 35; the factory must accept that form too.
+  const std::string def = "+proj=utm +zone=35 +ellps=WGS84 +units=m +no_defs";
+
+  std::shared_ptr<NFmiArea> area =
+      NFmiAreaFactory::CreateProj(def, BottomLeftLatLon, TopRightLatLon, TopLeftXY, BottomRightXY);
+  if (area->ClassId() != kNFmiTransverseMercatorArea)
+    TEST_FAILED("utm string should yield a native NFmiTransverseMercatorArea");
+
+  // UTM zone 35 has central meridian 27 -> easting 500000 there.
+  NFmiPoint wxy = area->LatLonToWorldXY(NFmiPoint(27, 65));
+  if (std::fabs(wxy.X() - 500000.0) > 1e-3)
+    TEST_FAILED("UTM zone 35 central meridian easting should be 500000");
 
   TEST_PASSED();
 }
@@ -563,6 +620,8 @@ class tests : public tframe::tests
     TEST(create_latlon_proj);
     TEST(create_mercator_proj);
     TEST(create_ykj_proj);
+    TEST(create_tm35fin_proj);
+    TEST(create_utm_proj);
     TEST(create_desired_resolution);
     TEST(create_gdal);
     TEST(test_negative_params_proj);

@@ -102,7 +102,10 @@
 #include "NFmiDef.h"
 #include "NFmiNearTreeImpl.h"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
+#include <cstdint>
+#include <random>
 #include <vector>
 
 // An utility functor to generate default 2D distance calculator
@@ -315,7 +318,9 @@ void NFmiNearTree<T, F>::Flush() const
 {
   if (!itsInputBuffer.empty())
   {
-    std::random_shuffle(itsInputBuffer.begin(), itsInputBuffer.end());
+    thread_local std::mt19937 rng{static_cast<std::uint32_t>(
+        std::chrono::high_resolution_clock::now().time_since_epoch().count())};
+    std::shuffle(itsInputBuffer.begin(), itsInputBuffer.end(), rng);
 
     for (typename buffer_type::const_iterator it = itsInputBuffer.begin();
          it != itsInputBuffer.end();

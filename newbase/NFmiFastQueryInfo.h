@@ -593,8 +593,12 @@ inline bool NFmiFastQueryInfo::AreIndividualIndexiesInside(const unsigned long &
   //  if(!IsLocationMasked(theLocationIndex))
   //	return false;
 
+// GCC false positive: inlining into NFmiQueryInfo call sites confuses bounds analysis
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
   return ((theParamIndex < itsParamSize) && (theLocationIndex < itsLocationSize) &&
           (theLevelIndex < itsLevelSize) && (theTimeIndex < itsTimeSize));
+#pragma GCC diagnostic pop
 }
 
 // ----------------------------------------------------------------------
@@ -605,11 +609,15 @@ inline bool NFmiFastQueryInfo::AreIndividualIndexiesInside(const unsigned long &
 
 inline size_t NFmiFastQueryInfo::Index() const
 {
+// GCC false positive: inlining into NFmiQueryInfo call sites confuses bounds analysis
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
   if (AreIndividualIndexiesInside(itsParamIndex, itsLocationIndex, itsLevelIndex, itsTimeIndex))
     return (itsParamIndex * itsLocLevTimSize + itsLocationIndex * itsLevTimSize +
             itsLevelIndex * itsTimeSize + itsTimeIndex);
   else
     return static_cast<size_t>(-1);
+#pragma GCC diagnostic pop
 }
 
 // ----------------------------------------------------------------------
@@ -645,7 +653,11 @@ inline size_t NFmiFastQueryInfo::Index(unsigned long theParamIndex,
 
 inline bool NFmiFastQueryInfo::IsSubParamUsed() const
 {
+// GCC false positive: inlining into NFmiQueryInfo call sites confuses bounds analysis
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
   return fUseSubParam;
+#pragma GCC diagnostic pop
 }
 // ----------------------------------------------------------------------
 /*!

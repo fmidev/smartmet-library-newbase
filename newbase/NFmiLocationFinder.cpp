@@ -237,8 +237,6 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
     // Process one line at a time
 
     string line;
-    int nerr = 0;
-    int nlong = 0;
     while (getline(in, line))
     {
       // Ignore the line if it is a comment line or "thrash" line
@@ -263,8 +261,6 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
         if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
         {
           firstCoord = fields.size();  // you must know which words shall be converted to doubles
-          if (firstCoord > 2)
-            nlong++;
         }
 
         if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
@@ -282,15 +278,9 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
 
       double value1, value2;
       if (sscanf(fields[firstCoord - 1].c_str(), "%lg", &value1) != 1)
-      {
-        nerr++;
         continue;
-      }
       if (sscanf(fields[firstCoord].c_str(), "%lg", &value2) != 1)
-      {
-        nerr++;
         continue;
-      }
 
       double longitude = lonFirst ? value1 : value2;
       double latitude = lonFirst ? value2 : value1;

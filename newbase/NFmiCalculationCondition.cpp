@@ -108,6 +108,8 @@ bool NFmiCalculationCondition::IsMasked(double theValue) const
         case kFmiMaskDoubleRamp:
           return (theValue < itsLowerLimit);  // tähän ei ole oikeastaan kunnon tarkastelua,
                                               // todellinen käyttö kun lasketaan maskikertoimia!
+        case kFmiMaskContinuousEqual:
+          return false;  // requires two consecutive values; cannot evaluate from a single value
       }
     }
 
@@ -194,6 +196,8 @@ double NFmiCalculationCondition::MaskValue(double theValue) const
           return 1.;
         case kFmiMaskAll:
           return 1;
+        case kFmiMaskContinuousEqual:
+          return 0.;  // requires two consecutive values; cannot evaluate from a single value
       }
     }
     return 0.;
@@ -311,6 +315,9 @@ const NFmiString NFmiCalculationCondition::MaskString(const NFmiString& theParam
         break;
       case kFmiMaskDoubleRamp:
         returnString += " tupla R";
+        break;
+      case kFmiMaskContinuousEqual:
+        returnString += " ~=";
         break;
     }
     return returnString;

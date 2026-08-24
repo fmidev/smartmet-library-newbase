@@ -26,6 +26,7 @@
 #include "NFmiMercatorArea.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
+#include "NFmiTransverseMercatorArea.h"
 #include "NFmiYKJArea.h"
 
 // Local utility functions
@@ -273,6 +274,22 @@ NFmiArea* CreateLegacyYKJArea(const NFmiPoint& theBottomLeft,
                               bool fMeters)
 {
   return new NFmiYKJArea(theBottomLeft, theTopRight, fMeters);
+}
+
+NFmiArea* CreateLegacyTransverseMercatorArea(const NFmiPoint& theBottomLeft,
+                                             const NFmiPoint& theTopRight,
+                                             double theCentralMeridian,
+                                             double theScaleFactor,
+                                             double theFalseEasting,
+                                             double theFalseNorthing)
+{
+  // Ellipsoid defaults to WGS84 (FMI treats EPSG:3067 as WGS84).
+  return new NFmiTransverseMercatorArea(theBottomLeft,
+                                        theTopRight,
+                                        theCentralMeridian,
+                                        theScaleFactor,
+                                        theFalseEasting,
+                                        theFalseNorthing);
 }
 
 }  // namespace NFmiAreaTools
