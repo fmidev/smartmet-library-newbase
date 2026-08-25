@@ -32,10 +32,10 @@ class NFmiDataModifierModMinMax : public NFmiDataModifier
   ~NFmiDataModifierModMinMax();
   NFmiDataModifierModMinMax(bool returnMinValue = true);
   NFmiDataModifierModMinMax(const NFmiDataModifierModMinMax& theOther);
-  NFmiDataModifierModMinMax* Clone() const;
+  NFmiDataModifierModMinMax* Clone() const override;
   NFmiDataModifierModMinMax& operator=(const NFmiDataModifierModMinMax& theOther) = delete;
 
-  void Clear();
+  void Clear() override;
   void Calculate(float theValue) override;
   float CalculationResult() override;
   float Min();

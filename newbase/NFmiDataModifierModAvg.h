@@ -27,10 +27,10 @@ class NFmiDataModifierModAvg : public NFmiDataModifier
   ~NFmiDataModifierModAvg();
   NFmiDataModifierModAvg();
   NFmiDataModifierModAvg(const NFmiDataModifierModAvg& theOther);
-  NFmiDataModifierModAvg* Clone() const;
+  NFmiDataModifierModAvg* Clone() const override;
   NFmiDataModifierModAvg& operator=(const NFmiDataModifierModAvg& theOther) = delete;
 
-  void Clear();
+  void Clear() override;
   void Calculate(float theValue) override;
   float CalculationResult() override;
 
