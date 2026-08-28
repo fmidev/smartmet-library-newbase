@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.7.18
+Version: 26.8.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,10 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Fri Aug 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.8.28-1.fmi
+- NFmiGdalArea: hold the datum as an Fmi::SpatialReference instead of a raw OGRSpatialReference. CoordinateTransformation takes const SpatialReference&, so passing a raw object constructed a temporary from it and re-derived the WKT, the PROJ string, the EPSG code and the axis flags every time -- twice per area construction, once for each direction. Built from the definition string those values are derived once and cached, so both transformations are free. Measured over 300 constructions of NFmiGdalArea("FMI", "EPSG:2393", ...): 1.754 ms each before, 0.015 ms after. Areas are constructed per querydata file and on every Clone(). The non-FMI datum path deliberately still builds from a raw OGRSpatialReference, because routing the datum name through the factory would apply its known_datums and known_ellipsoids substitutions and change results for names such as NAD83 or potsdam.
+- Implementation-only change: no header was touched, so dependent packages do not need rebuilding.
+
 * Sat Jul 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.18-1.fmi
 - Added NFmiTransverseMercatorArea, a native transverse mercator (Gauss-Kruger) area whose projection math lives in the new NFmiGaussKruger helper. EPSG:3067 (ETRS-TM35FIN) is now detected in NFmiArea::DetectClassId and NFmiAreaFactory (both the tmerc and utm proj forms) and built as this native WGS84 area instead of falling back to NFmiGdalArea, avoiding the deprecated +towgs84 datum handling that no longer works in PROJ.
 
