@@ -266,6 +266,50 @@ void create_equidist()
  * \brief Test NFmiAreaFactory::Create() for Gdal projections
  */
 // ----------------------------------------------------------------------
+/*!
+ * \brief Test NFmiAreaFactory::Create() for legacy tmerc projections
+ *
+ * The legacy form is what NFmiTransverseMercatorArea::AreaStr() writes, so
+ * the string must round trip back to an identical area.
+ */
+// ----------------------------------------------------------------------
+
+void create_tmerc()
+{
+  const NFmiPoint bl(21, 60), tr(30, 66);
+
+  {
+    const std::string def = "tmerc,27,0.9996,500000,0,6378137,298.257223563:21,60,30,66";
+    NFmiTransverseMercatorArea expected(bl, tr, 27, 0.9996, 500000, 0, 6378137, 298.257223563);
+    std::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
+  }
+
+  {
+    // Omitted parameters default to TM35FIN / EPSG:3067
+    const std::string def = "tmerc:21,60,30,66";
+    NFmiTransverseMercatorArea expected(bl, tr);
+    std::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
+    if (!(expected == *area))
+      TEST_FAILED("Failed to create " + def);
+  }
+
+  {
+    // AreaStr() round trip, including the full precision ellipsoid parameters
+    NFmiTransverseMercatorArea expected(bl, tr, 27, 0.9996, 500000, 0, 6378137, 298.257223563);
+    const std::string def = expected.AreaStr();
+    std::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
+    if (!(expected == *area))
+      TEST_FAILED("Failed to round trip AreaStr " + def);
+    if (area->AreaStr() != def)
+      TEST_FAILED("AreaStr changed in round trip: " + def + " -> " + area->AreaStr());
+  }
+
+  TEST_PASSED();
+}
+
+// ----------------------------------------------------------------------
 
 void create_gdal()
 {
@@ -612,6 +656,7 @@ class tests : public tframe::tests
     TEST(create_stereographic);
     TEST(create_gnomonic);
     TEST(create_equidist);
+    TEST(create_tmerc);
     TEST(create_latvia_stereographic_proj);
     TEST(create_FMI_stereographic_proj);
     TEST(create_orthographic_proj);

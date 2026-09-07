@@ -15,6 +15,7 @@
  */
 // ======================================================================
 
+#include <iomanip>
 #include "NFmiTransverseMercatorArea.h"
 
 #include <fmt/format.h>
@@ -289,6 +290,8 @@ const std::string NFmiTransverseMercatorArea::AreaStr() const
   try
   {
     std::ostringstream out;
+    // Full precision so that NFmiAreaFactory::Create(AreaStr()) reproduces the area exactly
+    out << std::setprecision(15);
     out << "tmerc," << itsCentralMeridian << ',' << itsScaleFactor << ',' << itsFalseEasting << ','
         << itsFalseNorthing << ',' << itsEllipsoidA << ',' << itsEllipsoidInvF << ':'
         << itsBottomLeftLatLon.X() << ',' << itsBottomLeftLatLon.Y() << ',' << itsTopRightLatLon.X()
