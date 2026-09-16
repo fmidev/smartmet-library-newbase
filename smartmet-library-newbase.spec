@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.7.18
+Version: 26.9.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,10 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Mon Sep  7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.7-1.fmi
+- NFmiAreaFactory::Create() now accepts the legacy comma form written by NFmiTransverseMercatorArea::AreaStr() (tmerc,lon_0,k_0,x_0,y_0,a,1/f:bbox; omitted parameters default to TM35FIN / WGS84), so that an area string of a native transverse mercator grid round trips through the factory. Previously e.g. cropping EPSG:3067 querydata by a bounding box failed with "Projection specification ... is invalid".
+- NFmiTransverseMercatorArea::AreaStr() writes its parameters in full precision (the ellipsoid semi-major axis was truncated to 6.37814e+06) so the round trip reproduces the area exactly.
+
 * Sat Jul 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.7.18-1.fmi
 - Added NFmiTransverseMercatorArea, a native transverse mercator (Gauss-Kruger) area whose projection math lives in the new NFmiGaussKruger helper. EPSG:3067 (ETRS-TM35FIN) is now detected in NFmiArea::DetectClassId and NFmiAreaFactory (both the tmerc and utm proj forms) and built as this native WGS84 area instead of falling back to NFmiGdalArea, avoiding the deprecated +towgs84 datum handling that no longer works in PROJ.
 

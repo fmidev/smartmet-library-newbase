@@ -583,6 +583,23 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         area.reset(new NFmiEquidistArea(
             bottomleft, topright, clon, corner1, corner2, clat, usePacificView));
       }
+      else if (proj == "tmerc")
+      {
+        // Legacy form written by NFmiTransverseMercatorArea::AreaStr():
+        // tmerc,lon_0,k_0,x_0,y_0,a,1/f:bbox. Omitted parameters default to
+        // TM35FIN (EPSG:3067) on the WGS84 ellipsoid.
+        if (pvec.size() > 6)
+          throw Fmi::Exception(BCP, "tmerc area requires max 6 parameters");
+        const double lon0 = check_longitude(
+            pvec.size() >= 1 ? pvec[0] : NFmiGaussKruger::kTM35FIN_CentralMeridian, usePacificView);
+        const double k0 = (pvec.size() >= 2 ? pvec[1] : NFmiGaussKruger::kTM35FIN_ScaleFactor);
+        const double x0 = (pvec.size() >= 3 ? pvec[2] : NFmiGaussKruger::kTM35FIN_FalseEasting);
+        const double y0 = (pvec.size() >= 4 ? pvec[3] : NFmiGaussKruger::kTM35FIN_FalseNorthing);
+        const double a = (pvec.size() >= 5 ? pvec[4] : NFmiGaussKruger::kWGS84_A);
+        const double invf = (pvec.size() >= 6 ? pvec[5] : NFmiGaussKruger::kWGS84_InvF);
+        area.reset(new NFmiTransverseMercatorArea(
+            bottomleft, topright, lon0, k0, x0, y0, a, invf, corner1, corner2, usePacificView));
+      }
 #ifdef UNIX
 #ifndef DISABLED_GDAL
       else
