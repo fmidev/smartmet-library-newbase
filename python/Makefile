@@ -32,11 +32,20 @@ load-test: newbase.so
 test:
 	LD_LIBRARY_PATH=.. $(PYTHON) test_newbase.py
 
+# Symlink to newbase.so will created into Python plaform-specific
+# library directory only when prefix is non-empty (that is, when
+# building rpms), or when using the default PREFIX /usr.  Otherwise
+# the link will be created into PREFIX/python to allow installation
+# with limited privileges.
 install:
-	# NOTE: installs for current Python3 version only
 	install -D -m 644 newbase.so $(datadir)/smartmet/python/newbase.so
-	install -d $(prefix)/..$(PYTHON_SITE_ARCH)
-	ln -srf $(datadir)/smartmet/python/newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so
+	if [ -n "$(prefix)" -o "$(PREFIX)" = "/usr" ]; then \
+	  install -d $(prefix)/..$(PYTHON_SITE_ARCH) ; \
+	  ln -srf $(datadir)/smartmet/python/newbase.so $(prefix)/..$(PYTHON_SITE_ARCH)/newbase.so ; \
+	else \
+	  install -d $(PREFIX)/python ; \
+	  ln -srf $(datadir)/smartmet/python/newbase.so $(PREFIX)/python/newbase.so ; \
+	fi
 
 clean:
 	rm -f newbase-binding.cpp *.o *.d $(LIBFILE)
