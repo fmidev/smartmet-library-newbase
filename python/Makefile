@@ -16,6 +16,7 @@ INCLUDES += -I$(PYTHON_INCLUDE_DIR)
 CFLAGS += -Wno-missing-field-initializers -Wno-cast-function-type
 
 LIBS += \
+	$(PREFIX_LDFLAGS) \
 	-L.. -lsmartmet-newbase \
 	-lsmartmet-macgyver \
 	-lboost_iostreams \
