@@ -16,6 +16,7 @@
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
 #include <memory>
+#include <shared_mutex>
 
 #ifndef BOOST_DISABLE_THREADS
 
@@ -235,8 +236,8 @@ class NFmiStopThreadException
 class NFmiTimeIndexCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
+  typedef std::shared_mutex MutexType;
+  typedef std::shared_lock<MutexType>
       ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
   typedef boost::unique_lock<MutexType> WriteLock;
 
@@ -262,8 +263,8 @@ class NFmiTimeIndexCalculator
 class NFmiLocationIndexRangeCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
+  typedef std::shared_mutex MutexType;
+  typedef std::shared_lock<MutexType>
       ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
   typedef boost::unique_lock<MutexType> WriteLock;
 

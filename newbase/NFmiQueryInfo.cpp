@@ -41,7 +41,9 @@
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
+#include <shared_mutex>
 #include <stdexcept>
+
 // abort()
 
 #include <boost/math/special_functions.hpp>
@@ -3151,10 +3153,10 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
 class TimeToModifyCalculator
 {
  public:
-  typedef boost::shared_mutex MutexType;
-  typedef boost::shared_lock<MutexType>
+  typedef std::shared_mutex MutexType;
+  typedef std::shared_lock<MutexType>
       ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  typedef std::unique_lock<MutexType> WriteLock;
 
   TimeToModifyCalculator(const NFmiTimeDescriptor &theTimeDescriptor)
       : itsTimeDescriptor(theTimeDescriptor), fNoMoreWork(false)

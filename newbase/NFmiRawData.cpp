@@ -33,9 +33,9 @@
 
 #if 0
 // paranoid mode
-typedef boost::shared_mutex MutexType;
-typedef boost::shared_lock<MutexType> ReadLock;
-typedef boost::unique_lock<MutexType> WriteLock;
+typedef std::shared_mutex MutexType;
+typedef std::shared_lock<MutexType> ReadLock;
+typedef std::unique_lock<MutexType> WriteLock;
 #else
 // trust kernel to handle it
 struct FooBar
