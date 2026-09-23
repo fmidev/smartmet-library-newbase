@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.9.16
+Version: 26.9.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -39,13 +39,13 @@ BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 26.7.9
-BuildRequires: smartmet-library-gis-devel >= 26.7.14
+BuildRequires: smartmet-library-macgyver-devel >= 26.9.23
+BuildRequires: smartmet-library-gis-devel >= 26.9.23
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 26.7.9
-Requires: smartmet-library-gis >= 26.7.14
+Requires: smartmet-library-macgyver >= 26.9.23
+Requires: smartmet-library-gis >= 26.9.23
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -59,10 +59,10 @@ Requires: geos313
 #TestRequires: gdal312-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 26.7.14
-#TestRequires: smartmet-library-macgyver-devel >= 26.7.9
-#TestRequires: smartmet-library-macgyver >= 26.7.9
-#TestRequires: smartmet-library-gis >= 26.7.14
+#TestRequires: smartmet-library-gis-devel >= 26.9.23
+#TestRequires: smartmet-library-macgyver-devel >= 26.9.23
+#TestRequires: smartmet-library-macgyver >= 26.9.23
+#TestRequires: smartmet-library-gis >= 26.9.23
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -118,8 +118,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
-Requires: smartmet-library-gis-devel >= 26.7.14
-Requires: smartmet-library-macgyver-devel >= 26.7.9
+Requires: smartmet-library-gis-devel >= 26.9.23
+Requires: smartmet-library-macgyver-devel >= 26.9.23
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Wed Sep 23 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.23-1.fmi
+- Use std::shared_lock instead of boost::shared_lock
+
 * Wed Sep 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.16-1.fmi
 - Merged Transverse Mercator support to master
 
