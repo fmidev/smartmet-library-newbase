@@ -306,6 +306,25 @@ void create_tmerc()
       TEST_FAILED("AreaStr changed in round trip: " + def + " -> " + area->AreaStr());
   }
 
+  // Invalid ellipsoid and scale parameters must be rejected
+  for (const std::string def : {"tmerc,27,0,500000,0,6378137,298.257223563:21,60,30,66",
+                                "tmerc,27,0.9996,500000,0,0,298.257223563:21,60,30,66",
+                                "tmerc,27,0.9996,500000,0,6378137,0:21,60,30,66",
+                                "tmerc,27,0.9996,500000,0,6378137,nan:21,60,30,66"})
+  {
+    bool thrown = false;
+    try
+    {
+      std::shared_ptr<NFmiArea> area(NFmiAreaFactory::Create(def));
+    }
+    catch (...)
+    {
+      thrown = true;
+    }
+    if (!thrown)
+      TEST_FAILED("Invalid tmerc parameters were accepted: " + def);
+  }
+
   TEST_PASSED();
 }
 
