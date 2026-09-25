@@ -554,8 +554,8 @@ const NFmiPoint NFmiGrid::RelativePoint() const
 {
   try
   {
-    double relativeX = itsCurrentX / (itsXNumber - 1);
-    double relativeY = itsCurrentY / (itsYNumber - 1);
+    double relativeX = static_cast<double>(itsCurrentX) / (itsXNumber - 1);
+    double relativeY = static_cast<double>(itsCurrentY) / (itsYNumber - 1);
     return NFmiPoint(relativeX, relativeY);
   }
   catch (...)
@@ -578,8 +578,8 @@ const NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
 {
   try
   {
-    double relativeX = itsCurrentX / (itsXNumber - 1);
-    double relativeY = itsCurrentY / (itsYNumber - 1);
+    double relativeX = static_cast<double>(itsCurrentX) / (itsXNumber - 1);
+    double relativeY = static_cast<double>(itsCurrentY) / (itsYNumber - 1);
     return NFmiPoint(relativeX, relativeY);
   }
   catch (...)
