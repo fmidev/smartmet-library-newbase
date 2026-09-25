@@ -57,7 +57,7 @@ std::ostream& NFmiIndividual::Write(std::ostream& file) const
 {
   try
   {
-    file << itsIdent << std::endl;
+    file << itsIdent << '\n';
     // We trust all data to be at least version 6 by now
     if (DefaultFmiInfoVersion >= 2)
     {

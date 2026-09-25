@@ -1147,40 +1147,40 @@ std::ostream &NFmiHPlaceDescriptor::Write(std::ostream &file) const
   {
     long theDummy = 0;
     file << static_cast<long>(itsSelectedType) << " " << itsMaxNumberOfSources << " " << theDummy
-         << " " << theDummy << std::endl;
+         << " " << theDummy << '\n';
 
     if (itsLocationBag)
     {
-      file << itsLocationBag->ClassId() << " NFmiLocationBag" << std::endl;
+      file << itsLocationBag->ClassId() << " NFmiLocationBag" << '\n';
       file << *itsLocationBag;
 
       for (unsigned long i = 0; i < itsLocationBag->GetSize(); i++)
         file << itsActivity[i] << " ";
-      file << std::endl;
+      file << '\n';
     }
     else
     {
-      file << 0 << " NFmiLocationBag" << std::endl;
+      file << 0 << " NFmiLocationBag" << '\n';
     }
 
     if (itsArea)
     {
-      file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
+      file << itsArea->ClassId() << " " << itsArea->ClassName() << '\n';
       file << *itsArea;
     }
     else
     {
-      file << 0 << " NFmiArea" << std::endl;
+      file << 0 << " NFmiArea" << '\n';
     }
 
     if (itsGrid)
     {
-      file << itsGrid->ClassId() << " " << itsGrid->ClassName() << std::endl;
+      file << itsGrid->ClassId() << " " << itsGrid->ClassName() << '\n';
       file << *itsGrid;
     }
     else
     {
-      file << 0 << " NFmiGrid" << std::endl;
+      file << 0 << " NFmiGrid" << '\n';
     }
 
     return file;

@@ -1272,12 +1272,12 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 
     if (itsTimeList)
     {
-      file << "1 " << ClassName() << std::endl;  // 1 NFmiTimeDescriptor
+      file << "1 " << ClassName() << '\n';  // 1 NFmiTimeDescriptor
       file << *itsTimeList;
     }
     else
     {
-      file << "0 " << ClassName() << std::endl;  // 0 NFmiTimeDescriptor
+      file << "0 " << ClassName() << '\n';  // 0 NFmiTimeDescriptor
       file << *itsValidTimeBag;
     }
 
@@ -1289,7 +1289,7 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
          << itsTimeBagIdent << " "     // Hakutapa
          << itsLocalTimeStep << " "    // Varalla
          << 0 << " "                   // Varalla
-         << 0 << std::endl;            // Varalla
+         << 0 << '\n';            // Varalla
 
     if (itsValidTimeBag)
     {
@@ -1302,7 +1302,7 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
         file << itsActivity[i] << " ";
     }
 
-    file << std::endl;
+    file << '\n';
 
     return file;
   }

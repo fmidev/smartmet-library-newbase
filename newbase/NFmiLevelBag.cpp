@@ -303,7 +303,7 @@ std::ostream &NFmiLevelBag::Write(std::ostream &file) const
       file << itsLevels[i];
     }
 
-    file << itsStep << std::endl;
+    file << itsStep << '\n';
     return file;
   }
   catch (...)

@@ -1395,13 +1395,13 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
                           // Utf-8:ksi ja string literalien non-ascii koodaus muutettava.
          << " ";
 
-    file << "VER " << itsInfoVersion << std::endl;
+    file << "VER " << itsInfoVersion << '\n';
 
-    file << ClassId() << " " << ClassName() << std::endl;
+    file << ClassId() << " " << ClassName() << '\n';
     file << "0 "
          << "0 "
          << "0 "
-         << "0 " << std::endl;  // Varalla tulevaisuuta varten
+         << "0 " << '\n';  // Varalla tulevaisuuta varten
 
     // Lisätty 9.3.1998/Vili
     if (itsHeaderText)
@@ -1423,12 +1423,12 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     if (itsParamDescriptor)
       file << *itsParamDescriptor;
     else
-      file << 0 << " NFmiParamDescriptor" << std::endl;
+      file << 0 << " NFmiParamDescriptor" << '\n';
 
     if (itsHPlaceDescriptor)
       file << *itsHPlaceDescriptor;
     else
-      file << 0 << " NFmiHPlaceDescriptor" << std::endl;
+      file << 0 << " NFmiHPlaceDescriptor" << '\n';
 
     if (itsVPlaceDescriptor)
       file << *itsVPlaceDescriptor;
@@ -1441,7 +1441,7 @@ std::ostream &NFmiQueryInfo::Write(std::ostream &file) const
     if (itsTimeDescriptor)
       file << *itsTimeDescriptor;
     else
-      file << 0 << " NFmiTimeDescriptor" << std::endl;
+      file << 0 << " NFmiTimeDescriptor" << '\n';
 
     return file;
   }

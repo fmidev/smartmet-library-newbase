@@ -317,13 +317,13 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
     if (DefaultFmiInfoVersion >= 4)
     {
       file << "0 ";               // Varattu
-      file << "0 " << std::endl;  // Varattu
+      file << "0 " << '\n';  // Varattu
       if (fHasDataParams)
         file << *itsDataParams;
 
       if (itsSecondaryProducers)
       {
-        file << itsSecondaryProducers->NumberOfItems() << std::endl;
+        file << itsSecondaryProducers->NumberOfItems() << '\n';
 
         NFmiVoidPtrIterator theProdItem(*itsSecondaryProducers);
         void *theVoid;
@@ -331,11 +331,11 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
           file << *(static_cast<NFmiProducer *>(theVoid));
       }
       else
-        file << 0 << std::endl;
+        file << 0 << '\n';
     }
     else
     {
-      file << std::endl;
+      file << '\n';
     }
 
     return file;

@@ -146,7 +146,7 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
       string::size_type pos1 = 0;
       while (pos1 < line.size())
       {
-        string::size_type pos2 = line.find("\t", pos1);
+        string::size_type pos2 = line.find('\t', pos1);
         if (pos2 == string::npos)
           pos2 = line.size();
         fields.push_back(line.substr(pos1, pos2 - pos1));
@@ -251,10 +251,10 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       string::size_type pos1 = 0;
       string::size_type pos2 = 0;
       vector<string>::size_type firstCoord = 0;
-      pos1 = line.find_first_not_of("\t", pos2);
+      pos1 = line.find_first_not_of('\t', pos2);
       while (pos1 < line.size())
       {
-        pos2 = line.find_first_of("\t", pos1);
+        pos2 = line.find_first_of('\t', pos1);
         if (pos2 == string::npos)
           pos2 = line.size();
         fields.push_back(line.substr(pos1, pos2 - pos1));
@@ -265,7 +265,7 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
 
         if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
           break;  // mahdolliset kommentit pois
-        pos1 = line.find_first_not_of("\t", pos2);
+        pos1 = line.find_first_not_of('\t', pos2);
       }
 
       // We require 1-6 text fields + 2 number fields + optional extra fields

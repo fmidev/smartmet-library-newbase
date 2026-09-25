@@ -981,9 +981,9 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
   {
     NFmiArea::Write(file);
 
-    file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude.Value() << endl
-         << itsCentralLatitude.Value() << endl
-         << itsTrueLatitude.Value() << endl;
+    file << itsBottomLeftLatLon << itsTopRightLatLon << itsCentralLongitude.Value() << '\n'
+         << itsCentralLatitude.Value() << '\n'
+         << itsTrueLatitude.Value() << '\n';
     int oldPrec = file.precision();
     file.precision(15);
 
@@ -991,11 +991,11 @@ std::ostream &NFmiAzimuthalArea::Write(std::ostream &file) const
     if (DefaultFmiInfoVersion >= 5)
     {
       file << itsRadialRange << " 0"
-           << " 0" << endl;
+           << " 0" << '\n';
       file << itsWorldRect << ' ';
     }
     else
-      file << itsWorldRect << endl;
+      file << itsWorldRect << '\n';
 
     file.precision(oldPrec);
 

@@ -189,7 +189,7 @@ std::ostream& NFmiPoint::Write(std::ostream& file) const
   try
   {
     file << itsX << " ";
-    file << itsY << std::endl;
+    file << itsY << '\n';
     return file;
   }
   catch (...)

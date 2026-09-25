@@ -102,7 +102,7 @@ void PrettyPrint(std::ostream& s,
     sz_type rows = m.NY();
     sz_type columns = m.NX();
 
-    s << static_cast<unsigned int>(columns) << " " << static_cast<unsigned int>(rows) << std::endl;
+    s << static_cast<unsigned int>(columns) << " " << static_cast<unsigned int>(rows) << '\n';
 
     if (printYInverted == false)
     {
@@ -110,7 +110,7 @@ void PrettyPrint(std::ostream& s,
       {
         for (sz_type i = 0; i < columns; i++)
           s << m[i][j] << " ";
-        s << std::endl;
+        s << '\n';
       }
     }
     else
@@ -121,7 +121,7 @@ void PrettyPrint(std::ostream& s,
           s << j << "\t";
         for (sz_type i = 0; i < columns; i++)
           s << m[i][j] << " ";
-        s << std::endl;
+        s << '\n';
 
         if (j == 0)  // luulen että koska j on unsigned tyyppinen, pitää tässä tarkastella 0-riviä,
                      // koska for-loopissa j-- lauseke ei ikinä vie j:n arvoa negatiiviseksi

@@ -270,14 +270,14 @@ std::ostream &NFmiLambertConformalConicArea::Write(std::ostream &file) const
   {
     NFmiArea::Write(file);
 
-    file << itsBottomLeftLatLon << itsTopRightLatLon << endl
-         << itsCentralLongitude << ' ' << itsCentralLatitude << endl
-         << itsTrueLatitude1 << ' ' << itsTrueLatitude2 << endl
-         << itsRadius << endl;
+    file << itsBottomLeftLatLon << itsTopRightLatLon << '\n'
+         << itsCentralLongitude << ' ' << itsCentralLatitude << '\n'
+         << itsTrueLatitude1 << ' ' << itsTrueLatitude2 << '\n'
+         << itsRadius << '\n';
 
     int oldPrec = file.precision();
     file.precision(15);
-    file << itsWorldRect << endl;
+    file << itsWorldRect << '\n';
 
     file.precision(oldPrec);
 

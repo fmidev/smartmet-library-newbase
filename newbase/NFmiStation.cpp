@@ -239,7 +239,7 @@ std::ostream &NFmiStation::Write(std::ostream &file) const
     if (DefaultFmiInfoVersion >= 4)
     {
       file << itsMaxDistance << " ";
-      file << static_cast<unsigned int>(itsIdentType) << std::endl;
+      file << static_cast<unsigned int>(itsIdentType) << '\n';
     }
 
     return file;

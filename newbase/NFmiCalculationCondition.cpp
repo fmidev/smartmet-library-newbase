@@ -333,7 +333,7 @@ void NFmiCalculationCondition::Write(std::ostream& os) const
   try
   {
     os << static_cast<int>(itsCondition) << ' ' << itsLowerLimit << ' ' << itsUpperLimit
-       << std::endl;
+       << '\n';
   }
   catch (...)
   {

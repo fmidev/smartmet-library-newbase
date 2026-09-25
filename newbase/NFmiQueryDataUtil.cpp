@@ -1940,7 +1940,7 @@ NFmiTimeBag MakeReferenceTimeBagCheck(const NFmiTimeBag &theTimeBag,
   try
   {
     NFmiMetTime startTime(theTimeBag.FirstTime());
-    NFmiMetTime startRefTime(thePossibleReferenceTimeBag->FirstTime());
+    const NFmiMetTime& startRefTime(thePossibleReferenceTimeBag->FirstTime());
     int resolutionInMinutes = theTimeBag.Resolution();
     int shiftInMinutes = abs(startTime.DifferenceInMinutes(startRefTime) % resolutionInMinutes);
     if (shiftInMinutes == 0)
@@ -4075,8 +4075,9 @@ bool NFmiQueryDataUtil::DoNowCastFiltering(const NFmiString &theData1FileName,
       // Tulos tiedostoon
       if (newQueryData)
       {
-        NFmiString realOutFileName(theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
-                                                        // outputFileName koska jakelija ei osaa
+        const NFmiString& realOutFileName(
+            theOutputFileName);  // otetaan toistaiseksi käyttöön haluttu
+                                 // outputFileName koska jakelija ei osaa
         // hoitaa muuttunutta tiedoston nimeä vielä
         ofstream out(realOutFileName, ios::binary);
         if (out)

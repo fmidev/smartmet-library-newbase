@@ -998,7 +998,7 @@ string NFmiSettingsImpl::ToString(const string& thePrefix) const
     {
       if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
       {
-        out << it->first << " = " << it->second << endl;
+        out << it->first << " = " << it->second << '\n';
       }
     }
     return out.str();

@@ -233,7 +233,7 @@ std::ostream& NFmiTimePerioid::Write(std::ostream& file) const
     // We trust all data to be version 6-7 by now
     if (DefaultFmiInfoVersion <= 2)
     {
-      file << itsMinutes << std::endl;
+      file << itsMinutes << '\n';
 
       return file;
     }
@@ -244,7 +244,7 @@ std::ostream& NFmiTimePerioid::Write(std::ostream& file) const
     file << itsHours << " ";
     file << itsMinutes << " ";
     file << itsSeconds << " ";
-    file << itsMicroSeconds << std::endl;
+    file << itsMicroSeconds << '\n';
 
     return file;
   }

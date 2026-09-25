@@ -449,12 +449,12 @@ std::ostream &NFmiGrid::Write(std::ostream &file) const
   {
     if (itsArea)
     {
-      file << itsArea->ClassId() << " " << itsArea->ClassName() << std::endl;
+      file << itsArea->ClassId() << " " << itsArea->ClassName() << '\n';
       file << *itsArea;
     }
     else
     {
-      file << 0 << " NFmiArea" << std::endl;
+      file << 0 << " NFmiArea" << '\n';
     }
 
     NFmiGridBase::Write(file);

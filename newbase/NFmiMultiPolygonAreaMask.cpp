@@ -173,8 +173,8 @@ std::ostream& NFmiMultiPolygonAreaMask::Write(std::ostream& file) const
     int size = itsAreaPolygons.size();
     for (int i = 0; i < size; i++)
     {
-      file << itsAreaPolygonValues[i] << std::endl;
-      file << *itsAreaPolygons[i] << std::endl;
+      file << itsAreaPolygonValues[i] << '\n';
+      file << *itsAreaPolygons[i] << '\n';
     }
     return file;
   }

@@ -811,7 +811,7 @@ std::ostream &NFmiString::Write(std::ostream &file) const
 {
   try
   {
-    file << fLength << " " << reinterpret_cast<char *>(fChar) << std::endl;
+    file << fLength << " " << reinterpret_cast<char *>(fChar) << '\n';
 
     return file;
   }

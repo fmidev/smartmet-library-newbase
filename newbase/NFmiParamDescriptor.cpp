@@ -412,19 +412,19 @@ std::ostream &NFmiParamDescriptor::Write(std::ostream &file) const
 {
   try
   {
-    file << ClassId() << " " << ClassName() << std::endl;
+    file << ClassId() << " " << ClassName() << '\n';
 
     file << fInterpolate << " "
          << "0 "
          << "0 "
-         << "0 " << std::endl;  // Varalla tulevaisuuta varten
+         << "0 " << '\n';  // Varalla tulevaisuuta varten
 
     file << *itsParamBag;
 
     for (unsigned long i = 0; i < itsParamBag->GetSize(); i++)
       file << itsActivity[i] << " ";
 
-    file << std::endl;
+    file << '\n';
 
     return file;
   }

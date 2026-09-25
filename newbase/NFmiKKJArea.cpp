@@ -766,7 +766,7 @@ std::ostream &NFmiKKJArea::Write(std::ostream &file) const
     // Dummies to replace old removed variables
     file << "0 0\n0 0\n";
 
-    file << itsXScaleFactor << " " << itsYScaleFactor << std::endl;
+    file << itsXScaleFactor << " " << itsYScaleFactor << '\n';
     file << itsWorldRect;
 
     return file;
