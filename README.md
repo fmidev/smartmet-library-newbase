@@ -17,6 +17,7 @@ The newbase library defines the native FMI weather data format, **QueryData** (`
 ## Documentation
 
 - [QueryData file format and usage guide](docs/querydata.md)
+- [Developer guide](docs/developer-guide.md): internals, file format details and pitfalls
 
 ## Usage
 

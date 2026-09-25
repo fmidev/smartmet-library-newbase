@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
+Full developer documentation: `docs/developer-guide.md` (internals and pitfalls) and `docs/querydata.md` (usage).
+
 `newbase` is a C++ library (`smartmet-library-newbase`) that defines and implements **QueryData** (`.sqd`), FMI's native binary format for gridded meteorological data. It is a foundational dependency of SmartMet Server and most FMI weather tools.
 
 ## Build commands
