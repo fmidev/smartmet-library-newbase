@@ -124,6 +124,7 @@
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
+#include <cmath>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
@@ -597,6 +598,14 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         const double y0 = (pvec.size() >= 4 ? pvec[3] : NFmiGaussKruger::kTM35FIN_FalseNorthing);
         const double a = (pvec.size() >= 5 ? pvec[4] : NFmiGaussKruger::kWGS84_A);
         const double invf = (pvec.size() >= 6 ? pvec[5] : NFmiGaussKruger::kWGS84_InvF);
+        // Area strings may come from requests (e.g. download plugin projection=), reject
+        // values which would produce an invalid PROJ definition or inf/NaN coordinates
+        if (!std::isfinite(k0) || !std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(a) ||
+            !std::isfinite(invf) || k0 <= 0 || a <= 0 || invf <= 1)
+          throw Fmi::Exception(BCP, "Invalid tmerc area parameters")
+              .addParameter("k_0", std::to_string(k0))
+              .addParameter("a", std::to_string(a))
+              .addParameter("1/f", std::to_string(invf));
         area.reset(new NFmiTransverseMercatorArea(
             bottomleft, topright, lon0, k0, x0, y0, a, invf, corner1, corner2, usePacificView));
       }
