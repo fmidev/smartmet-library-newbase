@@ -357,6 +357,9 @@ bool NFmiBitMask::IsLongBit(const long& theBitIndex, const long& theMaskedValue)
 
 NFmiBitMask& NFmiBitMask::operator=(const NFmiBitMask& theBitMask)
 {
+  if (this == &theBitMask)
+    return *this;
+
   try
   {
     itsSize = theBitMask.Size();

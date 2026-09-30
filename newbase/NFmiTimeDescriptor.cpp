@@ -1116,6 +1116,9 @@ const NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
 
 NFmiTimeDescriptor &NFmiTimeDescriptor::operator=(const NFmiTimeDescriptor &theTimeDescriptor)
 {
+  if (this == &theTimeDescriptor)
+    return *this;
+
   try
   {
     Destroy();

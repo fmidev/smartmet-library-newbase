@@ -223,6 +223,9 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
 
 NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList)
 {
+  if (this == &theList)
+    return *this;
+
   try
   {
     // Copy FirstPair array

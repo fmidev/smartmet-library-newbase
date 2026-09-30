@@ -1293,6 +1293,9 @@ NFmiGrid *NFmiFastQueryInfo::GridData(bool fUseExisting)
 
 NFmiFastQueryInfo &NFmiFastQueryInfo::operator=(const NFmiFastQueryInfo &theInfo)
 {
+  if (this == &theInfo)
+    return *this;
+
   try
   {
     NFmiQueryInfo::operator=(theInfo);

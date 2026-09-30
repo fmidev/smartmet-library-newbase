@@ -1317,6 +1317,9 @@ const NFmiGrid NFmiQueryInfo::GridValue()
 
 NFmiQueryInfo &NFmiQueryInfo::operator=(const NFmiQueryInfo &theInfo)
 {
+  if (this == &theInfo)
+    return *this;
+
   try
   {
     // HUOM!!!! Eikö tämä vuoda kun mitään ei deletoida??????

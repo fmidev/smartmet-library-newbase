@@ -319,6 +319,9 @@ bool NFmiParamDescriptor::NextActive(bool fIgnoreSubParam)
 
 NFmiParamDescriptor &NFmiParamDescriptor::operator=(const NFmiParamDescriptor &theParamDescriptor)
 {
+  if (this == &theParamDescriptor)
+    return *this;
+
   try
   {
     Destroy();

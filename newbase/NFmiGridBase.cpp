@@ -1657,6 +1657,9 @@ bool NFmiGridBase::Swap(FmiDirection theCurrentDirection)
 
 NFmiGridBase &NFmiGridBase::operator=(const NFmiGridBase &theBase)
 {
+  if (this == &theBase)
+    return *this;
+
   try
   {
     theBase.itsData ? itsData = new NFmiDataPool(*(theBase.itsData)) : itsData = nullptr;

@@ -230,6 +230,9 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 
 NFmiLevelBag &NFmiLevelBag::operator=(const NFmiLevelBag &theLevelBag)
 {
+  if (this == &theLevelBag)
+    return *this;
+
   try
   {
     itsIndex = theLevelBag.CurrentIndex();

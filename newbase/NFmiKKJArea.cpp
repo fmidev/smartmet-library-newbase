@@ -637,6 +637,9 @@ const NFmiPoint NFmiKKJArea::ToXY(const NFmiPoint &theLatLonPoint) const
 
 NFmiKKJArea &NFmiKKJArea::operator=(const NFmiKKJArea &theArea)
 {
+  if (this == &theArea)
+    return *this;
+
   try
   {
     NFmiArea::operator=(theArea);
