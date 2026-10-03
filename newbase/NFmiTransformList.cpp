@@ -223,6 +223,9 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
 
 NFmiTransformList& NFmiTransformList::operator=(const NFmiTransformList& theList)
 {
+  if (this == &theList)
+    return *this;
+
   try
   {
     // Copy FirstPair array
@@ -731,16 +734,16 @@ std::ostream& NFmiTransformList::Write(std::ostream& file) const
 {
   try
   {
-    file << itsMaxPairNumber << std::endl;
-    file << itsIncrementSize << std::endl;
-    file << itsCurrentIndex << std::endl;
-    file << itsCurrentMaxIndex << std::endl;
-    file << itsInputValue << std::endl;
-    file << itsOutputValue << std::endl << std::endl;
+    file << itsMaxPairNumber << '\n';
+    file << itsIncrementSize << '\n';
+    file << itsCurrentIndex << '\n';
+    file << itsCurrentMaxIndex << '\n';
+    file << itsInputValue << '\n';
+    file << itsOutputValue << '\n' << '\n';
     for (int i = 0; i < itsMaxPairNumber; i++)
     {
       file << itsFirstPair[i];
-      file << itsLastPair[i] << std::endl;
+      file << itsLastPair[i] << '\n';
     }
 
     return file;

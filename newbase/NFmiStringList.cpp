@@ -375,7 +375,7 @@ std::ostream &NFmiStringList::Write(std::ostream &file) const
   try
   {
     long items = NumberOfItems();
-    file << items << std::endl;
+    file << items << '\n';
 
     const StorageType::const_iterator begin = itsList.begin();
     const StorageType::const_iterator end = itsList.end();

@@ -948,20 +948,20 @@ std::ostream &NFmiDataPool::Write(std::ostream &file) const
   {
     // Used to be data type - now old kFloat value 6 for backward compatibility
     const int kFloat = 6;
-    file << kFloat << std::endl;
+    file << kFloat << '\n';
 
     // We trust everything to be at least version 6 by now
     if (DefaultFmiInfoVersion >= 6)
     {
-      file << fUseBinaryStorage << std::endl;
+      file << fUseBinaryStorage << '\n';
     }
-    file << itsSize * sizeof(float) << std::endl;
+    file << itsSize * sizeof(float) << '\n';
 
     if (fUseBinaryStorage)
     {
       // Native endianness output
       file.write(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
-      file << std::endl;
+      file << '\n';
     }
     else
     {

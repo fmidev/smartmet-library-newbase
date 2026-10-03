@@ -698,12 +698,12 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
 
     // Backward compatibility when other than floats were supported
     const int kFloat = 6;
-    file << kFloat << endl;
+    file << kFloat << '\n';
 
     if (DefaultFmiInfoVersion >= 6)
-      file << itsSaveAsBinaryFlag << endl;
+      file << itsSaveAsBinaryFlag << '\n';
 
-    file << itsSize * sizeof(float) << endl;
+    file << itsSize * sizeof(float) << '\n';
 
     if (itsSaveAsBinaryFlag && DefaultFmiInfoVersion >= 6)
     {
@@ -719,7 +719,7 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
       }
 
       // Backward compatibility - not sure if needed:
-      file << endl;
+      file << '\n';
     }
     else
     {

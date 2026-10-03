@@ -420,6 +420,9 @@ bool NFmiVPlaceDescriptor::SetActivity(bool theActivityState)
 NFmiVPlaceDescriptor &NFmiVPlaceDescriptor::operator=(
     const NFmiVPlaceDescriptor &theVPlaceDescriptor)
 {
+  if (this == &theVPlaceDescriptor)
+    return *this;
+
   try
   {
     Destroy();

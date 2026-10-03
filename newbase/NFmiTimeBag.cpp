@@ -555,17 +555,17 @@ std::ostream &NFmiTimeBag::Write(std::ostream &file) const
   {
     file << itsFirstTime.GetYear() << " " << itsFirstTime.GetMonth() << " " << itsFirstTime.GetDay()
          << " " << itsFirstTime.GetHour() << " " << itsFirstTime.GetMin() << " "
-         << itsFirstTime.GetSec() << std::endl;
+         << itsFirstTime.GetSec() << '\n';
 
     file << itsLastTime.GetYear() << " " << itsLastTime.GetMonth() << " " << itsLastTime.GetDay()
          << " " << itsLastTime.GetHour() << " " << itsLastTime.GetMin() << " "
-         << itsLastTime.GetSec() << std::endl;
+         << itsLastTime.GetSec() << '\n';
 
     // We trust all data to be at least version 6 by now
     if (DefaultFmiInfoVersion >= 4)
       file << itsResolution;
     else
-      file << static_cast<long>(itsResolution) << std::endl;
+      file << static_cast<long>(itsResolution) << '\n';
 
     return file;
   }

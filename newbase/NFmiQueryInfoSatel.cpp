@@ -172,7 +172,7 @@ std::ostream &NFmiQueryInfoSatel::Write(std::ostream &file) const
   {
     NFmiQueryInfo::Write(file);
 
-    file << static_cast<char *>(*itsSatelName) << std::endl;
+    file << static_cast<char *>(*itsSatelName) << '\n';
 
     return file;
   }

@@ -205,7 +205,7 @@ std::ostream& NFmiLevel::Write(std::ostream& file) const
   try
   {
     NFmiIndividual::Write(file);
-    file << itsLevelValue << std::endl;
+    file << itsLevelValue << '\n';
     return file;
   }
   catch (...)

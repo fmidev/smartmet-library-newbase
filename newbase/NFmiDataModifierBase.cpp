@@ -136,7 +136,7 @@ std::ostream &NFmiDataModifierBase::WriteOperand(std::ostream &file) const
 
 std::ostream &NFmiDataModifierBase::WriteExpressionStart(std::ostream &file) const
 {
-  file << std::endl << "<expression type='" << static_cast<char *>(itsExpressionType) << "'>";
+  file << '\n' << "<expression type='" << static_cast<char *>(itsExpressionType) << "'>";
   return file;
 }
 

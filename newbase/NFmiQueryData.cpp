@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <fstream>
 #include <ios>
+#include <utility>
 
 #ifndef UNIX
 #include <io.h>
@@ -885,7 +886,7 @@ void NFmiQueryData::SetLatLonCache(std::shared_ptr<std::vector<NFmiPoint> > newC
 {
   try
   {
-    itsLatLonCache = newCache;
+    itsLatLonCache = std::move(newCache);
   }
   catch (...)
   {

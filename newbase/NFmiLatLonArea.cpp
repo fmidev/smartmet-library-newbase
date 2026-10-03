@@ -307,7 +307,7 @@ std::ostream &NFmiLatLonArea::Write(std::ostream &file) const
     file << "0 0\n0 0\n";
 
     file << itsXScaleFactor << " ";
-    file << itsYScaleFactor << std::endl;
+    file << itsYScaleFactor << '\n';
     return file;
   }
   catch (...)

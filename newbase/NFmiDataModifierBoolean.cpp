@@ -94,7 +94,7 @@ bool NFmiDataModifierBoolean::BooleanValue()
 
 std::ostream& NFmiDataModifierBoolean::WriteOperator(std::ostream& file) const
 {
-  file << std::endl << "<operator type='boolean'>";
+  file << '\n' << "<operator type='boolean'>";
   switch (itsCondition)
   {
     case kFmiModifierValueLessThan:

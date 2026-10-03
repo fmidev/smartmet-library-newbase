@@ -43,6 +43,7 @@ std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiAreaMask::DoShallowCopy(
 {
   // tehd‰‰n matala kopio info-vektorista
   std::vector<std::shared_ptr<NFmiFastQueryInfo>> shallowCopyVector;
+  shallowCopyVector.reserve(infoVector.size());
   for (const auto &info : infoVector)
   {
     shallowCopyVector.push_back(std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*info)));

@@ -230,6 +230,9 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 
 NFmiLevelBag &NFmiLevelBag::operator=(const NFmiLevelBag &theLevelBag)
 {
+  if (this == &theLevelBag)
+    return *this;
+
   try
   {
     itsIndex = theLevelBag.CurrentIndex();
@@ -303,7 +306,7 @@ std::ostream &NFmiLevelBag::Write(std::ostream &file) const
       file << itsLevels[i];
     }
 
-    file << itsStep << std::endl;
+    file << itsStep << '\n';
     return file;
   }
   catch (...)

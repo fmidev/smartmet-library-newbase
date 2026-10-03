@@ -79,7 +79,7 @@ std::ostream& NFmiBox::Write(std::ostream& file) const
     for (unsigned long i = 0; i < itsSize; i++)
       file << itsValues[i] << " ";
 
-    file << std::endl;
+    file << '\n';
 
     return file;
   }

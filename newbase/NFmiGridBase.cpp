@@ -1482,10 +1482,10 @@ std::ostream &NFmiGridBase::Write(std::ostream &file) const
 {
   try
   {
-    file << static_cast<unsigned long>(itsInterpolationMethod) << std::endl;
-    file << static_cast<unsigned long>(itsStartingCorner) << std::endl;
+    file << static_cast<unsigned long>(itsInterpolationMethod) << '\n';
+    file << static_cast<unsigned long>(itsStartingCorner) << '\n';
     file << itsXNumber << " ";
-    file << itsYNumber << std::endl;
+    file << itsYNumber << '\n';
 
     if (itsData)
       file << *itsData;
@@ -1657,6 +1657,9 @@ bool NFmiGridBase::Swap(FmiDirection theCurrentDirection)
 
 NFmiGridBase &NFmiGridBase::operator=(const NFmiGridBase &theBase)
 {
+  if (this == &theBase)
+    return *this;
+
   try
   {
     theBase.itsData ? itsData = new NFmiDataPool(*(theBase.itsData)) : itsData = nullptr;

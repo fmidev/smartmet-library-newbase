@@ -517,7 +517,7 @@ std::ostream &NFmiTimeList::Write(std::ostream &file) const
   try
   {
     long items = NumberOfItems();
-    file << items << std::endl;
+    file << items << '\n';
     First();
     NFmiMetTime *aItem;
     for (long i = 0; i < items; i++)
@@ -525,7 +525,7 @@ std::ostream &NFmiTimeList::Write(std::ostream &file) const
       Next(&aItem);
 
       file << aItem->GetYear() << " " << aItem->GetMonth() << " " << aItem->GetDay() << " "
-           << aItem->GetHour() << " " << aItem->GetMin() << " " << aItem->GetSec() << std::endl;
+           << aItem->GetHour() << " " << aItem->GetMin() << " " << aItem->GetSec() << '\n';
     }
     return file;
   }
