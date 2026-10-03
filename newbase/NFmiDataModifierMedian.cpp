@@ -7,6 +7,7 @@
 
 #include "NFmiDataModifierMedian.h"
 #include "NFmiQueryInfo.h"
+#include <algorithm>
 #include <stdexcept>
 
 // ----------------------------------------------------------------------
@@ -53,7 +54,11 @@ float NFmiDataModifierMedian::Median()
                            // (Marko)
   std::sort(itsMedianArray.begin(), itsMedianArray.end());
   //  return itsMedianArray[itsMedianArray.size()/2];
-  return itsMedianArray[static_cast<int>(itsMedianArray.size() * itsLimitProsent / 100.f)];
+  // Clamp the index, the 100% fractile would otherwise read past the end of the array
+  const auto n = itsMedianArray.size();
+  const auto pos = static_cast<long>(n * itsLimitProsent / 100.f);
+  const auto index = std::clamp(pos, 0L, static_cast<long>(n - 1));
+  return itsMedianArray[index];
 }
 
 // ----------------------------------------------------------------------

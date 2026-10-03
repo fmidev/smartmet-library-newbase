@@ -44,7 +44,12 @@ void NFmiDataModifierMode::Clear()
 }
 float NFmiDataModifierMode::CalculationResult()
 {
-  auto pos = std::max_element(itsDataVector.begin(), itsDataVector.end());
+  // The most frequent value, the first one encountered in case of ties. Note that Data::operator<
+  // compares the values, not the counts.
+  auto pos = std::max_element(itsDataVector.begin(),
+                              itsDataVector.end(),
+                              [](const Data &lhs, const Data &rhs)
+                              { return lhs.Counter() < rhs.Counter(); });
   if (pos != itsDataVector.end())
     return (*pos).Value();
   return kFloatMissing;

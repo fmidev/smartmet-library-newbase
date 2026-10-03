@@ -14,6 +14,8 @@
 
 #include "NFmiDataModifierStandardDeviation.h"
 #include "NFmiQueryInfo.h"
+#include <algorithm>
+#include <cmath>
 
 // ----------------------------------------------------------------------
 /*!
@@ -73,10 +75,12 @@ void NFmiDataModifierStandardDeviation::Clear()
 
 float NFmiDataModifierStandardDeviation::CalculationResult()
 {
-  if (fCalculationResultOk)
-    return (itsSquaredSum - itsSum * itsSum / itsCounter) / (itsCounter - 1);
-  else
+  if (!fCalculationResultOk)
     return kFloatMissing;
+
+  // Sample standard deviation. Rounding errors may produce a slightly negative variance.
+  const double variance = (itsSquaredSum - itsSum * itsSum / itsCounter) / (itsCounter - 1);
+  return static_cast<float>(std::sqrt(std::max(0.0, variance)));
 }
 
 // ======================================================================

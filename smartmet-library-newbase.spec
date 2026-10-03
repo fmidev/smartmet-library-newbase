@@ -169,6 +169,9 @@ fi
 - Handle self-assignment in ten newbase assignment operators
 - Remove unnecessary copies found by clang-tidy performance checks
 - Fix integer division in NFmiGrid::RelativePoint
+- NFmiDataModifierStandardDeviation returned the sample variance instead of the standard deviation
+- NFmiDataModifierMode returned the largest value instead of the most frequent one
+- NFmiDataModifierMedian read past the end of the data for the 100% fractile
 
 * Thu Sep 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.9.24-1.fmi
 - Security: tmerc area strings with non-finite values, k_0 <= 0, a <= 0 or 1/f <= 1 are rejected
