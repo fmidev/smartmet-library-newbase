@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.3
+Version: 26.10.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Sun Oct 04 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.4-1.fmi
+- NFmiGdalArea holds the datum as an Fmi::SpatialReference so that the WKT, PROJ string, EPSG code and axis flags are derived once and cached instead of twice per area construction (1.75 ms to 0.015 ms per construction)
+
 * Sat Oct 03 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.3-1.fmi
 - Handle self-assignment in ten newbase assignment operators
 - Remove unnecessary copies found by clang-tidy performance checks
