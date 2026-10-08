@@ -5,14 +5,17 @@
  */
 // ======================================================================
 
+#include "NFmiAreaFactory.h"
 #include "NFmiFileSystem.h"
 #include "NFmiGrid.h"
 #include "NFmiIndexMask.h"
 #include "NFmiIndexMaskTools.h"
 #include "NFmiStreamQueryData.h"
 #include "NFmiSvgPath.h"
+#include "NFmiSvgTools.h"
 #include <regression/tframe.h>
 #include <fstream>
+#include <sstream>
 
 //! Protection against conflicts with global functions
 namespace NFmiIndexMaskToolsTest
@@ -298,6 +301,67 @@ void maskexpandmany(void)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test MaskInside() and MaskOutside() with large polygons
+ *
+ * The masks must agree with a brute force insidedness test of every grid
+ * point also when the polygon is much larger than the grid, when its center
+ * is outside the grid and when the projection bends its edges strongly
+ * (rotated latlon).
+ */
+// ----------------------------------------------------------------------
+
+void masklargepolygons(void)
+{
+  using namespace std;
+  using namespace NFmiIndexMaskTools;
+
+  // A rotated latlon area like that of the HARMONIE test data in smartmet-test-data
+  auto rotated = NFmiAreaFactory::Create("rotlatlon,-30,20:24.908,59.9827,26.0874,61.0171");
+  NFmiGrid rotatedgrid(rotated.get(), 15, 20);
+
+  const vector<pair<string, const NFmiGrid*>> grids{{"hiladata", theGrid},
+                                                    {"rotlatlon", &rotatedgrid}};
+
+  const vector<string> paths{"\"M -50 -50 L -50 70 L 70 70 L 70 -50 Z\"",
+                             "\"M 20 60 L 20 65 L 120 65 L 120 60 Z\"",
+                             "\"M 10 60.3 L 10 70 L 179 70 L 179 60.3 Z\"",
+                             "\"M 24 59 L 24 62 L 27 62 L 27 59 Z\"",
+                             "\"M 25.5 60.5 L 25.5 61.5 L 27 61.5 L 27 60.5 Z\""};
+
+  for (const auto& grid : grids)
+  {
+    const unsigned long n = grid.second->XNumber() * grid.second->YNumber();
+
+    for (const auto& svg : paths)
+    {
+      NFmiSvgPath path;
+      istringstream in(svg);
+      in >> path;
+
+      NFmiIndexMask expected;
+      for (unsigned long idx = 0; idx < n; idx++)
+        if (NFmiSvgTools::IsInside(path, grid.second->LatLon(idx)))
+          expected.insert(idx);
+
+      const NFmiIndexMask inside = MaskInside(*grid.second, path);
+      if (inside != expected)
+        TEST_FAILED("MaskInside failed for " + svg + " in " + grid.first + " grid: " +
+                    to_string(inside.size()) + " points instead of " +
+                    to_string(expected.size()));
+
+      const NFmiIndexMask outside = MaskOutside(*grid.second, path);
+      if (outside.size() + expected.size() != n)
+        TEST_FAILED("MaskOutside failed for " + svg + " in " + grid.first + " grid: " +
+                    to_string(outside.size()) + " points instead of " +
+                    to_string(n - expected.size()));
+    }
+  }
+
+  TEST_PASSED();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * The actual test suite
  */
 // ----------------------------------------------------------------------
@@ -314,6 +378,7 @@ class tests : public tframe::tests
     TEST(maskdistancepath);
     TEST(maskdistancepoint);
     TEST(maskexpandmany);
+    TEST(masklargepolygons);
   }
 };
 
