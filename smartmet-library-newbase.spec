@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.4
+Version: 26.10.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Thu Oct 08 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.8-1.fmi
+- Fixed index masks of large polygons, the distance optimization used straight projected edges instead of the projected latlon edges (BRAINSTORM-3026)
+
 * Sun Oct 04 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.4-1.fmi
 - NFmiGdalArea holds the datum as an Fmi::SpatialReference so that the WKT, PROJ string, EPSG code and axis flags are derived once and cached instead of twice per area construction (1.75 ms to 0.015 ms per construction)
 

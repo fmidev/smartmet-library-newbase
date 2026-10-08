@@ -579,6 +579,7 @@
 // ======================================================================
 
 #include "NFmiIndexMaskTools.h"
+#include "NFmiArea.h"
 #include "NFmiCalculationCondition.h"
 #include "NFmiFastQueryInfo.h"
 #include "NFmiGeoTools.h"
@@ -590,6 +591,7 @@
 #include "NFmiSvgTools.h"
 #include <macgyver/Exception.h>
 #include <cassert>
+#include <cmath>
 
 // Implementation hiding detail functions
 
@@ -601,48 +603,54 @@ const double resolution_factor = 1.0 / 4;
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Insert a line into the given NFmiNearTree
+ * \brief Insert a latlon edge projected to world xy coordinates
  *
- * This is used when inserting a NFmiSvgPath into the NFmiNearTree
- * with some fixed resolution.
- *
- * \param theTree The tree to insert the data into
- * \param theStart The starting X-coordinate
- * \param theEnd The end X-coordinate
- * \param theResolution The maximum allowed edge distance
+ * The insidedness tests treat the path edges as straight lines in latlon space.
+ * In most projections such an edge is a curve, so the edge is subdivided in latlon
+ * space and each subdivision point is projected separately until the projected
+ * pieces are short enough.
  */
 // ----------------------------------------------------------------------
 
-void Insert(NFmiNearTree<NFmiPoint> &theTree,
-            const NFmiPoint &theStart,
-            const NFmiPoint &theEnd,
-            double theResolution)
+void InsertLatLon(NFmiNearTree<NFmiPoint> &theTree,
+                  const NFmiArea &theArea,
+                  const NFmiPoint &theStartLatLon,
+                  const NFmiPoint &theEndLatLon,
+                  const NFmiPoint &theStartXY,
+                  const NFmiPoint &theEndXY,
+                  double theResolution,
+                  int theDepth)
 {
   try
   {
-    // Safety against infinite recursion
-    if (theResolution <= 0)
+    // The depth limit protects against projection singularities, where the
+    // projected pieces would never become short
+    const int max_depth = 20;
+
+    if (theResolution <= 0 || theDepth >= max_depth ||
+        theStartXY.Distance(theEndXY) <= theResolution)
     {
-      theTree.Insert(theStart);
-      theTree.Insert(theEnd);
+      if (std::isfinite(theStartXY.X()) && std::isfinite(theStartXY.Y()))
+        theTree.Insert(theStartXY);
+      if (std::isfinite(theEndXY.X()) && std::isfinite(theEndXY.Y()))
+        theTree.Insert(theEndXY);
+      return;
     }
-    else
-    {
-      // if edge length is small enough, stop recursion
-      const double dist = theStart.Distance(theEnd);
-      if (dist <= theResolution)
-      {
-        theTree.Insert(theStart);
-        theTree.Insert(theEnd);
-      }
-      else
-      {
-        // subdivide and recurse
-        NFmiPoint mid((theStart.X() + theEnd.X()) / 2, (theStart.Y() + theEnd.Y()) / 2);
-        Insert(theTree, theStart, mid, theResolution);
-        Insert(theTree, theEnd, mid, theResolution);
-      }
-    }
+
+    const NFmiPoint midLatLon((theStartLatLon.X() + theEndLatLon.X()) / 2,
+                              (theStartLatLon.Y() + theEndLatLon.Y()) / 2);
+    const NFmiPoint midXY = theArea.LatLonToWorldXY(midLatLon);
+
+    InsertLatLon(theTree,
+                 theArea,
+                 theStartLatLon,
+                 midLatLon,
+                 theStartXY,
+                 midXY,
+                 theResolution,
+                 theDepth + 1);
+    InsertLatLon(
+        theTree, theArea, midLatLon, theEndLatLon, midXY, theEndXY, theResolution, theDepth + 1);
   }
   catch (...)
   {
@@ -652,31 +660,41 @@ void Insert(NFmiNearTree<NFmiPoint> &theTree,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Insert the SVG path into the given NFmiNearTree
+ * \brief Insert a latlon SVG path projected to world xy coordinates
  *
- * The purpose here is to provide means for calculating
- * the distance of some point from the NFmiSvgPath. The user
- * is expected to provide some suitable resolution for
- * subdividing too long edges into more vertices.
- *
- * \param theTree The tree to insert the data into
- * \param thePath The path to insert
- * \param theResolution The maximum allowed edge distance
+ * Projecting only the vertices of the path would replace the curved images
+ * of the edges by straight lines. For large paths or strongly curved
+ * projections (e.g. rotated latlon) those may pass far from the real edges,
+ * which would break the distance based optimizations of the mask functions.
  */
 // ----------------------------------------------------------------------
 
-void Insert(NFmiNearTree<NFmiPoint> &theTree, const NFmiSvgPath &thePath, double theResolution)
+void Insert(NFmiNearTree<NFmiPoint> &theTree,
+            const NFmiSvgPath &theLatLonPath,
+            const NFmiArea &theArea,
+            double theResolution)
 {
   try
   {
-    if (thePath.empty())
+    if (theLatLonPath.empty())
       return;
 
-    NFmiPoint firstPoint(thePath.front().itsX, thePath.front().itsY);
+    NFmiPoint firstPoint(theLatLonPath.front().itsX, theLatLonPath.front().itsY);
+    NFmiPoint lastPoint = firstPoint;
 
-    NFmiPoint lastPoint(0, 0);
+    auto insert_edge = [&](const NFmiPoint &theStart, const NFmiPoint &theEnd)
+    {
+      InsertLatLon(theTree,
+                   theArea,
+                   theStart,
+                   theEnd,
+                   theArea.LatLonToWorldXY(theStart),
+                   theArea.LatLonToWorldXY(theEnd),
+                   theResolution,
+                   0);
+    };
 
-    for (const auto &it : thePath)
+    for (const auto &it : theLatLonPath)
     {
       switch (it.itsType)
       {
@@ -686,14 +704,14 @@ void Insert(NFmiNearTree<NFmiPoint> &theTree, const NFmiSvgPath &thePath, double
           break;
         case NFmiSvgPath::kElementClosePath:
         {
-          Insert(theTree, lastPoint, firstPoint, theResolution);
+          insert_edge(lastPoint, firstPoint);
           lastPoint = firstPoint;
           break;
         }
         case NFmiSvgPath::kElementLineto:
         {
           NFmiPoint nextPoint(it.itsX, it.itsY);
-          Insert(theTree, lastPoint, nextPoint, theResolution);
+          insert_edge(lastPoint, nextPoint);
           lastPoint = nextPoint;
           break;
         }
@@ -747,10 +765,8 @@ const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePa
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Optimization
 
@@ -840,10 +856,8 @@ const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &theP
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Optimization
 
@@ -957,10 +971,8 @@ const NFmiIndexMask MaskExpand(const NFmiGrid &theGrid,
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Optimization
 
@@ -1063,10 +1075,8 @@ const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Non-optimal solution loops through the entire grid
 
@@ -1129,10 +1139,8 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Non-optimal solution loops through the entire grid
 
@@ -1239,10 +1247,8 @@ const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
 
     // Fast lookup tree for distance calculations
 
-    NFmiSvgPath projectedPath(thePath);
-    NFmiSvgTools::LatLonToWorldXY(projectedPath, *theGrid.Area());
     NFmiNearTree<NFmiPoint> tree;
-    Insert(tree, projectedPath, FmiMin(dx, dy) * resolution_factor);
+    Insert(tree, thePath, *theGrid.Area(), FmiMin(dx, dy) * resolution_factor);
 
     // Non-optimal solution loops through the entire grid
 
