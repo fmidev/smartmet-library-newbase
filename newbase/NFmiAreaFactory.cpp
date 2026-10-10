@@ -124,14 +124,15 @@
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 
-#include <cmath>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
 #include <algorithm>
+#include <cmath>
 #include <deque>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -468,33 +469,38 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       {
         if (pvec.size() != 0)
           throw Fmi::Exception(BCP, "latlon area does not require any parameters");
-        area.reset(new NFmiLatLonArea(bottomleft, topright, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiLatLonArea>(
+            bottomleft, topright, corner1, corner2, usePacificView);
       }
       else if (proj == "ykj")
       {
         if (pvec.size() != 0)
           throw Fmi::Exception(BCP, "ykj area does not require any parameters");
-        area.reset(new NFmiYKJArea(bottomleft, topright, corner1, corner2, usePacificView));
+        area =
+            std::make_shared<NFmiYKJArea>(bottomleft, topright, corner1, corner2, usePacificView);
       }
       else if (proj == "pkj")
       {
         if (pvec.size() != 0)
           throw Fmi::Exception(BCP, "pkj area does not require any parameters");
-        area.reset(new NFmiPKJArea(bottomleft, topright, corner1, corner2, usePacificView));
+        area =
+            std::make_shared<NFmiPKJArea>(bottomleft, topright, corner1, corner2, usePacificView);
       }
       else if (proj == "mercator")
       {
         if (pvec.size() > 0)
           throw Fmi::Exception(BCP, "mercator area requires no parameters");
 
-        area.reset(new NFmiMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiMercatorArea>(
+            bottomleft, topright, corner1, corner2, usePacificView);
       }
       else if (proj == "webmercator")
       {
         if (pvec.size() > 0)
           throw Fmi::Exception(BCP, "webmercator area requires no parameters");
 
-        area.reset(new NFmiWebMercatorArea(bottomleft, topright, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiWebMercatorArea>(
+            bottomleft, topright, corner1, corner2, usePacificView);
       }
       else if (proj == "rotlatlon")
       {
@@ -502,8 +508,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           throw Fmi::Exception(BCP, "rotlatlon area requires max 2 parameters");
         const double pole_lon = check_longitude(pvec.size() >= 2 ? pvec[1] : 0, usePacificView);
         const double pole_lat = check_latitude(pvec.size() >= 1 ? pvec[0] : -90);
-        area.reset(new NFmiRotatedLatLonArea(
-            bottomleft, topright, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiRotatedLatLonArea>(
+            bottomleft, topright, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView);
       }
       else if (proj == "invrotlatlon")
       {
@@ -519,16 +525,16 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         NFmiPoint bl = rot.ToRegLatLon(bottomleft);
         NFmiPoint tr = rot.ToRegLatLon(topright);
 
-        area.reset(new NFmiRotatedLatLonArea(
-            bl, tr, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiRotatedLatLonArea>(
+            bl, tr, NFmiPoint(pole_lon, pole_lat), corner1, corner2, usePacificView);
       }
       else if (proj == "orthographic")
       {
         if (pvec.size() > 1)
           throw Fmi::Exception(BCP, "orthographi area requires max 1 parameter");
         const double azimuth = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
-        area.reset(new NFmiOrthographicArea(
-            bottomleft, topright, azimuth, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiOrthographicArea>(
+            bottomleft, topright, azimuth, corner1, corner2, usePacificView);
       }
       else if (proj == "stereographic")
       {
@@ -537,8 +543,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
         const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
         const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-        area.reset(new NFmiStereographicArea(
-            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+        area = std::make_shared<NFmiStereographicArea>(
+            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView);
       }
       else if (proj == "lambertequal")
       {
@@ -547,8 +553,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
         const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
         const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-        area.reset(new NFmiLambertEqualArea(
-            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+        area = std::make_shared<NFmiLambertEqualArea>(
+            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView);
       }
       else if (proj == "lcc")
       {
@@ -561,8 +567,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         const double tlat1 = check_latitude(pvec[2]);
         const double tlat2 = check_latitude(pvec.size() >= 4 ? pvec[3] : tlat1);
         const double rad = (pvec.size() >= 5 ? pvec[4] : kRearth);
-        area.reset(new NFmiLambertConformalConicArea(
-            bottomleft, topright, clon, clat, tlat1, tlat2, rad, usePacificView));
+        area = std::make_shared<NFmiLambertConformalConicArea>(
+            bottomleft, topright, clon, clat, tlat1, tlat2, rad, usePacificView);
       }
       else if (proj == "gnomonic")
       {
@@ -571,8 +577,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
         const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
         const double tlat = check_latitude(pvec.size() >= 3 ? pvec[2] : 60);
-        area.reset(new NFmiGnomonicArea(
-            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView));
+        area = std::make_shared<NFmiGnomonicArea>(
+            bottomleft, topright, clon, corner1, corner2, clat, tlat, usePacificView);
       }
       else if (proj == "equidist")
       {
@@ -580,8 +586,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           throw Fmi::Exception(BCP, "equidist area requires max 2 parameters");
         const double clon = check_longitude(pvec.size() >= 1 ? pvec[0] : 0, usePacificView);
         const double clat = check_latitude(pvec.size() >= 2 ? pvec[1] : 90);
-        area.reset(new NFmiEquidistArea(
-            bottomleft, topright, clon, corner1, corner2, clat, usePacificView));
+        area = std::make_shared<NFmiEquidistArea>(
+            bottomleft, topright, clon, corner1, corner2, clat, usePacificView);
       }
       else if (proj == "tmerc")
       {
@@ -605,8 +611,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
               .addParameter("k_0", std::to_string(k0))
               .addParameter("a", std::to_string(a))
               .addParameter("1/f", std::to_string(invf));
-        area.reset(new NFmiTransverseMercatorArea(
-            bottomleft, topright, lon0, k0, x0, y0, a, invf, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiTransverseMercatorArea>(
+            bottomleft, topright, lon0, k0, x0, y0, a, invf, corner1, corner2, usePacificView);
       }
 #ifdef UNIX
 #ifndef DISABLED_GDAL
@@ -624,8 +630,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
           proj = proj.substr(6, std::string::npos);
         }
 
-        area.reset(
-            new NFmiGdalArea(datum, proj, bottomleft, topright, corner1, corner2, usePacificView));
+        area = std::make_shared<NFmiGdalArea>(
+            datum, proj, bottomleft, topright, corner1, corner2, usePacificView);
       }
 #else
       else

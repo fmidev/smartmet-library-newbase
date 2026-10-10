@@ -18,6 +18,7 @@
 
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <memory>
 
 //! Destructor
 NFmiAreaMask::~NFmiAreaMask() = default;
@@ -28,7 +29,7 @@ std::shared_ptr<NFmiFastQueryInfo> NFmiAreaMask::DoShallowCopy(
   try
   {
     if (theInfo)
-      return std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*theInfo));
+      return std::make_shared<NFmiFastQueryInfo>(*theInfo);
 
     return theInfo;
   }
@@ -46,7 +47,7 @@ std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiAreaMask::DoShallowCopy(
   shallowCopyVector.reserve(infoVector.size());
   for (const auto &info : infoVector)
   {
-    shallowCopyVector.push_back(std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*info)));
+    shallowCopyVector.push_back(std::make_shared<NFmiFastQueryInfo>(*info));
   }
   return shallowCopyVector;
 }

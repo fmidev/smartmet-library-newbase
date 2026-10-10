@@ -46,11 +46,12 @@
 #include <macgyver/Exception.h>
 #include <macgyver/ThreadName.h>
 
-#include <fmt/format.h>
 #include <boost/math/special_functions/round.hpp>
+#include <fmt/format.h>
 #include <algorithm>
 #include <cassert>
 #include <fstream>
+#include <memory>
 #include <numeric>
 #include <stdexcept>
 #include <thread>
@@ -3971,9 +3972,8 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
         std::vector<std::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
         for (unsigned int i = 0; i < usedThreadCount; i++)
         {
-          targetInfos[i] = std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(destInfo));
-          sourceInfos[i] =
-              std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theSourceInfo));
+          targetInfos[i] = std::make_shared<NFmiFastQueryInfo>(destInfo);
+          sourceInfos[i] = std::make_shared<NFmiFastQueryInfo>(theSourceInfo);
         }
 
         unsigned long usedStartTimeIndex = 0;
@@ -5100,7 +5100,7 @@ NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
         std::shared_ptr<NFmiQueryData> qDataPtr;
         try
         {
-          qDataPtr = std::shared_ptr<NFmiQueryData>(new NFmiQueryData(totalFileName, true));
+          qDataPtr = std::make_shared<NFmiQueryData>(totalFileName, true);
         }
         catch (...)
         {
@@ -5156,8 +5156,7 @@ std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFast
     std::vector<std::shared_ptr<NFmiFastQueryInfo>> fastInfos = ::MakeFastInfos(theQDataVector);
     if (fDoRebuild == false && theBaseQData)
     {
-      fastInfos.push_back(
-          std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(theBaseQData.get())));
+      fastInfos.push_back(std::make_shared<NFmiFastQueryInfo>(theBaseQData.get()));
     }
     return fastInfos;
   }
@@ -6527,8 +6526,8 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
         std::vector<std::shared_ptr<NFmiFastQueryInfo>> sourceInfos(usedThreadCount);
         for (unsigned int i = 0; i < usedThreadCount; i++)
         {
-          targetInfos[i] = std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(target1));
-          sourceInfos[i] = std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(source1));
+          targetInfos[i] = std::make_shared<NFmiFastQueryInfo>(target1);
+          sourceInfos[i] = std::make_shared<NFmiFastQueryInfo>(source1);
         }
 
         NFmiTimeIndexCalculator timeIndexCalculator(usedStartTimeIndex, usedEndTimeIndex);

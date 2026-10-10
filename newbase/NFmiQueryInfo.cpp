@@ -41,6 +41,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <fstream>
+#include <memory>
 #include <shared_mutex>
 #include <stdexcept>
 
@@ -3249,8 +3250,7 @@ void NFmiQueryInfo::ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier
     {
       // HUOM! pakko tehdä fastQueryInfo copioita, että ei menetetä nopeutta, eikä saa tehdä
       // Clone:ja, koska tällöin kopioituu myös data-osio!!!
-      modifiedInfoVector[i] =
-          std::shared_ptr<NFmiFastQueryInfo>(new NFmiFastQueryInfo(*thisFastInfo));
+      modifiedInfoVector[i] = std::make_shared<NFmiFastQueryInfo>(*thisFastInfo);
       dataModifierVector[i] = std::shared_ptr<NFmiDataModifier>(theModifier->Clone());
     }
 

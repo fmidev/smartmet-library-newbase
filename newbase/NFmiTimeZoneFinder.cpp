@@ -465,7 +465,7 @@ NFmiTimeZoneFinder::NFmiTimeZoneFinder()
 {
   try
   {
-    itsPimple.reset(new NFmiTimeZoneFinderPimple());
+    itsPimple = std::make_shared<NFmiTimeZoneFinderPimple>();
   }
   catch (...)
   {
@@ -485,7 +485,7 @@ NFmiTimeZoneFinder::NFmiTimeZoneFinder(const NFmiTimeZoneFinder& theFinder)
 {
   try
   {
-    itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+    itsPimple = std::make_shared<NFmiTimeZoneFinderPimple>(*theFinder.itsPimple);
   }
   catch (...)
   {
@@ -507,7 +507,7 @@ NFmiTimeZoneFinder& NFmiTimeZoneFinder::operator=(const NFmiTimeZoneFinder& theF
   try
   {
     if (this != &theFinder)
-      itsPimple.reset(new NFmiTimeZoneFinderPimple(*theFinder.itsPimple));
+      itsPimple = std::make_shared<NFmiTimeZoneFinderPimple>(*theFinder.itsPimple);
 
     return *this;
   }
@@ -633,8 +633,8 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
 
         float tz;
         input >> tz;
-        poly.reset(new NFmiTimeZonePolygon(tz));
-        ring.reset(new NFmiTimeZoneRing());
+        poly = std::make_shared<NFmiTimeZonePolygon>(tz);
+        ring = std::make_shared<NFmiTimeZoneRing>();
       }
       else if (command == "xy")
       {
@@ -657,7 +657,7 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
           return false;
         }
         poly->Add(*ring);
-        ring.reset(new NFmiTimeZoneRing());
+        ring = std::make_shared<NFmiTimeZoneRing>();
       }
       else
       {
