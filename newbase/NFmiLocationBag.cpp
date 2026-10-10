@@ -179,8 +179,8 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag &theLocationBag)
   {
     itsLocations.reserve(theLocationBag.itsLocations.size());
 
-    for (unsigned long i = 0; i < theLocationBag.itsLocations.size(); i++)
-      AddLocation(*(theLocationBag.itsLocations[i]), false);
+    for (auto itsLocation : theLocationBag.itsLocations)
+      AddLocation(*itsLocation, false);
   }
   catch (...)
   {
@@ -199,8 +199,8 @@ void NFmiLocationBag::Destroy()
 {
   try
   {
-    for (unsigned long i = 0; i < itsLocations.size(); i++)
-      delete itsLocations[i];
+    for (auto& itsLocation : itsLocations)
+      delete itsLocation;
 
     itsLocations.clear();
     itsSortedLocations.clear();
@@ -480,9 +480,9 @@ std::ostream &NFmiLocationBag::Write(std::ostream &file) const
       file << itsLocations[0]->ClassId() << '\n';
     }
 
-    for (unsigned long i = 0; i < itsLocations.size(); i++)
+    for (auto itsLocation : itsLocations)
     {
-      file << *(itsLocations[i]);
+      file << *itsLocation;
     }
     return file;
   }
@@ -586,8 +586,8 @@ NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBa
     itsSize = theLocationBag.GetSize();
 
     itsLocations.reserve(theLocationBag.itsLocations.size());
-    for (unsigned int i = 0; i < theLocationBag.itsLocations.size(); i++)
-      Add(*(theLocationBag.itsLocations[i]));
+    for (auto itsLocation : theLocationBag.itsLocations)
+      Add(*itsLocation);
 
     return *this;
   }

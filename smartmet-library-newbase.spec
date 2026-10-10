@@ -173,6 +173,7 @@ fi
 - Remove redundant void parameter lists and use bool literals, no functional changes
 - Use emplace and C++ standard library headers where clang-tidy suggests it, no functional changes
 - Use raw string literals and std::make_shared where clang-tidy suggests it, no functional changes
+- Use range-based for loops where clang-tidy suggests it, no functional changes
 
 * Thu Oct 08 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.8-1.fmi
 - Fixed index masks of large polygons, the distance optimization used straight projected edges instead of the projected latlon edges (BRAINSTORM-3026)

@@ -3015,9 +3015,9 @@ static std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSour
   try
   {
     std::vector<unsigned long> paramIndexVector;
-    for (size_t i = 0; i < theParamIds.size(); i++)
+    for (int theParamId : theParamIds)
     {
-      theSourceInfo.Param(static_cast<FmiParameterName>(std::abs(theParamIds[i])));
+      theSourceInfo.Param(static_cast<FmiParameterName>(std::abs(theParamId)));
       paramIndexVector.push_back(theSourceInfo.ParamIndex());
     }
     return paramIndexVector;
@@ -3593,11 +3593,11 @@ static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
   {
     if (theOptionalParamIds.size() && (*theWeather1 || *theWeather2))
     {
-      for (size_t i = 0; i < theOptionalParamIds.size(); i++)
+      for (int theOptionalParamId : theOptionalParamIds)
       {
-        if (theOptionalParamIds[i] > 0)
+        if (theOptionalParamId > 0)
         {
-          auto precipFormParId = static_cast<FmiParameterName>(theOptionalParamIds[i]);
+          auto precipFormParId = static_cast<FmiParameterName>(theOptionalParamId);
           if (theSourceInfo.Param(precipFormParId))
           {
             // poista precipForm parametri uudesta parambagistä, koska sillä rakennetaan Weatheria

@@ -842,15 +842,15 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
         string nspace;
         input >> nspace;
 
-        for (auto it = itsData.begin(); it != itsData.end(); ++it)
+        for (auto& it : itsData)
         {
-          if (it->first.substr(0, nspace.size()) == nspace)
+          if (it.first.substr(0, nspace.size()) == nspace)
           {
-            string suffix = it->first.substr(nspace.size());
+            string suffix = it.first.substr(nspace.size());
             if (!suffix.empty())
             {
               string newvar = itsNamespaces.front() + suffix;
-              InternalSet(newvar, it->second);
+              InternalSet(newvar, it.second);
 
               pair<FileMap::iterator, bool> result =
                   itsFilenames.insert(make_pair(newvar, filename));
@@ -958,10 +958,10 @@ void NFmiSettingsImpl::Save() const
     {
       // collect all modified variables in this file
       std::set<string> modified_variables;
-      for (auto jt = itsFilenames.begin(); jt != itsFilenames.end(); ++jt)
-        if (modified_file == jt->second)
-          if (itsChangedVariables.find(jt->first) != itsChangedVariables.end())
-            modified_variables.insert(jt->first);
+      for (auto& itsFilename : itsFilenames)
+        if (modified_file == itsFilename.second)
+          if (itsChangedVariables.find(itsFilename.first) != itsChangedVariables.end())
+            modified_variables.insert(itsFilename.first);
 
       // read old contents
       string contents = readfile(modified_file);
@@ -994,11 +994,11 @@ string NFmiSettingsImpl::ToString(const string& thePrefix) const
   try
   {
     ostringstream out;
-    for (auto it = itsData.begin(); it != itsData.end(); ++it)
+    for (auto& it : itsData)
     {
-      if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+      if (thePrefix.empty() || it.first.compare(0, thePrefix.size(), thePrefix) == 0)
       {
-        out << it->first << " = " << it->second << '\n';
+        out << it.first << " = " << it.second << '\n';
       }
     }
     return out.str();
@@ -1026,11 +1026,11 @@ std::vector<std::string> NFmiSettingsImpl::ListChildren(const std::string& thePr
   try
   {
     set<string> strs;  // this eliminates duplicate values
-    for (auto it = itsData.begin(); it != itsData.end(); ++it)
+    for (auto& it : itsData)
     {
-      if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
+      if (thePrefix.empty() || it.first.compare(0, thePrefix.size(), thePrefix) == 0)
       {
-        string tmp(it->first.begin() + thePrefix.size(), it->first.end());
+        string tmp(it.first.begin() + thePrefix.size(), it.first.end());
         NFmiStringTools::TrimL(tmp, ':');
         std::string::size_type idx = tmp.find(':');
         string tmp2 = tmp;

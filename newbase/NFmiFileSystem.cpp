@@ -267,9 +267,8 @@ const string FileComplete(const string &theFile, const string &theSearchPath)
 
   // Try each individual search path
 
-  for (auto it = paths.begin(); it != paths.end(); ++it)
+  for (auto name : paths)
   {
-    string name = *it;
     const char lastchar = name[name.size() - 1];
     if (lastchar != '/' && lastchar != '\\')
       name += '/';
@@ -680,16 +679,16 @@ const string NewestFile(const string &thePath)
   string newestfile;
   time_t newesttime = 0;
 
-  for (auto f = files.begin(); f != files.end(); ++f)
+  for (auto& file : files)
   {
-    string filename = thePath + '/' + *f;
+    string filename = thePath + '/' + file;
     if (FileReadable(filename))
     {
       time_t modtime = FileModificationTime(filename);
       if (modtime > newesttime)
       {
         newesttime = modtime;
-        newestfile = *f;
+        newestfile = file;
       }
     }
   }
@@ -1475,9 +1474,9 @@ void CleanDirectory(const std::string &thePath,
   time_t currentTime;
   static_cast<void>(::time(&currentTime));
 
-  for (auto f = files.begin(); f != files.end(); ++f)
+  for (auto& file : files)
   {
-    string filename = thePath + '/' + *f;
+    string filename = thePath + '/' + file;
     time_t modtime = FileModificationTime(filename);
     if (currentTime - modtime > theMaxFileAgeInHours * 3600)
     {
@@ -1515,9 +1514,9 @@ void CleanFilePattern(const std::string &theFilePattern,
                          "NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
   list<string> files = PatternFiles(theFilePattern);
   std::map<time_t, std::string> fileMap;
-  for (auto f = files.begin(); f != files.end(); ++f)
+  for (auto& file : files)
   {
-    string filename = path + '/' + *f;
+    string filename = path + '/' + file;
     time_t modtime = FileModificationTime(filename);
     fileMap.insert(std::make_pair(modtime, filename));
   }
@@ -1563,10 +1562,8 @@ string FindQueryData(const string &thePath)
   string newestfile;
   time_t newesttime = 0;
 
-  for (auto f = files.begin(); f != files.end(); ++f)
+  for (auto& name : files)
   {
-    const string &name = *f;
-
     if (!name.empty() && name[0] == '.')
       continue;
 

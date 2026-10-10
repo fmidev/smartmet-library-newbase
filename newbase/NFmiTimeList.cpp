@@ -1115,8 +1115,8 @@ void NFmiTimeList::SetNewStartTime(const NFmiMetTime &theTime)
     if (NumberOfItems() > 0)
     {
       long diffInMinutes = theTime.DifferenceInMinutes(*itsVectorList[0]);
-      for (size_t i = 0; i < itsVectorList.size(); i++)
-        itsVectorList[i]->ChangeByMinutes(diffInMinutes);
+      for (auto& i : itsVectorList)
+        i->ChangeByMinutes(diffInMinutes);
     }
   }
   catch (...)

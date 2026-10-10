@@ -430,8 +430,8 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       vector<double> pvec;
 
       if (!gdalArea)
-        for (auto it = pparts.begin(); it != pparts.end(); ++it)
-          pvec.push_back(NFmiStringTools::Convert<double>(*it));
+        for (auto& ppart : pparts)
+          pvec.push_back(NFmiStringTools::Convert<double>(ppart));
 
       // fixate gvec to size 4
 

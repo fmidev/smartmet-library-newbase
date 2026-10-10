@@ -79,8 +79,8 @@ void NFmiStationBag::Destroy()
 {
   try
   {
-    for (unsigned long i = 0; i < itsLocations.size(); i++)
-      delete itsLocations[i];
+    for (auto& itsLocation : itsLocations)
+      delete itsLocation;
 
     itsLocations.clear();
     itsSize = 0;

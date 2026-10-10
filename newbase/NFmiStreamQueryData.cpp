@@ -52,12 +52,12 @@ const string find_newest_querydata(const string &thePath)
     string newestfile;
     time_t newesttime = 0;
 
-    for (auto f = files.begin(); f != files.end(); ++f)
+    for (auto& file : files)
     {
-      string filename = thePath + '/' + *f;
+      string filename = thePath + '/' + file;
       if (NFmiFileSystem::FileReadable(filename))
       {
-        string suffix = NFmiStringTools::Suffix(*f);
+        string suffix = NFmiStringTools::Suffix(file);
         NFmiStringTools::LowerCase(suffix);
 
         if (suffix == "sqd" || suffix == "fqd")
@@ -66,7 +66,7 @@ const string find_newest_querydata(const string &thePath)
           if (modtime > newesttime)
           {
             newesttime = modtime;
-            newestfile = *f;
+            newestfile = file;
           }
         }
       }

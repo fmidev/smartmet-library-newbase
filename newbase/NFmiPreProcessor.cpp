@@ -842,13 +842,13 @@ bool NFmiPreProcessor::Define()
         // First token on line was not define directive, process the line
         // and then output it
 
-        for (auto it = defines.begin(); it != defines.end(); ++it)
+        for (auto& define : defines)
         {
           int count = 0;
           string::size_type pos;
-          while ((pos = line.find(it->first)) != string::npos)
+          while ((pos = line.find(define.first)) != string::npos)
           {
-            line.replace(pos, it->first.size(), it->second);
+            line.replace(pos, define.first.size(), define.second);
 
             // Safety against eternal loop
             if (++count > 100)

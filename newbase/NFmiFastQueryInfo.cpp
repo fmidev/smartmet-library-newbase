@@ -1537,12 +1537,12 @@ static bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long thePar
       // pisteissä), pitää käydä ehkä useampia paikkoja läpi
       float firstValue = kFloatMissing;
       float secondValue = kFloatMissing;
-      for (int j = 0; j < static_cast<int>(timeIndexies.size()); j++)
+      for (unsigned long timeIndexie : timeIndexies)
       {
-        theInfo->TimeIndex(timeIndexies[j]);
-        for (int i = 0; i < static_cast<int>(locIndexies.size()); i++)
+        theInfo->TimeIndex(timeIndexie);
+        for (unsigned long locIndexie : locIndexies)
         {
-          theInfo->LocationIndex(locIndexies[i]);
+          theInfo->LocationIndex(locIndexie);
           if (GetFirstAndSecondParamValues(theInfo, firstValue, secondValue))
           {
             rising = secondValue > firstValue;
