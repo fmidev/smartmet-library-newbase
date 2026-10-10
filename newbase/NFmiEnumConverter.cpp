@@ -260,7 +260,7 @@ list<string> NFmiEnumConverter::Names()
     list<string> out;
 
     for (const auto &name_value : impl->itsParamMap)
-      out.push_back(name_value.first);
+      out.emplace_back(name_value.first);
 
     return out;
   }

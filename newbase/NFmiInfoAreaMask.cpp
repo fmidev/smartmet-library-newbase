@@ -2022,16 +2022,16 @@ void NFmiInfoAreaMaskGrad::InitCalcFactorVectors()
   {
     if (NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized == false)
     {
-      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.push_back(std::make_pair(2, -1.f));
-      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.push_back(std::make_pair(1, 4.f));
-      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.push_back(std::make_pair(0, -3.f));
+      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.emplace_back(2, -1.f);
+      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.emplace_back(1, 4.f);
+      NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.emplace_back(0, -3.f);
 
-      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.push_back(std::make_pair(-2, 1.f));
-      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.push_back(std::make_pair(-1, -4.f));
-      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.push_back(std::make_pair(0, 3.f));
+      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.emplace_back(-2, 1.f);
+      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.emplace_back(-1, -4.f);
+      NFmiInfoAreaMaskGrad::itsUpperEdgeFactors.emplace_back(0, 3.f);
 
-      NFmiInfoAreaMaskGrad::itsMiddleAreaFactors.push_back(std::make_pair(1, 1.f));
-      NFmiInfoAreaMaskGrad::itsMiddleAreaFactors.push_back(std::make_pair(-1, -1.f));
+      NFmiInfoAreaMaskGrad::itsMiddleAreaFactors.emplace_back(1, 1.f);
+      NFmiInfoAreaMaskGrad::itsMiddleAreaFactors.emplace_back(-1, -1.f);
 
       NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized = true;
     }
@@ -2310,17 +2310,17 @@ void NFmiInfoAreaMaskLaplace::InitCalcFactorVectors()
   {
     if (NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized == false)
     {
-      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.push_back(std::make_pair(2, 1.f));
-      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.push_back(std::make_pair(1, -2.f));
-      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.push_back(std::make_pair(0, 1.f));
+      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.emplace_back(2, 1.f);
+      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.emplace_back(1, -2.f);
+      NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.emplace_back(0, 1.f);
 
-      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.push_back(std::make_pair(-2, 1.f));
-      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.push_back(std::make_pair(-1, -2.f));
-      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.push_back(std::make_pair(0, 1.f));
+      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.emplace_back(-2, 1.f);
+      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.emplace_back(-1, -2.f);
+      NFmiInfoAreaMaskLaplace::itsUpperEdgeFactors.emplace_back(0, 1.f);
 
-      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.push_back(std::make_pair(1, 1.f));
-      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.push_back(std::make_pair(0, -2.f));
-      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.push_back(std::make_pair(-1, 1.f));
+      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.emplace_back(1, 1.f);
+      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.emplace_back(0, -2.f);
+      NFmiInfoAreaMaskLaplace::itsMiddleAreaFactors.emplace_back(-1, 1.f);
 
       NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized = true;
     }

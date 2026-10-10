@@ -34,7 +34,7 @@ void NFmiDataModifierMode::Calculate(float theValue)
     if (pos != itsDataVector.end())
       (*pos).Increase();
     else
-      itsDataVector.push_back(Data(theValue));
+      itsDataVector.emplace_back(theValue);
   }
 }
 
