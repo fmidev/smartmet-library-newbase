@@ -1063,7 +1063,7 @@ time_t FindFile(const string &theFileFilter,
 
   // Collect matches into a modification time sorted map
 
-  typedef multimap<time_t, string> Matches;
+  using Matches = multimap<time_t, string>;
   Matches matches;
 
   // Conversion to Boost type searching

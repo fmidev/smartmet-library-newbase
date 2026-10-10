@@ -132,7 +132,7 @@ class NFmiLatitude : public NFmiAngle
   //! Konstruktori
   NFmiLatitude(double theAngle, FmiAngleUnit theUnit = kDeg);
 
-  NFmiLatitude() {}
+  NFmiLatitude() = default;
   //! Latitudin muutosmetodi
   void SetValue(double theAngle, FmiAngleUnit theUnit = kDeg);
 

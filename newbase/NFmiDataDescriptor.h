@@ -15,7 +15,7 @@ class NFmiDataDescriptor
 {
  public:
   virtual ~NFmiDataDescriptor() {}
-  NFmiDataDescriptor() {}
+  NFmiDataDescriptor() = default;
   virtual unsigned long Index() const = 0;
   virtual unsigned long Size() const = 0;
 

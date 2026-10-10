@@ -41,14 +41,14 @@ class NFmiSvgPath
     Element();
   };
 
-  typedef Element value_type;
+  using value_type = Element;
   typedef const value_type& const_reference;
-  typedef value_type& reference;
-  typedef std::vector<value_type> storage_type;
-  typedef storage_type::size_type size_type;
-  typedef storage_type::difference_type difference_type;
-  typedef storage_type::const_iterator const_iterator;
-  typedef storage_type::iterator iterator;
+  using reference = value_type&;
+  using storage_type = std::vector<value_type>;
+  using size_type = storage_type::size_type;
+  using difference_type = storage_type::difference_type;
+  using const_iterator = storage_type::const_iterator;
+  using iterator = storage_type::iterator;
 
   size_type size() const;
   bool empty() const;

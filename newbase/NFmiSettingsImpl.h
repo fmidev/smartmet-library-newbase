@@ -54,7 +54,7 @@ class NFmiSettingsImpl
   static NFmiSettingsImpl* itsInstance;
 
   //! The type of the actual data
-  typedef std::map<std::string, std::string> DataType;
+  using DataType = std::map<std::string, std::string>;
 
   static bool itIsDestroyed;        //!< Boolean to detect singleton coupling at exit
   mutable std::string itsFilename;  //!< The file containing the configuration
@@ -68,7 +68,7 @@ class NFmiSettingsImpl
   mutable std::set<std::string> itsExpandedVariables;
   mutable std::set<std::string> itsChangedVariables;
 
-  typedef std::map<std::string, std::string> FileMap;
+  using FileMap = std::map<std::string, std::string>;
   mutable FileMap itsFilenames;
 
 };  // class NFmiSettingsImpl

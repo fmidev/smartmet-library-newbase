@@ -38,7 +38,7 @@ class NFmiProducer : public NFmiIndividual
  */
 // ----------------------------------------------------------------------
 
-inline NFmiProducer::NFmiProducer() {}
+inline NFmiProducer::NFmiProducer() = default;
 // ----------------------------------------------------------------------
 /*!
  * Constructor

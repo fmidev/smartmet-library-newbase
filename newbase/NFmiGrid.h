@@ -188,7 +188,7 @@ class NFmiGrid : public NFmiGridBase
 };  // class NFmiGrid
 
 //! Undocumented, should be removed
-typedef NFmiGrid *PNFmiGrid;
+using PNFmiGrid = NFmiGrid*;
 
 // ----------------------------------------------------------------------
 /*!

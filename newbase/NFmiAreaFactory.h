@@ -16,7 +16,7 @@ class NFmiArea;
 
 namespace NFmiAreaFactory
 {
-typedef std::shared_ptr<NFmiArea> return_type;
+using return_type = std::shared_ptr<NFmiArea>;
 
 bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
                           NFmiPoint &topRightLatlon,

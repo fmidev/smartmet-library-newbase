@@ -3157,10 +3157,10 @@ void NFmiQueryInfo::ModifyTimesLocationData(NFmiDataModifier *theModifier,
 class TimeToModifyCalculator
 {
  public:
-  typedef std::shared_mutex MutexType;
-  typedef std::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef std::unique_lock<MutexType> WriteLock;
+  using MutexType = std::shared_mutex;
+  using ReadLock = std::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                 // sen tähän, jos joskus tarvitaankin
+  using WriteLock = std::unique_lock<MutexType>;
 
   TimeToModifyCalculator(const NFmiTimeDescriptor &theTimeDescriptor)
       : itsTimeDescriptor(theTimeDescriptor), fNoMoreWork(false)

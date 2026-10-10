@@ -824,7 +824,7 @@ bool NFmiPreProcessor::Define()
     if (!IsDefine())
       return false;
 
-    typedef map<string, string> Defines;
+    using Defines = map<string, string>;
     Defines defines;
     bool fUseDefine = (!fUseReplace);
 

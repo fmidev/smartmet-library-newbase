@@ -4738,12 +4738,9 @@ NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask(
 }
 
 NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask(
-    const NFmiTimeShiftedInfoAreaMask &theOther)
-    : NFmiInfoAreaMask(theOther),
-      itsTimeOffsetInHours(theOther.itsTimeOffsetInHours),
-      itsChangeByMinutesValue(theOther.itsChangeByMinutesValue)
-{
-}
+    const NFmiTimeShiftedInfoAreaMask& theOther)
+
+    = default;
 
 NFmiAreaMask *NFmiTimeShiftedInfoAreaMask::Clone() const
 {

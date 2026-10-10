@@ -103,7 +103,7 @@ class NFmiRect
 };  // class NFmiRect
 
 //! Undocumented, should be removed
-typedef NFmiRect *PNFmiRect;
+using PNFmiRect = NFmiRect*;
 
 // ----------------------------------------------------------------------
 /*!

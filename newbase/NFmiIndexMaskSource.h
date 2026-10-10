@@ -24,7 +24,7 @@ class NFmiIndexMaskSource
   void Clear();
 
  private:
-  typedef std::map<NFmiMetTime, NFmiIndexMask> storage_type;
+  using storage_type = std::map<NFmiMetTime, NFmiIndexMask>;
   storage_type itsData;
 
 };  // class NFmiIndexMaskSource

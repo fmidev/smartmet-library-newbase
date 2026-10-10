@@ -6040,7 +6040,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
 
       // Get V values
 
-      typedef std::unique_ptr<float, void (*)(float *)> valBuf;
+      using valBuf = std::unique_ptr<float, void (*)(float*)>;
 
       valBuf vValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
       float *vPtr = vValues.get();
@@ -6159,7 +6159,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
 
       // Get V values
 
-      typedef std::unique_ptr<float, void (*)(float *)> valBuf;
+      using valBuf = std::unique_ptr<float, void (*)(float*)>;
 
       valBuf vValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
       float *vPtr = vValues.get();
@@ -6309,7 +6309,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
 
       // Get V values
 
-      typedef std::unique_ptr<float, void (*)(float *)> valBuf;
+      using valBuf = std::unique_ptr<float, void (*)(float*)>;
 
       valBuf vValues(new float[usedGrid.XNumber() * usedGrid.YNumber()], valBufDeleter);
       float *vPtr = vValues.get();

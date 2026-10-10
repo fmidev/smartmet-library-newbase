@@ -69,7 +69,7 @@ class NFmiPoint
 };  // class NFmiPoint
 
 //! Undocumented, should be removed
-typedef NFmiPoint *PNFmiPoint;
+using PNFmiPoint = NFmiPoint*;
 
 // ----------------------------------------------------------------------
 /*!

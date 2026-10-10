@@ -78,7 +78,7 @@ class NFmiEquidistArea : public NFmiAzimuthalArea
 };  // class NFmiEquidistArea
 
 //! Undocumented, should be removed
-typedef NFmiEquidistArea* PNFmiEquidistArea;
+using PNFmiEquidistArea = NFmiEquidistArea*;
 
 // ----------------------------------------------------------------------
 /*!

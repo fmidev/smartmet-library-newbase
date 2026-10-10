@@ -61,7 +61,7 @@ class NFmiLatLonArea : public NFmiArea
 };  // class NFmiLatLonArea
 
 //! Undocumented, should be removed
-typedef NFmiLatLonArea* PNFmiLatLonArea;
+using PNFmiLatLonArea = NFmiLatLonArea*;
 
 // ----------------------------------------------------------------------
 /*!

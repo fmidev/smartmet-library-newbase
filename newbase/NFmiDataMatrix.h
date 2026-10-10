@@ -56,7 +56,7 @@ template <class T>  // miten annetaan containeri template parametrina??????
 class NFmiDataMatrix : public std::vector<std::vector<T>>
 {
  public:
-  typedef typename std::vector<T>::size_type size_type;
+  using size_type = typename std::vector<T>::size_type;
 
  protected:
   size_type itsNX;  //!< Matrix width
@@ -410,7 +410,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
 template <class T>
 inline std::ostream& operator<<(std::ostream& s, const NFmiDataMatrix<T>& m)
 {
-  typedef typename NFmiDataMatrix<T>::size_type sz_type;
+  using sz_type = typename NFmiDataMatrix<T>::size_type;
   sz_type rows = m.NY();
   sz_type columns = m.NX();
 
@@ -428,7 +428,7 @@ inline std::ostream& operator<<(std::ostream& s, const NFmiDataMatrix<T>& m)
 template <class T>
 inline std::istream& operator>>(std::istream& s, NFmiDataMatrix<T>& m)
 {
-  typedef typename NFmiDataMatrix<T>::size_type sz_type;
+  using sz_type = typename NFmiDataMatrix<T>::size_type;
   sz_type rows = 0;
   sz_type columns = 0;
 

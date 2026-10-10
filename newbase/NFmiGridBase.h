@@ -201,7 +201,7 @@ class NFmiGridBase
 };  // class NFmiGridBase
 
 //! Undocumented, should be removed
-typedef NFmiGridBase* PNFmiGridBase;
+using PNFmiGridBase = NFmiGridBase*;
 
 // ----------------------------------------------------------------------
 /*!

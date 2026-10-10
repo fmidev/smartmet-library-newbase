@@ -841,7 +841,7 @@ bool NFmiGrid::Init(const std::string &theFileName,
 //************** Kunhan saadaan testatuksi ja mietityksi loppuun asti ***************
 //***********************************************************************************
 
-typedef pair<int, double> IndDistPari;
+using IndDistPari = pair<int, double>;
 
 // ----------------------------------------------------------------------
 /*! HUOM!!! EI OLE VIELÄ TOTEUTETTU, tähän on vain kopioitu komentteihin

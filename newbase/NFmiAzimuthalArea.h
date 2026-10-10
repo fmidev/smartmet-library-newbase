@@ -116,7 +116,7 @@ class NFmiAzimuthalArea : public NFmiArea
 };  // class NFmiAzimuthalArea
 
 //! Undocumented, should be removed
-typedef NFmiAzimuthalArea* PNFmiAzimuthalArea;
+using PNFmiAzimuthalArea = NFmiAzimuthalArea*;
 
 // ----------------------------------------------------------------------
 /*!

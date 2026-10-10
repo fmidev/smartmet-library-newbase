@@ -227,7 +227,7 @@ class NFmiThreadCallBacks
 class NFmiStopThreadException
 {
  public:
-  NFmiStopThreadException() {}
+  NFmiStopThreadException() = default;
   ~NFmiStopThreadException() {}
 };
 
@@ -237,10 +237,10 @@ class NFmiStopThreadException
 class NFmiTimeIndexCalculator
 {
  public:
-  typedef std::shared_mutex MutexType;
-  typedef std::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  using MutexType = std::shared_mutex;
+  using ReadLock = std::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                 // sen tähän, jos joskus tarvitaankin
+  using WriteLock = boost::unique_lock<MutexType>;
 
   NFmiTimeIndexCalculator(unsigned long theTimeSize);
   NFmiTimeIndexCalculator(unsigned long theStartTimeIndex, unsigned long theEndTimeIndex);
@@ -264,10 +264,10 @@ class NFmiTimeIndexCalculator
 class NFmiLocationIndexRangeCalculator
 {
  public:
-  typedef std::shared_mutex MutexType;
-  typedef std::shared_lock<MutexType>
-      ReadLock;  // Read-lockia ei oikeasti tarvita, mutta laitan sen tähän, jos joskus tarvitaankin
-  typedef boost::unique_lock<MutexType> WriteLock;
+  using MutexType = std::shared_mutex;
+  using ReadLock = std::shared_lock<MutexType>;  // Read-lockia ei oikeasti tarvita, mutta laitan
+                                                 // sen tähän, jos joskus tarvitaankin
+  using WriteLock = boost::unique_lock<MutexType>;
 
   NFmiLocationIndexRangeCalculator(unsigned long theLocationSize, unsigned long theChunkSize);
   NFmiLocationIndexRangeCalculator(unsigned long theStartLocationIndex,
@@ -294,7 +294,7 @@ class NFmiLocationIndexRangeCalculator
 class NFmiQueryDataUtil
 {
  public:
-  typedef std::vector<GridRecordData *> GridDataVector;
+  using GridDataVector = std::vector<GridRecordData*>;
   using SoundingLevelContainer = std::vector<unsigned long>;
   using SignificantSoundingLevels = std::unique_ptr<SoundingLevelContainer>;
   static SignificantSoundingLevels GetSignificantSoundingLevelIndices(NFmiFastQueryInfo &theInfo);

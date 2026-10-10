@@ -109,9 +109,9 @@ class NFmiMetTime : public NFmiTime
 };  // class NFmiMetTime
 
 //! Undocumented, should be removed
-typedef NFmiMetTime* PTMetTime;
+using PTMetTime = NFmiMetTime*;
 //! Undocumented, should be removed
-typedef NFmiMetTime TMetTime;
+using TMetTime = NFmiMetTime;
 
 // ----------------------------------------------------------------------
 /*!

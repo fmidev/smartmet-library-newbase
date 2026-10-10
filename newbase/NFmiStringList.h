@@ -43,7 +43,7 @@ class NFmiStringList
   int Index() const;
 
  private:
-  typedef std::vector<NFmiString *> StorageType;
+  using StorageType = std::vector<NFmiString*>;
   StorageType itsList;
 
   //! Note: For backward compatibility this index runs from 0 to N-1
@@ -54,7 +54,7 @@ class NFmiStringList
 };  // class NFmiStringList
 
 //! Undocumented, should be removed
-typedef NFmiStringList *PNFmiStringList;
+using PNFmiStringList = NFmiStringList*;
 
 // ----------------------------------------------------------------------
 /*!

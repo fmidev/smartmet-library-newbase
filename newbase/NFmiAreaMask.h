@@ -281,7 +281,7 @@ class NFmiAreaMask
   };
 
   virtual ~NFmiAreaMask();
-  NFmiAreaMask() {}
+  NFmiAreaMask() = default;
   virtual void Initialize() = 0;  // tämä on konstruktorin jälkeen kutsuttava virtuaalinen
                                   // initialisointi (koska konstruktorissa ei voi kutsua
                                   // virtuaali funktioita)

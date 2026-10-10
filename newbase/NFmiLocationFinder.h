@@ -32,7 +32,7 @@ class NFmiLocationFinder
   bool AddFileOfOptionalType(const NFmiString& theFileName, bool lonFirst = true);
 
   //! The data container consists of location names and coordinates.
-  typedef std::map<std::string, NFmiPoint> LocationFinderMap;
+  using LocationFinderMap = std::map<std::string, NFmiPoint>;
 
   LocationFinderMap itsPrimaryPoints;
   LocationFinderMap itsSecondaryPoints;

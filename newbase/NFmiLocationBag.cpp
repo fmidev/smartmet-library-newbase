@@ -628,7 +628,7 @@ bool NFmiLocationBag::operator==(const NFmiLocationBag &theLocationBag) const
 
 //! Undocumented typedef
 
-typedef pair<int, double> IndDistPari;
+using IndDistPari = pair<int, double>;
 
 // ----------------------------------------------------------------------
 /*!

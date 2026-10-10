@@ -97,7 +97,7 @@ class NFmiTimeList
 
 //! Undocumented, should be removed
 
-typedef NFmiTimeList *PNFmiTimeList;
+using PNFmiTimeList = NFmiTimeList*;
 
 // ----------------------------------------------------------------------
 /*!

@@ -101,10 +101,10 @@ class NFmiStaticTime : public NFmiSortable
 };  // class NFmiStaticTime
 
 //! Undocumented, should be removed
-typedef NFmiStaticTime* PTFmiStaticTime;
+using PTFmiStaticTime = NFmiStaticTime*;
 
 //! Undocumented, should be removed
-typedef NFmiStaticTime TFmiStaticTime;
+using TFmiStaticTime = NFmiStaticTime;
 
 // ----------------------------------------------------------------------
 /*!

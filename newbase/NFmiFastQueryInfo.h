@@ -568,7 +568,7 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   // Tähän tulee optimointi apua location ID hakuja varten. Eli kun haetaan havainto-aseman id:n
   // avulla paikkoja.
   // unorderd-mappiin laitetaan asema id avaimeksi ja location index arvoksi.
-  typedef boost::unordered_map<unsigned long, unsigned long> StationIdSeekContainer;
+  using StationIdSeekContainer = boost::unordered_map<unsigned long, unsigned long>;
   StationIdSeekContainer itsFastStationIdSeekList;
   NFmiInfoData::Type itsDataType;  // data tyyppiä käytetään lähinnä SmartMet koodeissa (esim.
                                    // 2=malli-pinta, 5=havainto, 15=mallihybridipinta), jouduin

@@ -10,7 +10,7 @@
 #include "NFmiRegressionModifier.h"
 
 #include <boost/thread.hpp>
-typedef boost::shared_mutex MutexType;
+using MutexType = boost::shared_mutex;
 
 //! Undocumented
 class NFmiDataModifierVariance : public NFmiRegressionModifier

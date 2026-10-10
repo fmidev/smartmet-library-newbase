@@ -1123,7 +1123,7 @@ NFmiArea *NFmiArea::CreateFromCenter(const Fmi::SpatialReference &theSR,
  */
 // ----------------------------------------------------------------------
 
-NFmiArea::~NFmiArea() {}
+NFmiArea::~NFmiArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * Default constructor

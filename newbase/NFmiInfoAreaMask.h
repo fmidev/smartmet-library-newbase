@@ -415,7 +415,7 @@ class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
   bool Time(const NFmiMetTime &theTime) override;
 
  protected:
-  typedef std::vector<std::pair<int, float>> CalcFactorVector;
+  using CalcFactorVector = std::vector<std::pair<int, float>>;
 
   virtual void SetDividers() = 0;
   virtual void InitCalcFactorVectors() = 0;

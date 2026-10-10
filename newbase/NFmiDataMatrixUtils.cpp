@@ -98,7 +98,7 @@ void PrettyPrint(std::ostream& s,
 {
   try
   {
-    typedef typename NFmiDataMatrix<float>::size_type sz_type;
+    using sz_type = typename NFmiDataMatrix<float>::size_type;
     sz_type rows = m.NY();
     sz_type columns = m.NX();
 

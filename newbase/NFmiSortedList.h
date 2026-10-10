@@ -39,7 +39,7 @@ class NFmiSortedList : public NFmiVoidPtrList
 };  // class NFmiSortedList
 
 //! Undocumented, should be removed
-typedef NFmiSortedList* PNFmiSortedList;
+using PNFmiSortedList = NFmiSortedList*;
 
 // ----------------------------------------------------------------------
 /*!

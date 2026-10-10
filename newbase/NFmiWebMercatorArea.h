@@ -59,7 +59,7 @@ class NFmiWebMercatorArea : public NFmiArea
 };  // class NFmiWebMercatorArea
 
 //! Undocumented, should be removed
-typedef NFmiWebMercatorArea *PNFmiWebMercatorArea;
+using PNFmiWebMercatorArea = NFmiWebMercatorArea*;
 
 // ----------------------------------------------------------------------
 /*!

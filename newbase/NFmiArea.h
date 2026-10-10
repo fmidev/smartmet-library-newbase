@@ -197,7 +197,7 @@ class NFmiArea
 
 //! Undocumented, should be removed
 
-typedef NFmiArea *PNFmiArea;
+using PNFmiArea = NFmiArea*;
 
 // ----------------------------------------------------------------------
 /*!
