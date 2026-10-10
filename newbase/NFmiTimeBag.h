@@ -33,8 +33,7 @@ class NFmiTimeBag : public NFmiSize
                                     const NFmiMetTime &theEndLimit);
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
-  unsigned long GetSize(
-      void) const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp
+  unsigned long GetSize() const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp
   bool IsEmpty() const;  // Jouduin tekemään IsEmpty -metodin, NFmiTimeBag palauttaa tyhjänä 1:n
                          // kun resolution on 0 jostain historiallisista v. 1998 syistä
   bool Next() override;

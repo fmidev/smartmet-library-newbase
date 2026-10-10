@@ -95,7 +95,7 @@ class NFmiVoidPtrList
   friend class NFmiVoidPtrIterator;
 
  public:
-  virtual ~NFmiVoidPtrList() { NFmiVoidPtrList::Clear(0); }
+  virtual ~NFmiVoidPtrList() { NFmiVoidPtrList::Clear(false); }
   NFmiVoidPtrList();
   NFmiVoidPtrList(const NFmiVoidPtrList& listItem);
 
