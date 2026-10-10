@@ -29,7 +29,7 @@
 class NFmiDataModifierModMinMax : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierModMinMax();
+  ~NFmiDataModifierModMinMax() override;
   NFmiDataModifierModMinMax(bool returnMinValue = true);
   NFmiDataModifierModMinMax(const NFmiDataModifierModMinMax& theOther);
   NFmiDataModifierModMinMax* Clone() const override;

@@ -16,17 +16,17 @@ class NFmiDataIdent;
 class NFmiRegressionItem : public NFmiInfoModifier
 {
  public:
-  virtual ~NFmiRegressionItem();
+  ~NFmiRegressionItem() override;
   NFmiRegressionItem(double theCoefficient = 1.0,
-                     NFmiDataIdent* theDataIdent = 0,
-                     NFmiLevel* theLevel = 0,
-                     NFmiQueryInfo* theData = 0);
+                     NFmiDataIdent* theDataIdent = nullptr,
+                     NFmiLevel* theLevel = nullptr,
+                     NFmiQueryInfo* theData = nullptr);
 
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(NFmiQueryInfo* theData);
-  virtual void Calculate(float theValue) { NFmiInfoModifier::Calculate(theValue); }
-  virtual float CalculationResult();
-  virtual double FloatValue();
+  void Calculate(NFmiQueryInfo* theData) override;
+  void Calculate(float theValue) override { NFmiInfoModifier::Calculate(theValue); }
+  float CalculationResult() override;
+  double FloatValue() override;
 
  protected:
   double itsReturnValue;

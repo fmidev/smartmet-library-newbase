@@ -15,7 +15,7 @@
 class NFmiIndividual : public NFmiSortable
 {
  public:
-  virtual ~NFmiIndividual() {}
+  ~NFmiIndividual() override {}
   NFmiIndividual() : itsName("None"), itsIdent(0) {}
   NFmiIndividual(long theIdent, const NFmiString &theName = "None")
       : itsName(theName), itsIdent(theIdent)
@@ -33,8 +33,8 @@ class NFmiIndividual : public NFmiSortable
   void SetName(const NFmiString &theName) { itsName = theName; }
   NFmiIndividual &operator=(const NFmiIndividual &theIndividual);
 
-  virtual bool IsEqual(const NFmiSortable &aFmiTest) const;
-  virtual bool IsLessThan(const NFmiSortable &aFmiTest) const;
+  bool IsEqual(const NFmiSortable& aFmiTest) const override;
+  bool IsLessThan(const NFmiSortable& aFmiTest) const override;
 
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);

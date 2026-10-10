@@ -117,7 +117,8 @@ class NFmiCombinedParam
   virtual bool LongValue(unsigned long theValue) = 0;
   virtual unsigned long LongValue() const = 0;
   virtual bool SubValue(double theValue, FmiParameterName theParam) = 0;
-  virtual double SubValue(FmiParameterName theParam, NFmiIntegrationSelector* theSelector = 0) = 0;
+  virtual double SubValue(FmiParameterName theParam,
+                          NFmiIntegrationSelector* theSelector = nullptr) = 0;
   virtual double RawSubValue(FmiParameterName theParam) = 0;
   virtual NFmiCombinedParam* Clone() const = 0;
   virtual bool IsMemberParam(FmiParameterName type) const = 0;
@@ -125,9 +126,9 @@ class NFmiCombinedParam
                                  float fac1,
                                  NFmiCombinedParam* theWeatherAndCloudiness2,
                                  float fac2,
-                                 NFmiCombinedParam* theWeatherAndCloudiness3 = 0,
+                                 NFmiCombinedParam* theWeatherAndCloudiness3 = nullptr,
                                  float fac3 = kFloatMissing,
-                                 NFmiCombinedParam* theWeatherAndCloudiness4 = 0,
+                                 NFmiCombinedParam* theWeatherAndCloudiness4 = nullptr,
                                  float fac4 = kFloatMissing) = 0;
 
   virtual bool SetToWeightedPeriod(NFmiQueryInfo* info,

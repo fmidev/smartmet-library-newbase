@@ -20,16 +20,16 @@
 class NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
 {
  public:
-  virtual ~NFmiDataModifierMinPlace();
+  ~NFmiDataModifierMinPlace() override;
   NFmiDataModifierMinPlace();
 
-  void Clear();
+  void Clear() override;
 
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
 
  protected:
-  virtual bool IsNewExtreme(float value);
+  bool IsNewExtreme(float value) override;
 
  private:
   NFmiDataModifierMinPlace& operator=(const NFmiDataModifierMinPlace& theOther);

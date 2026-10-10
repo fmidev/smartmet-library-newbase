@@ -12,18 +12,18 @@
 class NFmiDataModifierWithModifier : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierWithModifier();
+  ~NFmiDataModifierWithModifier() override;
   NFmiDataModifierWithModifier(NFmiQueryInfo* theQueryInfoCopy,
                                NFmiDataModifier* theDataModifier,
                                int theXRange,
                                int theYRange);
 
-  virtual float FloatOperation(float theValue);
-  virtual void Clear();
+  float FloatOperation(float theValue) override;
+  void Clear() override;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult();
+  void Calculate(float theValue) override;
+  float CalculationResult() override;
 
  protected:
   NFmiQueryInfo* itsQueryInfoCopy;

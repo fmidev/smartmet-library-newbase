@@ -50,7 +50,7 @@ class NFmiMetTime : public NFmiTime
   // And Fmi::LocalDateTime
   NFmiMetTime(const Fmi::LocalDateTime& theLocalTime);
 
-  virtual bool IsEqual(const NFmiSortable& aFmiTest) const;
+  bool IsEqual(const NFmiSortable& aFmiTest) const override;
 
   NFmiMetTime& operator=(const NFmiMetTime&);
   NFmiMetTime& operator++();          // prefix
@@ -83,20 +83,20 @@ class NFmiMetTime : public NFmiTime
 
   short GetLocalHour() const;
 
-  virtual const NFmiTime UTCTime(float theLongitude = kFloatMissing) const;
-  virtual const NFmiTime UTCTime(const NFmiLocation& theLocation) const;
-  virtual const NFmiTime LocalTime(float theLongitude = kFloatMissing) const;
-  virtual const NFmiTime LocalTime(const NFmiLocation& theLocation) const;
+  const NFmiTime UTCTime(float theLongitude = kFloatMissing) const override;
+  const NFmiTime UTCTime(const NFmiLocation& theLocation) const override;
+  const NFmiTime LocalTime(float theLongitude = kFloatMissing) const override;
+  const NFmiTime LocalTime(const NFmiLocation& theLocation) const override;
 
   virtual const NFmiTime CorrectLocalTime() const;
 
-  virtual const char* ClassName() const;
+  const char* ClassName() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
+  std::ostream& Write(std::ostream& file) const override;
   virtual std::istream& Read(std::istream& file);
 
  protected:
-  virtual struct std::tm GetSystemTime();
+  struct std::tm GetSystemTime() override;
 
  private:
   void ConstructMetTime(const long timeStepInMinutes, FmiDirection theDirect = kNoDirection);

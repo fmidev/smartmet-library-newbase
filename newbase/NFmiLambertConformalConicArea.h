@@ -6,7 +6,7 @@
 class NFmiLambertConformalConicArea : public NFmiArea
 {
  public:
-  virtual ~NFmiLambertConformalConicArea() = default;
+  ~NFmiLambertConformalConicArea() override = default;
   NFmiLambertConformalConicArea() = default;
   NFmiLambertConformalConicArea(const NFmiLambertConformalConicArea& theLambertConformalConicArea) =
       default;
@@ -22,40 +22,40 @@ class NFmiLambertConformalConicArea : public NFmiArea
                                 const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
                                 const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
 
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const override;
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* Clone() const;
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  void Init(bool fKeepWorldRect = false) override;
+  NFmiArea* Clone() const override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
-  virtual const NFmiRect WorldRect() const { return itsWorldRect; }
+  const NFmiRect WorldRect() const override { return itsWorldRect; }
 
   using NFmiArea::CreateNewArea;
-  NFmiArea* CreateNewArea(const NFmiRect& theRect) const;
+  NFmiArea* CreateNewArea(const NFmiRect& theRect) const override;
 
   NFmiLambertConformalConicArea& operator=(const NFmiLambertConformalConicArea& theArea) = default;
 
   bool operator==(const NFmiLambertConformalConicArea& theArea) const;
   bool operator!=(const NFmiLambertConformalConicArea& theArea) const;
 
-  bool operator==(const NFmiArea& theArea) const;
-  bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual unsigned long ClassId() const { return kNFmiLambertConformalConicArea; }
+  unsigned long ClassId() const override { return kNFmiLambertConformalConicArea; }
 
-  virtual const char* ClassName() const { return "kNFmiLambertConformalConicArea"; }
-  const std::string AreaStr() const;
-  virtual const std::string WKT() const;
+  const char* ClassName() const override { return "kNFmiLambertConformalConicArea"; }
+  const std::string AreaStr() const override;
+  const std::string WKT() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   std::size_t HashValue() const;
 

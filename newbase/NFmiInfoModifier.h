@@ -15,13 +15,13 @@ class NFmiQueryInfo;
 class NFmiInfoModifier : public NFmiParamDataModifier
 {
  public:
-  virtual ~NFmiInfoModifier();
+  ~NFmiInfoModifier() override;
   NFmiInfoModifier(NFmiDataIdent* theParam,
                    NFmiLevel* theLevel,
-                   NFmiQueryInfo* theData = 0,
+                   NFmiQueryInfo* theData = nullptr,
                    FmiJoinOperator theJoinOperator = kFmiAdd);
   NFmiQueryInfo* Info();
-  virtual double FloatValue();
+  double FloatValue() override;
   virtual double PeekValue(long dx, long dy, long dt);
 
  protected:

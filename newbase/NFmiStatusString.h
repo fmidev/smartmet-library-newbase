@@ -13,7 +13,7 @@
 class NFmiStatusString : public NFmiString
 {
  public:
-  ~NFmiStatusString();
+  ~NFmiStatusString() override;
   NFmiStatusString();
   NFmiStatusString(const NFmiStatusString& theStatusString);
   NFmiStatusString(const NFmiString& theString, long theStatus);
@@ -22,11 +22,11 @@ class NFmiStatusString : public NFmiString
 
   long Status();
   const NFmiString& String();
-  virtual unsigned long ClassId() const { return kNFmiStatusString; };
-  virtual NFmiString* Clone() const;
+  unsigned long ClassId() const override { return kNFmiStatusString; };
+  NFmiString* Clone() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  private:
   long itsStatus;

@@ -22,16 +22,16 @@ class NFmiStreamQueryData
   // Tällöin voin muuttaa koodin niin, että luettu data annetaan pointterin pointteriin ja omistus
   // siirtyy ulos NFmiStreamQueryData-oliolta.
 
-  bool ReadData(const NFmiString& theFileName, NFmiQueryData** theQueryData = 0);
-  bool ReadLatestData(const NFmiString& theFileName, NFmiQueryData** theQueryData = 0);
-  bool SafeReadLatestData(const NFmiString& theFileName, NFmiQueryData** theQueryData = 0);
+  bool ReadData(const NFmiString& theFileName, NFmiQueryData** theQueryData = nullptr);
+  bool ReadLatestData(const NFmiString& theFileName, NFmiQueryData** theQueryData = nullptr);
+  bool SafeReadLatestData(const NFmiString& theFileName, NFmiQueryData** theQueryData = nullptr);
   bool WriteData(const NFmiString& theFileName,
-                 NFmiQueryData* theQueryData = 0,
+                 NFmiQueryData* theQueryData = nullptr,
                  long theLibVersion = DefaultFmiInfoVersion) const;
 
-  bool ReadIn(NFmiQueryData* theQueryData = 0);
+  bool ReadIn(NFmiQueryData* theQueryData = nullptr);
   bool ReadIn(NFmiQueryInfo* theQueryInfo);
-  bool WriteCout(NFmiQueryData* theQueryData = 0) const;
+  bool WriteCout(NFmiQueryData* theQueryData = nullptr) const;
 
   bool IsData();
 

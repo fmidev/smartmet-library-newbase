@@ -16,18 +16,18 @@
 class NFmiDataModifierDummy : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierDummy();
+  ~NFmiDataModifierDummy() override;
   NFmiDataModifierDummy();
   using NFmiDataModifier::Calculate;
-  virtual void Calculate(float theValue);
+  void Calculate(float theValue) override;
 
   // Lasse ei kutsuta mistään, aikaisemmat kutsut QI::CalcInterpolatedTimeData ja
   // QI::CalcTimeData:sta jouduttu poistamaan
 
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(NFmiQueryInfo* theQI) override;
   using NFmiDataModifier::CalculationResult;
-  float CalculationResult();
-  virtual void Clear();
+  float CalculationResult() override;
+  void Clear() override;
 
  protected:
   float itsValue;

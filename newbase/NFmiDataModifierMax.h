@@ -20,17 +20,17 @@
 class NFmiDataModifierMax : public NFmiDataModifierExtreme
 {
  public:
-  virtual ~NFmiDataModifierMax();
+  ~NFmiDataModifierMax() override;
   NFmiDataModifierMax();
   NFmiDataModifierMax(const NFmiDataModifierMax& theOther);
-  NFmiDataModifier* Clone() const;
+  NFmiDataModifier* Clone() const override;
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
 
  protected:
-  virtual bool IsNewExtreme(float value);
+  bool IsNewExtreme(float value) override;
 
  private:
   NFmiDataModifierMax& operator=(const NFmiDataModifierMax& theOther);

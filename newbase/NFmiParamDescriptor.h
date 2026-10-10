@@ -15,7 +15,7 @@
 class NFmiParamDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiParamDescriptor();
+  ~NFmiParamDescriptor() override;
   NFmiParamDescriptor();
   NFmiParamDescriptor(const NFmiParamDescriptor &theParamDescriptor);
   NFmiParamDescriptor(const NFmiParamBag &theParamBag, bool interpolate = false);
@@ -33,19 +33,19 @@ class NFmiParamDescriptor : public NFmiDataDescriptor
   bool Param(const NFmiParam &theParam);
   bool Param(FmiParameterName theParam);
 
-  virtual unsigned long Index() const;
+  unsigned long Index() const override;
   bool Index(unsigned long theIndex);
-  virtual unsigned long Size() const;
+  unsigned long Size() const override;
 
-  virtual bool IsActive() const;
+  bool IsActive() const override;
   virtual bool IsActive(bool fIgnoreSubParam) const;
   virtual bool IsActive(unsigned long index, bool fIgnoreSubParam = true) const;
-  virtual bool SetActivity(bool theActivityState);
+  bool SetActivity(bool theActivityState) override;
   virtual bool SetActivity(bool theActivityState, bool fIgnoreSubParam);
   virtual bool SetActivity(bool theActivityState,
                            unsigned long theIndex,
                            bool fIgnoreSubParam = true);
-  virtual bool NextActive();
+  bool NextActive() override;
   virtual bool NextActive(bool fIgnoreSubParam);
   virtual unsigned long SizeActive() const;
   bool FindSubParam(const NFmiParam &theParam);
@@ -57,8 +57,8 @@ class NFmiParamDescriptor : public NFmiDataDescriptor
   void SetProducer(const NFmiProducer &newProducer);
 
   virtual const NFmiParamDescriptor Combine(const NFmiParamDescriptor &theCombine);
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   virtual unsigned long ClassId() const;
   virtual const char *ClassName() const;

@@ -16,17 +16,17 @@ class NFmiCombinedParam;
 class NFmiDataModifierCombinedParam : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierCombinedParam();
+  ~NFmiDataModifierCombinedParam() override;
   NFmiDataModifierCombinedParam(const NFmiCombinedParam &theParam);
 
-  virtual void Clear();
+  void Clear() override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult();
+  void Calculate(float theValue) override;
+  float CalculationResult() override;
 
-  virtual NFmiCombinedParam *CombinedCalculationResult();
+  NFmiCombinedParam* CombinedCalculationResult() override;
 
  protected:
   NFmiCombinedParam *itsCombinedParam;

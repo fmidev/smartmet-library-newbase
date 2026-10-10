@@ -13,7 +13,7 @@
 class NFmiFileString : public NFmiString
 {
  public:
-  ~NFmiFileString();
+  ~NFmiFileString() override;
   NFmiFileString();
   NFmiFileString(const NFmiFileString& theFileStr);
   NFmiFileString(const NFmiString& theStr);

@@ -12,10 +12,10 @@
 class NFmiDataModifierAllValidAvg : public NFmiDataModifierAvg
 {
  public:
-  virtual ~NFmiDataModifierAllValidAvg();
+  ~NFmiDataModifierAllValidAvg() override;
   NFmiDataModifierAllValidAvg();
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
  private:
   NFmiDataModifierAllValidAvg& operator=(const NFmiDataModifierAllValidAvg& theOther);

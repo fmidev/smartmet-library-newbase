@@ -12,13 +12,13 @@
 class NFmiDataModifierAllValidSum : public NFmiDataModifierSum
 {
  public:
-  virtual ~NFmiDataModifierAllValidSum();
+  ~NFmiDataModifierAllValidSum() override;
   NFmiDataModifierAllValidSum();
 
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear();
+  void Clear() override;
 
  protected:
   long itsCounter;

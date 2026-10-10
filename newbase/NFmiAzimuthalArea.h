@@ -14,7 +14,7 @@
 class NFmiAzimuthalArea : public NFmiArea
 {
  public:
-  virtual ~NFmiAzimuthalArea();
+  ~NFmiAzimuthalArea() override;
 
   NFmiAzimuthalArea();
 
@@ -51,18 +51,18 @@ class NFmiAzimuthalArea : public NFmiArea
                     const double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
-  virtual void Init(bool fKeepWorldRect = false);
+  void Init(bool fKeepWorldRect = false) override;
 
-  virtual const NFmiRect WorldRect() const;
+  const NFmiRect WorldRect() const override;
 
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
 
-  virtual const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const;
+  const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
   virtual const NFmiPoint ToLatLon(double theAzimuth, double theRadius) const;
-  virtual const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const;
-  virtual const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const;
+  const NFmiPoint XYToWorldXY(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint WorldXYToXY(const NFmiPoint& theWorldXYPoint) const override;
   virtual const NFmiPoint LatLonToWorldXY(double theAzimuth, double theRadius) const;
   virtual const NFmiPoint ToXY(double theAzimuth, double theRadius) const;
 
@@ -82,14 +82,14 @@ class NFmiAzimuthalArea : public NFmiArea
   virtual bool operator==(const NFmiAzimuthalArea& theArea) const;
   virtual bool operator!=(const NFmiAzimuthalArea& theArea) const;
 
-  virtual bool operator==(const NFmiArea& theArea) const;
-  virtual bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const char* ClassName() const;
-  const std::string AreaStr() const = 0;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override = 0;
 
   std::size_t HashValue() const;
 

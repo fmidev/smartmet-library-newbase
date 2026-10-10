@@ -19,23 +19,23 @@ class NFmiDataModifierList;
 class NFmiParamDataModifier : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiParamDataModifier();
+  ~NFmiParamDataModifier() override;
   // NFmiDataModifier(const NFmiDataModifier & theModier); // compiler generated
   NFmiParamDataModifier(NFmiDataIdent* theParam,
-                        NFmiLevel* theLevel = 0,
+                        NFmiLevel* theLevel = nullptr,
                         FmiJoinOperator theJoinOperator = kFmiAdd);
 
-  virtual std::ostream& WriteOperand(std::ostream& file) const;
-  virtual bool BoolOperation(float);
-  virtual float FloatOperation(float theValue);
+  std::ostream& WriteOperand(std::ostream& file) const override;
+  bool BoolOperation(float) override;
+  float FloatOperation(float theValue) override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
 
-  virtual float CalculationResult();
-  virtual void Calculate(float);
+  float CalculationResult() override;
+  void Calculate(float) override;
 
-  void Clear();
+  void Clear() override;
 
   bool Match(const NFmiDataIdent& theParam, const NFmiLevel* theLevel);
   bool AddSubModifier(NFmiDataModifier* theModifier);

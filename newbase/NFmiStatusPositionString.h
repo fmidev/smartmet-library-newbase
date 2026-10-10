@@ -13,7 +13,7 @@
 class NFmiStatusPositionString : public NFmiStatusString
 {
  public:
-  ~NFmiStatusPositionString();
+  ~NFmiStatusPositionString() override;
   NFmiStatusPositionString();
   NFmiStatusPositionString(const NFmiStatusPositionString& theStatusPositionString);
   NFmiStatusPositionString(const NFmiString& theString,
@@ -26,11 +26,11 @@ class NFmiStatusPositionString : public NFmiStatusString
 
   long StartPosition();
   long EndPosition();
-  virtual unsigned long ClassId() const;
-  virtual NFmiString* Clone() const;
+  unsigned long ClassId() const override;
+  NFmiString* Clone() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
  private:
   long itsStartPosition;

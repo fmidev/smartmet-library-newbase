@@ -15,7 +15,7 @@
 class NFmiString : public NFmiSortable
 {
  public:
-  virtual ~NFmiString();
+  ~NFmiString() override;
 
   NFmiString();
   NFmiString(const NFmiString &aString);
@@ -82,8 +82,8 @@ class NFmiString : public NFmiSortable
   bool Replace(const NFmiString &newChars, unsigned long fromIndex);
   void RemoveExtraSpaces();
 
-  bool IsLessThan(const NFmiSortable &aFmiTest) const;
-  bool IsEqual(const NFmiSortable &aFmiTest) const;
+  bool IsLessThan(const NFmiSortable& aFmiTest) const override;
+  bool IsEqual(const NFmiSortable& aFmiTest) const override;
 
   std::size_t HashValue() const;
 

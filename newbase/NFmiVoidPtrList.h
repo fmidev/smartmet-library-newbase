@@ -61,7 +61,8 @@ class NFmiVoidPtrItem
       delete itsValue;
   }
 
-  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = 0) : itsNextItem(item), itsValue()
+  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr)
+      : itsNextItem(item), itsValue()
   {
     if (value->itsReferenceCount)
     {

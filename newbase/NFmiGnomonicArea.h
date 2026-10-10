@@ -14,7 +14,7 @@
 class NFmiGnomonicArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiGnomonicArea();
+  ~NFmiGnomonicArea() override;
 
   NFmiGnomonicArea();
 
@@ -45,11 +45,11 @@ class NFmiGnomonicArea : public NFmiAzimuthalArea
                    const double theCentralLatitude = 90.,
                    const double theTrueLatitude = 60.);
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
-  virtual NFmiArea* Clone() const;
+  void Init(bool fKeepWorldRect = false) override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
+  NFmiArea* Clone() const override;
 
   NFmiGnomonicArea& operator=(const NFmiGnomonicArea& theArea);
 
@@ -59,23 +59,23 @@ class NFmiGnomonicArea : public NFmiAzimuthalArea
   bool operator==(const NFmiGnomonicArea& theArea) const;
   bool operator!=(const NFmiGnomonicArea& theArea) const;
 
-  bool operator==(const NFmiArea& theArea) const;
-  bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual unsigned long ClassId() const;
-  virtual const char* ClassName() const;
-  const std::string AreaStr() const;
-  virtual const std::string WKT() const;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
+  const std::string WKT() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   std::size_t HashValue() const;
 
  protected:
-  virtual double K(const double delta) const;
-  virtual double CalcDelta(const double xyDistance) const;
-  virtual double DistanceFromPerspectivePointToCenterOfEarth() const;
+  double K(const double delta) const override;
+  double CalcDelta(const double xyDistance) const override;
+  double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:
 };  // class NFmiGnomonicArea

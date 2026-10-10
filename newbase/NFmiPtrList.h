@@ -55,8 +55,8 @@ class NFmiPtrList
   class Node
   {
    public:
-    Node(Type *theData = 0, Node *thePrevious = 0, Node *theNext = 0)
-        : itsData(theData), itsPrevious(thePrevious), itsNext(theNext){};
+    Node(Type* theData = nullptr, Node* thePrevious = nullptr, Node* theNext = nullptr)
+        : itsData(theData), itsPrevious(thePrevious), itsNext(theNext) {};
     void SwapData(Node &theOther)
     {
       Type *tmp = itsData;
@@ -85,7 +85,7 @@ class NFmiPtrList
    public:
     friend class NFmiPtrList<Type>;
 
-    Iterator() : itsList(0), itsCurrent(0) {}
+    Iterator() : itsList(nullptr), itsCurrent(nullptr) {}
     // Lisäsin seuraavaan iteraattoriin toisen parametrin 8.9.99 /Mikael
     Iterator(Node *theNode, NFmiPtrList<Type> *theList) : itsList(theList), itsCurrent(theNode){};
     Iterator(const Iterator &theIter) : itsList(theIter.itsList), itsCurrent(theIter.itsCurrent){};

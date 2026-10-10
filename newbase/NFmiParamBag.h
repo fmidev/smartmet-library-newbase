@@ -16,7 +16,7 @@
 class NFmiParamBag : public NFmiSize
 {
  public:
-  virtual ~NFmiParamBag();
+  ~NFmiParamBag() override;
   void Destroy();
 
   NFmiParamBag();
@@ -27,11 +27,11 @@ class NFmiParamBag : public NFmiSize
   NFmiParamBag &operator=(const NFmiParamBag &theParam);
   bool operator==(const NFmiParamBag &theParam) const;
 
-  virtual void Reset(FmiDirection directionToIter = kForward);
-  virtual bool First();
-  bool Next();
+  void Reset(FmiDirection directionToIter = kForward) override;
+  bool First() override;
+  bool Next() override;
   bool Next(bool fIgnoreSubParam);  // = true);
-  bool Previous();
+  bool Previous() override;
   bool Previous(bool fIgnoreSubParam);  // =true);
 
   FmiParameterName CurrentParam() const;
@@ -75,10 +75,10 @@ class NFmiParamBag : public NFmiSize
   virtual bool IsActive(bool fIgnoreSubParam = true) const;
   virtual bool IsActive(unsigned long index, bool fIgnoreSubParam = true) const;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const char *ClassName() const { return "NFmiParamBag"; }
+  const char* ClassName() const override { return "NFmiParamBag"; }
   const std::vector<NFmiDataIdent> &ParamsVector() const { return itsParamsVector; }
 
  private:
@@ -119,7 +119,7 @@ inline const NFmiString NFmiParamBag::CurrentParamName() const
 
 inline const NFmiDataIdent *NFmiParamBag::GetFirst() const
 {
-  return GetSize() ? &itsParamsVector[0] : 0;
+  return GetSize() ? &itsParamsVector[0] : nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -130,7 +130,7 @@ inline const NFmiDataIdent *NFmiParamBag::GetFirst() const
 
 inline const NFmiDataIdent *NFmiParamBag::GetLast() const
 {
-  return GetSize() ? &itsParamsVector[GetSize() - 1] : 0;
+  return GetSize() ? &itsParamsVector[GetSize() - 1] : nullptr;
 }
 
 // ----------------------------------------------------------------------

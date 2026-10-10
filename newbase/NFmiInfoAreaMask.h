@@ -69,7 +69,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
                          NFmiInfoData::Type,
                          const std::shared_ptr<NFmiArea> &)>;
 
-  virtual ~NFmiInfoAreaMask();
+  ~NFmiInfoAreaMask() override;
   NFmiInfoAreaMask();
   NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
                    Type theMaskType,
@@ -119,7 +119,8 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
     return NFmiAreaMaskImpl::IsMasked(theLatLon);
   }
   bool Time(const NFmiMetTime &theTime) override;
-  bool IsWantedParam(const NFmiDataIdent &theParam, const NFmiLevel *theLevel = 0) const override;
+  bool IsWantedParam(const NFmiDataIdent& theParam,
+                     const NFmiLevel* theLevel = nullptr) const override;
   std::shared_ptr<NFmiFastQueryInfo> Info() override { return itsInfo; };
   void Info(const std::shared_ptr<NFmiFastQueryInfo> &newInfo);
   void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) override;
@@ -270,7 +271,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 class NFmiInfoAreaMaskPeekXY : public NFmiInfoAreaMask
 {
  public:
-  virtual ~NFmiInfoAreaMaskPeekXY();
+  ~NFmiInfoAreaMaskPeekXY() override;
   NFmiInfoAreaMaskPeekXY();
   NFmiInfoAreaMaskPeekXY(const NFmiCalculationCondition &theOperation,
                          Type theMaskType,
@@ -316,7 +317,7 @@ class NFmiInfoAreaMaskPeekXY : public NFmiInfoAreaMask
 class NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
 {
  public:
-  virtual ~NFmiInfoAreaMaskPeekXY2();
+  ~NFmiInfoAreaMaskPeekXY2() override;
   NFmiInfoAreaMaskPeekXY2();
   NFmiInfoAreaMaskPeekXY2(const NFmiCalculationCondition &theOperation,
                           Type theMaskType,
@@ -355,7 +356,7 @@ class NFmiInfoAreaMaskPeekXY2 : public NFmiInfoAreaMask
 class NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
 {
  public:
-  virtual ~NFmiInfoAreaMaskPeekXY3();
+  ~NFmiInfoAreaMaskPeekXY3() override;
   NFmiInfoAreaMaskPeekXY3();
   NFmiInfoAreaMaskPeekXY3(const NFmiCalculationCondition &theOperation,
                           Type theMaskType,
@@ -398,7 +399,7 @@ class NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
 class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
 {
  public:
-  ~NFmiInfoAreaMaskMetFuncBase();
+  ~NFmiInfoAreaMaskMetFuncBase() override;
   NFmiInfoAreaMaskMetFuncBase(const NFmiCalculationCondition &theOperation,
                               Type theMaskType,
                               NFmiInfoData::Type theDataType,
@@ -464,7 +465,7 @@ class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
 class NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
-  ~NFmiInfoAreaMaskGrad();
+  ~NFmiInfoAreaMaskGrad() override;
   NFmiInfoAreaMaskGrad(const NFmiCalculationCondition &theOperation,
                        Type theMaskType,
                        NFmiInfoData::Type theDataType,
@@ -507,7 +508,7 @@ class NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
 class NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
 {
  public:
-  ~NFmiInfoAreaMaskAdvection();
+  ~NFmiInfoAreaMaskAdvection() override;
   NFmiInfoAreaMaskAdvection(const NFmiCalculationCondition &theOperation,
                             Type theMaskType,
                             NFmiInfoData::Type theDataType,
@@ -536,7 +537,7 @@ class NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
 class NFmiInfoAreaMaskLaplace : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
-  ~NFmiInfoAreaMaskLaplace();
+  ~NFmiInfoAreaMaskLaplace() override;
   NFmiInfoAreaMaskLaplace(const NFmiCalculationCondition &theOperation,
                           Type theMaskType,
                           NFmiInfoData::Type theDataType,
@@ -574,7 +575,7 @@ class NFmiInfoAreaMaskLaplace : public NFmiInfoAreaMaskMetFuncBase
 class NFmiInfoAreaMaskRotor : public NFmiInfoAreaMaskGrad
 {
  public:
-  ~NFmiInfoAreaMaskRotor();
+  ~NFmiInfoAreaMaskRotor() override;
   NFmiInfoAreaMaskRotor(const NFmiCalculationCondition &theOperation,
                         Type theMaskType,
                         NFmiInfoData::Type theDataType,
@@ -615,7 +616,7 @@ class VerticalIterationBreakingData
 class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
-  ~NFmiInfoAreaMaskVertFunc();
+  ~NFmiInfoAreaMaskVertFunc() override;
   NFmiInfoAreaMaskVertFunc(const NFmiCalculationCondition &theOperation,
                            Type theMaskType,
                            NFmiInfoData::Type theDataType,
@@ -730,7 +731,7 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
 class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
 {
  public:
-  ~NFmiInfoAreaMaskVertConditionalFunc();
+  ~NFmiInfoAreaMaskVertConditionalFunc() override;
   NFmiInfoAreaMaskVertConditionalFunc(const NFmiCalculationCondition &theOperation,
                                       Type theMaskType,
                                       NFmiInfoData::Type theDataType,
@@ -762,7 +763,7 @@ class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
 class NFmiInfoAreaMaskTimeVertFunc : public NFmiInfoAreaMaskVertFunc
 {
  public:
-  ~NFmiInfoAreaMaskTimeVertFunc();
+  ~NFmiInfoAreaMaskTimeVertFunc() override;
   NFmiInfoAreaMaskTimeVertFunc(const NFmiCalculationCondition &theOperation,
                                Type theMaskType,
                                NFmiInfoData::Type theDataType,
@@ -791,7 +792,7 @@ class NFmiInfoAreaMaskTimeVertFunc : public NFmiInfoAreaMaskVertFunc
 class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
 {
  public:
-  ~NFmiInfoAreaMaskProbFunc();
+  ~NFmiInfoAreaMaskProbFunc() override;
   NFmiInfoAreaMaskProbFunc(const NFmiCalculationCondition &theOperation,
                            Type theMaskType,
                            NFmiInfoData::Type theDataType,
@@ -883,7 +884,7 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
 class NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
-  ~NFmiInfoTimeIntegrator();
+  ~NFmiInfoTimeIntegrator() override;
   NFmiInfoTimeIntegrator(const NFmiCalculationCondition &theOperation,
                          Type theMaskType,
                          NFmiInfoData::Type theDataType,
@@ -933,7 +934,7 @@ class NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
 class NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
 {
  public:
-  ~NFmiInfoRectAreaIntegrator();
+  ~NFmiInfoRectAreaIntegrator() override;
   NFmiInfoRectAreaIntegrator(const NFmiCalculationCondition &theOperation,
                              Type theMaskType,
                              NFmiInfoData::Type theDataType,
@@ -987,7 +988,7 @@ class NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
 class NFmiInfoAreaIntegrationFunc : public NFmiInfoAreaMaskProbFunc
 {
  public:
-  ~NFmiInfoAreaIntegrationFunc();
+  ~NFmiInfoAreaIntegrationFunc() override;
   NFmiInfoAreaIntegrationFunc(const NFmiCalculationCondition &theOperation,
                               Type theMaskType,
                               NFmiInfoData::Type theDataType,
@@ -1019,7 +1020,7 @@ class NFmiInfoAreaIntegrationFunc : public NFmiInfoAreaMaskProbFunc
 class NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
 {
  public:
-  ~NFmiInfoAreaMaskAreaProbFunc();
+  ~NFmiInfoAreaMaskAreaProbFunc() override;
   NFmiInfoAreaMaskAreaProbFunc(const NFmiCalculationCondition &theOperation,
                                Type theMaskType,
                                NFmiInfoData::Type theDataType,
@@ -1044,7 +1045,7 @@ class NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
 class NFmiTimeShiftedInfoAreaMask : public NFmiInfoAreaMask
 {
  public:
-  virtual ~NFmiTimeShiftedInfoAreaMask();
+  ~NFmiTimeShiftedInfoAreaMask() override;
   NFmiTimeShiftedInfoAreaMask();
   NFmiTimeShiftedInfoAreaMask(const NFmiCalculationCondition &theOperation,
                               Type theMaskType,

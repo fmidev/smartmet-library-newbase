@@ -18,7 +18,7 @@ class NFmAreaMaskList;
 class NFmiAreaMaskImpl : public NFmiAreaMask
 {
  public:
-  virtual ~NFmiAreaMaskImpl();
+  ~NFmiAreaMaskImpl() override;
   NFmiAreaMaskImpl();
   NFmiAreaMaskImpl(const NFmiCalculationCondition &theOperation,
                    Type theMaskType,
@@ -62,7 +62,8 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   const NFmiCalculationCondition &Condition() const override;
 
   bool IsRampMask() const override;
-  bool IsWantedParam(const NFmiDataIdent &theParam, const NFmiLevel *theLevel = 0) const override;
+  bool IsWantedParam(const NFmiDataIdent& theParam,
+                     const NFmiLevel* theLevel = nullptr) const override;
   const NFmiString MaskString() const override;
   std::shared_ptr<NFmiFastQueryInfo> Info() override;
   void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) override;

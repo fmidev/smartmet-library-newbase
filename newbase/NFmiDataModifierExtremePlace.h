@@ -16,7 +16,7 @@
 class NFmiDataModifierExtremePlace : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierExtremePlace();
+  ~NFmiDataModifierExtremePlace() override;
   NFmiDataModifierExtremePlace();
 
   void SetLocation(NFmiQueryInfo *theQI);

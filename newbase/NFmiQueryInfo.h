@@ -49,11 +49,11 @@ class NFmiQueryInfo
                 const NFmiVPlaceDescriptor &theVPlaceDescriptor = NFmiVPlaceDescriptor(),
                 double theInfoVersion = DefaultFmiInfoVersion);
 
-  NFmiQueryInfo(NFmiQueryData *data,
-                NFmiParamDescriptor *theParamDescriptor = 0,
-                NFmiTimeDescriptor *theTimeDescriptor = 0,
-                NFmiHPlaceDescriptor *theHPlaceDescriptor = 0,
-                NFmiVPlaceDescriptor *theVPlaceDescriptor = 0);
+  NFmiQueryInfo(NFmiQueryData* data,
+                NFmiParamDescriptor* theParamDescriptor = nullptr,
+                NFmiTimeDescriptor* theTimeDescriptor = nullptr,
+                NFmiHPlaceDescriptor* theHPlaceDescriptor = nullptr,
+                NFmiVPlaceDescriptor* theVPlaceDescriptor = nullptr);
 
   NFmiQueryInfo(const std::string &filename);
 
@@ -113,7 +113,7 @@ class NFmiQueryInfo
   virtual bool Location(const NFmiLocation &theLocation);
   virtual bool Location(const unsigned long &theIdent);
   virtual bool Location(const NFmiString &theLocationName);
-  virtual bool Location(const NFmiPoint &theLonLatPoint, NFmiPoint *theGridPoint = 0);
+  virtual bool Location(const NFmiPoint& theLonLatPoint, NFmiPoint* theGridPoint = nullptr);
   virtual bool NearestLocation(const NFmiLocation &theLocation,
                                double theMaxDistance = kFloatMissing * 1000.);
   virtual bool NearestLocation(const NFmiLocation &theLocation,
@@ -357,7 +357,7 @@ class NFmiQueryInfo
   // ************************************************************
   //  virtual NFmiQueryData * CreateSubQueryData(NFmiQueryInfo * theSubInfo);
 
-  bool ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *TheTimeBag = 0);
+  bool ReplaceData(NFmiQueryInfo* theReplaceData, NFmiTimeBag* TheTimeBag = nullptr);
   virtual std::ostream &Write(std::ostream &file) const;
   virtual std::istream &Read(std::istream &file);
 
@@ -388,11 +388,11 @@ class NFmiQueryInfo
                                          float endWeight = 1.);
 
   void CalcLevelData(NFmiDataModifier *theModifier);
-  void CalcLocationData(NFmiDataModifier *theModifier,
-                        NFmiArea *theArea = 0,
-                        NFmiLocationBag *theLocationBag = 0);
+  void CalcLocationData(NFmiDataModifier* theModifier,
+                        NFmiArea* theArea = nullptr,
+                        NFmiLocationBag* theLocationBag = nullptr);
   void CalcLocationDataWithExtremePlace(NFmiDataModifierExtremePlace *theModifier);
-  void CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *theTimeBag = 0);
+  void CalcTimeData(NFmiDataModifier* theModifier, NFmiTimeBag* theTimeBag = nullptr);
   void CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeDescriptor &theTimeDesc);
   void CalcTimeData(NFmiDataModifier *theModifier,
                     const NFmiMetTime &startTime,
@@ -407,15 +407,15 @@ class NFmiQueryInfo
   void CalcInterpolatedTimeData(NFmiDataModifier *theModifier,
                                 NFmiTimeDescriptor &theTimeDesc,
                                 const NFmiPoint &lonLat);
-  void ModifyLocationData(NFmiDataModifier *theModifier,
-                          NFmiQueryInfo *theQueryInfoCopy = 0,
-                          NFmiArea *theArea = 0,
-                          NFmiLocationBag *theLocationBag = 0);
+  void ModifyLocationData(NFmiDataModifier* theModifier,
+                          NFmiQueryInfo* theQueryInfoCopy = nullptr,
+                          NFmiArea* theArea = nullptr,
+                          NFmiLocationBag* theLocationBag = nullptr);
   void ModifyLevelData(NFmiDataModifier *theModifier);
-  void ModifyTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *theTimeBag = 0);
-  void ModifyTimesLocationData(NFmiDataModifier *theModifier,
-                               NFmiQueryInfo *theQueryInfoCopy,
-                               NFmiTimeBag *theTimeBag = 0);
+  void ModifyTimeData(NFmiDataModifier* theModifier, NFmiTimeBag* theTimeBag = nullptr);
+  void ModifyTimesLocationData(NFmiDataModifier* theModifier,
+                               NFmiQueryInfo* theQueryInfoCopy,
+                               NFmiTimeBag* theTimeBag = nullptr);
   void ModifyTimesLocationData(NFmiDataModifier *theModifier,
                                NFmiQueryInfo *theQueryInfoCopy,
                                NFmiTimeDescriptor &theTimeDescriptor);
@@ -1099,7 +1099,7 @@ inline const NFmiLocation *NFmiQueryInfo::Location() const
 
 inline const NFmiLevel *NFmiQueryInfo::Level() const
 {
-  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Level() : 0);
+  return (itsVPlaceDescriptor ? itsVPlaceDescriptor->Level() : nullptr);
 }
 
 // ----------------------------------------------------------------------

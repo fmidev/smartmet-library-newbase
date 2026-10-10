@@ -229,21 +229,21 @@ void NFmiNearTreeImpl<T, F>::Insert(const T& theObject)
   double dist_right = 0;
   double dist_left = 0;
 
-  if (itsRightObject != 0)
+  if (itsRightObject != nullptr)
   {
     dist_right = Distance(theObject, *itsRightObject);
     dist_left = Distance(theObject, *itsLeftObject);
   }
 
-  if (itsLeftObject == 0)
+  if (itsLeftObject == nullptr)
     itsLeftObject = new value_type(theObject);
 
-  else if (itsRightObject == 0)
+  else if (itsRightObject == nullptr)
     itsRightObject = new value_type(theObject);
 
   else if (dist_left > dist_right)
   {
-    if (itsRightBranch == 0)
+    if (itsRightBranch == nullptr)
       itsRightBranch = new NFmiNearTreeImpl();
 
     // note that the next line assumes that itsMaxRight is
@@ -256,7 +256,7 @@ void NFmiNearTreeImpl<T, F>::Insert(const T& theObject)
 
   else
   {
-    if (itsLeftBranch == 0)
+    if (itsLeftBranch == nullptr)
       itsLeftBranch = new NFmiNearTreeImpl();
 
     // note that the next line assumes that itsMaxLeft is

@@ -65,9 +65,9 @@ class NFmiTimeCache
 class NFmiGrid : public NFmiGridBase
 {
  public:
-  virtual ~NFmiGrid();
+  ~NFmiGrid() override;
 
-  NFmiGrid(const NFmiArea *theArea = 0,
+  NFmiGrid(const NFmiArea* theArea = nullptr,
            unsigned long theXNumber = 0,
            unsigned long theYNumber = 0,
            FmiDirection theStartingCorner = kBottomLeft,
@@ -77,7 +77,7 @@ class NFmiGrid : public NFmiGridBase
   NFmiGrid(const NFmiGrid &theGrid, FmiDirection theDirection = kBase);
 
   using NFmiGridBase::Init;
-  virtual bool Init(NFmiDataPool *theData);
+  bool Init(NFmiDataPool* theData) override;
   virtual bool Init(NFmiGrid *theGrid);
   bool Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate);
   bool Init(NFmiGrid &theGrid, NFmiGrid &theSubGrid, FmiInterpolationMethod howToInterpolate);
@@ -100,7 +100,7 @@ class NFmiGrid : public NFmiGridBase
   bool NearestLatLon(double newLon,
                      double newLat,
                      double theMaxDistance = kFloatMissing * 1000.,
-                     NFmiPoint *theGridPoint = 0);
+                     NFmiPoint* theGridPoint = nullptr);
 
   std::vector<std::pair<int, double> > NearestLocations(
       const NFmiLocation &theLocation,
@@ -166,12 +166,12 @@ class NFmiGrid : public NFmiGridBase
                              NFmiDataMatrix<NFmiLocationCache> &theLocationCache);
 
   virtual unsigned long ClassId() const;
-  virtual const char *ClassName() const;
+  const char* ClassName() const override;
   bool operator==(const NFmiGrid &theGrid) const;
   NFmiGrid &operator=(const NFmiGrid &theGrid);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   bool IsInside(const NFmiPoint &theLatLon) const;
 
@@ -213,7 +213,7 @@ inline NFmiGrid::~NFmiGrid()
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
+inline NFmiGrid::NFmiGrid(const NFmiArea* theArea,
                           unsigned long theXNumber,
                           unsigned long theYNumber,
                           FmiDirection theStartingCorner,
@@ -222,7 +222,7 @@ inline NFmiGrid::NFmiGrid(const NFmiArea *theArea,
     : NFmiGridBase(theXNumber, theYNumber, theStartingCorner, theInterpolationMethod)
       //				 theBase)
       ,
-      itsArea(theArea ? theArea->Clone() : 0)
+      itsArea(theArea ? theArea->Clone() : nullptr)
 {
 }
 

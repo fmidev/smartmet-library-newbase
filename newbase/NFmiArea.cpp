@@ -1410,7 +1410,7 @@ const NFmiRect &NFmiArea::XYArea() const
 
 NFmiArea *NFmiArea::Clone() const
 {
-  return 0;
+  return nullptr;
 }
 // ----------------------------------------------------------------------
 /*!

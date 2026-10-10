@@ -16,18 +16,18 @@ class NFmiIntegrationSelector;
 class NFmiDataModifierCombi : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierCombi();
+  ~NFmiDataModifierCombi() override;
   NFmiDataModifierCombi(const NFmiDataModifierCombi& other);
 
   NFmiDataModifierCombi(unsigned int theNumberOfValues = 0,
                         float theProbabilityScale = 100.,
                         FmiJoinOperator theJoinOperator = kFmiAdd,
                         bool missingValuesAllowed = true,
-                        NFmiCombinedParam* theCombinedParam = 0);
+                        NFmiCombinedParam* theCombinedParam = nullptr);
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::Calculate;
-  void Calculate(float theValue);
+  void Calculate(float theValue) override;
   float CalcResult(const NFmiIntegrationSelector& theSelector);
 
  protected:

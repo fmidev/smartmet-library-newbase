@@ -13,11 +13,13 @@
 class NFmiRegressionModifier : public NFmiInfoModifier
 {
  public:
-  virtual ~NFmiRegressionModifier();
-  NFmiRegressionModifier(NFmiDataIdent* theParam, NFmiLevel* theLevel, NFmiQueryInfo* theData = 0);
+  ~NFmiRegressionModifier() override;
+  NFmiRegressionModifier(NFmiDataIdent* theParam,
+                         NFmiLevel* theLevel,
+                         NFmiQueryInfo* theData = nullptr);
 
-  virtual std::ostream& WriteOperand(std::ostream& file) const;
-  virtual double FloatValue();
+  std::ostream& WriteOperand(std::ostream& file) const override;
+  double FloatValue() override;
 
  protected:
   NFmiDataModifierList* itsRegressionItems;

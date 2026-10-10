@@ -15,7 +15,7 @@
 class NFmiEquidistArea : public NFmiAzimuthalArea
 {
  public:
-  virtual ~NFmiEquidistArea();
+  ~NFmiEquidistArea() override;
   NFmiEquidistArea();
   NFmiEquidistArea(const NFmiEquidistArea& theEquidistArea);
 
@@ -46,10 +46,10 @@ class NFmiEquidistArea : public NFmiAzimuthalArea
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
                    const double theCentralLatitude = 90.);  // 90 deg. = North Pole
 
-  virtual void Init(bool fKeepWorldRect = false);
-  virtual NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
-                            const NFmiPoint& theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  void Init(bool fKeepWorldRect = false) override;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
   NFmiEquidistArea& operator=(const NFmiEquidistArea& theArea);
   bool operator==(const NFmiEquidistArea& theArea) const;
@@ -58,21 +58,21 @@ class NFmiEquidistArea : public NFmiAzimuthalArea
   using NFmiAzimuthalArea::operator==;
   using NFmiAzimuthalArea::operator!=;
 
-  bool operator==(const NFmiArea& theArea) const;
-  bool operator!=(const NFmiArea& theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
+  bool operator!=(const NFmiArea& theArea) const override;
 
-  virtual NFmiArea* Clone() const;
-  virtual unsigned long ClassId() const;
-  virtual const char* ClassName() const;
-  const std::string AreaStr() const;
-  virtual const std::string WKT() const;
+  NFmiArea* Clone() const override;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
+  const std::string WKT() const override;
 
   std::size_t HashValue() const;
 
  protected:
-  virtual double K(const double delta) const;
-  virtual double CalcDelta(const double xyDistance) const;
-  virtual double DistanceFromPerspectivePointToCenterOfEarth() const;
+  double K(const double delta) const override;
+  double CalcDelta(const double xyDistance) const override;
+  double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:
 };  // class NFmiEquidistArea

@@ -55,16 +55,16 @@ class NFmiDataIdent
   // 14.5.2002/Marko Tee kontruktori, jolle annetaan FmiParameterName parametrina.
   // explicit NFmiDataIdent (FmiParameterName theParam); // ks. mallia seuraavasta
 
-  NFmiDataIdent(const NFmiParam &theParam,
-                const NFmiProducer &theProducer = NFmiProducer(kSynopProducer),
+  NFmiDataIdent(const NFmiParam& theParam,
+                const NFmiProducer& theProducer = NFmiProducer(kSynopProducer),
                 FmiParamType theType = kContinuousParam,
                 bool isGroup = true,
                 bool isActive = true,
                 bool containsIndividualParams = true,
                 bool isDataParam = true,
                 bool hasDataParam = false,
-                NFmiParamBag *theSubParamBag = 0,
-                NFmiVoidPtrList *theSecondaryProducerList = 0);
+                NFmiParamBag* theSubParamBag = nullptr,
+                NFmiVoidPtrList* theSecondaryProducerList = nullptr);
 
   void Destroy();
 
@@ -165,10 +165,10 @@ inline NFmiDataIdent::NFmiDataIdent()
       fContainsIndividualParams(true),
       fIsDataParam(false),
       fHasDataParams(false),
-      itsDataParams(0),
-      itsSecondaryProducers(0),
-      itsSecondaryProducerIterator(0),
-      itsCurrentSecondaryProducer(0)
+      itsDataParams(nullptr),
+      itsSecondaryProducers(nullptr),
+      itsSecondaryProducerIterator(nullptr),
+      itsCurrentSecondaryProducer(nullptr)
 {
 }
 
@@ -361,7 +361,7 @@ inline bool NFmiDataIdent::IsDataParam() const
 
 inline bool NFmiDataIdent::IsDataProducer() const
 {
-  return itsProducer != 0;
+  return itsProducer != nullptr;
 }
 // ----------------------------------------------------------------------
 /*!

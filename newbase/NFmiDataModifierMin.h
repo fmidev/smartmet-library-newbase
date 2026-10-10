@@ -12,19 +12,19 @@
 class NFmiDataModifierMin : public NFmiDataModifierExtreme
 {
  public:
-  virtual ~NFmiDataModifierMin();
+  ~NFmiDataModifierMin() override;
   NFmiDataModifierMin();
   NFmiDataModifierMin(const NFmiDataModifierMin& theOther);
-  NFmiDataModifier* Clone() const;
+  NFmiDataModifier* Clone() const override;
 
   //  virtual void Calculate(float theValue);
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
 
  protected:
-  virtual bool IsNewExtreme(float value);
+  bool IsNewExtreme(float value) override;
 
  private:
   NFmiDataModifierMin& operator=(const NFmiDataModifierMin& theOther);

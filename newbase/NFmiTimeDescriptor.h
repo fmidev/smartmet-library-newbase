@@ -19,7 +19,7 @@ class NFmiTimeList;
 class NFmiTimeDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiTimeDescriptor();
+  ~NFmiTimeDescriptor() override;
 
   NFmiTimeDescriptor();
 
@@ -90,19 +90,19 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   // Following methods operate just in TimeDescriptor's list part
   // ---------------------------------------------------------------------
 
-  virtual unsigned long Index() const;
-  virtual unsigned long Size() const;
+  unsigned long Index() const override;
+  unsigned long Size() const override;
   bool IsEmpty() const;  // Jouduin tekemään IsEmpty -metodin, koska Size -metodi palauttaa
   // joskus tyhjänä 1:n (NFmiTimeBag palauttaa tyhjänä 1:n kun resolution
   // on 0 jostain historiallisista v. 1998 syistä)
   virtual unsigned long SizeActive() const;
 
-  virtual bool NextActive();
+  bool NextActive() override;
   virtual bool PreviousActive();
   virtual bool FirstActive();
   virtual bool LastActive();
-  virtual bool IsActive() const;
-  virtual bool SetActivity(bool theActivityState);
+  bool IsActive() const override;
+  bool SetActivity(bool theActivityState) override;
   virtual bool SetActivePeriod(bool theActivityState, const NFmiTimeBag &thePeriod);
   virtual NFmiTimeBag GetActivePeriod();
 
@@ -132,8 +132,8 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   virtual unsigned long ClassId() const;
   virtual const char *ClassName() const;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   unsigned long LocalTimeStep();
   void ReduseTimeBag();
@@ -286,7 +286,7 @@ inline bool NFmiTimeDescriptor::IsActive() const
 
 inline bool NFmiTimeDescriptor::UseTimeList() const
 {
-  return itsTimeList != 0;
+  return itsTimeList != nullptr;
 }
 // ----------------------------------------------------------------------
 /*!

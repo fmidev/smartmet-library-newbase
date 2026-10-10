@@ -20,18 +20,18 @@
 class NFmiDataModifierMedian : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierMedian();
+  ~NFmiDataModifierMedian() override;
   NFmiDataModifierMedian(float theLimitProsent = 50.f);
   NFmiDataModifierMedian(const NFmiDataModifierMedian& theOther);
-  NFmiDataModifier* Clone() const;
+  NFmiDataModifier* Clone() const override;
 
   float Median();
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
   float LimitProsent() const { return itsLimitProsent; }
   void LimitProsent(float newValue);
 

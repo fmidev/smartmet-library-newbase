@@ -19,7 +19,7 @@ class NFmiFastQueryInfo;
 class NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
 {
  public:
-  ~NFmiCalculatedAreaMask();
+  ~NFmiCalculatedAreaMask() override;
   NFmiCalculatedAreaMask();
   NFmiCalculatedAreaMask(const NFmiDataIdent& theParam,
                          const NFmiCalculationCondition& theOperation);
@@ -27,7 +27,8 @@ class NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
   NFmiCalculatedAreaMask& operator=(const NFmiCalculatedAreaMask& theMask);
   NFmiAreaMask* Clone() const override;
 
-  bool IsWantedParam(const NFmiDataIdent& theParam, const NFmiLevel* theLevel = 0) const override;
+  bool IsWantedParam(const NFmiDataIdent& theParam,
+                     const NFmiLevel* theLevel = nullptr) const override;
   const NFmiDataIdent* DataIdent() const override;
   const NFmiParam* Param() const override;
 
@@ -40,7 +41,7 @@ class NFmiCalculatedAreaMask : public NFmiAreaMaskImpl
 class NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
 {
  public:
-  ~NFmiLatLonAreaMask();
+  ~NFmiLatLonAreaMask() override;
   NFmiLatLonAreaMask();
   NFmiLatLonAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
   NFmiLatLonAreaMask(const NFmiLatLonAreaMask& theMask);
@@ -58,7 +59,7 @@ class NFmiLatLonAreaMask : public NFmiCalculatedAreaMask
 class NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
 {
  public:
-  ~NFmiElevationAngleAreaMask();
+  ~NFmiElevationAngleAreaMask() override;
   NFmiElevationAngleAreaMask();
   NFmiElevationAngleAreaMask(const NFmiElevationAngleAreaMask& theMask);
   NFmiElevationAngleAreaMask& operator=(const NFmiElevationAngleAreaMask&) = default;
@@ -80,7 +81,7 @@ class NFmiElevationAngleAreaMask : public NFmiLatLonAreaMask
 class NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiJulianDayAreaMask();
+  ~NFmiJulianDayAreaMask() override;
   NFmiJulianDayAreaMask();
   NFmiJulianDayAreaMask(const NFmiJulianDayAreaMask& theMask);
   NFmiJulianDayAreaMask(const NFmiDataIdent& theParam,
@@ -99,7 +100,7 @@ class NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
 class NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiLocalHourAreaMask();
+  ~NFmiLocalHourAreaMask() override;
   NFmiLocalHourAreaMask();
   NFmiLocalHourAreaMask(const NFmiLocalHourAreaMask& theMask);
   NFmiLocalHourAreaMask(const NFmiDataIdent& theParam,
@@ -116,7 +117,7 @@ class NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
 class NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiUtcHourAreaMask();
+  ~NFmiUtcHourAreaMask() override;
   NFmiUtcHourAreaMask();
   NFmiUtcHourAreaMask(const NFmiUtcHourAreaMask& theMask);
   NFmiUtcHourAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
@@ -132,7 +133,7 @@ class NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
 class NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiMinuteAreaMask();
+  ~NFmiMinuteAreaMask() override;
   NFmiMinuteAreaMask();
   NFmiMinuteAreaMask(const NFmiMinuteAreaMask& theMask);
   NFmiMinuteAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
@@ -147,7 +148,7 @@ class NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
 class NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiForecastHourAreaMask();
+  ~NFmiForecastHourAreaMask() override;
   NFmiForecastHourAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo);
   NFmiForecastHourAreaMask(const NFmiForecastHourAreaMask& theMask);
   NFmiForecastHourAreaMask& operator=(const NFmiForecastHourAreaMask& theMask);
@@ -169,7 +170,7 @@ class NFmiForecastHourAreaMask : public NFmiElevationAngleAreaMask
 class NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiTimeStepAreaMask();
+  ~NFmiTimeStepAreaMask() override;
   NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo);
   NFmiTimeStepAreaMask(const NFmiTimeStepAreaMask& theMask);
   NFmiTimeStepAreaMask& operator=(const NFmiTimeStepAreaMask& theMask);
@@ -194,7 +195,7 @@ class NFmiTimeStepAreaMask : public NFmiElevationAngleAreaMask
 class NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
 {
  public:
-  ~NFmiGridSizeAreaMask();
+  ~NFmiGridSizeAreaMask() override;
   NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo, bool calcXValue);
   NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                        const NFmiDataIdent& theParam,

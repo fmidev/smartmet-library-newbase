@@ -15,22 +15,22 @@
 class NFmiDataModifierProb : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierProb();
+  ~NFmiDataModifierProb() override;
   NFmiDataModifierProb(FmiProbabilityCondition theCondition,
                        double theFirstLimit,
                        FmiJoinOperator theJoinOperator = kFmiAdd,
-                       NFmiCombinedParam* theCombinedParam = 0);
+                       NFmiCombinedParam* theCombinedParam = nullptr);
   NFmiDataModifierProb(FmiProbabilityCondition theCondition,
                        double theFirstLimit,
                        double theSecondLimit,
                        FmiJoinOperator theJoinOperator,
-                       NFmiCombinedParam* theCombinedParam = 0);
+                       NFmiCombinedParam* theCombinedParam = nullptr);
 
-  void Clear();
+  void Clear() override;
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  void Calculate(float theValue);
-  float CalculationResult();
+  void Calculate(float theValue) override;
+  float CalculationResult() override;
 
  protected:
   virtual bool CheckParams(double theValue);

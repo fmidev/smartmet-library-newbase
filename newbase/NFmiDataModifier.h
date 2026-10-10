@@ -17,12 +17,12 @@ class NFmiQueryInfo;
 class NFmiDataModifier : public NFmiDataModifierBase
 {
  public:
-  virtual ~NFmiDataModifier();
+  ~NFmiDataModifier() override;
   NFmiDataModifier(const NFmiDataModifier& theModier);
   virtual NFmiDataModifier* Clone() const;
   NFmiDataModifier(FmiJoinOperator theJoinOperator = kFmiAdd,
                    bool missingValuesAllowed = true,
-                   NFmiCombinedParam* thePotentialCombinedParam = 0);
+                   NFmiCombinedParam* thePotentialCombinedParam = nullptr);
 
   operator double();
 

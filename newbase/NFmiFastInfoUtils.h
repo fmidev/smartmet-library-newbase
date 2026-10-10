@@ -35,7 +35,7 @@ class QueryInfoTotalStateRestorer : public QueryInfoParamStateRestorer
 
  public:
   QueryInfoTotalStateRestorer(NFmiQueryInfo &info);
-  ~QueryInfoTotalStateRestorer();
+  ~QueryInfoTotalStateRestorer() override;
 };
 
 class MetaWindParamUsage

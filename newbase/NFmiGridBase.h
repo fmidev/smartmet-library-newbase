@@ -233,8 +233,8 @@ inline NFmiGridBase::NFmiGridBase(unsigned long theXNumber,
                                   FmiDirection theStartingCorner,
                                   FmiInterpolationMethod theInterpolationMethod)
     //						   bool theBase)
-    : itsData(0),
-      itsFloatData(0),
+    : itsData(nullptr),
+      itsFloatData(nullptr),
       itsStartingCorner(theStartingCorner),
       itsInterpolationMethod(theInterpolationMethod),
       itsXNumber(theXNumber),

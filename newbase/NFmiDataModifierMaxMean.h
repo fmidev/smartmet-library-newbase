@@ -12,16 +12,16 @@
 class NFmiDataModifierMaxMean : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierMaxMean();
+  ~NFmiDataModifierMaxMean() override;
   NFmiDataModifierMaxMean();
   NFmiDataModifierMaxMean(float theWeightFactor);
 
-  void Clear();
+  void Clear() override;
 
   using NFmiDataModifier::Calculate;
   using NFmiDataModifier::CalculationResult;
-  virtual void Calculate(float theValue);
-  virtual float CalculationResult();
+  void Calculate(float theValue) override;
+  float CalculationResult() override;
 
  private:
   long itsCounter;

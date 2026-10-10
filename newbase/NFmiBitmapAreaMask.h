@@ -18,7 +18,7 @@ class NFmiGrid;
 class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
 {
  public:
-  virtual ~NFmiBitmapAreaMask();
+  ~NFmiBitmapAreaMask() override;
 
   NFmiBitmapAreaMask();
 
@@ -37,7 +37,7 @@ class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
                      const NFmiLevel* theLevel,
                      BinaryOperator thePostBinaryOperator);
 
-  NFmiAreaMask* Clone() const;
+  NFmiAreaMask* Clone() const override;
 #ifdef UNIX
   // RHEL6 compiler bug fails the reference
   void Init(std::shared_ptr<NFmiFastQueryInfo> theInfo,
@@ -47,23 +47,27 @@ class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
             const NFmiCalculationCondition& theOperation);
 #endif
 
-  bool IsMasked(const NFmiPoint& theLatLon) const;
+  bool IsMasked(const NFmiPoint& theLatLon) const override;
   bool IsMasked(int theIndex)
-      const;  // erikoistapaus optimoituun käyttöön (ei voi käyttää kaikille luokille!!!!)
-  void Mask(int theIndex, bool newStatus);
-  double MaskValue(const NFmiPoint& theLatLon) const;  // palauttaa kertoimen 0:n ja 1:n välilt
-  void SetAll(bool theNewState);  // HUOM! toimii vain NFmiBinaryMask:in kanssa. Asettaa koko maskin
-                                  // kaikki arvot halutuksi.
+      const override;  // erikoistapaus optimoituun käyttöön (ei voi käyttää kaikille luokille!!!!)
+  void Mask(int theIndex, bool newStatus) override;
+  double MaskValue(
+      const NFmiPoint& theLatLon) const override;  // palauttaa kertoimen 0:n ja 1:n välilt
+  void SetAll(bool theNewState) override;  // HUOM! toimii vain NFmiBinaryMask:in kanssa. Asettaa
+                                           // koko maskin kaikki arvot halutuksi.
 
-  const NFmiDataIdent* DataIdent() const { return itsDataIdent; }
-  const NFmiParam* Param() const { return itsDataIdent ? itsDataIdent->GetParam() : 0; }
+  const NFmiDataIdent* DataIdent() const override { return itsDataIdent; }
+  const NFmiParam* Param() const override
+  {
+    return itsDataIdent ? itsDataIdent->GetParam() : nullptr;
+  }
   using NFmiAreaMaskImpl::Level;
-  const NFmiLevel* Level() const { return itsLevel; }
+  const NFmiLevel* Level() const override { return itsLevel; }
 
  protected:
-  double CalcValueFromLocation(const NFmiPoint& theLatLon) const;  // tee tämä lapsiin!!!
+  double CalcValueFromLocation(const NFmiPoint& theLatLon) const override;  // tee tämä lapsiin!!!
   const NFmiString MakeSubMaskString(
-      void) const;  // tekee  param nimi tai vastaavan stringin pätkän
+      void) const override;  // tekee  param nimi tai vastaavan stringin pätkän
 
  private:
   NFmiBitmapAreaMask& operator=(const NFmiBitmapAreaMask& theMask);

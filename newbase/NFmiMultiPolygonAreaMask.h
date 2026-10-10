@@ -18,7 +18,7 @@ class NFmiGrid;
 class NFmiMultiPolygonAreaMask : public NFmiAreaMaskImpl
 {
  public:
-  ~NFmiMultiPolygonAreaMask();
+  ~NFmiMultiPolygonAreaMask() override;
 
   NFmiMultiPolygonAreaMask();
 
@@ -35,8 +35,8 @@ class NFmiMultiPolygonAreaMask : public NFmiAreaMaskImpl
   //@}
 
  protected:
-  double CalcValueFromLocation(const NFmiPoint &theLatLon) const;
-  const NFmiString MakeSubMaskString() const;
+  double CalcValueFromLocation(const NFmiPoint& theLatLon) const override;
+  const NFmiString MakeSubMaskString() const override;
 
  private:
   void Clear();

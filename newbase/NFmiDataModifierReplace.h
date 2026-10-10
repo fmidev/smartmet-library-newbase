@@ -14,7 +14,7 @@ class NFmiDataModifierReplace : public NFmiDataModifier
  public:
   NFmiDataModifierReplace(float theOrigValue, float theNewValue);
 
-  float FloatOperation(float theValue);
+  float FloatOperation(float theValue) override;
 
  private:
   float itsOriginalValue;

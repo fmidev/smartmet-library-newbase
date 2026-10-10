@@ -20,16 +20,16 @@
 class NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
 {
  public:
-  virtual ~NFmiDataModifierMaxPlace();
+  ~NFmiDataModifierMaxPlace() override;
   NFmiDataModifierMaxPlace();
 
-  void Clear();
+  void Clear() override;
 
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
 
  protected:
-  virtual bool IsNewExtreme(float value);
+  bool IsNewExtreme(float value) override;
 
  private:
   NFmiDataModifierMaxPlace& operator=(const NFmiDataModifierMaxPlace& theOther);

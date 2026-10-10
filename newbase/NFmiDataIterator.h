@@ -18,9 +18,9 @@ class NFmiDataIterator
 {
  public:
   virtual ~NFmiDataIterator();
-  NFmiDataIterator(NFmiQueryInfo* theData = 0);
+  NFmiDataIterator(NFmiQueryInfo* theData = nullptr);
 
-  virtual void DoForEach(NFmiDataModifier* theDataModifier = 0);
+  virtual void DoForEach(NFmiDataModifier* theDataModifier = nullptr);
   virtual void SetDimensions(long dx, long dy, long dt);
 
   NFmiAreaMask* Mask();

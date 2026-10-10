@@ -13,10 +13,10 @@
 class NFmiDataModifierConstant : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierConstant();
+  ~NFmiDataModifierConstant() override;
   NFmiDataModifierConstant(double theConstant, FmiJoinOperator theJoinOperator = kFmiAdd);
-  virtual double FloatValue();
-  virtual std::ostream& WriteOperand(std::ostream& file) const;
+  double FloatValue() override;
+  std::ostream& WriteOperand(std::ostream& file) const override;
 
  protected:
   double itsConstant;

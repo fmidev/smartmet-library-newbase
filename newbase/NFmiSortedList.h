@@ -22,7 +22,7 @@ class NFmiSortable;
 class NFmiSortedList : public NFmiVoidPtrList
 {
  public:
-  virtual ~NFmiSortedList();
+  ~NFmiSortedList() override;
   NFmiSortedList(NFmiSortedList& theList);
   NFmiSortedList(FmiSortOrder theSortOrder = kAscending);
 

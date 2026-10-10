@@ -23,7 +23,7 @@ class NFmiStationBag : public NFmiLocationBag
                  NFmiIndividual *theStationArray);
   NFmiStationBag(const NFmiStationBag &theBag);
 
-  ~NFmiStationBag() { Destroy(); }
+  ~NFmiStationBag() override { Destroy(); }
   long CurrentStation() const;
   bool SetCurrent(long theStation);
 
@@ -32,19 +32,19 @@ class NFmiStationBag : public NFmiLocationBag
 
   bool AddStation(const NFmiStation &theStation);
 
-  const NFmiLocationBag Combine(const NFmiLocationBag &theBag);
-  bool AddLocation(const NFmiLocation &theLocation, bool theChecking = true);
-  bool Location(const NFmiLocation &theLocation);
+  const NFmiLocationBag Combine(const NFmiLocationBag& theBag) override;
+  bool AddLocation(const NFmiLocation& theLocation, bool theChecking = true) override;
+  bool Location(const NFmiLocation& theLocation) override;
 
   using NFmiLocationBag::Location;
-  const NFmiLocation *Location() const;
+  const NFmiLocation* Location() const override;
 
-  NFmiLocationBag *Clone() const;
-  void Destroy();
+  NFmiLocationBag* Clone() const override;
+  void Destroy() override;
 
-  unsigned long ClassId() const { return kNFmiStationBag; }
-  std::ostream &Write(std::ostream &file) const;
-  std::istream &Read(std::istream &file);
+  unsigned long ClassId() const override { return kNFmiStationBag; }
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   NFmiStationBag &operator=(const NFmiStationBag &theStationBag);
 

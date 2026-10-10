@@ -15,15 +15,15 @@ class NFmiDataModifierPrecFormUnion : public NFmiDataModifier
   // HUOM missingValuesAlloved = true koska pouta tuo puuttuvan !!!
 
  public:
-  virtual ~NFmiDataModifierPrecFormUnion();
+  ~NFmiDataModifierPrecFormUnion() override;
   NFmiDataModifierPrecFormUnion(FmiJoinOperator theJoinOperator = kFmiAdd,
                                 bool missingValuesAlloved = true);
 
-  void Clear();
-  virtual void Calculate(float theValue);
-  virtual void Calculate(NFmiQueryInfo* theQI);
+  void Clear() override;
+  void Calculate(float theValue) override;
+  void Calculate(NFmiQueryInfo* theQI) override;
   using NFmiDataModifier::CalculationResult;
-  virtual float CalculationResult();
+  float CalculationResult() override;
   float Result();
 
  private:

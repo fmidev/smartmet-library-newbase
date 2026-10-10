@@ -312,8 +312,8 @@ class NFmiAreaMask
   virtual void Condition(const NFmiCalculationCondition &theOperation) = 0;
   virtual const NFmiCalculationCondition &Condition() const = 0;
   virtual bool IsRampMask() const = 0;
-  virtual bool IsWantedParam(const NFmiDataIdent &theParam,
-                             const NFmiLevel *theLevel = 0) const = 0;
+  virtual bool IsWantedParam(const NFmiDataIdent& theParam,
+                             const NFmiLevel* theLevel = nullptr) const = 0;
   virtual const NFmiString MaskString() const = 0;
   virtual std::shared_ptr<NFmiFastQueryInfo> Info() = 0;
   virtual void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) = 0;

@@ -24,7 +24,7 @@
 class NFmiDataModifierModAvg : public NFmiDataModifier
 {
  public:
-  ~NFmiDataModifierModAvg();
+  ~NFmiDataModifierModAvg() override;
   NFmiDataModifierModAvg();
   NFmiDataModifierModAvg(const NFmiDataModifierModAvg& theOther);
   NFmiDataModifierModAvg* Clone() const override;

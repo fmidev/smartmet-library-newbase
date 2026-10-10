@@ -30,7 +30,7 @@ class SpatialReference;
 class NFmiHPlaceDescriptor : public NFmiDataDescriptor
 {
  public:
-  virtual ~NFmiHPlaceDescriptor();
+  ~NFmiHPlaceDescriptor() override;
   NFmiHPlaceDescriptor();
   NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor &theHPlaceDescriptor);
 
@@ -101,7 +101,7 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
   bool Location(const NFmiLocation &theLocation);
   bool Location(long theIdent);
   bool Location(const NFmiString &theLocationName);
-  bool Location(const NFmiPoint &theLonLatPoint, NFmiPoint *theGridPoint = 0);
+  bool Location(const NFmiPoint& theLonLatPoint, NFmiPoint* theGridPoint = nullptr);
 
   void Reset();
   bool First();
@@ -110,9 +110,9 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
 
   void CreateLatLonCache(std::vector<NFmiPoint> &v);
 
-  virtual unsigned long Index() const;
+  unsigned long Index() const override;
   bool Index(unsigned long theIndex);
-  virtual unsigned long Size() const;
+  unsigned long Size() const override;
 
   virtual FmiStationType SelectedType() const;
   virtual void SelectedType(FmiStationType thelocationType);
@@ -121,14 +121,14 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
   virtual void MaxNumberOfSources(unsigned long theMaxNumberOfSources);
   virtual bool IsMaxNumberOfSources() const;
 
-  virtual bool IsActive() const;
-  virtual bool SetActivity(bool);
-  virtual bool NextActive();
+  bool IsActive() const override;
+  bool SetActivity(bool) override;
+  bool NextActive() override;
 
   virtual const NFmiHPlaceDescriptor Combine(const NFmiHPlaceDescriptor &theCombine);
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   virtual unsigned long ClassId() const;
   virtual const char *ClassName() const;
@@ -174,7 +174,7 @@ inline NFmiHPlaceDescriptor::~NFmiHPlaceDescriptor()
 
 inline bool NFmiHPlaceDescriptor::IsLocation() const
 {
-  return (itsLocationBag != 0);
+  return (itsLocationBag != nullptr);
 }
 // ----------------------------------------------------------------------
 /*!
@@ -184,7 +184,7 @@ inline bool NFmiHPlaceDescriptor::IsLocation() const
 
 inline bool NFmiHPlaceDescriptor::IsArea() const
 {
-  return (itsArea != 0);
+  return (itsArea != nullptr);
 }
 // ----------------------------------------------------------------------
 /*!
@@ -194,7 +194,7 @@ inline bool NFmiHPlaceDescriptor::IsArea() const
 
 inline bool NFmiHPlaceDescriptor::IsGrid() const
 {
-  return (itsGrid != 0);
+  return (itsGrid != nullptr);
 }
 // ----------------------------------------------------------------------
 /*!

@@ -14,13 +14,13 @@
 class NFmiDataModifierLogical : public NFmiDataModifier
 {
  public:
-  virtual ~NFmiDataModifierLogical();
-  NFmiDataModifierLogical(NFmiDataModifierBoolean* theCondition = 0,
-                          NFmiDataModifier* thePrimaryModifier = 0,
-                          NFmiDataModifier* theSecondaryModifier = 0);
+  ~NFmiDataModifierLogical() override;
+  NFmiDataModifierLogical(NFmiDataModifierBoolean* theCondition = nullptr,
+                          NFmiDataModifier* thePrimaryModifier = nullptr,
+                          NFmiDataModifier* theSecondaryModifier = nullptr);
 
-  virtual std::ostream& WriteOperand(std::ostream& file) const;
-  virtual double FloatValue();
+  std::ostream& WriteOperand(std::ostream& file) const override;
+  double FloatValue() override;
 
  protected:
   NFmiDataModifierBoolean* itsCondition;

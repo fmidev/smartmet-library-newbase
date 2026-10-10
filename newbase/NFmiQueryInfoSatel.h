@@ -16,7 +16,7 @@ class NFmiQueryData;
 class NFmiQueryInfoSatel : public NFmiQueryInfo
 {
  public:
-  ~NFmiQueryInfoSatel();
+  ~NFmiQueryInfoSatel() override;
   NFmiQueryInfoSatel();
   NFmiQueryInfoSatel(const NFmiQueryInfoSatel& theInfo);
 
@@ -26,20 +26,20 @@ class NFmiQueryInfoSatel : public NFmiQueryInfo
                      const NFmiVPlaceDescriptor& theVPlaceDescriptor = NFmiVPlaceDescriptor());
 
   NFmiQueryInfoSatel(NFmiQueryData* data,
-                     NFmiParamDescriptor* theParamDescriptor = 0,
-                     NFmiTimeDescriptor* theTimeDescriptor = 0,
-                     NFmiHPlaceDescriptor* theHPlaceDescriptor = 0,
-                     NFmiVPlaceDescriptor* theVPlaceDescriptor = 0);
+                     NFmiParamDescriptor* theParamDescriptor = nullptr,
+                     NFmiTimeDescriptor* theTimeDescriptor = nullptr,
+                     NFmiHPlaceDescriptor* theHPlaceDescriptor = nullptr,
+                     NFmiVPlaceDescriptor* theVPlaceDescriptor = nullptr);
 
   virtual NFmiQueryInfo& operator=(const NFmiQueryInfo& theInfo);
 
-  NFmiQueryInfo* Clone() const;
+  NFmiQueryInfo* Clone() const override;
 
-  virtual std::ostream& Write(std::ostream& file) const;
-  virtual std::istream& Read(std::istream& file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual unsigned long ClassId() const;
-  virtual const char* ClassName() const;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
 
  private:
   NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo);

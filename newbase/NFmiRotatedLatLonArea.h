@@ -14,7 +14,7 @@
 class NFmiRotatedLatLonArea : public NFmiLatLonArea
 {
  public:
-  virtual ~NFmiRotatedLatLonArea();
+  ~NFmiRotatedLatLonArea() override;
   NFmiRotatedLatLonArea();
   NFmiRotatedLatLonArea(const NFmiRotatedLatLonArea &theRotatedLatLonArea);
   NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLon,
@@ -26,38 +26,38 @@ class NFmiRotatedLatLonArea : public NFmiLatLonArea
                         const bool initiallyRotated = false,
                         bool usePacificView = false);
 
-  virtual NFmiArea *Clone() const;
-  virtual const NFmiPoint ToLatLon(const NFmiPoint &theXYPoint) const;
-  virtual const NFmiPoint ToXY(const NFmiPoint &theLatLonPoint) const;
-  virtual const NFmiPoint WorldXYToLatLon(const NFmiPoint &theXYPoint) const;
-  virtual const NFmiPoint LatLonToWorldXY(const NFmiPoint &theLatLonPoint) const;
+  NFmiArea* Clone() const override;
+  const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint ToXY(const NFmiPoint& theLatLonPoint) const override;
+  const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;
+  const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
 
   virtual bool IsInside(const NFmiPoint &theLatLonPoint) const;
   virtual const NFmiPoint ToRotLatLon(const NFmiPoint &theLatLonPoint) const;
   virtual const NFmiPoint ToRegLatLon(const NFmiPoint &theRotLatLonPoint) const;
   const NFmiPoint &SouthernPole() const { return itsSouthernPole; }
-  virtual NFmiArea *NewArea(const NFmiPoint &theBottomLeftLatLon,
-                            const NFmiPoint &theTopRightLatLon,
-                            bool allowPacificFix = true) const;
+  NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
+                    bool allowPacificFix = true) const override;
 
-  virtual unsigned long ClassId() const;
-  virtual const char *ClassName() const;
-  const std::string AreaStr() const;
-  virtual const std::string WKT() const;
+  unsigned long ClassId() const override;
+  const char* ClassName() const override;
+  const std::string AreaStr() const override;
+  const std::string WKT() const override;
 
   using NFmiLatLonArea::operator==;
   virtual bool operator==(const NFmiRotatedLatLonArea &theArea) const;
-  virtual bool operator==(const NFmiArea &theArea) const;
+  bool operator==(const NFmiArea& theArea) const override;
 
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
-  virtual const NFmiAngle TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
-                                           double theLatitudeEpsilon = 0.001) const;
+  const NFmiAngle TrueNorthAzimuth(const NFmiPoint& theLatLonPoint,
+                                   double theLatitudeEpsilon = 0.001) const override;
 
   std::size_t HashValue() const;
 
-  virtual void Init(bool fKeepWorldRect = false);
+  void Init(bool fKeepWorldRect = false) override;
 
  private:
   NFmiPoint itsSouthernPole;

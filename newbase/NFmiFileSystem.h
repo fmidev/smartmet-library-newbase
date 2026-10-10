@@ -89,12 +89,12 @@ const std::string TemporaryFile(const std::string &thePath);
 const std::string BaseName(const std::string &theName);
 const std::string DirName(const std::string &theName);
 
-void CleanDirectory(const std::string &thePath,
+void CleanDirectory(const std::string& thePath,
                     double theMaxFileAgeInHours,
-                    std::list<std::string> *theDeletedFilesOut = 0);
-void CleanFilePattern(const std::string &theFilePattern,
+                    std::list<std::string>* theDeletedFilesOut = nullptr);
+void CleanFilePattern(const std::string& theFilePattern,
                       int theKeepFileCount,
-                      std::list<std::string> *theDeletedFilesOut = 0);
+                      std::list<std::string>* theDeletedFilesOut = nullptr);
 
 std::string FindQueryData(const std::string &thePath);
 bool IsQueryData(const std::string &theName);

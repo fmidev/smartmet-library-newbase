@@ -31,7 +31,7 @@ class CoordinateMatrix;
 class NFmiLocationBag : public NFmiSize
 {
  public:
-  virtual ~NFmiLocationBag();
+  ~NFmiLocationBag() override;
   NFmiLocationBag();
   NFmiLocationBag(const NFmiLocationBag &theBag);
   NFmiLocationBag(const NFmiLocation &theLocation);
@@ -65,8 +65,8 @@ class NFmiLocationBag : public NFmiSize
   virtual NFmiLocationBag *Clone() const;
 
   virtual unsigned long ClassId() const { return kNFmiLocationBag; }
-  virtual std::ostream &Write(std::ostream &file) const;
-  virtual std::istream &Read(std::istream &file);
+  std::ostream& Write(std::ostream& file) const override;
+  std::istream& Read(std::istream& file) override;
 
   bool IsInside(const NFmiPoint &theLatLon, double theRadius) const;
 
@@ -139,7 +139,7 @@ inline const NFmiLocation *NFmiLocationBag::Location(unsigned long theIndex) con
   if (theIndex < itsLocations.size())
     return itsLocations[theIndex];
   else
-    return 0;
+    return nullptr;
 }
 
 // ----------------------------------------------------------------------

@@ -63,21 +63,21 @@ class NFmiLogger;
 class MyGrid
 {
  public:
-  MyGrid() : itsArea(0), itsNX(0), itsNY(0) {}
-  MyGrid(const NFmiArea *theArea, int theNX, int theNY)
-      : itsArea(theArea ? theArea->Clone() : 0), itsNX(theNX), itsNY(theNY)
+  MyGrid() : itsArea(nullptr), itsNX(0), itsNY(0) {}
+  MyGrid(const NFmiArea* theArea, int theNX, int theNY)
+      : itsArea(theArea ? theArea->Clone() : nullptr), itsNX(theNX), itsNY(theNY)
   {
   }
 
-  MyGrid(const MyGrid &theGrid)
-      : itsArea(theGrid.itsArea ? theGrid.itsArea->Clone() : 0),
+  MyGrid(const MyGrid& theGrid)
+      : itsArea(theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr),
         itsNX(theGrid.itsNX),
         itsNY(theGrid.itsNY)
   {
   }
 
-  MyGrid(const NFmiGrid &theGrid)
-      : itsArea(theGrid.Area() ? theGrid.Area()->Clone() : 0),
+  MyGrid(const NFmiGrid& theGrid)
+      : itsArea(theGrid.Area() ? theGrid.Area()->Clone() : nullptr),
         itsNX(theGrid.XNumber()),
         itsNY(theGrid.YNumber())
   {
@@ -89,7 +89,7 @@ class MyGrid
     if (this != &theGrid)
     {
       delete itsArea;
-      itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : 0;
+      itsArea = theGrid.itsArea ? theGrid.itsArea->Clone() : nullptr;
       itsNX = theGrid.itsNX;
       itsNY = theGrid.itsNY;
     }
@@ -99,7 +99,7 @@ class MyGrid
   MyGrid &operator=(const NFmiGrid &theGrid)
   {
     delete itsArea;
-    itsArea = theGrid.Area() ? theGrid.Area()->Clone() : 0;
+    itsArea = theGrid.Area() ? theGrid.Area()->Clone() : nullptr;
     itsNX = theGrid.XNumber();
     itsNY = theGrid.YNumber();
     return *this;
@@ -109,7 +109,7 @@ class MyGrid
     if (itsNX == theGrid.itsNX)
       if (itsNY == theGrid.itsNY)
       {
-        if (itsArea == 0 && theGrid.itsArea == 0)
+        if (itsArea == nullptr && theGrid.itsArea == nullptr)
           return true;
         else if (itsArea && theGrid.itsArea)
         {
@@ -204,7 +204,8 @@ class NFmiOperationProgress
 class NFmiThreadCallBacks
 {
  public:
-  NFmiThreadCallBacks(NFmiStopFunctor *theStopper = 0, NFmiOperationProgress *theProgress = 0)
+  NFmiThreadCallBacks(NFmiStopFunctor* theStopper = nullptr,
+                      NFmiOperationProgress* theProgress = nullptr)
       : itsStopper(theStopper), itsProgress(theProgress)
   {
   }
@@ -381,36 +382,36 @@ class NFmiQueryDataUtil
                                          NFmiQueryData *theSourceData2,
                                          int thePriorisedDataNumber);
 
-  static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
-                                              const NFmiGrid *theWantedGrid,
-                                              NFmiLogger *theLogger = 0);
+  static NFmiQueryData* Interpolate2OtherGrid(NFmiQueryData* theSourceData,
+                                              const NFmiGrid* theWantedGrid,
+                                              NFmiLogger* theLogger = nullptr);
 
   static NFmiQueryData *Interpolate2OtherGrid(NFmiQueryData *theSourceData,
                                               const NFmiGrid *theWantedGrid,
                                               NFmiLogger *theLogger,
                                               int theMaxThreadCount);
 
-  static void FillGridData(NFmiQueryData *theSource,
-                           NFmiQueryData *theTarget,
+  static void FillGridData(NFmiQueryData* theSource,
+                           NFmiQueryData* theTarget,
                            unsigned long theStartTimeIndex = gMissingIndex,
                            unsigned long theEndTimeIndex = gMissingIndex,
-                           NFmiLogger *theLogger = 0,
+                           NFmiLogger* theLogger = nullptr,
                            bool fUseOnlyOneThread = true);
 
-  static void FillGridDataFullMT(NFmiQueryData *theSource,
-                                 NFmiQueryData *theTarget,
+  static void FillGridDataFullMT(NFmiQueryData* theSource,
+                                 NFmiQueryData* theTarget,
                                  unsigned long theStartTimeIndex = gMissingIndex,
                                  unsigned long theEndTimeIndex = gMissingIndex,
                                  unsigned int usedThreadCount = 0,
-                                 NFmiLogger *theDebugLogger = 0);
+                                 NFmiLogger* theDebugLogger = nullptr);
 
   static NFmiQueryData *ExtractTimes(const NFmiQueryData *theSourceData,
                                      const NFmiTimeDescriptor &theWantedTimeDesc);
 
-  static NFmiQueryData *InterpolateTimes(NFmiQueryData *theSourceData,
+  static NFmiQueryData* InterpolateTimes(NFmiQueryData* theSourceData,
                                          int theTimeResolutionInMinutes,
                                          int theStartTimeResolutionInMinutes,
-                                         NFmiTimeBag *thePossibleReferenceTimeBag = 0,
+                                         NFmiTimeBag* thePossibleReferenceTimeBag = nullptr,
                                          int theMaxTimeSearchRangeInMinutes = 360,
                                          FmiInterpolationMethod theInterpolationMethod = kLinearly);
 
@@ -553,12 +554,12 @@ class NFmiQueryDataUtil
       std::vector<std::string> &theFilesIn,
       NFmiStopFunctor *theStopFunctor,
       bool fDoRebuildCheck);
-  static NFmiQueryData *CombineAcceptedTimeStepQueryData(
+  static NFmiQueryData* CombineAcceptedTimeStepQueryData(
       bool fDoRebuild,
-      std::shared_ptr<NFmiQueryData> &theBaseQData,
-      std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
-      const std::vector<NFmiMetTime> &theAcceptedTimes,
-      NFmiStopFunctor *theStopFunctor = 0);
+      std::shared_ptr<NFmiQueryData>& theBaseQData,
+      std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector,
+      const std::vector<NFmiMetTime>& theAcceptedTimes,
+      NFmiStopFunctor* theStopFunctor = nullptr);
   static std::vector<NFmiMetTime> MakeValidTimesList(
       std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector,
       int theMaxTimeStepsInData);
