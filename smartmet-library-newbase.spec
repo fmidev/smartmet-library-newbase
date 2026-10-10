@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.8
+Version: 26.10.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
+- Added metaparameter RoadWW (BRAINSTORM-2786)
+
 * Thu Oct 08 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.8-1.fmi
 - Fixed index masks of large polygons, the distance optimization used straight projected edges instead of the projected latlon edges (BRAINSTORM-3026)
 
