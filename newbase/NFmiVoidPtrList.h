@@ -64,12 +64,7 @@ class NFmiVoidPtrItem
   NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr)
       : itsNextItem(item), itsValue()
   {
-    if (value->itsReferenceCount)
-    {
-      itsValue = value;
-    }
-    else
-      itsValue = value;
+    itsValue = value;
     itsValue->itsReferenceCount++;
   }
 
