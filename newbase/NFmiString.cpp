@@ -376,7 +376,10 @@ void NFmiString::TrimL(unsigned char theChar)
 
     if (len)
     {
-      Set(&fChar[len], (fLength - len));
+      // Shift in place. Set() would copy between overlapping ranges with strncpy.
+      fLength -= len;
+      memmove(fChar, fChar + len, fLength);
+      fChar[fLength] = '\0';
     }
   }
   catch (...)

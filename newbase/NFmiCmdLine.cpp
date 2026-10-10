@@ -145,7 +145,7 @@ NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
     Init(argc, const_cast<const char **>(argv), optallow);
 
     for (int i = 0; i < argc; i++)
-      delete argv[i];
+      delete[] argv[i];
 
     delete[] argv;
   }
@@ -198,9 +198,23 @@ bool NFmiCmdLine::GetSpaceStringValue(NFmiString &theString, NFmiString &theValu
  */
 // ----------------------------------------------------------------------
 
-int NFmiCmdLine::GetSpaceStringSize(const NFmiString & /* theString */)
+int NFmiCmdLine::GetSpaceStringSize(const NFmiString &theString)
 {
-  return 3;
+  try
+  {
+    // Count with the same parser the constructor uses, the size used to be a
+    // hard coded 3 and longer strings overflowed the argument array
+    NFmiString buffer(theString);
+    NFmiString value;
+    int count = 0;
+    while (GetSpaceStringValue(buffer, value))
+      ++count;
+    return count;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -276,8 +290,10 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
     itsOptionsAllowed = new char[strlen(p) + 1];
     strcpy(itsOptionsAllowed, p);
     // Save Command
-    itsCommand = new char[strlen(argv[0]) + 1];
-    strcpy(itsCommand, itsArgv[0]);
+    // An empty command line string has no command either
+    const char *command = (itsArgc > 0 ? itsArgv[0] : "");
+    itsCommand = new char[strlen(command) + 1];
+    strcpy(itsCommand, command);
 
     // Dig Out & save option letters & values
     i = 1;
