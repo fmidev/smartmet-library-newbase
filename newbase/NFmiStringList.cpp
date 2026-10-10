@@ -54,8 +54,8 @@ NFmiStringList::NFmiStringList(const NFmiStringList &theList) : itsList(), itsIn
 {
   try
   {
-    const StorageType::const_iterator begin = theList.itsList.begin();
-    const StorageType::const_iterator end = theList.itsList.end();
+    const auto begin = theList.itsList.begin();
+    const auto end = theList.itsList.end();
     for (StorageType::const_iterator iter = begin; iter != end; ++iter)
       Add((*iter)->Clone());
   }
@@ -244,8 +244,8 @@ void NFmiStringList::Add(NFmiStringList *theList)
 {
   try
   {
-    const StorageType::const_iterator begin = theList->itsList.begin();
-    const StorageType::const_iterator end = theList->itsList.end();
+    const auto begin = theList->itsList.begin();
+    const auto end = theList->itsList.end();
     for (StorageType::const_iterator iter = begin; iter != end; ++iter)
       Add(*iter);
   }
@@ -347,8 +347,8 @@ NFmiStringList &NFmiStringList::operator=(NFmiStringList &theList)
     if (this != &theList)
     {
       Destroy();
-      const StorageType::const_iterator begin = theList.itsList.begin();
-      const StorageType::const_iterator end = theList.itsList.end();
+      const auto begin = theList.itsList.begin();
+      const auto end = theList.itsList.end();
       for (StorageType::const_iterator iter = begin; iter != end; ++iter)
         Add((*iter)->Clone());
       Reset();
@@ -377,8 +377,8 @@ std::ostream &NFmiStringList::Write(std::ostream &file) const
     long items = NumberOfItems();
     file << items << '\n';
 
-    const StorageType::const_iterator begin = itsList.begin();
-    const StorageType::const_iterator end = itsList.end();
+    const auto begin = itsList.begin();
+    const auto end = itsList.end();
     for (StorageType::const_iterator iter = begin; iter != end; ++iter)
     {
       file << (*iter)->ClassId() << " " << *(*iter);
@@ -526,8 +526,8 @@ void NFmiStringList::Destroy()
 {
   try
   {
-    const StorageType::iterator begin = itsList.begin();
-    const StorageType::iterator end = itsList.end();
+    const auto begin = itsList.begin();
+    const auto end = itsList.end();
     for (StorageType::iterator iter = begin; iter != end; ++iter)
       delete *iter;
 

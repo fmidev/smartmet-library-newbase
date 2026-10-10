@@ -487,8 +487,7 @@ bool NFmiMultiQueryInfo::Time(const NFmiMetTime &theTime)
 {
   try
   {
-    std::vector<MultiIndex>::const_iterator pos =
-        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
+    auto pos = std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
     if (pos != itsMultiIndexes.end() && pos->valid_time == theTime)
       return TimeIndex(pos - itsMultiIndexes.begin());
@@ -533,8 +532,7 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
 {
   try
   {
-    std::vector<MultiIndex>::const_iterator pos =
-        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
+    auto pos = std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
     // Algorithm from NFmiTimeList::FindNearestTime
 
@@ -607,8 +605,7 @@ float NFmiMultiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theM
   {
     std::size_t oldTimeIndex = itsMultiTimeIndex;
 
-    MultiIndexes::const_iterator pos =
-        std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
+    auto pos = std::lower_bound(itsMultiIndexes.begin(), itsMultiIndexes.end(), theTime);
 
     float value = InterpolatedValue(theTime, pos, theMaxMinuteRange);
 

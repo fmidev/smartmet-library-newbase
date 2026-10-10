@@ -229,8 +229,8 @@ const NFmiLocationBag NFmiLocationBag::Combine(const NFmiLocationBag &theBag)
     NFmiLocationBag outbag;
     outbag.itsLocations.reserve(itsLocations.size() + theBag.itsLocations.size());
 
-    StorageType::const_iterator begin = itsLocations.begin();
-    StorageType::const_iterator end = itsLocations.end();
+    auto begin = itsLocations.cbegin();
+    auto end = itsLocations.cend();
     StorageType::const_iterator iter;
     for (iter = begin; iter != end; ++iter)
       outbag.AddLocation(*(*iter), true);

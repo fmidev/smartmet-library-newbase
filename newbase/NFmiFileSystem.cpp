@@ -267,7 +267,7 @@ const string FileComplete(const string &theFile, const string &theSearchPath)
 
   // Try each individual search path
 
-  for (PathList::const_iterator it = paths.begin(); it != paths.end(); ++it)
+  for (auto it = paths.begin(); it != paths.end(); ++it)
   {
     string name = *it;
     const char lastchar = name[name.size() - 1];
@@ -680,7 +680,7 @@ const string NewestFile(const string &thePath)
   string newestfile;
   time_t newesttime = 0;
 
-  for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+  for (auto f = files.begin(); f != files.end(); ++f)
   {
     string filename = thePath + '/' + *f;
     if (FileReadable(filename))
@@ -1101,7 +1101,7 @@ time_t FindFile(const string &theFileFilter,
     return 0;
   else
   {
-    Matches::const_iterator it = (fSearchNewest ? --matches.end() : matches.begin());
+    auto it = (fSearchNewest ? --matches.end() : matches.begin());
     if (theFoundFileName != nullptr)
       *theFoundFileName = it->second;
     return it->first;
@@ -1475,7 +1475,7 @@ void CleanDirectory(const std::string &thePath,
   time_t currentTime;
   static_cast<void>(::time(&currentTime));
 
-  for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+  for (auto f = files.begin(); f != files.end(); ++f)
   {
     string filename = thePath + '/' + *f;
     time_t modtime = FileModificationTime(filename);
@@ -1515,7 +1515,7 @@ void CleanFilePattern(const std::string &theFilePattern,
                          "NFmiFileSystem::CleanFilePattern - directory doesn't exist: " + path);
   list<string> files = PatternFiles(theFilePattern);
   std::map<time_t, std::string> fileMap;
-  for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+  for (auto f = files.begin(); f != files.end(); ++f)
   {
     string filename = path + '/' + *f;
     time_t modtime = FileModificationTime(filename);
@@ -1563,7 +1563,7 @@ string FindQueryData(const string &thePath)
   string newestfile;
   time_t newesttime = 0;
 
-  for (Files::const_iterator f = files.begin(); f != files.end(); ++f)
+  for (auto f = files.begin(); f != files.end(); ++f)
   {
     const string &name = *f;
 

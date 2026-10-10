@@ -22,7 +22,7 @@ std::string GetDictionaryString(const char *theMagicWord)
     // tabulaattori on siten sanakirjassa
     std::string finalMagicWord(baseWords);
     finalMagicWord += usedMagicWord;
-    std::string dictionarySentense =
+    auto dictionarySentense =
         NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string(theMagicWord));
     NFmiStringTools::ReplaceAll(
         dictionarySentense,

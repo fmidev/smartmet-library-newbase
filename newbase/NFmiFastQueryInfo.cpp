@@ -2953,7 +2953,7 @@ bool NFmiFastQueryInfo::GetInterpolatedLevel(std::vector<float> &values, const N
 
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-    FmiParameterName parId = static_cast<FmiParameterName>(param.GetParamIdent());
+    auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
 
     std::transform(values.begin(),
                    values.end(),
@@ -2984,7 +2984,7 @@ bool NFmiFastQueryInfo::GetInterpolatedCube(std::vector<float> &values, const NF
     NFmiTimeCache timeCache = CalcTimeCache(time);
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
-    FmiParameterName parId = static_cast<FmiParameterName>(param.GetParamIdent());
+    auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
     bool simpleInterp = (interp == kNoneInterpolation) || (interp == kNearestPoint);
     if ((simpleInterp && timeCache.itsOffset <= 0.5) || timeCache.itsOffset < 0.001)
     {

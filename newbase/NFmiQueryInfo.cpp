@@ -5881,7 +5881,7 @@ bool NFmiQueryInfo::AddKey(const NFmiString &theKey,
     if (fClearDuplicatesFirst)
       RemoveAllKeys(theKey);
 
-    NFmiString *keyValueStr = new NFmiString(MakeKeyValueString(theKey, theValue));
+    auto* keyValueStr = new NFmiString(MakeKeyValueString(theKey, theValue));
     itsHeaderText->Add(keyValueStr);  // stringlist tuhoaa keyValueStr:in
     return true;
   }

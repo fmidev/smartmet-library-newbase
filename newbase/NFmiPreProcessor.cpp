@@ -842,7 +842,7 @@ bool NFmiPreProcessor::Define()
         // First token on line was not define directive, process the line
         // and then output it
 
-        for (Defines::const_iterator it = defines.begin(); it != defines.end(); ++it)
+        for (auto it = defines.begin(); it != defines.end(); ++it)
         {
           int count = 0;
           string::size_type pos;

@@ -2623,7 +2623,7 @@ NFmiQueryDataUtil::SignificantSoundingLevels NFmiQueryDataUtil::GetSignificantSo
       if (indexVector->size())
         return indexVector;
     }
-    return SignificantSoundingLevels();
+    return {};
   }
   catch (...)
   {
@@ -3596,7 +3596,7 @@ static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
       {
         if (theOptionalParamIds[i] > 0)
         {
-          FmiParameterName precipFormParId = static_cast<FmiParameterName>(theOptionalParamIds[i]);
+          auto precipFormParId = static_cast<FmiParameterName>(theOptionalParamIds[i]);
           if (theSourceInfo.Param(precipFormParId))
           {
             // poista precipForm parametri uudesta parambagistä, koska sillä rakennetaan Weatheria
@@ -5190,7 +5190,7 @@ std::vector<NFmiMetTime> NFmiQueryDataUtil::MakeValidTimesList(
     }
 
     if (uniqueValidTimes.empty())
-      return std::vector<NFmiMetTime>();
+      return {};
 
     std::list<NFmiMetTime> selectedTimes(uniqueValidTimes.begin(), uniqueValidTimes.end());
     selectedTimes.reverse();  // käännetään järjestys, että uusimmat on ensin

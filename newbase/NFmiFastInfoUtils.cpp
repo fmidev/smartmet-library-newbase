@@ -381,7 +381,7 @@ bool IsInfoShipTypeData(NFmiFastQueryInfo &theInfo)
   {
     if (theInfo.IsGrid() == false)
     {
-      FmiProducerName prodId = static_cast<FmiProducerName>(theInfo.Producer()->GetIdent());
+      auto prodId = static_cast<FmiProducerName>(theInfo.Producer()->GetIdent());
       if (prodId == kFmiSHIP || prodId == kFmiBUOY)
         return true;
     }
@@ -402,7 +402,7 @@ void SetSoundingDataLevel(const NFmiLevel &theWantedSoundingPressureLevel, NFmiF
     if (theWantedSoundingPressureLevel.LevelType() == kFmiSoundingLevel)
     {  // sounding plotin yhteydess� pit�� asettaa level haluttuun korkeuteen
       float levelValue = theWantedSoundingPressureLevel.LevelValue();
-      FmiParameterName parName = static_cast<FmiParameterName>(info.Param().GetParamIdent());
+      auto parName = static_cast<FmiParameterName>(info.Param().GetParamIdent());
       unsigned long parIndex = info.ParamIndex();
       bool subParaUsed = info.IsSubParamUsed();
       if (info.Param(kFmiPressure))
@@ -611,7 +611,7 @@ bool FindMovingSoundingDataTime(const std::shared_ptr<NFmiFastQueryInfo> &theInf
     theInfo->Param(kFmiLongitude);
     unsigned long lonIndex = theInfo->ParamIndex();
     double minDistance = 99999999;
-    unsigned long minDistTimeInd = static_cast<unsigned long>(-1);
+    auto minDistTimeInd = static_cast<unsigned long>(-1);
     for (unsigned long i = timeIndex1; i <= timeIndex2; i++)
     {
       theInfo->TimeIndex(i);
@@ -802,7 +802,7 @@ MetaWindParamUsage CheckMetaWindParamUsage(const std::shared_ptr<NFmiFastQueryIn
     if (theInfo)
       return CheckMetaWindParamUsage(*theInfo);
 
-    return MetaWindParamUsage();
+    return {};
   }
   catch (...)
   {

@@ -256,21 +256,21 @@ std::pair<double, double> ellipsoid_from_projparams(const map<string, string> &p
     auto ita = projParams.find("a");
     if (ita != projParams.end())
     {
-      double a = NFmiStringTools::Convert<double>(ita->second);
+      auto a = NFmiStringTools::Convert<double>(ita->second);
       auto itrf = projParams.find("rf");
       if (itrf != projParams.end())
         return {a, NFmiStringTools::Convert<double>(itrf->second)};
       auto itf = projParams.find("f");
       if (itf != projParams.end())
       {
-        double f = NFmiStringTools::Convert<double>(itf->second);
+        auto f = NFmiStringTools::Convert<double>(itf->second);
         if (f != 0.0)
           return {a, 1.0 / f};
       }
       auto itb = projParams.find("b");
       if (itb != projParams.end())
       {
-        double b = NFmiStringTools::Convert<double>(itb->second);
+        auto b = NFmiStringTools::Convert<double>(itb->second);
         if (a != b)
           return {a, a / (a - b)};
       }
@@ -370,7 +370,7 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
     if (projection.find('|') != std::string::npos)
       separator = "|";
 
-    vector<string> parts = NFmiStringTools::Split<vector<string> >(projection, separator);
+    auto parts = NFmiStringTools::Split<vector<string> >(projection, separator);
 
     try
     {
@@ -381,7 +381,7 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         throw Fmi::Exception(BCP, "must have 1-3 parts separated by ':' or '|'");
 
       // extracts the parts separated by ','
-      list<string> pparts = NFmiStringTools::Split<list<string> >(parts[0]);
+      auto pparts = NFmiStringTools::Split<list<string> >(parts[0]);
 
       // Extract possible units
       bool units = false;
@@ -404,14 +404,13 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
         }
       }
 
-      const vector<string> aparts = NFmiStringTools::Split<vector<string> >(parts[1], "/");
+      const auto aparts = NFmiStringTools::Split<vector<string> >(parts[1], "/");
       if (aparts.empty())
         throw Fmi::Exception(BCP, "area specification must have 3-4 numbers");
-      const vector<double> avec = NFmiStringTools::Split<vector<double> >(aparts[0]);
+      const auto avec = NFmiStringTools::Split<vector<double> >(aparts[0]);
       double aspect = (aparts.size() == 1 ? 1 : NFmiStringTools::Convert<double>(aparts[1]));
 
-      deque<double> gvec =
-          NFmiStringTools::Split<deque<double> >(parts.size() == 2 ? "0,0,1,1" : parts[2]);
+      auto gvec = NFmiStringTools::Split<deque<double> >(parts.size() == 2 ? "0,0,1,1" : parts[2]);
 
       // intermediate validity checks
       if (pparts.size() < 1)
@@ -430,7 +429,7 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
       vector<double> pvec;
 
       if (!gdalArea)
-        for (list<string>::const_iterator it = pparts.begin(); it != pparts.end(); ++it)
+        for (auto it = pparts.begin(); it != pparts.end(); ++it)
           pvec.push_back(NFmiStringTools::Convert<double>(*it));
 
       // fixate gvec to size 4
@@ -949,7 +948,7 @@ return_type CreateProj(const std::string &projString,
         map_it = projParams.find("zone");
         if (map_it == projParams.end())
           throw Fmi::Exception(BCP, "zone must be specified for utm projection");
-        double zone = NFmiStringTools::Convert<double>(map_it->second);
+        auto zone = NFmiStringTools::Convert<double>(map_it->second);
         usedParams.insert("zone");
 
         lon_0 = 6.0 * zone - 183.0;  // UTM zone central meridian

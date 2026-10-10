@@ -148,7 +148,7 @@ inline float NFmiSmoother::Weight(float theDistance) const
   {
     case kFmiSmootherNeighbourhood:
     {
-      float delta = static_cast<float>(3.0 / Radius() * theDistance * Factor());
+      auto delta = static_cast<float>(3.0 / Radius() * theDistance * Factor());
       weight = static_cast<float>((1.0 / (1.0 + delta * delta)));
       break;
     }

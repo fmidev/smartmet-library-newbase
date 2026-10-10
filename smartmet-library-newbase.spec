@@ -168,6 +168,7 @@ fi
 * Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
 - Fixed NFmiCmdLine string constructor overflowing its argument array with more than three words
 - Fixed NFmiString::TrimL copying between overlapping memory
+- Use auto and return {} where clang-tidy suggests it, no functional changes
 
 * Thu Oct 08 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.8-1.fmi
 - Fixed index masks of large polygons, the distance optimization used straight projected edges instead of the projected latlon edges (BRAINSTORM-3026)

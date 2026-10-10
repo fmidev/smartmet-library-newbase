@@ -227,7 +227,7 @@ inline const NFmiCalculationCondition &NFmiAreaMaskImpl::Condition() const
 
 inline std::shared_ptr<NFmiFastQueryInfo> NFmiAreaMaskImpl::Info()
 {
-  return std::shared_ptr<NFmiFastQueryInfo>();
+  return {};
 }
 
 inline void NFmiAreaMaskImpl::UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> & /* theInfo */) {}

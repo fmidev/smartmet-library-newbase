@@ -1452,10 +1452,9 @@ void NFmiTimeDescriptor::SetLocalTimes(const float theLongitude)
     {
       itsIsLocalTime = kLongitude;
 
-      NFmiTimeBag *theLocalTimeBag =
-          new NFmiTimeBag(itsValidTimeBag->FirstTime().LocalTime(theLongitude),
-                          itsValidTimeBag->LastTime().LocalTime(theLongitude),
-                          itsValidTimeBag->Resolution());
+      auto* theLocalTimeBag = new NFmiTimeBag(itsValidTimeBag->FirstTime().LocalTime(theLongitude),
+                                              itsValidTimeBag->LastTime().LocalTime(theLongitude),
+                                              itsValidTimeBag->Resolution());
 
       delete itsValidTimeBag;
 

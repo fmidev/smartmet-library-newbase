@@ -322,9 +322,7 @@ void NFmiNearTree<T, F>::Flush() const
         std::chrono::high_resolution_clock::now().time_since_epoch().count())};
     std::shuffle(itsInputBuffer.begin(), itsInputBuffer.end(), rng);
 
-    for (typename buffer_type::const_iterator it = itsInputBuffer.begin();
-         it != itsInputBuffer.end();
-         ++it)
+    for (auto it = itsInputBuffer.begin(); it != itsInputBuffer.end(); ++it)
       itsImpl.Insert(*it);
 
     itsInputBuffer.clear();

@@ -284,8 +284,8 @@ string findfile(const std::string& filename, const std::list<std::string>& searc
     if (NFmiFileSystem::FileExists(filename))
       return (filename);
 
-    const list<string>::const_iterator begin = search_path.begin();
-    const list<string>::const_iterator end = search_path.end();
+    const auto begin = search_path.begin();
+    const auto end = search_path.end();
     for (list<string>::const_iterator iter = begin; iter != end; ++iter)
     {
       string trialname = *iter + '/' + filename;
@@ -567,7 +567,7 @@ const std::string NFmiSettingsImpl::Value(const std::string& theName,
     if (!itIsInitialized)
       Init();
 
-    DataType::const_iterator pos = itsData.find(theName);
+    auto pos = itsData.find(theName);
     if (pos == itsData.end())
       return theAlternate;
     else
@@ -592,7 +592,7 @@ const std::string NFmiSettingsImpl::Require(const std::string& theName) const
     if (!itIsInitialized)
       Init();
 
-    DataType::const_iterator pos = itsData.find(theName);
+    auto pos = itsData.find(theName);
     if (pos == itsData.end())
       throw Fmi::Exception(BCP, "The variable " + theName + " is required to have a value");
 
@@ -842,7 +842,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
         string nspace;
         input >> nspace;
 
-        for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+        for (auto it = itsData.begin(); it != itsData.end(); ++it)
         {
           if (it->first.substr(0, nspace.size()) == nspace)
           {
@@ -958,7 +958,7 @@ void NFmiSettingsImpl::Save() const
     {
       // collect all modified variables in this file
       std::set<string> modified_variables;
-      for (FileMap::const_iterator jt = itsFilenames.begin(); jt != itsFilenames.end(); ++jt)
+      for (auto jt = itsFilenames.begin(); jt != itsFilenames.end(); ++jt)
         if (modified_file == jt->second)
           if (itsChangedVariables.find(jt->first) != itsChangedVariables.end())
             modified_variables.insert(jt->first);
@@ -994,7 +994,7 @@ string NFmiSettingsImpl::ToString(const string& thePrefix) const
   try
   {
     ostringstream out;
-    for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+    for (auto it = itsData.begin(); it != itsData.end(); ++it)
     {
       if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
       {
@@ -1026,7 +1026,7 @@ std::vector<std::string> NFmiSettingsImpl::ListChildren(const std::string& thePr
   try
   {
     set<string> strs;  // this eliminates duplicate values
-    for (DataType::const_iterator it = itsData.begin(); it != itsData.end(); ++it)
+    for (auto it = itsData.begin(); it != itsData.end(); ++it)
     {
       if (thePrefix.empty() || it->first.compare(0, thePrefix.size(), thePrefix) == 0)
       {

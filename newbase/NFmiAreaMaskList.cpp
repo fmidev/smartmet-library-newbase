@@ -51,7 +51,7 @@ std::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
       return copyMaskList;
     }
 
-    return std::shared_ptr<NFmiAreaMaskList>();
+    return {};
   }
   catch (...)
   {

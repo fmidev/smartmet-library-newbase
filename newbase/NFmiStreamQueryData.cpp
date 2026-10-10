@@ -52,7 +52,7 @@ const string find_newest_querydata(const string &thePath)
     string newestfile;
     time_t newesttime = 0;
 
-    for (list<string>::const_iterator f = files.begin(); f != files.end(); ++f)
+    for (auto f = files.begin(); f != files.end(); ++f)
     {
       string filename = thePath + '/' + *f;
       if (NFmiFileSystem::FileReadable(filename))
@@ -345,7 +345,7 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
 
     Fmi::IStream dataFile(rawDataFile, theFileName.CharPtr());
 
-    NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
+    auto* theTempData = static_cast<NFmiQueryData*>(new NFmiQueryData);
 
     try
     {
@@ -467,7 +467,7 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
     }
 #endif
 
-    NFmiQueryData *theTempData = static_cast<NFmiQueryData *>(new NFmiQueryData);
+    auto* theTempData = static_cast<NFmiQueryData*>(new NFmiQueryData);
 
     try
     {

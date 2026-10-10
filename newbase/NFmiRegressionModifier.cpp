@@ -74,7 +74,7 @@ NFmiRegressionModifier::NFmiRegressionModifier(NFmiDataIdent *theParam,
       secondAlternative->Add(new NFmiRegressionItem(
           -0.5, new NFmiDataIdent(NFmiParam(kFmiWindSpeedMS)), itsLevel, itsData));
 
-      NFmiInfoModifier *conditionData =
+      auto* conditionData =
           new NFmiInfoModifier(new NFmiDataIdent(NFmiParam(kFmiTemperature)), itsLevel, itsData);
       auto *condition = new NFmiDataModifierBoolean(
           kFmiModifierValueGreaterThan, conditionData, new NFmiRegressionItem(14.0));
