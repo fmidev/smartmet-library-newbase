@@ -417,6 +417,8 @@ void NFmiTimeList::Clear(bool fDeleteData)
 
 NFmiTimeList &NFmiTimeList::operator=(const NFmiTimeList &theList)
 {
+  if (&theList == this)
+    return *this;
   try
   {
     Clear(true);  // vanha vuoti, koska ei tuhonnut metTimeja listasta, saattaa kaataa ohjelmia,

@@ -502,6 +502,8 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
 
 NFmiTimeBag &NFmiTimeBag::operator=(const NFmiTimeBag &theBag)
 {
+  if (&theBag == this)
+    return *this;
   try
   {
     NFmiSize::operator=(*(static_cast<const NFmiSize *>(&theBag)));

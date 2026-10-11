@@ -92,6 +92,8 @@ class NFmiPtrList
 
     Iterator &operator=(const Iterator &theIter)
     {
+      if (&theIter == this)
+        return *this;
       itsList = theIter.itsList;
       itsCurrent = theIter.itsCurrent;
       return *this;

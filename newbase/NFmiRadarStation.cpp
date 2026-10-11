@@ -87,6 +87,8 @@ NFmiRadarStation::NFmiRadarStation(NFmiStation &station,
 
 NFmiRadarStation &NFmiRadarStation::operator=(const NFmiRadarStation &theStation)
 {
+  if (&theStation == this)
+    return *this;
   try
   {
     NFmiStation::operator=(*static_cast<const NFmiStation *>(&theStation));

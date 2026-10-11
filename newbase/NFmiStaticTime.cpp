@@ -252,6 +252,8 @@ struct tm NFmiStaticTime::GetSystemTime()
 
 NFmiStaticTime &NFmiStaticTime::operator=(const NFmiStaticTime &from)
 {
+  if (&from == this)
+    return *this;
   try
   {
     fYear = from.fYear;

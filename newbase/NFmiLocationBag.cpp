@@ -578,6 +578,8 @@ std::istream &NFmiLocationBag::Read(std::istream &file)
 
 NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBag)
 {
+  if (&theLocationBag == this)
+    return *this;
   try
   {
     Destroy();

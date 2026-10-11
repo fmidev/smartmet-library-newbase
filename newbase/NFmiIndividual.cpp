@@ -32,6 +32,8 @@
 
 NFmiIndividual& NFmiIndividual::operator=(const NFmiIndividual& theIndividual)
 {
+  if (&theIndividual == this)
+    return *this;
   try
   {
     itsName = theIndividual.itsName;

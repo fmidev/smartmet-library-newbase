@@ -254,6 +254,8 @@ std::istream &NFmiStationBag::Read(std::istream &file)
 
 NFmiStationBag &NFmiStationBag::operator=(const NFmiStationBag &theStationBag)
 {
+  if (&theStationBag == this)
+    return *this;
   try
   {
     NFmiLocationBag::operator=(*static_cast<const NFmiLocationBag *>(&theStationBag));

@@ -51,6 +51,7 @@ NFmiDataModifierVariance::NFmiDataModifierVariance(NFmiDataIdent* theDataIdent,
       fVarianceOnly(onlyVariance),
       itsVarianceLevel(theVarianceLevel)
 {
+  // NOLINTNEXTLINE(cert-msc32-c,cert-msc51-cpp): the seed is not used for security
   srand(static_cast<unsigned int>(time(nullptr)));
   // AddSubModifier(&NFmiRegressionItem);//Vain testiä varten
 }
@@ -102,7 +103,9 @@ double NFmiDataModifierVariance::GaussianRandom()
   {
     do
     {
+      // NOLINTNEXTLINE(cert-msc50-cpp): rand() is not used for security here
       double U1 = static_cast<double>(rand()) / RAND_MAX;
+      // NOLINTNEXTLINE(cert-msc50-cpp): rand() is not used for security here
       double U2 = static_cast<double>(rand()) / RAND_MAX;
       V1 = 2 * U1 - 1;
       V2 = 2 * U2 - 1;

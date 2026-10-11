@@ -137,6 +137,8 @@ void NFmiTimePerioid::CalculatePerioid()
 
 NFmiTimePerioid& NFmiTimePerioid::operator=(const NFmiTimePerioid& theTimePerioid)
 {
+  if (&theTimePerioid == this)
+    return *this;
   try
   {
     itsYears = theTimePerioid.itsYears;

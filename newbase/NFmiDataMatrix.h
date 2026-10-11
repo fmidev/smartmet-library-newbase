@@ -202,6 +202,8 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
 
   NFmiDataMatrix<T>& operator=(const NFmiDataMatrix<T>& theMatrix)
   {
+    if (&theMatrix == this)
+      return *this;
     Resize(theMatrix.NX(), theMatrix.NY());
     for (size_type j = 0; j < itsNY; j++)
       for (size_type i = 0; i < itsNX; i++)

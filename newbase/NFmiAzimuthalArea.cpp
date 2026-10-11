@@ -845,6 +845,8 @@ const NFmiPoint NFmiAzimuthalArea::CurrentCenter() const
 
 NFmiAzimuthalArea &NFmiAzimuthalArea::operator=(const NFmiAzimuthalArea &theArea)
 {
+  if (&theArea == this)
+    return *this;
   try
   {
     NFmiArea::operator=(theArea);

@@ -497,6 +497,8 @@ NFmiArea *NFmiOrthographicArea::Clone() const
 
 NFmiOrthographicArea &NFmiOrthographicArea::operator=(const NFmiOrthographicArea &theArea)
 {
+  if (&theArea == this)
+    return *this;
   try
   {
     NFmiAzimuthalArea::operator=(theArea);

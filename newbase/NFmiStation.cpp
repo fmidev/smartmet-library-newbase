@@ -167,6 +167,8 @@ bool NFmiStation::IsEqualName(const NFmiStation &theStation) const
 
 NFmiStation &NFmiStation::operator=(const NFmiStation &theStation)
 {
+  if (&theStation == this)
+    return *this;
   try
   {
     SetLocation(theStation);

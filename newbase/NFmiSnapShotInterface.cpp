@@ -189,6 +189,7 @@ bool NFmiSnapShotInterface::ReadData()
     // int aRet = system(command);
     // if( aRet != 0 )
     // return false;
+    // NOLINTNEXTLINE(cert-env33-c): runs the clone.exe helper by design
     system(command);
 
     delete itsData;

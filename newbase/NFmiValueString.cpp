@@ -843,8 +843,14 @@ const NFmiString NFmiValueString::GetStringWithMaxDecimalsSmartWay(double value,
     NFmiString format;
     if (precisionValue)
     {
-      for (double tmp = fabs(value); tmp > 1; tmp /= 10.)
+      // Count the digits before the decimal point. An infinite value would
+      // never get below 1.
+      double tmp = fabs(value);
+      while (std::isfinite(tmp) && tmp > 1)
+      {
+        tmp /= 10.;
         precisionValue++;
+      }
 #ifdef _MSC_VER
       ::_snprintf(buffer2, sizeof(buffer2) - 1, "%%0.%dg", precisionValue);
 #else

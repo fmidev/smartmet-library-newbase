@@ -75,6 +75,8 @@ NFmiParam::NFmiParam(const NFmiParam &theParam)
 
 NFmiParam &NFmiParam::operator=(const NFmiParam &theParam)
 {
+  if (&theParam == this)
+    return *this;
   try
   {
     NFmiIndividual::operator=(*(static_cast<const NFmiIndividual *>(&theParam)));
