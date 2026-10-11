@@ -1971,6 +1971,7 @@ enum FmiParameterName
   kFmiWindCompass8,
   kFmiXMLTime,
   kFmiWSI,  // WIGOS station identifier
+  kFmiRoadWW,  // road weather station precipitation as a WMO 4677 ww code
 
   // NetCDF parameters, last generated on 201X.MM.DD ????
 
