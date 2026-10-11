@@ -981,7 +981,7 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
     struct tm newtime;
     time_t aclock;
 
-    time(&aclock);
+    (void)time(&aclock);
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or

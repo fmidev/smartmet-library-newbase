@@ -950,7 +950,7 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
   {
     if (theUpperIndex < fLength)
     {
-      setlocale(LC_ALL, "Finnish");
+      (void)setlocale(LC_ALL, "Finnish");
       NFmiString theLetter(fChar);
 #ifndef UNIX
       char *theChar = ::_strupr((char *)theLetter);
@@ -960,7 +960,7 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
       *theChar = toupper(*theChar);
 #endif
       fChar[theUpperIndex] = theChar[theUpperIndex];
-      setlocale(LC_ALL, "C");
+      (void)setlocale(LC_ALL, "C");
     }
   }
   catch (...)
