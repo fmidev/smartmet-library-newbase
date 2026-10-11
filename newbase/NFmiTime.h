@@ -142,9 +142,7 @@ inline NFmiTime::NFmiTime() : NFmiStaticTime(), itsZoneDifferenceHour()
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTime::NFmiTime(const NFmiTime& aTime)
-
-    = default;
+inline NFmiTime::NFmiTime(const NFmiTime& aTime) = default;
 
 // ----------------------------------------------------------------------
 /*!

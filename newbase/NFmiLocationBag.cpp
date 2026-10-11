@@ -179,7 +179,7 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag &theLocationBag)
   {
     itsLocations.reserve(theLocationBag.itsLocations.size());
 
-    for (auto itsLocation : theLocationBag.itsLocations)
+    for (auto* itsLocation : theLocationBag.itsLocations)
       AddLocation(*itsLocation, false);
   }
   catch (...)
@@ -480,7 +480,7 @@ std::ostream &NFmiLocationBag::Write(std::ostream &file) const
       file << itsLocations[0]->ClassId() << '\n';
     }
 
-    for (auto itsLocation : itsLocations)
+    for (auto* itsLocation : itsLocations)
     {
       file << *itsLocation;
     }
@@ -588,7 +588,7 @@ NFmiLocationBag &NFmiLocationBag::operator=(const NFmiLocationBag &theLocationBa
     itsSize = theLocationBag.GetSize();
 
     itsLocations.reserve(theLocationBag.itsLocations.size());
-    for (auto itsLocation : theLocationBag.itsLocations)
+    for (auto* itsLocation : theLocationBag.itsLocations)
       Add(*itsLocation);
 
     return *this;
