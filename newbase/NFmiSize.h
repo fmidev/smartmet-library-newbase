@@ -14,7 +14,7 @@
 class NFmiSize
 {
  public:
-  virtual ~NFmiSize() {}
+  virtual ~NFmiSize() = default;
   NFmiSize();
   NFmiSize(const NFmiSize& theSize);
   NFmiSize(unsigned long theSize);

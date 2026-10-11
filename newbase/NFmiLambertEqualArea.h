@@ -97,7 +97,7 @@ using PNFmiLambertEqualArea = NFmiLambertEqualArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiLambertEqualArea::~NFmiLambertEqualArea() {}
+inline NFmiLambertEqualArea::~NFmiLambertEqualArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

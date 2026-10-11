@@ -67,7 +67,7 @@ using PNFmiMercatorArea = NFmiMercatorArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiMercatorArea::~NFmiMercatorArea() {}
+inline NFmiMercatorArea::~NFmiMercatorArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

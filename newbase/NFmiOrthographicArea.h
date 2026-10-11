@@ -105,7 +105,7 @@ using PNFmiOrthographicArea = NFmiOrthographicArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiOrthographicArea::~NFmiOrthographicArea() {}
+inline NFmiOrthographicArea::~NFmiOrthographicArea() = default;
 // ----------------------------------------------------------------------
 
 inline double NFmiOrthographicArea::GlobeRadius() const

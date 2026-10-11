@@ -20,7 +20,7 @@ class NFmiMetTime;
 class NFmiLocation : public NFmiIndividual
 {
  public:
-  ~NFmiLocation() override {}
+  ~NFmiLocation() override = default;
   NFmiLocation() : NFmiIndividual(0, "undefined"), itsLatlon(NFmiPoint::gMissingLatlon) {}
   NFmiLocation(double theLongitude, double theLatitude)
       : NFmiIndividual(0, "undefined"), itsLatlon(theLongitude, theLatitude)

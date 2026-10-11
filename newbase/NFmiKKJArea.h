@@ -97,7 +97,7 @@ using PNFmiKKJArea = NFmiKKJArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiKKJArea::~NFmiKKJArea() {}
+inline NFmiKKJArea::~NFmiKKJArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

@@ -15,7 +15,7 @@
 class NFmiStatus
 {
  public:
-  virtual ~NFmiStatus() {}
+  virtual ~NFmiStatus() = default;
   NFmiStatus();
   NFmiStatus(const NFmiStatus& theStatus);
 

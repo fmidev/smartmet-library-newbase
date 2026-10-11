@@ -73,7 +73,7 @@ using PNFmiRotatedLatLonArea = NFmiRotatedLatLonArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiRotatedLatLonArea::~NFmiRotatedLatLonArea() {}
+inline NFmiRotatedLatLonArea::~NFmiRotatedLatLonArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

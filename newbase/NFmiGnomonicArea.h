@@ -89,7 +89,7 @@ using PNFmiGnomonicArea = NFmiGnomonicArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiGnomonicArea::~NFmiGnomonicArea() {}
+inline NFmiGnomonicArea::~NFmiGnomonicArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

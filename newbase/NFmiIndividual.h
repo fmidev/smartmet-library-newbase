@@ -15,7 +15,7 @@
 class NFmiIndividual : public NFmiSortable
 {
  public:
-  ~NFmiIndividual() override {}
+  ~NFmiIndividual() override = default;
   NFmiIndividual() : itsName("None"), itsIdent(0) {}
   NFmiIndividual(long theIdent, const NFmiString &theName = "None")
       : itsName(theName), itsIdent(theIdent)

@@ -97,7 +97,7 @@ using PNFmiStereographicArea = NFmiStereographicArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStereographicArea::~NFmiStereographicArea() {}
+inline NFmiStereographicArea::~NFmiStereographicArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

@@ -16,7 +16,7 @@
 class NFmiCommentStripper
 {
  public:
-  virtual ~NFmiCommentStripper() {}
+  virtual ~NFmiCommentStripper() = default;
   NFmiCommentStripper(bool stripPound = true,
                       bool stripDoubleSlash = true,
                       bool stripSlashAst = true,

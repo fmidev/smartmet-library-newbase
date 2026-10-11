@@ -24,7 +24,7 @@ class NFmiAngle
 {
  public:
   //! Destruktori
-  virtual ~NFmiAngle() {}
+  virtual ~NFmiAngle() = default;
   //! Konstruktori
   NFmiAngle(double theAngle = 0.0, FmiAngleUnit theUnit = kDeg);
 

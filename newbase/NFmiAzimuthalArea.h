@@ -124,7 +124,7 @@ using PNFmiAzimuthalArea = NFmiAzimuthalArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiAzimuthalArea::~NFmiAzimuthalArea() {}
+inline NFmiAzimuthalArea::~NFmiAzimuthalArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

@@ -13,7 +13,7 @@
 class NFmiRect
 {
  public:
-  virtual ~NFmiRect() {}
+  virtual ~NFmiRect() = default;
   NFmiRect();
   NFmiRect(const NFmiPoint &theTopLeftCorner, const NFmiPoint &theBottomRightCorner);
   NFmiRect(double Left, double Top, double Right, double Bottom);

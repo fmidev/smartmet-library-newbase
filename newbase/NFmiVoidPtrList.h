@@ -139,7 +139,7 @@ class NFmiVoidPtrList
 class NFmiVoidPtrIterator
 {
  public:
-  virtual ~NFmiVoidPtrIterator() {}
+  virtual ~NFmiVoidPtrIterator() = default;
   NFmiVoidPtrIterator(NFmiVoidPtrList* listItem);
   NFmiVoidPtrIterator(NFmiVoidPtrList& listItem);
 

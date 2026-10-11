@@ -61,7 +61,7 @@ inline NFmiProducer::NFmiProducer(unsigned long theIdent, const NFmiString& theN
  */
 // ----------------------------------------------------------------------
 
-inline NFmiProducer::NFmiProducer(const NFmiProducer& theProducer) : NFmiIndividual(theProducer) {}
+inline NFmiProducer::NFmiProducer(const NFmiProducer& theProducer) = default;
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -85,11 +85,7 @@ inline bool NFmiProducer::operator==(const NFmiProducer& theProducer) const
  */
 // ----------------------------------------------------------------------
 
-inline NFmiProducer& NFmiProducer::operator=(const NFmiProducer& theProducer)
-{
-  NFmiIndividual::operator=(theProducer);
-  return *this;
-}
+inline NFmiProducer& NFmiProducer::operator=(const NFmiProducer& theProducer) = default;
 
 // ----------------------------------------------------------------------
 /*!

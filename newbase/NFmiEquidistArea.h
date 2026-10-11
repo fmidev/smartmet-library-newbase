@@ -86,7 +86,7 @@ using PNFmiEquidistArea = NFmiEquidistArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiEquidistArea::~NFmiEquidistArea() {}
+inline NFmiEquidistArea::~NFmiEquidistArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * Void constructor

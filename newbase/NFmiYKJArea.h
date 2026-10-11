@@ -86,7 +86,7 @@ using PNFmiYKJArea = NFmiYKJArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiYKJArea::~NFmiYKJArea() {}
+inline NFmiYKJArea::~NFmiYKJArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

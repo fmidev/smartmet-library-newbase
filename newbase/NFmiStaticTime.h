@@ -36,7 +36,7 @@ const unsigned long kDDHHMM = kDay + kHour + kMinute;
 class NFmiStaticTime : public NFmiSortable
 {
  public:
-  ~NFmiStaticTime() override {}
+  ~NFmiStaticTime() override = default;
   NFmiStaticTime();
   NFmiStaticTime(const NFmiStaticTime& theTime);
   NFmiStaticTime(short year, short month, short day);

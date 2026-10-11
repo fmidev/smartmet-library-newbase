@@ -16,7 +16,7 @@
 class NFmiTimePerioid
 {
  public:
-  virtual ~NFmiTimePerioid() {}
+  virtual ~NFmiTimePerioid() = default;
   NFmiTimePerioid();
   NFmiTimePerioid(const NFmiTimePerioid &theTimePerioid);
   NFmiTimePerioid(long minutes);

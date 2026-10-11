@@ -193,7 +193,7 @@ class NFmiStopFunctor
 class NFmiOperationProgress
 {
  public:
-  virtual ~NFmiOperationProgress() {}
+  virtual ~NFmiOperationProgress() = default;
   virtual void StepIt() = 0;
   virtual void SetRange(int low, int high, int stepCount) = 0;
   virtual void AddRange(int value) = 0;

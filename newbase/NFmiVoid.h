@@ -41,7 +41,7 @@ class NFmiVoid
  */
 // ----------------------------------------------------------------------
 
-inline NFmiVoid::~NFmiVoid() {}
+inline NFmiVoid::~NFmiVoid() = default;
 // ----------------------------------------------------------------------
 /*!
  * Void constructor does nothing special, meaning all member variables
@@ -59,13 +59,6 @@ inline NFmiVoid::NFmiVoid() : itsVoid(), itsNumber(), itsUnitSize(), itsSize() {
  */
 // ----------------------------------------------------------------------
 
-inline NFmiVoid& NFmiVoid::operator=(const NFmiVoid& theVoid)
-{
-  itsVoid = theVoid.itsVoid;
-  itsNumber = theVoid.itsNumber;
-  itsUnitSize = theVoid.itsUnitSize;
-  itsSize = theVoid.itsSize;
-  return *this;
-}
+inline NFmiVoid& NFmiVoid::operator=(const NFmiVoid& theVoid) = default;
 
 // ======================================================================

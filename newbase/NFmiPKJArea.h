@@ -80,7 +80,7 @@ using PNFmiPKJArea = NFmiPKJArea*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiPKJArea::~NFmiPKJArea() {}
+inline NFmiPKJArea::~NFmiPKJArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

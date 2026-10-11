@@ -40,7 +40,7 @@ using PNFmiMap = NFmiMap*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiMap::~NFmiMap() {}
+inline NFmiMap::~NFmiMap() = default;
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
