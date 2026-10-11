@@ -42,7 +42,7 @@ class NFmiSvgPath
   };
 
   using value_type = Element;
-  typedef const value_type& const_reference;
+  using const_reference = const value_type&;
   using reference = value_type&;
   using storage_type = std::vector<value_type>;
   using size_type = storage_type::size_type;
