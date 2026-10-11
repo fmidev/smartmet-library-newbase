@@ -25,7 +25,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 26.10.11
-Release: 2%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -39,13 +39,13 @@ BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.3
-BuildRequires: smartmet-library-gis-devel >= 26.10.3
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.11
+BuildRequires: smartmet-library-gis-devel >= 26.10.11
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 26.10.3
-Requires: smartmet-library-gis >= 26.10.3
+Requires: smartmet-library-macgyver >= 26.10.11
+Requires: smartmet-library-gis >= 26.10.11
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -59,10 +59,10 @@ Requires: geos313
 #TestRequires: gdal312-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 26.10.3
-#TestRequires: smartmet-library-macgyver-devel >= 26.10.3
-#TestRequires: smartmet-library-macgyver >= 26.10.3
-#TestRequires: smartmet-library-gis >= 26.10.3
+#TestRequires: smartmet-library-gis-devel >= 26.10.11
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.11
+#TestRequires: smartmet-library-macgyver >= 26.10.11
+#TestRequires: smartmet-library-gis >= 26.10.11
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -118,8 +118,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
-Requires: smartmet-library-gis-devel >= 26.10.3
-Requires: smartmet-library-macgyver-devel >= 26.10.3
+Requires: smartmet-library-gis-devel >= 26.10.11
+Requires: smartmet-library-macgyver-devel >= 26.10.11
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -165,14 +165,10 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
-* Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-2.fmi
-- Added metaparameter RoadWW (BRAINSTORM-2786)
-
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
+- Added metaparameter RoadWW (BRAINSTORM-2786)
 - Invalid numbers are now detected instead of silently becoming 0 or a numeric prefix
 - Floating point loops use integer counters, so rounding no longer drops or adds iterations
-
-* Sat Oct 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.10-1.fmi
 - Fixed NFmiCmdLine string constructor overflowing its argument array with more than three words
 - Fixed NFmiString::TrimL copying between overlapping memory
 - Use auto and return {} where clang-tidy suggests it, no functional changes
