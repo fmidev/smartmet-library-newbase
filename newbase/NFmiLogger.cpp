@@ -20,6 +20,7 @@
 #include "NFmiFileSystem.h"
 #include "NFmiSettings.h"
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 
 #include <fstream>
 #ifdef UNIX
@@ -739,9 +740,8 @@ void NFmiLogger::TimeStampStringFormat(const string &newFormat)
   try
   {
     itsTimeStampStringFormat = newFormat;
-    itsTimeStampStringIntegerFormat =
-        atoi(itsTimeStampStringFormat
-                 .c_str());  // tässä vaiheessa vielä käytetään tätä simppeliä formatointia
+    // tässä vaiheessa vielä käytetään tätä simppeliä formatointia: 0 if not a number
+    itsTimeStampStringIntegerFormat = Fmi::stoi_opt(itsTimeStampStringFormat).value_or(0);
   }
   catch (...)
   {

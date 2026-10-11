@@ -8,12 +8,53 @@
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
 #include <cctype>
+#include <cerrno>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <string>
+#include <type_traits>
 
+namespace
+{
+// Parses a number from the start of str like sscanf did (leading whitespace
+// and trailing text are allowed), but fails if no number is found or if the
+// value does not fit in T. sscanf cannot detect overflow at all, and it
+// returns EOF (true in a boolean context) for an empty string.
+template <typename T>
+bool parse_number(const char *str, T &value)
+{
+  if (str == nullptr)
+    return false;
+  char *end = nullptr;
+  errno = 0;
+  if constexpr (std::is_same_v<T, float>)
+  {
+    const float result = std::strtof(str, &end);
+    if (end == str || (errno == ERANGE && std::fabs(result) == HUGE_VALF))
+      return false;
+    value = result;
+  }
+  else if constexpr (std::is_same_v<T, double>)
+  {
+    const double result = std::strtod(str, &end);
+    if (end == str || (errno == ERANGE && std::fabs(result) == HUGE_VAL))
+      return false;
+    value = result;
+  }
+  else
+  {
+    const long result = std::strtol(str, &end, 10);
+    if (end == str || errno == ERANGE || result < std::numeric_limits<T>::min() ||
+        result > std::numeric_limits<T>::max())
+      return false;
+    value = static_cast<T>(result);
+  }
+  return true;
+}
+}  // namespace
 using namespace std;
 
 // ----------------------------------------------------------------------
@@ -370,7 +411,7 @@ bool NFmiValueString::IsShort() const
       return false;
 
     if (itsValueType == eChar)
-      return sscanf(CharPtr(), "%hd", &returnValue) == 1 ? true : false;
+      return parse_number(CharPtr(), returnValue);
 
     return false;
   }
@@ -569,9 +610,8 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
     if (!IsNumeric())
       return false;
 
-    return (sscanf(theSize ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
-                   "%lf",
-                   &returnValue) == 1);
+    return parse_number(theSize ? static_cast<char *>(GetChars(theStart, theSize)) : CharPtr(),
+                        returnValue);
   }
   catch (...)
   {
@@ -593,9 +633,9 @@ bool NFmiValueString::ConvertToInt(int &theValue, const int theStart, const int 
   try
   {
     if (theSize)
-      return sscanf(GetChars(theStart, theSize), "%d", &theValue) ? true : false;
+      return parse_number(GetChars(theStart, theSize), theValue);
 
-    return sscanf(CharPtr(), "%d", &theValue) ? true : false;
+    return parse_number(CharPtr(), theValue);
   }
   catch (...)
   {
@@ -623,10 +663,7 @@ bool NFmiValueString::ConvertToLong(long &theValue, const int theStart, const in
     else
       theConvertStr = CharPtr();
 
-    if (sscanf(theConvertStr, "%ld", &theValue))
-      return true;
-
-    return false;
+    return parse_number(theConvertStr.CharPtr(), theValue);
   }
   catch (...)
   {
@@ -654,10 +691,7 @@ bool NFmiValueString::ConvertToFloat(float &theValue, const int theStart, const 
     else
       theConvertStr = CharPtr();
 
-    if (sscanf(theConvertStr, "%f", &theValue) > 0)
-      return true;
-
-    return false;
+    return parse_number(theConvertStr.CharPtr(), theValue);
   }
   catch (...)
   {
@@ -681,9 +715,9 @@ bool NFmiValueString::ConvertToDouble(double &theValue, const int theStart, cons
       return false;
 
     if (theSize > 0)
-      return sscanf(GetChars(theStart, theSize), "%lf", &theValue) != 0;
+      return parse_number(GetChars(theStart, theSize), theValue);
 
-    return sscanf(CharPtr(), "%lf", &theValue) != 0;
+    return parse_number(CharPtr(), theValue);
   }
   catch (...)
   {
@@ -701,9 +735,8 @@ NFmiValueString::operator short() const
 {
   try
   {
-    short returnValue;
-
-    return short(sscanf(CharPtr(), "%hd", &returnValue) ? returnValue : 0);
+    short returnValue = 0;
+    return parse_number(CharPtr(), returnValue) ? returnValue : short(0);
   }
   catch (...)
   {
@@ -722,10 +755,7 @@ NFmiValueString::operator int() const
   try
   {
     int returnValue = 0;
-
-    sscanf(CharPtr(), "%d", &returnValue);
-
-    return returnValue;
+    return parse_number(CharPtr(), returnValue) ? returnValue : 0;
   }
   catch (...)
   {
@@ -744,8 +774,7 @@ NFmiValueString::operator float() const
   try
   {
     float returnValue = 0.0;
-    sscanf(CharPtr(), "%f", &returnValue);
-    return returnValue;
+    return parse_number(CharPtr(), returnValue) ? returnValue : 0.0F;
   }
   catch (...)
   {
@@ -764,9 +793,7 @@ NFmiValueString::operator long() const
   try
   {
     long returnValue = 0;
-    sscanf(CharPtr(), "%ld", &returnValue);
-
-    return returnValue;
+    return parse_number(CharPtr(), returnValue) ? returnValue : 0L;
   }
   catch (...)
   {
@@ -784,11 +811,8 @@ NFmiValueString::operator double() const
 {
   try
   {
-    double returnValue;
-
-    sscanf(CharPtr(), "%lf", &returnValue);
-
-    return returnValue;
+    double returnValue = 0.0;
+    return parse_number(CharPtr(), returnValue) ? returnValue : 0.0;
   }
   catch (...)
   {

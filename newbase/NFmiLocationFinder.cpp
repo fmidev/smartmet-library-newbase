@@ -37,13 +37,37 @@
 #include "NFmiLocationFinder.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
-#include <cstdio>  // for sscanf()
+#include <macgyver/StringConversion.h>
+#include <cctype>
+#include <cerrno>
+#include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <vector>
 // atoi()
 
 using namespace std;
+
+namespace
+{
+// Parses a coordinate: the whole field must be a number (surrounding
+// whitespace is allowed) and it must not overflow
+bool parse_coordinate(const std::string &field, double &value)
+{
+  const char *str = field.c_str();
+  char *end = nullptr;
+  errno = 0;
+  const double result = std::strtod(str, &end);
+  if (end == str || (errno == ERANGE && std::fabs(result) == HUGE_VAL))
+    return false;
+  while (std::isspace(static_cast<unsigned char>(*end)))
+    ++end;
+  if (*end != '\0')
+    return false;
+  value = result;
+  return true;
+}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -159,12 +183,12 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
         continue;
 
       // Extract the numbers. Note that atof returns nothing
-      // to indicate success, hence we use sscanf instead.
+      // to indicate success, hence we use a checked parser instead.
 
       double value1, value2;
-      if (sscanf(fields[coordinate1].c_str(), "%lg", &value1) != 1)
+      if (!parse_coordinate(fields[coordinate1], value1))
         continue;
-      if (sscanf(fields[coordinate2].c_str(), "%lg", &value2) != 1)
+      if (!parse_coordinate(fields[coordinate2], value2))
         continue;
 
       double longitude = lonFirst ? value1 : value2;
@@ -274,12 +298,12 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       //	continue;
 
       // Extract the numbers. Note that atof returns nothing
-      // to indicate success, hence we use sscanf instead.
+      // to indicate success, hence we use a checked parser instead.
 
       double value1, value2;
-      if (sscanf(fields[firstCoord - 1].c_str(), "%lg", &value1) != 1)
+      if (!parse_coordinate(fields[firstCoord - 1], value1))
         continue;
-      if (sscanf(fields[firstCoord].c_str(), "%lg", &value2) != 1)
+      if (!parse_coordinate(fields[firstCoord], value2))
         continue;
 
       double longitude = lonFirst ? value1 : value2;
@@ -387,7 +411,6 @@ unsigned long NFmiLocationFinder::FindWmo(const NFmiString& theName)
     name = NFmiStringTools::LowerCase(name);
     LocationFinderMap::const_iterator iter;
     iter = itsPrimaryPoints.find(name);
-    unsigned long wmo;
 
     if (iter == itsPrimaryPoints.end())
     {
@@ -406,8 +429,8 @@ unsigned long NFmiLocationFinder::FindWmo(const NFmiString& theName)
         if (wmoName.substr(0, 3) == "wmo" && wmoName.size() == 8)
         {
           wmoName.erase(0, 3);
-          wmo = atoi(wmoName.c_str());
-          return wmo;
+          if (auto number = Fmi::stoi_opt(wmoName))
+            return *number;
         }
       }
     }
