@@ -97,9 +97,9 @@ class NFmiQueryData
 
   float FloatValue();
 
-  const NFmiGrid &GridInfo();
+  const NFmiGrid& GridInfo() const;
 
-  bool operator==(NFmiQueryData &theQueryData);
+  bool operator==(const NFmiQueryData& theQueryData);
 
   NFmiQueryData &operator=(const NFmiQueryData &theQueryData);
 

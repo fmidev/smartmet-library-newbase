@@ -24,8 +24,8 @@ class NFmiStatusPositionString : public NFmiStatusString
 
   NFmiStatusPositionString& operator=(const NFmiStatusPositionString& theStatusPositionString);
 
-  long StartPosition();
-  long EndPosition();
+  long StartPosition() const;
+  long EndPosition() const;
   unsigned long ClassId() const override;
   NFmiString* Clone() const override;
 

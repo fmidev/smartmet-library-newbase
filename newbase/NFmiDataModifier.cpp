@@ -82,7 +82,7 @@ NFmiDataModifier* NFmiDataModifier::Clone() const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifier::IsInside(float theValue)
+bool NFmiDataModifier::IsInside(float theValue) const
 {
   if (!fIsLimitCheck)
     return true;
@@ -120,7 +120,7 @@ bool NFmiDataModifier::SetLimits(float theLowerLimit, float theUpperLimit)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiDataModifier::IsCombinedParam()
+bool NFmiDataModifier::IsCombinedParam() const
 {
   return fIsCombinedParam;
 }

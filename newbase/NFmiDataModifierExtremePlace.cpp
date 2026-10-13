@@ -52,7 +52,7 @@ void NFmiDataModifierExtremePlace::SetLocation(NFmiQueryInfo* theQI)
  */
 // ----------------------------------------------------------------------
 
-const NFmiLocation NFmiDataModifierExtremePlace::GetLocation()
+const NFmiLocation NFmiDataModifierExtremePlace::GetLocation() const
 {
   return itsExtremeLocation;
 }

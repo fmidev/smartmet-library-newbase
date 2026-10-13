@@ -93,7 +93,7 @@ NFmiStatusPositionString::NFmiStatusPositionString(
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusPositionString::StartPosition()
+long NFmiStatusPositionString::StartPosition() const
 {
   return itsStartPosition;
 }
@@ -103,7 +103,7 @@ long NFmiStatusPositionString::StartPosition()
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusPositionString::EndPosition()
+long NFmiStatusPositionString::EndPosition() const
 {
   return itsEndPosition;
 }

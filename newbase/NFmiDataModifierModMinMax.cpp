@@ -43,7 +43,7 @@ void TestSingleValue(float result, float expected, const std::string& testedName
   }
 }
 
-void TestModMinMax(const std::vector<float>& values, std::pair<float, float>& results)
+void TestModMinMax(const std::vector<float>& values, const std::pair<float, float>& results)
 {
   NFmiDataModifierModMinMax modMinMax;
   for (auto value : values)

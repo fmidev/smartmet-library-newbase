@@ -106,7 +106,7 @@ class NFmiVoidPtrList
   virtual void Remove(NFmiVoidPtrData* removeValue);
   virtual void Clear(bool doDelete = kNoDelete);
 
-  int NumberOfItems() { return itsNumberOffItems; }
+  int NumberOfItems() const { return itsNumberOffItems; }
   NFmiVoidPtrItem* FirstItem() { return itsFirstItem; }
   void operator+=(const NFmiVoidPtrList& listItem);
 

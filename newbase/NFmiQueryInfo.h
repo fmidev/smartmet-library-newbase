@@ -344,7 +344,7 @@ class NFmiQueryInfo
 
   // ClassIdent
   virtual unsigned long ClassId() const;
-  unsigned long NewClassId();
+  unsigned long NewClassId() const;
   virtual const char *ClassName() const;
 
   virtual NFmiQueryInfo *Clone() const;
@@ -420,7 +420,7 @@ class NFmiQueryInfo
                                NFmiQueryInfo *theQueryInfoCopy,
                                NFmiTimeDescriptor &theTimeDescriptor);
   void ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier,
-                                      NFmiTimeDescriptor &theTimeDescriptor);
+                                      const NFmiTimeDescriptor& theTimeDescriptor);
 
   virtual unsigned long TimeResolution();
 
@@ -436,15 +436,15 @@ class NFmiQueryInfo
 
   // Persa lisäsi joukon uusia metodeja 11022000
 
-  long CalcTimeUnCertainty();
-  long CalcAreaUnCertainty();
-  long TimeUnCertaintyStart();
+  long CalcTimeUnCertainty() const;
+  long CalcAreaUnCertainty() const;
+  long TimeUnCertaintyStart() const;
   void TimeUnCertaintyStart(long newValue);
-  long TimeUnCertaintyEnd();
+  long TimeUnCertaintyEnd() const;
   void TimeUnCertaintyEnd(long newValue);
-  long AreaUnCertaintyStart();
+  long AreaUnCertaintyStart() const;
   void AreaUnCertaintyStart(long newValue);
-  long AreaUnCertaintyEnd();
+  long AreaUnCertaintyEnd() const;
   void AreaUnCertaintyEnd(long newValue);
 
   // ***** 14.5.2001/MArko Uusia metodeja hilassa liikkumiseen ***************
@@ -489,7 +489,7 @@ class NFmiQueryInfo
   bool RemoveAllKeys(const NFmiString &theKey);
   const NFmiStringList GetAllKeys(bool fRemoveDuplicates = false);
   const NFmiString GetCurrentKey();
-  bool DoEndianByteSwap();
+  bool DoEndianByteSwap() const;
 
   double InfoVersion() const;
   void InfoVersion(double newValue) const;
@@ -569,7 +569,7 @@ class NFmiQueryInfo
                         const NFmiMetTime &endTime,
                         float factor1 = 1.,
                         float factor2 = 1.,
-                        float factor3 = 1.);
+                        float factor3 = 1.) const;
   void Destroy();
   virtual size_t Index() const;
   virtual size_t Index(unsigned long theParamIndex,
@@ -1621,7 +1621,7 @@ inline unsigned long NFmiQueryInfo::ClassId() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiQueryInfo::NewClassId()
+inline unsigned long NFmiQueryInfo::NewClassId() const
 {
   return itsNewClassIdent;
 }
@@ -1692,7 +1692,7 @@ inline unsigned long NFmiQueryInfo::TimeResolution()
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::TimeUnCertaintyStart()
+inline long NFmiQueryInfo::TimeUnCertaintyStart() const
 {
   return itsTimeUnCertaintyStart;
 }
@@ -1713,7 +1713,7 @@ inline void NFmiQueryInfo::TimeUnCertaintyStart(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::TimeUnCertaintyEnd()
+inline long NFmiQueryInfo::TimeUnCertaintyEnd() const
 {
   return itsTimeUnCertaintyEnd;
 }
@@ -1733,7 +1733,7 @@ inline void NFmiQueryInfo::TimeUnCertaintyEnd(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::AreaUnCertaintyStart()
+inline long NFmiQueryInfo::AreaUnCertaintyStart() const
 {
   return itsAreaUnCertaintyStart;
 }
@@ -1754,7 +1754,7 @@ inline void NFmiQueryInfo::AreaUnCertaintyStart(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline long NFmiQueryInfo::AreaUnCertaintyEnd()
+inline long NFmiQueryInfo::AreaUnCertaintyEnd() const
 {
   return itsAreaUnCertaintyEnd;
 }
@@ -1774,7 +1774,7 @@ inline void NFmiQueryInfo::AreaUnCertaintyEnd(long newValue)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryInfo::DoEndianByteSwap()
+inline bool NFmiQueryInfo::DoEndianByteSwap() const
 {
   return fDoEndianByteSwap;
 }

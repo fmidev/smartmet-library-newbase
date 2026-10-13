@@ -20,7 +20,7 @@ class NFmiDataModifierExtreme : public NFmiDataModifier
   NFmiDataModifierExtreme(const NFmiDataModifierExtreme &theOther);
 
   void SetTime(NFmiQueryInfo *theQI);
-  const NFmiTime GetTime();
+  const NFmiTime GetTime() const;
   void Calculate(NFmiQueryInfo* theQI) override;
   void Calculate(float theValue) override;
   virtual void Calculate(float theValue, NFmiQueryInfo *theQI);

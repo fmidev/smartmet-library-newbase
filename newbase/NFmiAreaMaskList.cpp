@@ -80,7 +80,7 @@ unsigned long NFmiAreaMaskList::NumberOfItems()
  */
 // ----------------------------------------------------------------------
 
-void NFmiAreaMaskList::Add(std::shared_ptr<NFmiAreaMask> &theMask)
+void NFmiAreaMaskList::Add(const std::shared_ptr<NFmiAreaMask>& theMask)
 {
   try
   {

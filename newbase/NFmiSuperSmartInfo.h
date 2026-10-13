@@ -147,7 +147,7 @@ class NFmiSuperSmartInfo : public NFmiFastQueryInfo
   bool UseVarianceCalculator() const;
   void UseVariationCalculator(bool value);
   bool UseVariationCalculator() const;
-  bool UseTimeIntegrationCalculator();
+  bool UseTimeIntegrationCalculator() const;
   void UseTimeIntegrationCalculator(bool value);
   void SetCalculator(NFmiCalculator* value, bool useCalculator = true);
   void SetDataModifierDescriptor(NFmiDataModifierDescriptor* value);
@@ -395,7 +395,7 @@ inline bool NFmiSuperSmartInfo::UseVariationCalculator() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiSuperSmartInfo::UseTimeIntegrationCalculator()
+inline bool NFmiSuperSmartInfo::UseTimeIntegrationCalculator() const
 {
   return fUseTimeIntegrationCalculator;
 }

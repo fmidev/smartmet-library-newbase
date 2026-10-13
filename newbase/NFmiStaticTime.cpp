@@ -375,7 +375,7 @@ void NFmiStaticTime::SetMissing()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiStaticTime::IsMissing()
+bool NFmiStaticTime::IsMissing() const
 {
   return fYear == 0;
 }

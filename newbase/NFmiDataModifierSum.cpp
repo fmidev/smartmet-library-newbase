@@ -50,7 +50,7 @@ NFmiDataModifier* NFmiDataModifierSum::Clone() const
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierSum::Sum()
+float NFmiDataModifierSum::Sum() const
 {
   return itsSum;
 }

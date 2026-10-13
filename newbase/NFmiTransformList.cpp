@@ -352,7 +352,7 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
  */
 // ----------------------------------------------------------------------
 
-bool NFmiTransformList::Equal(NFmiPoint& p1, NFmiPoint& p2)
+bool NFmiTransformList::Equal(const NFmiPoint& p1, const NFmiPoint& p2)
 {
   try
   {

@@ -94,7 +94,7 @@ class NFmiMultiQueryInfo : public NFmiFastQueryInfo
 
   NFmiMultiQueryInfo(const std::string& thePath);
   NFmiMultiQueryInfo(const std::list<std::string>& thePaths);
-  NFmiMultiQueryInfo(std::vector<std::shared_ptr<NFmiFastQueryInfo> >& theInfos);
+  NFmiMultiQueryInfo(const std::vector<std::shared_ptr<NFmiFastQueryInfo> >& theInfos);
 
   using NFmiFastQueryInfo::OriginTime;
   const NFmiMetTime& OriginTime() const override;  // we may have multiple origin times

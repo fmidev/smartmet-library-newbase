@@ -85,7 +85,7 @@ class NFmiLogger
   const std::string &CurrentLogFileName() const { return itsCurrentLogFileName; }
   bool LogJustMessages() const { return fLogJustMessages; }
   void LogJustMessages(bool newValue) { fLogJustMessages = newValue; }
-  bool NewLogFileInUse() { return fNewLogFileInUse; }
+  bool NewLogFileInUse() const { return fNewLogFileInUse; }
   void NewLogFileInUse(bool newState) { fNewLogFileInUse = newState; }
 
  private:

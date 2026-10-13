@@ -21,7 +21,7 @@ class NFmiAreaMaskList
   static std::shared_ptr<NFmiAreaMaskList> CreateShallowCopy(
       const std::shared_ptr<NFmiAreaMaskList> &theOther);
 
-  void Add(std::shared_ptr<NFmiAreaMask> &theMask);
+  void Add(const std::shared_ptr<NFmiAreaMask>& theMask);
   bool Remove();
   void Clear();
   unsigned long NumberOfItems();
@@ -30,7 +30,7 @@ class NFmiAreaMaskList
   bool Next();
   std::shared_ptr<NFmiAreaMask> Current();
 
-  bool UseMask() { return fMaskInUse; }
+  bool UseMask() const { return fMaskInUse; }
   bool IsMasked(const NFmiPoint &theLatLon);
   double MaskValue(const NFmiPoint &theLatLon);
   bool CheckIfMaskUsed();

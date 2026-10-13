@@ -691,7 +691,7 @@ bool NFmiTimeList::FindNearestBackwardTime(std::vector<NFmiMetTime *>::iterator 
 }
 
 // Assumption: firstNotLess -iterator is from the itsVectorList.
-bool NFmiTimeList::FindNearestForwardTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
+bool NFmiTimeList::FindNearestForwardTime(const std::vector<NFmiMetTime*>::iterator& firstNotLess,
                                           const NFmiMetTime &theTime,
                                           unsigned long theTimeRangeInMinutes)
 {
@@ -759,7 +759,7 @@ int NFmiTimeList::CalcTimeListIndex(const std::vector<NFmiMetTime *>::iterator &
   }
 }
 
-bool NFmiTimeList::IsSearchedTimeInRange(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
+bool NFmiTimeList::IsSearchedTimeInRange(const std::vector<NFmiMetTime*>::iterator& foundTimeIter,
                                          const NFmiMetTime &theTime,
                                          unsigned long theTimeRangeInMinutes)
 {
@@ -779,7 +779,7 @@ bool NFmiTimeList::IsSearchedTimeInRange(std::vector<NFmiMetTime *>::iterator &f
   }
 }
 
-bool NFmiTimeList::CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
+bool NFmiTimeList::CheckFoundTimeIter(const std::vector<NFmiMetTime*>::iterator& foundTimeIter,
                                       const NFmiMetTime &theTime,
                                       unsigned long theTimeRangeInMinutes)
 {
@@ -811,7 +811,7 @@ bool NFmiTimeList::CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foun
 // onko annettu aika tietyn rajan sisällä currentista ajasta?
 
 bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
-                                     unsigned long theTimeRangeInMinutes)
+                                     unsigned long theTimeRangeInMinutes) const
 {
   try
   {
@@ -839,7 +839,7 @@ bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimeList NFmiTimeList::Combine(NFmiTimeList &theList,
+const NFmiTimeList NFmiTimeList::Combine(const NFmiTimeList& theList,
                                          int theStartTimeFunction,
                                          int theEndTimeFunction)
 {
@@ -1004,7 +1004,7 @@ const NFmiMetTime *NFmiTimeList::Time(int theIndex) const
 // ----------------------------------------------------------------------
 
 const NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime &theStartLimit,
-                                                 const NFmiMetTime &theEndLimit)
+                                                 const NFmiMetTime& theEndLimit) const
 {
   try
   {

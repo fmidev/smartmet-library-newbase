@@ -65,7 +65,7 @@ class NFmiPreProcessor : public NFmiCommentStripper
   bool AddReplaceString(const std::string fromString, const std::string toString);
 
   int NumOfReplacesDone() const;
-  bool NoFilesIncluded();
+  bool NoFilesIncluded() const;
 
   void SetNumOfIncludes(int newValue) { itsCurNumOfIncludes = newValue; }
   bool ReplaceAll();
@@ -120,7 +120,7 @@ inline int NFmiPreProcessor::NumOfReplacesDone() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiPreProcessor::NoFilesIncluded()
+inline bool NFmiPreProcessor::NoFilesIncluded() const
 {
   return fNoFilesIncluded;
 }

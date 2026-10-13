@@ -2558,7 +2558,7 @@ class TimeInterpolationData
     }
   }
 
-  bool CanGetValues()
+  bool CanGetValues() const
   {
     try
     {
@@ -2587,7 +2587,7 @@ class TimeInterpolationData
     }
   }
 
-  bool HasWantedTime()
+  bool HasWantedTime() const
   {
     try
     {
@@ -2599,7 +2599,7 @@ class TimeInterpolationData
     }
   }
 
-  bool DoNearestTime()
+  bool DoNearestTime() const
   {
     try
     {
@@ -2619,7 +2619,7 @@ class TimeInterpolationData
     }
   }
 
-  void SetPreviousTimeValues(NFmiFastQueryInfo &info, const NFmiMetTime &theInterpolatedTime)
+  void SetPreviousTimeValues(const NFmiFastQueryInfo& info, const NFmiMetTime& theInterpolatedTime)
   {
     try
     {

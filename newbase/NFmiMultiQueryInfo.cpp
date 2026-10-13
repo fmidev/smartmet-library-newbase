@@ -133,7 +133,8 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string> &theFiles)
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiQueryInfo::NFmiMultiQueryInfo(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &theInfos)
+NFmiMultiQueryInfo::NFmiMultiQueryInfo(
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo> >& theInfos)
     : itsDatas()  // will remain empty
       ,
       itsInfos(theInfos),

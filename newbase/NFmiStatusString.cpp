@@ -54,7 +54,7 @@ NFmiStatusString::NFmiStatusString(const NFmiStatusString &theStatusString)
  */
 // ----------------------------------------------------------------------
 
-long NFmiStatusString::Status()
+long NFmiStatusString::Status() const
 {
   return itsStatus;
 }

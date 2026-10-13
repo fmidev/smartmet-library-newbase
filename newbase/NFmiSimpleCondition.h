@@ -22,9 +22,9 @@ class NFmiSimpleConditionPart
 
  public:
   ~NFmiSimpleConditionPart();
-  NFmiSimpleConditionPart(std::shared_ptr<NFmiAreaMask> &mask1,
+  NFmiSimpleConditionPart(const std::shared_ptr<NFmiAreaMask>& mask1,
                           NFmiAreaMask::CalculationOperator calculationOperator,
-                          std::shared_ptr<NFmiAreaMask> &mask2);
+                          const std::shared_ptr<NFmiAreaMask>& mask2);
   NFmiSimpleConditionPart(const NFmiSimpleConditionPart &theOther);
   void Initialize();
   NFmiSimpleConditionPart *Clone() const;

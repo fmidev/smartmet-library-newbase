@@ -82,7 +82,7 @@ double CalculateValue(double value1,
   }
 }
 
-double GetPressureValue(std::shared_ptr<NFmiAreaMask> &mask,
+double GetPressureValue(const std::shared_ptr<NFmiAreaMask>& mask,
                         double pressure,
                         const NFmiCalculationParams &calculationParams,
                         bool useTimeInterpolation)
@@ -96,7 +96,7 @@ double GetPressureValue(std::shared_ptr<NFmiAreaMask> &mask,
     return mask->PressureValue(pressure, calculationParams);
 }
 
-double GetHeightValue(std::shared_ptr<NFmiAreaMask> &mask,
+double GetHeightValue(const std::shared_ptr<NFmiAreaMask>& mask,
                       double height,
                       const NFmiCalculationParams &calculationParams,
                       bool useTimeInterpolation)
@@ -119,9 +119,9 @@ double GetHeightValue(std::shared_ptr<NFmiAreaMask> &mask,
 NFmiSimpleConditionPart::~NFmiSimpleConditionPart() = default;
 
 NFmiSimpleConditionPart::NFmiSimpleConditionPart(
-    std::shared_ptr<NFmiAreaMask> &mask1,
+    const std::shared_ptr<NFmiAreaMask>& mask1,
     NFmiAreaMask::CalculationOperator calculationOperator,
-    std::shared_ptr<NFmiAreaMask> &mask2)
+    const std::shared_ptr<NFmiAreaMask>& mask2)
     : itsMask1(mask1), itsCalculationOperator(calculationOperator), itsMask2(mask2)
 {
 }
@@ -258,7 +258,7 @@ NFmiSingleCondition::NFmiSingleCondition(const NFmiSingleCondition &theOther)
 {
 }
 
-static void InitializePart(std::shared_ptr<NFmiSimpleConditionPart> &part)
+static void InitializePart(const std::shared_ptr<NFmiSimpleConditionPart>& part)
 {
   try
   {
@@ -485,7 +485,7 @@ NFmiSimpleCondition::NFmiSimpleCondition(const NFmiSimpleCondition &theOther)
 {
 }
 
-static void InitializePart(std::shared_ptr<NFmiSingleCondition> &condition)
+static void InitializePart(const std::shared_ptr<NFmiSingleCondition>& condition)
 {
   try
   {

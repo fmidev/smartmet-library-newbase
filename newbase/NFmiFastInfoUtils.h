@@ -75,10 +75,10 @@ void SetSoundingDataLevel(const NFmiLevel &theWantedSoundingPressureLevel, NFmiF
 std::string GetTotalDataFilePath(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
 bool IsYearLongData(const std::shared_ptr<NFmiFastQueryInfo> &info);
 bool IsModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo> &info);
-NFmiMetTime GetUsedTimeIfModelClimatologyData(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiMetTime GetUsedTimeIfModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                               const NFmiMetTime &theTime);
 bool IsMovingSoundingData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
-bool IsLightningTypeData(std::shared_ptr<NFmiFastQueryInfo> &info);
+bool IsLightningTypeData(const std::shared_ptr<NFmiFastQueryInfo>& info);
 bool FindTimeIndicesForGivenTimeRange(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                                       const NFmiMetTime &theStartTime,
                                       long minuteRange,
@@ -146,7 +146,7 @@ void CalcMatrixVcomponentFromSpeedAndDirection(const NFmiDataMatrix<float> &ws,
                                                const NFmiDataMatrix<float> &wd,
                                                NFmiDataMatrix<float> &vOut,
                                                unsigned int theStartColumnIndex = 0);
-bool SetInfoToGridPoint(std::shared_ptr<NFmiFastQueryInfo> &info,
+bool SetInfoToGridPoint(const std::shared_ptr<NFmiFastQueryInfo>& info,
                         unsigned long gridPointX,
                         unsigned long gridPointY);
 

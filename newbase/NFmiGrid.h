@@ -149,8 +149,8 @@ class NFmiGrid : public NFmiGridBase
   const Fmi::SpatialReference &SpatialReference() const;
   Fmi::CoordinateMatrix CoordinateMatrix(bool wrap) const;
 
-  bool CropByLatLon(NFmiPoint &theBottomLeftLatLon,
-                    NFmiPoint &theTopRightLatLon,
+  bool CropByLatLon(const NFmiPoint& theBottomLeftLatLon,
+                    const NFmiPoint& theTopRightLatLon,
                     bool theMinimizedCrop = true);
 
   void Transform(NFmiTransformList &theList);
@@ -434,8 +434,8 @@ inline void NFmiGrid::Transform(NFmiTransformList &theList)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiGrid::CropByLatLon(NFmiPoint &theBottomLeftLatLon,
-                                   NFmiPoint &theTopRightLatLon,
+inline bool NFmiGrid::CropByLatLon(const NFmiPoint& theBottomLeftLatLon,
+                                   const NFmiPoint& theTopRightLatLon,
                                    bool theMinimizedCrop)
 {
   return Crop(LatLonToGrid(theBottomLeftLatLon), LatLonToGrid(theTopRightLatLon), theMinimizedCrop);

@@ -22,9 +22,9 @@ class NFmiStatus
   NFmiStatus& operator=(const NFmiStatus& theStatus);
   operator bool() const;
 
-  void ErrorLog(NFmiString& theErrorLog);
-  void WarningLog(NFmiString& theWarningLog);
-  void MessageLog(NFmiString& theMessageLog);
+  void ErrorLog(const NFmiString& theErrorLog);
+  void WarningLog(const NFmiString& theWarningLog);
+  void MessageLog(const NFmiString& theMessageLog);
 
   void ErrorLog(const char* theErrorLog);
   void WarningLog(const char* theWarningLog);

@@ -583,7 +583,7 @@ float NFmiQueryData::FloatValue()
  */
 // ----------------------------------------------------------------------
 
-const NFmiGrid &NFmiQueryData::GridInfo()
+const NFmiGrid& NFmiQueryData::GridInfo() const
 {
   try
   {
@@ -604,7 +604,7 @@ const NFmiGrid &NFmiQueryData::GridInfo()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiQueryData::operator==(NFmiQueryData &theQueryData)
+bool NFmiQueryData::operator==(const NFmiQueryData& theQueryData)
 {
   try
   {

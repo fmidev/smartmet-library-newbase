@@ -95,7 +95,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   static bool IsKnownMultiSourceData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo);
   static std::vector<std::shared_ptr<NFmiFastQueryInfo>> GetMultiSourceData(
       const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
-      std::shared_ptr<NFmiArea> &calculationArea,
+      const std::shared_ptr<NFmiArea>& calculationArea,
       bool getStationarySynopDataOnly);
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -150,13 +150,13 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 
   static std::shared_ptr<NFmiDataModifier> CreateIntegrationFuction(
       NFmiAreaMask::FunctionType func);
-  static bool CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+  static bool CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                    const NFmiCalculationParams &theCalculationParams,
                                    double theStartTimeOffsetInHours,
                                    double theEndTimeOffsetInHours,
                                    unsigned long *theStartTimeIndexOut,
                                    unsigned long *theEndTimeIndexOut);
-  static bool CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+  static bool CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                    const NFmiCalculationParams &theCalculationParams,
                                    const NFmiMetTime &theStartTime,
                                    const NFmiMetTime &theEndTime,
@@ -809,7 +809,7 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
   // tätä kaytetaan smarttool-modifierin yhteydessä
   double Value(const NFmiCalculationParams &theCalculationParams,
                bool fUseTimeInterpolationAlways) override;
-  static NFmiMetTime CalcTimeLoopLimits(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+  static NFmiMetTime CalcTimeLoopLimits(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                         const NFmiCalculationParams &theCalculationParams,
                                         double theStartTimeOffsetInHours,
                                         double theEndTimeOffsetInHours,
@@ -848,7 +848,7 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
                                            const NFmiMetTime &theInterpolationTime,
                                            bool useInterpolatedTime);
   double DoObservationAreaMaskCalculations(const NFmiCalculationParams &theCalculationParams);
-  double CalcAreaProbability();
+  double CalcAreaProbability() const;
   float CalculationPointValueForObservation(const std::shared_ptr<NFmiFastQueryInfo> &info);
 
   // Esim. Over, Under, Between, Equal
@@ -1068,7 +1068,8 @@ class NFmiTimeShiftedInfoAreaMask : public NFmiInfoAreaMask
   bool Time(const NFmiMetTime &theTime) override;
 
  protected:
-  NFmiCalculationParams GetUsedCalculationParams(const NFmiCalculationParams &theCalculationParams);
+  NFmiCalculationParams GetUsedCalculationParams(
+      const NFmiCalculationParams& theCalculationParams) const;
 
   float itsTimeOffsetInHours;
   long itsChangeByMinutesValue;

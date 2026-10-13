@@ -47,7 +47,7 @@ NFmiDataModifier* NFmiDataModifierAvg::Clone() const
  */
 // ----------------------------------------------------------------------
 
-float NFmiDataModifierAvg::Avg()
+float NFmiDataModifierAvg::Avg() const
 {
   return itsAverage;
 }
@@ -109,7 +109,7 @@ float NFmiDataModifierAvg::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-long NFmiDataModifierAvg::Counter()
+long NFmiDataModifierAvg::Counter() const
 {
   return itsCounter;
 }

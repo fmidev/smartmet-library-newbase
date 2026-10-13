@@ -26,7 +26,7 @@ class NFmiLocationFinder
 
   bool Empty() const;
   void Clear();
-  bool LastSearchFailed();
+  bool LastSearchFailed() const;
 
  private:
   bool AddFileOfOptionalType(const NFmiString& theFileName, bool lonFirst = true);
@@ -74,7 +74,7 @@ inline void NFmiLocationFinder::Clear()
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiLocationFinder::LastSearchFailed()
+inline bool NFmiLocationFinder::LastSearchFailed() const
 {
   return itsLastSearchFailed;
 }

@@ -474,7 +474,7 @@ bool IsModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo> &info)
   }
 }
 
-NFmiMetTime GetUsedTimeIfModelClimatologyData(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiMetTime GetUsedTimeIfModelClimatologyData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                               const NFmiMetTime &theTime)
 {
   try
@@ -520,7 +520,7 @@ bool IsMovingSoundingData(const std::shared_ptr<NFmiFastQueryInfo> &theInfo)
 // Lightning eli salama tyyppi datalla on yksi feikki asema ja paljon aikoja, jos useita salamoita
 // tai vastaavia havaintoja on havaittu. Datassa pitää olla latitude ja longitude parametrit,
 // jotta jokaisella satunnaiselle havainnolle saadaan kulloiseenkin aikaan oikea lokaatio.
-bool IsLightningTypeData(std::shared_ptr<NFmiFastQueryInfo> &info)
+bool IsLightningTypeData(const std::shared_ptr<NFmiFastQueryInfo>& info)
 {
   if (info && !info->IsGrid())
   {
@@ -1211,7 +1211,7 @@ void CalcMatrixVcomponentFromSpeedAndDirection(const NFmiDataMatrix<float> &ws,
   }
 }
 
-bool SetInfoToGridPoint(std::shared_ptr<NFmiFastQueryInfo> &info,
+bool SetInfoToGridPoint(const std::shared_ptr<NFmiFastQueryInfo>& info,
                         unsigned long gridPointX,
                         unsigned long gridPointY)
 {

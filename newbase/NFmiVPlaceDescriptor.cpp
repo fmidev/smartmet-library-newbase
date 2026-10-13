@@ -282,7 +282,7 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
  */
 // ----------------------------------------------------------------------
 
-void NFmiVPlaceDescriptor::LevelBag(NFmiLevelBag &theLevelBag)
+void NFmiVPlaceDescriptor::LevelBag(const NFmiLevelBag& theLevelBag)
 {
   try
   {

@@ -33,7 +33,7 @@ class NFmiDataModifierCombi : public NFmiDataModifier
  protected:
   float ProbValue(const NFmiIntegrationSelector& theSelector);
   bool CheckFrequency(float theValue, const NFmiIntegrationSelector& theSelector);
-  bool CheckParams(double theValue);
+  bool CheckParams(double theValue) const;
 
  private:
   NFmiDataModifierCombi& operator=(const NFmiDataModifierCombi& theCombi);

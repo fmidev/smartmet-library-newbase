@@ -17,14 +17,14 @@ class NFmiDataModifierAvg : public NFmiDataModifier
   NFmiDataModifierAvg(const NFmiDataModifierAvg& theOther);
   NFmiDataModifier* Clone() const override;
 
-  float Avg();
+  float Avg() const;
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;
 
   void Clear() override;
   using NFmiDataModifier::CalculationResult;
   float CalculationResult() override;
-  long Counter();
+  long Counter() const;
 
  protected:
   long itsCounter;

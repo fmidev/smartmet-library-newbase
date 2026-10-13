@@ -646,7 +646,7 @@ NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect)
   }
 }
 
-NFmiArea *NFmiArea::CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside)
+NFmiArea* NFmiArea::CreateNewAreaByWorldRect(const NFmiRect& theWorldRect, bool fMustBeInside) const
 {
   try
   {

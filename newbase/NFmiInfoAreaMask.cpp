@@ -158,7 +158,7 @@ void NFmiInfoAreaMask::SetMultiSourceDataGetterCallback(
 
 std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiInfoAreaMask::GetMultiSourceData(
     const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
-    std::shared_ptr<NFmiArea> &calculationArea,
+    const std::shared_ptr<NFmiArea>& calculationArea,
     bool getStationarySynopDataOnly)
 {
   std::vector<std::shared_ptr<NFmiFastQueryInfo>> infoVector;
@@ -1020,7 +1020,7 @@ std::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
 
 // Etsii halutun aika loopituksen alku- ja loppuaika indeksejä annetusta infosta.
 // Jos startOffset ja endOffsetit ovat samoja, käytetään kyseistä aikaa aikainterpolaatiossa.
-bool NFmiInfoAreaMask::CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                             const NFmiCalculationParams &theCalculationParams,
                                             double theStartTimeOffsetInHours,
                                             double theEndTimeOffsetInHours,
@@ -1052,7 +1052,7 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &
   }
 }
 
-bool NFmiInfoAreaMask::CalcTimeLoopIndexies(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                             const NFmiCalculationParams &theCalculationParams,
                                             const NFmiMetTime &theStartTime,
                                             const NFmiMetTime &theEndTime,
@@ -1562,7 +1562,7 @@ NFmiAreaMask *NFmiInfoAreaMaskPeekXY3::Clone() const
   }
 }
 
-static bool IsPacificViewData(std::shared_ptr<NFmiFastQueryInfo> &theInfo)
+static bool IsPacificViewData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
 {
   try
   {
@@ -3310,7 +3310,7 @@ class DoubleValueSearcher
   float ExtremeSecondaryValue() const { return itsExtremeSecondaryValue; }
 
  private:
-  bool IsExtreme(float primaryValue)
+  bool IsExtreme(float primaryValue) const
   {
     try
     {
@@ -3894,7 +3894,7 @@ bool NFmiInfoAreaMaskProbFunc::CheckProbabilityCondition(double value)
 // Palauttaa mahdollisen interpolaatio ajan, jos startOffset ja endOffsetit ovat samoja, käytetään
 // kyseistä aikaa aikainterpolaatiossa.
 NFmiMetTime NFmiInfoAreaMaskProbFunc::CalcTimeLoopLimits(
-    std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     const NFmiCalculationParams &theCalculationParams,
     double theStartTimeOffsetInHours,
     double theEndTimeOffsetInHours,
@@ -3956,7 +3956,7 @@ static void SetSimpleConditionCalculationTime(
     NFmiCalculationParams &simpleConditionCalculationPointParams,
     bool useInterpolatedTime,
     const NFmiMetTime &interpolationTime,
-    std::shared_ptr<NFmiFastQueryInfo> &info)
+    const std::shared_ptr<NFmiFastQueryInfo>& info)
 {
   try
   {
@@ -4128,7 +4128,7 @@ double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
   return CalcAreaProbability();
 }
 
-double NFmiInfoAreaMaskProbFunc::CalcAreaProbability()
+double NFmiInfoAreaMaskProbFunc::CalcAreaProbability() const
 {
   if (itsTotalCalculatedGridPoints)
   {
@@ -4816,7 +4816,7 @@ bool NFmiTimeShiftedInfoAreaMask::Time(const NFmiMetTime &theTime)
 }
 
 NFmiCalculationParams NFmiTimeShiftedInfoAreaMask::GetUsedCalculationParams(
-    const NFmiCalculationParams &theCalculationParams)
+    const NFmiCalculationParams& theCalculationParams) const
 {
   try
   {

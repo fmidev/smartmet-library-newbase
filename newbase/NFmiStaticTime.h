@@ -76,7 +76,7 @@ class NFmiStaticTime : public NFmiSortable
   void SetMin(short minute);
   void SetSec(short sec);
   void SetMissing();
-  bool IsMissing();
+  bool IsMissing() const;
 
   virtual const char* ClassName() const;
 

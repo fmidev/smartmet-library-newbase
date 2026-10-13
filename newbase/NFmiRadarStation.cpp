@@ -62,7 +62,7 @@ NFmiRadarStation::NFmiRadarStation(const NFmiRadarStation &theStation)
  */
 // ----------------------------------------------------------------------
 
-NFmiRadarStation::NFmiRadarStation(NFmiStation &station,
+NFmiRadarStation::NFmiRadarStation(const NFmiStation& station,
                                    unsigned long resolution,
                                    unsigned long theXNumber,
                                    unsigned long theYNumber)

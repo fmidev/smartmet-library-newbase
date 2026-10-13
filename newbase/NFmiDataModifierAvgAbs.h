@@ -21,7 +21,7 @@ class NFmiDataModifierAvgAbs : public NFmiDataModifier
   void Clear() override;
   using NFmiDataModifier::CalculationResult;
   float CalculationResult() override;
-  long Counter();
+  long Counter() const;
 
  protected:
   long itsCounter;

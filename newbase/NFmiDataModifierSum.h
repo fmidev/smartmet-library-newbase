@@ -17,7 +17,7 @@ class NFmiDataModifierSum : public NFmiDataModifier
   NFmiDataModifierSum(const NFmiDataModifierSum& theOther);
   NFmiDataModifier* Clone() const override;
 
-  float Sum();
+  float Sum() const;
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;
 

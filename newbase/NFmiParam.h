@@ -43,7 +43,7 @@ class NFmiParam : public NFmiIndividual
   void Scale(float newValue);
   void Base(float newValue);
   void Precision(const NFmiString &newValue);
-  bool IsScaleBase();
+  bool IsScaleBase() const;
 
   FmiInterpolationMethod InterpolationMethod() const;
   void InterpolationMethod(FmiInterpolationMethod theInterpolationMethod);
@@ -185,7 +185,7 @@ inline void NFmiParam::Precision(const NFmiString &newValue)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiParam::IsScaleBase()
+inline bool NFmiParam::IsScaleBase() const
 {
   return !(itsScale == kFloatMissing || itsBase == kFloatMissing);
 }

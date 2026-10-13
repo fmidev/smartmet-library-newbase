@@ -28,7 +28,7 @@ class NFmiDataModifier : public NFmiDataModifierBase
 
   virtual unsigned long ClassId() const;
   virtual const char* ClassName() const;
-  bool IsCombinedParam();
+  bool IsCombinedParam() const;
 
   virtual bool BoolOperation(float theValue);
   virtual float FloatOperation(float theValue);
@@ -39,7 +39,7 @@ class NFmiDataModifier : public NFmiDataModifierBase
   virtual void Calculate(NFmiQueryInfo* theQI);
   virtual void Clear();
   virtual double FloatValue();
-  bool IsInside(float theValue);
+  bool IsInside(float theValue) const;
   bool SetLimits(float theLowerLimit, float theUpperLimit);
   void SetMissingAllowed(bool OnOff);
 

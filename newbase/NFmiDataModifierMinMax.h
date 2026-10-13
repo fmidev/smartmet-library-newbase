@@ -28,8 +28,8 @@ class NFmiDataModifierMinMax : public NFmiDataModifier
   NFmiDataModifierMinMax(const NFmiDataModifierMinMax& theOther);
   NFmiDataModifier* Clone() const override;
 
-  float MinValue();
-  float MaxValue();
+  float MinValue() const;
+  float MaxValue() const;
 
   void Clear() override;
 

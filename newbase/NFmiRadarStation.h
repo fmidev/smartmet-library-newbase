@@ -19,7 +19,7 @@ class NFmiRadarStation : public NFmiStation
 
   NFmiRadarStation(const NFmiRadarStation& theStation);
 
-  NFmiRadarStation(NFmiStation& station,
+  NFmiRadarStation(const NFmiStation& station,
                    unsigned long resolution,
                    unsigned long theXNumber,
                    unsigned long theYNumber);

@@ -2650,7 +2650,7 @@ float NFmiQueryInfo::TimePeriodValue(const NFmiPoint &theLonLat,
                                      const NFmiMetTime &theEndTime,
                                      float factor1,
                                      float factor2,
-                                     float factor3)
+                                     float factor3) const
 {
   try
   {
@@ -3230,7 +3230,7 @@ static void ModifySingleTimeGridInThread(NFmiFastQueryInfo &theModifiedInfo,
 }
 
 void NFmiQueryInfo::ModifyTimesLocationData_FullMT(NFmiDataModifier *theModifier,
-                                                   NFmiTimeDescriptor &theTimeDescriptor)
+                                                   const NFmiTimeDescriptor& theTimeDescriptor)
 {
   try
   {
@@ -5415,7 +5415,7 @@ float NFmiQueryInfo::PeekValue(int theTimeOffset, int theXOffset, int theYOffset
  */
 // ----------------------------------------------------------------------
 
-long NFmiQueryInfo::CalcAreaUnCertainty()
+long NFmiQueryInfo::CalcAreaUnCertainty() const
 {
   try
   {
@@ -5435,7 +5435,7 @@ long NFmiQueryInfo::CalcAreaUnCertainty()
  */
 // ----------------------------------------------------------------------
 
-long NFmiQueryInfo::CalcTimeUnCertainty()
+long NFmiQueryInfo::CalcTimeUnCertainty() const
 {
   try
   {

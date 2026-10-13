@@ -62,7 +62,7 @@ bool NFmiStatus::IsMessage() const
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::ErrorLog(NFmiString& theErrorLog)
+void NFmiStatus::ErrorLog(const NFmiString& theErrorLog)
 {
   itsErrorLog = theErrorLog;
 }
@@ -72,7 +72,7 @@ void NFmiStatus::ErrorLog(NFmiString& theErrorLog)
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::WarningLog(NFmiString& theWarningLog)
+void NFmiStatus::WarningLog(const NFmiString& theWarningLog)
 {
   itsWarningLog = theWarningLog;
 }
@@ -82,7 +82,7 @@ void NFmiStatus::WarningLog(NFmiString& theWarningLog)
  */
 // ----------------------------------------------------------------------
 
-void NFmiStatus::MessageLog(NFmiString& theMessageLog)
+void NFmiStatus::MessageLog(const NFmiString& theMessageLog)
 {
   itsMessageLog = theMessageLog;
 }

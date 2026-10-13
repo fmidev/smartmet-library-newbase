@@ -43,11 +43,11 @@ class NFmiTimeList
   const NFmiMetTime &LastTime() const;
   int CurrentResolution() const;
 
-  const NFmiTimeList Combine(NFmiTimeList &theList,
+  const NFmiTimeList Combine(const NFmiTimeList& theList,
                              int theStartTimeFunction = 0,
                              int theEndTimeFunction = 0);
   const NFmiTimeList GetIntersection(const NFmiMetTime &theStartLimit,
-                                     const NFmiMetTime &theEndLimit);
+                                     const NFmiMetTime& theEndLimit) const;
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
   int NumberOfItems() const;
@@ -67,22 +67,22 @@ class NFmiTimeList
 
  private:
   bool TimeInSearchRange(const NFmiMetTime &theTime,
-                         unsigned long theTimeRangeInMinutes);  // apu funktio nearestTime:en
+                         unsigned long theTimeRangeInMinutes) const;  // apu funktio nearestTime:en
   bool IndexOk(int theIndex) const;
   bool FindNearestBackwardTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
                                const NFmiMetTime &theTime,
                                unsigned long theTimeRangeInMinutes);
-  bool FindNearestForwardTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
+  bool FindNearestForwardTime(const std::vector<NFmiMetTime*>::iterator& firstNotLess,
                               const NFmiMetTime &theTime,
                               unsigned long theTimeRangeInMinutes);
   bool FindNearestTime(std::vector<NFmiMetTime *>::iterator &firstNotLess,
                        const NFmiMetTime &theTime,
                        unsigned long theTimeRangeInMinutes);
   int CalcTimeListIndex(const std::vector<NFmiMetTime *>::iterator &theIter);
-  bool IsSearchedTimeInRange(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
+  bool IsSearchedTimeInRange(const std::vector<NFmiMetTime*>::iterator& foundTimeIter,
                              const NFmiMetTime &theTime,
                              unsigned long theTimeRangeInMinutes);
-  bool CheckFoundTimeIter(std::vector<NFmiMetTime *>::iterator &foundTimeIter,
+  bool CheckFoundTimeIter(const std::vector<NFmiMetTime*>::iterator& foundTimeIter,
                           const NFmiMetTime &theTime,
                           unsigned long theTimeRangeInMinutes);
 

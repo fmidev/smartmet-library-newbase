@@ -81,7 +81,7 @@ class NFmiDataPool
   bool WriteTextData(unsigned long theNumber, const char* theFileName);
 
   void UseBinaryStorage(bool newState) const;
-  bool IsBinaryStorageUsed();
+  bool IsBinaryStorageUsed() const;
 
   NFmiDataPool& operator=(const NFmiDataPool& theDataPool);
   bool operator==(const NFmiDataPool& theDataPool) const;
@@ -300,7 +300,7 @@ inline void NFmiDataPool::UseBinaryStorage(bool newState) const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataPool::IsBinaryStorageUsed()
+inline bool NFmiDataPool::IsBinaryStorageUsed() const
 {
   return fUseBinaryStorage;
 }

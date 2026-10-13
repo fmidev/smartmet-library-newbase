@@ -24,7 +24,7 @@ class NFmiDataModifierPrecFormUnion : public NFmiDataModifier
   void Calculate(NFmiQueryInfo* theQI) override;
   using NFmiDataModifier::CalculationResult;
   float CalculationResult() override;
-  float Result();
+  float Result() const;
 
  private:
   bool fIsRain;

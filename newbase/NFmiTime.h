@@ -61,11 +61,11 @@ class NFmiTime : public NFmiStaticTime
   // Use always even numbers between 0->12
   // 0 = Real length of the night (not implemented yet)
 
-  bool IsNight(const NFmiLocation &theLocation, unsigned short theResolution = 12);
+  bool IsNight(const NFmiLocation& theLocation, unsigned short theResolution = 12) const;
 
   // Use always even numbers between 0->12
   // 0 = Real length of the day (not implemented yet)
-  bool IsDay(const NFmiLocation &theLocation, unsigned short theResolution = 12);
+  bool IsDay(const NFmiLocation& theLocation, unsigned short theResolution = 12) const;
 
   void ChangeBySeconds(long seconds);
   void ChangeByMinutes(long minutes);

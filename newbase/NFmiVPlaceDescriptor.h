@@ -37,7 +37,7 @@ class NFmiVPlaceDescriptor : public NFmiDataDescriptor
   bool IsStep() const;   // 'askel' määritelty? false jos ei.
   bool IsLevel() const;  // LevelBag määritelty?
 
-  void LevelBag(NFmiLevelBag &theLevelBag);
+  void LevelBag(const NFmiLevelBag& theLevelBag);
   const NFmiLevelBag &LevelBag() const { return *itsLevelBag; }
   void Destroy();
 

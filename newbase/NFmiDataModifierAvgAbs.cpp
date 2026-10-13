@@ -91,7 +91,7 @@ float NFmiDataModifierAvgAbs::CalculationResult()
  */
 // ----------------------------------------------------------------------
 
-long NFmiDataModifierAvgAbs::Counter()
+long NFmiDataModifierAvgAbs::Counter() const
 {
   return itsCounter;
 }

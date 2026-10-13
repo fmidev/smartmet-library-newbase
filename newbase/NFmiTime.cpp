@@ -1016,7 +1016,7 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
  */
 // ----------------------------------------------------------------------
 
-bool NFmiTime::IsDay(const NFmiLocation &theLocation, unsigned short theResolution)
+bool NFmiTime::IsDay(const NFmiLocation& theLocation, unsigned short theResolution) const
 {
   try
   {
@@ -1038,7 +1038,7 @@ bool NFmiTime::IsDay(const NFmiLocation &theLocation, unsigned short theResoluti
  */
 // ----------------------------------------------------------------------
 
-bool NFmiTime::IsNight(const NFmiLocation &theLocation, unsigned short theResolution)
+bool NFmiTime::IsNight(const NFmiLocation& theLocation, unsigned short theResolution) const
 {
   try
   {

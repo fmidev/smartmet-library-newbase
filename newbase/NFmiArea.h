@@ -107,7 +107,7 @@ class NFmiArea
   virtual NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect);
 
   // Added to enable enlarging areas
-  NFmiArea *CreateNewAreaByWorldRect(const NFmiRect &theWorldRect, bool fMustBeInside);
+  NFmiArea* CreateNewAreaByWorldRect(const NFmiRect& theWorldRect, bool fMustBeInside) const;
 
   virtual NFmiArea *CreateNewArea(double theNewAspectRatioXperY,
                                   FmiDirection theFixedPoint,

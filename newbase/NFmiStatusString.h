@@ -20,7 +20,7 @@ class NFmiStatusString : public NFmiString
 
   NFmiStatusString& operator=(const NFmiStatusString& theStausString);
 
-  long Status();
+  long Status() const;
   const NFmiString& String();
   unsigned long ClassId() const override { return kNFmiStatusString; };
   NFmiString* Clone() const override;

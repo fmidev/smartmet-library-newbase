@@ -161,7 +161,7 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
  protected:
   void CreateSubParams() override;
 
-  unsigned long PrecipitationFormFromWeightTable(double* formTable) const;
+  unsigned long PrecipitationFormFromWeightTable(const double* formTable) const;
   unsigned long PrecipitationFormWeightedMean(unsigned long form1,
                                               unsigned long amount1,
                                               float factor1,
@@ -213,7 +213,7 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
       float factor4 = kFloatMissing);
 
   unsigned long CalcTotalPrecipitation() const;
-  unsigned long CalcPrecipitationFromHessaa(unsigned long theValue);
+  unsigned long CalcPrecipitationFromHessaa(unsigned long theValue) const;
 
   unsigned long LowAndMiddleClouds() const;
   unsigned long CloudsToEighths(unsigned long tenProsents) const;

@@ -33,11 +33,11 @@ class NFmiTransformList
   double LastOutputValue(int theRangeIndex);
 
   int RangeIndex(double theValue);
-  int RangeIndex();
-  int MaxRangeIndex();
+  int RangeIndex() const;
+  int MaxRangeIndex() const;
 
   bool IsConstantRange(int theRangeIndex);
-  int PreviousInputRangeIndex();
+  int PreviousInputRangeIndex() const;
 
   NFmiTransformList& operator=(const NFmiTransformList& theList);
   bool operator==(const NFmiTransformList& theList);
@@ -51,7 +51,7 @@ class NFmiTransformList
   virtual bool Allocate(int theMaxPairNumber);
   virtual bool Interpolate(const NFmiPoint& firstPair, const NFmiPoint& lastPair);
   virtual bool Interpolate(const int theRangeIndex, double theValue);
-  bool Equal(NFmiPoint& p1, NFmiPoint& p2);
+  bool Equal(const NFmiPoint& p1, const NFmiPoint& p2);
 
  private:
   NFmiTransformList(const NFmiTransformList& theList);
@@ -175,7 +175,7 @@ inline double NFmiTransformList::LastOutputValue(int theRangeIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::RangeIndex()
+inline int NFmiTransformList::RangeIndex() const
 {
   return itsPreviousInputRangeIndex;
 }
@@ -185,7 +185,7 @@ inline int NFmiTransformList::RangeIndex()
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::MaxRangeIndex()
+inline int NFmiTransformList::MaxRangeIndex() const
 {
   return itsCurrentMaxIndex;
 }
@@ -207,7 +207,7 @@ inline bool NFmiTransformList::IsConstantRange(int theRangeIndex)
  */
 // ----------------------------------------------------------------------
 
-inline int NFmiTransformList::PreviousInputRangeIndex()
+inline int NFmiTransformList::PreviousInputRangeIndex() const
 {
   return itsPreviousInputRangeIndex;
 }

@@ -727,7 +727,7 @@ NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData *NFmiQueryDataUtil::CreateEmptyData(NFmiQueryInfo &srcInfo)
+NFmiQueryData* NFmiQueryDataUtil::CreateEmptyData(const NFmiQueryInfo& srcInfo)
 {
   try
   {
@@ -2754,7 +2754,7 @@ static NFmiParamDescriptor GetParamDesc(NFmiQueryDataUtil::GridDataVector &theGr
   }
 }
 
-static bool ConvertTimeList2TimeBag(NFmiTimeList &theTimeList, NFmiTimeBag &theTimeBag)
+static bool ConvertTimeList2TimeBag(const NFmiTimeList& theTimeList, NFmiTimeBag& theTimeBag)
 {
   try                                     // tutkitaan onko mahdollista tehda listasta bagi
   {                                       // eli ajat ovat peräkkäisiä ja tasavälisiä
@@ -3585,8 +3585,8 @@ static bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
 
 static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
                                      NFmiParamBag &adjustedParambag,
-                                     bool *theWeather1,
-                                     bool *theWeather2,
+                                     const bool* theWeather1,
+                                     const bool* theWeather2,
                                      const std::vector<int> &theOptionalParamIds)
 {
   try
@@ -5075,7 +5075,7 @@ std::vector<std::shared_ptr<NFmiQueryData>>
 NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
     std::shared_ptr<NFmiQueryData> theBaseQData,
     const std::string &theDirName,
-    std::vector<std::string> &theFilesIn,
+    const std::vector<std::string>& theFilesIn,
     NFmiStopFunctor *theStopFunctor,
     bool fDoRebuildCheck)
 {
@@ -5127,12 +5127,12 @@ NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
 }
 
 static std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
-    std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector)
+    const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector)
 {
   try
   {
     std::vector<std::shared_ptr<NFmiFastQueryInfo>> fastInfos;
-    for (auto &i : theQDataVector)
+    for (const auto &i : theQDataVector)
     {
       auto *fInfo = new NFmiFastQueryInfo(i.get());
       if (fInfo)
@@ -5147,8 +5147,8 @@ static std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
 }
 
 std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFastInfoVector(
-    std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
-    std::shared_ptr<NFmiQueryData> &theBaseQData,
+    const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector,
+    const std::shared_ptr<NFmiQueryData>& theBaseQData,
     bool fDoRebuild)
 {
   try
@@ -5171,12 +5171,13 @@ std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFast
 // järjestykseen (uusimmat ensin) ja leikkaa tarvittaessa listan koon haluttuun määrään
 // theMaxTimeStepsInData-parametrin mukaan. Jos se on <= 0, tällöin otetaan kaiiki ajat mukaan.
 std::vector<NFmiMetTime> NFmiQueryDataUtil::MakeValidTimesList(
-    std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector, int theMaxTimeStepsInData)
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFastInfoVector,
+    int theMaxTimeStepsInData)
 {
   try
   {
     std::set<NFmiMetTime> uniqueValidTimes;
-    for (auto &infoPtr : theFastInfoVector)
+    for (const auto &infoPtr : theFastInfoVector)
     {
       NFmiFastQueryInfo *fInfo = infoPtr.get();
       if (fInfo)
@@ -5241,12 +5242,12 @@ struct less<NFmiDataIdent>
 }  // namespace std
 
 static NFmiParamDescriptor MakeParamDesc(
-    std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
   try
   {
     std::set<NFmiDataIdent> paramSet;
-    for (auto &i : theFInfoVectorIn)
+    for (const auto &i : theFInfoVectorIn)
     {
       for (i->ResetParam(); i->NextParam();)
         paramSet.insert(i->Param());
@@ -5267,8 +5268,8 @@ static NFmiParamDescriptor MakeParamDesc(
 }
 
 static NFmiParamDescriptor MakeParamDescriptor(
-    std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFastInfoVector,
-    std::shared_ptr<NFmiFastQueryInfo> &theFirstFastInfo,
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFastInfoVector,
+    const std::shared_ptr<NFmiFastQueryInfo>& theFirstFastInfo,
     bool fFirstInfoDefines)
 {
   try
@@ -5302,12 +5303,12 @@ struct less<NFmiLevel>
 }  // namespace std
 
 static NFmiVPlaceDescriptor MakeVPlaceDesc(
-    std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
   try
   {
     std::set<NFmiLevel> levelSet;
-    for (auto &i : theFInfoVectorIn)
+    for (const auto &i : theFInfoVectorIn)
     {
       for (i->ResetLevel(); i->NextLevel();)
         levelSet.insert(*(i->Level()));
@@ -5370,12 +5371,13 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
   }
 }
 
-static NFmiFastQueryInfo *FindWantedInfo(
-    const NFmiMetTime &theTime, std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn)
+static NFmiFastQueryInfo* FindWantedInfo(
+    const NFmiMetTime& theTime,
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
   try
   {
-    for (auto &i : theFInfoVectorIn)
+    for (const auto &i : theFInfoVectorIn)
     {
       if (i->Time(theTime))
         return i.get();
@@ -5390,7 +5392,7 @@ static NFmiFastQueryInfo *FindWantedInfo(
 
 static void FillDataToCurrentTime(
     NFmiFastQueryInfo &theFilledInfo,
-    std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn,
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn,
     NFmiStopFunctor *theStopFunctor)
 {
   try
@@ -5445,9 +5447,10 @@ std::string NFmiQueryDataUtil::GetFileFilterDirectory(const std::string &theFile
   }
 }
 
-static void CombineTimeStepDatas(NFmiQueryData &theData,
-                                 std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVector,
-                                 NFmiStopFunctor *theStopFunctor)
+static void CombineTimeStepDatas(
+    NFmiQueryData& theData,
+    const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVector,
+    NFmiStopFunctor* theStopFunctor)
 {
   try
   {
@@ -5466,14 +5469,14 @@ static void CombineTimeStepDatas(NFmiQueryData &theData,
 }
 
 static void CombineSliceDatas(NFmiQueryData &theData,
-                              std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVector,
+                              const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVector,
                               NFmiStopFunctor *theStopFunctor)
 {
   try
   {
     NFmiFastQueryInfo combFastInfo(&theData);
     // käydään kaikki fInfot läpi ja katsotaan mihin rakoihin data saadaan tungettua
-    for (auto &i : theFInfoVector)
+    for (const auto &i : theFInfoVector)
     {
       NFmiFastQueryInfo &fInfo = *(i.get());
 
@@ -5566,8 +5569,8 @@ static void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunctio
 // Jos theBaseQData sisältää dataa, käytetään se ensin pohjaksi uudelle datalle.
 NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
     bool fDoRebuild,
-    std::shared_ptr<NFmiQueryData> &theBaseQData,
-    std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
+    const std::shared_ptr<NFmiQueryData>& theBaseQData,
+    const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector,
     bool fDoTimeStepCombine,
     int theMaxTimeStepsInData,
     NFmiStopFunctor *theStopFunctor,
@@ -5713,8 +5716,8 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(bool fDoRebuildCheck,
 
 NFmiQueryData *NFmiQueryDataUtil::CombineAcceptedTimeStepQueryData(
     bool fDoRebuild,
-    std::shared_ptr<NFmiQueryData> &theBaseQData,
-    std::vector<std::shared_ptr<NFmiQueryData>> &theQDataVector,
+    const std::shared_ptr<NFmiQueryData>& theBaseQData,
+    const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector,
     const std::vector<NFmiMetTime> &theAcceptedTimes,
     NFmiStopFunctor *theStopFunctor)
 {

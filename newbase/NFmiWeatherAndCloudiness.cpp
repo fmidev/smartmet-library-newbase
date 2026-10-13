@@ -1165,7 +1165,8 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormWeightedMean(unsigned l
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(double *formTable) const
+unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
+    const double* formTable) const
 {
   try
   {
@@ -3356,7 +3357,7 @@ unsigned long NFmiWeatherAndCloudiness::TotalPrecipitationFromHessaa(unsigned lo
  */
 // ----------------------------------------------------------------------
 
-unsigned long NFmiWeatherAndCloudiness::CalcPrecipitationFromHessaa(unsigned long theValue)
+unsigned long NFmiWeatherAndCloudiness::CalcPrecipitationFromHessaa(unsigned long theValue) const
 {
   try
   {

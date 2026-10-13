@@ -135,7 +135,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   std::ostream& Write(std::ostream& file) const override;
   std::istream& Read(std::istream& file) override;
 
-  unsigned long LocalTimeStep();
+  unsigned long LocalTimeStep() const;
   void ReduseTimeBag();
   void ExtendTimeBag();
   //  unsigned long TimeResolution(); // poistettu, käytä Resolution-metodia
@@ -314,7 +314,7 @@ inline const char *NFmiTimeDescriptor::ClassName() const
  */
 // ----------------------------------------------------------------------
 
-inline unsigned long NFmiTimeDescriptor::LocalTimeStep()
+inline unsigned long NFmiTimeDescriptor::LocalTimeStep() const
 {
   return itsLocalTimeStep;
 }
