@@ -598,7 +598,7 @@ int NFmiWeatherAndCloudiness::WeightedMean(int missingValue,
       return missingValue;
 
     if (facSum > 0.)
-      return static_cast<int>(sum / facSum + .5);
+      return static_cast<int>(std::lround(sum / facSum));
 
     return 0;
   }
@@ -2280,17 +2280,17 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     itsData.longType = kTCombinedWeatherMissing;  // riittääkö?
 
     if (lowCloudsFactorSum > 0.)
-      SetLowClouds(static_cast<unsigned long>(lowCloudsSum / lowCloudsFactorSum + .5));
+      SetLowClouds(static_cast<unsigned long>(std::lround(lowCloudsSum / lowCloudsFactorSum)));
     if (middleCloudsFactorSum > 0.)
-      SetMiddleClouds(static_cast<unsigned long>(middleCloudsSum / middleCloudsFactorSum + .5));
+      SetMiddleClouds(static_cast<unsigned long>(std::lround(middleCloudsSum / middleCloudsFactorSum)));
     if (highCloudsFactorSum > 0.)
-      SetHighClouds(static_cast<unsigned long>(highCloudsSum / highCloudsFactorSum + .5));
+      SetHighClouds(static_cast<unsigned long>(std::lround(highCloudsSum / highCloudsFactorSum)));
     if (totalCloudinessFactorSum > 0.)
       SetTotalCloudiness(
-          static_cast<unsigned long>(totalCloudinessSum / totalCloudinessFactorSum + .5));
+          static_cast<unsigned long>(std::lround(totalCloudinessSum / totalCloudinessFactorSum)));
     if (precipitationTypeFactorSum > 0.)
       SetPrecipitationType(
-          static_cast<unsigned long>(precipitationTypeSum / precipitationTypeFactorSum + .5));
+          static_cast<unsigned long>(std::lround(precipitationTypeSum / precipitationTypeFactorSum)));
 
     if (totalPrecipitationFactorSum > 0.)
     {
@@ -2316,7 +2316,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       SubValue(thunderWithMax, kFmiProbabilityThunderstorm);
     }
     if (fogIntensityFactorSum > 0.)
-      SetFogIntensity(static_cast<unsigned long>(fogIntensitySum / fogIntensityFactorSum + .5));
+      SetFogIntensity(static_cast<unsigned long>(std::lround(fogIntensitySum / fogIntensityFactorSum)));
 
     delete newInfo;
     return true;
@@ -2475,17 +2475,17 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     itsData.longType = kTCombinedWeatherMissing;  // riittääkö?
 
     if (lowCloudsFactorSum > 0.)
-      SetLowClouds(static_cast<unsigned long>(lowCloudsSum / lowCloudsFactorSum + .5));
+      SetLowClouds(static_cast<unsigned long>(std::lround(lowCloudsSum / lowCloudsFactorSum)));
     if (middleCloudsFactorSum > 0.)
-      SetMiddleClouds(static_cast<unsigned long>(middleCloudsSum / middleCloudsFactorSum + .5));
+      SetMiddleClouds(static_cast<unsigned long>(std::lround(middleCloudsSum / middleCloudsFactorSum)));
     if (highCloudsFactorSum > 0.)
-      SetHighClouds(static_cast<unsigned long>(highCloudsSum / highCloudsFactorSum + .5));
+      SetHighClouds(static_cast<unsigned long>(std::lround(highCloudsSum / highCloudsFactorSum)));
     if (totalCloudinessFactorSum > 0.)
       SetTotalCloudiness(
-          static_cast<unsigned long>(totalCloudinessSum / totalCloudinessFactorSum + .5));
+          static_cast<unsigned long>(std::lround(totalCloudinessSum / totalCloudinessFactorSum)));
     if (precipitationTypeFactorSum > 0.)
       SetPrecipitationType(
-          static_cast<unsigned long>(precipitationTypeSum / precipitationTypeFactorSum + .5));
+          static_cast<unsigned long>(std::lround(precipitationTypeSum / precipitationTypeFactorSum)));
 
     if (totalPrecipitationFactorSum > 0.)
     {
@@ -2512,7 +2512,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
       SubValue(thunderWithMax, kFmiProbabilityThunderstorm);
     }
     if (fogIntensityFactorSum > 0.)
-      SetFogIntensity(static_cast<unsigned long>(fogIntensitySum / fogIntensityFactorSum + .5));
+      SetFogIntensity(static_cast<unsigned long>(std::lround(fogIntensitySum / fogIntensityFactorSum)));
 
     delete newInfo;
     return true;

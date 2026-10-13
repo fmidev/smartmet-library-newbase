@@ -13,6 +13,7 @@
 PRAGMA_WARNING_PUSH()
 PRAGMA_WARNING_DISABLE(4996)
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <cmath>
 PRAGMA_WARNING_POP()
 
 namespace Fmi
@@ -217,7 +218,9 @@ enum Logical
 
 // use C99 math.h instead of these:
 //#if 0  //poisto päälle taas kun Lassella uusi newbase
-#define FmiRound(x) ((x) < 0.0 ? static_cast<long>((x)-0.5) : static_cast<long>((x) + 0.5))
+// Rounds half away from zero. std::lround avoids the double evaluation of the old macro
+// and the incorrect result of x + 0.5 for the largest double below 0.5
+inline long FmiRound(double x) { return std::lround(x); }
 #define FmiTrunc(x) (static_cast<long>(x))
 //#endif
 
