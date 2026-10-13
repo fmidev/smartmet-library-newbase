@@ -65,6 +65,8 @@ NFmiLevelBag::NFmiLevelBag(FmiLevelType theLevelType,
   {
     itsLevels = new NFmiLevel[itsSize];
     for (unsigned long i = 0; i < itsSize; i++)
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       itsLevels[i] = NFmiLevel(theLevelType, theMinValue + i * theStep);
   }
   catch (...)
@@ -91,6 +93,8 @@ NFmiLevelBag::NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels)
   {
     if (itsLevels != nullptr)
       for (unsigned int i = 0; i < GetSize(); i++)
+        // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+        // elements are exactly of the pointed-to type, there are no derived objects in it
         itsLevels[i] = theLevelArray[i];
   }
   catch (...)
@@ -116,6 +120,8 @@ NFmiLevelBag::NFmiLevelBag(const NFmiLevelBag &theBag)
   {
     if (itsLevels != nullptr)
       for (unsigned int i = 0; i < itsSize; i++)
+        // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+        // elements are exactly of the pointed-to type, there are no derived objects in it
         itsLevels[i] = (theBag.itsLevels)[i];
   }
   catch (...)
@@ -182,6 +188,8 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
   {
     int i;
     for (i = 0; i < static_cast<int>(itsSize); i++)
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       if (itsLevels[i] == theLevel)
         break;
 
@@ -192,8 +200,12 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
       tempLevels = new NFmiLevel[GetSize() + 1];
 
       for (j = 0; j < static_cast<int>(itsSize); j++)
+        // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+        // elements are exactly of the pointed-to type, there are no derived objects in it
         tempLevels[j] = itsLevels[j];
 
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       tempLevels[j] = theLevel;
 
       if (itsLevels)
@@ -202,6 +214,10 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
       itsLevels = new NFmiLevel[itsSize + 1];
       itsSize = GetSize() + 1;
       for (j = 0; j < static_cast<int>(GetSize()); j++)
+        // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object,
+        // security.ArrayBound] the array elements are exactly of the pointed-to type, there are no
+        // derived objects in it; itsLevels has itsSize + 1 elements and GetSize() returns the
+        // updated itsSize
         itsLevels[j] = tempLevels[j];
 
       itsStep = 0ul;  // askel ei välttämättä enää vakio
@@ -242,6 +258,8 @@ NFmiLevelBag &NFmiLevelBag::operator=(const NFmiLevelBag &theLevelBag)
 
     itsLevels = new NFmiLevel[theLevelBag.GetSize()];
     for (int i = 0; i < static_cast<int>(theLevelBag.GetSize()); i++)
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       itsLevels[i] = theLevelBag.itsLevels[i];
 
     return *this;
@@ -272,6 +290,8 @@ bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
            i < static_cast<int>(this->GetSize()) && static_cast<int>(theLevelBag.GetSize());
            i++)
       {
+        // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+        // elements are exactly of the pointed-to type, there are no derived objects in it
         if (!(this->itsLevels[i] == theLevelBag.itsLevels[i]))
           return false;
         else
@@ -303,6 +323,8 @@ std::ostream &NFmiLevelBag::Write(std::ostream &file) const
 
     for (unsigned long i = 0; i < GetSize(); i++)
     {
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       file << itsLevels[i];
     }
 
@@ -337,6 +359,8 @@ std::istream &NFmiLevelBag::Read(std::istream &file)
 
     for (unsigned long i = 0; i < GetSize(); i++)
     {
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       file >> itsLevels[i];
     }
 

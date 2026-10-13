@@ -261,6 +261,7 @@ void NFmiHPlaceDescriptor::LocationList(const NFmiLocationBag &theLocationBag)
 
     itsActivity = new bool[Size()];
     for (int i = 0; i < static_cast<int>(Size()); i++)
+      // codechecker_false_positive [security.ArrayBound] the array has Size() elements
       itsActivity[i] = true;
   }
   catch (...)

@@ -282,7 +282,11 @@ void NFmiString::Set(const unsigned char *aText,
       fLength = len;
       fReservedLength = fLength + 1;
     }
+    // codechecker_false_positive [core.NonNullParamChecker] only reachable with a string length
+    // above INT_MAX
     strncpy(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aText), fLength);
+    // codechecker_false_positive [security.ArrayBound] only reachable with a string length above
+    // INT_MAX
     fChar[fReservedLength - 1] = '\0';  // Kun riviä ei ollut jätti joskus roskaa
   }
   catch (...)

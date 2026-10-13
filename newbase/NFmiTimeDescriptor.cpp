@@ -305,6 +305,8 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor &theTimeDescript
 
     itsActivity = new bool[theSize];
     for (int i = 0; i < static_cast<int>(theSize); i++)
+      // codechecker_false_positive [core.uninitialized.Assign] the source has an initialized
+      // activity flag for each of its times
       itsActivity[i] = theTimeDescriptor.itsActivity[i];
   }
   catch (...)
@@ -1135,6 +1137,8 @@ NFmiTimeDescriptor &NFmiTimeDescriptor::operator=(const NFmiTimeDescriptor &theT
 
     itsActivity = new bool[theTimeDescriptor.Size()];
     for (int i = 0; i < static_cast<int>(theTimeDescriptor.Size()); i++)
+      // codechecker_false_positive [core.uninitialized.Assign] the source has an initialized
+      // activity flag for each of its times
       itsActivity[i] = theTimeDescriptor.itsActivity[i];
 
     return *this;

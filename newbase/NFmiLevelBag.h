@@ -98,6 +98,8 @@ inline bool NFmiLevelBag::IsStep()
 
 inline NFmiLevel *NFmiLevelBag::LevelMinValue()
 {
+  // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+  // elements are exactly of the pointed-to type, there are no derived objects in it
   return &itsLevels[0];
 }
 // ----------------------------------------------------------------------
@@ -108,6 +110,8 @@ inline NFmiLevel *NFmiLevelBag::LevelMinValue()
 
 inline NFmiLevel *NFmiLevelBag::LevelMaxValue()
 {
+  // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+  // elements are exactly of the pointed-to type, there are no derived objects in it
   return &itsLevels[itsSize - 1];
 }
 // ----------------------------------------------------------------------
@@ -120,6 +124,8 @@ inline NFmiLevel *NFmiLevelBag::Level() const
 {
   //  return &(itsLevels[itsIndex]);
   if (itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
+    // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+    // elements are exactly of the pointed-to type, there are no derived objects in it
     return &(itsLevels[itsIndex]);
   else
     return nullptr;
@@ -135,6 +141,8 @@ inline NFmiLevel *NFmiLevelBag::Level() const
 inline NFmiLevel *NFmiLevelBag::Level(unsigned long theIndex) const
 {
   if (theIndex < GetSize())
+    // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+    // elements are exactly of the pointed-to type, there are no derived objects in it
     return &(itsLevels[theIndex]);
   else
     return nullptr;

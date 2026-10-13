@@ -6066,6 +6066,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
       vPtr = vValues.get();
 
       for (usedGrid.Reset(); usedGrid.Next(); uPtr++, vPtr++)
+        // codechecker_false_positive [core.CallAndMessage] both buffers are filled by an identical
+        // loop over the same grid
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
@@ -6189,6 +6191,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       vPtr = vValues.get();
 
       for (usedGrid.Reset(); usedGrid.Next(); uPtr++, vPtr++)
+        // codechecker_false_positive [core.CallAndMessage] both buffers are filled by an identical
+        // loop over the same grid
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))
@@ -6335,6 +6339,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
       vPtr = vValues.get();
 
       for (usedGrid.Reset(); usedGrid.Next(); uPtr++, vPtr++)
+        // codechecker_false_positive [core.CallAndMessage] both buffers are filled by an identical
+        // loop over the same grid
         DoWindComponentFix(usedGrid, *uPtr, *vPtr, id, values);
 
       if (!Param(id))

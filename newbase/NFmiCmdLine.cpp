@@ -138,6 +138,7 @@ NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
     int k = 0;
     while (GetSpaceStringValue(theStringBuffer, theValue))
     {
+      // codechecker_false_positive [security.ArrayBound] argc is counted with the same parser
       argv[k] = new char[theValue.GetLen() + 1];
       strcpy(argv[k++], theValue);
     }

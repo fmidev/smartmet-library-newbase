@@ -99,6 +99,8 @@ NFmiLocationBag::NFmiLocationBag(const NFmiStation *theLocationArray,
     for (unsigned long i = 0; i < numberOfLocations; i++)
     {
       AddLocation(*theLocationArray);
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       theLocationArray++;
     }
   }
@@ -128,6 +130,8 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation *theLocationArray,
     for (unsigned long i = 0; i < numberOfLocations; i++)
     {
       AddLocation(*theLocationArray);
+      // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
+      // elements are exactly of the pointed-to type, there are no derived objects in it
       theLocationArray++;
     }
   }
