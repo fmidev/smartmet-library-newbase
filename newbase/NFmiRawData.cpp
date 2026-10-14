@@ -211,10 +211,9 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
                                Fmi::to_string(itsOffset + poolsize - filesize) +
                                " bytes too short: '" + filename + "'");
 
-    else if (filesize - itsOffset - poolsize > 2)
+    if (filesize - itsOffset - poolsize > 2)
       throw Fmi::Exception(BCP,
-                           "Querydata file " +
-                               Fmi::to_string(filesize - itsOffset - poolsize) +
+                           "Querydata file " + Fmi::to_string(filesize - itsOffset - poolsize) +
                                " bytes too long: '" + filename + "'");
 
     // memory map starting from this file position
@@ -299,7 +298,10 @@ NFmiRawData::Pimple::Pimple(istream& file, size_t size, bool endianswap)
 
     if (itsEndianSwapFlag)
     {
-      char tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
+      char tmp1 = 0;
+      char tmp2 = 0;
+      char tmp3 = 0;
+      char tmp4 = 0;
       auto *ptr = reinterpret_cast<char *>(itsData);
       for (size_t i = 3; i < itsSize * sizeof(float); i += 4)
       {
@@ -657,13 +659,13 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
       itsData[index] = value;
       return true;
     }
-    else if (itsOffset > 0)
+    if (itsOffset > 0)
     {
       if (itsMappedFile->flags() == boost::iostreams::mapped_file::readonly)
         throw Fmi::Exception(BCP, "Can't modify read-only memory-mapped data");
 
       // We have mmapped output data
-      auto *ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
+      auto* ptr = reinterpret_cast<float*>(itsMappedFile->data() + itsOffset);
       ptr[index] = value;
       return true;
     }

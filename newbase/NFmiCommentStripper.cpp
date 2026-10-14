@@ -116,7 +116,8 @@ bool NFmiCommentStripper::ReadFile(const string& theFileName)
       itsString = "";  // nollaa lopullinen stringi
 
       string filt_elem1("//");
-      string rowbuffer, bigstring;
+      string rowbuffer;
+      string bigstring;
 
       // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
 
@@ -187,7 +188,8 @@ bool NFmiCommentStripper::ReadFileCheckingOptions(const string& theFileName,
       itsString = "";  // nollaa lopullinen stringi
 
       string filt_elem1("//");
-      string rowbuffer, bigstring;
+      string rowbuffer;
+      string bigstring;
 
       // luetaan tiedostoa rivi kerrallaan ja testataan löytyykö yhden rivin kommentteja
 
@@ -262,7 +264,8 @@ bool NFmiCommentStripper::Strip()
   try
   {
     StripBomMarkersFromStart();
-    string filt_elem2("/*"), filt_elem3("*/");
+    string filt_elem2("/*");
+    string filt_elem3("*/");
     if (fStripSlashAst)
     {
       if (fStripNested)
@@ -574,7 +577,9 @@ bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositio
   {
     auto startFiltsInd = theBeginPositions.begin();
     auto endFiltsInd = theEndPositions.begin();
-    int posStart = 0, posEnd = 0, startOfErase = 0;
+    int posStart = 0;
+    int posEnd = 0;
+    int startOfErase = 0;
     int eraseSum = 0;
     int level = 0;
     while (startFiltsInd != theBeginPositions.end() || endFiltsInd != theEndPositions.end())
@@ -598,7 +603,7 @@ bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositio
                        ": Missing pair to */ after: " + itsString.substr(max(posEnd - 22, 0), 21);
           return false;
         }
-        else if (level == 0)
+        if (level == 0)
         {
           int len = posEnd + 2 - startOfErase;
           itsString.erase(startOfErase - eraseSum, len);

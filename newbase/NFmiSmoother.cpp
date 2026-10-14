@@ -141,7 +141,7 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
     // Should not exceed the number of bits in an integer
 
     const int nsectors = 4;
-    const float pi = 3.14159265358979323f;
+    const float pi = 3.14159265358979323F;
     const auto factor = static_cast<float>(nsectors / (2.0 * pi));
 
     // Bitmask indicating full set of sectors:

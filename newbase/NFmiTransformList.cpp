@@ -309,13 +309,13 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
 
     if (itsFirstPair && theList.itsFirstPair && itsLastPair && theList.itsLastPair)
     {
-      do
+      for (bool more = true; more; more = ++ind <= itsCurrentMaxIndex)
       {
         if (!Equal(itsFirstPair[ind], theList.itsFirstPair[ind]))
           return false;
         if (!Equal(itsLastPair[ind], theList.itsLastPair[ind]))
           return false;
-      } while (++ind <= itsCurrentMaxIndex);
+      }
     }
     else
       return false;
@@ -341,7 +341,8 @@ bool NFmiTransformList::Equal(const NFmiPoint& p1, const NFmiPoint& p2)
 {
   try
   {
-    double diffX = NAN, diffY = NAN;
+    double diffX = NAN;
+    double diffY = NAN;
 
     diffX = fabs(p1.X() - p2.X());
     diffY = fabs(p1.Y() - p2.Y());
@@ -417,22 +418,20 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
       // Prevent crash in AddDataMapping since itsFirstPair is nullptr
       throw Fmi::Exception(BCP, "Unable to allocate more memory for transform list");
     }
-    else
-    {
-        delete[] itsFirstPair;
 
-      itsFirstPair = new NFmiPoint[itsMaxPairNumber];
+    delete[] itsFirstPair;
 
-        delete[] itsLastPair;
+    itsFirstPair = new NFmiPoint[itsMaxPairNumber];
 
-      itsLastPair = new NFmiPoint[itsMaxPairNumber];
+    delete[] itsLastPair;
 
-        delete[] itsOutputInputRatio;
+    itsLastPair = new NFmiPoint[itsMaxPairNumber];
 
-      itsOutputInputRatio = new double[itsMaxPairNumber];
+    delete[] itsOutputInputRatio;
 
-      return true;
-    }
+    itsOutputInputRatio = new double[itsMaxPairNumber];
+
+    return true;
   }
   catch (...)
   {

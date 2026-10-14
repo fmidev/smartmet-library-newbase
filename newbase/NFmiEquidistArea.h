@@ -27,8 +27,8 @@ class NFmiEquidistArea : public NFmiAzimuthalArea
   NFmiEquidistArea(const NFmiPoint& theBottomLeftLatLon,
                    const NFmiPoint& theTopRightLatLon,
                    const double theOrientation = 0.,
-                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                    const double theCentralLatitude = 90.,  // 90 deg. = North Pole
                    bool usePacificView = false);
 
@@ -36,14 +36,14 @@ class NFmiEquidistArea : public NFmiAzimuthalArea
                    const double theWidthInMeters,
                    const double theHeightInMeters,
                    const double theOrientation = 0.,
-                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                    const double theCentralLatitude = 90.);  // 90 deg. = North Pole
 
   NFmiEquidistArea(const double theRadialRange,
                    const double theOrientation = 0.,
-                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                   const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                   const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                    const double theCentralLatitude = 90.);  // 90 deg. = North Pole
 
   void Init(bool fKeepWorldRect = false) override;

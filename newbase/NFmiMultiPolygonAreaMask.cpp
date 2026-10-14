@@ -204,7 +204,7 @@ std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
     NFmiSvgPath* tmp = nullptr;
     double value = NAN;
     Clear();
-    do
+    for (bool more = true; more; more = !file.fail())
     {
       file >> value;
       if (file.fail())
@@ -218,7 +218,7 @@ std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
       }
       itsAreaPolygons.push_back(tmp);
       itsAreaPolygonValues.push_back(value);
-    } while (!file.fail());
+    }
     return file;
   }
   catch (...)

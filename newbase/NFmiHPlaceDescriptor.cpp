@@ -479,7 +479,7 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
       const NFmiLocation *location = LocationWithIndex(theIndex);
       return NFmiPoint(location->GetLongitude(), location->GetLatitude());
     }
-    else if (itsGrid)
+    if (itsGrid)
     {
       return itsGrid->LatLon(theIndex);
     }
@@ -553,7 +553,7 @@ bool NFmiHPlaceDescriptor::Next()
   {
     if (IsLocation())
       return (itsLocationBag->Next());
-    else if (IsGrid())
+    if (IsGrid())
       return (itsGrid->Next());
     return false;
   }
@@ -575,7 +575,7 @@ bool NFmiHPlaceDescriptor::Previous()
   {
     if (IsLocation())
       return (itsLocationBag->Previous());
-    else if (IsGrid())
+    if (IsGrid())
       return (itsGrid->Previous());
     return false;
   }
@@ -598,7 +598,7 @@ unsigned long NFmiHPlaceDescriptor::Size() const
     if (IsLocation())
       return (itsLocationBag->GetSize());
     if (IsArea())
-      return 1ul;
+      return 1UL;
     if (itsGrid)
       return itsGrid->OriginalSize();  // Marko/23.11.1998, myös time, param, level jutut
     return 0;
@@ -677,16 +677,15 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
       bool tempBoolean = false;
       itsLocationBag->Reset();
 
-      do
+      for (bool more = true; more; more = !(itsLocationBag->Location()->GetIdent() == theIdent))
       {
         tempBoolean = itsLocationBag->Next();
         if (!tempBoolean)
           break;
-      } while (!(itsLocationBag->Location()->GetIdent() == theIdent));
+      }
       return tempBoolean;
     }
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -715,23 +714,22 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
       bool tempBoolean = false;
       itsLocationBag->Reset();
 
-      do
+      for (bool more = true; more; more = !(theLocationUpperCase == theUpperName))
       {
-        do
+        for (bool moreInner = true; moreInner; moreInner = theName.GetLen() != itsLocationBag->Location()->GetName().GetLen())
         {
           tempBoolean = itsLocationBag->Next();
           if (!tempBoolean)
             return false;
-        } while (theName.GetLen() != itsLocationBag->Location()->GetName().GetLen());
+        }
 
         theLocationUpperCase = itsLocationBag->Location()->GetName();
         theLocationUpperCase.UpperCase();
-      } while (!(theLocationUpperCase == theUpperName));
+      }
 
       return tempBoolean;
     }
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -753,7 +751,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiPoint &theLonLatPoint, NFmiPoint *
     if (IsLocation())  // Muutin käyttämään locationbagin omaa koodia ("saman niminen asema" -bugin
                        // takia) /Marko
       return itsLocationBag->NearestLocation(theLonLatPoint);
-    else if (IsGrid())
+    if (IsGrid())
     {
       if (itsGrid->NearestLatLon(
               theLonLatPoint.X(), theLonLatPoint.Y(), kFloatMissing * 1000., theGridPoint))
@@ -785,18 +783,18 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
       bool tempBoolean = false;
       itsLocationBag->Reset();
 
-      do
+      for (bool more = true; more; more = !(theLocation == *itsLocationBag->Location()))
       {
         tempBoolean = itsLocationBag->Next();
         if (!tempBoolean)
           break;
-      } while (!(theLocation == *itsLocationBag->Location()));  // Marko: kun käännetään järjestys,
+      }  // Marko: kun käännetään järjestys,
                                                                 // voidaan etsiä myös locationilla
                                                                 // stationeita
 
       return tempBoolean;
     }
-    else if (IsGrid())
+    if (IsGrid())
       return itsGrid->NearestLatLon(theLocation.GetLongitude(), theLocation.GetLatitude());
     else
       return false;
@@ -819,8 +817,7 @@ bool NFmiHPlaceDescriptor::IsActive() const
   {
     if (itsActivity)
       return (itsActivity[Index()]);
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -845,8 +842,7 @@ bool NFmiHPlaceDescriptor::SetActivity(bool theActivityState)
       itsActivity[Index()] = theActivityState;
       return temp;
     }
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -1034,8 +1030,7 @@ bool NFmiHPlaceDescriptor::NearestLocation(const NFmiLocation &theLocation,
     {
       if (theArea)
         return itsLocationBag->NearestLocation(theLocation, theArea, theMaxDistance);
-      else
-        return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
+      return itsLocationBag->NearestLocation(theLocation, theMaxDistance);
     }
     if (itsGrid)
       return itsGrid->NearestLatLon(
@@ -1114,8 +1109,7 @@ bool NFmiHPlaceDescriptor::MoveInGrid(long xSteps, long ySteps)
       }
       return true;
     }
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -1197,7 +1191,8 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
   {
     unsigned long classId = 0;
     unsigned char className[30];
-    long theDummy2 = 0, theDummy3 = 0;
+    long theDummy2 = 0;
+    long theDummy3 = 0;
     long theSelectedTypeValue = 0;
 
     Destroy();
@@ -1268,7 +1263,9 @@ const NFmiArea *NFmiHPlaceDescriptor::Area() const
 {
   try
   {
-    return itsArea ? itsArea : itsGrid ? itsGrid->Area() : nullptr;
+    if (itsArea)
+      return itsArea;
+    return itsGrid ? itsGrid->Area() : nullptr;
   }
   catch (...)
   {
@@ -1355,10 +1352,8 @@ const std::vector<std::pair<int, double> > NFmiHPlaceDescriptor::NearestLocation
     {
       return itsLocationBag->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
     }
-    else
-    {
-      return itsGrid->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
-    }
+
+    return itsGrid->NearestLocations(theLocation, theMaxWantedLocations, theMaxDistance);
   }
   catch (...)
   {
@@ -1416,8 +1411,7 @@ bool NFmiHPlaceDescriptor::IsInside(const NFmiPoint &theLatLon, double theRadius
   {
     if (IsLocation())
       return itsLocationBag->IsInside(theLatLon, theRadius);
-    else
-      return itsGrid->IsInside(theLatLon);
+    return itsGrid->IsInside(theLatLon);
   }
   catch (...)
   {

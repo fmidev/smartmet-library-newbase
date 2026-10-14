@@ -122,7 +122,7 @@ class NFmiHPlaceDescriptor : public NFmiDataDescriptor
   virtual bool IsMaxNumberOfSources() const;
 
   bool IsActive() const override;
-  bool SetActivity(bool) override;
+  bool SetActivity(bool /*theActivityState*/) override;
   bool NextActive() override;
 
   virtual const NFmiHPlaceDescriptor Combine(const NFmiHPlaceDescriptor &theCombine);

@@ -32,16 +32,16 @@ class NFmiGdalArea : public NFmiArea
                const std::string& theDescription,
                const NFmiPoint& theBottomLeftLatLon,
                const NFmiPoint& theTopRightLatLon,
-               const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-               const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+               const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+               const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                bool usePacificView = false);
 
   NFmiGdalArea(const std::string& theDatum,
                const OGRSpatialReference& theCRS,
                const NFmiPoint& theBottomLeftLatLon,
                const NFmiPoint& theTopRightLatLon,
-               const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-               const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+               const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+               const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                bool usePacificView = false);
 
   NFmiGdalArea(const std::string& theDatum,
@@ -50,8 +50,8 @@ class NFmiGdalArea : public NFmiArea
                double theYmin,
                double theXmax,
                double theYmax,
-               const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-               const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+               const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+               const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                bool usePacificView = false);
 
   NFmiArea* Clone() const override;

@@ -497,7 +497,8 @@ const NFmiPoint NFmiLambertConformalConicArea::ToXY(const NFmiPoint &theLatLonPo
 {
   try
   {
-    double xLocal = NAN, yLocal = NAN;
+    double xLocal = NAN;
+    double yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());

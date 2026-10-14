@@ -29,24 +29,24 @@ class NFmiAzimuthalArea : public NFmiArea
   NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
                     const NFmiPoint& theTopRightLatLon,
                     const double theCentralLongitude = 0.,
-                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                     const double theCenterLatitude = 90.,
                     const double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
   NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
                     const double theCentralLongitude = 0.,
-                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                     const double theCenterLatitude = 90.,
                     const double theTrueLatitude = 60.,
                     bool usePacificView = false);
 
   NFmiAzimuthalArea(const double theRadialRange,
                     const double theCentralLongitude = 0.,
-                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                     const double theCenterLatitude = 90.,
                     const double theTrueLatitude = 60.,
                     bool usePacificView = false);

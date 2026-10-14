@@ -129,8 +129,7 @@ bool NFmiThreadCallBacks::Stop() const
   {
     if (itsStopper)
       return itsStopper->Stop();
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -196,8 +195,7 @@ bool NFmiThreadCallBacks::DoPostMessage(unsigned int message, unsigned int wPara
   {
     if (itsProgress)
       return itsProgress->DoPostMessage(message, wParam, lParam);
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -224,8 +222,7 @@ bool NFmiThreadCallBacks::WaitUntilInitialized()
   {
     if (itsProgress)
       return itsProgress->WaitUntilInitialized();
-    else
-      return true;
+    return true;
   }
   catch (...)
   {
@@ -436,7 +433,7 @@ float NFmiQueryDataUtil::LimitChecker::GetInsideLimitsValue(float theValue) cons
     {
       if (itsLowerLimit != kFloatMissing && theValue < itsLowerLimit)
         return itsLowerLimit;
-      else if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit)
+      if (itsUpperLimit != kFloatMissing && theValue > itsUpperLimit)
         return itsUpperLimit;
     }
     else
@@ -449,7 +446,7 @@ float NFmiQueryDataUtil::LimitChecker::GetInsideLimitsValue(float theValue) cons
         float tmp = itsUpperLimit - (itsLowerLimit - theValue);
         return tmp;
       }
-      else if (theValue > itsUpperLimit)
+      if (theValue > itsUpperLimit)
       {
         float tmp = itsLowerLimit + (theValue - itsUpperLimit);
         return tmp;
@@ -961,13 +958,11 @@ float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
       if (std::find_if(valueVec.begin(), valueVec.end(), ::IsMissingValue<double>(kFloatMissing)) !=
           valueVec.end())
         return kFloatMissing;  // jos yksikin lähtöarvoista oli puuttuva, palauta puuttuva
-      else
-      {
-        lagrange.Init(sVec, tVec, &valueVec[0], maxSize, maxSize);
-        value = static_cast<float>(
-            lagrange.Interpolate(fmod(gridPoint.X(), 1), fmod(gridPoint.Y(), 1)));
-        return theLimitChecker.GetInsideLimitsValue(value);
-      }
+
+      lagrange.Init(sVec, tVec, &valueVec[0], maxSize, maxSize);
+      value =
+          static_cast<float>(lagrange.Interpolate(fmod(gridPoint.X(), 1), fmod(gridPoint.Y(), 1)));
+      return theLimitChecker.GetInsideLimitsValue(value);
     }
 
     // hilan reunoilla tehdään lineaarinen interpolointi, en jaksa tehdä erikoistapauksia
@@ -1790,7 +1785,8 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
     int timeSize = theDestination.TimeDescriptor().Size();
 
     bool status = true;
-    NFmiMetTime time1, time2;
+    NFmiMetTime time1;
+    NFmiMetTime time2;
     NFmiDataModifierSum sumModifier;
     NFmiDataModifierMode modeModifier;
     bool useLagrange = theInterpolationMethod == kLagrange;
@@ -2185,11 +2181,11 @@ bool NFmiQueryDataUtil::OverWriteTimesFromFile(NFmiFastQueryInfo &theLongerInfo,
     float value = kFloatMissing;
 
     // Etsitään pienin yhteinen aika
-    do
+    for (bool more = true; more; more = !theLongerInfo.Time(theShorterInfo.Time()))
     {
       if (!theShorterInfo.NextTime())
         break;
-    } while (!theLongerInfo.Time(theShorterInfo.Time()));
+    }
 
     // Siirretään ajassa yksi pykälä taaksepäin, että ei jää yhtään aikaa väliin
     // Entä, jos ensimmäinen aika mätsää --> siirtääkö resettiin?
@@ -3153,7 +3149,7 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
             precipitation3h =
                 (tmp == kFloatMissing)
                     ? kFloatMissing
-                    : tmp / 3.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
+                    : tmp / 3.F;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
           }
           if (theSourceInfo.ParamIndex(precipitation6hIndex))
           {
@@ -3161,7 +3157,7 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
             precipitation6h =
                 (tmp == kFloatMissing)
                     ? kFloatMissing
-                    : tmp / 6.f;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
+                    : tmp / 6.F;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
           }
 
           if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
@@ -3229,9 +3225,9 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
                 {
                   auto xFactor = static_cast<float>(
                       1.0 - 1.0 / (1.0 + ::exp(22.0 - 2.7 * temperature - 0.2 * rh)));
-                  if (xFactor >= 0.8f)
+                  if (xFactor >= 0.8F)
                     hSade = 72;  // 72 = lumisadetta
-                  else if (xFactor >= 0.2f && xFactor < 0.8f)
+                  else if (xFactor >= 0.2F && xFactor < 0.8F)
                     hSade = 68;  // 68 = räntää
                 }
               }
@@ -4943,16 +4939,16 @@ void CropData(NFmiFastQueryInfo &theSource,
           theResult.Bottom();
           theSource.Bottom();
           theSource.MoveUp(theBottom);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
-          do
+          for (bool more = true; more; more = theResult.MoveUp() && theSource.MoveUp())
           {
             theResult.Left();
             theSource.Left();
             theSource.MoveRight(theLeft);  // liikutetaan sourcea haluttuun cropin alkupisteeseen
-            do
+            for (bool moreInner = true; moreInner; moreInner = theResult.MoveRight() && theSource.MoveRight())
             {
               theResult.FloatValue(theSource.FloatValue());
-            } while (theResult.MoveRight() && theSource.MoveRight());
-          } while (theResult.MoveUp() && theSource.MoveUp());
+            }
+          }
         }
       }
     }
@@ -5502,11 +5498,11 @@ void CombineTimeStepDatas(
   {
     NFmiFastQueryInfo combFastInfo(&theData);
     combFastInfo.LastTime();
-    do
+    for (bool more = true; more; more = combFastInfo.PreviousTime())
     {
       NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
       ::FillDataToCurrentTime(combFastInfo, theFInfoVector, theStopFunctor);
-    } while (combFastInfo.PreviousTime());
+    }
   }
   catch (...)
   {
@@ -5582,7 +5578,7 @@ void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunction,
     }
 
     message += "total size: ";
-    auto sizeInGB = metaInfo.Size() * sizeof(float) / (1024l * 1024 * 1024.);
+    auto sizeInGB = metaInfo.Size() * sizeof(float) / (1024L * 1024 * 1024.);
     message += NFmiValueString::GetStringWithMaxDecimalsSmartWay(sizeInGB, 2);
     message += " GB, params: " + std::to_string(metaInfo.SizeParams());
     message += ", times: " + std::to_string(metaInfo.SizeTimes());
@@ -6192,6 +6188,8 @@ void FillGridDataInThread(NFmiFastQueryInfo& theSourceInfo,
   }
 }
 
+// Used only by the threaded branch below, which UNIX builds disable
+#if !defined(UNIX) && !defined(BOOST_DISABLE_THREADS)
 // Kun joku rutiini jaetaan kolmeen työ-threadi osioon ajan-suhteen, tämä laskee
 // kullekin threadille alkuaika ja loppuaika indeksit.
 void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
@@ -6222,7 +6220,7 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
           gMissingIndex;
       return;
     }
-    else if (totalSize == 1)
+    if (totalSize == 1)
     {
       theStartInd1 = theEndInd1 = theStartInd;
       theStartInd2 = theEndInd2 = theStartInd3 = theEndInd3 = gMissingIndex;
@@ -6265,6 +6263,7 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+#endif
 }  // namespace
 
 //#define BOOST_DISABLE_THREADS 1
@@ -6648,8 +6647,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
             if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
                 static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
               return true;
-            else
-              return false;
+            return false;
           }
           else
             return true;
@@ -6676,8 +6674,7 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
         if (static_cast<const NFmiAzimuthalArea *>(theArea1)->Orientation() ==
             static_cast<const NFmiAzimuthalArea *>(theArea2)->Orientation())
           return true;
-        else
-          return false;
+        return false;
       }
       else if (theArea1->ClassId() == theArea2->ClassId())
         return true;
@@ -6803,6 +6800,5 @@ unsigned int NFmiQueryDataUtil::GetReasonableWorkingThreadCount(double wantedHar
   ::CheckThreadCountLimits(threadCount, maxThreadCount);
   if (separateTaskCount == 0)
     return threadCount;
-  else
-    return CalcOptimalThreadCount(threadCount, separateTaskCount);
+  return CalcOptimalThreadCount(threadCount, separateTaskCount);
 }

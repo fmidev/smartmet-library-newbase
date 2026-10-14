@@ -20,26 +20,26 @@ class NFmiYKJArea : public NFmiKKJArea
 
   NFmiYKJArea(const NFmiPoint& theBottomLeftLatLon,
               const NFmiPoint& theTopRightLatLon,
-              const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-              const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+              const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+              const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
               bool usePacificView = false);
 
   NFmiYKJArea(double theRadialRangeInMeters,
               const NFmiPoint& theCenterLatLon,
-              const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-              const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
+              const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+              const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
   NFmiYKJArea(const NFmiPoint& theBottomLeftLatLon,
               const double theWidthInMeters,
               const double theHeightInMeters,
-              const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-              const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
+              const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+              const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
   NFmiYKJArea(const NFmiPoint& theBottomLeftWorldXY,  // defaults to meters
               const NFmiPoint& theTopRightWorldXY,    // defaults to meters
               const bool& IsWorldXYInMeters,          // dummy argument
-              const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-              const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
+              const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+              const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
   void Init(bool fKeepWorldRect = false) override;
   NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,

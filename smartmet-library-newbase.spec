@@ -169,6 +169,7 @@ fi
 - Declare member functions and parameters const where nothing is modified (const correctness), no functional changes
 - FmiRound is an inline function using std::lround: no double evaluation of the argument and correct rounding just below 0.5; weather and cloudiness averages are rounded with std::lround
 - Fixed mechanical clang-tidy findings (internal linkage, unused parameters, initialization, redundant code), no functional changes
+- Fixed clang-tidy style findings (loops, nested conditionals, dead code)
 
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Added metaparameter RoadWW (BRAINSTORM-2786)

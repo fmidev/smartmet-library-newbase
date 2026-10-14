@@ -388,7 +388,7 @@ const NFmiParamDescriptor NFmiParamDescriptor::Combine(const NFmiParamDescriptor
   {
     if (itsParamBag && theCombine.itsParamBag)
       return NFmiParamDescriptor(itsParamBag->Combine(*(theCombine).itsParamBag));
-    else if (itsParamBag)
+    if (itsParamBag)
       return NFmiParamDescriptor(*itsParamBag);
     else if (theCombine.itsParamBag)
       return NFmiParamDescriptor(*theCombine.itsParamBag);
@@ -512,12 +512,10 @@ NFmiDataIdent &NFmiParamDescriptor::Param(unsigned long theIndex, bool fIgnoreSu
 
     if (param)
       return *param;
-    else
-    {
-      // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
-      // jolloin palautetaan 1. parametrin tuottaja
-      return *(itsParamBag->Param(0, fIgnoreSubParam));
-    }
+
+    // 28.12.2001/Marko Tämä on hätäviritys 'virhetilanteeseen',
+    // jolloin palautetaan 1. parametrin tuottaja
+    return *(itsParamBag->Param(0, fIgnoreSubParam));
   }
   catch (...)
   {
@@ -551,13 +549,11 @@ NFmiDataIdent &NFmiParamDescriptor::EditParam(unsigned long theIndex, bool fIgno
 
     if (param)
       return *param;
-    else
-    {
-      // 28.12.2001/Marko Tämä on hätäviritys virhetilanteeseen.
-      static NFmiParam dummyParam(kFmiBadParameter, "virheparametri, korjaa koodiasi");
-      static NFmiDataIdent dummy(dummyParam);
-      return dummy;
-    }
+
+    // 28.12.2001/Marko Tämä on hätäviritys virhetilanteeseen.
+    static NFmiParam dummyParam(kFmiBadParameter, "virheparametri, korjaa koodiasi");
+    static NFmiDataIdent dummy(dummyParam);
+    return dummy;
   }
   catch (...)
   {

@@ -111,7 +111,7 @@ class MyGrid
       {
         if (itsArea == nullptr && theGrid.itsArea == nullptr)
           return true;
-        else if (itsArea && theGrid.itsArea)
+        if (itsArea && theGrid.itsArea)
         {
           if (itsArea->ClassId() == theGrid.itsArea->ClassId())
             if (*itsArea == *(theGrid.itsArea))
@@ -341,7 +341,7 @@ class NFmiQueryDataUtil
     float itsLowerLimit;
     float itsUpperLimit;
     bool fCircularValue;       // esim tuulen suunta menee ympäri rajojen
-    float itsLimitDifference = 0.0f;  // ympyrä laskuja varten
+    float itsLimitDifference = 0.0F;  // ympyrä laskuja varten
   };                           // class LimitChecker
 
   static void CheckIfStopped(NFmiStopFunctor *theStopFunctor);

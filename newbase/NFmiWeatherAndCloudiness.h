@@ -473,8 +473,7 @@ inline unsigned long NFmiWeatherAndCloudiness::PrecipitationScale(double theValu
 {
   if (itsInfoVersion >= 7.)
     return PrecipitationScaleV7(theValue);
-  else
-    return PrecipitationScaleV6(theValue);
+  return PrecipitationScaleV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -488,8 +487,7 @@ inline double NFmiWeatherAndCloudiness::PrecipitationScale(unsigned long theValu
 {
   if (itsInfoVersion >= 7.)
     return PrecipitationScaleV7(theValue);
-  else
-    return PrecipitationScaleV6(theValue);
+  return PrecipitationScaleV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -557,8 +555,7 @@ inline unsigned long NFmiWeatherAndCloudiness::HighClouds() const
 {
   if (itsInfoVersion >= 7.)
     return HighCloudsV7();
-  else
-    return HighCloudsV6();
+  return HighCloudsV6();
 }
 
 // ----------------------------------------------------------------------
@@ -593,8 +590,7 @@ inline unsigned long NFmiWeatherAndCloudiness::TotalPrecipitation() const
 {
   if (itsInfoVersion >= 7.)
     return TotalPrecipitationV7();
-  else
-    return TotalPrecipitationV6();
+  return TotalPrecipitationV6();
 }
 
 // ----------------------------------------------------------------------

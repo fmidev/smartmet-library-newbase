@@ -85,8 +85,7 @@ float NFmiDataModifierPrecFormUnion::CalculationResult()
 {
   if (fCalculationResultOk)
     return Result();
-  else
-    return kFloatMissing;
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

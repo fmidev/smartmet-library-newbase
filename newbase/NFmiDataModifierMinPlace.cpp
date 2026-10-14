@@ -22,7 +22,7 @@ NFmiDataModifierMinPlace::~NFmiDataModifierMinPlace() = default;
 
 NFmiDataModifierMinPlace::NFmiDataModifierMinPlace()
 {
-  itsExtremeValue = 3.4E+38f;
+  itsExtremeValue = 3.4E+38F;
 }
 // ----------------------------------------------------------------------
 /*!
@@ -45,7 +45,7 @@ void NFmiDataModifierMaxPlace::Calculate(float theValue)
 
 void NFmiDataModifierMinPlace::Clear()
 {
-  itsExtremeValue = 3.4E+38f;
+  itsExtremeValue = 3.4E+38F;
 }
 // ----------------------------------------------------------------------
 /*!
@@ -55,7 +55,7 @@ void NFmiDataModifierMinPlace::Clear()
 
 float NFmiDataModifierMinPlace::CalculationResult()
 {
-  return itsExtremeValue != 3.4E+38f && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
+  return itsExtremeValue != 3.4E+38F && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
              ? itsExtremeValue
              : kFloatMissing;
 }

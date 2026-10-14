@@ -24,11 +24,11 @@ bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon,
 
 return_type Create(const std::string &theProjection);
 
-return_type CreateProj(const std::string &projString,
-                       const NFmiPoint &bottomLeftLatLon,
-                       const NFmiPoint &topRightLatLon,
-                       const NFmiPoint &topLeftXY = NFmiPoint(0.0f, 0.0f),
-                       const NFmiPoint &bottomRightXY = NFmiPoint(1.0f, 1.0f));
+return_type CreateProj(const std::string& projString,
+                       const NFmiPoint& bottomLeftLatLon,
+                       const NFmiPoint& topRightLatLon,
+                       const NFmiPoint& topLeftXY = NFmiPoint(0.0F, 0.0F),
+                       const NFmiPoint& bottomRightXY = NFmiPoint(1.0F, 1.0F));
 
 }  // namespace NFmiAreaFactory
 

@@ -39,8 +39,7 @@ float NFmiDataModifierReplace::FloatOperation(float theValue)
 {
   if (theValue == itsOriginalValue)
     return itsNewValue;
-  else
-    return theValue;
+  return theValue;
 }
 
 // ======================================================================

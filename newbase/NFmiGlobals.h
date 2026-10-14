@@ -166,8 +166,8 @@ const double kBlueMissing = 0.0;
 const double kAlphaMissing = 0.0;
 const double kMaxDouble = 1.7E+307;
 const double kMinDouble = -1.7E+307;
-const float kMaxFloat = 3.4E+37f;
-const float kMinFloat = -3.4E+37f;
+const float kMaxFloat = 3.4E+37F;
+const float kMinFloat = -3.4E+37F;
 const float kRadarPrecipitationMissing = 65535;
 // shape datoissa menee jotkin longitudet hieman yli 180 asteen, mutta niitä pitää käsitellä silti
 // atlantic-maailmassa (cntry06 data has longitudes such as 180.00000033527612686)

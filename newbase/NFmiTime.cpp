@@ -998,8 +998,7 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
 
     if (theLongitude < 0)
       return static_cast<short>((((-1 * theLongitude) + 7.5) / 15) + theWinterTimeDiff);
-    else
-      return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
+    return static_cast<short>((-(theLongitude + 7.5) / 15) - theWinterTimeDiff);
   }
   catch (...)
   {
@@ -1115,9 +1114,15 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
     bool noConversion = false;
     int ind = 1;
     int len = theTimeCode.GetLen();
-    NFmiString str6, str4, str3, str2, str1, strh;
+    NFmiString str6;
+    NFmiString str4;
+    NFmiString str3;
+    NFmiString str2;
+    NFmiString str1;
+    NFmiString strh;
     NFmiValueString theString;
-    int plusInd = 0, subPlusInd = 0;
+    int plusInd = 0;
+    int subPlusInd = 0;
 
     while (ind <= len)
     {
@@ -1133,12 +1138,10 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
           ind++;
           continue;
         }
-        else
-        {
-          noConversion = !noConversion;
-          ind++;
-          continue;
-        }
+
+        noConversion = !noConversion;
+        ind++;
+        continue;
       }
       else if (noConversion)
       {

@@ -192,7 +192,8 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiSuperSmartInfo& theInfo)
       fUseHelperBinaryMasks(theInfo.fUseHelperBinaryMasks),
       itsCurrentHelperBinaryMask(
           nullptr)  // tämä alustetaan (virheellisesti) CopyHelperBinaryMasksAndInfo:issa
-
+      // itsXYMaskBoundingBox ja itsHelperBinaryMaskList: nämä alustetaan (virheellisesti)
+      // CopyHelperBinaryMasksAndInfo:issa
 {
   try
   {
@@ -294,10 +295,9 @@ bool NFmiSuperSmartInfo::NextLocation()
     if (!fUseAreaMask)
       return NFmiFastQueryInfo::NextLocation();
 
-    bool status = false;
-    do
+    bool status = NFmiFastQueryInfo::NextLocation();
+    while (status && !IsLocationMasked(LocationIndex()))
       status = NFmiFastQueryInfo::NextLocation();
-    while (status && !IsLocationMasked(LocationIndex()));
     return status;
   }
   catch (...)
@@ -322,10 +322,9 @@ bool NFmiSuperSmartInfo::PreviousLocation()
     if (!fUseAreaMask)
       return NFmiFastQueryInfo::PreviousLocation();
 
-    bool status = false;
-    do
+    bool status = NFmiFastQueryInfo::PreviousLocation();
+    while (status && IsLocationMasked(LocationIndex()))
       status = NFmiFastQueryInfo::PreviousLocation();
-    while (status && IsLocationMasked(LocationIndex()));
     return status;
   }
   catch (...)
@@ -771,7 +770,7 @@ bool NFmiSuperSmartInfo::LocationIndex2XYPosition(unsigned long theIndex,
       *theYOffset = -1;
       return false;
     }
-    else if (IsGrid())
+    if (IsGrid())
     {
       *theXOffset = (theIndex % itsGridXNumber);
       *theYOffset = (theIndex / itsGridXNumber);
@@ -953,8 +952,7 @@ bool NFmiSuperSmartInfo::IsLocationMasked(unsigned long theLocationIndex) const
     {
       if (fUseHelperBinaryMasks && itsCurrentHelperBinaryMask)
         return itsCurrentHelperBinaryMask->IsMasked(theLocationIndex);
-      else
-        return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
+      return itsAreaMask->IsMasked(HPlaceDescriptor().LatLon(theLocationIndex));
     }
 
     return true;  // jos ei maskia käytössä, on maski aina päällä!!!
@@ -1581,8 +1579,7 @@ NFmiBitmapAreaMask* NFmiSuperSmartInfo::HelperBinaryMask(int theUsedVariationFac
     size_t size = itsHelperBinaryMaskList.size();
     if (theUsedVariationFactor < 0 || static_cast<std::size_t>(theUsedVariationFactor) >= size)
       return nullptr;
-    else
-      return itsHelperBinaryMaskList[theUsedVariationFactor];
+    return itsHelperBinaryMaskList[theUsedVariationFactor];
   }
   catch (...)
   {
@@ -1777,7 +1774,8 @@ void NFmiSuperSmartInfo::CalcXYMaskBoundingBox()
     fUseHelperBinaryMasks = false;
     NFmiDataModifierMinMax xMinMax;
     NFmiDataModifierMinMax yMinMax;
-    int xOffset = -1, yOffset = -1;
+    int xOffset = -1;
+    int yOffset = -1;
     for (ResetLocation(); NextLocation();)
     {
       // tämän pitäisi olla turha testi
@@ -1835,7 +1833,8 @@ NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFa
       int i = 0;
       string rowStr;
       std::vector<string> lines;
-      int x = 0, y = 0;
+      int x = 0;
+      int y = 0;
       for (ResetLocation(); NextLocation();)
       {
         locIndex = LocationIndex();

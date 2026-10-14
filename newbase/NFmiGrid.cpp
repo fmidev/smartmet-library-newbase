@@ -237,7 +237,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
       counter++;
     }
 
-      delete itsData;
+    delete itsData;
     itsData = new NFmiDataPool();
     itsData->Init(Size(), values);
 
@@ -291,7 +291,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
       counter++;
     }
 
-      delete itsData;
+    delete itsData;
     itsData = new NFmiDataPool();
     itsData->Init(Size(), values);
 
@@ -647,12 +647,12 @@ bool SeekStartingPoint(ifstream &in,
       in.ignore(theStartOffsetInBytes);
       return !in.fail();
     }
-    else if (!theDataStartsAfterString.empty())
+    if (!theDataStartsAfterString.empty())
     {
       // int maxIgnoredCount = std::numeric_limits<double>::max(); // ei piru käänny!!!???!!!!
       int maxIgnoredCount = 2000000000;  // tähän iso luku
       int firstChar = theDataStartsAfterString[0];
-      do
+      for (bool more = true; more; more = !in.fail())
       {
         in.ignore(maxIgnoredCount, firstChar);
         if (!in.fail())
@@ -670,7 +670,7 @@ bool SeekStartingPoint(ifstream &in,
             }
           }
         }
-      } while (!in.fail());
+      }
     }
     else
       return !(in.fail());
@@ -698,10 +698,9 @@ bool NFmiGrid::SwapData(FmiDirection theStartingCorner, bool walkXDimFirst)
   {
     if (walkXDimFirst)
       return NFmiGridBase::Swap(theStartingCorner);
-    else
-    {
-      // ei ole vielä toteutettu!!!!!!!
-    }
+
+    // ei ole vielä toteutettu!!!!!!!
+
     return false;
   }
   catch (...)
@@ -1032,7 +1031,7 @@ bool NFmiGrid::IsStrechableGlobalGrid(const NFmiGrid &theGrid)
           float totalLongitudeDiff =
               static_cast<float>(area.TopRightLatLon().X() - area.BottomLeftLatLon().X());
           float gridPointLongitudeDiff = totalLongitudeDiff / (theGrid.XNumber() - 1);
-          if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01f)
+          if (360 - area.TopRightLatLon().X() <= gridPointLongitudeDiff * 1.01F)
             return true;
         }
       }

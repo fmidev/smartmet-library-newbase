@@ -94,8 +94,7 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
   {
     if (i < 0 || j < 0 || static_cast<size_type>(i) >= itsNX || static_cast<size_type>(j) >= itsNY)
       return missingvalue;
-    else
-      return this->operator[](i)[j];
+    return this->operator[](i)[j];
   }
 
   const T& GetValue(int theLongIndex, const T& missingvalue) const
@@ -361,51 +360,44 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
         b == -kFloatMissing)  // HUOM! pitää ottaa huomioon myös negatiivinen puuttuva, koska esim.
                               // NFmiDataMatrix operator-= antaa b-arvot tänne negatiivisina
       return kFloatMissing;
-    else
-      return a + b;
+    return a + b;
   }
 
   float FloatMul(float a, float b) const
   {
     if (a == kFloatMissing || b == kFloatMissing)
       return kFloatMissing;
-    else
-      return a * b;
+    return a * b;
   }
 
   float FloatDiv(float a, float b) const
   {
     if (a == kFloatMissing || b == kFloatMissing || b == 0.0)
       return kFloatMissing;
-    else
-      return a / b;
+    return a / b;
   }
 
   float FloatMin(float a, float b) const
   {
     if (a == kFloatMissing || b == kFloatMissing)
       return kFloatMissing;
-    else
-      return (a < b ? a : b);
+    return (a < b ? a : b);
   }
 
   float FloatMax(float a, float b) const
   {
     if (a == kFloatMissing || b == kFloatMissing)
       return kFloatMissing;
-    else
-      return (a > b ? a : b);
+    return (a > b ? a : b);
   }
 
   float FloatMinMax(float a, float minLimit, float maxLimit) const
   {
     if (a == kFloatMissing || minLimit == kFloatMissing || maxLimit == kFloatMissing)
       return kFloatMissing;
-    else
-    {
-      a = (a > maxLimit ? maxLimit : a);
-      return (a < minLimit ? minLimit : a);
-    }
+
+    a = (a > maxLimit ? maxLimit : a);
+    return (a < minLimit ? minLimit : a);
   }
 };
 

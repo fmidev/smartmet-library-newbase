@@ -275,8 +275,7 @@ double NFmiLatLonAreaMask::CalcValueFromLocation(const NFmiPoint& theLatLon) con
   {
     if (itsDataIdent->GetParamIdent() == kFmiLatitude)
       return theLatLon.Y();
-    else
-      return theLatLon.X();
+    return theLatLon.X();
   }
   catch (...)
   {
@@ -1036,8 +1035,7 @@ double NFmiGridSizeAreaMask::CalcValueFromLocation(const NFmiPoint& /* theLatLon
     {
       if (fCalcXValue)
         return itsInfo->Area()->WorldXYWidth() / (itsInfo->Grid()->XNumber() - 1);
-      else
-        return itsInfo->Area()->WorldXYHeight() / (itsInfo->Grid()->YNumber() - 1);
+      return itsInfo->Area()->WorldXYHeight() / (itsInfo->Grid()->YNumber() - 1);
     }
     return kFloatMissing;
 

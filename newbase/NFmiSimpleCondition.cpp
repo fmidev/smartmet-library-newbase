@@ -57,15 +57,13 @@ double CalculateValue(double value1,
       {
         if (value2 == 0)
           return kFloatMissing;
-        else
-          return value1 / value2;
+        return value1 / value2;
       }
       case NFmiAreaMask::Mod:
       {
         if (value2 == 0)
           return kFloatMissing;
-        else
-          return std::fmod(value1, value2);
+        return std::fmod(value1, value2);
       }
       case NFmiAreaMask::Pow:
         return std::pow(value1, value2);
@@ -92,8 +90,7 @@ double GetPressureValue(const std::shared_ptr<NFmiAreaMask>& mask,
     // jos käytössä on 1 levelinen pintadata, pyydetään vain pinta-arvoa
     return mask->Value(calculationParams, useTimeInterpolation);
   }
-  else
-    return mask->PressureValue(pressure, calculationParams);
+  return mask->PressureValue(pressure, calculationParams);
 }
 
 double GetHeightValue(const std::shared_ptr<NFmiAreaMask>& mask,
@@ -106,8 +103,7 @@ double GetHeightValue(const std::shared_ptr<NFmiAreaMask>& mask,
     // jos käytössä on 1 levelinen pintadata, pyydetään vain pinta-arvoa
     return mask->Value(calculationParams, useTimeInterpolation);
   }
-  else
-    return mask->HeightValue(height, calculationParams);
+  return mask->HeightValue(height, calculationParams);
 }
 
 }  // namespace
@@ -399,7 +395,7 @@ bool NFmiSingleCondition::CheckCondition(const NFmiCalculationParams &theCalcula
     {
       return ::EvaluateContinuousEqualCase(value1, value2, part1->PreviousValue(value1));
     }
-    else if (!part3)
+    if (!part3)
     {
       return ::EvaluateCondition(value1, conditionOperand1, value2);
     }
@@ -424,7 +420,7 @@ bool NFmiSingleCondition::CheckPressureCondition(double thePressure,
     {
       return ::EvaluateContinuousEqualCase(value1, value2, part1->PreviousValue(value1));
     }
-    else if (!part3)
+    if (!part3)
     {
       return ::EvaluateCondition(value1, conditionOperand1, value2);
     }
@@ -449,7 +445,7 @@ bool NFmiSingleCondition::CheckHeightCondition(double theHeight,
     {
       return ::EvaluateContinuousEqualCase(value1, value2, part1->PreviousValue(value1));
     }
-    else if (!part3)
+    if (!part3)
     {
       return ::EvaluateCondition(value1, conditionOperand1, value2);
     }

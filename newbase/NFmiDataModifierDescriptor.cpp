@@ -63,7 +63,7 @@ void NFmiDataModifierDescriptor::SetVarianceModifiers(NFmiParamDataModifierList*
 {
   // HUOM!!! Ottaa annetun listan omistukseensa!
 
-    delete itsVarianceModifiers;
+  delete itsVarianceModifiers;
   itsVarianceModifiers = theList;
 }
 

@@ -138,8 +138,7 @@ inline const NFmiLocation *NFmiLocationBag::Location(unsigned long theIndex) con
 {
   if (theIndex < itsLocations.size())
     return itsLocations[theIndex];
-  else
-    return nullptr;
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------

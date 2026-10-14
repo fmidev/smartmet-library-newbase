@@ -569,8 +569,7 @@ const std::string NFmiSettingsImpl::Value(const std::string& theName,
     auto pos = itsData.find(theName);
     if (pos == itsData.end())
       return theAlternate;
-    else
-      return expand(pos->second, itsData, "${", "}", itsNamespaces);
+    return expand(pos->second, itsData, "${", "}", itsNamespaces);
   }
   catch (...)
   {
@@ -635,8 +634,7 @@ void NFmiSettingsImpl::Set(const std::string& theName,
     {
       if (expanded != theValue)
         throw Fmi::Exception(BCP, "Cannot modify variable " + theName + " with expanding value");
-      else
-        result.first->second = expanded;
+      result.first->second = expanded;
     }
 
     itsChangedVariables.insert(theName);
@@ -800,8 +798,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
       {
         if (words == 0)
           break;
-        else
-          throw Fmi::Exception(BCP, "Error parsing the end of the configuration file");
+        throw Fmi::Exception(BCP, "Error parsing the end of the configuration file");
       }
 
       // Extract name containing multiple words
@@ -869,7 +866,8 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
         getline(input, line);
 
         istringstream lineinput(line);
-        string val, word;
+        string val;
+        string word;
         while (lineinput >> word)
         {
           if (!val.empty())

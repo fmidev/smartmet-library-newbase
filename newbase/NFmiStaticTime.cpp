@@ -601,7 +601,10 @@ void NFmiStaticTime::ReadDateTime()  // testausfunktio!!!!
 {
   try
   {
-    short y = 0, m = 0, d = 0, h = 0;
+    short y = 0;
+    short m = 0;
+    short d = 0;
+    short h = 0;
     std::cout << " Input date 'yy mm dd hh': ";
     std::cin >> y >> m >> d >> h;
     SetDate(y, m, d);

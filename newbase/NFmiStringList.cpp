@@ -278,7 +278,7 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
     unsigned long lineLenght = theLengthLimitForStrItem;
     unsigned long ind = 0;
 
-    do
+    for (bool more = true; more; more = strLeft->GetLen() > 0)
     {
       if (strLeft->GetLen() <= lineLenght)  // only on line left
       {
@@ -298,7 +298,7 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
       NFmiString strLeft2(strLeft->GetChars(ind + 1, strLeft->GetLen() - ind));
       delete strLeft;
       strLeft = new NFmiString(strLeft2);
-    } while (strLeft->GetLen() > 0);  // because of this check have to use "new NFmiString"
+    }  // because of this check have to use "new NFmiString"
     delete strLeft;
   }
   catch (...)

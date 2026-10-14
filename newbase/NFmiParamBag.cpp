@@ -199,8 +199,7 @@ bool NFmiParamBag::operator==(const NFmiParamBag& theOtherParams) const
     {
       if (!(this->itsParamsVector[i] == theOtherParams.itsParamsVector[i]))
         return false;
-      else
-        retVal = true;
+      retVal = true;
     }
     return retVal;
   }
@@ -450,11 +449,10 @@ NFmiDataIdent* NFmiParamBag::Current(bool fIgnoreSubParam) const
         return itsUsedSubParam;
     if (GetSize() > 0 && itsIndex >= 0 && itsIndex < static_cast<long>(GetSize()))
       return const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]);
-    else
-    {
-      static NFmiDataIdent dummy;
-      return &dummy;
-    }
+
+    static NFmiDataIdent dummy;
+    return &dummy;
+
     //  return GetSize() ? const_cast<NFmiDataIdent*>(&itsParamsVector[itsIndex]) : 0;
   }
   catch (...)
@@ -1019,12 +1017,10 @@ bool NFmiParamBag::Previous(bool fIgnoreSubParam)
         fIsSubParamUsed = true;
         return Current()->ResetLastDataParams();
       }
-      else
-      {
-        fIsSubParamUsed = false;
-        itsUsedSubParam = nullptr;
-        return true;
-      }
+
+      fIsSubParamUsed = false;
+      itsUsedSubParam = nullptr;
+      return true;
     }
     return false;
   }

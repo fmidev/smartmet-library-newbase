@@ -213,8 +213,7 @@ bool NFmiBitmapAreaMask::IsMasked(const NFmiPoint& theLatLon) const
   {
     if (!fEnabled)
       return true;
-    else
-      return IsMasked(LatLon2Index(theLatLon));
+    return IsMasked(LatLon2Index(theLatLon));
   }
   catch (...)
   {
@@ -241,7 +240,7 @@ bool NFmiBitmapAreaMask::IsMasked(int theIndex) const
   {
     if (!fEnabled)
       return true;
-    else if (CheckIndex(theIndex))
+    if (CheckIndex(theIndex))
       return itsBitmask[theIndex];
 
     return false;
@@ -270,8 +269,7 @@ double NFmiBitmapAreaMask::MaskValue(const NFmiPoint& theLatLon) const
   {
     if (!fEnabled)
       return 1;
-    else
-      return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
+    return IsMasked(LatLon2Index(theLatLon)) ? 1 : 0;
   }
   catch (...)
   {

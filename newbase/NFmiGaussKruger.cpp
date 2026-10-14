@@ -165,14 +165,14 @@ NFmiPoint NFmiGaussKruger::ToLatLon(const NFmiPoint& theEastingNorthing) const
     double temp = std::sin(std::atan(std::sinh(1.0040685 * q)));
     double d = temp;
     double testv = 0.0;
-    do
+    for (bool more = true; more; more = testv >= 1.0E-11)
     {
       const double q2 = artanh(itsE * temp);
       d = std::sinh(q + itsE * q2);
       d = d / std::sqrt(1.0 + d * d);
       testv = std::fabs(d - temp);
       temp = d;
-    } while (testv >= 1.0E-11);
+    }
 
     const double lat = deg(std::asin(d));
     const double lon = itsCentralMeridian + deg(lambda);

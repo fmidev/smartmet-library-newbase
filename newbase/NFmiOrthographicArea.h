@@ -21,11 +21,11 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
 
   NFmiOrthographicArea(const NFmiOrthographicArea &thePerspectiveArea);
 
-  NFmiOrthographicArea(const NFmiPoint &theCentralLatLonPoint,
+  NFmiOrthographicArea(const NFmiPoint& theCentralLatLonPoint,
                        const double theRadialRange = kRearth,
                        const double theAzimuthAngle = 0.,
-                       const NFmiPoint &theTopLeftXY = NFmiPoint(0.f, 0.f),
-                       const NFmiPoint &theBottomRightXY = NFmiPoint(1.f, 1.f),
+                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                        bool usePacificView = false);
 
   /*
@@ -34,11 +34,11 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
           ESIM. JOILLEKIN SUORAKULMAISEN KOORDINAATISTON XY-PISTEILLE EI LÖYDY
           VASTAAVIA MAANTIETEELLISIÄ LONLAT -PISTEITÄ (PISTEET OVAT "KARTTAPALLON" ULKOPUOLELLA)
   */
-  NFmiOrthographicArea(const NFmiPoint &theBottomLeftLatLon,
-                       const NFmiPoint &theTopRightLatLon,
+  NFmiOrthographicArea(const NFmiPoint& theBottomLeftLatLon,
+                       const NFmiPoint& theTopRightLatLon,
                        const double theAzimuthAngle = 0.0,
-                       const NFmiPoint &theTopLeftXY = NFmiPoint(0.f, 0.f),
-                       const NFmiPoint &theBottomRightXY = NFmiPoint(1.f, 1.f),
+                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                        bool usePacificView = false);
 
   void Init(bool fKeepWorldRect = false) override;

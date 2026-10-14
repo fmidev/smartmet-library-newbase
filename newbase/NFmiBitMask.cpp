@@ -131,7 +131,7 @@ void NFmiBitMask::Init(long theSize)
 
     CalculateMaskProperties(theSize);  // theSize: the number of BITS to be stored in mask array
 
-      delete[] itsMaskData;
+    delete[] itsMaskData;
 
     itsMaskData = new long[itsNumberOfLongsInMask];
 
@@ -157,7 +157,7 @@ void NFmiBitMask::Init(NFmiBitMask* theBitMask)
 
     CalculateMaskProperties(theBitMask->Size());
 
-      delete[] itsMaskData;
+    delete[] itsMaskData;
 
     itsMaskData = new long[itsNumberOfLongsInMask];
 
@@ -365,7 +365,7 @@ NFmiBitMask& NFmiBitMask::operator=(const NFmiBitMask& theBitMask)
     itsNumberOfBytesInMask = theBitMask.itsNumberOfBytesInMask;
     itsNumberOfLongsInMask = theBitMask.itsNumberOfLongsInMask;
 
-      delete[] itsMaskData;
+    delete[] itsMaskData;
 
     itsMaskData = new long[itsNumberOfLongsInMask];
 

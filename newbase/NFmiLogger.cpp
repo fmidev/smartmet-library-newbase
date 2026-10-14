@@ -629,8 +629,7 @@ bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, 
     theFile.open(theFullFileName.c_str(), ios::out | ios::app);
     if (theFile)
       return true;
-    else if (DirectoryExist(
-                 thePath))  // hakemisto on, mutta tiedostoa ei voi luoda/avata, palauta false
+    if (DirectoryExist(thePath))  // hakemisto on, mutta tiedostoa ei voi luoda/avata, palauta false
       return false;
     else  // muuten yritä luoda hakemisto ja sitten tiedosto
     {
@@ -779,7 +778,7 @@ bool NFmiLogger::CleanBackupFiles()
       string foundFileName;
       bool continueLoop = true;
       time_t fileTimeStamp = 0;
-      do
+      for (bool more = true; more; more = continueLoop)
       {
         fileTimeStamp = NFmiFileSystem::FindFile(
             fileFilter, false, &foundFileName);  // false=etsi vanhin tiedosto
@@ -795,7 +794,7 @@ bool NFmiLogger::CleanBackupFiles()
         }
         else
           continueLoop = false;
-      } while (continueLoop);
+      }
     }
     return true;
   }

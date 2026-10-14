@@ -244,7 +244,8 @@ const NFmiPoint NFmiMercatorArea::ToXY(const NFmiPoint& theLatLonPoint) const
   {
     // Transforms input geodetic coordinates (longitude,latitude) into local (relative)
     // coordinates on xy-plane.
-    double xLocal = NAN, yLocal = NAN;
+    double xLocal = NAN;
+    double yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
@@ -411,9 +412,8 @@ NFmiArea* NFmiMercatorArea::NewArea(const NFmiPoint& theBottomLeftLatLon,
                                   BottomRight(),
                                   fixedPointData.fIsPacific);
     }
-    else
-      return new NFmiMercatorArea(
-          theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+    return new NFmiMercatorArea(
+        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
   }
   catch (...)
   {

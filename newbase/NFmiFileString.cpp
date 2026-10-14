@@ -87,7 +87,7 @@ bool NFmiFileString::HasExtension() const
 #endif
 
     unsigned long lastSlash = SearchLast(slash);
-    return Search(find, std::max(lastSlash, 1ul)) > 0;
+    return Search(find, std::max(lastSlash, 1UL)) > 0;
   }
   catch (...)
   {
@@ -123,8 +123,7 @@ const NFmiString NFmiFileString::Extension() const
     last = SearchLast(find);
     if (last)
       return GetChars(last + 1, GetLen() - last);
-    else
-      return "";  // jos last oli 0, ei löytynyt .-merkkiä  ja ei ole extensiota
+    return "";  // jos last oli 0, ei löytynyt .-merkkiä  ja ei ole extensiota
   }
   catch (...)
   {
@@ -165,7 +164,8 @@ const NFmiString NFmiFileString::Header() const
 {
   try
   {
-    unsigned long first = 0, last = 0;
+    unsigned long first = 0;
+    unsigned long last = 0;
     unsigned char find1[2] = {kFmiDirectorySeparator, '\0'};
     unsigned char find2[2] = ".";
 
@@ -197,7 +197,8 @@ const NFmiString NFmiFileString::Path() const
 {
   try
   {
-    unsigned long first = 0, last = 0;
+    unsigned long first = 0;
+    unsigned long last = 0;
     unsigned char find[2] = R"(\)";
     unsigned char find2[2] = "/";
 
@@ -214,7 +215,7 @@ const NFmiString NFmiFileString::Path() const
     {
       if (fChar[0] == '.')  // Lasse 23.9.98 suht polku
         return GetChars(1, last);
-      else if (!IsAbsolutePath())  // suhteellinen polku ilman .-merkkiä alussa
+      if (!IsAbsolutePath())  // suhteellinen polku ilman .-merkkiä alussa
         return GetChars(1, last);
       else
         return GetChars(first, (last + 1) - first);
@@ -268,7 +269,10 @@ const NFmiString NFmiFileString::PathWithoutLastDirectory()
 {
   try
   {
-    unsigned long first = 0, last = 0, nextLast = 0, pos = 0;
+    unsigned long first = 0;
+    unsigned long last = 0;
+    unsigned long nextLast = 0;
+    unsigned long pos = 0;
     unsigned char find[2] = {kFmiDirectorySeparator, '\0'};
 
     first = Search(find);
@@ -286,8 +290,7 @@ const NFmiString NFmiFileString::PathWithoutLastDirectory()
     {
       if (fChar[0] == '.')
         return GetChars(1, nextLast);
-      else
-        return GetChars(first, (nextLast + 1) - first);
+      return GetChars(first, (nextLast + 1) - first);
     }
 
     return NFmiString();
@@ -308,7 +311,8 @@ const NFmiString NFmiFileString::Directory() const
 {
   try
   {
-    unsigned long first = 0, last = 0;
+    unsigned long first = 0;
+    unsigned long last = 0;
     unsigned char backSlash[2] = {kFmiDirectorySeparator, '\0'};
 
     unsigned long pos = 1;
@@ -324,8 +328,7 @@ const NFmiString NFmiFileString::Directory() const
     }
     if (last > first)
       return GetChars(first + 1, last - (first + 1));
-    else
-      return NFmiString();
+    return NFmiString();
   }
   catch (...)
   {

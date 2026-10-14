@@ -73,8 +73,8 @@ class NFmiDataModifier : public NFmiDataModifierBase
 
   bool fIsCombinedParam;
   bool fIsLimitCheck = false;
-  float itsLowerLimit = 0.0f;
-  float itsUpperLimit = 0.0f;
+  float itsLowerLimit = 0.0F;
+  float itsUpperLimit = 0.0F;
 
 };  // class NFmiDataModifier
 

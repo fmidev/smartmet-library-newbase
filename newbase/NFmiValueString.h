@@ -34,10 +34,10 @@ class NFmiValueString : public NFmiString
   NFmiValueString(const long theValue, const char *format = "%ld");
   NFmiValueString(const double theValue, const char *format = "%lf");
 
-  NFmiValueString(const char *);
-  NFmiValueString(const unsigned char *);
-  NFmiValueString(const NFmiString &);
-  NFmiValueString(const NFmiValueString &);
+  NFmiValueString(const char* /*theValue*/);
+  NFmiValueString(const unsigned char* /*theValue*/);
+  NFmiValueString(const NFmiString& /*theValue*/);
+  NFmiValueString(const NFmiValueString& /*theValue*/);
 
   NFmiValueString& operator = (const NFmiValueString&);
 

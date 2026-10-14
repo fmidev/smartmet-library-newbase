@@ -361,15 +361,14 @@ NFmiArea *NFmiLambertEqualArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                       itsTrueLatitude.Value(),
                                       fixedPointData.fIsPacific);
     }
-    else
-      return new NFmiLambertEqualArea(theBottomLeftLatLon,
-                                      theTopRightLatLon,
-                                      itsCentralLongitude.Value(),
-                                      TopLeft(),
-                                      BottomRight(),
-                                      itsCentralLatitude.Value(),
-                                      itsTrueLatitude.Value(),
-                                      PacificView());
+    return new NFmiLambertEqualArea(theBottomLeftLatLon,
+                                    theTopRightLatLon,
+                                    itsCentralLongitude.Value(),
+                                    TopLeft(),
+                                    BottomRight(),
+                                    itsCentralLatitude.Value(),
+                                    itsTrueLatitude.Value(),
+                                    PacificView());
   }
   catch (...)
   {
@@ -588,19 +587,18 @@ const std::string NFmiLambertEqualArea::WKT() const
                         R"(UNIT["Metre",1.0]])";
       return fmt::format(fmt::runtime(fmt), kRearth, itsCentralLatitude.Value(), itsCentralLongitude.Value());
     }
-    else
-    {
-      const char *fmt = R"(PROJCS["FMI_LambertEqual",)"
-                        R"(GEOGCS["FMI_Sphere",)"
-                        R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
-                        R"(PRIMEM["Greenwich",0],)"
-                        R"(UNIT["Degree",0.0174532925199433]],)"
-                        R"(PROJECTION["Lambert_Azimuthal_Equal_Area"],)"
-                        R"(PARAMETER["latitude_of_origin",{}],)"
-                        R"(PARAMETER["central_meridian",{}],)"
-                        R"(UNIT["Metre",1.0]])";
-      return fmt::format(fmt::runtime(fmt), kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
-    }
+
+    const char* fmt = R"(PROJCS["FMI_LambertEqual",)"
+                      R"(GEOGCS["FMI_Sphere",)"
+                      R"(DATUM["FMI_2007",SPHEROID["FMI_Sphere",{:.0f},0]],)"
+                      R"(PRIMEM["Greenwich",0],)"
+                      R"(UNIT["Degree",0.0174532925199433]],)"
+                      R"(PROJECTION["Lambert_Azimuthal_Equal_Area"],)"
+                      R"(PARAMETER["latitude_of_origin",{}],)"
+                      R"(PARAMETER["central_meridian",{}],)"
+                      R"(UNIT["Metre",1.0]])";
+    return fmt::format(
+        fmt::runtime(fmt), kRearth, itsTrueLatitude.Value(), itsCentralLongitude.Value());
   }
   catch (...)
   {

@@ -22,7 +22,7 @@ NFmiDataModifierMax::~NFmiDataModifierMax() = default;
 
 NFmiDataModifierMax::NFmiDataModifierMax()
 {
-  itsExtremeValue = -3.4E+38f;
+  itsExtremeValue = -3.4E+38F;
 }
 NFmiDataModifierMax::NFmiDataModifierMax(const NFmiDataModifierMax& theOther)
 
@@ -53,7 +53,7 @@ void NFmiDataModifierMax::Calculate(float theValue)
 
 void NFmiDataModifierMax::Clear()
 {
-  itsExtremeValue = -3.4E+38f;
+  itsExtremeValue = -3.4E+38F;
 }
 // ----------------------------------------------------------------------
 /*!
@@ -63,7 +63,7 @@ void NFmiDataModifierMax::Clear()
 
 float NFmiDataModifierMax::CalculationResult()
 {
-  return itsExtremeValue != -3.4E+38f && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
+  return itsExtremeValue != -3.4E+38F && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
              ? itsExtremeValue
              : kFloatMissing;
 }

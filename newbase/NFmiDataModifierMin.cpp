@@ -29,7 +29,7 @@ NFmiDataModifierMin::~NFmiDataModifierMin() = default;
 
 NFmiDataModifierMin::NFmiDataModifierMin()
 {
-  itsExtremeValue = 3.4E+38f;
+  itsExtremeValue = 3.4E+38F;
 }
 NFmiDataModifierMin::NFmiDataModifierMin(const NFmiDataModifierMin& theOther)
 
@@ -60,7 +60,7 @@ void NFmiDataModifierMin::Calculate(float theValue)
 
 void NFmiDataModifierMin::Clear()
 {
-  itsExtremeValue = 3.4E+38f;
+  itsExtremeValue = 3.4E+38F;
 }
 // ----------------------------------------------------------------------
 /*!
@@ -70,7 +70,7 @@ void NFmiDataModifierMin::Clear()
 
 float NFmiDataModifierMin::CalculationResult()
 {
-  return itsExtremeValue != 3.4E+38f && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
+  return itsExtremeValue != 3.4E+38F && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
              ? itsExtremeValue
              : kFloatMissing;
 }

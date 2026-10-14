@@ -427,7 +427,8 @@ double NFmiLagrange::Interpolate(double s, double t)
     // Performs Lagrange 2D polynome interpolation of two independent variables s and t.
     // NOTE: input grid is assumed to be rectilinear.
 
-    int i = 0, j = 0;
+    int i = 0;
+    int j = 0;
 
     // Interpolate at (s, t)
 

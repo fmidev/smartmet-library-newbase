@@ -83,7 +83,7 @@ bool NFmiParamDataModifier::Match(const NFmiDataIdent& theParam, const NFmiLevel
     {
       if (itsLevel && theLevel && (*itsLevel == *theLevel))
         return true;
-      else if (!(itsLevel && theLevel))  // jos molemmat ovat 0-pointtereita myös true
+      if (!(itsLevel && theLevel))  // jos molemmat ovat 0-pointtereita myös true
         return true;
     }
     return false;

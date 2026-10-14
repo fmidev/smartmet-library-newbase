@@ -97,7 +97,7 @@ NFmiStreamQueryData::~NFmiStreamQueryData()
     if (!itsOwnerData && itsQueryData)
       delete itsQueryData;
 
-      delete itsQueryDataIter;
+    delete itsQueryDataIter;
   }
   catch (...)
   {

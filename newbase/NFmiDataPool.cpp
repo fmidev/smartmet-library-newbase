@@ -131,10 +131,8 @@ bool NFmiDataPool::Init(unsigned long theNumber)
 
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
   catch (...)
   {
@@ -1041,7 +1039,10 @@ void NFmiDataPool::DoEndianByteSwap()
       // Mika: Lisätty swab operaatio
       if (itsSize > 1)
       {
-        char tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
+        char tmp1 = 0;
+        char tmp2 = 0;
+        char tmp3 = 0;
+        char tmp4 = 0;
         char* ptr = nullptr;
         ptr = reinterpret_cast<char *>(itsData);
         for (unsigned long i = 3; i < itsSize * sizeof(float); i += 4)

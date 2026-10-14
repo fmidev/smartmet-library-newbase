@@ -1083,7 +1083,9 @@ const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
     const unsigned long nx = theGrid.XNumber();
     const unsigned long ny = theGrid.YNumber();
 
-    NFmiPoint nearestPoint, p, xy;
+    NFmiPoint nearestPoint;
+    NFmiPoint p;
+    NFmiPoint xy;
     for (unsigned long j = 0; j < ny; j++)
     {
       for (unsigned long i = 0; i < nx; i++)
@@ -1147,7 +1149,8 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
     const unsigned long nx = theGrid.XNumber();
     const unsigned long ny = theGrid.YNumber();
 
-    NFmiPoint nearestPoint, xy;
+    NFmiPoint nearestPoint;
+    NFmiPoint xy;
     for (unsigned long j = 0; j < ny; j++)
     {
       for (unsigned long i = 0; i < nx; i++)
@@ -1255,7 +1258,8 @@ const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
     const unsigned long nx = theGrid.XNumber();
     const unsigned long ny = theGrid.YNumber();
 
-    NFmiPoint nearestPoint, xy;
+    NFmiPoint nearestPoint;
+    NFmiPoint xy;
 
     for (unsigned long j = 0; j < ny; j++)
     {

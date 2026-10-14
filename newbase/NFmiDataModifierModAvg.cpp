@@ -46,10 +46,10 @@ void NFmiDataModifierModAvg::DoSomeTestRoutines()
 {
   // Testi 20, 50  ==>  avg = 35
   auto values = std::vector<float>{20, 50};
-  auto result = 35.f;
+  auto result = 35.F;
   ::TestModAvg(values, result);
 
   values = std::vector<float>{10, 340};
-  result = 355.f;
+  result = 355.F;
   ::TestModAvg(values, result);
 }

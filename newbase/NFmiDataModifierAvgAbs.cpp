@@ -81,8 +81,7 @@ float NFmiDataModifierAvgAbs::CalculationResult()
 {
   if (fCalculationResultOk && itsCounter > 0)
     return itsSum / itsCounter;
-  else
-    return kFloatMissing;
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

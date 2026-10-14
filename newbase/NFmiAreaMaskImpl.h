@@ -134,7 +134,11 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   {
     itsFunctionDataTimeOffsetInHours = newValue;
   }
-  bool CheckPossibleObservationDistance(const NFmiCalculationParams &) override { return true; }
+  bool CheckPossibleObservationDistance(
+      const NFmiCalculationParams& /*theCalculationParamsInOut*/) override
+  {
+    return true;
+  }
 
  protected:
   virtual double CalcValueFromLocation(const NFmiPoint &theLatLon) const;

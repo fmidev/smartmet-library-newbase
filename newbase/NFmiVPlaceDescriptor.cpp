@@ -257,12 +257,12 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
     bool tempBoolean = false;
     itsLevelBag->Reset();
 
-    do
+    for (bool more = true; more; more = !(*itsLevelBag->Level() == theLevel))
     {
       tempBoolean = itsLevelBag->Next();
       if (!tempBoolean)
         break;
-    } while (!(*itsLevelBag->Level() == theLevel));
+    }
 
     return tempBoolean;
   }

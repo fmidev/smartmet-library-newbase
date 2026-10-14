@@ -141,8 +141,7 @@ double WindVector(double theX,
 
       if (wdInterp != kFloatMissing && wsInterp != kFloatMissing)
         return round(wsInterp) * 100 + round(wdInterp / 10.);
-      else
-        return kFloatMissing;
+      return kFloatMissing;
     }
 
     // Grid cell edges
@@ -326,8 +325,8 @@ double BiLinear(double theX,
               dx * dy * theTopRight) /
              wsum;
     }
-    else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-             theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
     {
       double wsum = ((1 - dx) * dy + (1 - dx) * (1 - dy) + dx * (1 - dy));
       return ((1 - dx) * (1 - dy) * theBottomLeft + dx * (1 - dy) * theBottomRight +
@@ -607,8 +606,8 @@ double ModBiLinear(double theX,
       calculator(static_cast<float>(theTopRight), static_cast<float>(dx * dy));
       return calculator();
     }
-    else if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
-             theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
+    if (theTopLeft != kFloatMissing && theTopRight == kFloatMissing &&
+        theBottomLeft != kFloatMissing && theBottomRight != kFloatMissing)
     {
       if (1 - dx < dy)
         return kFloatMissing;

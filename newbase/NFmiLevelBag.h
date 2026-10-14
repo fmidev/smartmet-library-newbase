@@ -127,8 +127,7 @@ inline NFmiLevel *NFmiLevelBag::Level() const
     // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
     // elements are exactly of the pointed-to type, there are no derived objects in it
     return &(itsLevels[itsIndex]);
-  else
-    return nullptr;
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------
@@ -144,8 +143,7 @@ inline NFmiLevel *NFmiLevelBag::Level(unsigned long theIndex) const
     // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
     // elements are exactly of the pointed-to type, there are no derived objects in it
     return &(itsLevels[theIndex]);
-  else
-    return nullptr;
+  return nullptr;
 }
 
 // ----------------------------------------------------------------------

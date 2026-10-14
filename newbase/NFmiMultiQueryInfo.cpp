@@ -143,6 +143,7 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(
 {
   try
   {
+    // itsDatas will remain empty
     if (theInfos.empty())
       throw Fmi::Exception(BCP, "Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
 

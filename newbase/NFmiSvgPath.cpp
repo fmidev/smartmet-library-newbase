@@ -48,14 +48,13 @@ bool EatWhiteSpaces(istream& theInput)
   try
   {
     char ch = '\0';
-    do
+    for (bool more = true; more; more = isspace(ch))
     {
       ch = static_cast<char>(theInput.get());
-    } while (isspace(ch));
+    }
     if (theInput.fail())
       return false;  // jos stremin lopussa, epäonnistuu
-    else
-      theInput.unget();
+    theInput.unget();
     return true;
   }
   catch (...)
@@ -158,21 +157,21 @@ bool GetPolygonStringFromStream(istream& theInput, string& thePolygonDataStr)
   try
   {
     char ch = '\0';
-    do  // luetaan streamia kunnes loppuu tai tulee "-merkki
+    // luetaan streamia kunnes loppuu tai tulee "-merkki
+    while (theInput.get(ch) && ch != '\"')
     {
-      theInput.get(ch);
-    } while ((!theInput.fail()) && ch != '\"');
+    }
 
     // luetaan streamia kunnes loppuu tai tulee "-merkki ja
     // lisätään merkit stringiin
-    do
+    for (bool more = true; more; more = (!theInput.fail()) && ch != '\"')
     {
       theInput.get(ch);
       if ((!theInput.fail()) && ch != '\"')
         thePolygonDataStr += ch;
       else if ((!theInput.fail()) && ch == '\"')
         return true;  // saatiin "" -blokin välistä merkit kunnialla talteen, palautetaan true
-    } while ((!theInput.fail()) && ch != '\"');  // tupla tarkistus fail-bittiin (tämä on turha
+    }  // tupla tarkistus fail-bittiin (tämä on turha
                                                  // periaateessa koska loopissa on tarkistus)
     return false;
   }
@@ -226,14 +225,17 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
   {
     stringstream strStream(theSvgPathString);
     char elementTypeChar = '\0';
-    double x = 0, y = 0;
+    double x = 0;
+    double y = 0;
     NFmiSvgPath::ElementType eType = NFmiSvgPath::kElementNotValid;
 
-    double firstX = 0, firstY = 0;
-    double lastX = 0, lastY = 0;
+    double firstX = 0;
+    double firstY = 0;
+    double lastX = 0;
+    double lastY = 0;
 
     bool isRelative = false;
-    do
+    for (bool more = true; more; more = !strStream.fail())
     {
       if (!EatWhiteSpaces(strStream))
         break;
@@ -315,7 +317,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
         case NFmiSvgPath::kElementNotValid:
           return false;
       }
-    } while (!strStream.fail());
+    }
     return (!strStream.fail());
   }
   catch (...)

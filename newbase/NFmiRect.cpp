@@ -133,15 +133,13 @@ const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
     {
       if (dLeftTop <= dLeftBottom)
         return TopLeft();
-      else
-        return BottomLeft();
+      return BottomLeft();
     }
     else
     {
       if (dRightTop <= dRightBottom)
         return TopRight();
-      else
-        return BottomRight();
+      return BottomRight();
     }
   }
   catch (...)

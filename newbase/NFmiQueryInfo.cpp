@@ -1528,10 +1528,8 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
         itsNewClassIdent = classIdent;
         return file;
       }
-      else
-      {
-        itsNewClassIdent = kNFmiRadarQueryInfo;
-      }
+
+      itsNewClassIdent = kNFmiRadarQueryInfo;
     }
 
     unsigned long theReserve = 0;
@@ -1620,11 +1618,9 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint)
       NFmiLocationCache locCache = CalcLocationCache(theLatLonPoint);
       return CachedInterpolation(locCache);
     }
-    else
-    {
-      Location(theLatLonPoint);  // asemadatalle haetaan lähimmän pisteen arvo
-      return FloatValue();
-    }
+
+    Location(theLatLonPoint);  // asemadatalle haetaan lähimmän pisteen arvo
+    return FloatValue();
   }
   catch (...)
   {
@@ -2195,8 +2191,8 @@ bool NFmiQueryInfo::Param(const NFmiDataIdent &theDataIdent)
   {
     if (itsParamDescriptor->Param(theDataIdent))
       return true;
-    else if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä
-                                          // parametrin aliparametrina
+    if (FindSubParam(theDataIdent))  // katsotaan löytyykö parametri jonkin yhdistelmä
+                                     // parametrin aliparametrina
     {
       return true;
     }
@@ -2221,8 +2217,8 @@ bool NFmiQueryInfo::Param(const NFmiParam &theParam)
   {
     if (itsParamDescriptor->Param(theParam))
       return true;
-    else if (FindSubParam(theParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
-                                      // aliparametrina
+    if (FindSubParam(theParam))  // katsotaan löytyykö parametri jonkin yhdistelmä parametrin
+                                 // aliparametrina
     {
       return true;
     }
@@ -2265,8 +2261,8 @@ bool NFmiQueryInfo::Param(const NFmiParam &theParam, const NFmiParam &theSubPara
     if (!itsParamDescriptor->Param(theParam))
       return false;
 
-    else if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä
-                                         // parametrin aliparametrina
+    if (FindSubParam(theSubParam))  // katsotaan löytyykö parametri jonkin yhdistelmä
+                                    // parametrin aliparametrina
     {
       return true;
     }
@@ -2837,15 +2833,15 @@ void NFmiQueryInfo::CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *the
       if (static_cast<unsigned long>(theTimeBag->Resolution()) == TimeResolution())
       {
         theTimeBag->First();
-        do
+        for (bool more = true; more; more = theTimeBag->Next())
         {
           if (Time(theTimeBag->CurrentTime()))
             break;
-        } while (theTimeBag->Next());
-        do
+        }
+        for (bool more = true; more; more = theTimeBag->Next() && NextTime())
         {
           theModifier->Calculate(FloatValue());
-        } while (theTimeBag->Next() && NextTime());
+        }
       }
       else
       {
@@ -3348,7 +3344,8 @@ float NFmiQueryInfo::PeekTimeValue(int theTimeOffset)
   try
   {
     float returnValue = kFloatMissing;
-    NFmiMetTime copyTime = ValidTime(), copyTime2 = ValidTime();
+    NFmiMetTime copyTime = ValidTime();
+    NFmiMetTime copyTime2 = ValidTime();
 
     copyTime2.ChangeByMinutes(theTimeOffset * TimeResolution());
     if (Time(copyTime2))
@@ -3702,7 +3699,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
       {
         // aletaan etsiä lähimpiä arvoja molemmista suunnista
         int i = 0;
-        float value1 = kFloatMissing, value2 = kFloatMissing;
+        float value1 = kFloatMissing;
+        float value2 = kFloatMissing;
         for (i = backwardOffset; i + timeIndex >= 0; i--)
         {
           backwardOffset = i;
@@ -3714,8 +3712,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
               value1 = kFloatMissing;
             break;
           }
-          else
-            value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+          value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
         }
         for (i = forwardOffset; i + timeIndex < sizeTimes; i++)
         {
@@ -3728,8 +3725,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
               value2 = kFloatMissing;
             break;
           }
-          else
-            value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+          value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
         }
         if (value1 == kFloatMissing || value2 == kFloatMissing)
           returnValue = kFloatMissing;
@@ -3829,7 +3825,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
                   static_cast<float>(NFmiInterpolation::WindVector(offset1, value1, value2));
             }
             else
-              returnValue = (offset1 * value1 + (1.f - offset1) * value2);
+              returnValue = (offset1 * value1 + (1.F - offset1) * value2);
           }
         }
       }
@@ -3860,7 +3856,7 @@ float NFmiQueryInfo::FindNearestNonMissingValueFromTimeList(const NFmiMetTime &t
           BCP,
           "Error: Programming error in NFmiQueryInfo::FindNearestNonMissingValueFromTimeList, no "
           "timelist found.");
-    do
+    for (bool more = true; more; more = backWard ? theTimeIndexInOut >= 0 : theTimeIndexInOut < timeList->NumberOfItems())
     {
       value = PeekValue(Index(ParamIndex(), LocationIndex(), LevelIndex(), theTimeIndexInOut));
       if (value != kFloatMissing)
@@ -3877,7 +3873,7 @@ float NFmiQueryInfo::FindNearestNonMissingValueFromTimeList(const NFmiMetTime &t
         break;
       }
       backWard ? theTimeIndexInOut-- : theTimeIndexInOut++;
-    } while (backWard ? theTimeIndexInOut >= 0 : theTimeIndexInOut < timeList->NumberOfItems());
+    }
     return value;
   }
   catch (...)
@@ -3907,8 +3903,7 @@ float NFmiQueryInfo::CalcTimeOffsetToLastTime(const NFmiMetTime &theTime,
       float offset1 = 1 - (diff1 / totalDiff);
       return offset1;
     }
-    else
-      return 1;  // eli palautetaan offset, jolla ollaan kiinni time1:ssä
+    return 1;  // eli palautetaan offset, jolla ollaan kiinni time1:ssä
   }
   catch (...)
   {
@@ -4074,7 +4069,7 @@ NFmiTimeCache NFmiQueryInfo::CalcTimeCache(const NFmiMetTime &theTime)
         NFmiMetTime time1 = Time();
         NextTime();
         NFmiMetTime time2 = Time();
-        timeCache.itsOffset = 1.f - CalcTimeOffsetToLastTime(theTime, time1, time2);
+        timeCache.itsOffset = 1.F - CalcTimeOffsetToLastTime(theTime, time1, time2);
       }
       timeCache.CalcIsInterpolationNeeded();
     }
@@ -4141,7 +4136,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
                                                       // which may cause locks
       NFmiMetTime time2 = NFmiMetTime::gMissingTime;
 
-      int index1 = 0, index2 = 0;
+      int index1 = 0;
+      int index2 = 0;
       if ((index1 = timeList->FindNearestTimes(
                theTime, theMaxMinuteRange ? theMaxMinuteRange : kLongMissing, time1, time2)) != -1)
       {
@@ -4236,8 +4232,7 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
       // puuttuva tai ei
       if (offset1 <= 0.5)
         return theValue2;
-      else
-        return theValue1;
+      return theValue1;
     }
     else
     {
@@ -4304,7 +4299,7 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
               static_cast<float>(NFmiInterpolation::ModLinear(1 - offset1, theValue1, theValue2));
         }
         else
-          returnValue = (offset1 * theValue1 + (1.f - offset1) * theValue2);
+          returnValue = (offset1 * theValue1 + (1.F - offset1) * theValue2);
       }
     }
     return returnValue;
@@ -4471,7 +4466,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
       bool wcParam = IsSubParamUsed() && ::IsWeatherSubParam(*this);
       if (wcParam)  // HESSAA, hsade, sateenolomuoto ja sateen tyypit pitää hoitaa erikoistapauksina
         return InterpolatedValueForCombinedParam(theLocationCache.itsGridPoint);
-      else if (interp == kNearestPoint || interp == kNoneInterpolation)
+      if (interp == kNearestPoint || interp == kNoneInterpolation)
       {
         if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
         {
@@ -4871,7 +4866,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
         if (interp == kNearestPoint || interp == kNoneInterpolation)
         {
-          if (theTimeCache.itsOffset > 0.5f)
+          if (theTimeCache.itsOffset > 0.5F)
             TimeIndex(theTimeCache.itsTimeIndex2);
           value = FloatValue();
         }
@@ -5258,7 +5253,7 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
           //				return InterpolatedValueForCombinedParam(gpoint, xShift,
           // yShift);
         }
-        else if (interp == kByCombinedParam)
+        if (interp == kByCombinedParam)
         {
           if (param == kFmiWeatherAndCloudiness)
             return InterpolatedValueForWeatherAndCloudiness(
@@ -5299,8 +5294,8 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
             double dy = gpoint.Y() - floor(gpoint.Y());
             NFmiInterpolation::WindInterpolator windInterpolator;
             windInterpolator.operator()(blWS, bottomLeftValue, (1 - dx) * (1 - dy));
-            windInterpolator.operator()(brWS, bottomRightValue, dx *(1 - dy));
-            windInterpolator.operator()(trWS, topRightValue, dx *dy);
+            windInterpolator.operator()(brWS, bottomRightValue, dx * (1 - dy));
+            windInterpolator.operator()(trWS, topRightValue, dx * dy);
             windInterpolator.operator()(tlWS, topLeftValue, (1 - dx) * dy);
 
             theValue = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain
@@ -5812,11 +5807,11 @@ bool NFmiQueryInfo::FindFirstKey(const NFmiString &theKey)
       return itsRefQueryData->FindFirstKey(theKey);
 
     itsHeaderText->Reset();
-    do
+    for (bool more = true; more; more = itsHeaderText->Next())
     {
       if (IsCurrentKey(theKey))
         return true;
-    } while (itsHeaderText->Next());
+    }
     return false;
   }
   catch (...)
@@ -5982,7 +5977,7 @@ bool NFmiQueryInfo::RemoveAllKeys()
 
     if (FindFirstAnyKey())
     {
-      do
+      for (bool more = true; more; more = FindNextAnyKey())
       {
         // Tämä toinen sisempi luuppi piti laittaa, koska NFmiStringList käyttää voidptrlistaa.
         // En saa voidptrlistasta pois tavaraa, niin että osoitin siirtyisi edelliseen stringiin.
@@ -5990,10 +5985,10 @@ bool NFmiQueryInfo::RemoveAllKeys()
         // stringi olisi 1., remove:n jälkeen next heittäisi ohi seuraavan mahd. poistettavan
         // stringin.
         // TEE NFmiStringList käyttäen STL vector:ia!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        do
+        for (bool moreInner = true; moreInner; moreInner = RemoveCurrentKey())
         {
-        } while (RemoveCurrentKey());
-      } while (FindNextAnyKey());
+        }
+      }
     }
     return true;
   }
@@ -6021,7 +6016,7 @@ bool NFmiQueryInfo::RemoveAllKeys(const NFmiString &theKey)
 
     if (FindFirstKey(theKey))
     {
-      do
+      for (bool more = true; more; more = FindNextKey(theKey))
       {
         // Tämä toinen sisempi luuppi piti laittaa, koska NFmiStringList käyttää voidptrlistaa.
         // En saa voidptrlistasta pois tavaraa, niin että osoitin siirtyisi edelliseen stringiin.
@@ -6029,10 +6024,10 @@ bool NFmiQueryInfo::RemoveAllKeys(const NFmiString &theKey)
         // stringi olisi 1., remove:n jälkeen next heittäisi ohi seuraavan mahd. poistettavan
         // stringin.
         // TEE NFmiStringList käyttäen STL vector:ia!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        do
+        for (bool moreInner = true; moreInner; moreInner = RemoveCurrentKey())
         {
-        } while (RemoveCurrentKey());
-      } while (FindNextKey(theKey));
+        }
+      }
     }
     return true;
   }
@@ -6062,7 +6057,7 @@ const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
     if (FindFirstAnyKey())
     {
       NFmiString *key = nullptr;
-      do
+      for (bool more = true; more; more = FindNextAnyKey())
       {
         key = new NFmiString(ExtractCurrentKey());
         if (fRemoveDuplicates && list.Find(*key))
@@ -6070,7 +6065,7 @@ const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
         else
           list.Add(key);
 
-      } while (FindNextAnyKey());
+      }
     }
     return list;
   }
@@ -6150,11 +6145,11 @@ bool NFmiQueryInfo::FindFirstAnyKey()
   try
   {
     itsHeaderText->Reset();
-    do
+    for (bool more = true; more; more = itsHeaderText->Next())
     {
       if (IsCurrentAnyKey())
         return true;
-    } while (itsHeaderText->Next());
+    }
     return false;
   }
   catch (...)
@@ -6450,8 +6445,7 @@ void NFmiQueryInfo::SetHPlaceDescriptor(const NFmiHPlaceDescriptor &newDesc)
     if (newDesc.Size() != Size())
       throw Fmi::Exception(
           BCP, "NFmiQueryInfo::SetHPlaceDescriptor - ei voi asettaa erikokoista descriptoria.");
-    else
-      *itsHPlaceDescriptor = newDesc;
+    *itsHPlaceDescriptor = newDesc;
 
     if (itsRefQueryData)  // pitää laittaa sisuskalutkin kuntoon!!!
       itsRefQueryData->SetHPlaceDescriptor(newDesc);

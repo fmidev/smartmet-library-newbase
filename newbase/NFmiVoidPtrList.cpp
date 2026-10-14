@@ -515,13 +515,13 @@ bool NFmiVoidPtrIterator::Index(long theNewValue)
       return false;
 
     Reset();
-    do
+    for (bool more = true; more; more = Next())
     {
       if (theNewValue == itsIndex)
       {
         return true;
       }
-    } while (Next());
+    }
     return false;
   }
   catch (...)

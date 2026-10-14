@@ -864,7 +864,8 @@ NFmiTimeBag NFmiTimeDescriptor::GetActivePeriod()
   {
     NFmiTime saveTime(Time());
 
-    NFmiTime firstTime, lastTime;
+    NFmiTime firstTime;
+    NFmiTime lastTime;
 
     if (FirstActive())
     {
@@ -1054,7 +1055,8 @@ const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
     if (itsValidTimeBag)
     {
       NFmiTime saveTime = Time();
-      NFmiTime startTime, endTime;
+      NFmiTime startTime;
+      NFmiTime endTime;
 
       if (FirstActive())
       {
@@ -1234,7 +1236,7 @@ NFmiTimeDescriptor NFmiTimeDescriptor::Combine(const NFmiTimeDescriptor &theComb
             itsIsLocalTime,
             itsIsInterpolation);
       }
-      else if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
+      if (itsTimeList && theCombine.itsTimeList)  // yhdistetään aikalistat
       {
         NFmiTimeList timeList = itsTimeList->Combine(
             *(theCombine.itsTimeList), theStartTimeFunction, theEndTimeFunction);

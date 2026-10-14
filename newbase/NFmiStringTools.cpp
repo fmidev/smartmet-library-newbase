@@ -567,7 +567,7 @@ int todec(unsigned char theHex)
   {
     if (theHex >= '0' && theHex <= '9')
       return (theHex - '0');
-    else if (theHex >= 'a' && theHex <= 'f')
+    if (theHex >= 'a' && theHex <= 'f')
       return (theHex - 'a' + 10);
     else
       return (theHex - 'A' + 10);
@@ -1173,8 +1173,7 @@ const std::string Suffix(const std::string &theFile)
     string::size_type pos = theFile.rfind('.');
     if (pos == string::npos)
       return "";
-    else
-      return theFile.substr(pos + 1);
+    return theFile.substr(pos + 1);
   }
   catch (...)
   {

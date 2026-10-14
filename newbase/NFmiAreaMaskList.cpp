@@ -249,7 +249,8 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
     if (fMaskInUse)  // 1999.09.24/Marko Muutin tämän katsomaan ensin onko maski käytössä
     {                // jos on, katsotaan onko maskattu, muuten on aina maskattu
                      // näin pääsee eroon muutamasta ikävästä if-lause testeistä
-      double sum = 0, tempValue = 0;
+      double sum = 0;
+      double tempValue = 0;
       int count = 0;
       for (auto &index : itsMaskVector)
       {
@@ -260,13 +261,11 @@ double NFmiAreaMaskList::MaskValue(const NFmiPoint &theLatLon)
           {
             return 0.;
           }
-          else
+
+          if (index->IsRampMask())
           {
-            if (index->IsRampMask())
-            {
-              sum += tempValue;
-              count++;
-            }
+            sum += tempValue;
+            count++;
           }
         }
       }

@@ -219,16 +219,14 @@ inline double NFmiTotalWind::WindSpeedVx(unsigned long theValue)
 {
   if (itsInfoVersion >= 7.)
     return WindSpeedV7(theValue);
-  else
-    return WindSpeedV6(theValue);
+  return WindSpeedV6(theValue);
 }
 
 inline double NFmiTotalWind::WindGustVx(unsigned long theValue)
 {
   if (itsInfoVersion >= 7.)
     return WindGustV7(theValue);
-  else
-    return WindGustV6(theValue);
+  return WindGustV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -242,16 +240,14 @@ inline unsigned long NFmiTotalWind::WindSpeedVx(double theValue)
 {
   if (itsInfoVersion >= 7.)
     return WindSpeedV7(theValue);
-  else
-    return WindSpeedV6(theValue);
+  return WindSpeedV6(theValue);
 }
 
 inline unsigned long NFmiTotalWind::WindGustVx(double theValue)
 {
   if (itsInfoVersion >= 7.)
     return WindGustV7(theValue);
-  else
-    return WindGustV6(theValue);
+  return WindGustV6(theValue);
 }
 
 // ----------------------------------------------------------------------
@@ -296,8 +292,7 @@ inline unsigned long NFmiTotalWind::WindSpeed() const
 {
   if (itsInfoVersion >= 7.)
     return WindSpeedV7();
-  else
-    return WindSpeedV6();
+  return WindSpeedV6();
 }
 
 // ----------------------------------------------------------------------
@@ -332,8 +327,7 @@ inline unsigned long NFmiTotalWind::WindGust() const
 {
   if (itsInfoVersion >= 7.)
     return WindGustV7();
-  else
-    return WindGustV6();
+  return WindGustV6();
 }
 
 // ----------------------------------------------------------------------

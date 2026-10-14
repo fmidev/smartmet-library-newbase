@@ -121,7 +121,7 @@ void NFmiDataModifierProb::AddCounter(bool theCondition)
 float NFmiDataModifierProb::CalculationResult()
 {
   return itsTotalCounter
-             ? 100.0f * (static_cast<float>(itsCounter) / static_cast<float>(itsTotalCounter))
+             ? 100.0F * (static_cast<float>(itsCounter) / static_cast<float>(itsTotalCounter))
              : kFloatMissing;
 }
 

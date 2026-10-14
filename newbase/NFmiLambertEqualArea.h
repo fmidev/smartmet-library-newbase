@@ -23,8 +23,8 @@ class NFmiLambertEqualArea : public NFmiAzimuthalArea
   NFmiLambertEqualArea(const NFmiPoint& theBottomLeftLatLon,
                        const NFmiPoint& theTopRightLatLon,
                        const double theCentralLongitude = 10.,
-                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                        const double theCentralLatitude = 52.,
                        const double theTrueLatitude = 90.,
                        bool usePacificView = false);
@@ -38,15 +38,15 @@ class NFmiLambertEqualArea : public NFmiAzimuthalArea
                        const double theWidthInMeters,
                        const double theHeightInMeters,
                        const double theCentralLongitude = 10.,
-                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                        const double theCentralLatitude = 52.,
                        const double theTrueLatitude = 90.);
 
   NFmiLambertEqualArea(const double theRadialRange,
                        const double theCentralLongitude = 10.,
-                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f),
+                       const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                       const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
                        const double theCentralLatitude = 52.,
                        const double theTrueLatitude = 90.);
 

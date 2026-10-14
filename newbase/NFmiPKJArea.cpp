@@ -348,9 +348,8 @@ NFmiArea *NFmiPKJArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                              BottomRight(),
                              fixedPointData.fIsPacific);
     }
-    else
-      return new NFmiPKJArea(
-          theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
+    return new NFmiPKJArea(
+        theBottomLeftLatLon, theTopRightLatLon, TopLeft(), BottomRight(), PacificView());
   }
   catch (...)
   {

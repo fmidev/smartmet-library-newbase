@@ -548,7 +548,12 @@ std::istream &NFmiTimeList::Read(std::istream &file)
   try
   {
     int items = 0;
-    short year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
+    short year = 0;
+    short month = 0;
+    short day = 0;
+    short hour = 0;
+    short min = 0;
+    short sec = 0;
 
     file >> items;
     First();

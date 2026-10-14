@@ -331,8 +331,7 @@ double NFmiStereographicArea::K(const double delta) const
     D = DistanceFromPerspectivePointToCenterOfEarth();
     if ((D + (kRearth * delta)) != 0)
       return kRearth * (D + kRearth) / (D + (kRearth * delta));
-    else
-      return kFloatMissing;
+    return kFloatMissing;
   }
   catch (...)
   {
@@ -412,15 +411,14 @@ NFmiArea *NFmiStereographicArea::NewArea(const NFmiPoint &theBottomLeftLatLon,
                                        itsTrueLatitude.Value(),
                                        fixedPointData.fIsPacific);
     }
-    else
-      return new NFmiStereographicArea(theBottomLeftLatLon,
-                                       theTopRightLatLon,
-                                       itsCentralLongitude.Value(),
-                                       TopLeft(),
-                                       BottomRight(),
-                                       itsCentralLatitude.Value(),
-                                       itsTrueLatitude.Value(),
-                                       PacificView());
+    return new NFmiStereographicArea(theBottomLeftLatLon,
+                                     theTopRightLatLon,
+                                     itsCentralLongitude.Value(),
+                                     TopLeft(),
+                                     BottomRight(),
+                                     itsCentralLatitude.Value(),
+                                     itsTrueLatitude.Value(),
+                                     PacificView());
   }
   catch (...)
   {

@@ -12,13 +12,11 @@ float GetModCaseMinMaxValue(const std::multiset<float>& rawValues, bool getMinBi
     // molemmat ovat virhetilanteita.
     return kFloatMissing;
   }
+
+  if (getMinBigValue)
+    return *minBigIter;
   else
-  {
-    if (getMinBigValue)
-      return *minBigIter;
-    else
-      return *(--minBigIter);
-  }
+    return *(--minBigIter);
 }
 
 float GetMaxSmallValue(const std::multiset<float>& rawValues)
@@ -94,8 +92,8 @@ float NFmiDataModifierModMinMax::CalculationResult()
   if (!fCalculationsAreMade) DoCalculations();
   if (fReturnMinValue)
     return itsMinValue;
-  else
-    return itsMaxValue;
+
+  return itsMaxValue;
 }
 
 float NFmiDataModifierModMinMax::Min()
@@ -165,11 +163,11 @@ void NFmiDataModifierModMinMax::DoSomeTestRoutines()
 {
   // Testi 20, 50, 90, 120  ==>  min 20 ja max 120
   auto values = std::vector<float>{20, 50, 90, 120};
-  auto results = std::make_pair(20.f, 120.f);
+  auto results = std::make_pair(20.F, 120.F);
   ::TestModMinMax(values, results);
 
   values = std::vector<float>{20, 50, 90, 340};
-  results = std::make_pair(340.f, 90.f);
+  results = std::make_pair(340.F, 90.F);
   ::TestModMinMax(values, results);
 
   values = std::vector<float>{};
@@ -177,10 +175,10 @@ void NFmiDataModifierModMinMax::DoSomeTestRoutines()
   ::TestModMinMax(values, results);
 
   values = std::vector<float>{210};
-  results = std::make_pair(210.f, 210.f);
+  results = std::make_pair(210.F, 210.F);
   ::TestModMinMax(values, results);
 
   values = std::vector<float>{20, 150, 240, 340};
-  results = std::make_pair(20.f, 340.f);
+  results = std::make_pair(20.F, 340.F);
   ::TestModMinMax(values, results);
 }

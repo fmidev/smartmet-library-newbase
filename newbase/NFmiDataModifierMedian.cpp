@@ -56,7 +56,7 @@ float NFmiDataModifierMedian::Median()
   //  return itsMedianArray[itsMedianArray.size()/2];
   // Clamp the index, the 100% fractile would otherwise read past the end of the array
   const auto n = itsMedianArray.size();
-  const auto pos = static_cast<long>(n * itsLimitProsent / 100.f);
+  const auto pos = static_cast<long>(n * itsLimitProsent / 100.F);
   const auto index = std::clamp(pos, 0L, static_cast<long>(n - 1));
   return itsMedianArray[index];
 }
@@ -116,10 +116,10 @@ float NFmiDataModifierMedian::CalculationResult()
 
 void NFmiDataModifierMedian::LimitProsent(float newValue)
 {
-  if (newValue < 0.f)
-    itsLimitProsent = 0.f;
-  else if (newValue > 100.f)
-    itsLimitProsent = 100.f;
+  if (newValue < 0.F)
+    itsLimitProsent = 0.F;
+  else if (newValue > 100.F)
+    itsLimitProsent = 100.F;
   else
     itsLimitProsent = newValue;
 }

@@ -96,13 +96,15 @@ double NFmiDataModifierVariance::GaussianRandom()
 
   WriteLock lock(itsMutex);
 
-  static double V1, V2, S;
+  static double V1;
+  static double V2;
+  static double S;
   static int phase = 0;
   double X = NAN;
 
   if (phase == 0)
   {
-    do
+    for (bool more = true; more; more = S >= 1 || S == 0)
     {
       // NOLINTNEXTLINE(cert-msc50-cpp): rand() is not used for security here
       double U1 = static_cast<double>(rand()) / RAND_MAX;
@@ -111,7 +113,7 @@ double NFmiDataModifierVariance::GaussianRandom()
       V1 = 2 * U1 - 1;
       V2 = 2 * U2 - 1;
       S = V1 * V1 + V2 * V2;
-    } while (S >= 1 || S == 0);
+    }
     X = V1 * sqrt(-2 * log(S) / S);
   }
   else

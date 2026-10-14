@@ -157,8 +157,7 @@ double DistanceFromLineSegment(
 
     if (u < 0)
       return Distance(theX, theY, theX1, theY1);
-    else
-      return Distance(theX, theY, theX2, theY2);
+    return Distance(theX, theY, theX2, theY2);
   }
   catch (...)
   {

@@ -12,7 +12,7 @@ using namespace std;
 
 namespace
 {
-const float Kelvin0 = 273.15f;
+const float Kelvin0 = 273.15F;
 const float simmer_limit = 14.5;
 }  // namespace
 
@@ -29,7 +29,7 @@ float FmiCelsius2Fahrenheit(float value)
 {
   try
   {
-    return value == kFloatMissing ? kFloatMissing : value * 1.8f + 32.f;
+    return value == kFloatMissing ? kFloatMissing : value * 1.8F + 32.F;
   }
   catch (...)
   {
@@ -81,14 +81,14 @@ float FmiDewPointUCAR(float t, float rh)
     if (t == kFloatMissing || rh == kFloatMissing)
       return kFloatMissing;
 
-    static const float C15 = 26.66082f;
-    static const float C1 = 0.0091379024f;
-    static const float C2 = 6106.396f;
-    static const float C3 = 223.1986f;
-    static const float C4 = 0.0182758048f;
+    static const float C15 = 26.66082F;
+    static const float C1 = 0.0091379024F;
+    static const float C2 = 6106.396F;
+    static const float C3 = 223.1986F;
+    static const float C4 = 0.0182758048F;
 
     const float T = t + Kelvin0;   // from Celsius to Kelvins
-    const float RH = rh / 100.0f;  // ratio 0-1
+    const float RH = rh / 100.0F;  // ratio 0-1
 
     const float es = exp(C15 - C1 * T - C2 / T);  // saturation vapor pressure
     const float e = RH * es;                      // vapor pressure
@@ -123,10 +123,10 @@ float FmiDewPointFMI(float t, float rh)
     if (t == kFloatMissing || rh == kFloatMissing)
       return kFloatMissing;
 
-    static const float b = 17.27f;
-    static const float c = 237.3f;
+    static const float b = 17.27F;
+    static const float c = 237.3F;
 
-    const float x = (log(rh / 100.0f) + b * (t / (t + c))) / b;
+    const float x = (log(rh / 100.0F) + b * (t / (t + c))) / b;
     const float tdew = c * x / (1 - x);
 
     return tdew;
@@ -158,13 +158,13 @@ float FmiSnowWaterRatio(float t, float ff)
     if (t == kFloatMissing || ff == kFloatMissing)
       return 10.0;
 
-    const float knot = 0.51444444444444444444f;
+    const float knot = 0.51444444444444444444F;
 
     if (ff < 10 * knot)
     {
       if (t > 0)
         return 10;
-      else if (t > -5)
+      if (t > -5)
         return 11;
       else if (t > -10)
         return 14;
@@ -177,7 +177,7 @@ float FmiSnowWaterRatio(float t, float ff)
     {
       if (t > -5)
         return 10;
-      else if (t > -10)
+      if (t > -10)
         return 12;
       else if (t > -20)
         return 15;
@@ -188,7 +188,7 @@ float FmiSnowWaterRatio(float t, float ff)
     {
       if (t > -10)
         return 10;
-      else if (t > -15)
+      if (t > -15)
         return 11;
       else if (t > -20)
         return 14;
@@ -276,8 +276,7 @@ double CalcFlightLevelPressure(double PALT)
   {
     if (PALT <= 36089)
       return 1013.25 * ::pow((1 - (0.000001 * 6.8756 * PALT)), 5.2559);
-    else
-      return 226.32 * ::exp(-((PALT - 36089) / 20805));
+    return 226.32 * ::exp(-((PALT - 36089) / 20805));
   }
   catch (...)
   {
@@ -406,10 +405,10 @@ float FmiDegreeDays(float value, int month)
     // huom eri kynnysarvo alku/loppuvuodelle (sÃ¤teilyn vaikutus)
     if (value == kFloatMissing)
       return kFloatMissing;
-    else if ((value > 12.) || (value > 10. && month < 7))
+    if ((value > 12.) || (value > 10. && month < 7))
       return 0;
     else
-      return 17.f - value;
+      return 17.F - value;
   }
   catch (...)
   {
@@ -482,17 +481,17 @@ float FmiWindChill(float wind, float temp)
 {
   try
   {
-    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f)
+    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.F)
       return kFloatMissing;
 
-    float kmh = wind * 3.6f;
+    float kmh = wind * 3.6F;
 
-    if (kmh < 5.0f)
-      return temp + (-1.59f + 0.1345f * temp) / 5.0f * kmh;
+    if (kmh < 5.0F)
+      return temp + (-1.59F + 0.1345F * temp) / 5.0F * kmh;
 
-    float wpow = std::pow(kmh, 0.16f);
+    float wpow = std::pow(kmh, 0.16F);
 
-    return 13.12f + 0.6215f * temp - 11.37f * wpow + 0.3965f * temp * wpow;
+    return 13.12F + 0.6215F * temp - 11.37F * wpow + 0.3965F * temp * wpow;
   }
   catch (...)
   {
@@ -518,7 +517,7 @@ float FmiOldWindChill(float wind, float temp)
     // Njurmelta kaava; Vakiot naimisissa edellisen minTuulen 1.7 kanssa
     return FmiOldConvectiveHumanHeatFlux(wind, temp) == kFloatMissing
                ? kFloatMissing
-               : 28.505f - .04f * FmiOldConvectiveHumanHeatFlux(wind, temp);
+               : 28.505F - .04f * FmiOldConvectiveHumanHeatFlux(wind, temp);
   }
   catch (...)
   {
@@ -590,16 +589,16 @@ float FmiOldConvectiveHumanHeatFlux(float wind, float temp)
 {
   try
   {
-    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.f)
+    if (wind == kFloatMissing || temp == kFloatMissing || wind < 0.F)
       return kFloatMissing;
 
     // Njurmelta kaava
     using namespace std;
 
     // 1.7 m/s = walking speed
-    float w = FmiMax(1.7f, wind);
+    float w = FmiMax(1.7F, wind);
 
-    return (10.47f + 12.68f * sqrt(w) - 1.163f * w) * (33.f - temp) - 112.5f;  // - sÃ¤teily;
+    return (10.47F + 12.68F * sqrt(w) - 1.163F * w) * (33.F - temp) - 112.5F;  // - sÃ¤teily;
   }
   catch (...)
   {
@@ -624,11 +623,11 @@ float FmiApparentTemperature(float wind, float rh, float temp)
 
     // Water vapour pressure in hPa
 
-    float e = rh / 100 * 6.105f * exp(17.27f * temp / (237.7f + temp));
+    float e = rh / 100 * 6.105F * exp(17.27F * temp / (237.7F + temp));
 
     // Apparent temperature
 
-    float at = temp + 0.33f * e - 0.70f * wind - 4.00f;
+    float at = temp + 0.33F * e - 0.70F * wind - 4.00F;
 
     return at;
   }

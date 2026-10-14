@@ -70,18 +70,16 @@ float InterpolatedValue(const NFmiDataMatrix<float>& m,
       double yFraction = yInd - y1;
       if (interp == kNearestPoint)
         return m.At(FmiRound(xInd), FmiRound(yInd));
+
+      if (theParamId == kFmiWindDirection || theParamId == kFmiWaveDirection)
+        value = static_cast<float>(NFmiInterpolation::ModBiLinear(
+            xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1), 360));
+      else if (theParamId == kFmiWindVectorMS)
+        value = static_cast<float>(NFmiInterpolation::WindVector(
+            xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1)));
       else
-      {
-        if (theParamId == kFmiWindDirection || theParamId == kFmiWaveDirection)
-          value = static_cast<float>(NFmiInterpolation::ModBiLinear(
-              xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1), 360));
-        else if (theParamId == kFmiWindVectorMS)
-          value = static_cast<float>(NFmiInterpolation::WindVector(
-              xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1)));
-        else
-          value = static_cast<float>(NFmiInterpolation::BiLinear(
-              xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1)));
-      }
+        value = static_cast<float>(NFmiInterpolation::BiLinear(
+            xFraction, yFraction, m.At(x1, y2), m.At(x2, y2), m.At(x1, y1), m.At(x2, y1)));
     }
     return value;
   }

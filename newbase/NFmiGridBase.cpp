@@ -82,7 +82,7 @@ bool NFmiGridBase::Init(NFmiDataPool *theData)
     if (Size() != theData->Number())
       return false;
 
-      delete itsData;
+    delete itsData;
 
     itsData = new NFmiDataPool(*theData);
 
@@ -122,7 +122,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
     float theYScaleFactor =
         (static_cast<float>(theData->YNumber() - 1)) / (static_cast<float>(YNumber() - 1));
 
-      delete itsData;
+    delete itsData;
 
     itsData = new NFmiDataPool();
 
@@ -157,11 +157,11 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
 
       // Create a array of float data just to avoid "item-by-item" type casting
 
-        delete[] itsFloatData;
+      delete[] itsFloatData;
 
       itsFloatData = new float[numberOfGridItems];
 
-      do
+      for (bool more = true; more; more = (y < yRes) && (++index < numberOfGridItems))
       {
         value = 0;
         dx = static_cast<double>(x) * theXScaleFactor;
@@ -178,7 +178,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
           x = 0;
           y++;
         }
-      } while ((y < yRes) && (++index < numberOfGridItems));
+      }
 
       // Update the data pool with interpolated data array
       if (!itsData->Init(numberOfGridItems, itsFloatData))
@@ -600,8 +600,8 @@ bool NFmiGridBase::MinimizedCrop(const NFmiPoint &theBottomLeft, const NFmiPoint
     else
     {
       // Truncate the crop window size into the nearest smaller integer window size
-      itsFirstX = std::max(0l, static_cast<long>(trunc(theBottomLeft.X() + 1)));
-      itsFirstY = std::max(0l, static_cast<long>(trunc(theBottomLeft.Y() + 1)));
+      itsFirstX = std::max(0L, static_cast<long>(trunc(theBottomLeft.X() + 1)));
+      itsFirstY = std::max(0L, static_cast<long>(trunc(theBottomLeft.Y() + 1)));
     }
 
     itsLastX = static_cast<unsigned long>(trunc(theTopRight.X()));
@@ -915,7 +915,8 @@ bool NFmiGridBase::BiLinearInterpolation(double x, double y, double &theValue)
 {
   try
   {
-    double X = NAN, Y = NAN;
+    double X = NAN;
+    double Y = NAN;
 
     double dx = modf(x, &X);
     double dy = modf(y, &Y);
@@ -1022,7 +1023,8 @@ bool NFmiGridBase::FastBiVariateInterpolation(double x, double y, double &theVal
 {
   try
   {
-    double X = NAN, Y = NAN;
+    double X = NAN;
+    double Y = NAN;
 
     double dx = modf(x, &X);
     double dy = modf(y, &Y);
@@ -1194,7 +1196,7 @@ bool NFmiGridBase::Swap()
     if (datapool.Data() == nullptr)
       return false;
 
-      delete itsData;
+    delete itsData;
 
     itsData = new NFmiDataPool();
 
@@ -1211,44 +1213,44 @@ bool NFmiGridBase::Swap()
       case kBottomRight:
       {
         GridPoint(itsLastX, itsFirstY);
-        do
+        for (bool more = true; more; more = Up())
         {
           GridPoint(itsLastX, itsCurrentY);
-          do
+          for (bool moreInner = true; moreInner; moreInner = Left())
           {
             FloatValue(datapool.FloatValue());
             datapool.Next();
-          } while (Left());
-        } while (Up());
+          }
+        }
         break;
       }
       case kTopLeft:
       {
         GridPoint(itsFirstX, itsLastY);
-        do
+        for (bool more = true; more; more = Down())
         {
           GridPoint(itsFirstX, itsCurrentY);
-          do
+          for (bool moreInner = true; moreInner; moreInner = Right())
           {
             FloatValue(datapool.FloatValue());
             datapool.Next();
-          } while (Right());
-        } while (Down());
+          }
+        }
         break;
       }
       case kTopRight:
       {
         itsData->First();
         GridPoint(itsLastX, itsLastY);
-        do
+        for (bool more = true; more; more = Down())
         {
           GridPoint(itsLastX, itsCurrentY);
-          do
+          for (bool moreInner = true; moreInner; moreInner = Left())
           {
             FloatValue(datapool.FloatValue());
             datapool.Next();
-          } while (Left());
-        } while (Down());
+          }
+        }
         break;
       }
       default:
@@ -1278,10 +1280,10 @@ void NFmiGridBase::MeanFilter(unsigned long numOfSteps)
   try
   {
     FirstY();
-    do
+    for (bool more = true; more; more = Up(numOfSteps))
     {
       FirstX();
-      do
+      for (bool moreInner = true; moreInner; moreInner = Right(numOfSteps))
       {
         double sum = 0;
         double num = 0;
@@ -1310,8 +1312,8 @@ void NFmiGridBase::MeanFilter(unsigned long numOfSteps)
             itsData->FloatValue(DataIndex(itsCurrentX + dx, itsCurrentY + dy), float(sum));
           }
         }
-      } while (Right(numOfSteps));
-    } while (Up(numOfSteps));
+      }
+    }
   }
   catch (...)
   {
@@ -1418,8 +1420,7 @@ bool NFmiGridBase::WriteBinaryData(const char *theFileName)
 
     if (itsData)
       return itsData->WriteBinaryData(numberOfItems, theFileName);
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -1447,8 +1448,7 @@ bool NFmiGridBase::WriteTextData(const char *theFileName)
 
     if (itsData)
       return itsData->WriteBinaryData(numberOfItems, theFileName);
-    else
-      return false;
+    return false;
   }
   catch (...)
   {
@@ -1519,7 +1519,7 @@ std::istream &NFmiGridBase::Read(std::istream &file)
     itsFirstY = 0;
     itsLastY = itsYNumber - 1;
 
-      delete itsData;
+    delete itsData;
 
     itsData = new NFmiDataPool();
     file >> *itsData;
@@ -1591,7 +1591,7 @@ bool NFmiGridBase::Init(unsigned long theXNumber, unsigned long theYNumber)
     itsBottomLeftValue = kMaxDouble;
     itsBottomRightValue = kMaxDouble;
 
-      delete itsData;
+    delete itsData;
 
     itsData = new NFmiDataPool();
     return itsData->Init(theXNumber * theYNumber);

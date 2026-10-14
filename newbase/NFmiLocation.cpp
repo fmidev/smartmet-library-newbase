@@ -399,7 +399,8 @@ NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurr
 {
   try
   {
-    bool isMidNightSun = false, isPolarNight = false;
+    bool isMidNightSun = false;
+    bool isPolarNight = false;
     NFmiMetTime sunrise = LastTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
     if (isPolarNight)
       sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
@@ -435,7 +436,8 @@ NFmiMetTime NFmiLocation::TimeOfSunset(const NFmiMetTime &theTime, bool &isCurre
 {
   try
   {
-    bool isMidNightSun = false, isPolarNight = false;
+    bool isMidNightSun = false;
+    bool isPolarNight = false;
     NFmiMetTime sunset = NextTimeOfSunset(theTime, isMidNightSun, isPolarNight);
     if (isPolarNight)
       sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);
@@ -480,10 +482,10 @@ NFmiMetTime NFmiLocation::NextTimeOfSunset(const NFmiMetTime &theTime,
     {
       // polar night
       isPolarNight = true;
-      do
+      for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
       {
         solarTime.ChangeByDays(1);  // finds the next day of the sunset
-      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      }
       solarTime.ChangeByHours(12);  // next midnight
     }
     else
@@ -493,10 +495,10 @@ NFmiMetTime NFmiLocation::NextTimeOfSunset(const NFmiMetTime &theTime,
       {
         // midnight sun
         isMidNightSun = true;
-        do
+        for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
         {
           solarTime.ChangeByDays(1);  // finds the next day of the sunset
-        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+        }
       }
     }
 
@@ -541,10 +543,10 @@ NFmiMetTime NFmiLocation::NextTimeOfSunrise(const NFmiMetTime &theTime,
     {
       // polar night
       isPolarNight = true;
-      do
+      for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
       {
         solarTime.ChangeByDays(1);  // finds the next day of the sunrise
-      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      }
     }
     else
     {
@@ -553,10 +555,10 @@ NFmiMetTime NFmiLocation::NextTimeOfSunrise(const NFmiMetTime &theTime,
       {
         // midnight sun
         isMidNightSun = true;
-        do
+        for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
         {
           solarTime.ChangeByDays(1);  // finds the next day of the sunrise
-        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+        }
       }
       solarTime.SetHour(12);
     }
@@ -601,10 +603,10 @@ NFmiMetTime NFmiLocation::LastTimeOfSunset(const NFmiMetTime &theTime,
     {
       // polar night
       isPolarNight = true;
-      do
+      for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
       {
         solarTime.ChangeByDays(-1);  // finds the last day of the sunset
-      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      }
       solarTime.ChangeByHours(12);  // midnight
     }
     else
@@ -614,10 +616,10 @@ NFmiMetTime NFmiLocation::LastTimeOfSunset(const NFmiMetTime &theTime,
       {
         // midnight sun
         isMidNightSun = true;
-        do
+        for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
         {
           solarTime.ChangeByDays(-1);  // finds the last day of the sunset
-        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+        }
       }
     }
     CalcSunriseOrSunsetTime(solarTime);  // solarTime == 24:00
@@ -662,10 +664,10 @@ NFmiMetTime NFmiLocation::LastTimeOfSunrise(const NFmiMetTime &theTime,
     {
       // polar night
       isPolarNight = true;
-      do
+      for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) < kRefractCorr)
       {
         solarTime.ChangeByDays(-1);  // finds the last day of the sunrise
-      } while (ElevationAngleFromSolarTime(solarTime) < kRefractCorr);
+      }
     }
     else
     {
@@ -674,10 +676,10 @@ NFmiMetTime NFmiLocation::LastTimeOfSunrise(const NFmiMetTime &theTime,
       {
         // midnight sun
         isMidNightSun = true;
-        do
+        for (bool more = true; more; more = ElevationAngleFromSolarTime(solarTime) > kRefractCorr)
         {
           solarTime.ChangeByDays(-1);  // finds the last day of the sunrise
-        } while (ElevationAngleFromSolarTime(solarTime) > kRefractCorr);
+        }
       }
       solarTime.SetHour(12);
     }
@@ -723,7 +725,8 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
   try
   {
     short stopHour = 23;
-    double angle1 = kFloatMissing, angle2 = kFloatMissing;
+    double angle1 = kFloatMissing;
+    double angle2 = kFloatMissing;
     if (theSolarTime.GetHour() == 0)  // Sunset
     {
       stopHour = 11;
@@ -737,7 +740,7 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
       angle1 = ElevationAngleFromSolarTime(theSolarTime);
       if ((angle1 < kRefractCorr) ^ (angle2 < kRefractCorr))  // XOR
       {
-        do
+        for (bool more = true; more; more = theSolarTime.GetMin() != 0)
         {
           theSolarTime.ChangeByMinutes(1);
           angle2 = ElevationAngleFromSolarTime(theSolarTime);
@@ -748,7 +751,7 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
             return;
           }
           angle1 = angle2;
-        } while (theSolarTime.GetMin() != 0);  // beginnig of the next hour is already handled
+        }  // beginnig of the next hour is already handled
       }
       angle2 = angle1;
     }

@@ -361,7 +361,7 @@ void NFmiQueryData::Destroy()
   {
       delete itsQueryInfo;
 
-      delete itsRawData;
+    delete itsRawData;
   }
   catch (...)
   {
@@ -403,7 +403,7 @@ bool NFmiQueryData::Init(const NFmiQueryInfo &theInfo)
 
     itsQueryInfo = theInfo.Clone();
 
-      delete itsRawData;
+    delete itsRawData;
 
     itsRawData = new NFmiRawData();
     itsRawData->Init(itsQueryInfo->Size());
@@ -663,7 +663,7 @@ float NFmiQueryData::Quality() const
         oksize++;
     }
 
-    return oksize * 100.0f / totalsize;
+    return oksize * 100.0F / totalsize;
   }
   catch (...)
   {

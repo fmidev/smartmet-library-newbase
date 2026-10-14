@@ -325,7 +325,8 @@ bool NFmiPreProcessor::Include()
     itsCurNumOfIncludes++;
     string newString;
     string oldString(itsString);
-    string fileContents, fileName;
+    string fileContents;
+    string fileName;
     std::string::size_type lenDef = itsIncludeDirective.length();
     std::string::size_type posHelp = 0;
     std::string::size_type pos = oldString.find(itsIncludeDirective);
@@ -473,7 +474,8 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
     string oldString(itsString);
     string newString;
     string::size_type posbigalku = oldString.find(theBeginDirective);
-    string::size_type posbigloppu = 0, posbigloppu2 = 0;
+    string::size_type posbigloppu = 0;
+    string::size_type posbigloppu2 = 0;
     string::size_type len = theEndDirective.length();
     string::size_type len2 = theEndDirective2.length();
     string::size_type curLen = 0;
@@ -496,7 +498,7 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
           itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
           return false;
         }
-        else if (posbigalku == string::npos && posbigloppu != string::npos)
+        if (posbigalku == string::npos && posbigloppu != string::npos)
         {
           itsMessage = "ERROR in " + itsFileName + ": " + theBeginDirective + " missing";
           return false;
@@ -846,7 +848,8 @@ bool NFmiPreProcessor::Define()
       else
       {
         // Extract the variable name and value
-        string name, value;
+        string name;
+        string value;
         lineinput >> name;
         getline(lineinput, value);
         NFmiStringTools::TrimL(value);

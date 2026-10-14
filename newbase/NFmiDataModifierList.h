@@ -23,7 +23,7 @@ class NFmiDataModifierList : public NFmiDataModifier
 
   bool IsCombinedParam();
 
-  bool BoolOperation(float) override;
+  bool BoolOperation(float /*theValue*/) override;
   float FloatOperation(float theValue) override;
 
   using NFmiDataModifier::Calculate;
@@ -54,7 +54,7 @@ class NFmiDataModifierList : public NFmiDataModifier
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiDataModifierList::BoolOperation(float)
+inline bool NFmiDataModifierList::BoolOperation(float /*theValue*/)
 {
   return false;
 }

@@ -639,7 +639,8 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
       }
       else if (command == "xy")
       {
-        double x = NAN, y = NAN;
+        double x = NAN;
+        double y = NAN;
         input >> x >> y;
 
         if (ring.get() == nullptr)

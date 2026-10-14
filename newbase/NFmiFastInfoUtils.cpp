@@ -67,7 +67,7 @@ float DoWindSpeedFromWindComponentsRoundingFix(float realWS)
 {
   try
   {
-    const float roundingFactor = 1000000.f;
+    const float roundingFactor = 1000000.F;
     float roundingFixerValue = std::round(realWS * roundingFactor) / roundingFactor;
     return roundingFixerValue;
   }
@@ -105,7 +105,7 @@ float CalcMetaWindVectorValue(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
       auto WD = getFunction();
       return NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(WS, WD);
     }
-    else if (metaWindParamUsage.HasWindComponents())
+    if (metaWindParamUsage.HasWindComponents())
     {
       theInfo->Param(kFmiWindUMS);
       auto u = getFunction();
@@ -483,7 +483,7 @@ NFmiMetTime GetUsedTimeIfModelClimatologyData(const std::shared_ptr<NFmiFastQuer
       usedTime.SetYear(theInfo->TimeDescriptor().FirstTime().GetYear());
       return usedTime;
     }
-    else if (theInfo->DataType() == NFmiInfoData::kStationary)
+    if (theInfo->DataType() == NFmiInfoData::kStationary)
     {
       // Stationaarisissa datoissa (esim. topograafiset datat) on vain 1. aika, joka on fiksattu kun
       // data on tehty
@@ -546,11 +546,11 @@ bool FindTimeIndicesForGivenTimeRange(const std::shared_ptr<NFmiFastQueryInfo> &
 
     if (timeIndex1 == gMissingIndex || timeIndex2 == gMissingIndex)
       return false;
-    else if (timeIndex1 == timeIndex2)
+    if (timeIndex1 == timeIndex2)
     {
       // pitää testata erikoistapaus, koska TimeToNearestStep-palauttaa aina jotain, jos on dataa
       theInfo->TimeIndex(timeIndex1);
-      const auto &foundTime = theInfo->Time();
+      const auto& foundTime = theInfo->Time();
       if (foundTime > endTime || foundTime < theStartTime)
       {
         // jos löydetty aika on alku ja loppu ajan ulkopuolella ei piirretä salamaa
@@ -1267,7 +1267,7 @@ float CalcU(float WS, float WD)
       return 0;
     // huom! tuulen suunta pit�� ensin k��nt�� 180 astetta ja sitten
     // muuttaa radiaaneiksi kulma/360 * 2*pii
-    float value = WS * sin(((fmod(180.f + WD, 360.f) / 360.f) * (2.f * static_cast<float>(kPii))));
+    float value = WS * sin(((fmod(180.F + WD, 360.F) / 360.F) * (2.F * static_cast<float>(kPii))));
     return value;
   }
   catch (...)
@@ -1287,7 +1287,7 @@ float CalcV(float WS, float WD)
       return 0;
     // Huom! tuulen suunta pit�� ensin k��nt�� 180 astetta ja sitten
     // muuttaa radiaaneiksi kulma/360 * 2*pii
-    float value = WS * cos(((fmod(180.f + WD, 360.f) / 360.f) * (2.f * static_cast<float>(kPii))));
+    float value = WS * cos(((fmod(180.F + WD, 360.F) / 360.F) * (2.F * static_cast<float>(kPii))));
     return value;
   }
   catch (...)
@@ -1313,7 +1313,7 @@ float CalcWindVectorFromSpeedAndDirection(float WS, float WD)
   try
   {
     if (WS != kFloatMissing && WD != kFloatMissing)
-      return std::round(WS) * 100 + std::round(WD / 10.f);
+      return std::round(WS) * 100 + std::round(WD / 10.F);
 
     return kFloatMissing;
   }

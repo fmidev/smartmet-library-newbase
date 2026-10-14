@@ -391,9 +391,23 @@ const NFmiPoint NFmiKKJArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xeast = NAN, ynorth = NAN, zone = NAN, xeastForCentralMeridian = NAN, ksi = NAN,
-           eta = NAN, ksi1 = NAN, eta1 = NAN, lambda = NAN, q = NAN, temp = NAN, q2 = NAN, d = NAN,
-           testv = NAN, lat = NAN, lon = NAN, dind = NAN;
+    double xeast = NAN;
+    double ynorth = NAN;
+    double zone = NAN;
+    double xeastForCentralMeridian = NAN;
+    double ksi = NAN;
+    double eta = NAN;
+    double ksi1 = NAN;
+    double eta1 = NAN;
+    double lambda = NAN;
+    double q = NAN;
+    double temp = NAN;
+    double q2 = NAN;
+    double d = NAN;
+    double testv = NAN;
+    double lat = NAN;
+    double lon = NAN;
+    double dind = NAN;
     int ind = 0;
 
     // Transform world xy-coordinates into geodetic coordinates.
@@ -418,14 +432,14 @@ const NFmiPoint NFmiKKJArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
     q = Arsinh(cos(lambda) * tan(ksi));
     temp = sin(atan(sinh(1.0040685 * q)));
 
-    do
+    for (bool more = true; more; more = testv >= 1.0E-11)
     {
       q2 = Artanh(e * temp);
       d = sinh(q + e * q2);
       d = d / sqrt(1. + d * d);
       testv = fabs(d - temp);
       temp = d;
-    } while (testv >= 1.0E-11);
+    }
 
     lat = Deg(asin(d));
     lon = 18. + zone * 3.0 + Deg(lambda);
@@ -452,7 +466,8 @@ const NFmiPoint NFmiKKJArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xeast = NAN, ynorth = NAN;
+    double xeast = NAN;
+    double ynorth = NAN;
 
     // Transform local xy-coordinates into world xy-coordinates (meters).
     xeast = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;    // Easting
@@ -544,9 +559,21 @@ const NFmiPoint NFmiKKJArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) co
     // Transforms input geodetic coordinates (longitude,latitude) into world coordinates
     // (meters) for the Finnish National Grid Coordinate System (KKJ).
 
-    double lat = NAN, lon = NAN, fii = NAN, d = NAN, zone = NAN, xeastForCentralMeridian = NAN,
-           lambda = NAN, xeast = NAN, ynorth = NAN, q = NAN, ksi = NAN, ksi1 = NAN, eta = NAN,
-           eta1 = NAN, dind = NAN;
+    double lat = NAN;
+    double lon = NAN;
+    double fii = NAN;
+    double d = NAN;
+    double zone = NAN;
+    double xeastForCentralMeridian = NAN;
+    double lambda = NAN;
+    double xeast = NAN;
+    double ynorth = NAN;
+    double q = NAN;
+    double ksi = NAN;
+    double ksi1 = NAN;
+    double eta = NAN;
+    double eta1 = NAN;
+    double dind = NAN;
     int ind = 0;
 
     lat = theLatLonPoint.Y();
@@ -596,7 +623,8 @@ const NFmiPoint NFmiKKJArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   try
   {
-    double xLocal = NAN, yLocal = NAN;
+    double xLocal = NAN;
+    double yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters).
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());

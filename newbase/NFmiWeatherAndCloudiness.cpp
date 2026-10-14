@@ -39,8 +39,8 @@ bool fDefaultPrecipitationTypeIsLargeScale = false;
 
 // näitä lukuja käytetään eri versioissa vertailussa, onko sadetta vai ei
 
-const float gMinimumPrecipitationForV6 = 0.1f;
-const float gMinimumPrecipitationForV7 = 0.015f;
+const float gMinimumPrecipitationForV6 = 0.1F;
+const float gMinimumPrecipitationForV7 = 0.015F;
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -820,7 +820,8 @@ const NFmiWeatherAndCloudiness NFmiWeatherAndCloudiness::MeanWeather(
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3 = NAN, factor4 = NAN;
+    float factor3 = NAN;
+    float factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -980,7 +981,8 @@ bool NFmiWeatherAndCloudiness::SetToWeightedMean(NFmiCombinedParam *theCombinedP
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3 = NAN, factor4 = NAN;
+    float factor3 = NAN;
+    float factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -1177,7 +1179,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
     // toimiiko vaikka näin
     if (sum <= 0.)
       return kT3BitMissing;
-    else if ((formTable[5] + formTable[4]) / sum > .3)
+    if ((formTable[5] + formTable[4]) / sum > .3)
     {
       if (formTable[5] >= formTable[4])
         return kTFreezingRain;
@@ -1246,7 +1248,8 @@ unsigned long NFmiWeatherAndCloudiness::TimeIntegratedHessaa(
       factorSum += fac3;
     if (fac4 != kFloatMissing)
       factorSum += fac4;
-    float factor3 = NAN, factor4 = NAN;
+    float factor3 = NAN;
+    float factor4 = NAN;
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
@@ -1826,32 +1829,26 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
         if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
           return kT3BitMissing;
 
-        else
-        {
-          long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
-                          0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
+        long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
+                        0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
 
-          if (theTemperature >= y)
-            return kTDrizzle;
-          else
-            return kTSnow;
-        }
+        if (theTemperature >= y)
+          return kTDrizzle;
+        else
+          return kTSnow;
       }
       case 26:
       {
         if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
           return kT3BitMissing;
 
-        else
-        {
-          long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
-                          0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
+        long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
+                        0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
 
-          if (theTemperature >= y)
-            return kTSleet;
-          else
-            return kTSnow;
-        }
+        if (theTemperature >= y)
+          return kTSleet;
+        else
+          return kTSnow;
       }
       case 22:
       case 70:
@@ -1893,20 +1890,20 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
         if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
           return kT3BitMissing;
 
-        else if ((theTemperature >= 3.6 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
-                 (theTemperature >= 3.5 && theHumidity >= 41 && theHumidity <= 42) ||
-                 (theTemperature >= 3.4 && theHumidity >= 43 && theHumidity <= 44) ||
-                 (theTemperature >= 3.3 && theHumidity == 45) ||
-                 (theTemperature >= 3.2 && theHumidity == 46) ||
-                 (theTemperature >= 3.1 && theHumidity == 47) ||
-                 (theTemperature >= 3.0 && theHumidity == 48) ||
-                 (theTemperature >= 2.8 && theHumidity == 49) ||
-                 (theTemperature >= 2.6 && theHumidity == 50) ||
-                 (theTemperature >= 0.6 && theHumidity >= 51 && theHumidity <= 60) ||
-                 (theTemperature >= 0.7 && theHumidity >= 61 && theHumidity <= 74) ||
-                 (theTemperature >= 0.8 && theHumidity >= 75 && theHumidity <= 78) ||
-                 (theTemperature >= 0.9 && theHumidity >= 79 && theHumidity <= 82) ||
-                 (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
+        if ((theTemperature >= 3.6 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
+            (theTemperature >= 3.5 && theHumidity >= 41 && theHumidity <= 42) ||
+            (theTemperature >= 3.4 && theHumidity >= 43 && theHumidity <= 44) ||
+            (theTemperature >= 3.3 && theHumidity == 45) ||
+            (theTemperature >= 3.2 && theHumidity == 46) ||
+            (theTemperature >= 3.1 && theHumidity == 47) ||
+            (theTemperature >= 3.0 && theHumidity == 48) ||
+            (theTemperature >= 2.8 && theHumidity == 49) ||
+            (theTemperature >= 2.6 && theHumidity == 50) ||
+            (theTemperature >= 0.6 && theHumidity >= 51 && theHumidity <= 60) ||
+            (theTemperature >= 0.7 && theHumidity >= 61 && theHumidity <= 74) ||
+            (theTemperature >= 0.8 && theHumidity >= 75 && theHumidity <= 78) ||
+            (theTemperature >= 0.9 && theHumidity >= 79 && theHumidity <= 82) ||
+            (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
           return kTRain;
 
         else if ((theTemperature <= 3.5 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
@@ -2971,15 +2968,13 @@ unsigned long NFmiWeatherAndCloudiness::ThunderToHessaa() const
       {  // kovaa ukkosta 62 ja 64
         if (N >= 85)
           return 64;
-        else
-          return 62;
+        return 62;
       }
       else
       {  // heikompaa ukkosta 61 ja 63
         if (N >= 85)
           return 63;
-        else
-          return 61;
+        return 61;
       }
     }
     // oletus oli että tähän metodiin tullaan vain jos ukkosen tn >= 30, joten tarkastetaan tämä
@@ -3016,20 +3011,19 @@ unsigned long NFmiWeatherAndCloudiness::ToHessaa()
     if (IsFair())  // ei sada
       return TotalCloudinessToHessaa();
 
-    else  // sataa, ei ukkosta
+    // sataa, ei ukkosta
+    if (TotalCloudiness() > kTSkyClear && TotalCloudiness() < kTPartlyCloudy)
+      hessaa = PartlyCloudyHessaa();
+    else if (TotalCloudiness() >= kTPartlyCloudy && TotalCloudiness() <= kTNearlyCloudy)
+      hessaa = HalfCloudyHessaa();
+    else if (TotalCloudiness() > kTNearlyCloudy && TotalCloudiness() <= kTOverCast)
+      hessaa = OverCastHessaa();
+    else  // pilvet puuttuu
     {
-      if (TotalCloudiness() > kTSkyClear && TotalCloudiness() < kTPartlyCloudy)
-        hessaa = PartlyCloudyHessaa();
-      else if (TotalCloudiness() >= kTPartlyCloudy && TotalCloudiness() <= kTNearlyCloudy)
-        hessaa = HalfCloudyHessaa();
-      else if (TotalCloudiness() > kTNearlyCloudy && TotalCloudiness() <= kTOverCast)
-        hessaa = OverCastHessaa();
-      else  // pilvet puuttuu
-      {
-        fDataOk = false;                     // pilvet puuttuu, vaikka sataa
-        hessaa = TotalCloudinessToHessaa();  // koemielessä täällä (laura 051099)
-      }
+      fDataOk = false;                     // pilvet puuttuu, vaikka sataa
+      hessaa = TotalCloudinessToHessaa();  // koemielessä täällä (laura 051099)
     }
+
     return hessaa;
   }
   catch (...)
@@ -3228,11 +3222,9 @@ bool NFmiWeatherAndCloudiness::FromHessaa(unsigned long theValue)
       SetThunderProbability(ThunderProbabilityFromHessaa(theValue));
       return true;
     }
-    else
-    {
-      itsData.longType = kTCombinedWeatherMissing;
-      return false;
-    }
+
+    itsData.longType = kTCombinedWeatherMissing;
+    return false;
   }
   catch (...)
   {
@@ -3821,8 +3813,8 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedSubValue(
           case kFmiMediumCloudCover:
           case kFmiHighCloudCover:
           case kFmiProbabilityThunderstorm:
-            tmpSelector.ScaleLowerLimit(0.1f);
-            tmpSelector.ScaleUpperLimit(0.1f);
+            tmpSelector.ScaleLowerLimit(0.1F);
+            tmpSelector.ScaleUpperLimit(0.1F);
             break;
           case kFmiPrecipitation1h:
           {
@@ -3847,8 +3839,7 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedSubValue(
         float returnValue = integrator->CalcResult(tmpSelector);
         if (returnValue == kFloatMissing)
           return kUnsignedLongMissing;
-        else
-          return static_cast<unsigned long>(returnValue);
+        return static_cast<unsigned long>(returnValue);
       }
     }
     return kUnsignedLongMissing;
@@ -4931,9 +4922,9 @@ bool NFmiWeatherAndCloudiness::TotalPrecipitation(unsigned long theValue)
                           // oli puuttuvaa eli ollaan esim. interpolointia tekemässä
             {
               if (fDefaultPrecipitationTypeIsLargeScale)
-                SetTotalCloudiness(FmiMax(10ul, TotalCloudiness()));
+                SetTotalCloudiness(FmiMax(10UL, TotalCloudiness()));
               else
-                SetTotalCloudiness(FmiMax(5ul, TotalCloudiness()));
+                SetTotalCloudiness(FmiMax(5UL, TotalCloudiness()));
             }
           }
         }

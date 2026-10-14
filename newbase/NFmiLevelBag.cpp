@@ -83,10 +83,10 @@ NFmiLevelBag::NFmiLevelBag(FmiLevelType theLevelType,
  */
 // ----------------------------------------------------------------------
 
-NFmiLevelBag::NFmiLevelBag(NFmiLevel *theLevelArray, unsigned long numOfLevels)
+NFmiLevelBag::NFmiLevelBag(NFmiLevel* theLevelArray, unsigned long numOfLevels)
     : NFmiSize(numOfLevels),
       itsLevels(theLevelArray ? new NFmiLevel[GetSize()] : nullptr),
-      itsStep(0ul)
+      itsStep(0UL)
 {
   try
   {
@@ -207,7 +207,7 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
       // elements are exactly of the pointed-to type, there are no derived objects in it
       tempLevels[j] = theLevel;
 
-        delete[] itsLevels;
+      delete[] itsLevels;
 
       itsLevels = new NFmiLevel[itsSize + 1];
       itsSize = GetSize() + 1;
@@ -218,7 +218,7 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
         // updated itsSize
         itsLevels[j] = tempLevels[j];
 
-      itsStep = 0ul;  // askel ei välttämättä enää vakio
+      itsStep = 0UL;  // askel ei välttämättä enää vakio
 
       delete[] tempLevels;
 
@@ -292,8 +292,7 @@ bool NFmiLevelBag::operator==(const NFmiLevelBag &theLevelBag) const
         // elements are exactly of the pointed-to type, there are no derived objects in it
         if (!(this->itsLevels[i] == theLevelBag.itsLevels[i]))
           return false;
-        else
-          retVal = true;
+        retVal = true;
       }
     }
     return retVal;

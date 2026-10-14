@@ -121,7 +121,7 @@ bool NFmiSnapShotInterface::Update(NFmiQueryInfo** theInfo)
     if (IsValid())
       return retBool;
 
-    else if (itsInfo)
+    if (itsInfo)
     {
       retBool = true;
       if (*theInfo)

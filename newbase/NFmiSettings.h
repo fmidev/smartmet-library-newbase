@@ -140,8 +140,7 @@ inline T Optional(const std::string& theName, const T& theDefault)
 {
   if (!IsSet(theName))
     return theDefault;
-  else
-    return Require<T>(theName);
+  return Require<T>(theName);
 }
 
 // ----------------------------------------------------------------------
@@ -200,8 +199,7 @@ inline T OptionalRange(const std::string& theName,
 {
   if (!IsSet(theName))
     return theDefault;
-  else
-    return RequireRange<T>(theName, theLowerLimit, theUpperLimit);
+  return RequireRange<T>(theName, theLowerLimit, theUpperLimit);
 }
 }  // namespace NFmiSettings
 

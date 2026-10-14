@@ -245,7 +245,12 @@ std::istream &NFmiMetTime::Read(std::istream &file)
 {
   try
   {
-    short year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0;
+    short year = 0;
+    short month = 0;
+    short day = 0;
+    short hour = 0;
+    short minutes = 0;
+    short seconds = 0;
     file >> year >> month >> day >> hour >> minutes >> seconds;
     SetDate(year, month, day);
     SetTime(hour, minutes, seconds);
@@ -403,15 +408,13 @@ void NFmiMetTime::NextMetTime(const NFmiTimePerioid &thePerioid)
         SetMonth(short(GetMonth() + thePerioid.Month() - 12));
         return;
       }
-      else
-      {
-        SetYear(short(GetYear() + thePerioid.Year()));
-        SetMonth(short(GetMonth() + thePerioid.Month()));
-        if (thePerioid.Day())
-          DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
 
-        return;
-      }
+      SetYear(short(GetYear() + thePerioid.Year()));
+      SetMonth(short(GetMonth() + thePerioid.Month()));
+      if (thePerioid.Day())
+        DecodeCompareValue(GetCompareValue() + (thePerioid.Day() * 24L * 60L));
+
+      return;
     }
 
     DecodeCompareValue(GetCompareValue() + (thePerioid.Hour() * 60L + thePerioid.Minute()));
@@ -470,14 +473,12 @@ void NFmiMetTime::PreviousMetTime(const NFmiTimePerioid &thePerioid)
         SetMonth(short(12 - GetMonth() + thePerioid.Month()));
         return;
       }
-      else
-      {
-        SetYear(short(GetYear() - thePerioid.Year()));
-        SetMonth(short(GetMonth() - thePerioid.Month()));
-        if (thePerioid.Day())
-          DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
-        return;
-      }
+
+      SetYear(short(GetYear() - thePerioid.Year()));
+      SetMonth(short(GetMonth() - thePerioid.Month()));
+      if (thePerioid.Day())
+        DecodeCompareValue(GetCompareValue() - (thePerioid.Day() * 24L * 60L));
+      return;
     }
 
     DecodeCompareValue(GetCompareValue() - thePerioid);

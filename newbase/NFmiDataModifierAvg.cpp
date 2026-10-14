@@ -99,8 +99,7 @@ float NFmiDataModifierAvg::CalculationResult()
 {
   if (fCalculationResultOk)
     return itsAverage;
-  else
-    return kFloatMissing;
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

@@ -862,7 +862,7 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
 {
   try
   {
-    double meanValue = 0.f;
+    double meanValue = 0.F;
 
     short lkm1 = 0;  // alle 180 astetta
     short lkm2 = 0;  // yli 180 astetta
@@ -875,22 +875,19 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
     {
       if (factor == 0)
         return kTVariableWind;
-      else
-        return dir2;  // ei tarvitse laskea mitään
+      return dir2;  // ei tarvitse laskea mitään
     }
     else if (dir2 == kTVariableWind)
     {
       if (factor == 1)
         return kTVariableWind;
-      else
-        return dir1;  // ei tarvitse laskea mitään
+      return dir1;  // ei tarvitse laskea mitään
     }
     if (dir1 == kT6BitMissing)
     {
       if (factor == 0)
         return kT6BitMissing;  // palautetaan puuttuva tieto
-      else
-        return dir2;  // ei tarvitse laskea mitään
+      return dir2;             // ei tarvitse laskea mitään
     }
 
     for (unsigned long i : dirTable)  // katsotaan kummalla puolella 180:aa astetta arvot ovat
@@ -1002,7 +999,8 @@ bool NFmiTotalWind::SetToWeightedMean(NFmiCombinedParam *theCombinedParam1,
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3 = NAN, factor4 = NAN;
+    float factor3 = NAN;
+    float factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -1214,12 +1212,10 @@ bool NFmiTotalWind::LongValue(unsigned long theValue)
       fDataOk = true;
       return true;
     }
-    else
-    {
-      itsData.longType = kTCombinedWeatherMissing;
-      fDataOk = true;
-      return false;
-    }
+
+    itsData.longType = kTCombinedWeatherMissing;
+    fDataOk = true;
+    return false;
   }
   catch (...)
   {

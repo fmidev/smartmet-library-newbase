@@ -297,11 +297,9 @@ bool NFmiLocationBag::Location(const NFmiLocation &theLocation)
       itsIndex = result.GetIndex();
       return true;
     }
-    else
-    {
-      Reset();
-      return false;
-    }
+
+    Reset();
+    return false;
   }
   catch (...)
   {
@@ -339,10 +337,8 @@ bool NFmiLocationBag::NearestLocation(const NFmiLocation &theLocation, double th
       itsIndex = result.GetIndex();
       return true;
     }
-    else
-    {
-      return false;
-    }
+
+    return false;
   }
   catch (...)
   {
@@ -710,20 +706,18 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
     {
       if (tempValues.empty())
         return std::vector<pair<int, double> >();
-      else
-      {
-        // halutaan n kpl lahimpiä paikkoja
-        int usedCount = theMaxWantedLocations;
-        usedCount = std::min(
-            usedCount,
-            static_cast<int>(tempValues.size()));  // maksimissaan voidaan sortata size:iin asti
-        std::partial_sort(tempValues.begin(),
-                          tempValues.begin() + usedCount,
-                          tempValues.end(),
-                          LocationIndexDistanceLess<IndDistPari>());
-        // palautetaan haluttu määrä locatioita
-        return std::vector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
-      }
+
+      // halutaan n kpl lahimpiä paikkoja
+      int usedCount = theMaxWantedLocations;
+      usedCount = std::min(
+          usedCount,
+          static_cast<int>(tempValues.size()));  // maksimissaan voidaan sortata size:iin asti
+      std::partial_sort(tempValues.begin(),
+                        tempValues.begin() + usedCount,
+                        tempValues.end(),
+                        LocationIndexDistanceLess<IndDistPari>());
+      // palautetaan haluttu määrä locatioita
+      return std::vector<IndDistPari>(tempValues.begin(), tempValues.begin() + usedCount);
     }
 
     // theMaxDistance != kFloatMissing)
@@ -747,8 +741,7 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
 
     if (pos == tempValues.end())
       return tempValues;
-    else
-      return std::vector<IndDistPari>(tempValues.begin(), pos);
+    return std::vector<IndDistPari>(tempValues.begin(), pos);
   }
   catch (...)
   {

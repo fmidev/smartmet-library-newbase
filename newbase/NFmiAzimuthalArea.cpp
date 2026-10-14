@@ -290,7 +290,8 @@ const NFmiPoint NFmiAzimuthalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xWorld = NAN, yWorld = NAN;
+    double xWorld = NAN;
+    double yWorld = NAN;
 
     // Transform local xy-coordinates into world xy-coordinates (meters).
 
@@ -387,12 +388,28 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) 
 {
   try
   {
-    double lat0 = NAN, lat = NAN, dlon = NAN, sinlat0 = NAN, coslat0 = NAN, coslat = NAN,
-           delta = NAN;
-    double sinDelta = NAN, cosDelta = NAN, B = NAN, cosB = NAN, xWorld = NAN, yWorld = NAN,
-           xWorldTangential = NAN, yWorldTangential = NAN, xyDist = NAN;
-    double dlonDeg = NAN, lonDeg = NAN, latDeg = NAN, trueLat = NAN, centralLat = NAN,
-           centralLon = NAN;
+    double lat0 = NAN;
+    double lat = NAN;
+    double dlon = NAN;
+    double sinlat0 = NAN;
+    double coslat0 = NAN;
+    double coslat = NAN;
+    double delta = NAN;
+    double sinDelta = NAN;
+    double cosDelta = NAN;
+    double B = NAN;
+    double cosB = NAN;
+    double xWorld = NAN;
+    double yWorld = NAN;
+    double xWorldTangential = NAN;
+    double yWorldTangential = NAN;
+    double xyDist = NAN;
+    double dlonDeg = NAN;
+    double lonDeg = NAN;
+    double latDeg = NAN;
+    double trueLat = NAN;
+    double centralLat = NAN;
+    double centralLon = NAN;
 
     trueLat = itsTrueLatitude.Value();
     centralLat = itsCentralLatitude.Value();
@@ -550,10 +567,22 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoi
 {
   try
   {
-    double k = NAN, lat0 = NAN, lat = NAN, dlon = NAN, sinlat0 = NAN, sinlat = NAN, coslat0 = NAN,
-           coslat = NAN, delta = NAN;
-    double xWorldTangential = NAN, yWorldTangential = NAN;
-    double xWorld = NAN, yWorld = NAN, trueLat = NAN, centralLat = NAN, centralLon = NAN;
+    double k = NAN;
+    double lat0 = NAN;
+    double lat = NAN;
+    double dlon = NAN;
+    double sinlat0 = NAN;
+    double sinlat = NAN;
+    double coslat0 = NAN;
+    double coslat = NAN;
+    double delta = NAN;
+    double xWorldTangential = NAN;
+    double yWorldTangential = NAN;
+    double xWorld = NAN;
+    double yWorld = NAN;
+    double trueLat = NAN;
+    double centralLat = NAN;
+    double centralLon = NAN;
 
     trueLat = itsTrueLatitude.Value();
     centralLat = itsCentralLatitude.Value();
@@ -667,7 +696,8 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   try
   {
-    double xLocal = NAN, yLocal = NAN;
+    double xLocal = NAN;
+    double yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
@@ -756,7 +786,8 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(double theAzimuth, double theRadius) con
 {
   try
   {
-    double xLocal = NAN, yLocal = NAN;
+    double xLocal = NAN;
+    double yLocal = NAN;
 
     // First, transform azimuth and radius into world coordinates (meters) on xy-plane.
     NFmiPoint xyWorld(LatLonToWorldXY(theAzimuth, theRadius));
@@ -1003,7 +1034,9 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
 {
   try
   {
-    double centralLatitude = NAN, trueLatitude = NAN, centralLongitude = NAN;
+    double centralLatitude = NAN;
+    double trueLatitude = NAN;
+    double centralLongitude = NAN;
 
     NFmiArea::Read(file);
 

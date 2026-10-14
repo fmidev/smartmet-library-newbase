@@ -81,9 +81,8 @@ bool NFmiDataModifier::IsInside(float theValue) const
 {
   if (!fIsLimitCheck)
     return true;
-  else
-    return !(((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
-             ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)));
+  return !(((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
+           ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)));
 }
 
 // ----------------------------------------------------------------------
@@ -98,13 +97,11 @@ bool NFmiDataModifier::SetLimits(float theLowerLimit, float theUpperLimit)
 {
   if (theLowerLimit >= theUpperLimit)
     return false;
-  else
-  {
-    itsLowerLimit = theLowerLimit;
-    itsUpperLimit = theUpperLimit;
-    fIsLimitCheck = true;
-    return true;
-  }
+
+  itsLowerLimit = theLowerLimit;
+  itsUpperLimit = theUpperLimit;
+  fIsLimitCheck = true;
+  return true;
 }
 
 // ----------------------------------------------------------------------

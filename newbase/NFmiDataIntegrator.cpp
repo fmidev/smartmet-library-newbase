@@ -55,11 +55,11 @@ float Integrate(NFmiFastQueryInfo& theQI,
     if (!theQI.Time(theStartTime))
       return kFloatMissing;
 
-    do
+    for (bool more = true; more; more = theQI.NextTime() && theQI.Time() <= theEndTime)
     {
       const float tmp = theQI.FloatValue();
       theTimeModifier.Calculate(tmp);
-    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    }
 
     return theTimeModifier.CalculationResult();
   }
@@ -118,23 +118,23 @@ float Integrate(NFmiFastQueryInfo& theQI,
     if (!theQI.Time(time1))
       return kFloatMissing;
 
-    do
+    for (bool more = true; more; more = theQI.IsValidTime() && theQI.Time() <= theEndTime)
     {
       NFmiTime time2(time1);
       time1.ChangeByHours(theInterval);
 
       theSubTimeModifier.Clear();
 
-      do
+      for (bool moreInner = true; moreInner; moreInner = theQI.NextTime() && theQI.Time() < time2)
       {
         const float tmp = theQI.FloatValue();
         theSubTimeModifier.Calculate(tmp);
-      } while (theQI.NextTime() && theQI.Time() < time2);
+      }
 
       const float subresult = theSubTimeModifier.CalculationResult();
       theMainTimeModifier.Calculate(subresult);
 
-    } while (theQI.IsValidTime() && theQI.Time() <= theEndTime);
+    }
 
     return theMainTimeModifier.CalculationResult();
   }
@@ -223,11 +223,11 @@ float Integrate(NFmiFastQueryInfo& theQI,
     if (theIndexMask.empty())
       return kFloatMissing;
 
-    do
+    for (bool more = true; more; more = theQI.NextTime() && theQI.Time() <= theEndTime)
     {
       const float tmp = Integrate(theQI, theIndexMask, theSpaceModifier);
       theTimeModifier.Calculate(tmp);
-    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    }
 
     return theTimeModifier.CalculationResult();
   }
@@ -280,14 +280,14 @@ float Integrate(NFmiFastQueryInfo& theQI,
       if (!theQI.Time(theStartTime))
         return kFloatMissing;
 
-      do
+      for (bool more = true; more; more = theQI.NextTime() && theQI.Time() <= theEndTime)
       {
         theQI.LocationIndex(it);
 
         const float tmp = theQI.FloatValue();
 
         theTimeModifier.Calculate(tmp);
-      } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+      }
 
       const float timeresult = theTimeModifier.CalculationResult();
       theSpaceModifier.Calculate(timeresult);
@@ -336,12 +336,12 @@ float Integrate(NFmiFastQueryInfo& theQI,
     if (!theQI.Time(theStartTime))
       return kFloatMissing;
 
-    do
+    for (bool more = true; more; more = theQI.NextTime() && theQI.Time() <= theEndTime)
     {
       const NFmiIndexMask& mask = theMaskSource.Find(theQI.Time());
       const float tmp = Integrate(theQI, mask, theSpaceModifier);
       theTimeModifier.Calculate(tmp);
-    } while (theQI.NextTime() && theQI.Time() <= theEndTime);
+    }
 
     return theTimeModifier.CalculationResult();
   }
@@ -417,20 +417,20 @@ float Integrate(NFmiFastQueryInfo& theQI,
       if (!theQI.Time(time1))
         return kFloatMissing;
 
-      do
+      for (bool more = true; more; more = theQI.IsValidTime() && theQI.Time() < theEndTime)
       {
         NFmiTime time2(time1);
         time2.ChangeByHours(theInterval);
 
         theSubTimeModifier.Clear();
 
-        do
+        for (bool moreInner = true; moreInner; moreInner = theQI.NextTime() && theQI.Time() < time2)
         {
           theQI.LocationIndex(it);
           const float tmp = theQI.FloatValue();
 
           theSubTimeModifier.Calculate(tmp);
-        } while (theQI.NextTime() && theQI.Time() < time2);
+        }
 
         const float subtimeresult = theSubTimeModifier.CalculationResult();
         theMainTimeModifier.Calculate(subtimeresult);
@@ -438,8 +438,6 @@ float Integrate(NFmiFastQueryInfo& theQI,
         time1 = time2;
 
       }
-
-      while (theQI.IsValidTime() && theQI.Time() < theEndTime);
 
       const float timeresult = theMainTimeModifier.CalculationResult();
       theSpaceModifier.Calculate(timeresult);

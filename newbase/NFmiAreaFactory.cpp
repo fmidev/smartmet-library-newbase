@@ -202,7 +202,7 @@ double degrees_from_projparam(const string &inParam)
         return boost::lexical_cast<double>(inParam.substr(0, length - 1));
       }
       // South
-      else if (boost::iends_with(inParam, "s"))
+      if (boost::iends_with(inParam, "s"))
       {
         return -boost::lexical_cast<double>(inParam.substr(0, length - 1));
       }
@@ -301,8 +301,8 @@ bool DoPossiblePacificFix(NFmiPoint &bottomLeftLatlon, NFmiPoint &topRightLatlon
         topRightLatlon.X(topRightLatlon.X() + 360);
         return true;
       }
-      else if (bottomLeftLatlon.X() < topRightLatlon.X() && bottomLeftLatlon.X() >= 180 &&
-               topRightLatlon.X() > 180)
+      if (bottomLeftLatlon.X() < topRightLatlon.X() && bottomLeftLatlon.X() >= 180 &&
+          topRightLatlon.X() > 180)
       {  // molemmat nurkkapisteet ovat pacific-alueella (180 - 360), tehdään niistä molemmista
          // atlantisia koordinaatteja
         // koska SmartMet toimii paremmin tälläisissa tilanteissa, jos kyseinen muutos tehdään. En
@@ -748,7 +748,8 @@ return_type CreateProj(const std::string &projString,
     set<string> usedParams;
 
     // Tokenize the input string
-    vector<string> tokens, splitToken;
+    vector<string> tokens;
+    vector<string> splitToken;
     boost::split(tokens, projString, boost::is_any_of(" \t\n"), boost::token_compress_on);
 
     // The result

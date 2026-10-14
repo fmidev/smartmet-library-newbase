@@ -452,6 +452,8 @@ class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
   int itsGridSizeY = 0;
   float itsGridPointWidthInMeters = 0;
   float itsGridPointHeightInMeters = 0;
+  // laitetaan 0-arvot oletuksena, nämä 'dividerit' pitää alustaa sitten ennen varsinaisia
+  // laskuja!!!
   float itsMetFuncDividerX = 0;  // tähän lasketaan luku, millä jaetaan laskut X-suunnassa
   float itsMetFuncDividerY = 0;  // tähän lasketaan luku, millä jaetaan laskut Y-suunnassa
   bool fTotalWindParam = false;  // jos parametrina on total wind- itää se ottaa tietyissä

@@ -35,7 +35,7 @@ NFmiDataModifierMaxMean::~NFmiDataModifierMaxMean() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierMaxMean::NFmiDataModifierMaxMean()
-    : itsCounter(0), itsAverage(0.), itsMaxValue(-3.4E+38f), itsWeightFactor(kFloatMissing)
+    : itsCounter(0), itsAverage(0.), itsMaxValue(-3.4E+38F), itsWeightFactor(kFloatMissing)
 {
 }
 
@@ -48,7 +48,7 @@ NFmiDataModifierMaxMean::NFmiDataModifierMaxMean()
 // ----------------------------------------------------------------------
 
 NFmiDataModifierMaxMean::NFmiDataModifierMaxMean(float theWeightFactor)
-    : itsCounter(0), itsAverage(0.), itsMaxValue(-3.4E+38f), itsWeightFactor(theWeightFactor)
+    : itsCounter(0), itsAverage(0.), itsMaxValue(-3.4E+38F), itsWeightFactor(theWeightFactor)
 {
 }
 
@@ -79,7 +79,7 @@ void NFmiDataModifierMaxMean::Calculate(float theValue)
 void NFmiDataModifierMaxMean::Clear()
 {
   NFmiDataModifier::Clear();
-  itsMaxValue = -3.4E+38f;
+  itsMaxValue = -3.4E+38F;
   itsCounter = 0;
   itsAverage = 0;
   fCalculationResultOk = false;
@@ -93,12 +93,13 @@ void NFmiDataModifierMaxMean::Clear()
 
 float NFmiDataModifierMaxMean::CalculationResult()
 {
-  float avg = kFloatMissing, max = kFloatMissing;
+  float avg = kFloatMissing;
+  float max = kFloatMissing;
   if (fCalculationResultOk)
     avg = itsAverage;
   else
     avg = kFloatMissing;
-  if (itsMaxValue != -3.4E+38f)
+  if (itsMaxValue != -3.4E+38F)
     max = itsMaxValue;
   else
     max = kFloatMissing;
@@ -108,7 +109,7 @@ float NFmiDataModifierMaxMean::CalculationResult()
     float weightFactor = avg / max;
     if (weightFactor < 0.4)
       return avg;
-    else if (weightFactor >= 0.4 && weightFactor <= 0.6)
+    if (weightFactor >= 0.4 && weightFactor <= 0.6)
       return (avg + max) / 2;
     else if (weightFactor > 0.6 && weightFactor != kFloatMissing)
       return max;

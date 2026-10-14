@@ -19,8 +19,8 @@ class NFmiLambertConformalConicArea : public NFmiArea
                                 double theTrueLatitude2,
                                 double theRadius = kRearth,
                                 bool usePacificView = false,
-                                const NFmiPoint& theTopLeftXY = NFmiPoint(0.f, 0.f),
-                                const NFmiPoint& theBottomRightXY = NFmiPoint(1.f, 1.f));
+                                const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
+                                const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
   const NFmiPoint LatLonToWorldXY(const NFmiPoint& theLatLonPoint) const override;
   const NFmiPoint WorldXYToLatLon(const NFmiPoint& theXYPoint) const override;

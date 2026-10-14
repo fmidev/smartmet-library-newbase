@@ -135,8 +135,8 @@ class NFmiQueryInfo
 
   virtual bool Level(const NFmiLevel &theLevelValue);
   virtual bool Time(const NFmiMetTime &theTime);
-  virtual bool TimeToNearestStep(const NFmiMetTime &theTime,
-                                 FmiDirection = kForward,
+  virtual bool TimeToNearestStep(const NFmiMetTime& theTime,
+                                 FmiDirection /*theDirection*/ = kForward,
                                  long theTimeRangeInMinutes = kLongMissing);
 
   const NFmiArea *Area() const;
@@ -1467,9 +1467,8 @@ inline bool NFmiQueryInfo::FloatValue(float theFloatData)
     fHasNonFiniteValueSet = true;
     return false;
   }
-  else
-    return IsSubParamUsed() ? SubParamFloatValue(theFloatData)
-                            : IndexFloatValue(Index(), theFloatData);
+  return IsSubParamUsed() ? SubParamFloatValue(theFloatData)
+                          : IndexFloatValue(Index(), theFloatData);
 }
 
 // ----------------------------------------------------------------------

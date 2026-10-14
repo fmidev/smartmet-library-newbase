@@ -162,7 +162,7 @@ inline float NFmiSmoother::Weight(float theDistance) const
     }
     default:
     {
-      weight = (theDistance == 0.0f ? 1.0f : 0.0f);
+      weight = (theDistance == 0.0F ? 1.0F : 0.0F);
     }
   }
   return weight;

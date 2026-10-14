@@ -154,8 +154,7 @@ string path_of_msdos_pattern(const string &theMsPattern)
   string::size_type pos = theMsPattern.rfind('/');
   if (pos == string::npos)
     return ".";
-  else
-    return theMsPattern.substr(0, pos);
+  return theMsPattern.substr(0, pos);
 }
 
 // ----------------------------------------------------------------------
@@ -171,11 +170,9 @@ string regex_of_msdos_pattern(const string &theMsPattern)
   string::size_type pos = theMsPattern.rfind('/');
   if (pos == string::npos)
     return extend_plain_regex(theMsPattern);
-  else
-  {
-    string mspattern = theMsPattern.substr(pos + 1);
-    return extend_plain_regex(mspattern);
-  }
+
+  string mspattern = theMsPattern.substr(pos + 1);
+  return extend_plain_regex(mspattern);
 }
 }  // namespace
 
@@ -1101,13 +1098,12 @@ time_t FindFile(const string &theFileFilter,
 
   if (matches.empty())
     return 0;
-  else
-  {
-    auto it = (fSearchNewest ? --matches.end() : matches.begin());
-    if (theFoundFileName != nullptr)
-      *theFoundFileName = it->second;
-    return it->first;
-  }
+
+  auto it = (fSearchNewest ? --matches.end() : matches.begin());
+  if (theFoundFileName != nullptr)
+    *theFoundFileName = it->second;
+  return it->first;
+
 #else
   struct _finddata_t fileinfo;
   intptr_t handle;
@@ -1236,7 +1232,7 @@ bool ReadFile2String(const std::string &theFileName,
       in.close();
       return in.good();
     }
-    else if (FileExists(theFileName) && fileSize == 0)
+    if (FileExists(theFileName) && fileSize == 0)
     {
       theFileContent = "";  // pitää tyhjentää stringi, koska tiedosto oli tyhjä
       return true;          // tiedoston luku onnistui, vaikka se olikin tyhjä
@@ -1268,7 +1264,7 @@ bool ReadFileStart2String(const std::string &theFileName,
       in.close();
       return in.good();
     }
-    else if (FileExists(theFileName) && fileSize == 0)
+    if (FileExists(theFileName) && fileSize == 0)
     {
       theFileContent = "";  // pitää tyhjentää stringi, koska tiedosto oli tyhjä
       return true;          // tiedoston luku onnistui, vaikka se olikin tyhjä
@@ -1529,13 +1525,11 @@ void CleanFilePattern(const std::string &theFilePattern,
   {
     if (static_cast<int>(fileMap.size()) - i <= theKeepFileCount)
       break;
-    else
-    {
-      std::string &filename = (*mapIt).second;
-      bool status = RemoveFile(filename);
-      if (theDeletedFilesOut && status)
-        theDeletedFilesOut->push_back(filename);
-    }
+
+    std::string& filename = (*mapIt).second;
+    bool status = RemoveFile(filename);
+    if (theDeletedFilesOut && status)
+      theDeletedFilesOut->push_back(filename);
   }
 }
 
@@ -1608,10 +1602,9 @@ bool IsQueryData(const string &theName)
     p.replace_extension();
     return boost::regex_search(p.string(), r_qd);
   }
-  else
-  {
-    return boost::regex_search(theName, r_qd);
-  }
+
+  return boost::regex_search(theName, r_qd);
+
 #else
   // FIXME: it would perhaps best to avoid using boost::regex here and
   //        write own test fir suffixes
@@ -1631,19 +1624,17 @@ std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &
   NFmiFileString fileString(theOrigPath);
   if (fileString.IsAbsolutePath())
     return theOrigPath;
-  else
-  {
-    std::string finalPath;
-    finalPath = theWorkingDirectory;
-    if (!theWorkingDirectory.empty() &&
-        theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
+
+  std::string finalPath;
+  finalPath = theWorkingDirectory;
+  if (!theWorkingDirectory.empty() &&
+      theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
 #ifdef WIN32
-      if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
+    if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
 #endif  // WIN32
-        finalPath += kFmiDirectorySeparator;
-    finalPath += theOrigPath;
-    return finalPath;
-  }
+      finalPath += kFmiDirectorySeparator;
+  finalPath += theOrigPath;
+  return finalPath;
 }
 
 // Polku on absoluuttinen jos:

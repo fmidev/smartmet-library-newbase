@@ -79,8 +79,7 @@ float NFmiDataModifierSingleExtremeValuesFilter::CalculationResult()
   float avg = itsAvgModifier.CalculationResult();
   if ((avg / itsValue < 0.12 && itsValue != kFloatMissing))
     return 0;
-  else
-    return itsValue;
+  return itsValue;
 }
 
 // ======================================================================

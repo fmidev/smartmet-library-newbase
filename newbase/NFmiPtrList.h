@@ -469,11 +469,11 @@ bool NFmiPtrList<Type>::Add(Type *theItem, unsigned long theIndex)
   Iterator iter(itsStart, this);
 
   unsigned long ind = 0;
-  do
+  for (bool more = true; more; more = iter.Next())
   {
     if (++ind == theIndex)
       return iter.AddAfter(theItem);
-  } while (iter.Next());
+  }
   return false;
 }
 

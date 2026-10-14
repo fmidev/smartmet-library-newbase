@@ -598,10 +598,13 @@ bool NFmiString::ReplaceChars2(const unsigned char *fromChars,
 {
   try
   {
-    NFmiString fromStr(fromChars), toStr(toChars);
+    NFmiString fromStr(fromChars);
+    NFmiString toStr(toChars);
     if (fromStr.GetLen() == 0)
       return false;
-    unsigned long pos1 = 1, pos = 1, counter = 0;
+    unsigned long pos1 = 1;
+    unsigned long pos = 1;
+    unsigned long counter = 0;
     if (replacementsMaxCount == 0)
       return true;
     counter++;
