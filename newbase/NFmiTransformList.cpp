@@ -183,23 +183,8 @@ NFmiTransformList::~NFmiTransformList()
 // ----------------------------------------------------------------------
 
 NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
-    : itsMaxPairNumber(),
-      itsIncrementSize(),
-      itsCurrentIndex(),
-      itsCurrentMaxIndex(),
-      itsPreviousInputRangeIndex(),
-      itsPreviousInputValue(),
-      itsPreviousOutputValue(),
-      itsMinInputValue(),
-      itsMaxInputValue(),
-      itsInputValue(),
-      itsOutputValue(),
-      itsFirstPair(nullptr),
-      itsLastPair(nullptr),
-      itsVeryFirstPair(),
-      itsVeryLastPair(),
-      itsEps(NFmiPoint(0.0000001, 0.0000001)),
-      itsOutputInputRatio(nullptr)
+    :
+      itsEps(NFmiPoint(0.0000001, 0.0000001))
 {
   try
   {
@@ -308,10 +293,10 @@ bool NFmiTransformList::operator==(const NFmiTransformList& theList)
   {
     // NOTE: Currently doesn't check for 'itsOutputInputRatio' equality !
 
-    if (!((itsMaxPairNumber == theList.itsMaxPairNumber) &&
-          (itsIncrementSize == theList.itsIncrementSize) &&
-          (itsCurrentIndex == theList.itsCurrentIndex) &&
-          (itsCurrentMaxIndex == theList.itsCurrentMaxIndex)))
+    if ((itsMaxPairNumber != theList.itsMaxPairNumber) ||
+        (itsIncrementSize != theList.itsIncrementSize) ||
+        (itsCurrentIndex != theList.itsCurrentIndex) ||
+        (itsCurrentMaxIndex != theList.itsCurrentMaxIndex))
       return false;
 
     // No pairs inserted in lists ?
@@ -356,15 +341,12 @@ bool NFmiTransformList::Equal(const NFmiPoint& p1, const NFmiPoint& p2)
 {
   try
   {
-    double diffX, diffY;
+    double diffX = NAN, diffY = NAN;
 
     diffX = fabs(p1.X() - p2.X());
     diffY = fabs(p1.Y() - p2.Y());
 
-    if ((diffX < itsEps.X()) && (diffY < itsEps.Y()))
-      return true;
-
-    return false;
+    return (diffX < itsEps.X()) && (diffY < itsEps.Y());
   }
   catch (...)
   {
@@ -437,17 +419,14 @@ bool NFmiTransformList::Allocate(int theMaxPairNumber)
     }
     else
     {
-      if (itsFirstPair)
         delete[] itsFirstPair;
 
       itsFirstPair = new NFmiPoint[itsMaxPairNumber];
 
-      if (itsLastPair)
         delete[] itsLastPair;
 
       itsLastPair = new NFmiPoint[itsMaxPairNumber];
 
-      if (itsOutputInputRatio)
         delete[] itsOutputInputRatio;
 
       itsOutputInputRatio = new double[itsMaxPairNumber];

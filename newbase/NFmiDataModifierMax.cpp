@@ -63,7 +63,7 @@ void NFmiDataModifierMax::Clear()
 
 float NFmiDataModifierMax::CalculationResult()
 {
-  return itsExtremeValue != -3.4E+38f && !(!fMissingValuesAllowed && itsNumberOfMissingValues > 0)
+  return itsExtremeValue != -3.4E+38f && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
              ? itsExtremeValue
              : kFloatMissing;
 }

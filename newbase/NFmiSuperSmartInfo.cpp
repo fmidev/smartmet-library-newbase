@@ -32,8 +32,7 @@ using namespace std;
 // ----------------------------------------------------------------------
 
 NFmiSuperSmartInfo::NFmiSuperSmartInfo()
-    : NFmiFastQueryInfo(),
-      itsFloatValueAccessLevel(kNormalAccess),
+    : itsFloatValueAccessLevel(kNormalAccess),
       fUseCalculator(false),
       fUseVarianceCalculator(false),
       fUseVariationCalculator(false),
@@ -50,9 +49,7 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo()
       itsAreaMask(nullptr),
       fUseAreaMask(false),
       fUseHelperBinaryMasks(false),
-      itsCurrentHelperBinaryMask(nullptr),
-      itsXYMaskBoundingBox(),
-      itsHelperBinaryMaskList()
+      itsCurrentHelperBinaryMask(nullptr)
 {
 }
 
@@ -90,9 +87,7 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiParamDescriptor& theParamDescri
       itsAreaMask(nullptr),
       fUseAreaMask(false),
       fUseHelperBinaryMasks(false),
-      itsCurrentHelperBinaryMask(nullptr),
-      itsXYMaskBoundingBox(),
-      itsHelperBinaryMaskList()
+      itsCurrentHelperBinaryMask(nullptr)
 {
 }
 
@@ -132,9 +127,7 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(NFmiQueryData* data,
       itsAreaMask(nullptr),
       fUseAreaMask(false),
       fUseHelperBinaryMasks(false),
-      itsCurrentHelperBinaryMask(nullptr),
-      itsXYMaskBoundingBox(),
-      itsHelperBinaryMaskList()
+      itsCurrentHelperBinaryMask(nullptr)
 {
 }
 
@@ -165,9 +158,7 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiQueryInfo& theInfo)
       itsAreaMask(nullptr),
       fUseAreaMask(false),
       fUseHelperBinaryMasks(false),
-      itsCurrentHelperBinaryMask(nullptr),
-      itsXYMaskBoundingBox(),
-      itsHelperBinaryMaskList()
+      itsCurrentHelperBinaryMask(nullptr)
 {
 }
 // ----------------------------------------------------------------------
@@ -201,11 +192,7 @@ NFmiSuperSmartInfo::NFmiSuperSmartInfo(const NFmiSuperSmartInfo& theInfo)
       fUseHelperBinaryMasks(theInfo.fUseHelperBinaryMasks),
       itsCurrentHelperBinaryMask(
           nullptr)  // tämä alustetaan (virheellisesti) CopyHelperBinaryMasksAndInfo:issa
-      ,
-      itsXYMaskBoundingBox()  // tämä alustetaan (virheellisesti) CopyHelperBinaryMasksAndInfo:issa
-      ,
-      itsHelperBinaryMaskList()  // tämä alustetaan (virheellisesti)
-                                 // CopyHelperBinaryMasksAndInfo:issa
+
 {
   try
   {

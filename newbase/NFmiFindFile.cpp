@@ -50,9 +50,7 @@ NFmiFindFile::~NFmiFindFile()
 // ----------------------------------------------------------------------
 
 NFmiFindFile::NFmiFindFile()
-    : itsFileName(),
-      itsFilePath(),
-      itsFileFile(0)
+    : itsFileFile(0)
 #ifdef UNIX
       ,
       itsGlobIndex(0),
@@ -161,7 +159,7 @@ bool NFmiFindFile::Find(const NFmiString& theFileMask)
     itsFileName = itsGlobBuffer->gl_pathv[itsGlobIndex];
     // Ilman hakupolkua
     itsFileName = itsFileName.substr(itsFilePath.size(), itsFileName.size() - itsFilePath.size());
-    if (itsFileName.size() > 0 && itsFileName[0] == '/')
+    if (!itsFileName.empty() && itsFileName[0] == '/')
       itsFileName = itsFileName.substr(1, itsFileName.size() - 1);
 
 #else

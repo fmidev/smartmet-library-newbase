@@ -15,10 +15,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiVoidPtrList::NFmiVoidPtrList()
-    : itsFirstItem(nullptr), itsCurrentItem(nullptr), itsPreviousItem(nullptr), itsNumberOffItems(0)
-{
-}
+NFmiVoidPtrList::NFmiVoidPtrList() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -222,7 +219,7 @@ void NFmiVoidPtrList::DeleteItem()
 {
   try
   {
-    NFmiVoidPtrItem *deleteItem;
+    NFmiVoidPtrItem* deleteItem = nullptr;
     deleteItem = itsFirstItem;
     itsFirstItem = itsFirstItem->itsNextItem;
     if (deleteItem == itsCurrentItem)
@@ -440,7 +437,7 @@ bool NFmiVoidPtrIterator::Next(void *&theItem)
   try
   {
     theItem = Next();
-    return *&theItem ? true : false;
+    return *&theItem != nullptr;
   }
   catch (...)
   {
@@ -460,7 +457,7 @@ bool NFmiVoidPtrIterator::NextPtr(NFmiVoidPtrData *&theItem)
   try
   {
     theItem = NextPtr();
-    return *&theItem ? true : false;
+    return *&theItem != nullptr;
   }
   catch (...)
   {

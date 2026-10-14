@@ -25,8 +25,7 @@ NFmiLevelBag::~NFmiLevelBag()
 {
   try
   {
-    if (itsLevels)
-      delete[] static_cast<NFmiLevel *>(itsLevels);
+      delete[] itsLevels;
   }
   catch (...)
   {
@@ -186,7 +185,7 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 {
   try
   {
-    int i;
+    int i = 0;
     for (i = 0; i < static_cast<int>(itsSize); i++)
       // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
       // elements are exactly of the pointed-to type, there are no derived objects in it
@@ -195,8 +194,8 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
 
     if (i == static_cast<int>(itsSize))
     {
-      int j;
-      NFmiLevel *tempLevels;
+      int j = 0;
+      NFmiLevel* tempLevels = nullptr;
       tempLevels = new NFmiLevel[GetSize() + 1];
 
       for (j = 0; j < static_cast<int>(itsSize); j++)
@@ -208,7 +207,6 @@ bool NFmiLevelBag::AddLevel(const NFmiLevel &theLevel)
       // elements are exactly of the pointed-to type, there are no derived objects in it
       tempLevels[j] = theLevel;
 
-      if (itsLevels)
         delete[] itsLevels;
 
       itsLevels = new NFmiLevel[itsSize + 1];
@@ -350,8 +348,7 @@ std::istream &NFmiLevelBag::Read(std::istream &file)
 {
   try
   {
-    if (itsLevels)
-      delete[] static_cast<NFmiLevel *>(itsLevels);
+      delete[] itsLevels;
 
     NFmiSize::Read(file);
     if (GetSize())  // 11.02.97 Vili Add size check

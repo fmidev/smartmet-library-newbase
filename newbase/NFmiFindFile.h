@@ -38,11 +38,11 @@ class NFmiFindFile
   std::string itsFileName;
   std::string itsFilePath;
 
-  long itsFileFile;
+  long itsFileFile = 0;
 
 #ifdef UNIX
-  unsigned int itsGlobIndex;
-  glob_t* itsGlobBuffer;
+  unsigned int itsGlobIndex = 0;
+  glob_t* itsGlobBuffer = nullptr;
 #endif
 
 };  // class NFmiFindFile

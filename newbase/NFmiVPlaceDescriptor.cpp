@@ -65,9 +65,8 @@ NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(NFmiLevelBag &theLevelBag)
  */
 // ----------------------------------------------------------------------
 
-NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor &theVPlaceDescriptor)
-    : NFmiDataDescriptor(),
-      itsLevelBag(theVPlaceDescriptor.itsLevelBag
+NFmiVPlaceDescriptor::NFmiVPlaceDescriptor(const NFmiVPlaceDescriptor& theVPlaceDescriptor)
+    : itsLevelBag(theVPlaceDescriptor.itsLevelBag
                       ? new NFmiLevelBag(*theVPlaceDescriptor.itsLevelBag)
                       : nullptr),
       itsActivity(nullptr)
@@ -101,7 +100,7 @@ void NFmiVPlaceDescriptor::Destroy()
   {
     if (itsActivity)
     {
-      delete[] static_cast<bool *>(itsActivity);
+      delete[] itsActivity;
       itsActivity = nullptr;
     }
     if (itsLevelBag)
@@ -255,7 +254,7 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
 {
   try
   {
-    bool tempBoolean;
+    bool tempBoolean = false;
     itsLevelBag->Reset();
 
     do
@@ -265,10 +264,7 @@ bool NFmiVPlaceDescriptor::Level(const NFmiLevel &theLevel)
         break;
     } while (!(*itsLevelBag->Level() == theLevel));
 
-    if (tempBoolean)
-      return true;
-
-    return false;
+    return tempBoolean;
   }
   catch (...)
   {
@@ -353,10 +349,7 @@ bool NFmiVPlaceDescriptor::IsLevel() const
 {
   try
   {
-    if (itsLevelBag)
-      return true;
-
-    return false;
+    return itsLevelBag != nullptr;
   }
   catch (...)
   {

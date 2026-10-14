@@ -32,7 +32,7 @@ NFmiDataModifierSum::~NFmiDataModifierSum() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierSum::NFmiDataModifierSum(FmiJoinOperator theJoinOperator, bool missingValuesAlloved)
-    : NFmiDataModifier(theJoinOperator, missingValuesAlloved), itsSum(0)
+    : NFmiDataModifier(theJoinOperator, missingValuesAlloved)
 {
 }
 

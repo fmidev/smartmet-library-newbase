@@ -246,7 +246,7 @@ inline unsigned long NFmiString::ClassId() const
 
 inline bool NFmiString::operator==(const NFmiString &other) const
 {
-  return IsEqual(other) == true;
+  return IsEqual(other);
 }
 // ----------------------------------------------------------------------
 /*!
@@ -259,7 +259,7 @@ inline bool NFmiString::operator==(const NFmiString &other) const
 
 inline bool NFmiString::operator==(const char *other) const
 {
-  return IsEqual(NFmiString(other)) == true;
+  return IsEqual(NFmiString(other));
 }
 
 // ----------------------------------------------------------------------

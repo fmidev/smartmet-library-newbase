@@ -50,7 +50,7 @@ NFmiStringList::~NFmiStringList()
  */
 // ----------------------------------------------------------------------
 
-NFmiStringList::NFmiStringList(const NFmiStringList &theList) : itsList(), itsIndex(0)
+NFmiStringList::NFmiStringList(const NFmiStringList& theList) : itsIndex(0)
 {
   try
   {
@@ -110,7 +110,7 @@ bool NFmiStringList::Next()
 {
   try
   {
-    if (itsList.size())
+    if (!itsList.empty())
     {
       itsIndex = (itsIndex < itsList.size() - 1) ? itsIndex + 1 : 0;
       return (itsIndex != 0);
@@ -189,7 +189,7 @@ bool NFmiStringList::Reset(FmiDirection theDirect)
   {
     if (theDirect == kBackward)
     {
-      if (itsList.size() > 0)
+      if (!itsList.empty())
         itsIndex = itsList.size() - 1;
       else
         itsIndex = 0;
@@ -197,7 +197,7 @@ bool NFmiStringList::Reset(FmiDirection theDirect)
     else
       itsIndex = 0;
 
-    return (itsList.size() > 0);
+    return (!itsList.empty());
   }
   catch (...)
   {
@@ -401,10 +401,10 @@ std::istream &NFmiStringList::Read(std::istream &file)
 {
   try
   {
-    int items;
+    int items = 0;
     file >> items;
 
-    unsigned long classId;
+    unsigned long classId = 0;
 
     NFmiString *item = nullptr;
     for (long i = 0; i < items; i++)

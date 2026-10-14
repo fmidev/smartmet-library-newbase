@@ -32,8 +32,7 @@ NFmiRadarStation::~NFmiRadarStation() = default;
 // ----------------------------------------------------------------------
 
 NFmiRadarStation::NFmiRadarStation()
-    : NFmiStation(),
-      itsResolution(static_cast<unsigned long>(kFloatMissing)),
+    : itsResolution(static_cast<unsigned long>(kFloatMissing)),
       itsXNumber(static_cast<unsigned long>(kFloatMissing)),
       itsYNumber(static_cast<unsigned long>(kFloatMissing))
 {

@@ -30,7 +30,7 @@ NFmiDataModifierAllValidAvg::~NFmiDataModifierAllValidAvg() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierAllValidAvg::NFmiDataModifierAllValidAvg() : NFmiDataModifierAvg()
+NFmiDataModifierAllValidAvg::NFmiDataModifierAllValidAvg()
 {
   fMissingValuesAllowed = false;
 }

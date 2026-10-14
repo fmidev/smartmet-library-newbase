@@ -129,7 +129,7 @@ using TFmiTime = NFmiTime;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiTime::NFmiTime() : NFmiStaticTime(), itsZoneDifferenceHour()
+inline NFmiTime::NFmiTime() : itsZoneDifferenceHour()
 {
   SetZoneDifferenceHour();
 }

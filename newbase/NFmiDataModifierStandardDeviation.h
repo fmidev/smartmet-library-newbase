@@ -23,9 +23,9 @@ class NFmiDataModifierStandardDeviation : public NFmiDataModifier
   float CalculationResult() override;
 
  protected:
-  long itsCounter;
-  float itsSum;
-  float itsSquaredSum;
+  long itsCounter = 0;
+  float itsSum = 0;
+  float itsSquaredSum = 0;
 
 };  // class NFmiDataModifierStandardDeviation
 

@@ -141,15 +141,6 @@ NFmiPreProcessor::NFmiPreProcessor(bool stripPound,
                                    bool stripEndOfLineSpaces)
     : NFmiCommentStripper(
           stripPound, stripDoubleSlash, stripSlashAst, stripSlashAstNested, stripEndOfLineSpaces),
-      itsDefineDirective(""),
-      itsIncludeDirective(""),
-      itsIncludePath(),
-      itsIncludeExtension(),
-      itsConditionalBeginDirective(""),
-      itsConditionalNotBeginDirective(),
-      itsConditionalEndDirective(),
-      itsConditionalElseDirective(),
-      itsReplaceMap(),
       itsNumOfReplacesDone(0),
       fConditionValue(),
       fNoFilesIncluded(false),
@@ -171,7 +162,7 @@ NFmiPreProcessor::NFmiPreProcessor(bool stripPound,
  */
 // ----------------------------------------------------------------------
 
-NFmiPreProcessor::NFmiPreProcessor(const std::string &theFileName,
+NFmiPreProcessor::NFmiPreProcessor(const std::string& theFileName,
                                    bool stripPound,
                                    bool stripDoubleSlash,
                                    bool stripSlashAst,
@@ -183,15 +174,6 @@ NFmiPreProcessor::NFmiPreProcessor(const std::string &theFileName,
                           stripSlashAst,
                           stripSlashAstNested,
                           stripEndOfLineSpaces),
-      itsDefineDirective(""),
-      itsIncludeDirective(""),
-      itsIncludePath(),
-      itsIncludeExtension(),
-      itsConditionalBeginDirective(""),
-      itsConditionalNotBeginDirective(),
-      itsConditionalEndDirective(),
-      itsConditionalElseDirective(),
-      itsReplaceMap(),
       itsNumOfReplacesDone(0),
       fConditionValue(),
       fNoFilesIncluded(false),
@@ -305,8 +287,10 @@ bool NFmiPreProcessor::IncludeFiles(const string &theIncludeDirective,
   }
 }
 
+namespace
+{
 // tämä poistaa halutun merkin stringin alusta ja lopusta, jos merkki on molemmissa päissä
-static void RemovePossibleCharactersFromStartAndEnd(std::string &theString, char theChar)
+void RemovePossibleCharactersFromStartAndEnd(std::string &theString, char theChar)
 {
   try
   {
@@ -321,6 +305,7 @@ static void RemovePossibleCharactersFromStartAndEnd(std::string &theString, char
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -338,11 +323,11 @@ bool NFmiPreProcessor::Include()
       return false;
     }
     itsCurNumOfIncludes++;
-    string newString = "";
+    string newString;
     string oldString(itsString);
     string fileContents, fileName;
     std::string::size_type lenDef = itsIncludeDirective.length();
-    std::string::size_type posHelp;
+    std::string::size_type posHelp = 0;
     std::string::size_type pos = oldString.find(itsIncludeDirective);
     if (pos == string::npos)
     {
@@ -486,12 +471,12 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
   try
   {
     string oldString(itsString);
-    string newString = "";
+    string newString;
     string::size_type posbigalku = oldString.find(theBeginDirective);
-    string::size_type posbigloppu, posbigloppu2;
+    string::size_type posbigloppu = 0, posbigloppu2 = 0;
     string::size_type len = theEndDirective.length();
     string::size_type len2 = theEndDirective2.length();
-    string::size_type curLen;
+    string::size_type curLen = 0;
 
     if (posbigalku == string::npos)
       itsString = oldString;
@@ -845,7 +830,7 @@ bool NFmiPreProcessor::Define()
         for (auto& define : defines)
         {
           int count = 0;
-          string::size_type pos;
+          string::size_type pos = 0;
           while ((pos = line.find(define.first)) != string::npos)
           {
             line.replace(pos, define.first.size(), define.second);

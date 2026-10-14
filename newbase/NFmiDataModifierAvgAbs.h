@@ -24,8 +24,8 @@ class NFmiDataModifierAvgAbs : public NFmiDataModifier
   long Counter() const;
 
  protected:
-  long itsCounter;
-  float itsSum;
+  long itsCounter = 0;
+  float itsSum = 0;
   float itsAverage;
 
 };  // class NFmiDataModifierAvgAbs

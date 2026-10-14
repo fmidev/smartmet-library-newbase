@@ -599,8 +599,7 @@ float FmiOldConvectiveHumanHeatFlux(float wind, float temp)
     // 1.7 m/s = walking speed
     float w = FmiMax(1.7f, wind);
 
-    return (10.47f + 12.68f * static_cast<float>(sqrt(w)) - 1.163f * w) * (33.f - temp) -
-           112.5f;  // - sÃ¤teily;
+    return (10.47f + 12.68f * sqrt(w) - 1.163f * w) * (33.f - temp) - 112.5f;  // - sÃ¤teily;
   }
   catch (...)
   {

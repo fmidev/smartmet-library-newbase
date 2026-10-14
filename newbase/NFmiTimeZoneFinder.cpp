@@ -33,6 +33,7 @@
 #include <macgyver/Exception.h>
 #include <iostream>
 #include <list>
+#include <cmath>
 #include <memory>
 #include <set>
 #include <sstream>
@@ -411,7 +412,7 @@ bool NFmiTimeZonePolygon::Inside(const NFmiPoint& thePoint) const
 class NFmiTimeZoneFinderPimple
 {
  public:
-  NFmiTimeZoneFinderPimple() : itsData() {}
+  NFmiTimeZoneFinderPimple() {}
   float Find(const NFmiPoint& thePoint) const;
 
   using storage_type = list<NFmiTimeZonePolygon>;
@@ -631,14 +632,14 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
         if (poly.get() != nullptr)
           itsPimple->itsData.push_back(*poly);
 
-        float tz;
+        float tz = NAN;
         input >> tz;
         poly = std::make_shared<NFmiTimeZonePolygon>(tz);
         ring = std::make_shared<NFmiTimeZoneRing>();
       }
       else if (command == "xy")
       {
-        double x, y;
+        double x = NAN, y = NAN;
         input >> x >> y;
 
         if (ring.get() == nullptr)

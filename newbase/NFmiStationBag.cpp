@@ -22,7 +22,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiStationBag::NFmiStationBag() : NFmiLocationBag() {}
+NFmiStationBag::NFmiStationBag() {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -33,7 +33,7 @@ NFmiStationBag::NFmiStationBag() : NFmiLocationBag() {}
 // ----------------------------------------------------------------------
 
 NFmiStationBag::NFmiStationBag(unsigned long *theStationArray, unsigned long numberOfStations)
-    : NFmiLocationBag()
+
 {
   try
   {

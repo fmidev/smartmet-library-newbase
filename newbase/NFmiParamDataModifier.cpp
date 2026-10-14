@@ -54,8 +54,7 @@ NFmiParamDataModifier::NFmiParamDataModifier(NFmiDataIdent* theParam,
                                              FmiJoinOperator theJoinOperator)
     : NFmiDataModifier(theJoinOperator),
       itsParam(theParam ? new NFmiDataIdent(*theParam) : nullptr),
-      itsLevel(theLevel ? new NFmiLevel(*theLevel) : nullptr),
-      itsSubList(nullptr)
+      itsLevel(theLevel ? new NFmiLevel(*theLevel) : nullptr)
 {
   try
   {

@@ -32,10 +32,7 @@ NFmiSortedList::~NFmiSortedList() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiSortedList::NFmiSortedList(FmiSortOrder theSortOrder)
-    : NFmiVoidPtrList(), itsSortOrder(theSortOrder)
-{
-}
+NFmiSortedList::NFmiSortedList(FmiSortOrder theSortOrder) : itsSortOrder(theSortOrder) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -90,7 +87,7 @@ bool NFmiSortedList::AddAscending(NFmiSortable *theItem, bool fAddDuplicates)
       return true;
     }
 
-    void *anItem;
+    void* anItem = nullptr;
     NFmiVoidPtrIterator it(this);
     it.Reset();
     while (it.Next(anItem))
@@ -134,7 +131,7 @@ bool NFmiSortedList::AddDescending(NFmiSortable *theItem, bool fAddDuplicates)
       return true;
     }
 
-    void *anItem;
+    void* anItem = nullptr;
     NFmiVoidPtrIterator it(this);
     it.Reset();
     while (it.Next(anItem))

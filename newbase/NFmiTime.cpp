@@ -282,8 +282,7 @@ const char *reldays[] =  // OBS also in NFmiPressTime ??
  */
 // ----------------------------------------------------------------------
 
-NFmiTime::NFmiTime(const long datePart, const long timePart)
-    : NFmiStaticTime(), itsZoneDifferenceHour()
+NFmiTime::NFmiTime(const long datePart, const long timePart) : itsZoneDifferenceHour()
 {
   try
   {
@@ -979,7 +978,7 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
                                      // palautetaan vanha arvo
 
     struct tm newtime;
-    time_t aclock;
+    time_t aclock = 0;
 
     (void)time(&aclock);
 
@@ -1118,7 +1117,7 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
     int len = theTimeCode.GetLen();
     NFmiString str6, str4, str3, str2, str1, strh;
     NFmiValueString theString;
-    int plusInd, subPlusInd;
+    int plusInd = 0, subPlusInd = 0;
 
     while (ind <= len)
     {
@@ -1308,7 +1307,7 @@ const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
 
     if (theFormat.GetChars(5, 1) == NFmiString("+") || theFormat.GetChars(5, 1) == NFmiString("-"))
     {
-      int addDiff;
+      int addDiff = 0;
       NFmiValueString vString = NFmiValueString(theFormat);
       vString.ConvertToInt(addDiff, 5, 2);
       diff += -addDiff;

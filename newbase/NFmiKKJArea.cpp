@@ -64,8 +64,8 @@
 // ======================================================================
 
 #include "NFmiKKJArea.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <cmath>
 #include <cstdlib>
 #include <stdexcept>
@@ -79,10 +79,7 @@ using namespace std;
 // ----------------------------------------------------------------------
 
 NFmiKKJArea::NFmiKKJArea()
-    : NFmiArea(),
-      itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
-      a(),
+    : a(),
       p(),
       b(),
       e(),
@@ -94,8 +91,7 @@ NFmiKKJArea::NFmiKKJArea()
       h1(),
       h2(),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -154,10 +150,10 @@ NFmiKKJArea::NFmiKKJArea(const NFmiKKJArea &theKKJArea)
  */
 // ----------------------------------------------------------------------
 
-NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
-                         const NFmiPoint &theTopRightLatLon,
-                         const NFmiPoint &theTopLeftXY,
-                         const NFmiPoint &theBottomRightXY,
+NFmiKKJArea::NFmiKKJArea(const NFmiPoint& theBottomLeftLatLon,
+                         const NFmiPoint& theTopRightLatLon,
+                         const NFmiPoint& theTopLeftXY,
+                         const NFmiPoint& theBottomRightXY,
                          bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsTopRightLatLon(theTopRightLatLon),
@@ -174,8 +170,7 @@ NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
       h1(),
       h2(),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -196,13 +191,11 @@ NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
  * \param theBottomRightXY Undocumented
  */
 NFmiKKJArea::NFmiKKJArea(double /* theRadialRangeInMeters */,
-                         const NFmiPoint & /* theCenterLatLon */,
-                         const NFmiPoint &theTopLeftXY,
-                         const NFmiPoint &theBottomRightXY)
+                         const NFmiPoint& /* theCenterLatLon */,
+                         const NFmiPoint& theTopLeftXY,
+                         const NFmiPoint& theBottomRightXY)
 
     : NFmiArea(theTopLeftXY, theBottomRightXY),
-      itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
       a(),
       p(),
       b(),
@@ -215,8 +208,7 @@ NFmiKKJArea::NFmiKKJArea(double /* theRadialRangeInMeters */,
       h1(),
       h2(),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -238,11 +230,10 @@ NFmiKKJArea::NFmiKKJArea(double /* theRadialRangeInMeters */,
  */
 // ----------------------------------------------------------------------
 
-NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
-                         const NFmiPoint &theTopLeftXY,
-                         const NFmiPoint &theBottomRightXY)
+NFmiKKJArea::NFmiKKJArea(const NFmiPoint& theBottomLeftLatLon,
+                         const NFmiPoint& theTopLeftXY,
+                         const NFmiPoint& theBottomRightXY)
     : NFmiArea(theTopLeftXY, theBottomRightXY),
-      itsTopRightLatLon(),
       itsBottomLeftLatLon(theBottomLeftLatLon),
       a(),
       p(),
@@ -256,8 +247,7 @@ NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
       h1(),
       h2(),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -278,10 +268,8 @@ NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theTopLeftXY, const NFmiPoint &theBottomRightXY)
+NFmiKKJArea::NFmiKKJArea(const NFmiPoint& theTopLeftXY, const NFmiPoint& theBottomRightXY)
     : NFmiArea(theTopLeftXY, theBottomRightXY),
-      itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
       a(),
       p(),
       b(),
@@ -294,8 +282,7 @@ NFmiKKJArea::NFmiKKJArea(const NFmiPoint &theTopLeftXY, const NFmiPoint &theBott
       h1(),
       h2(),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -404,9 +391,10 @@ const NFmiPoint NFmiKKJArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xeast, ynorth, zone, xeastForCentralMeridian, ksi, eta, ksi1, eta1, lambda, q, temp, q2,
-        d, testv, lat, lon, dind;
-    int ind;
+    double xeast = NAN, ynorth = NAN, zone = NAN, xeastForCentralMeridian = NAN, ksi = NAN,
+           eta = NAN, ksi1 = NAN, eta1 = NAN, lambda = NAN, q = NAN, temp = NAN, q2 = NAN, d = NAN,
+           testv = NAN, lat = NAN, lon = NAN, dind = NAN;
+    int ind = 0;
 
     // Transform world xy-coordinates into geodetic coordinates.
     xeast = theXYPoint.X();   // Easting
@@ -464,7 +452,7 @@ const NFmiPoint NFmiKKJArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xeast, ynorth;
+    double xeast = NAN, ynorth = NAN;
 
     // Transform local xy-coordinates into world xy-coordinates (meters).
     xeast = itsWorldRect.Left() + (theXYPoint.X() - Left()) / itsXScaleFactor;    // Easting
@@ -556,9 +544,10 @@ const NFmiPoint NFmiKKJArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoint) co
     // Transforms input geodetic coordinates (longitude,latitude) into world coordinates
     // (meters) for the Finnish National Grid Coordinate System (KKJ).
 
-    double lat, lon, fii, d, zone, xeastForCentralMeridian, lambda, xeast, ynorth, q, ksi, ksi1,
-        eta, eta1, dind;
-    int ind;
+    double lat = NAN, lon = NAN, fii = NAN, d = NAN, zone = NAN, xeastForCentralMeridian = NAN,
+           lambda = NAN, xeast = NAN, ynorth = NAN, q = NAN, ksi = NAN, ksi1 = NAN, eta = NAN,
+           eta1 = NAN, dind = NAN;
+    int ind = 0;
 
     lat = theLatLonPoint.Y();
     lon = theLatLonPoint.X();
@@ -607,7 +596,7 @@ const NFmiPoint NFmiKKJArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   try
   {
-    double xLocal, yLocal;
+    double xLocal = NAN, yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters).
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
@@ -671,13 +660,10 @@ bool NFmiKKJArea::operator==(const NFmiKKJArea &theArea) const
 {
   try
   {
-    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-        (itsXScaleFactor == theArea.itsXScaleFactor) &&
-        (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-      return true;
-
-    return false;
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+           (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+           (itsXScaleFactor == theArea.itsXScaleFactor) &&
+           (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect);
   }
   catch (...)
   {
@@ -795,7 +781,7 @@ std::istream &NFmiKKJArea::Read(std::istream &file)
   {
     NFmiArea::Read(file);
 
-    double dummy;
+    double dummy = NAN;
 
     file >> itsBottomLeftLatLon;
     file >> itsTopRightLatLon;

@@ -49,15 +49,11 @@ NFmiLogger::~NFmiLogger() = default;
 
 NFmiLogger::NFmiLogger()
     : itsUsedLoggingLevels(127),
-      itsLogFilePath(),
-      itsAbsolutLogFilePath(),
       itsLogFileBaseName("log.txt"),
       itsTimeStampStringFormat("126"),
       itsTimeStampStringIntegerFormat(126)  // 126 = YYYYMMDDHHmmss ks. NFmiStaticTime.h
       ,
       itsLogFileBackupTimePeriod(kMonthly),
-      itsCurrentTime(),
-      itsLastLoggedTime(),
       itsUsedLoggingDevices(kFile),
       fOperational(true),
       fUseLocalTime(true),
@@ -67,7 +63,6 @@ NFmiLogger::NFmiLogger()
       fLogJustMessages(false),
       fNewLogFileInUse(false),
       itsKeepFilesDays(30),
-      itsCurrentLogFileName(),
       itsNoLevelLabel("NoLevel"),
       itsImportantInfoLabel("ImportantInfo"),
       itsInfoLabel("Info"),
@@ -75,8 +70,7 @@ NFmiLogger::NFmiLogger()
       itsMinorWarningLabel("MinorWarning"),
       itsWarningLabel("Warning"),
       itsErrorLabel("Error"),
-      itsFatalErrorLabel("FatalError"),
-      itsBaseNameSpace()
+      itsFatalErrorLabel("FatalError")
 {
   try
   {
@@ -90,21 +84,18 @@ NFmiLogger::NFmiLogger()
   }
 }
 
-NFmiLogger::NFmiLogger(const std::string &theLogFilePath,
-                       const std::string &theLogFileBaseName,
+NFmiLogger::NFmiLogger(const std::string& theLogFilePath,
+                       const std::string& theLogFileBaseName,
                        bool theUseBackupSystem,
                        bool theCleanBackupFiles,
                        Period theLoggingPeriod)
     : itsUsedLoggingLevels(127),
       itsLogFilePath(theLogFilePath),
-      itsAbsolutLogFilePath(),
       itsLogFileBaseName(theLogFileBaseName),
       itsTimeStampStringFormat("126"),
       itsTimeStampStringIntegerFormat(126)  // 126 = YYYYMMDDHHmmss ks. NFmiStaticTime.h
       ,
       itsLogFileBackupTimePeriod(theLoggingPeriod),
-      itsCurrentTime(),
-      itsLastLoggedTime(),
       itsUsedLoggingDevices(kFile),
       fOperational(true),
       fUseLocalTime(true),
@@ -114,7 +105,6 @@ NFmiLogger::NFmiLogger(const std::string &theLogFilePath,
       fLogJustMessages(false),
       fNewLogFileInUse(false),
       itsKeepFilesDays(30),
-      itsCurrentLogFileName(),
       itsNoLevelLabel("NoLevel"),
       itsImportantInfoLabel("ImportantInfo"),
       itsInfoLabel("Info"),
@@ -122,8 +112,7 @@ NFmiLogger::NFmiLogger(const std::string &theLogFilePath,
       itsMinorWarningLabel("MinorWarning"),
       itsWarningLabel("Warning"),
       itsErrorLabel("Error"),
-      itsFatalErrorLabel("FatalError"),
-      itsBaseNameSpace()
+      itsFatalErrorLabel("FatalError")
 {
   try
   {
@@ -180,7 +169,7 @@ void NFmiLogger::StoreToSettings()
 {
   try
   {
-    if (itsBaseNameSpace.empty() == false)
+    if (!itsBaseNameSpace.empty())
     {
       NFmiSettings::Set(itsBaseNameSpace + "::UsedLoggingLevels",
                         NFmiStringTools::Convert(itsUsedLoggingLevels),
@@ -650,10 +639,7 @@ bool NFmiLogger::OpenFile(const string &theFullFileName, const string &thePath, 
         theFile.clear();  // asettaa bad-bitin pois päältä, että voidaan yrittää tiedoston luomista
                           // uudestaan (ja kysyä onnistuiko)
         theFile.open(theFullFileName.c_str(), ios::out | ios::app);
-        if (theFile)
-          return true;
-        else
-          return false;  // edelleenkään tiedostoa ei saatu luotua
+        return static_cast<bool>(theFile);  // edelleenkään tiedostoa ei saatu luotua
       }
       else
         return false;  // hakemistoa ei saatu luotua

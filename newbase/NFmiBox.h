@@ -34,7 +34,7 @@ class NFmiBox
   virtual long CalcSize();
   bool IsInside(unsigned long theIndex) const;
 
-  float *itsValues;
+  float* itsValues = nullptr;
   unsigned long itsSize;
 
  private:

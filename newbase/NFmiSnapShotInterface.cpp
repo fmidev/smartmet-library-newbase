@@ -47,11 +47,7 @@ NFmiSnapShotInterface::NFmiSnapShotInterface(NFmiString theDataFileName,
                                              NFmiString theWorkingDirectory,
                                              NFmiString theSourceDirectory,
                                              time_t theUpdateInterval)
-    : fIsValid(),
-      itsUpdateInterval(theUpdateInterval),
-      itsInfo(nullptr),
-      itsData(nullptr),
-      itsDataFileName(),
+    : itsUpdateInterval(theUpdateInterval),
       itsSourceDirectory(theSourceDirectory),
       itsWorkingDirectory(theWorkingDirectory),
       itsStartingTime(time(nullptr))
@@ -156,10 +152,7 @@ bool NFmiSnapShotInterface::IsValid()
 {
   try
   {
-    if (!itsInfo || time(nullptr) - itsStartingTime > itsUpdateInterval)
-      return false;
-
-    return true;
+    return !(!itsInfo || time(nullptr) - itsStartingTime > itsUpdateInterval);
   }
   catch (...)
   {

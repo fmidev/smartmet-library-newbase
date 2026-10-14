@@ -69,16 +69,8 @@ NFmiLagrange::NFmiLagrange()
  */
 // ----------------------------------------------------------------------
 
-NFmiLagrange::NFmiLagrange(const double *si, const double *ti, double *yij, int sn, int tn)
-    : itsSn(),
-      itsTn(),
-      itsSi(),
-      itsTi(),
-      itsYij(),
-      itsSiDenominator(),
-      itsTiDenominator(),
-      itsLs(),
-      itsLt()
+NFmiLagrange::NFmiLagrange(const double* si, const double* ti, double* yij, int sn, int tn)
+    : itsSn(), itsTn()
 {
   try
   {
@@ -100,16 +92,7 @@ NFmiLagrange::NFmiLagrange(const double *si, const double *ti, double *yij, int 
  */
 // ----------------------------------------------------------------------
 
-NFmiLagrange::NFmiLagrange(const double *si, const double *yij, int sn)
-    : itsSn(),
-      itsTn(),
-      itsSi(),
-      itsTi(),
-      itsYij(),
-      itsSiDenominator(),
-      itsTiDenominator(),
-      itsLs(),
-      itsLt()
+NFmiLagrange::NFmiLagrange(const double* si, const double* yij, int sn) : itsSn(), itsTn()
 {
   try
   {
@@ -444,7 +427,7 @@ double NFmiLagrange::Interpolate(double s, double t)
     // Performs Lagrange 2D polynome interpolation of two independent variables s and t.
     // NOTE: input grid is assumed to be rectilinear.
 
-    int i, j;
+    int i = 0, j = 0;
 
     // Interpolate at (s, t)
 

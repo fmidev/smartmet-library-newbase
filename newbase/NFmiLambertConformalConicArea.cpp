@@ -1,8 +1,8 @@
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiStringTools.h"
-#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <cmath>
 
 using namespace std;
@@ -176,16 +176,13 @@ bool NFmiLambertConformalConicArea::operator==(const NFmiLambertConformalConicAr
 {
   try
   {
-    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-        (itsCentralLongitude == theArea.itsCentralLongitude) &&
-        (itsCentralLatitude == theArea.itsCentralLatitude) &&
-        (itsTrueLatitude1 == theArea.itsTrueLatitude1) &&
-        (itsTrueLatitude2 == theArea.itsTrueLatitude2) && (itsRadius == theArea.itsRadius) &&
-        (itsWorldRect == theArea.itsWorldRect))
-      return true;
-
-    return false;
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+           (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+           (itsCentralLongitude == theArea.itsCentralLongitude) &&
+           (itsCentralLatitude == theArea.itsCentralLatitude) &&
+           (itsTrueLatitude1 == theArea.itsTrueLatitude1) &&
+           (itsTrueLatitude2 == theArea.itsTrueLatitude2) && (itsRadius == theArea.itsRadius) &&
+           (itsWorldRect == theArea.itsWorldRect);
   }
   catch (...)
   {
@@ -500,7 +497,7 @@ const NFmiPoint NFmiLambertConformalConicArea::ToXY(const NFmiPoint &theLatLonPo
 {
   try
   {
-    double xLocal, yLocal;
+    double xLocal = NAN, yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());

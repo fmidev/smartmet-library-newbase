@@ -167,26 +167,26 @@ class NFmiGridBase
   bool MaximizedCrop(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
   bool MinimizedCrop(const NFmiPoint& theBottomLeft, const NFmiPoint& theTopRight);
 
-  NFmiDataPool* itsData;
-  float* itsFloatData;
+  NFmiDataPool* itsData = nullptr;
+  float* itsFloatData = nullptr;
   FmiDirection itsStartingCorner;
 
   FmiInterpolationMethod itsInterpolationMethod;
 
   unsigned long itsXNumber;
   unsigned long itsYNumber;
-  unsigned long itsCurrentX;
-  unsigned long itsCurrentY;
+  unsigned long itsCurrentX = 0;
+  unsigned long itsCurrentY = 0;
 
   NFmiGridBase& operator=(const NFmiGridBase& theBase);
 
  private:
   //  bool itsBase;
-  bool fWaitX;
-  bool fWaitY;
+  bool fWaitX = true;
+  bool fWaitY = true;
 
-  unsigned long itsFirstX;
-  unsigned long itsFirstY;
+  unsigned long itsFirstX = 0;
+  unsigned long itsFirstY = 0;
   unsigned long itsLastX;
   unsigned long itsLastY;
 
@@ -212,7 +212,7 @@ using PNFmiGridBase = NFmiGridBase*;
 inline NFmiGridBase::~NFmiGridBase()
 {
   delete itsData;
-  if (itsFloatData)
+
     delete[] itsFloatData;
 }
 
@@ -233,20 +233,10 @@ inline NFmiGridBase::NFmiGridBase(unsigned long theXNumber,
                                   FmiDirection theStartingCorner,
                                   FmiInterpolationMethod theInterpolationMethod)
     //						   bool theBase)
-    : itsData(nullptr),
-      itsFloatData(nullptr),
-      itsStartingCorner(theStartingCorner),
+    : itsStartingCorner(theStartingCorner),
       itsInterpolationMethod(theInterpolationMethod),
       itsXNumber(theXNumber),
       itsYNumber(theYNumber),
-      itsCurrentX(0),
-      itsCurrentY(0)
-      //  , itsBase(theBase)
-      ,
-      fWaitX(true),
-      fWaitY(true),
-      itsFirstX(0),
-      itsFirstY(0),
       itsLastX(theXNumber - 1),
       itsLastY(theYNumber - 1),
       itsPreviousX(kMinDouble),

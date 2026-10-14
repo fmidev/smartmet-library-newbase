@@ -20,7 +20,7 @@
 #include "NFmiEditParam.h"
 
 //! Constructor
-NFmiEditParam::NFmiEditParam() : itsMaskMethod(kFmiIsLessThan), itsMaskValue() {}
+NFmiEditParam::NFmiEditParam() {}
 //! Destructor
 NFmiEditParam::~NFmiEditParam() = default;
 // ======================================================================

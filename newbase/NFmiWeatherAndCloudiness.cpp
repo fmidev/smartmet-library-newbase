@@ -643,7 +643,7 @@ float NFmiWeatherAndCloudiness::PrecipitationWeightedMean(unsigned long missingV
     bool any = false;
     double sum = 0.;
     double facSum = 0.;
-    double prec;
+    double prec = NAN;
     double maxvalue = 0.;
     if (value1 != missingValue)
     {
@@ -820,7 +820,7 @@ const NFmiWeatherAndCloudiness NFmiWeatherAndCloudiness::MeanWeather(
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3, factor4;
+    float factor3 = NAN, factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -980,7 +980,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedMean(NFmiCombinedParam *theCombinedP
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3, factor4;
+    float factor3 = NAN, factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -1192,7 +1192,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
     {  // 6.2.03 tihkut pois jotta tihku+lumi ei ->räntää
       double rainSum = formTable[1] + .5 * formTable[2] + formTable[5];
       double snowSum = formTable[3] + .5 * formTable[2];  // ei rakeita tänne
-      double rainSnowRelation;
+      double rainSnowRelation = NAN;
       if (snowSum > 0.)
         rainSnowRelation = rainSum / snowSum;
       else
@@ -1246,7 +1246,7 @@ unsigned long NFmiWeatherAndCloudiness::TimeIntegratedHessaa(
       factorSum += fac3;
     if (fac4 != kFloatMissing)
       factorSum += fac4;
-    float factor3, factor4;
+    float factor3 = NAN, factor4 = NAN;
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
@@ -1388,7 +1388,7 @@ unsigned long NFmiWeatherAndCloudiness::TimeIntegratedHessaa(
                                                          theWeatherAndCloudiness4.FogIntensity(),
                                                          factor4));
 
-    return static_cast<unsigned long>(newWeatherAndCloudiness.ToHessaa());
+    return newWeatherAndCloudiness.ToHessaa();
   }
   catch (...)
   {
@@ -2187,7 +2187,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     double fogIntensityFactorSum = 0;
     double maxPrecipitation = 0.;
     double maxThunder = 0.;
-    double factor;
+    double factor = NAN;
 
     if (!newInfo->TimeToNearestStep(theStartTime))
     {
@@ -2294,7 +2294,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
 
     if (totalPrecipitationFactorSum > 0.)
     {
-      double mmWithMax;
+      double mmWithMax = NAN;
       if (considerMax)
         mmWithMax = (maxPrecipitation + totalPrecipitationSum / totalPrecipitationFactorSum) / 2.;
       else
@@ -2307,7 +2307,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
 
     if (thunderProbabilityFactorSum > 0.)
     {
-      double thunderWithMax;
+      double thunderWithMax = NAN;
       if (considerMax)
         thunderWithMax = (maxThunder + thunderProbabilitySum / thunderProbabilityFactorSum) / 2.;
       else
@@ -2382,7 +2382,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     double fogIntensityFactorSum = 0;
     double maxPrecipitation = 0.;
     double maxThunder = 0.;
-    float factor;
+    float factor = NAN;
 
     if (!newInfo->TimeToNearestStep(startTime) || !newInfo->TimeToNearestStep(endTime))
     {
@@ -2489,7 +2489,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
 
     if (totalPrecipitationFactorSum > 0.)
     {
-      double mmWithMax;
+      double mmWithMax = NAN;
       if (considerMax)
         mmWithMax = (maxPrecipitation + totalPrecipitationSum / totalPrecipitationFactorSum) / 2.;
       else
@@ -2503,7 +2503,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
 
     if (thunderProbabilityFactorSum > 0.)
     {
-      double thunderWithMax;
+      double thunderWithMax = NAN;
       if (considerMax)
         thunderWithMax = (maxThunder + thunderProbabilitySum / thunderProbabilityFactorSum) / 2.;
       else
@@ -3589,7 +3589,7 @@ unsigned long NFmiWeatherAndCloudiness::LowAndMiddleClouds() const
 {
   try
   {
-    unsigned long returnValue;
+    unsigned long returnValue = 0;
     if (HighClouds() == HighCloudsMissingValue() || HighClouds() == 0)
     {
       if (TotalCloudiness() == kT4BitMissing)
@@ -4599,8 +4599,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationScaleV6(double theValue) co
     if (theValue >= 0.03 && theValue < gMinimumPrecipitationForV6)
       return 1;
 
-    if (theValue > 100)
-      theValue = 100;
+    theValue = std::min<double>(theValue, 100);
     return static_cast<unsigned long>(round(4 * log(theValue) + 10));
   }
   catch (...)
@@ -4627,8 +4626,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationScaleV7(double theValue) co
       return kUnsignedLongMissing;
     if (theValue < gMinimumPrecipitationForV7)
       return 0;  // 0.015 on pienin mahd. arvo
-    if (theValue > 100)
-      theValue = 100;
+    theValue = std::min<double>(theValue, 100);
 
     return static_cast<unsigned long>(round(b * log(theValue / a + 1)));
   }
@@ -4702,8 +4700,7 @@ bool NFmiWeatherAndCloudiness::ThunderProbability(unsigned long theValue)
   {
     if (theValue != kT4BitMissing)
     {
-      if (theValue > 10)
-        theValue = 10;
+      theValue = std::min<unsigned long>(theValue, 10);
       SetThunderProbability(theValue);
       return true;
     }
@@ -4729,8 +4726,7 @@ bool NFmiWeatherAndCloudiness::TotalCloudiness(unsigned long theValue)
   {
     if (theValue != kT4BitMissing)
     {
-      if (theValue > 10)
-        theValue = 10;
+      theValue = std::min<unsigned long>(theValue, 10);
       SetTotalCloudiness(theValue);
       if (fAutoUpdate)
       {
@@ -4772,8 +4768,7 @@ bool NFmiWeatherAndCloudiness::LowClouds(unsigned long theValue)
   {
     if (theValue != kT4BitMissing)
     {
-      if (theValue > 10)
-        theValue = 10;
+      theValue = std::min<unsigned long>(theValue, 10);
       SetLowClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
       // laitoin
@@ -4803,8 +4798,7 @@ bool NFmiWeatherAndCloudiness::MiddleClouds(unsigned long theValue)
   {
     if (theValue != kT4BitMissing)
     {
-      if (theValue > 10)
-        theValue = 10;
+      theValue = std::min<unsigned long>(theValue, 10);
       SetMiddleClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
       // laitoin
@@ -4835,8 +4829,7 @@ bool NFmiWeatherAndCloudiness::HighClouds(unsigned long theValue)
     if (theValue != HighCloudsMissingValue())
     {
       unsigned long maxHighCloudValue = (itsInfoVersion >= 7.) ? 6 : 10;
-      if (theValue > maxHighCloudValue)
-        theValue = maxHighCloudValue;
+      theValue = std::min(theValue, maxHighCloudValue);
       SetHighClouds(theValue);
       //	  SetTotalCloudiness(0); // tämä aiheutti ongelmi fqgV7ToV6-filtterin kanssa, joten
       // laitoin
@@ -5026,8 +5019,7 @@ bool NFmiWeatherAndCloudiness::PrecipitationForm(unsigned long theValue)
   {
     if (theValue != kT3BitMissing)
     {
-      if (theValue > 6)
-        theValue = 6;
+      theValue = std::min<unsigned long>(theValue, 6);
       SetPrecipitationForm(theValue);  // olomuodolla on nyt arvo
 
       if (TotalPrecipitation() == TotalPrecipitationMissingValue() || TotalPrecipitation() == 0)
@@ -5088,8 +5080,7 @@ bool NFmiWeatherAndCloudiness::FogIntensity(unsigned long theValue)
   {
     if (theValue != kT2BitMissing)
     {
-      if (theValue > 2)
-        theValue = 2;
+      theValue = std::min<unsigned long>(theValue, 2);
 
       SetFogIntensity(theValue);
       fDataOk = true;

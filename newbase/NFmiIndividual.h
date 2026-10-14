@@ -22,8 +22,8 @@ class NFmiIndividual : public NFmiSortable
   {
   }
 
-  NFmiIndividual(const NFmiIndividual &anOtherIndividual)
-      : NFmiSortable(), itsName(anOtherIndividual.GetName()), itsIdent(anOtherIndividual.GetIdent())
+  NFmiIndividual(const NFmiIndividual& anOtherIndividual)
+      : itsName(anOtherIndividual.GetName()), itsIdent(anOtherIndividual.GetIdent())
   {
   }
 

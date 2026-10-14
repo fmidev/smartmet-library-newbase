@@ -14,6 +14,8 @@
 
 #include "NFmiDataModifierMinMax.h"
 
+#include <algorithm>
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor does nothing special
@@ -27,7 +29,7 @@ NFmiDataModifierMinMax::~NFmiDataModifierMinMax() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierMinMax::NFmiDataModifierMinMax() : itsMinValue(FLT_MAX), itsMaxValue(-FLT_MAX) {}
+NFmiDataModifierMinMax::NFmiDataModifierMinMax() {}
 
 NFmiDataModifierMinMax::NFmiDataModifierMinMax(const NFmiDataModifierMinMax& theOther)
 
@@ -76,10 +78,8 @@ void NFmiDataModifierMinMax::Calculate(float theValue)
 {
   if (CheckMissingValues(theValue))
   {
-    if (itsMaxValue < theValue)
-      itsMaxValue = theValue;
-    if (itsMinValue > theValue)
-      itsMinValue = theValue;
+    itsMaxValue = std::max(itsMaxValue, theValue);
+    itsMinValue = std::min(itsMinValue, theValue);
   }
 }
 

@@ -49,7 +49,7 @@ NFmiGdalArea::~NFmiGdalArea() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea() : NFmiArea(), itsDatum("WGS84") {}
+NFmiGdalArea::NFmiGdalArea() : itsDatum("WGS84") {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -75,19 +75,18 @@ NFmiGdalArea &NFmiGdalArea::operator=(const NFmiGdalArea &theArea) = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
-                           const std::string &theDescription,
-                           const NFmiPoint &theBottomLeftLatLon,
-                           const NFmiPoint &theTopRightLatLon,
-                           const NFmiPoint &theTopLeftXY,
-                           const NFmiPoint &theBottomRightXY,
+NFmiGdalArea::NFmiGdalArea(const std::string& theDatum,
+                           const std::string& theDescription,
+                           const NFmiPoint& theBottomLeftLatLon,
+                           const NFmiPoint& theTopRightLatLon,
+                           const NFmiPoint& theTopLeftXY,
+                           const NFmiPoint& theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsDatum(theDatum),
       itsDescription(theDescription),
       itsBottomLeftLatLon(theBottomLeftLatLon),
-      itsTopRightLatLon(theTopRightLatLon),
-      itsWorldRect()
+      itsTopRightLatLon(theTopRightLatLon)
 {
   try
   {
@@ -105,19 +104,17 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
-                           const OGRSpatialReference &theCRS,
-                           const NFmiPoint &theBottomLeftLatLon,
-                           const NFmiPoint &theTopRightLatLon,
-                           const NFmiPoint &theTopLeftXY,
-                           const NFmiPoint &theBottomRightXY,
+NFmiGdalArea::NFmiGdalArea(const std::string& theDatum,
+                           const OGRSpatialReference& theCRS,
+                           const NFmiPoint& theBottomLeftLatLon,
+                           const NFmiPoint& theTopRightLatLon,
+                           const NFmiPoint& theTopLeftXY,
+                           const NFmiPoint& theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsDatum(theDatum),
-      itsDescription(),
       itsBottomLeftLatLon(theBottomLeftLatLon),
-      itsTopRightLatLon(theTopRightLatLon),
-      itsWorldRect()
+      itsTopRightLatLon(theTopRightLatLon)
 {
   try
   {
@@ -153,20 +150,17 @@ NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
  */
 // ----------------------------------------------------------------------
 
-NFmiGdalArea::NFmiGdalArea(const std::string &theDatum,
-                           const OGRSpatialReference &theCRS,
+NFmiGdalArea::NFmiGdalArea(const std::string& theDatum,
+                           const OGRSpatialReference& theCRS,
                            double theXmin,
                            double theYmin,
                            double theXmax,
                            double theYmax,
-                           const NFmiPoint &theTopLeftXY,
-                           const NFmiPoint &theBottomRightXY,
+                           const NFmiPoint& theTopLeftXY,
+                           const NFmiPoint& theBottomRightXY,
                            bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsDatum(theDatum),
-      itsDescription(),
-      itsBottomLeftLatLon(),
-      itsTopRightLatLon(),
       itsWorldRect(NFmiPoint(theXmin, theYmin), NFmiPoint(theXmax, theYmax))
 {
   try

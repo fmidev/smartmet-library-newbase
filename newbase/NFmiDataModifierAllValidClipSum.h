@@ -19,7 +19,7 @@ class NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
   void Calculate(NFmiQueryInfo* theQI) override;
 
  private:
-  float itsHalfValue;
+  float itsHalfValue = 0;
 
 };  // class NFmiDataModifierAllValidClipSum
 

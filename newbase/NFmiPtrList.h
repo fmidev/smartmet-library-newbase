@@ -73,7 +73,7 @@ class NFmiPtrList
   };  // Node
   Node *itsStart;
   Node *itsEnd;
-  unsigned long itsCounter;  // Lisäsin nämä 8.9.99 /Mikael
+  unsigned long itsCounter = 0;  // Lisäsin nämä 8.9.99 /Mikael
 
  public:
   class Iterator
@@ -229,7 +229,7 @@ bool NFmiPtrList<Type>::Iterator::Next()
 }*/
 
 template <class Type>
-NFmiPtrList<Type>::NFmiPtrList() : itsStart(new Node()), itsEnd(new Node()), itsCounter(0)
+NFmiPtrList<Type>::NFmiPtrList() : itsStart(new Node()), itsEnd(new Node())
 {
   itsStart->itsNext = itsEnd;
   itsEnd->itsPrevious = itsStart;
@@ -425,7 +425,7 @@ bool NFmiPtrList<Type>::Remove(unsigned long theIndex, bool fDeleteItem)
   // untill the counter has reached the value of index given (if not,
   // the returning is false) and then removing the corresponding item
   Iterator iter = Start();
-  unsigned long counter;
+  unsigned long counter = 0;
   for (counter = 0; counter < theIndex && iter.Next(); counter++)
     ;
   if (counter == theIndex)

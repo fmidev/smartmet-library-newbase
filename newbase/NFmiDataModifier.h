@@ -60,20 +60,21 @@ class NFmiDataModifier : public NFmiDataModifierBase
   virtual bool IsAllowedValue(float theValue);
 
   NFmiCombinedParam* itsCombinedParam;
-  bool fCalculationResultOk;  // käytetään mm. keskiarvon laskun tuloksen palautuksen tarkastelussa
+  bool fCalculationResultOk =
+      true;  // käytetään mm. keskiarvon laskun tuloksen palautuksen tarkastelussa
   // eli jos ei ole ollut mitään laskettavaa, ei palauteta arvoa 0 vaan
   // kFloatMissing
   bool fMissingValuesAllowed;
 
-  int itsNumberOfMissingValues;
+  int itsNumberOfMissingValues = 0;
 
  private:
   NFmiDataModifier& operator=(const NFmiDataModifier& theModifier);
 
   bool fIsCombinedParam;
-  bool fIsLimitCheck;
-  float itsLowerLimit;
-  float itsUpperLimit;
+  bool fIsLimitCheck = false;
+  float itsLowerLimit = 0.0f;
+  float itsUpperLimit = 0.0f;
 
 };  // class NFmiDataModifier
 

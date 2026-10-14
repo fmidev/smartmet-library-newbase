@@ -89,14 +89,14 @@ class WindInterpolator
   double Direction() const;
 
  private:
-  double itsCount;
-  double itsSpeedSum;
-  double itsSpeedSumX;
-  double itsSpeedSumY;
-  double itsWeightSum;
+  double itsCount = 0;
+  double itsSpeedSum = 0;
+  double itsSpeedSumX = 0;
+  double itsSpeedSumY = 0;
+  double itsWeightSum = 0;
 
-  double itsBestDirection;
-  double itsBestWeight;
+  double itsBestDirection = 0;
+  double itsBestWeight = 0;
 };
 
 }  // namespace NFmiInterpolation

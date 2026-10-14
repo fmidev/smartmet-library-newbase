@@ -363,10 +363,7 @@ bool NFmiTimeBag::IsInside(const NFmiMetTime &theTime) const
 {
   try
   {
-    if (theTime >= itsFirstTime && theTime <= itsLastTime)
-      return true;
-
-    return false;
+    return theTime >= itsFirstTime && theTime <= itsLastTime;
   }
   catch (...)
   {
@@ -532,11 +529,8 @@ bool NFmiTimeBag::operator==(const NFmiTimeBag &theTimeBag) const
 {
   try
   {
-    if (itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
-        itsResolution == theTimeBag.itsResolution)
-      return true;
-
-    return false;
+    return itsFirstTime == theTimeBag.itsFirstTime && itsLastTime == theTimeBag.itsLastTime &&
+           itsResolution == theTimeBag.itsResolution;
   }
   catch (...)
   {
@@ -588,7 +582,7 @@ std::istream &NFmiTimeBag::Read(std::istream &file)
 {
   try
   {
-    short year, month, day, hour, min, sec;
+    short year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
     file >> year >> month >> day >> hour >> min >> sec;
     itsFirstTime = NFmiMetTime(year, month, day, hour, min, sec, 1);
@@ -603,7 +597,7 @@ std::istream &NFmiTimeBag::Read(std::istream &file)
     }
     else
     {
-      long theResolution;
+      long theResolution = 0;
       file >> theResolution;
       itsResolution = theResolution;
     }

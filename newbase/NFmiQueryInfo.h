@@ -623,7 +623,6 @@ class NFmiQueryInfo
   NFmiRawData *itsRefRawData;
   NFmiQueryData *itsRefQueryData;
 
- protected:
   /* // 2012.1.19 Marko Poistetaan käytöstä itsStaticDataMask -luokka, koska se on ilmeisesti turhaa
     (SuperSmartInfo käyttää tätä)
     bool IsLocationMasked(unsigned long theLocationIndex) const;
@@ -1463,7 +1462,7 @@ inline float NFmiQueryInfo::FloatValue() const
 
 inline bool NFmiQueryInfo::FloatValue(float theFloatData)
 {
-  if (::FmiIsValidNumber(theFloatData) == false)
+  if (!::FmiIsValidNumber(theFloatData))
   {
     fHasNonFiniteValueSet = true;
     return false;

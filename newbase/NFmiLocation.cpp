@@ -399,7 +399,7 @@ NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurr
 {
   try
   {
-    bool isMidNightSun, isPolarNight;
+    bool isMidNightSun = false, isPolarNight = false;
     NFmiMetTime sunrise = LastTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
     if (isPolarNight)
       sunrise = NextTimeOfSunrise(theTime, isMidNightSun, isPolarNight);
@@ -435,7 +435,7 @@ NFmiMetTime NFmiLocation::TimeOfSunset(const NFmiMetTime &theTime, bool &isCurre
 {
   try
   {
-    bool isMidNightSun, isPolarNight;
+    bool isMidNightSun = false, isPolarNight = false;
     NFmiMetTime sunset = NextTimeOfSunset(theTime, isMidNightSun, isPolarNight);
     if (isPolarNight)
       sunset = LastTimeOfSunset(theTime, isMidNightSun, isPolarNight);

@@ -37,6 +37,8 @@
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 std::size_t find_newest_data(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &theInfos)
 {
   try
@@ -56,6 +58,7 @@ std::size_t find_newest_data(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &t
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -66,8 +69,8 @@ std::size_t find_newest_data(std::vector<std::shared_ptr<NFmiFastQueryInfo> > &t
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
-    : itsDatas(), itsInfos(), itsMultiIndexes(), itsMultiTimeIndex(kUnsignedLongMissing)
+NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string& thePath)
+    : itsMultiTimeIndex(kUnsignedLongMissing)
 {
   try
   {
@@ -114,8 +117,8 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::string &thePath)
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string> &theFiles)
-    : itsDatas(), itsInfos(), itsMultiIndexes(), itsMultiTimeIndex(kUnsignedLongMissing)
+NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string>& theFiles)
+    : itsMultiTimeIndex(kUnsignedLongMissing)
 {
   try
   {
@@ -135,15 +138,12 @@ NFmiMultiQueryInfo::NFmiMultiQueryInfo(const std::list<std::string> &theFiles)
 
 NFmiMultiQueryInfo::NFmiMultiQueryInfo(
     const std::vector<std::shared_ptr<NFmiFastQueryInfo> >& theInfos)
-    : itsDatas()  // will remain empty
-      ,
-      itsInfos(theInfos),
-      itsMultiIndexes(),
+    : itsInfos(theInfos),
       itsMultiTimeIndex(kUnsignedLongMissing)
 {
   try
   {
-    if (theInfos.size() == 0)
+    if (theInfos.empty())
       throw Fmi::Exception(BCP, "Cannot construct NFmiMultiQueryInfo from zero NFmiFastQueryInfos");
 
     Init();
@@ -233,7 +233,7 @@ void NFmiMultiQueryInfo::Init()
           auto res = time_index.insert(idx);
 
           // Resolve conflict when multiple datas provide the same valid time
-          if (res.second == false)
+          if (!res.second)
           {
             std::size_t old_index = res.first->info_index;
 

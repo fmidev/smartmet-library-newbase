@@ -242,9 +242,7 @@ inline int trunc(double x)
 template <typename T>
 inline bool FmiIsValidNumber(T theValue)
 {
-  if (boost::math::isfinite(theValue))
-    return true;
-  return false;
+  return static_cast<bool>(boost::math::isfinite(theValue));
 }
 
 template <typename T>

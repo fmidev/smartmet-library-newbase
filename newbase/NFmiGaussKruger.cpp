@@ -57,11 +57,7 @@ NFmiGaussKruger::NFmiGaussKruger(double theEllipsoidA,
       itsCentralMeridian(theCentralMeridian),
       itsScaleFactor(theScaleFactor),
       itsFalseEasting(theFalseEasting),
-      itsFalseNorthing(theFalseNorthing),
-      itsE(),
-      itsA1(),
-      itsH1(),
-      itsH2()
+      itsFalseNorthing(theFalseNorthing)
 {
   try
   {

@@ -9,6 +9,8 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiGridBase.h"
+#include <cmath>
+
 #include <memory>
 
 class NFmiQueryInfo;
@@ -47,10 +49,10 @@ class NFmiBitMask
 
   static long itsNumberOfBitsInLong;
 
-  long itsSize;
-  long itsNumberOfBytesInMask;
-  long itsNumberOfLongsInMask;
-  long* itsMaskData;
+  long itsSize = 0;
+  long itsNumberOfBytesInMask = 0;
+  long itsNumberOfLongsInMask = 0;
+  long* itsMaskData = nullptr;
 
  public:  // template functions
   // if both x and y are 0, use grids x and y numbers
@@ -94,7 +96,7 @@ class NFmiBitMask
     double dy = 0.;
     double deltaX = 1. / (theXNumber - 1);
     double deltaY = 1. / (theYNumber - 1);
-    double value;
+    double value = NAN;
 
     Init(theXNumber * theYNumber);
     for (unsigned long i = 0; i < theYNumber; i++)
@@ -120,7 +122,6 @@ class NFmiBitMask
 
 inline NFmiBitMask::~NFmiBitMask()
 {
-  if (itsMaskData)
     delete[] itsMaskData;
 }
 

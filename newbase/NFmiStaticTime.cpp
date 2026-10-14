@@ -24,8 +24,7 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiStaticTime::NFmiStaticTime()
-    : NFmiSortable(), fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
+NFmiStaticTime::NFmiStaticTime() : fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
 {
   try
   {
@@ -47,8 +46,8 @@ NFmiStaticTime::NFmiStaticTime()
  */
 // ----------------------------------------------------------------------
 
-NFmiStaticTime::NFmiStaticTime(const NFmiStaticTime &from)
-    : NFmiSortable(), fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
+NFmiStaticTime::NFmiStaticTime(const NFmiStaticTime& from)
+    : fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
 {
   try
   {
@@ -76,7 +75,7 @@ NFmiStaticTime::NFmiStaticTime(const NFmiStaticTime &from)
 // ----------------------------------------------------------------------
 
 NFmiStaticTime::NFmiStaticTime(const short year, const short month, const short day)
-    : NFmiSortable(), fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
+    : fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
 {
   try
   {
@@ -110,7 +109,7 @@ NFmiStaticTime::NFmiStaticTime(const short year,
                                const short hour,
                                const short minute,
                                const short sec)
-    : NFmiSortable(), fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
+    : fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
 {
   try
   {
@@ -133,7 +132,7 @@ NFmiStaticTime::NFmiStaticTime(const short year,
 // ----------------------------------------------------------------------
 
 NFmiStaticTime::NFmiStaticTime(time_t theTime, bool fMakeLocal)
-    : NFmiSortable(), fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
+    : fYear(), fMonth(), fDay(), fHour(), fMin(), fSec()
 {
   try
   {
@@ -218,7 +217,7 @@ struct tm NFmiStaticTime::GetSystemTime()
 {
   try
   {
-    time_t t;
+    time_t t = 0;
     static_cast<void>(time(&t));
     tm ret;
 
@@ -602,7 +601,7 @@ void NFmiStaticTime::ReadDateTime()  // testausfunktio!!!!
 {
   try
   {
-    short y, m, d, h;
+    short y = 0, m = 0, d = 0, h = 0;
     std::cout << " Input date 'yy mm dd hh': ";
     std::cin >> y >> m >> d >> h;
     SetDate(y, m, d);

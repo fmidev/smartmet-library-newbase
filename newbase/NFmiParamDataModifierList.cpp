@@ -41,7 +41,7 @@ NFmiParamDataModifierList::~NFmiParamDataModifierList()
  */
 // ----------------------------------------------------------------------
 
-NFmiParamDataModifierList::NFmiParamDataModifierList() : itsList(), itsIter() {}
+NFmiParamDataModifierList::NFmiParamDataModifierList() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -54,7 +54,7 @@ bool NFmiParamDataModifierList::Add(NFmiParamDataModifier* theModifier)
 {
   try
   {
-    return itsList.AddEnd(theModifier) == true;
+    return itsList.AddEnd(theModifier);
   }
   catch (...)
   {
@@ -91,7 +91,7 @@ bool NFmiParamDataModifierList::Next()
 {
   try
   {
-    return itsIter.Next() == true;
+    return itsIter.Next();
   }
   catch (...)
   {
@@ -128,10 +128,7 @@ bool NFmiParamDataModifierList::Remove(bool fDeleteData)
 {
   try
   {
-    if (itsIter.Remove(fDeleteData))
-      return true;
-
-    return false;
+    return itsIter.Remove(fDeleteData);
   }
   catch (...)
   {
@@ -169,9 +166,7 @@ bool NFmiParamDataModifierList::Index(unsigned long theIndex)
   try
   {
     itsIter = itsList.Index(theIndex);
-    if (Current())
-      return true;
-    return false;
+    return Current() != nullptr;
   }
   catch (...)
   {

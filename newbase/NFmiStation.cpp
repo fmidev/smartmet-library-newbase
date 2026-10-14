@@ -30,7 +30,7 @@ NFmiStation::~NFmiStation() = default;
  * Void constructor
  */
 // ----------------------------------------------------------------------
-NFmiStation::NFmiStation() : NFmiLocation(), itsMaxDistance(kFloatMissing), itsIdentType(kWMO) {}
+NFmiStation::NFmiStation() : itsMaxDistance(kFloatMissing), itsIdentType(kWMO) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -272,7 +272,7 @@ std::istream &NFmiStation::Read(std::istream &file)
 
     if (DefaultFmiInfoVersion >= 4)
     {
-      unsigned int theIdentType;
+      unsigned int theIdentType = 0;
       file >> itsMaxDistance;
       file >> theIdentType;
       itsIdentType = FmiStationType(theIdentType);

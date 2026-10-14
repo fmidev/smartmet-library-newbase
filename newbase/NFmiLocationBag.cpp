@@ -20,9 +20,10 @@
 #include "NFmiStation.h"
 #include "NFmiValueString.h"
 #include "NFmiVersion.h"
-#include <macgyver/Hash.h>
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <algorithm>
 #include <functional>
 
 using namespace std;
@@ -51,9 +52,7 @@ NFmiLocationBag::~NFmiLocationBag()
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag() : NFmiSize(), itsLocations(), itsSortedLocations(), itsNearTree()
-{
-}
+NFmiLocationBag::NFmiLocationBag() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -67,7 +66,7 @@ NFmiLocationBag::NFmiLocationBag() : NFmiSize(), itsLocations(), itsSortedLocati
 // ----------------------------------------------------------------------
 
 NFmiLocationBag::NFmiLocationBag(const NFmiLocation &theLocation)
-    : NFmiSize(), itsLocations(), itsSortedLocations(), itsNearTree()
+
 {
   try
   {
@@ -89,9 +88,9 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation &theLocation)
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag(const NFmiStation *theLocationArray,
+NFmiLocationBag::NFmiLocationBag(const NFmiStation* theLocationArray,
                                  unsigned long numberOfLocations)
-    : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
+    : NFmiSize(numberOfLocations)
 {
   try
   {
@@ -120,9 +119,9 @@ NFmiLocationBag::NFmiLocationBag(const NFmiStation *theLocationArray,
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag(const NFmiLocation *theLocationArray,
+NFmiLocationBag::NFmiLocationBag(const NFmiLocation* theLocationArray,
                                  unsigned long numberOfLocations)
-    : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
+    : NFmiSize(numberOfLocations)
 {
   try
   {
@@ -153,8 +152,8 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation *theLocationArray,
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag(NFmiLocation **theLocationArray, unsigned long numberOfLocations)
-    : NFmiSize(numberOfLocations), itsLocations(), itsSortedLocations(), itsNearTree()
+NFmiLocationBag::NFmiLocationBag(NFmiLocation** theLocationArray, unsigned long numberOfLocations)
+    : NFmiSize(numberOfLocations)
 {
   try
   {
@@ -176,8 +175,7 @@ NFmiLocationBag::NFmiLocationBag(NFmiLocation **theLocationArray, unsigned long 
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag &theLocationBag)
-    : NFmiSize(theLocationBag), itsLocations(), itsSortedLocations(), itsNearTree()
+NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag& theLocationBag) : NFmiSize(theLocationBag)
 {
   try
   {
@@ -523,7 +521,7 @@ std::istream &NFmiLocationBag::Read(std::istream &file)
     unsigned long newSize = GetSize();
     itsLocations.reserve(newSize);
 
-    NFmiLocation *temp;
+    NFmiLocation* temp = nullptr;
 
     switch (classID)
     {
@@ -710,15 +708,15 @@ const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
 
     if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
     {
-      if (tempValues.size() == 0)
+      if (tempValues.empty())
         return std::vector<pair<int, double> >();
       else
       {
         // halutaan n kpl lahimpiä paikkoja
         int usedCount = theMaxWantedLocations;
-        if (usedCount > static_cast<int>(tempValues.size()))
-          usedCount =
-              static_cast<int>(tempValues.size());  // maksimissaan voidaan sortata size:iin asti
+        usedCount = std::min(
+            usedCount,
+            static_cast<int>(tempValues.size()));  // maksimissaan voidaan sortata size:iin asti
         std::partial_sort(tempValues.begin(),
                           tempValues.begin() + usedCount,
                           tempValues.end(),

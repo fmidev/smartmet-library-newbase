@@ -32,19 +32,14 @@ using namespace std;
 // ----------------------------------------------------------------------
 
 NFmiTransverseMercatorArea::NFmiTransverseMercatorArea()
-    : NFmiArea(),
-      itsBottomLeftLatLon(),
-      itsTopRightLatLon(),
-      itsXScaleFactor(),
+    : itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsCentralMeridian(NFmiGaussKruger::kTM35FIN_CentralMeridian),
       itsScaleFactor(NFmiGaussKruger::kTM35FIN_ScaleFactor),
       itsFalseEasting(NFmiGaussKruger::kTM35FIN_FalseEasting),
       itsFalseNorthing(NFmiGaussKruger::kTM35FIN_FalseNorthing),
       itsEllipsoidA(NFmiGaussKruger::kWGS84_A),
-      itsEllipsoidInvF(NFmiGaussKruger::kWGS84_InvF),
-      itsProjection()
+      itsEllipsoidInvF(NFmiGaussKruger::kWGS84_InvF)
 {
 }
 
@@ -70,14 +65,12 @@ NFmiTransverseMercatorArea::NFmiTransverseMercatorArea(const NFmiPoint& theBotto
       itsTopRightLatLon(theTopRightLatLon),
       itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsCentralMeridian(theCentralMeridian),
       itsScaleFactor(theScaleFactor),
       itsFalseEasting(theFalseEasting),
       itsFalseNorthing(theFalseNorthing),
       itsEllipsoidA(theEllipsoidA),
-      itsEllipsoidInvF(theEllipsoidInvF),
-      itsProjection()
+      itsEllipsoidInvF(theEllipsoidInvF)
 {
   try
   {

@@ -180,7 +180,7 @@ inline NFmiDataIdent::NFmiDataIdent()
 
 inline bool NFmiDataIdent::IsSecondaryProducerList() const
 {
-  return itsSecondaryProducers ? true : false;
+  return itsSecondaryProducers != nullptr;
 }
 
 // ----------------------------------------------------------------------

@@ -28,7 +28,7 @@ NFmiDataModifierAvg::~NFmiDataModifierAvg() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierAvg::NFmiDataModifierAvg() : NFmiDataModifier(), itsCounter(0), itsAverage(0.)
+NFmiDataModifierAvg::NFmiDataModifierAvg()
 {
   fCalculationResultOk = false;
 }

@@ -74,10 +74,10 @@ NFmiTimeList::NFmiTimeList(const NFmiTimeList &theList)
  */
 // ----------------------------------------------------------------------
 
-NFmiTimeList::NFmiTimeList(const NFmiTimeBag &theTimes)
+NFmiTimeList::NFmiTimeList(const NFmiTimeBag& theTimes)
     : itsVectorList(theTimes.GetSize()),
       itsIndex(theTimes.CurrentIndex()),
-      itsIsReset(theTimes.CurrentIndex() >= 0 ? false : true)
+      itsIsReset(theTimes.CurrentIndex() < 0)
 {
   try
   {
@@ -164,10 +164,7 @@ bool NFmiTimeList::IndexOk(int theIndex) const
 {
   try
   {
-    if (theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size())
-      return true;
-
-    return false;
+    return theIndex >= 0 && static_cast<unsigned int>(theIndex) < itsVectorList.size();
   }
   catch (...)
   {
@@ -521,7 +518,7 @@ std::ostream &NFmiTimeList::Write(std::ostream &file) const
     long items = NumberOfItems();
     file << items << '\n';
     First();
-    NFmiMetTime *aItem;
+    NFmiMetTime* aItem = nullptr;
     for (long i = 0; i < items; i++)
     {
       Next(&aItem);
@@ -550,12 +547,12 @@ std::istream &NFmiTimeList::Read(std::istream &file)
 {
   try
   {
-    int items;
-    short year, month, day, hour, min, sec;
+    int items = 0;
+    short year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
     file >> items;
     First();
-    NFmiMetTime *aItem;
+    NFmiMetTime* aItem = nullptr;
     for (long i = 0; i < items; i++)
     {
       file >> year >> month >> day >> hour >> min >> sec;
@@ -815,12 +812,9 @@ bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
 {
   try
   {
-    if (theTimeRangeInMinutes == kUnsignedLongMissing ||
-        static_cast<unsigned long>(std::abs(Current()->DifferenceInMinutes(theTime))) <
-            theTimeRangeInMinutes)
-      return true;
-
-    return false;
+    return theTimeRangeInMinutes == kUnsignedLongMissing ||
+           static_cast<unsigned long>(std::abs(Current()->DifferenceInMinutes(theTime))) <
+               theTimeRangeInMinutes;
   }
   catch (...)
   {

@@ -24,6 +24,7 @@
 #include <macgyver/Exception.h>
 
 #include <boost/math/special_functions/round.hpp>
+#include <algorithm>
 #include <cassert>
 
 // HUOM!!! Jostain syystä kun käytin täällä boost::math::iround -funktiota, se ei mennyt parissa
@@ -53,11 +54,8 @@ bool MetaParamDataHolder::isMetaParameterCalculationNeeded() const
 {
   try
   {
-    if (checkMetaParamCalculation_ &&
-        metaWindParamUsage_.ParamNeedsMetaCalculations(possibleMetaParamId_))
-      return true;
-
-    return false;
+    return checkMetaParamCalculation_ &&
+           metaWindParamUsage_.ParamNeedsMetaCalculations(possibleMetaParamId_);
   }
   catch (...)
   {
@@ -65,14 +63,13 @@ bool MetaParamDataHolder::isMetaParameterCalculationNeeded() const
   }
 }
 
-static bool IsFindFunction(NFmiAreaMask::FunctionType theFunction)
+namespace
+{
+bool IsFindFunction(NFmiAreaMask::FunctionType theFunction)
 {
   try
   {
-    if (theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC)
-      return true;
-
-    return false;
+    return theFunction == NFmiAreaMask::FindH || theFunction == NFmiAreaMask::FindC;
   }
   catch (...)
   {
@@ -80,14 +77,12 @@ static bool IsFindFunction(NFmiAreaMask::FunctionType theFunction)
   }
 }
 
-static bool IsSimpleConditionFindFunction(NFmiAreaMask::FunctionType theFunction)
+bool IsSimpleConditionFindFunction(NFmiAreaMask::FunctionType theFunction)
 {
   try
   {
-    if (theFunction == NFmiAreaMask::FindCountCond || theFunction == NFmiAreaMask::FindHeightCond)
-      return true;
-
-    return false;
+    return theFunction == NFmiAreaMask::FindCountCond ||
+           theFunction == NFmiAreaMask::FindHeightCond;
   }
   catch (...)
   {
@@ -95,14 +90,11 @@ static bool IsSimpleConditionFindFunction(NFmiAreaMask::FunctionType theFunction
   }
 }
 
-static bool IsFindConditionalFunction(NFmiAreaMask::FunctionType theFunction)
+bool IsFindConditionalFunction(NFmiAreaMask::FunctionType theFunction)
 {
   try
   {
-    if (theFunction >= NFmiAreaMask::ProbOver && theFunction <= NFmiAreaMask::ProbBetweenEq)
-      return true;
-
-    return false;
+    return theFunction >= NFmiAreaMask::ProbOver && theFunction <= NFmiAreaMask::ProbBetweenEq;
   }
   catch (...)
   {
@@ -110,7 +102,7 @@ static bool IsFindConditionalFunction(NFmiAreaMask::FunctionType theFunction)
   }
 }
 
-static bool CheckProbabilityCondition(NFmiAreaMask::FunctionType condition,
+bool CheckProbabilityCondition(NFmiAreaMask::FunctionType condition,
                                       double value,
                                       double limit1,
                                       double limit2)
@@ -146,6 +138,7 @@ static bool CheckProbabilityCondition(NFmiAreaMask::FunctionType condition,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Static data member initialization to empty
 NFmiInfoAreaMask::MultiSourceDataGetterType NFmiInfoAreaMask::itsMultiSourceDataGetter;
@@ -200,15 +193,9 @@ NFmiInfoAreaMask::~NFmiInfoAreaMask() = default;
 // ----------------------------------------------------------------------
 
 NFmiInfoAreaMask::NFmiInfoAreaMask()
-    : NFmiAreaMaskImpl(),
-      itsInfo(),
-      itsDataIdent(),
-      itsLevel(),
-      fIsTimeIntepolationNeededInValue(false),
+    : fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
-      itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder(),
-      itsInfoVector()
+      itsUsedPressureLevelValue(kFloatMissing)
 {
   try
   {
@@ -234,21 +221,18 @@ NFmiInfoAreaMask::NFmiInfoAreaMask()
  */
 // ----------------------------------------------------------------------
 
-NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
+NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition& theOperation,
                                    Type theMaskType,
                                    NFmiInfoData::Type theDataType,
-                                   const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                   const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                    unsigned long thePossibleMetaParamId,
                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
       itsInfo(theInfo),
       itsDataIdent(theInfo ? theInfo->Param() : NFmiDataIdent()),
-      itsLevel(NFmiLevel()),
       fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
-      itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder(),
-      itsInfoVector()
+      itsUsedPressureLevelValue(kFloatMissing)
 {
   try
   {
@@ -271,19 +255,16 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition &theOperation,
  */
 // ----------------------------------------------------------------------
 
-NFmiInfoAreaMask::NFmiInfoAreaMask(const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+NFmiInfoAreaMask::NFmiInfoAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                    unsigned long thePossibleMetaParamId,
                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(
           NFmiCalculationCondition(), kInfo, NFmiInfoData::kEditable, thePostBinaryOperator),
       itsInfo(theInfo),
       itsDataIdent(theInfo ? theInfo->Param() : NFmiDataIdent()),
-      itsLevel(NFmiLevel()),
       fIsTimeIntepolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
-      itsUsedPressureLevelValue(kFloatMissing),
-      metaParamDataHolder(),
-      itsInfoVector()
+      itsUsedPressureLevelValue(kFloatMissing)
 {
   try
   {
@@ -605,11 +586,8 @@ bool NFmiInfoAreaMask::IsTimeInterpolationNeeded(bool fUseTimeInterpolationAlway
 {
   try
   {
-    if ((fUseTimeInterpolationAlways || fIsTimeIntepolationNeededInValue) &&
-        !NFmiFastInfoUtils::IsModelClimatologyData(itsInfo))
-      return true;
-
-    return false;
+    return (fUseTimeInterpolationAlways || fIsTimeIntepolationNeededInValue) &&
+           !NFmiFastInfoUtils::IsModelClimatologyData(itsInfo);
   }
   catch (...)
   {
@@ -679,7 +657,7 @@ double NFmiInfoAreaMask::ValueFinal(const NFmiCalculationParams &theCalculationP
   }
   else
   {
-    auto currentMultiInfoData = theCalculationParams.itsCurrentMultiInfoData;
+    auto* currentMultiInfoData = theCalculationParams.itsCurrentMultiInfoData;
     if (currentMultiInfoData)
     {
       NFmiFastInfoUtils::QueryInfoTotalStateRestorer queryInfoTotalStateRestorer(
@@ -1053,11 +1031,11 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryI
 }
 
 bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
-                                            const NFmiCalculationParams &theCalculationParams,
-                                            const NFmiMetTime &theStartTime,
-                                            const NFmiMetTime &theEndTime,
-                                            unsigned long *theStartTimeIndexOut,
-                                            unsigned long *theEndTimeIndexOut)
+                                            const NFmiCalculationParams& /*theCalculationParams*/,
+                                            const NFmiMetTime& theStartTime,
+                                            const NFmiMetTime& theEndTime,
+                                            unsigned long* theStartTimeIndexOut,
+                                            unsigned long* theEndTimeIndexOut)
 {
   try
   {
@@ -1235,8 +1213,7 @@ void NFmiInfoAreaMask::AddValuesToFunctionModifier(
 NFmiInfoAreaMaskPeekXY::~NFmiInfoAreaMaskPeekXY() = default;
 
 NFmiInfoAreaMaskPeekXY::NFmiInfoAreaMaskPeekXY()
-    : NFmiInfoAreaMask(),
-      itsXOffset(0),
+    : itsXOffset(0),
       itsYOffset(0),
       itsGridXDiff(1)  // dummy arvo, en laita 0, että ei tule joskus 0:lla jakoa vahingossa
       ,
@@ -1387,10 +1364,7 @@ double NFmiInfoAreaMaskPeekXY::PressureValue(double thePressure,
 
 NFmiInfoAreaMaskPeekXY2::~NFmiInfoAreaMaskPeekXY2() = default;
 
-NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2()
-    : NFmiInfoAreaMask(), itsXOffset(0), itsYOffset(0), itsEditedInfo()
-{
-}
+NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2() : itsXOffset(0), itsYOffset(0) {}
 
 NFmiInfoAreaMaskPeekXY2::NFmiInfoAreaMaskPeekXY2(
     const NFmiCalculationCondition &theOperation,
@@ -1440,7 +1414,7 @@ NFmiCalculationParams NFmiInfoAreaMaskPeekXY2::MakeModifiedCalculationParams(
   try
   {
     NFmiCalculationParams modifiedCalculationParams(theCalculationParams);
-    auto area = itsEditedInfo->Area();
+    const auto* area = itsEditedInfo->Area();
     if (area)
     {
       // worldXy on annettu latlon piste kartta-alueen metrisessä maailmassa
@@ -1501,10 +1475,7 @@ double NFmiInfoAreaMaskPeekXY2::PressureValue(double thePressure,
 
 NFmiInfoAreaMaskPeekXY3::~NFmiInfoAreaMaskPeekXY3() = default;
 
-NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3()
-    : NFmiInfoAreaMask(), itsXOffsetInKM(0), itsYOffsetInKM(0), itsEditedInfo()
-{
-}
+NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3() : itsXOffsetInKM(0), itsYOffsetInKM(0) {}
 
 NFmiInfoAreaMaskPeekXY3::NFmiInfoAreaMaskPeekXY3(
     const NFmiCalculationCondition &theOperation,
@@ -1562,7 +1533,9 @@ NFmiAreaMask *NFmiInfoAreaMaskPeekXY3::Clone() const
   }
 }
 
-static bool IsPacificViewData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
+namespace
+{
+bool IsPacificViewData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
 {
   try
   {
@@ -1579,6 +1552,7 @@ static bool IsPacificViewData(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 NFmiCalculationParams NFmiInfoAreaMaskPeekXY3::MakeModifiedCalculationParams(
     const NFmiCalculationParams &theCalculationParams)
@@ -1655,10 +1629,10 @@ double NFmiInfoAreaMaskPeekXY3::PressureValue(double thePressure,
 NFmiInfoAreaMaskMetFuncBase::~NFmiInfoAreaMaskMetFuncBase() = default;
 
 NFmiInfoAreaMaskMetFuncBase::NFmiInfoAreaMaskMetFuncBase(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     bool thePeekAlongTudes,
     MetFunctionDirection theMetFuncDirection,
     unsigned long thePossibleMetaParamId,
@@ -1669,16 +1643,6 @@ NFmiInfoAreaMaskMetFuncBase::NFmiInfoAreaMaskMetFuncBase(
                        theInfo,
                        thePossibleMetaParamId,
                        thePostBinaryOperator),
-      itsTimeCache(),
-      itsGridSizeX(0),
-      itsGridSizeY(0),
-      itsGridPointWidthInMeters(0),
-      itsGridPointHeightInMeters(0),
-      itsMetFuncDividerX(0)  // laitetaan 0-arvot oletuksena, nämä 'dividerit' pitää alustaa sitten
-                             // ennen varsinaisia laskuja!!!
-      ,
-      itsMetFuncDividerY(0),
-      fTotalWindParam(false),
       fPeekAlongTudes(thePeekAlongTudes)
 {
   try
@@ -1740,7 +1704,7 @@ void NFmiInfoAreaMaskMetFuncBase::SetGridSizeVariables()
 {
   try
   {
-    if (IsDataOperatable(itsInfo) == false)
+    if (!IsDataOperatable(itsInfo))
       throw Fmi::Exception(BCP, "Error: given data for Met-function was not grid-data");
 
     itsGridSizeX = itsInfo->Grid()->XNumber();
@@ -1763,10 +1727,7 @@ bool NFmiInfoAreaMaskMetFuncBase::IsDataOperatable(
 {
   try
   {
-    if (theInfo && theInfo->Grid())
-      return true;
-
-    return false;
+    return theInfo && theInfo->Grid();
   }
   catch (...)
   {
@@ -2020,7 +1981,7 @@ void NFmiInfoAreaMaskGrad::InitCalcFactorVectors()
 {
   try
   {
-    if (NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized == false)
+    if (!NFmiInfoAreaMaskGrad::fCalcFactorVectorsInitialized)
     {
       NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.emplace_back(2, -1.f);
       NFmiInfoAreaMaskGrad::itsLowerEdgeFactors.emplace_back(1, 4.f);
@@ -2044,10 +2005,10 @@ void NFmiInfoAreaMaskGrad::InitCalcFactorVectors()
 
 NFmiInfoAreaMaskGrad::~NFmiInfoAreaMaskGrad() = default;
 
-NFmiInfoAreaMaskGrad::NFmiInfoAreaMaskGrad(const NFmiCalculationCondition &theOperation,
+NFmiInfoAreaMaskGrad::NFmiInfoAreaMaskGrad(const NFmiCalculationCondition& theOperation,
                                            Type theMaskType,
                                            NFmiInfoData::Type theDataType,
-                                           const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                           const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                            bool thePeekAlongTudes,
                                            MetFunctionDirection theMetFuncDirection,
                                            unsigned long thePossibleMetaParamId,
@@ -2059,8 +2020,8 @@ NFmiInfoAreaMaskGrad::NFmiInfoAreaMaskGrad(const NFmiCalculationCondition &theOp
                                   thePeekAlongTudes,
                                   theMetFuncDirection,
                                   thePossibleMetaParamId,
-                                  thePostBinaryOperator),
-      fCalculateDivergence(false)
+                                  thePostBinaryOperator)
+
 {
   try
   {
@@ -2308,7 +2269,7 @@ void NFmiInfoAreaMaskLaplace::InitCalcFactorVectors()
 {
   try
   {
-    if (NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized == false)
+    if (!NFmiInfoAreaMaskLaplace::fCalcFactorVectorsInitialized)
     {
       NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.emplace_back(2, 1.f);
       NFmiInfoAreaMaskLaplace::itsLowerEdgeFactors.emplace_back(1, -2.f);
@@ -2528,10 +2489,10 @@ double NFmiInfoAreaMaskRotor::Value(const NFmiCalculationParams &theCalculationP
 NFmiInfoAreaMaskVertFunc::~NFmiInfoAreaMaskVertFunc() = default;
 
 NFmiInfoAreaMaskVertFunc::NFmiInfoAreaMaskVertFunc(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -2546,16 +2507,8 @@ NFmiInfoAreaMaskVertFunc::NFmiInfoAreaMaskVertFunc(
                                   kNoValue),
       itsPrimaryFunc(thePrimaryFunc),
       itsSecondaryFunc(theSecondaryFunc),
-      itsArgumentVector(),
-      itsFunctionModifier(),
       itsStartLevelValue(kFloatMissing),
-      itsEndLevelValue(kFloatMissing),
-      itsStartLevelIndex(gMissingIndex),
-      itsEndLevelIndex(gMissingIndex),
-      itsUsedHeightParId(kFmiBadParameter),
-      fReturnHeightValue(false),
-      itsLevelIncrement(1),
-      fReverseLevels(false)
+      itsEndLevelValue(kFloatMissing)
 {
   try
   {
@@ -2662,7 +2615,9 @@ void NFmiInfoAreaMaskVertFunc::SetArguments(std::vector<float> &theArgumentVecto
   }
 }
 
-static bool IsBetweenValues(double value, double value1, double value2)
+namespace
+{
+bool IsBetweenValues(double value, double value1, double value2)
 {
   try
   {
@@ -2677,6 +2632,7 @@ static bool IsBetweenValues(double value, double value1, double value2)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 void NFmiInfoAreaMaskVertFunc::SetLevelIndexies(float theHeightValue)
 {
@@ -2700,7 +2656,9 @@ void NFmiInfoAreaMaskVertFunc::SetLevelIndexies(float theHeightValue)
   }
 }
 
-static bool IsInsideLimits(float low, float high, float value)
+namespace
+{
+bool IsInsideLimits(float low, float high, float value)
 {
   try
   {
@@ -2711,6 +2669,7 @@ static bool IsInsideLimits(float low, float high, float value)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocationCache)
 {
@@ -2732,11 +2691,9 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
         if (itsStartLevelValue > itsEndLevelValue)
           std::swap(itsStartLevelValue, itsEndLevelValue);
 
-        if (itsStartLevelValue < firstExistingLevelValue)
-          itsStartLevelValue = firstExistingLevelValue;
+        itsStartLevelValue = std::max(itsStartLevelValue, firstExistingLevelValue);
 
-        if (itsEndLevelValue > lastExistingLevelValue)
-          itsEndLevelValue = lastExistingLevelValue;
+        itsEndLevelValue = std::min(itsEndLevelValue, lastExistingLevelValue);
 
         // float closestInsideStartLevelValue = kFloatMissing;
         float minStartDiff = 99999999.f;
@@ -2794,7 +2751,9 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
   }
 }
 
-static float ConvertFL2P(float FL)
+namespace
+{
+float ConvertFL2P(float FL)
 {
   try
   {
@@ -2808,6 +2767,7 @@ static float ConvertFL2P(float FL)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 void NFmiInfoAreaMaskVertFunc::SetLevelValues()
 {
@@ -2860,7 +2820,7 @@ void NFmiInfoAreaMaskVertFunc::FindCalculatedLeves(const NFmiLocationCache &theL
       }
       else
       {
-        if (itsInfo->HeightParamIsRising() == false)
+        if (!itsInfo->HeightParamIsRising())
           itsLevelIncrement = -1;  // HeightParamIsRising = false -> levelien vertikaali suunta on
                                    // alaspäin (avaruudesta kohti maanpintaa)
       }
@@ -2953,7 +2913,9 @@ float NFmiInfoAreaMaskVertFunc::DoPeekZFunction(const NFmiCalculationParams &the
   return kFloatMissing;
 }
 
-static bool IsUnder(float theSearchedValue, float theCurrentValue)
+namespace
+{
+bool IsUnder(float theSearchedValue, float theCurrentValue)
 {
   try
   {
@@ -2965,6 +2927,7 @@ static bool IsUnder(float theSearchedValue, float theCurrentValue)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 unsigned long NFmiInfoAreaMaskVertFunc::GetNonMissingStartLevelIndex(
     const NFmiLocationCache &theLocationCache, const NFmiCalculationParams &theCalculationParams)
@@ -3494,8 +3457,8 @@ bool NFmiInfoAreaMaskVertConditionalFunc::InitializeFromArguments()
   }
 }
 
-double NFmiInfoAreaMaskVertConditionalFunc::Value(const NFmiCalculationParams &theCalculationParams,
-                                                  bool fUseTimeInterpolationAlways)
+double NFmiInfoAreaMaskVertConditionalFunc::Value(const NFmiCalculationParams& theCalculationParams,
+                                                  bool /*fUseTimeInterpolationAlways*/)
 {
   try
   {
@@ -3581,10 +3544,10 @@ float NFmiInfoAreaMaskVertConditionalFunc::DoFindConditionalFunction(
 NFmiInfoAreaMaskTimeVertFunc::~NFmiInfoAreaMaskTimeVertFunc() = default;
 
 NFmiInfoAreaMaskTimeVertFunc::NFmiInfoAreaMaskTimeVertFunc(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3596,9 +3559,8 @@ NFmiInfoAreaMaskTimeVertFunc::NFmiInfoAreaMaskTimeVertFunc(
                                thePrimaryFunc,
                                theSecondaryFunc,
                                theArgumentCount,
-                               thePossibleMetaParamId),
-      itsStartTimeOffsetInHours(0),
-      itsEndTimeOffsetInHours(0)
+                               thePossibleMetaParamId)
+
 {
 }
 
@@ -3720,10 +3682,10 @@ double NFmiInfoAreaMaskTimeVertFunc::Value(const NFmiCalculationParams &theCalcu
 NFmiInfoAreaMaskProbFunc::~NFmiInfoAreaMaskProbFunc() = default;
 
 NFmiInfoAreaMaskProbFunc::NFmiInfoAreaMaskProbFunc(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -3732,16 +3694,8 @@ NFmiInfoAreaMaskProbFunc::NFmiInfoAreaMaskProbFunc(
           theOperation, theMaskType, theDataType, theInfo, thePossibleMetaParamId, kNoValue),
       itsPrimaryFunc(thePrimaryFunc),
       itsSecondaryFunc(theSecondaryFunc),
-      itsArgumentVector(),
-      itsSearchRangeInKM(0),
       itsLimit1(kFloatMissing),
-      itsLimit2(kFloatMissing),
-      itsStartTimeOffsetInHours(0),
-      itsEndTimeOffsetInHours(0),
-      itsGridPointRectSizeX(0),
-      itsGridPointRectSizeY(0),
-      itsConditionFullfilledGridPointCount(0),
-      itsTotalCalculatedGridPoints(0)
+      itsLimit2(kFloatMissing)
 {
   try
   {
@@ -3837,19 +3791,21 @@ void NFmiInfoAreaMaskProbFunc::SetArguments(std::vector<float> &theArgumentVecto
   }
 }
 
-static bool IsOdd(int value)
+namespace
+{
+bool IsOdd(int value)
 {
   return value % 2 == 1;
 }
 
-static void CalcPeekLoopLimits(int rectSize, double interpolationPoint, int &limit1, int &limit2)
+void CalcPeekLoopLimits(int rectSize, double interpolationPoint, int &limit1, int &limit2)
 {
   try
   {
     if (::IsOdd(rectSize))
     {
       // Pariton on helppo tapaus, looppi alkaa -x:sta ja menee x:ään ja x = (int)(theRectSize/2)
-      limit2 = static_cast<int>(rectSize / 2);
+      limit2 = (rectSize / 2);
       limit1 = -limit2;
     }
     else
@@ -3860,14 +3816,14 @@ static void CalcPeekLoopLimits(int rectSize, double interpolationPoint, int &lim
       {
         // Interpolointi piste on suurempi kuin nearest-point arvo, tällöin limit2 saa yhden
         // suuremman (itseis)arvon
-        limit2 = static_cast<int>(rectSize / 2);
+        limit2 = (rectSize / 2);
         limit1 = -(limit2 - 1);
       }
       else
       {
         // Interpolointi piste on pienempi kuin nearest-point arvo, tällöin limit1 saa yhden
         // suuremman (itseis)arvon
-        limit1 = static_cast<int>(-rectSize / 2);
+        limit1 = (-rectSize / 2);
         limit2 = -limit1 - 1;
       }
     }
@@ -3877,6 +3833,7 @@ static void CalcPeekLoopLimits(int rectSize, double interpolationPoint, int &lim
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 bool NFmiInfoAreaMaskProbFunc::CheckProbabilityCondition(double value)
 {
@@ -3952,7 +3909,9 @@ NFmiMetTime NFmiInfoAreaMaskProbFunc::CalcTimeLoopLimits(
   }
 }
 
-static void SetSimpleConditionCalculationTime(
+namespace
+{
+void SetSimpleConditionCalculationTime(
     NFmiCalculationParams &simpleConditionCalculationPointParams,
     bool useInterpolatedTime,
     const NFmiMetTime &interpolationTime,
@@ -3971,6 +3930,7 @@ static void SetSimpleConditionCalculationTime(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // tätä kaytetaan smarttool-modifierin yhteydessä
 double NFmiInfoAreaMaskProbFunc::Value(const NFmiCalculationParams &theCalculationParams,
@@ -4051,7 +4011,9 @@ double NFmiInfoAreaMaskProbFunc::Value(const NFmiCalculationParams &theCalculati
   }
 }
 
-static bool IsSynopDataCase(const std::shared_ptr<NFmiFastQueryInfo> &info)
+namespace
+{
+bool IsSynopDataCase(const std::shared_ptr<NFmiFastQueryInfo> &info)
 {
   if (info)
   {
@@ -4059,6 +4021,7 @@ static bool IsSynopDataCase(const std::shared_ptr<NFmiFastQueryInfo> &info)
   }
   return false;
 }
+}  // namespace
 
 double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
     const NFmiCalculationParams &theCalculationParams)
@@ -4317,10 +4280,10 @@ void NFmiInfoAreaMaskProbFunc::InitializeIntegrationValues()
 
 NFmiInfoTimeIntegrator::~NFmiInfoTimeIntegrator() = default;
 
-NFmiInfoTimeIntegrator::NFmiInfoTimeIntegrator(const NFmiCalculationCondition &theOperation,
+NFmiInfoTimeIntegrator::NFmiInfoTimeIntegrator(const NFmiCalculationCondition& theOperation,
                                                Type theMaskType,
                                                NFmiInfoData::Type theDataType,
-                                               const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                               const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                                NFmiAreaMask::FunctionType theIntegrationFunc,
                                                int theStartTimeOffset,
                                                int theEndTimeOffset,
@@ -4334,7 +4297,6 @@ NFmiInfoTimeIntegrator::NFmiInfoTimeIntegrator(const NFmiCalculationCondition &t
                                   thePossibleMetaParamId,
                                   kNoValue),
       itsIntegrationFunc(theIntegrationFunc),
-      itsFunctionModifier(),
       itsStartTimeOffset(theStartTimeOffset),
       itsEndTimeOffset(theEndTimeOffset)
 {
@@ -4419,10 +4381,10 @@ double NFmiInfoTimeIntegrator::Value(const NFmiCalculationParams &theCalculation
 NFmiInfoRectAreaIntegrator::~NFmiInfoRectAreaIntegrator() = default;
 
 NFmiInfoRectAreaIntegrator::NFmiInfoRectAreaIntegrator(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     NFmiAreaMask::FunctionType theIntegrationFunc,
     int theStartXOffset,
     int theEndXOffset,
@@ -4438,7 +4400,6 @@ NFmiInfoRectAreaIntegrator::NFmiInfoRectAreaIntegrator(
                                   thePossibleMetaParamId,
                                   kNoValue),
       itsIntegrationFunc(theIntegrationFunc),
-      itsFunctionModifier(),
       itsStartXOffset(theStartXOffset),
       itsEndXOffset(theEndXOffset),
       itsStartYOffset(theStartYOffset),
@@ -4519,10 +4480,10 @@ double NFmiInfoRectAreaIntegrator::Value(const NFmiCalculationParams &theCalcula
 NFmiInfoAreaIntegrationFunc::~NFmiInfoAreaIntegrationFunc() = default;
 
 NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
-    const NFmiCalculationCondition &theOperation,
+    const NFmiCalculationCondition& theOperation,
     Type theMaskType,
     NFmiInfoData::Type theDataType,
-    const std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
     NFmiAreaMask::FunctionType thePrimaryFunc,
     NFmiAreaMask::FunctionType theSecondaryFunc,
     int theArgumentCount,
@@ -4535,8 +4496,7 @@ NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
                                theSecondaryFunc,
                                theArgumentCount,
                                thePossibleMetaParamId),
-      itsIntegrationFunc(thePrimaryFunc),
-      itsFunctionModifier()
+      itsIntegrationFunc(thePrimaryFunc)
 {
   try
   {
@@ -4688,7 +4648,7 @@ float NFmiInfoAreaMaskAreaProbFunc::CalculationPointValue(int theOffsetX,
   }
 }
 
-void NFmiInfoAreaMaskAreaProbFunc::DoIntegrationCalculations(float value)
+void NFmiInfoAreaMaskAreaProbFunc::DoIntegrationCalculations(float /*value*/)
 {
   try
   {
@@ -4714,7 +4674,7 @@ void NFmiInfoAreaMaskAreaProbFunc::DoIntegrationCalculations(float value)
 NFmiTimeShiftedInfoAreaMask::~NFmiTimeShiftedInfoAreaMask() = default;
 
 NFmiTimeShiftedInfoAreaMask::NFmiTimeShiftedInfoAreaMask()
-    : NFmiInfoAreaMask(), itsTimeOffsetInHours(0), itsChangeByMinutesValue(0)
+    : itsTimeOffsetInHours(0), itsChangeByMinutesValue(0)
 {
 }
 

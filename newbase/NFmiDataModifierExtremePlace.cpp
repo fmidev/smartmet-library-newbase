@@ -28,10 +28,7 @@ NFmiDataModifierExtremePlace::~NFmiDataModifierExtremePlace() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierExtremePlace::NFmiDataModifierExtremePlace()
-    : itsExtremeValue(), itsExtremeLocation()
-{
-}
+NFmiDataModifierExtremePlace::NFmiDataModifierExtremePlace() {}
 
 // ----------------------------------------------------------------------
 /*!

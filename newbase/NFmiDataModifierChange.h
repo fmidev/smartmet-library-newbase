@@ -26,7 +26,7 @@ class NFmiDataModifierChange : public NFmiDataModifier
   float CalculationResult() override;
 
  protected:
-  bool itsFirstValueOK;
+  bool itsFirstValueOK = false;
   float itsFirstValue;
   float itsLastValue;
 

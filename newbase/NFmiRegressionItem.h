@@ -29,11 +29,11 @@ class NFmiRegressionItem : public NFmiInfoModifier
   double FloatValue() override;
 
  protected:
-  double itsReturnValue;
+  double itsReturnValue = 0.0;
 
  private:
   double itsCoefficient;
-  double itsConstant;
+  double itsConstant = 0.0;
 
 };  // class NFmiRegressionItem
 

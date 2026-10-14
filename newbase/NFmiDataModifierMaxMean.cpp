@@ -19,6 +19,8 @@
 
 #include "NFmiDataModifierMaxMean.h"
 
+#include <algorithm>
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor does nothing special
@@ -33,11 +35,7 @@ NFmiDataModifierMaxMean::~NFmiDataModifierMaxMean() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierMaxMean::NFmiDataModifierMaxMean()
-    : NFmiDataModifier(),
-      itsCounter(0),
-      itsAverage(0.),
-      itsMaxValue(-3.4E+38f),
-      itsWeightFactor(kFloatMissing)
+    : itsCounter(0), itsAverage(0.), itsMaxValue(-3.4E+38f), itsWeightFactor(kFloatMissing)
 {
 }
 
@@ -68,8 +66,7 @@ void NFmiDataModifierMaxMean::Calculate(float theValue)
     itsCounter++;
     itsAverage -= ((itsAverage - theValue) / itsCounter);
 
-    if (itsMaxValue < theValue)
-      itsMaxValue = theValue;
+    itsMaxValue = std::max(itsMaxValue, theValue);
   }
 }
 
@@ -97,7 +94,7 @@ void NFmiDataModifierMaxMean::Clear()
 float NFmiDataModifierMaxMean::CalculationResult()
 {
   float avg = kFloatMissing, max = kFloatMissing;
-  if (fCalculationResultOk == true)
+  if (fCalculationResultOk)
     avg = itsAverage;
   else
     avg = kFloatMissing;

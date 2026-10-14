@@ -196,7 +196,6 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
 
   void DoConstructorInitializations(unsigned long thePossibleMetaParamId);
 
- protected:
   std::shared_ptr<NFmiFastQueryInfo> itsInfo;
   NFmiDataIdent itsDataIdent;
   NFmiLevel itsLevel;
@@ -449,14 +448,14 @@ class NFmiInfoAreaMaskMetFuncBase : public NFmiInfoAreaMask
 
   NFmiTimeCache
       itsTimeCache;  // tähän lasketaan time-metodissa optimoinnissa käytetty aika-cache laskuri
-  int itsGridSizeX;
-  int itsGridSizeY;
-  float itsGridPointWidthInMeters;
-  float itsGridPointHeightInMeters;
-  float itsMetFuncDividerX;  // tähän lasketaan luku, millä jaetaan laskut X-suunnassa
-  float itsMetFuncDividerY;  // tähän lasketaan luku, millä jaetaan laskut Y-suunnassa
-  bool fTotalWindParam;  // jos parametrina on total wind- itää se ottaa tietyissä tapauksissa
-                         // erikseen huomioon laskuissa
+  int itsGridSizeX = 0;
+  int itsGridSizeY = 0;
+  float itsGridPointWidthInMeters = 0;
+  float itsGridPointHeightInMeters = 0;
+  float itsMetFuncDividerX = 0;  // tähän lasketaan luku, millä jaetaan laskut X-suunnassa
+  float itsMetFuncDividerY = 0;  // tähän lasketaan luku, millä jaetaan laskut Y-suunnassa
+  bool fTotalWindParam = false;  // jos parametrina on total wind- itää se ottaa tietyissä
+                                 // tapauksissa erikseen huomioon laskuissa
   bool fPeekAlongTudes;  // tehdäänkö xy-suuntaiset kurkkaukset datan oman hilan suunnassa (false)
                          // vaiko pitkin latitude ja longitude linjoja (true)
 };
@@ -497,9 +496,10 @@ class NFmiInfoAreaMaskGrad : public NFmiInfoAreaMaskMetFuncBase
   static CalcFactorVector itsLowerEdgeFactors;
   static CalcFactorVector itsUpperEdgeFactors;
   static CalcFactorVector itsMiddleAreaFactors;
-  bool fCalculateDivergence;  // tämä muuttuja määrää lasketaanko gradientti (oletus) vai
-                              // divergenssi. Laskenta on muuten sama,
-                              // mutta x- ja y-componentit lasketaan vain erilailla lopuksi yhteen
+  bool fCalculateDivergence =
+      false;  // tämä muuttuja määrää lasketaanko gradientti (oletus) vai
+              // divergenssi. Laskenta on muuten sama,
+              // mutta x- ja y-componentit lasketaan vain erilailla lopuksi yhteen
 
   static bool fCalcFactorVectorsInitialized;
 
@@ -601,16 +601,16 @@ class VerticalIterationBreakingData
 {
  public:
   VerticalIterationBreakingData(bool useData = false)
-      : useBreakingData(useData), stopIteration(false), value(kFloatMissing), index(gMissingIndex)
+      : useBreakingData(useData), value(kFloatMissing)
   {
   }
 
   bool BreakIteration() const { return useBreakingData && stopIteration; }
 
   bool useBreakingData;  // Käytetäänkö loopissa tätä datapakettia
-  bool stopIteration;
+  bool stopIteration = false;
   float value;          // arvo joka halutaan loopituksen lopuksi palauttaa
-  unsigned long index;  // indeksi joka halutaan loppituksen lopuksi palauttaa
+  unsigned long index = gMissingIndex;  // indeksi joka halutaan loppituksen lopuksi palauttaa
 };
 
 class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
@@ -679,10 +679,10 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
   // Vertikaali levelien läpikäynti oikeassa järjestyksessä. Tehty template funktioksi
   // jotta sitä voidaan käyttää erilaisten lambda funktioiden avulla eri paikoissa.
   template <typename FunctionObject>
-  void IterateLevelsFromGroundUpward(FunctionObject &functionObject,
-                                     VerticalIterationBreakingData &iterationBreakingData,
+  void IterateLevelsFromGroundUpward(FunctionObject& functionObject,
+                                     VerticalIterationBreakingData& iterationBreakingData,
                                      int usedStartLevelIndex,
-                                     const NFmiCalculationParams &theCalculationParams)
+                                     const NFmiCalculationParams& /*theCalculationParams*/)
   {
     for (auto levelIndex = usedStartLevelIndex;
          fReverseLevels ? levelIndex >= static_cast<int>(itsEndLevelIndex)
@@ -712,20 +712,20 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
   // yksikössä onkaan), PAITSI, jos kyse on get-funktiosta, jolloin tämä on
   // puuttuva
   float itsEndLevelValue;
-  unsigned long itsStartLevelIndex;  // dataa käydään läpi alkaen tästä levelistä
-  unsigned long itsEndLevelIndex;    // dataa käydään läpi tähän leveliin asti
+  unsigned long itsStartLevelIndex = gMissingIndex;  // dataa käydään läpi alkaen tästä levelistä
+  unsigned long itsEndLevelIndex = gMissingIndex;    // dataa käydään läpi tähän leveliin asti
 
-  FmiParameterName itsUsedHeightParId;
-  bool fReturnHeightValue;
+  FmiParameterName itsUsedHeightParId = kFmiBadParameter;
+  bool fReturnHeightValue = false;
   // Kun ollaan päätelty mihin suuntaan leveldata menee (ylös maanpinnasta vai alas avaruudesta)
   // tähän on tarkoitus laskea for-looppeja varten level incrementti (joko 1 tai -1)
   // Jos datan levelien suunta on maanpinnasta ylöspäin, on incrementti 1 ja käydään levelit
   // normaali järjestyksessä läpi. Jos datan levelien suuntä on avaruudesta maanpintaa kohden, on
   // incrementti -1 ja levelit käydään käänteisessä järjestyksessä.
-  int itsLevelIncrement;
+  int itsLevelIncrement = 1;
   // Jos itsLevelIncrement on -1, tämä on true, jolloin for-loopitus tehdään
   // käänteisessä järjestyksessä
-  bool fReverseLevels;
+  bool fReverseLevels = false;
 };
 
 class NFmiInfoAreaMaskVertConditionalFunc : public NFmiInfoAreaMaskVertFunc
@@ -783,10 +783,10 @@ class NFmiInfoAreaMaskTimeVertFunc : public NFmiInfoAreaMaskVertFunc
  protected:
   void SetRangeValuesFromArguments();
 
-  double itsStartTimeOffsetInHours;  // kuinka monta tuntia aikaiteroinnin alkuaika poikkeaa
-                                     // current-timesta
-  double itsEndTimeOffsetInHours;    // kuinka monta tuntia aikaiteroinnin loppuaika poikkeaa
-                                     // current-timesta
+  double itsStartTimeOffsetInHours = 0;  // kuinka monta tuntia aikaiteroinnin alkuaika poikkeaa
+                                         // current-timesta
+  double itsEndTimeOffsetInHours = 0;    // kuinka monta tuntia aikaiteroinnin loppuaika poikkeaa
+                                         // current-timesta
 };
 
 class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
@@ -860,25 +860,25 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
   std::vector<float> itsArgumentVector;
 
   // minkä säteisen alueen halutaan käyvän läpi originaali datassa
-  double itsSearchRangeInKM;
+  double itsSearchRangeInKM = 0;
   double itsLimit1;
   double itsLimit2;
   // kuinka monta tuntia aikaiteroinnin alkuaika poikkeaa current-timesta
-  double itsStartTimeOffsetInHours;
+  double itsStartTimeOffsetInHours = 0;
 
   // kuinka monta tuntia aikaiteroinnin loppuaika poikkeaa current-timesta
-  double itsEndTimeOffsetInHours;
+  double itsEndTimeOffsetInHours = 0;
   // käydään läpi ali hila, joka on tämän kokoinen x-suunnassa (min 2)
-  int itsGridPointRectSizeX;
+  int itsGridPointRectSizeX = 0;
   // käydään läpi ali hila, joka on tämän kokoinen y-suunnassa (min 2)
-  int itsGridPointRectSizeY;
+  int itsGridPointRectSizeY = 0;
   // Kaikki hilapisteet, missä todennäköisyys ehto piti paikkaansa (tämä otetaan talteen Value
   // -metodissa, jotta NFmiInfoAreaMaskOccurrance -lapsiluokka voi käyttää tämän luokan laskuja
   // hyväkseen hiladatan tapauksessa)
-  int itsConditionFullfilledGridPointCount;
+  int itsConditionFullfilledGridPointCount = 0;
   // Kaikkien laskuissaa läpikäytyjen hilapisteiden määrä, aika- ja area-loopeissa yhteensä,
   // joissa oli ei-puuttuva arvo.
-  int itsTotalCalculatedGridPoints;
+  int itsTotalCalculatedGridPoints = 0;
 };
 
 class NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase

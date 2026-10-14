@@ -113,9 +113,8 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
-    : itsStatus(),
-      itsArgc(),
+NFmiCmdLine::NFmiCmdLine(const NFmiString& theString, const char* optallow)
+    : itsArgc(),
       itsArgv(),
       itsOptionsAllowed(),
       itsCommand(),
@@ -128,7 +127,7 @@ NFmiCmdLine::NFmiCmdLine(const NFmiString &theString, const char *optallow)
   try
   {
     int argc = GetSpaceStringSize(theString);
-    char **argv;
+    char** argv = nullptr;
 
     NFmiString theStringBuffer(theString);
 
@@ -228,9 +227,8 @@ int NFmiCmdLine::GetSpaceStringSize(const NFmiString &theString)
  */
 // ----------------------------------------------------------------------
 
-NFmiCmdLine::NFmiCmdLine(int argc, const char **argv, const char *optallow)
-    : itsStatus(),
-      itsArgc(),
+NFmiCmdLine::NFmiCmdLine(int argc, const char** argv, const char* optallow)
+    : itsArgc(),
       itsArgv(),
       itsOptionsAllowed(),
       itsCommand(),
@@ -262,8 +260,8 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
 {
   try
   {
-    const char *p;
-    int i;
+    const char* p = nullptr;
+    int i = 0;
     itsParameterCount = 0;  // Init to 0, if illegal option, remains uninitialized
     itsOptionCount = 0;     // Init to 0, if illegal option, remains uninitialized
     itsArgc = argc;
@@ -375,7 +373,7 @@ NFmiCmdLine::~NFmiCmdLine()
 {
   try
   {
-    int i;
+    int i = 0;
     for (i = 0; i < itsArgc; i++)
       delete[] itsArgv[i];
     delete[] itsArgv;
@@ -581,7 +579,7 @@ const char *NFmiCmdLine::OptionValue(char c) const
 {
   try
   {
-    int i;
+    int i = 0;
     for (i = 0; i < itsOptionCount; i++)
       if (itsOptionLetters[i] == c)
         break;

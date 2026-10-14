@@ -82,10 +82,7 @@ NFmiLocationFinder::~NFmiLocationFinder() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationFinder::NFmiLocationFinder()
-    : itsPrimaryPoints(), itsSecondaryPoints(), itsLastSearchFailed(false)
-{
-}
+NFmiLocationFinder::NFmiLocationFinder() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -185,7 +182,7 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
       // Extract the numbers. Note that atof returns nothing
       // to indicate success, hence we use a checked parser instead.
 
-      double value1, value2;
+      double value1 = NAN, value2 = NAN;
       if (!parse_coordinate(fields[coordinate1], value1))
         continue;
       if (!parse_coordinate(fields[coordinate2], value2))
@@ -300,7 +297,7 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       // Extract the numbers. Note that atof returns nothing
       // to indicate success, hence we use a checked parser instead.
 
-      double value1, value2;
+      double value1 = NAN, value2 = NAN;
       if (!parse_coordinate(fields[firstCoord - 1], value1))
         continue;
       if (!parse_coordinate(fields[firstCoord], value2))

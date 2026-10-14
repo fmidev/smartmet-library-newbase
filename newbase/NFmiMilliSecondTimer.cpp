@@ -8,6 +8,7 @@
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
 
+#include <algorithm>
 #include <iomanip>
 
 namespace
@@ -38,7 +39,7 @@ int calculateSignificantDigitPrecision(double value, int wantedPrecision)
   else
     usedPrecision = 1;
 
-  if (usedPrecision <= 1) usedPrecision = 1;
+  usedPrecision = std::max(usedPrecision, 1);
 
   return usedPrecision;
 }
@@ -130,7 +131,7 @@ std::string NFmiMilliSecondTimer::EasyTimeDiffStr(int theDiffInMS, bool fIgnoreM
     }
     //	sekunnit tulee aina
     result += NFmiStringTools::Convert<int>(seconds) + " s ";
-    if (fIgnoreMilliSeconds == false)
+    if (!fIgnoreMilliSeconds)
     {
       NFmiValueString valStr(msecs, "%03d");
       result += valStr.CharPtr();

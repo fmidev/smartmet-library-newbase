@@ -164,19 +164,18 @@ class NFmiCombinedParam
   virtual void DeleteIntegrators();
   virtual void CreateIntegrators();
 
- protected:
   virtual void CrossCheck(FmiParameterName theParam);
   NFmiDataModifierCombi* GetSubIntegrator(unsigned long theIndex);
   virtual void CreateSubParams();
   NFmiDataModifierCombi* FindSubParamIntegrator(FmiParameterName theName);
-  NFmiParamBag* itsSubParams;
-  NFmiDataModifierCombi** itsIntegrators;
+  NFmiParamBag* itsSubParams = nullptr;
+  NFmiDataModifierCombi** itsIntegrators = nullptr;
 
-  bool fIntegrationMode;
-  bool fIntegrationReady;
-  bool fIntegrationStarted;
-  bool fDataOk;
-  bool fAutoUpdate;
+  bool fIntegrationMode = false;
+  bool fIntegrationReady = false;
+  bool fIntegrationStarted = false;
+  bool fDataOk = true;
+  bool fAutoUpdate = true;
 
   // info version pitää ottaa myös tänne, koska totalwind ja weatherandcloudiness
   // tarvitsevat tietoa kun kaavat muuttuivat

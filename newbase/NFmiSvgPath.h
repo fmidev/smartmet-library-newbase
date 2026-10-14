@@ -76,11 +76,11 @@ class NFmiSvgPath
   storage_type itsData;
 
   // Hidden bounding box information for faster isInside implementation
-  mutable bool itsBBoxValid;
-  mutable double itsMinX;
-  mutable double itsMinY;
-  mutable double itsMaxX;
-  mutable double itsMaxY;
+  mutable bool itsBBoxValid = false;
+  mutable double itsMinX = 0;
+  mutable double itsMinY = 0;
+  mutable double itsMaxX = 0;
+  mutable double itsMaxY = 0;
 
 };  // class NFmiSvgPath
 

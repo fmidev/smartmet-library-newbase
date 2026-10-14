@@ -56,28 +56,28 @@ class NFmiTransformList
  private:
   NFmiTransformList(const NFmiTransformList& theList);
 
-  int itsMaxPairNumber;
+  int itsMaxPairNumber = 0;
 
-  int itsIncrementSize;
-  int itsCurrentIndex;
-  int itsCurrentMaxIndex;
-  int itsPreviousInputRangeIndex;
-  double itsPreviousInputValue;
-  double itsPreviousOutputValue;
-  double itsMinInputValue;
-  double itsMaxInputValue;
+  int itsIncrementSize = 0;
+  int itsCurrentIndex = 0;
+  int itsCurrentMaxIndex = 0;
+  int itsPreviousInputRangeIndex = 0;
+  double itsPreviousInputValue = 0.0;
+  double itsPreviousOutputValue = 0.0;
+  double itsMinInputValue = 0.0;
+  double itsMaxInputValue = 0.0;
 
-  double itsInputValue;
-  double itsOutputValue;
+  double itsInputValue = 0.0;
+  double itsOutputValue = 0.0;
 
-  NFmiPoint* itsFirstPair;
-  NFmiPoint* itsLastPair;
+  NFmiPoint* itsFirstPair = nullptr;
+  NFmiPoint* itsLastPair = nullptr;
   NFmiPoint itsVeryFirstPair;
   NFmiPoint itsVeryLastPair;
 
   NFmiPoint itsEps;
 
-  double* itsOutputInputRatio;
+  double* itsOutputInputRatio = nullptr;
 
 };  // class NFmiTransformList
 

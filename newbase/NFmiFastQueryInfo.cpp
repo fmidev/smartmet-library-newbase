@@ -62,7 +62,6 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(double theInfoVersion)
       fUseSubParam(false),
       fHeightValueAvailable(false),
       fHeightLevelDataAvailable(false),
-      itsHeightLevelDataHeights(),
       fHeightParamIsRising(false),
       itsHeightParamIndex(static_cast<unsigned long>(-1)),
       fPressureValueAvailable(false),
@@ -71,10 +70,8 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(double theInfoVersion)
       itsPressureParamIndex(static_cast<unsigned long>(-1)),
       itsOldParamIndex(static_cast<unsigned long>(-1)),
       fOldFSubParamUsed(false),
-      itsPressureLevelDataPressures(),
       itsLongitudeParamIndex(static_cast<unsigned long>(-1)),
       itsLatitudeParamIndex(static_cast<unsigned long>(-1)),
-      itsFastStationIdSeekList(),
       itsDataType(NFmiInfoData::kNoDataType),
       itsDummyTime(1900, 1, 1, 1, 1, 1)
 {
@@ -100,10 +97,10 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(double theInfoVersion)
  */
 // ----------------------------------------------------------------------
 
-NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiParamDescriptor &theParamDescriptor,
-                                     const NFmiTimeDescriptor &theTimeDescriptor,
-                                     const NFmiHPlaceDescriptor &theHPlaceDescriptor,
-                                     const NFmiVPlaceDescriptor &theVPlaceDescriptor,
+NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiParamDescriptor& theParamDescriptor,
+                                     const NFmiTimeDescriptor& theTimeDescriptor,
+                                     const NFmiHPlaceDescriptor& theHPlaceDescriptor,
+                                     const NFmiVPlaceDescriptor& theVPlaceDescriptor,
                                      double theInfoVersion)
     : NFmiQueryInfo(theParamDescriptor,
                     theTimeDescriptor,
@@ -127,7 +124,6 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiParamDescriptor &theParamDescript
       fUseSubParam(false),
       fHeightValueAvailable(false),
       fHeightLevelDataAvailable(false),
-      itsHeightLevelDataHeights(),
       fHeightParamIsRising(false),
       itsHeightParamIndex(static_cast<unsigned long>(-1)),
       fPressureValueAvailable(false),
@@ -136,10 +132,8 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiParamDescriptor &theParamDescript
       itsPressureParamIndex(static_cast<unsigned long>(-1)),
       itsOldParamIndex(static_cast<unsigned long>(-1)),
       fOldFSubParamUsed(false),
-      itsPressureLevelDataPressures(),
       itsLongitudeParamIndex(static_cast<unsigned long>(-1)),
       itsLatitudeParamIndex(static_cast<unsigned long>(-1)),
-      itsFastStationIdSeekList(),
       itsDataType(NFmiInfoData::kNoDataType),
       itsDummyTime(1900, 1, 1, 1, 1, 1)
 {
@@ -165,11 +159,11 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiParamDescriptor &theParamDescript
  */
 // ----------------------------------------------------------------------
 
-NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData *data,
-                                     NFmiParamDescriptor *theParamDescriptor,
-                                     NFmiTimeDescriptor *theTimeDescriptor,
-                                     NFmiHPlaceDescriptor *theHPlaceDescriptor,
-                                     NFmiVPlaceDescriptor *theVPlaceDescriptor)
+NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData* data,
+                                     NFmiParamDescriptor* theParamDescriptor,
+                                     NFmiTimeDescriptor* theTimeDescriptor,
+                                     NFmiHPlaceDescriptor* theHPlaceDescriptor,
+                                     NFmiVPlaceDescriptor* theVPlaceDescriptor)
     : NFmiQueryInfo(
           data, theParamDescriptor, theTimeDescriptor, theHPlaceDescriptor, theVPlaceDescriptor),
       itsParamIndex(),
@@ -189,7 +183,6 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData *data,
       fUseSubParam(false),
       fHeightValueAvailable(false),
       fHeightLevelDataAvailable(false),
-      itsHeightLevelDataHeights(),
       fHeightParamIsRising(false),
       itsHeightParamIndex(static_cast<unsigned long>(-1)),
       fPressureValueAvailable(false),
@@ -198,10 +191,8 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData *data,
       itsPressureParamIndex(static_cast<unsigned long>(-1)),
       itsOldParamIndex(static_cast<unsigned long>(-1)),
       fOldFSubParamUsed(false),
-      itsPressureLevelDataPressures(),
       itsLongitudeParamIndex(static_cast<unsigned long>(-1)),
       itsLatitudeParamIndex(static_cast<unsigned long>(-1)),
-      itsFastStationIdSeekList(),
       itsDataType(NFmiInfoData::kNoDataType),
       itsDummyTime(1900, 1, 1, 1, 1, 1)
 {
@@ -226,7 +217,7 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData *data,
  */
 // ----------------------------------------------------------------------
 
-NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiQueryInfo &theInfo)
+NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiQueryInfo& theInfo)
     : NFmiQueryInfo(theInfo),
       itsParamIndex(),
       itsLocationIndex(),
@@ -245,7 +236,6 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiQueryInfo &theInfo)
       fUseSubParam(false),
       fHeightValueAvailable(false),
       fHeightLevelDataAvailable(false),
-      itsHeightLevelDataHeights(),
       fHeightParamIsRising(false),
       itsHeightParamIndex(static_cast<unsigned long>(-1)),
       fPressureValueAvailable(false),
@@ -254,10 +244,8 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(const NFmiQueryInfo &theInfo)
       itsPressureParamIndex(static_cast<unsigned long>(-1)),
       itsOldParamIndex(static_cast<unsigned long>(-1)),
       fOldFSubParamUsed(false),
-      itsPressureLevelDataPressures(),
       itsLongitudeParamIndex(static_cast<unsigned long>(-1)),
       itsLatitudeParamIndex(static_cast<unsigned long>(-1)),
-      itsFastStationIdSeekList(),
       itsDataType(NFmiInfoData::kNoDataType),
       itsDummyTime(1900, 1, 1, 1, 1, 1)
 {
@@ -710,7 +698,7 @@ bool NFmiFastQueryInfo::Location(const unsigned long &theIdent)
 {
   try
   {
-    if (itsFastStationIdSeekList.empty() == false)
+    if (!itsFastStationIdSeekList.empty())
     {  // jos on rakennettu fast-seeker, käytetään sitä
       StationIdSeekContainer::iterator it = itsFastStationIdSeekList.find(theIdent);
       if (it != itsFastStationIdSeekList.end())
@@ -1344,9 +1332,11 @@ NFmiFastQueryInfo &NFmiFastQueryInfo::operator=(const NFmiFastQueryInfo &theInfo
   }
 }
 
+namespace
+{
 // Hakee currentista pisteestä, parametrista ja ajasta arvoja
 // niin kauan että löytyy kaksi "non missing" arvoa.
-static bool GetFirstAndSecondParamValues(NFmiFastQueryInfo *theInfo,
+bool GetFirstAndSecondParamValues(NFmiFastQueryInfo *theInfo,
                                          float &theValue1,
                                          float &theValue2)
 {
@@ -1381,7 +1371,7 @@ static bool GetFirstAndSecondParamValues(NFmiFastQueryInfo *theInfo,
 // Tämä siis sen takia, että datassa ei aina ole kaikilla ajan hetkillä kuin
 // puuttuvaa korkeus dataa. Tässä fiksu arvaus mitä ajan hetkiä käydää läpi, koska jos
 // käy kaikki hilapisteet ja ajat läpi, on se liian raskasta.
-static std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
+std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
 {
   try
   {
@@ -1419,7 +1409,7 @@ static std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
   }
 }
 
-static int GetGridDataIndex(int xSize, int xInd, int yInd)
+int GetGridDataIndex(int xSize, int xInd, int yInd)
 {
   try
   {
@@ -1435,7 +1425,7 @@ static int GetGridDataIndex(int xSize, int xInd, int yInd)
 // Tämä siis sen takia, että datassa ei aina ole kaikissa paikoissa kuin
 // puuttuvaa korkeus dataa. Tässä fiksu arvaus mitä paikkoja käydää läpi, koska jos
 // käy kaikki hilapisteet ja ajat läpi, on se liian raskasta.
-static std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
+std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
 {
   try
   {
@@ -1518,7 +1508,7 @@ static std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInf
 // Jos datassa on jotain puuttuvaa osiota, voi joutua tarkistamaan/käymään läpi muutamia
 // aikoja/hilapisteitä.
 // Asettaa lopuksi ajan ja paikan ennalleen.
-static bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long theParamIndex)
+bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long theParamIndex)
 {
   try
   {
@@ -1568,7 +1558,7 @@ static bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long thePar
 // Laskeva = 1000, 925, 850, 700 jne.
 // Nouseva = 300, 500, 700, 850 jne.
 // HUOM! tämä toimii samoin painepinta datoille että height-level datoille
-static bool IsLevelValuesInRisingOrder(NFmiFastQueryInfo *theInfo)
+bool IsLevelValuesInRisingOrder(NFmiFastQueryInfo *theInfo)
 {
   try
   {
@@ -1587,6 +1577,7 @@ static bool IsLevelValuesInRisingOrder(NFmiFastQueryInfo *theInfo)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -1713,7 +1704,7 @@ std::vector<float> NFmiFastQueryInfo::CalcPressureLevelDataPressures()
     std::vector<float> pressureLevels;
     for (ResetLevel(); NextLevel();)
     {
-      pressureLevels.push_back(static_cast<float>(Level()->LevelValue()));
+      pressureLevels.push_back(Level()->LevelValue());
     }
     return pressureLevels;
   }
@@ -1731,7 +1722,7 @@ std::vector<float> NFmiFastQueryInfo::CalcHeightLevelDataHeights()
     std::vector<float> heightLevels;
     for (ResetLevel(); NextLevel();)
     {
-      heightLevels.push_back(static_cast<float>(Level()->LevelValue()));
+      heightLevels.push_back(Level()->LevelValue());
     }
     return heightLevels;
   }
@@ -2427,8 +2418,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(int x1, int y1, int x2, i
 {
   try
   {
-    auto nx = static_cast<int>(x2 - x1 + 1);
-    auto ny = static_cast<int>(y2 - y1 + 1);
+    auto nx = (x2 - x1 + 1);
+    auto ny = (y2 - y1 + 1);
 
     NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
@@ -2463,7 +2454,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(int x1, int y1, int x2, i
   }
 }
 
-static float InterpolationHelper(float theValue1, float theValue2, float theFactor1)
+namespace
+{
+float InterpolationHelper(float theValue1, float theValue2, float theFactor1)
 {
   try
   {
@@ -2487,6 +2480,7 @@ static float InterpolationHelper(float theValue1, float theValue2, float theFact
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Luokka jonka avulla tehdään matriisi aikainterpolaatioita hallitummin
 class TimeInterpolationData
@@ -3085,8 +3079,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(const NFmiMetTime &theInt
 
     // Extract leftside and rightside data values
 
-    auto nx = static_cast<int>(x2 - x1 + 1);
-    auto ny = static_cast<int>(y2 - y1 + 1);
+    auto nx = (x2 - x1 + 1);
+    auto ny = (y2 - y1 + 1);
     NFmiDataMatrix<float> values(nx, ny, kFloatMissing);
 
     NFmiDataMatrix<float> values1;
@@ -3256,7 +3250,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::Values(const Fmi::CoordinateMatrix &the
     NFmiDataMatrix<float> values(theLatlonMatrix.width(), theLatlonMatrix.height(), kFloatMissing);
 
     // Cannot interpolate non-gridded data
-    if (HPlaceDescriptor().IsGrid() == false)
+    if (!HPlaceDescriptor().IsGrid())
       return values;
 
     bool doNormalInterpolation = (P == kFloatMissing && H == kFloatMissing);
@@ -3461,7 +3455,7 @@ bool NFmiFastQueryInfo::LastParam(bool fIgnoreSubParam)
   {
     itsParamIndex = itsParamSize - 1;
     fUseSubParam = false;
-    if (fIgnoreSubParam == false)
+    if (!fIgnoreSubParam)
     {
       // tämä on viritys, etsitään mahd. viimeinen aliparametreista paramDescriptorista loopissa
       for (; itsParamDescriptor->Next(false);)
@@ -3484,12 +3478,14 @@ bool NFmiFastQueryInfo::LastParam(bool fIgnoreSubParam)
   }
 }
 
+namespace
+{
 // Laskee logaritmisessa asteikossa interpoloidun arvon.
 // Käytetään esim. logaritmisen paine asteikon kanssa.
 // Palauttaa x:ää vastaavan y:n, kun x1 arvoa vastaa y1 ja x2:n arvoa vastaa y2.
 // eli x-parametrit ovat logaritmisella asteikolla (eli paineet ovat x-lukuja).
 // Palauttaa x:ää vastaavan luvun y, joka on siis interpoloitu logaritmisesti.
-static double CalcLogInterpolatedValue(double x1, double x2, double x, double y1, double y2)
+double CalcLogInterpolatedValue(double x1, double x2, double x, double y1, double y2)
 {
   try
   {
@@ -3578,7 +3574,7 @@ float CalcLogInterpolatedWindWectorValue(float x1, float x2, float x, float wv1,
   }
 }
 
-static double GetLogaritmicFactor(double x1, double x2, double x)
+double GetLogaritmicFactor(double x1, double x2, double x)
 {
   try
   {
@@ -3590,6 +3586,7 @@ static double GetLogaritmicFactor(double x1, double x2, double x)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 bool NFmiFastQueryInfo::GetLocationIndex(const NFmiPoint &theLatlon, double &xInd, double &yInd)
 {
@@ -4249,8 +4246,8 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
         {  // lineaarinen interpolointi
           auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
           if (param == kFmiWindVectorMS)
-            return static_cast<float>(
-                CalcLogInterpolatedWindWectorValue(pressureValue, lastPressure, P, value1, value2));
+            return CalcLogInterpolatedWindWectorValue(
+                pressureValue, lastPressure, P, value1, value2);
           else if (param == kFmiWindDirection || param == kFmiWaveDirection)
           {
             float factor = 1. - (::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue));
@@ -4312,7 +4309,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P, const NFmiPoint &theLatlon)
 
         auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
         if (param == kFmiWindVectorMS)
-          return static_cast<float>(CalcLogInterpolatedWindWectorValue(p1, p2, P, value1, value2));
+          return CalcLogInterpolatedWindWectorValue(p1, p2, P, value1, value2);
         else if (param != kFmiWindDirection && param != kFmiWaveDirection)
           return static_cast<float>(CalcLogInterpolatedValue(p1, p2, P, value1, value2));
 
@@ -4338,7 +4335,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P,
 {
   try
   {
-    bool isTimeInside;
+    bool isTimeInside = false;
 
     if (Time(theTime))
       return PressureLevelValue(P, theLatlon);
@@ -4593,7 +4590,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight,
 {
   try
   {
-    bool isTimeInside;
+    bool isTimeInside = false;
 
     if (Time(theTime))
       return HeightValue(theHeight, theLatlon);
@@ -4727,13 +4724,15 @@ bool NFmiFastQueryInfo::FindNearestTime(const NFmiMetTime &theTime,
   }
 }
 
-static bool IsInsideRange(std::vector<float> &theLevelValues, float theValue)
+namespace
+{
+bool IsInsideRange(std::vector<float> &theLevelValues, float theValue)
 {
   try
   {
     if (theValue != kFloatMissing)
     {
-      if (theLevelValues.size())
+      if (!theLevelValues.empty())
       {
         float value1 = theLevelValues[0];
         float value2 = theLevelValues[theLevelValues.size() - 1];
@@ -4755,7 +4754,7 @@ static bool IsInsideRange(std::vector<float> &theLevelValues, float theValue)
 
 // laskee halutun paramerin arvon haluttuun korkeuteen (korkeus matriisin avulla määritetty)
 // halutussa sarakkeessa eli poikkileikkaus pisteessä.
-static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
+float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
                               NFmiDataMatrix<float> &theHValues,
                               float theHeight,
                               int theColumn,
@@ -4770,7 +4769,7 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
     std::vector<float> &tmpVec = theHValues[theColumn];
     // Teen theHeight:ille range-checkin ensin ja jos ollaan ala ja ylä arvojen ulkopuolella,
     // palautetaan missing arvo.
-    if (::IsInsideRange(tmpVec, theHeight) == false)
+    if (!::IsInsideRange(tmpVec, theHeight))
       return kFloatMissing;
 
     // haetaan 1. theHeight:ia suuremman arvon sijainti
@@ -4816,7 +4815,7 @@ static float GetValueAtHeight(NFmiDataMatrix<float> &theParValues,
 
 // laskee halutun paramerin arvon haluttuun paine kerrokseen (korkeus matriisin avulla mritetty)
 // halutussa sarakkeessa eli poikkileikkaus pisteess.
-static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
+float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
                                 NFmiDataMatrix<float> &thePValues,
                                 float theP,
                                 int theColumn,
@@ -4835,7 +4834,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
     // edellä sanotaan, en tiedä mitä tässä funktiossa loppujen lopuksi pitäisi tehdä, se pitäisi
     // joskus tarkistaa... (teen kuitenkin theP:lle range-checkin ensin ja jos ollaan ala ja ylä
     // arvojen ulkopuolella, palautetaan missing arvo.)
-    if (::IsInsideRange(tmpVec, theP) == false)
+    if (!::IsInsideRange(tmpVec, theP))
       return kFloatMissing;
 
     auto pos = std::lower_bound(tmpVec.rbegin(), tmpVec.rend(), theP);
@@ -4875,6 +4874,7 @@ static float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Täyttää annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data täytetään joka leveliltä.
@@ -4891,7 +4891,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
       bool fTimeFound = theInfo.Time(theTime);
       theInfo.FirstLevel();  // pitää varmistaa, että voidaan kysyä level tietoa
       if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
-          ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+          ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
       {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
         theInfo.ResetLevel();
         for (unsigned int j = 0; j < values.NY(); j++)
@@ -4934,10 +4934,12 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
   }
 }
 
+namespace
+{
 // 05-Oct-2011 PKi
 // Tytt annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
 // Matriisi on poikkileikkaus pisteiden kokoinen ja data tytetn annetuilta mallipinnoilta.
-static NFmiDataMatrix<float> CalcCrossSectionLeveldataHybrid(
+NFmiDataMatrix<float> CalcCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
     const std::vector<NFmiLevel> &theLevels,
     const std::vector<NFmiPoint> &thePoints,
@@ -4978,7 +4980,7 @@ static NFmiDataMatrix<float> CalcCrossSectionLeveldataHybrid(
 // Laskee paine datan painepinta level tietojen avulla. xSize kertoo matriisin x koon ja levelSize y
 // koon.
 // Jokaiseen columniin siis sijoitetaan vain samat paine arvot uudestaan ja uudestaan.
-static NFmiDataMatrix<float> CalcCrossSectionLevelValuesFromLevelCache(
+NFmiDataMatrix<float> CalcCrossSectionLevelValuesFromLevelCache(
     NFmiFastQueryInfo &theInfo, int xSize, const std::vector<float> &theLevelValueCache)
 {
   try
@@ -5016,6 +5018,7 @@ static NFmiDataMatrix<float> CalcCrossSectionLevelValuesFromLevelCache(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Funktio tekee poikkileikkauksen annetuista metri korkeuksista ja latlon pisteistä halutulle
 // ajalle.
@@ -5102,9 +5105,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CrossSectionValuesLogP(
 {
   try
   {
-    if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan
-                                                                    // löytyykö siitä korkeus dataa
+    if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
+                                                            // paine-dataa, katsotaan
+                                                            // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5191,8 +5194,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcTimeCrossSectionLeveldata(NFmiFastQ
     // matriisin pitää olla siis pisteiden ja leveleiden kokoinen
     NFmiDataMatrix<float> values(theTimes.GetSize(), theInfo.SizeLevels(), kFloatMissing);
     float tmpValue = 0.f;
-    if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising() == true) ||
-        ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+    if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
+        ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
     {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
       theInfo.ResetLevel();
       for (unsigned int j = 0; j < values.NY(); j++)
@@ -5232,10 +5235,12 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcTimeCrossSectionLeveldata(NFmiFastQ
   }
 }
 
+namespace
+{
 // 05-Oct-2011 PKi
 // Tytt annetun matriisin halutun pisteen ja parametrin aika-poikkileikkaus datalla.
 // Matriisi on poikkileikkaus timebagin kokoinen ja data tytetn annetuilta leveleilt.
-static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldataHybrid(
+NFmiDataMatrix<float> CalcTimeCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
     const std::vector<NFmiLevel> &theLevels,
     const NFmiPoint &thePoint,
@@ -5271,6 +5276,7 @@ static NFmiDataMatrix<float> CalcTimeCrossSectionLeveldataHybrid(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValues(std::vector<float> &theHeights,
                                                                 const NFmiPoint &thePoint,
@@ -5345,9 +5351,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::TimeCrossSectionValuesLogP(
     // matriisin y-akselin alapäässä.
     // x-akseli täytetään timebagistä tulevilla ajoilla
 
-    if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan
-                                                                    // löytyykö siitä korkeus dataa
+    if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
+                                                            // paine-dataa, katsotaan
+                                                            // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5436,7 +5442,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcRouteCrossSectionLeveldata(
     NFmiDataMatrix<float> values(theLatlonPoints.size(), theInfo.SizeLevels(), kFloatMissing);
     float tmpValue = 0.f;
     if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
-        ((theInfo.PressureDataAvailable()) && theInfo.PressureParamIsRising() == false))
+        ((theInfo.PressureDataAvailable()) && !theInfo.PressureParamIsRising()))
     {  // esim. painepinta data täytetään näin, kun levelit ovat alhaalta ylöspäin
       theInfo.ResetLevel();
       for (unsigned int j = 0; j < values.NY(); j++)
@@ -5473,10 +5479,12 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcRouteCrossSectionLeveldata(
   }
 }
 
+namespace
+{
 // 05-Oct-2011 PKi
 // Tytt annetun matriisin reitti poikkileikkaus datalla.
 // data tytetn annetuilta leveleilt.
-static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldataHybrid(
+NFmiDataMatrix<float> CalcRouteCrossSectionLeveldataHybrid(
     NFmiFastQueryInfo &theInfo,
     const std::vector<NFmiLevel> &theLevels,
     const std::vector<NFmiPoint> &theLatlonPoints,
@@ -5514,7 +5522,7 @@ static NFmiDataMatrix<float> CalcRouteCrossSectionLeveldataHybrid(
 // 09-Mar-2015 PKi
 // Palauttaa suurimman arvon. Kunkin arvon tulee olla 1 tai sama N, muuten palautetaan 0.
 //
-static size_t MaxValueOf_1_Or_N(size_t n1, size_t n2, size_t n3)
+size_t MaxValueOf_1_Or_N(size_t n1, size_t n2, size_t n3)
 {
   try
   {
@@ -5536,7 +5544,7 @@ static size_t MaxValueOf_1_Or_N(size_t n1, size_t n2, size_t n3)
 //
 // Levelina voi olla myos ground level
 //
-static NFmiDataMatrix<float> CalcFlightRouteDataHybrid(
+NFmiDataMatrix<float> CalcFlightRouteDataHybrid(
     NFmiFastQueryInfo &theInfo,
     const std::vector<NFmiLevel> &theLevels,
     const std::vector<NFmiPoint> &theLatlonPoints,
@@ -5578,6 +5586,7 @@ static NFmiDataMatrix<float> CalcFlightRouteDataHybrid(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // kerää dataa matriisiin siten, että alhaalla (pinnalla) olevat datat ovat
 // matriisin y-akselin alapäässä.
@@ -5735,9 +5744,9 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::RouteCrossSectionValuesLogP(
   {
     // määrä ja ynumberissa
     // haluttujen korkeuksien määrä
-    if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei löydy
-                                                                    // paine-dataa, katsotaan
-                                                                    // löytyykö siitä korkeus dataa
+    if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei löydy
+                                                            // paine-dataa, katsotaan
+                                                            // löytyykö siitä korkeus dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5806,10 +5815,10 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::FlightRouteValuesLogP(
 {
   try
   {
-    if (PressureDataAvailable() == false && HeightDataAvailable())  // jos datasta ei lï¿½ydy
-                                                                    // paine-dataa, katsotaan
-                                                                    // lï¿½ytyykï¿½ siitï¿½ korkeus
-                                                                    // dataa
+    if (!PressureDataAvailable() && HeightDataAvailable())  // jos datasta ei lï¿½ydy
+                                                            // paine-dataa, katsotaan
+                                                            // lï¿½ytyykï¿½ siitï¿½ korkeus
+                                                            // dataa
     {
       // Lasketaan paine vektorin avulla korkeus vektori ja lasketaan poikkileikkausarvot
       // korkeus-funktion avulla.
@@ -5941,7 +5950,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiMetTime &theIn
 {
   try
   {
-    if (PressureDataAvailable() == false)
+    if (!PressureDataAvailable())
       throw Fmi::Exception(
           BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
@@ -5990,11 +5999,12 @@ void NFmiFastQueryInfo::DoWindComponentFix(const NFmiGrid &usedGrid,
   }
 }
 
-static void valBufDeleter(float *ptr)
+namespace
+{
+void valBufDeleter(float *ptr)
 {
   try
   {
-    if (ptr)
       delete[] ptr;
   }
   catch (...)
@@ -6002,6 +6012,7 @@ static void valBufDeleter(float *ptr)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Tämä hakee haluttuun hilaan ja alueeseen dataa.
 NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWantedGrid,
@@ -6010,7 +6021,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
 {
   try
   {
-    if (PressureDataAvailable() == false)
+    if (!PressureDataAvailable())
       throw Fmi::Exception(
           BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
@@ -6107,7 +6118,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
     if (relative_uv)
       return PressureValues(theWantedGrid, theInterpolatedTime, wantedPressureLevel);
 
-    if (PressureDataAvailable() == false)
+    if (!PressureDataAvailable())
       throw Fmi::Exception(
           BCP,
           "Error: NFmiFastQueryInfo::PressureValues - Can't calculate pressure values, data "
@@ -6138,7 +6149,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
     NFmiGrid usedGrid(theWantedGrid);
 
     NFmiDataMatrix<float> values(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
-    bool timeInterpolationNeeded = (Time(theInterpolatedTime) == false);
+    bool timeInterpolationNeeded = (!Time(theInterpolatedTime));
 
     auto id = FmiParameterName(Param().GetParam()->GetIdent());
 
@@ -6233,7 +6244,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
 
     NFmiGrid usedGrid(theWantedGrid);
     NFmiDataMatrix<float> values(usedGrid.XNumber(), usedGrid.YNumber(), kFloatMissing);
-    bool timeInterpolationNeeded = (Time(theInterpolatedTime) == false);
+    bool timeInterpolationNeeded = (!Time(theInterpolatedTime));
 
     for (usedGrid.Reset(); usedGrid.Next();)
     {
@@ -6258,7 +6269,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiMetTime &theInte
 {
   try
   {
-    if (HeightDataAvailable() == false)
+    if (!HeightDataAvailable())
       throw Fmi::Exception(BCP,
                            "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
                            "values, data unsuitable.");
@@ -6285,7 +6296,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
 {
   try
   {
-    if (HeightDataAvailable() == false)
+    if (!HeightDataAvailable())
       throw Fmi::Exception(BCP,
                            "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
                            "values, data unsuitable.");
@@ -6378,7 +6389,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::HeightValues(const NFmiGrid &theWantedG
     if (relative_uv)
       return HeightValues(theWantedGrid, theInterpolatedTime, wantedHeightLevel);
 
-    if (HeightDataAvailable() == false)
+    if (!HeightDataAvailable())
       throw Fmi::Exception(BCP,
                            "Error: NFmiFastQueryInfo::HeightValues - Can't calculate height "
                            "values, data unsuitable.");

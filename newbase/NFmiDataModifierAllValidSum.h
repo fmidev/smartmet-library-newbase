@@ -21,7 +21,7 @@ class NFmiDataModifierAllValidSum : public NFmiDataModifierSum
   void Clear() override;
 
  protected:
-  long itsCounter;
+  long itsCounter = 0;
 
  private:
   NFmiDataModifierAllValidSum& operator=(const NFmiDataModifierAllValidSum& theOther);

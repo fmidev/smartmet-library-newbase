@@ -59,7 +59,7 @@ class NFmiSettingsImpl
   static bool itIsDestroyed;        //!< Boolean to detect singleton coupling at exit
   mutable std::string itsFilename;  //!< The file containing the configuration
   mutable DataType itsData;         //!< The actual data
-  mutable bool itIsInitialized;     //!< For detecting initialization
+  mutable bool itIsInitialized = false;  //!< For detecting initialization
 
   mutable std::list<std::string> itsSearchPath;
 

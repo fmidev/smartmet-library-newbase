@@ -76,7 +76,7 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiGnomonicArea::NFmiGnomonicArea() : NFmiAzimuthalArea() {}
+NFmiGnomonicArea::NFmiGnomonicArea() {}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -241,7 +241,7 @@ double NFmiGnomonicArea::K(const double delta) const
 {
   try
   {
-    double D;
+    double D = NAN;
 
     D = DistanceFromPerspectivePointToCenterOfEarth();
     return kRearth * (D + kRearth) / (D + (kRearth * delta));

@@ -17,6 +17,7 @@
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
+#include <algorithm>
 #include <cstdio>
 #include <fcntl.h>
 #include <fstream>
@@ -38,6 +39,8 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 const string find_newest_querydata(const string &thePath)
 {
   try
@@ -79,6 +82,7 @@ const string find_newest_querydata(const string &thePath)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -93,7 +97,6 @@ NFmiStreamQueryData::~NFmiStreamQueryData()
     if (!itsOwnerData && itsQueryData)
       delete itsQueryData;
 
-    if (itsQueryDataIter)
       delete itsQueryDataIter;
   }
   catch (...)
@@ -188,10 +191,7 @@ bool NFmiStreamQueryData::IsData()
 {
   try
   {
-    if (itsQueryData)
-      return true;
-
-    return false;
+    return itsQueryData != nullptr;
   }
   catch (...)
   {
@@ -215,15 +215,14 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
   try
   {
     auto version = static_cast<unsigned short>(theLibVersion);
-    if (version < 5)
-      version = 5;
+    version = std::max<unsigned short>(version, 5);
 
     ofstream dataFile(theFileName, ios::binary | ios::out);
     if (dataFile)
     {
       if (theQueryData)
       {
-        theQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+        theQueryData->UseBinaryStorage(theLibVersion > 5);
         theQueryData->InfoVersion(version);
         dataFile << *theQueryData;
       }
@@ -231,7 +230,7 @@ bool NFmiStreamQueryData::WriteData(const NFmiString &theFileName,
       {
         if (itsQueryData)
         {
-          itsQueryData->UseBinaryStorage(theLibVersion <= 5 ? false : true);
+          itsQueryData->UseBinaryStorage(theLibVersion > 5);
           itsQueryData->InfoVersion(version);
           dataFile << *itsQueryData;
         }
@@ -345,7 +344,7 @@ bool NFmiStreamQueryData::ReadData(const NFmiString &theFileName, NFmiQueryData 
 
     Fmi::IStream dataFile(rawDataFile, theFileName.CharPtr());
 
-    auto* theTempData = static_cast<NFmiQueryData*>(new NFmiQueryData);
+    auto* theTempData = new NFmiQueryData;
 
     try
     {
@@ -467,7 +466,7 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
     }
 #endif
 
-    auto* theTempData = static_cast<NFmiQueryData*>(new NFmiQueryData);
+    auto* theTempData = new NFmiQueryData;
 
     try
     {

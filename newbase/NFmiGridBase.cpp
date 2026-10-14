@@ -13,11 +13,12 @@
 // ======================================================================
 
 #include "NFmiGridBase.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <cmath>
 // memcpy()
 
 using namespace std;
@@ -81,7 +82,6 @@ bool NFmiGridBase::Init(NFmiDataPool *theData)
     if (Size() != theData->Number())
       return false;
 
-    if (itsData)
       delete itsData;
 
     itsData = new NFmiDataPool(*theData);
@@ -122,7 +122,6 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
     float theYScaleFactor =
         (static_cast<float>(theData->YNumber() - 1)) / (static_cast<float>(YNumber() - 1));
 
-    if (itsData)
       delete itsData;
 
     itsData = new NFmiDataPool();
@@ -134,10 +133,7 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
     {
       // Gridit saman kokoisia hiloja --> voidaan kopioida suoraan interpoloimatta
 
-      if (!itsData->Init(Size(), theData->DataPool()->Data()))
-        return false;
-
-      return true;
+      return itsData->Init(Size(), theData->DataPool()->Data());
     }
 
     if (!itsData->Init(Size()))
@@ -161,7 +157,6 @@ bool NFmiGridBase::Init(NFmiGridBase *theData)
 
       // Create a array of float data just to avoid "item-by-item" type casting
 
-      if (itsFloatData)
         delete[] itsFloatData;
 
       itsFloatData = new float[numberOfGridItems];
@@ -715,8 +710,7 @@ double NFmiGridBase::FloatValue(long dx, long dy) const
     if (!itsData)
       return kFloatMissing;
 
-    return static_cast<float>(itsData->IndexFloatValue(
-        static_cast<unsigned long>(DataIndex(itsCurrentX + dx, itsCurrentY + dy))));
+    return itsData->IndexFloatValue(DataIndex(itsCurrentX + dx, itsCurrentY + dy));
   }
   catch (...)
   {
@@ -739,8 +733,8 @@ double NFmiGridBase::FloatValue(const NFmiPoint &gridPoint)
                       static_cast<unsigned long>(gridPoint.Y())))
       return kFloatMissing;
 
-    return itsData->IndexFloatValue(static_cast<unsigned long>(DataIndex(
-        static_cast<unsigned long>(gridPoint.X()), static_cast<unsigned long>(gridPoint.Y()))));
+    return itsData->IndexFloatValue(DataIndex(static_cast<unsigned long>(gridPoint.X()),
+                                              static_cast<unsigned long>(gridPoint.Y())));
   }
   catch (...)
   {
@@ -788,11 +782,8 @@ bool NFmiGridBase::IsInsideOriginalGrid(double xGrid, double yGrid) const
 {
   try
   {
-    if (!(xGrid + kFmiEps >= 0 && xGrid - kFmiEps <= itsXNumber - 1 && yGrid + kFmiEps >= 0 &&
-          yGrid - kFmiEps <= itsYNumber - 1))
-      return false;
-
-    return true;
+    return xGrid + kFmiEps >= 0 && xGrid - kFmiEps <= itsXNumber - 1 && yGrid + kFmiEps >= 0 &&
+           yGrid - kFmiEps <= itsYNumber - 1;
   }
   catch (...)
   {
@@ -818,10 +809,7 @@ bool NFmiGridBase::NearestGridPoint(double &x_, double &y_) const
     x_ = ::round(x_);
     y_ = ::round(y_);
 
-    if (!IsInsideGrid(static_cast<unsigned long>(x_), static_cast<unsigned long>(y_)))
-      return false;
-
-    return true;
+    return IsInsideGrid(static_cast<unsigned long>(x_), static_cast<unsigned long>(y_));
   }
   catch (...)
   {
@@ -927,7 +915,7 @@ bool NFmiGridBase::BiLinearInterpolation(double x, double y, double &theValue)
 {
   try
   {
-    double X, Y;
+    double X = NAN, Y = NAN;
 
     double dx = modf(x, &X);
     double dy = modf(y, &Y);
@@ -952,10 +940,10 @@ bool NFmiGridBase::BiLinearInterpolation(double x, double y, double &theValue)
       Y++;
     }
 
-    double topLeftValue;
-    double topRightValue;
-    double bottomLeftValue;
-    double bottomRightValue;
+    double topLeftValue = NAN;
+    double topRightValue = NAN;
+    double bottomLeftValue = NAN;
+    double bottomRightValue = NAN;
 
     if ((X == itsPreviousX) && (Y == itsPreviousY))
     {
@@ -1034,7 +1022,7 @@ bool NFmiGridBase::FastBiVariateInterpolation(double x, double y, double &theVal
 {
   try
   {
-    double X, Y;
+    double X = NAN, Y = NAN;
 
     double dx = modf(x, &X);
     double dy = modf(y, &Y);
@@ -1062,10 +1050,10 @@ bool NFmiGridBase::FastBiVariateInterpolation(double x, double y, double &theVal
       Y++;
     }
 
-    double topLeftValue;
-    double topRightValue;
-    double bottomLeftValue;
-    double bottomRightValue;
+    double topLeftValue = NAN;
+    double topRightValue = NAN;
+    double bottomLeftValue = NAN;
+    double bottomRightValue = NAN;
 
     // Copy the datapool data into a temporary array of floats just to avoid "item-by-item" type
     // casting when interpolating
@@ -1206,7 +1194,6 @@ bool NFmiGridBase::Swap()
     if (datapool.Data() == nullptr)
       return false;
 
-    if (itsData)
       delete itsData;
 
     itsData = new NFmiDataPool();
@@ -1229,7 +1216,7 @@ bool NFmiGridBase::Swap()
           GridPoint(itsLastX, itsCurrentY);
           do
           {
-            FloatValue(static_cast<float>(datapool.FloatValue()));
+            FloatValue(datapool.FloatValue());
             datapool.Next();
           } while (Left());
         } while (Up());
@@ -1243,7 +1230,7 @@ bool NFmiGridBase::Swap()
           GridPoint(itsFirstX, itsCurrentY);
           do
           {
-            FloatValue(static_cast<float>(datapool.FloatValue()));
+            FloatValue(datapool.FloatValue());
             datapool.Next();
           } while (Right());
         } while (Down());
@@ -1258,7 +1245,7 @@ bool NFmiGridBase::Swap()
           GridPoint(itsLastX, itsCurrentY);
           do
           {
-            FloatValue(static_cast<float>(datapool.FloatValue()));
+            FloatValue(datapool.FloatValue());
             datapool.Next();
           } while (Left());
         } while (Down());
@@ -1298,8 +1285,8 @@ void NFmiGridBase::MeanFilter(unsigned long numOfSteps)
       {
         double sum = 0;
         double num = 0;
-        unsigned long dx;
-        unsigned long dy;
+        unsigned long dx = 0;
+        unsigned long dy = 0;
         for (dy = 0; dy < numOfSteps; dy++)
         {
           for (dx = 0; dx < numOfSteps; dx++)
@@ -1516,8 +1503,8 @@ std::istream &NFmiGridBase::Read(std::istream &file)
 {
   try
   {
-    unsigned long interpolationMethod;
-    unsigned long startingCorner;
+    unsigned long interpolationMethod = 0;
+    unsigned long startingCorner = 0;
 
     file >> interpolationMethod;
     itsInterpolationMethod = FmiInterpolationMethod(interpolationMethod);
@@ -1532,7 +1519,6 @@ std::istream &NFmiGridBase::Read(std::istream &file)
     itsFirstY = 0;
     itsLastY = itsYNumber - 1;
 
-    if (itsData)
       delete itsData;
 
     itsData = new NFmiDataPool();
@@ -1605,11 +1591,10 @@ bool NFmiGridBase::Init(unsigned long theXNumber, unsigned long theYNumber)
     itsBottomLeftValue = kMaxDouble;
     itsBottomRightValue = kMaxDouble;
 
-    if (itsData)
       delete itsData;
 
     itsData = new NFmiDataPool();
-    return itsData->Init(theXNumber * theYNumber) == true;
+    return itsData->Init(theXNumber * theYNumber);
   }
   catch (...)
   {
@@ -1638,7 +1623,7 @@ bool NFmiGridBase::Swap(FmiDirection theCurrentDirection)
     FmiDirection oldDirection =
         itsStartingCorner;  // itsStartingCorner pitäisi pitää sisällään bottomleft:in
     itsStartingCorner = theCurrentDirection;
-    bool status = Swap() == true;
+    bool status = Swap();
     itsStartingCorner =
         oldDirection;  // asetetaan bottomleft taas kulmaksi, koska data on muutettu sen mukaiseksi.
     return status;

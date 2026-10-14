@@ -59,18 +59,10 @@
 using namespace std;
 
 GridRecordData::GridRecordData()
-    : itsOrigTime(),
-      itsValidTime(),
-      itsParam(),
-      itsLevel(),
-      itsOrigGrid(),
-      itsGrid(),
-      fDoProjectionConversion(false),
-      itsGridData(),
+    :
       itsLatlonCropRect(gMissingCropRect)  // tämä pitää alustaa missing arvoksi aluksi
       ,
       itsGridPointCropOffset(0, 0),
-      fParamChanged(false),
       itsOrigParam(0, "no param")
 {
 }
@@ -326,6 +318,8 @@ bool NFmiLocationIndexRangeCalculator::GetCurrentLocationRange(unsigned long &th
   }
 }
 
+namespace
+{
 bool GetProducerIdsLister(NFmiQueryInfo *theInfo, NFmiProducerIdLister &theProducerIdsLister)
 {
   try
@@ -399,7 +393,7 @@ void AddProducerIds(NFmiFastQueryInfo &theDestInfo, NFmiFastQueryInfo &theSource
 }
 
 //! esim. tuulen suunta on ympyrä arvoinen eli arvo menee kehässä ylärajalta alarajalle.
-static bool IsParamCircularValued(const NFmiParam *theParam)
+bool IsParamCircularValued(const NFmiParam *theParam)
 {
   try
   {
@@ -414,14 +408,12 @@ static bool IsParamCircularValued(const NFmiParam *theParam)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 NFmiQueryDataUtil::LimitChecker::LimitChecker(float theLowerLimit,
                                               float theUpperLimit,
                                               bool theCircularValue)
-    : itsLowerLimit(theLowerLimit),
-      itsUpperLimit(theUpperLimit),
-      fCircularValue(theCircularValue),
-      itsLimitDifference()
+    : itsLowerLimit(theLowerLimit), itsUpperLimit(theUpperLimit), fCircularValue(theCircularValue)
 {
   try
   {
@@ -502,6 +494,8 @@ void NFmiQueryDataUtil::LimitChecker::Update()
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 NFmiQueryInfo *CreateInfo(const NFmiQueryInfo *theSourceInfo, NFmiGrid *theWantedGridFormat)
 {
   try
@@ -569,6 +563,7 @@ bool GridInfo2NewGridInfo(NFmiFastQueryInfo &theSourceInfo, NFmiFastQueryInfo &t
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -612,9 +607,11 @@ NFmiQueryData *NFmiQueryDataUtil::GridQD2NewGridQD(NFmiQueryData *theSourceData,
   }
 }
 
+namespace
+{
 // optimoidaan ja tutkitaan mitä paikkoja todella tarvitaan
 // eli mitkä info2:n paikat ovat interpoloitavissa info1:sta.
-static void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
+void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
                                  NFmiFastQueryInfo &theInfo2,
                                  std::vector<unsigned long> &theLocationIndexies,
                                  std::vector<NFmiPoint> &theLatlons)
@@ -643,6 +640,7 @@ static void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -859,6 +857,8 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractParams(NFmiQueryData *theSourceData,
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 void ExtractLocationsFromLocationData(NFmiFastQueryInfo &theSourceInfo,
                                       NFmiFastQueryInfo &theDestInfo)
 {
@@ -889,6 +889,7 @@ void ExtractLocationsFromLocationData(NFmiFastQueryInfo &theSourceInfo,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -914,6 +915,8 @@ struct IsMissingValue
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 float LocationInterpolationValue(NFmiFastQueryInfo &theInfo,
                                  const NFmiPoint &theLatlon,
                                  FmiInterpolationMethod theInterpolationMethod,
@@ -1028,6 +1031,7 @@ void ExtractLocationsFromGridData(NFmiFastQueryInfo &theSourceInfo,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -1344,6 +1348,8 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractTimes(const NFmiQueryData *theSourceDat
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 bool FillSimilarDataWithDifferentTimeEnds(NFmiFastQueryInfo *theDestination,
                                           NFmiFastQueryInfo *theSource)
 {
@@ -2074,6 +2080,7 @@ NFmiQueryData *CreateSimilarDataWithTimeInterpolation(NFmiFastQueryInfo *theSour
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -2303,6 +2310,8 @@ NFmiQueryData *NFmiQueryDataUtil::Interpolate2OtherGrid(NFmiQueryData *theSource
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 void SpaceOutDataWithSmoother(NFmiFastQueryInfo & /* theSourceInfo */,
                               NFmiFastQueryInfo & /* theDestInfo */,
                               int /* theModifierId */,
@@ -2310,6 +2319,7 @@ void SpaceOutDataWithSmoother(NFmiFastQueryInfo & /* theSourceInfo */,
                               double /* theRange */)
 {
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -2448,7 +2458,9 @@ NFmiQueryData *NFmiQueryDataUtil::SpaceOutData(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &theTimeDescriptor1,
+namespace
+{
+NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &theTimeDescriptor1,
                                                    const NFmiTimeDescriptor &theTimeDescriptor2,
                                                    int theStartTimeFunction,
                                                    int theEndTimeFunction,
@@ -2485,6 +2497,7 @@ static NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &the
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -2621,7 +2634,7 @@ NFmiQueryDataUtil::SignificantSoundingLevels NFmiQueryDataUtil::GetSignificantSo
         if (value != kFloatMissing && value > 0)
           indexVector->push_back(theInfo.LevelIndex());
       }
-      if (indexVector->size())
+      if (!indexVector->empty())
         return indexVector;
     }
     return {};
@@ -2647,7 +2660,9 @@ void NFmiQueryDataUtil::DestroyGridRecordData(GridDataVector &theGridRecordDatas
   }
 }
 
-static void FillWithGribData(GridRecordData &theGridData, NFmiFastQueryInfo &theInfo)
+namespace
+{
+void FillWithGribData(GridRecordData &theGridData, NFmiFastQueryInfo &theInfo)
 {
   try
   {
@@ -2670,7 +2685,7 @@ static void FillWithGribData(GridRecordData &theGridData, NFmiFastQueryInfo &the
   }
 }
 
-static const NFmiLevel &FindFirstLevel(float theLevelValue,
+const NFmiLevel &FindFirstLevel(float theLevelValue,
                                        NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
@@ -2689,7 +2704,7 @@ static const NFmiLevel &FindFirstLevel(float theLevelValue,
   }
 }
 
-static const NFmiDataIdent &FindFirstParam(int theParId,
+const NFmiDataIdent &FindFirstParam(int theParId,
                                            NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
@@ -2708,7 +2723,7 @@ static const NFmiDataIdent &FindFirstParam(int theParId,
   }
 }
 
-static NFmiVPlaceDescriptor GetVPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
+NFmiVPlaceDescriptor GetVPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
   {
@@ -2732,7 +2747,7 @@ static NFmiVPlaceDescriptor GetVPlaceDesc(NFmiQueryDataUtil::GridDataVector &the
   }
 }
 
-static NFmiParamDescriptor GetParamDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
+NFmiParamDescriptor GetParamDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
   {
@@ -2754,7 +2769,7 @@ static NFmiParamDescriptor GetParamDesc(NFmiQueryDataUtil::GridDataVector &theGr
   }
 }
 
-static bool ConvertTimeList2TimeBag(const NFmiTimeList& theTimeList, NFmiTimeBag& theTimeBag)
+bool ConvertTimeList2TimeBag(const NFmiTimeList& theTimeList, NFmiTimeBag& theTimeBag)
 {
   try                                     // tutkitaan onko mahdollista tehda listasta bagi
   {                                       // eli ajat ovat peräkkäisiä ja tasavälisiä
@@ -2779,7 +2794,7 @@ static bool ConvertTimeList2TimeBag(const NFmiTimeList& theTimeList, NFmiTimeBag
   }
 }
 
-static NFmiHPlaceDescriptor GetHPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
+NFmiHPlaceDescriptor GetHPlaceDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
   {
@@ -2803,7 +2818,7 @@ static NFmiHPlaceDescriptor GetHPlaceDesc(NFmiQueryDataUtil::GridDataVector &the
   }
 }
 
-static NFmiTimeDescriptor GetTimeDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
+NFmiTimeDescriptor GetTimeDesc(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
   {
@@ -2835,7 +2850,7 @@ static NFmiTimeDescriptor GetTimeDesc(NFmiQueryDataUtil::GridDataVector &theGrid
   }
 }
 
-static void FillQDataWithGribRecords(NFmiQueryData &theQData,
+void FillQDataWithGribRecords(NFmiQueryData &theQData,
                                      NFmiQueryDataUtil::GridDataVector &theGridRecordDatas)
 {
   try
@@ -2862,7 +2877,7 @@ static void FillQDataWithGribRecords(NFmiQueryData &theQData,
   }
 }
 
-static NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas,
+NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGridRecordDatas,
                                       int theMaxTimesInNewData)
 {
   try
@@ -2889,6 +2904,7 @@ static NFmiQueryData *CreateQueryData(NFmiQueryDataUtil::GridDataVector &theGrid
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -2943,7 +2959,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(std::vector<std::string> &theFile
  */
 // ----------------------------------------------------------------------
 
-static void WeatherAndCloudinessFromHessaa(NFmiFastQueryInfo &theSourceInfo,
+namespace
+{
+void WeatherAndCloudinessFromHessaa(NFmiFastQueryInfo &theSourceInfo,
                                            NFmiFastQueryInfo &theDestInfo)
 {
   try
@@ -2982,7 +3000,7 @@ static void WeatherAndCloudinessFromHessaa(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static void SetSubParamValue(NFmiFastQueryInfo &theSourceInfo,
+void SetSubParamValue(NFmiFastQueryInfo &theSourceInfo,
                              NFmiWeatherAndCloudiness &theWeather,
                              const std::vector<unsigned long> &theParamIndexVector,
                              FmiParameterName wantedSubParam)
@@ -3009,7 +3027,7 @@ static void SetSubParamValue(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSourceInfo,
+std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSourceInfo,
                                                       const std::vector<int> &theParamIds)
 {
   try
@@ -3035,7 +3053,7 @@ static std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSour
  */
 // ----------------------------------------------------------------------
 
-static void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
+void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
                                                NFmiFastQueryInfo &theDestInfo,
                                                bool fAllowLessParamsWhenCreatingWeather,
                                                bool fDoaccuratePrecip,
@@ -3248,12 +3266,12 @@ static void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
             weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
           }
           // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
-          if (precipFormParamIndexVector.size())
+          if (!precipFormParamIndexVector.empty())
             ::SetSubParamValue(
                 theSourceInfo, weather, precipFormParamIndexVector, kFmiPrecipitationForm);
-          if (fogParamIndexVector.size())
+          if (!fogParamIndexVector.empty())
             ::SetSubParamValue(theSourceInfo, weather, fogParamIndexVector, kFmiFogIntensity);
-          if (potParamIndexVector.size())
+          if (!potParamIndexVector.empty())
             ::SetSubParamValue(
                 theSourceInfo, weather, potParamIndexVector, kFmiProbabilityThunderstorm);
 
@@ -3457,7 +3475,7 @@ void TotalWindFromUandVcomponents(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static void FillCombineParamsOneTime(NFmiFastQueryInfo &theSourceInfo,
+void FillCombineParamsOneTime(NFmiFastQueryInfo &theSourceInfo,
                                      NFmiFastQueryInfo &theDestInfo,
                                      const CombinedParamStruct &theCombinedParamStruct,
                                      FmiParameterName theWindGustParId,
@@ -3503,6 +3521,7 @@ static void FillCombineParamsOneTime(NFmiFastQueryInfo &theSourceInfo,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Piti luoda uusi luokka että saatoin sitoa muutaman parametrin yhteen nippuun.
 // boost:in thread kun ei tue kuin maksimissaan 10 parametria ja se raja täyttyi.
@@ -3522,7 +3541,9 @@ struct OptionalParamIdHolder
   std::vector<int> itsPotParIds;
 };
 
-static void MakeCombineParamsOneThread(NFmiFastQueryInfo &theSourceInfo,
+namespace
+{
+void MakeCombineParamsOneThread(NFmiFastQueryInfo &theSourceInfo,
                                        NFmiFastQueryInfo &theDestInfo,
                                        const CombinedParamStruct &theCombinedParamStruct,
                                        FmiParameterName theWindGustParId,
@@ -3557,7 +3578,7 @@ static void MakeCombineParamsOneThread(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
+bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
                                                   bool fAllowLessParamsWhenCreatingWeather)
 {
   try
@@ -3583,7 +3604,7 @@ static bool WantedWeatherAndCloudinessParamsFound(NFmiFastQueryInfo &theInfo,
   }
 }
 
-static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
+void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
                                      NFmiParamBag &adjustedParambag,
                                      const bool* theWeather1,
                                      const bool* theWeather2,
@@ -3591,7 +3612,7 @@ static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
 {
   try
   {
-    if (theOptionalParamIds.size() && (*theWeather1 || *theWeather2))
+    if (!theOptionalParamIds.empty() && (*theWeather1 || *theWeather2))
     {
       for (int theOptionalParamId : theOptionalParamIds)
       {
@@ -3627,7 +3648,7 @@ static void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
  */
 // ----------------------------------------------------------------------
 
-static NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInfo,
+NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInfo,
                                                  bool *theWeather1,
                                                  bool *theWeather2,
                                                  bool *theWind1,
@@ -3787,6 +3808,7 @@ static NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInf
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -3896,9 +3918,9 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
 {
   try
   {
-    if (theWantedInfoVersion < 6.)
-      theWantedInfoVersion =
-          6.;  // 6 on pienin tunnustettu versio numero (muuten tulos data on turha kirjoittaa!)
+    theWantedInfoVersion = std::max(
+        theWantedInfoVersion,
+        6.);  // 6 on pienin tunnustettu versio numero (muuten tulos data on turha kirjoittaa!)
 
     NFmiQueryData *destData = nullptr;
     CombinedParamStruct combinedParamStruct;
@@ -3941,8 +3963,7 @@ NFmiQueryData *NFmiQueryDataUtil::MakeCombineParams(NFmiFastQueryInfo &theSource
       if (theMaxUsedThreadCount > 0)
         usedThreadCount =
             std::min(static_cast<unsigned int>(theMaxUsedThreadCount), usedThreadCount);
-      if (usedThreadCount > destInfo.SizeTimes())
-        usedThreadCount = destInfo.SizeTimes();
+      usedThreadCount = std::min<unsigned long>(usedThreadCount, destInfo.SizeTimes());
 
       NFmiPoint dummyPoint =
           destInfo.LatLon();  // Varmistetaan että NFmiQueryDatan itsLatLonCache on alustettu!!
@@ -4114,6 +4135,8 @@ bool NFmiQueryDataUtil::DoNowCastFiltering(const NFmiString &theData1FileName,
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
                         NFmiFastQueryInfo &theInfo2,
                         int theWantedHoursFromStart)
@@ -4156,6 +4179,7 @@ bool CopyData1OverData2(NFmiFastQueryInfo &theInfo1,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -4190,8 +4214,7 @@ NFmiQueryData *NFmiQueryDataUtil::DoNowCastFiltering(NFmiFastQueryInfo &theInfo1
 
         int maxHours =
             theInfo2.ValidTimes().LastTime().DifferenceInHours(theInfo2.ValidTimes().FirstTime());
-        if (theTimeRangeForPureData > maxHours)
-          theTimeRangeForPureData = maxHours;
+        theTimeRangeForPureData = std::min(theTimeRangeForPureData, maxHours);
       }
     }
 
@@ -4243,6 +4266,8 @@ NFmiQueryData *NFmiQueryDataUtil::DoNowCastFiltering(NFmiFastQueryInfo &theInfo1
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 bool FqdV6ToV7WeatherAndCloudinessModification(NFmiFastQueryInfo &theSourceInfoV6,
                                                NFmiFastQueryInfo &theDestInfoV7)
 {
@@ -4454,6 +4479,7 @@ bool FqdV7ToV6TotalWindModification(NFmiFastQueryInfo &theSourceInfoV7,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -4535,6 +4561,8 @@ NFmiQueryData *NFmiQueryDataUtil::FqdV7ToV6(NFmiFastQueryInfo &theSourceInfo)
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
                                            int theTimeOffsetStartInMinutes,
                                            int theTimeOffsetEndInMinutes,
@@ -4642,6 +4670,7 @@ NFmiDataModifier *CreateModifier(int theFilterId)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -4850,7 +4879,9 @@ const NFmiString &NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()
   }
 }
 
-static void CheckCropLimits(int nx, int ny, int theLeft, int theTop, int theRight, int theBottom)
+namespace
+{
+void CheckCropLimits(int nx, int ny, int theLeft, int theTop, int theRight, int theBottom)
 {
   try
   {
@@ -4874,7 +4905,7 @@ static void CheckCropLimits(int nx, int ny, int theLeft, int theTop, int theRigh
   }
 }
 
-static NFmiArea *CreateCropArea(const NFmiGrid *theGrid,
+NFmiArea *CreateCropArea(const NFmiGrid *theGrid,
                                 const NFmiPoint &theBLXY,
                                 const NFmiPoint &theTRXY)
 {
@@ -4893,7 +4924,7 @@ static NFmiArea *CreateCropArea(const NFmiGrid *theGrid,
 }
 
 // sitten päästään itse croppaukseen!!!!
-static void CropData(NFmiFastQueryInfo &theSource,
+void CropData(NFmiFastQueryInfo &theSource,
                      NFmiFastQueryInfo &theResult,
                      int theLeft,
                      int theBottom)
@@ -4931,6 +4962,7 @@ static void CropData(NFmiFastQueryInfo &theSource,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -5126,7 +5158,9 @@ NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
   }
 }
 
-static std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
+namespace
+{
+std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
     const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector)
 {
   try
@@ -5145,6 +5179,7 @@ static std::vector<std::shared_ptr<NFmiFastQueryInfo>> MakeFastInfos(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 std::vector<std::shared_ptr<NFmiFastQueryInfo>> NFmiQueryDataUtil::MakeTotalFastInfoVector(
     const std::vector<std::shared_ptr<NFmiQueryData>>& theQDataVector,
@@ -5206,7 +5241,9 @@ std::vector<NFmiMetTime> NFmiQueryDataUtil::MakeValidTimesList(
   }
 }
 
-static NFmiTimeList MakeTimeList(const std::vector<NFmiMetTime> &theValidTimesIn)
+namespace
+{
+NFmiTimeList MakeTimeList(const std::vector<NFmiMetTime> &theValidTimesIn)
 {
   try
   {
@@ -5221,6 +5258,7 @@ static NFmiTimeList MakeTimeList(const std::vector<NFmiMetTime> &theValidTimesIn
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 namespace std
 {
@@ -5241,7 +5279,9 @@ struct less<NFmiDataIdent>
 };
 }  // namespace std
 
-static NFmiParamDescriptor MakeParamDesc(
+namespace
+{
+NFmiParamDescriptor MakeParamDesc(
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
   try
@@ -5267,7 +5307,7 @@ static NFmiParamDescriptor MakeParamDesc(
   }
 }
 
-static NFmiParamDescriptor MakeParamDescriptor(
+NFmiParamDescriptor MakeParamDescriptor(
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFastInfoVector,
     const std::shared_ptr<NFmiFastQueryInfo>& theFirstFastInfo,
     bool fFirstInfoDefines)
@@ -5282,6 +5322,7 @@ static NFmiParamDescriptor MakeParamDescriptor(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 namespace std
 {
@@ -5302,7 +5343,9 @@ struct less<NFmiLevel>
 };
 }  // namespace std
 
-static NFmiVPlaceDescriptor MakeVPlaceDesc(
+namespace
+{
+NFmiVPlaceDescriptor MakeVPlaceDesc(
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
   try
@@ -5336,14 +5379,14 @@ static NFmiVPlaceDescriptor MakeVPlaceDesc(
 // otetaan aina 1. infosta.
 // Validtime-vektorista tehdään timeDescriptori.
 // HUOM! Tämä toimii nyt vain hiladatoille. Muuttuu tulevaisuudessa...
-static NFmiQueryInfo MakeCombinedDatasMetaInfo(
+NFmiQueryInfo MakeCombinedDatasMetaInfo(
     std::vector<std::shared_ptr<NFmiFastQueryInfo>> &theFInfoVectorIn,
     const std::vector<NFmiMetTime> &theValidTimesIn,
     bool fFirstInfoDefines)
 {
   try
   {
-    if (theFInfoVectorIn.size() == 0)
+    if (theFInfoVectorIn.empty())
       throw Fmi::Exception(BCP,
                            "Error in MakeCombinedDatasMetaInfo, given fastInfo-vector was empty.");
     auto &firstInfo = theFInfoVectorIn[0];
@@ -5371,7 +5414,7 @@ static NFmiQueryInfo MakeCombinedDatasMetaInfo(
   }
 }
 
-static NFmiFastQueryInfo* FindWantedInfo(
+NFmiFastQueryInfo* FindWantedInfo(
     const NFmiMetTime& theTime,
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn)
 {
@@ -5390,7 +5433,7 @@ static NFmiFastQueryInfo* FindWantedInfo(
   }
 }
 
-static void FillDataToCurrentTime(
+void FillDataToCurrentTime(
     NFmiFastQueryInfo &theFilledInfo,
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVectorIn,
     NFmiStopFunctor *theStopFunctor)
@@ -5429,6 +5472,7 @@ static void FillDataToCurrentTime(
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 std::string NFmiQueryDataUtil::GetFileFilterDirectory(const std::string &theFileFilter)
 {
@@ -5447,7 +5491,9 @@ std::string NFmiQueryDataUtil::GetFileFilterDirectory(const std::string &theFile
   }
 }
 
-static void CombineTimeStepDatas(
+namespace
+{
+void CombineTimeStepDatas(
     NFmiQueryData& theData,
     const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVector,
     NFmiStopFunctor* theStopFunctor)
@@ -5468,7 +5514,7 @@ static void CombineTimeStepDatas(
   }
 }
 
-static void CombineSliceDatas(NFmiQueryData &theData,
+void CombineSliceDatas(NFmiQueryData &theData,
                               const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVector,
                               NFmiStopFunctor *theStopFunctor)
 {
@@ -5521,7 +5567,7 @@ static void CombineSliceDatas(NFmiQueryData &theData,
   }
 }
 
-static void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunction,
+void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunction,
                               NFmiQueryInfo &metaInfo,
                               const std::string *theFileFilterPtr)
 {
@@ -5560,6 +5606,7 @@ static void DoMetaInfoLogging(NFmiQueryDataUtil::LoggingFunction *loggingFunctio
     (*loggingFunction)(std::string("Combined data will have times: ") + timeStepsStr);
   }
 }
+}  // namespace
 
 // fFirstInfoDefines määrää sekä rakennetaanko 'metaInfo' ensimmäisen infon avulla,
 // että miten lopullinen data täytetään.
@@ -5584,7 +5631,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineQueryDatas(
 
     std::vector<NFmiMetTime> foundValidTimes =
         MakeValidTimesList(fastInfoVector, theMaxTimeStepsInData);
-    if (foundValidTimes.size() > 0)
+    if (!foundValidTimes.empty())
     {
       NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
       NFmiQueryInfo combinedDataMetaInfo =
@@ -5723,7 +5770,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineAcceptedTimeStepQueryData(
 {
   try
   {
-    if (theAcceptedTimes.size() > 0)
+    if (!theAcceptedTimes.empty())
     {
       std::vector<std::shared_ptr<NFmiFastQueryInfo>> fastInfoVector =
           MakeTotalFastInfoVector(theQDataVector, theBaseQData, fDoRebuild);
@@ -5746,7 +5793,9 @@ NFmiQueryData *NFmiQueryDataUtil::CombineAcceptedTimeStepQueryData(
   }
 }
 
-static void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
+namespace
+{
+void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
                                              NFmiFastQueryInfo &theTargetInfo,
                                              unsigned long theStartTimeIndex,
                                              unsigned long theEndTimeIndex)
@@ -5793,7 +5842,7 @@ static void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
+void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
                                               NFmiFastQueryInfo &theTargetInfo,
                                               std::vector<NFmiTimeCache> &theTimeCacheVector,
                                               unsigned long theStartTimeIndex,
@@ -5858,6 +5907,7 @@ static void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 struct IndexMapping
 {
@@ -5865,7 +5915,9 @@ struct IndexMapping
   unsigned long target;
 };
 
-static void FillGridDataWithLocationInterpolation(
+namespace
+{
+void FillGridDataWithLocationInterpolation(
     NFmiFastQueryInfo &theSourceInfo,
     NFmiFastQueryInfo &theTargetInfo,
     NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
@@ -5955,7 +6007,7 @@ static void FillGridDataWithLocationInterpolation(
   }
 }
 
-static void FillGridDataWithTimeAndLocationInterpolation(
+void FillGridDataWithTimeAndLocationInterpolation(
     NFmiFastQueryInfo &theSourceInfo,
     NFmiFastQueryInfo &theTargetInfo,
     NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
@@ -6064,7 +6116,7 @@ static void FillGridDataWithTimeAndLocationInterpolation(
 }
 
 // If source does not have target time but spans the range, we need time interpolation
-static bool NeedsTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
+bool NeedsTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
                                    NFmiFastQueryInfo &theTargetInfo,
                                    unsigned long theStartTimeIndex,
                                    unsigned long theEndTimeIndex)
@@ -6091,14 +6143,13 @@ static bool NeedsTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
-static void FillGridDataInThread(NFmiFastQueryInfo &theSourceInfo,
-                                 NFmiFastQueryInfo &theTargetInfo,
-                                 NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
-                                 std::vector<NFmiTimeCache> &theTimeCacheVector,
+void FillGridDataInThread(NFmiFastQueryInfo& theSourceInfo,
+                                 NFmiFastQueryInfo& theTargetInfo,
+                                 NFmiDataMatrix<NFmiLocationCache>& theLocationCacheMatrix,
+                                 std::vector<NFmiTimeCache>& theTimeCacheVector,
                                  unsigned long theStartTimeIndex,
                                  unsigned long theEndTimeIndex,
-                                 int theThreadNumber,
-                                 NFmiLogger *theLogger)
+                                 int theThreadNumber)
 {
   Fmi::set_thread_name(fmt::format("qd-fillgrid-{}", theThreadNumber));
   try
@@ -6214,6 +6265,7 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 //#define BOOST_DISABLE_THREADS 1
 
@@ -6225,12 +6277,12 @@ void CalcTimeIndexiesForThreeThreads(unsigned long theStartInd,
 // Kokeiltu (1) latlon interpolaation kanssa että jos täyttää matriisiin datan ja lopuksi
 // SetValues target:ille, niin se onkin hitaampaa!
 
-void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
-                                     NFmiQueryData *theTarget,
+void NFmiQueryDataUtil::FillGridData(NFmiQueryData* theSource,
+                                     NFmiQueryData* theTarget,
                                      unsigned long theStartTimeIndex,
                                      unsigned long theEndTimeIndex,
-                                     NFmiLogger *theLogger,
-                                     bool fUseOnlyOneThread)
+                                     NFmiLogger* theLogger,
+                                     bool /*fUseOnlyOneThread*/)
 {
   try
   {
@@ -6269,8 +6321,7 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
                              timeCacheVector,
                              usedStartTimeIndex,
                              usedEndTimeIndex,
-                             1,
-                             theLogger);
+                             1);
 
 #else   // DISABLE_THIS_THREAD
 
@@ -6366,7 +6417,9 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData *theSource,
   }
 }
 
-static void FillSingleTimeGridDataInThread(
+namespace
+{
+void FillSingleTimeGridDataInThread(
     NFmiFastQueryInfo &theSourceInfo,
     NFmiFastQueryInfo &theTargetInfo,
     bool fDoLocationInterpolation,
@@ -6445,6 +6498,7 @@ static void FillSingleTimeGridDataInThread(
     }
   }
 }
+}  // namespace
 
 // Tämä on FillGridData-funktion viritetty versio, joka tekee työtä koneen kaikilla
 // kone-threadeilla.
@@ -6493,8 +6547,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
         usedThreadCount = NFmiQueryDataUtil::GetReasonableWorkingThreadCount(threadCountPercentage);
       }
 
-      if (usedThreadCount > target1.SizeTimes())
-        usedThreadCount = target1.SizeTimes();
+      usedThreadCount = std::min<unsigned long>(usedThreadCount, target1.SizeTimes());
 
       if (usedThreadCount <= 1)
       {  // käytetään vanhaa simppelimpää funktiota kun threadauksesta ei ole hyötyä
@@ -6504,8 +6557,7 @@ void NFmiQueryDataUtil::FillGridDataFullMT(NFmiQueryData *theSource,
                                timeCacheVector,
                                usedStartTimeIndex,
                                usedEndTimeIndex,
-                               1,
-                               theDebugLogger);
+                               1);
       }
       else
       {
@@ -6659,13 +6711,16 @@ NFmiQueryData *NFmiQueryDataUtil::ReadNewestData(const std::string &theFileFilte
   }
 }
 
+namespace
+{
 template <typename T>
-static void CheckThreadCountLimits(T &threadCountInOut, T maxThreadCount)
+void CheckThreadCountLimits(T &threadCountInOut, T maxThreadCount)
 {
   T minThreadCount = 1;
   threadCountInOut = std::max(threadCountInOut, minThreadCount);
   threadCountInOut = std::min(threadCountInOut, maxThreadCount);
 }
+}  // namespace
 
 // Halutaan laskea eri tehtäviä varten optimaalinen threadien käyttö.
 // Esim. soundingIndex laskut tehdään haluttaessa niin että otetaan käyttöön n kpl

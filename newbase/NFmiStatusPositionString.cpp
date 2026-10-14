@@ -31,10 +31,7 @@ NFmiStatusPositionString::~NFmiStatusPositionString() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiStatusPositionString::NFmiStatusPositionString()
-    : NFmiStatusString(), itsStartPosition(0), itsEndPosition(0)
-{
-}
+NFmiStatusPositionString::NFmiStatusPositionString() : itsStartPosition(0), itsEndPosition(0) {}
 
 // ----------------------------------------------------------------------
 /*!

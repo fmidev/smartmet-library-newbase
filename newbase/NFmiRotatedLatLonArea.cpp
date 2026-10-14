@@ -176,7 +176,7 @@ const NFmiPoint toreglatlon(const NFmiPoint &theRotLatLonPoint,
  */
 // ----------------------------------------------------------------------
 
-NFmiRotatedLatLonArea::NFmiRotatedLatLonArea() : NFmiLatLonArea(), itsSouthernPole() {}
+NFmiRotatedLatLonArea::NFmiRotatedLatLonArea() {}
 NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiRotatedLatLonArea &theRotatedLatLonArea)
 
     = default;
@@ -528,10 +528,7 @@ bool NFmiRotatedLatLonArea::operator==(const NFmiRotatedLatLonArea &theArea) con
 {
   try
   {
-    if ((itsSouthernPole == theArea.itsSouthernPole) && NFmiLatLonArea::operator==(theArea))
-      return true;
-
-    return false;
+    return (itsSouthernPole == theArea.itsSouthernPole) && NFmiLatLonArea::operator==(theArea);
   }
   catch (...)
   {

@@ -111,7 +111,7 @@ using PNFmiRect = NFmiRect*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiRect::NFmiRect() : itsPlace(NFmiPoint()), itsSize(NFmiPoint()) {}
+inline NFmiRect::NFmiRect() {}
 // ----------------------------------------------------------------------
 /*!
  * \param theTopLeftCorner Undocumented

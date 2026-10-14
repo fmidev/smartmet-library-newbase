@@ -46,7 +46,7 @@ NFmiIndexMaskSource::~NFmiIndexMaskSource() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiIndexMaskSource::NFmiIndexMaskSource() : itsData() {}
+NFmiIndexMaskSource::NFmiIndexMaskSource() {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Copy constructor

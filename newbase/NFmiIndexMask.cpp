@@ -85,7 +85,7 @@ NFmiIndexMask::~NFmiIndexMask() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiIndexMask::NFmiIndexMask() : itsData(), itsSorted(true), itsXSize(0), itsYSize(0) {}
+NFmiIndexMask::NFmiIndexMask() : itsSorted(true), itsXSize(0), itsYSize(0) {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Constructor with grid sizes.
@@ -93,7 +93,7 @@ NFmiIndexMask::NFmiIndexMask() : itsData(), itsSorted(true), itsXSize(0), itsYSi
 // ----------------------------------------------------------------------
 
 NFmiIndexMask::NFmiIndexMask(size_type theXSize, size_type theYSize)
-    : itsData(), itsSorted(true), itsXSize(theXSize), itsYSize(theYSize)
+    : itsSorted(true), itsXSize(theXSize), itsYSize(theYSize)
 {
 }
 

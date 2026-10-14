@@ -101,7 +101,6 @@ class NFmiMetTime : public NFmiTime
  private:
   void ConstructMetTime(const long timeStepInMinutes, FmiDirection theDirect = kNoDirection);
 
- private:
   NFmiTimePerioid fTimeStepInMinutes;
   short itsNegativeRange;
   short itsPositiveRange;
@@ -123,7 +122,7 @@ using TMetTime = NFmiMetTime;
 // ----------------------------------------------------------------------
 
 inline NFmiMetTime::NFmiMetTime(const long datePart, const long timePart)
-    : NFmiTime(datePart, timePart), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
+    : NFmiTime(datePart, timePart), itsNegativeRange(0), itsPositiveRange(0)
 {
   SetTimeStep(60);
 }
@@ -213,7 +212,7 @@ inline NFmiMetTime::NFmiMetTime(const NFmiTime& aTime,
                                 long theConstructMetTime,
                                 short negRange,
                                 short posRange)
-    : NFmiTime(aTime), fTimeStepInMinutes(), itsNegativeRange(negRange), itsPositiveRange(posRange)
+    : NFmiTime(aTime), itsNegativeRange(negRange), itsPositiveRange(posRange)
 {
   ConstructMetTime(theConstructMetTime);
 }
@@ -230,7 +229,7 @@ inline NFmiMetTime::NFmiMetTime(const NFmiTime& aTime,
 // ----------------------------------------------------------------------
 
 inline NFmiMetTime::NFmiMetTime(const short year, const short month, const short day)
-    : NFmiTime(year, month, day), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
+    : NFmiTime(year, month, day), itsNegativeRange(0), itsPositiveRange(0)
 {
   ConstructMetTime(60);
 }
@@ -261,7 +260,6 @@ inline NFmiMetTime::NFmiMetTime(const short year,
                                 short negRange,
                                 short posRange)
     : NFmiTime(year, month, day, hour, minute, sec),
-      fTimeStepInMinutes(),
       itsNegativeRange(negRange),
       itsPositiveRange(posRange)
 {

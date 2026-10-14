@@ -377,6 +377,8 @@ bool operator<(const PointData &p1, const PointData &p2)
 {
   return p1.distance_ < p2.distance_;
 }
+namespace
+{
 PointData CalcPointData(const NFmiPoint &referencePoint,
                         const NFmiPoint &cornerPoint,
                         FmiDirection corner,
@@ -394,6 +396,7 @@ PointData CalcPointData(const NFmiPoint &referencePoint,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -649,16 +652,7 @@ double ModBiLinear(double theX,
  */
 // ----------------------------------------------------------------------
 
-WindInterpolator::WindInterpolator()
-    : itsCount(0),
-      itsSpeedSum(0),
-      itsSpeedSumX(0),
-      itsSpeedSumY(0),
-      itsWeightSum(0),
-      itsBestDirection(0),
-      itsBestWeight(0)
-{
-}
+WindInterpolator::WindInterpolator() {}
 
 // ----------------------------------------------------------------------
 /*!

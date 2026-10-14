@@ -16,19 +16,16 @@
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
-#include <macgyver/Hash.h>
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 
 using namespace std;
 
-NFmiLocationCache::NFmiLocationCache()
-    : itsGridPoint(), itsLocationIndex(static_cast<unsigned long>(-1)), fNoInterpolation(false)
-{
-}
+NFmiLocationCache::NFmiLocationCache() : itsLocationIndex(static_cast<unsigned long>(-1)) {}
 
 NFmiLocationCache::~NFmiLocationCache() = default;
 
@@ -143,9 +140,7 @@ void NFmiLocationCache::SetToNearestGridPoint(bool fDoX,
 }
 
 NFmiTimeCache::NFmiTimeCache()
-    : itsTimeIndex1(static_cast<unsigned long>(-1)),
-      itsTimeIndex2(static_cast<unsigned long>(-1)),
-      itsOffset(1)
+    : itsTimeIndex1(static_cast<unsigned long>(-1)), itsTimeIndex2(static_cast<unsigned long>(-1))
 {
 }
 
@@ -159,7 +154,7 @@ void NFmiTimeCache::CalcIsInterpolationNeeded()
 
     if (diff < gGridPointEpsilon)  // käytetään tässä samaa epsilonia
     {
-      itsOffset = static_cast<float>(::round(itsOffset));
+      itsOffset = ::round(itsOffset);
       if (itsOffset == 0)
         itsTimeIndex1 = itsTimeIndex2;
       else
@@ -230,7 +225,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
   try
   {
     unsigned long counter = 0;
-    double theValue;
+    double theValue = NAN;
     auto *values = new float[Size()];
 
     Reset();
@@ -242,7 +237,6 @@ bool NFmiGrid::Init(NFmiGrid &theGrid, FmiInterpolationMethod howToInterpolate)
       counter++;
     }
 
-    if (itsData)
       delete itsData;
     itsData = new NFmiDataPool();
     itsData->Init(Size(), values);
@@ -278,7 +272,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
     // Otherwise, interpolate from 'theGrid'
 
     unsigned long counter = 0;
-    double theValue;
+    double theValue = NAN;
     auto *values = new float[Size()];
 
     Reset();
@@ -297,7 +291,6 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
       counter++;
     }
 
-    if (itsData)
       delete itsData;
     itsData = new NFmiDataPool();
     itsData->Init(Size(), values);
@@ -480,7 +473,7 @@ std::istream &NFmiGrid::Read(std::istream &file)
 {
   try
   {
-    unsigned long classId;
+    unsigned long classId = 0;
     std::string className;
 
     file >> classId;
@@ -641,7 +634,9 @@ bool NFmiGrid::NearestLatLon(double newLon,
  */
 // ----------------------------------------------------------------------
 
-static bool SeekStartingPoint(ifstream &in,
+namespace
+{
+bool SeekStartingPoint(ifstream &in,
                               unsigned int theStartOffsetInBytes,
                               const string &theDataStartsAfterString)
 {
@@ -687,6 +682,7 @@ static bool SeekStartingPoint(ifstream &in,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

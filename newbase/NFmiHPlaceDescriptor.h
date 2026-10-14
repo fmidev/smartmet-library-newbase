@@ -267,7 +267,7 @@ inline void NFmiHPlaceDescriptor::MaxNumberOfSources(unsigned long theMaxNumberO
 
 inline bool NFmiHPlaceDescriptor::IsMaxNumberOfSources() const
 {
-  return itsMaxNumberOfSources ? true : false;
+  return itsMaxNumberOfSources != 0;
 }
 
 // ----------------------------------------------------------------------

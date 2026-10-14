@@ -55,7 +55,7 @@ bool NFmiBox::Initialize(unsigned long newSize)
     if (itsSize > 0)
       itsValues = new float[itsSize];
 
-    return itsValues ? true : false;
+    return itsValues != nullptr;
   }
   catch (...)
   {
@@ -144,7 +144,7 @@ NFmiBox::NFmiBox(NFmiBox& theBox) : itsValues(new float[theBox.itsSize]), itsSiz
  */
 // ----------------------------------------------------------------------
 
-NFmiBox::NFmiBox(long theSize) : itsValues(nullptr), itsSize(theSize)
+NFmiBox::NFmiBox(long theSize) : itsSize(theSize)
 {
   try
   {

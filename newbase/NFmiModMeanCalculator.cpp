@@ -44,15 +44,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiModMeanCalculator::NFmiModMeanCalculator(float theModulo)
-    : itsModulo(theModulo),
-      itsValid(true),
-      itsCount(0),
-      itsLastValue(0),
-      itsWeightedSum(0),
-      itsWeightSum(0)
-{
-}
+NFmiModMeanCalculator::NFmiModMeanCalculator(float theModulo) : itsModulo(theModulo) {}
 
 // ----------------------------------------------------------------------
 /*!

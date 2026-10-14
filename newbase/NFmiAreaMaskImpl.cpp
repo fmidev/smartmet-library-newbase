@@ -27,8 +27,7 @@
 // ----------------------------------------------------------------------
 
 NFmiAreaMaskImpl::NFmiAreaMaskImpl()
-    : itsMaskCondition(),
-      itsMaskType(kNoType),
+    : itsMaskType(kNoType),
       itsDataType(NFmiInfoData::kNoDataType),
       itsCalculationOperationType(NoType),
       itsCalculationOperator(NotOperation),
@@ -40,8 +39,7 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl()
       itsIntegrationFunctionType(0),
       itsFunctionArgumentCount(0),
       fHasSubMasks(false),
-      fEnabled(true),
-      itsSimpleCondition()
+      fEnabled(true)
 {
 }
 
@@ -56,7 +54,7 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl()
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiCalculationCondition &theOperation,
+NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiCalculationCondition& theOperation,
                                    Type theMaskType,
                                    NFmiInfoData::Type theDataType,
                                    BinaryOperator thePostBinaryOperator)
@@ -74,8 +72,7 @@ NFmiAreaMaskImpl::NFmiAreaMaskImpl(const NFmiCalculationCondition &theOperation,
       itsIntegrationFunctionType(0),
       itsFunctionArgumentCount(0),
       fHasSubMasks(false),
-      fEnabled(true),
-      itsSimpleCondition()
+      fEnabled(true)
 {
 }
 
@@ -427,10 +424,10 @@ bool NFmiAreaMaskImpl::SimpleConditionCheck(const NFmiCalculationParams &theCalc
   }
 }
 
-float NFmiAreaMaskImpl::CalculationPointValue(int theOffsetX,
-                                              int theOffsetY,
-                                              const NFmiMetTime &theInterpolationTime,
-                                              bool useInterpolatedTime)
+float NFmiAreaMaskImpl::CalculationPointValue(int /*theOffsetX*/,
+                                              int /*theOffsetY*/,
+                                              const NFmiMetTime& /*theInterpolationTime*/,
+                                              bool /*useInterpolatedTime*/)
 {
   return kFloatMissing;
 }

@@ -33,10 +33,7 @@ NFmiDataModifierDescriptor::~NFmiDataModifierDescriptor()
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierDescriptor::NFmiDataModifierDescriptor()
-    : NFmiDataDescriptor(), itsSystematicModifiers(nullptr), itsVarianceModifiers(nullptr)
-{
-}
+NFmiDataModifierDescriptor::NFmiDataModifierDescriptor() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -65,7 +62,7 @@ NFmiParamDataModifier* NFmiDataModifierDescriptor::VarianceModifier(const NFmiDa
 void NFmiDataModifierDescriptor::SetVarianceModifiers(NFmiParamDataModifierList* theList)
 {
   // HUOM!!! Ottaa annetun listan omistukseensa!
-  if (itsVarianceModifiers)
+
     delete itsVarianceModifiers;
   itsVarianceModifiers = theList;
 }

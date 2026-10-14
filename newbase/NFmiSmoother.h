@@ -11,6 +11,7 @@
 #include "NFmiGlobals.h"     // for kFloatMissing
 #include "NFmiPoint.h"       // for NFmiPoint
 #include <gis/CoordinateMatrix.h>
+#include <cmath>
 #include <string>
 
 //! Undocumented
@@ -143,7 +144,7 @@ inline void NFmiSmoother::Radius(float radius)
 
 inline float NFmiSmoother::Weight(float theDistance) const
 {
-  float weight;
+  float weight = NAN;
   switch (Smoother())
   {
     case kFmiSmootherNeighbourhood:

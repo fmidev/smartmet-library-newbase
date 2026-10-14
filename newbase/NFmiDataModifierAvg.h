@@ -27,8 +27,8 @@ class NFmiDataModifierAvg : public NFmiDataModifier
   long Counter() const;
 
  protected:
-  long itsCounter;
-  float itsAverage;
+  long itsCounter = 0;
+  float itsAverage = 0.;
 
 };  // class NFmiDataModifierAvg
 

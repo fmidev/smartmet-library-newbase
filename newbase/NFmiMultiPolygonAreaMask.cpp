@@ -32,6 +32,7 @@
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
 #include <macgyver/Exception.h>
+#include <cmath>
 
 // ----------------------------------------------------------------------
 /*!
@@ -58,10 +59,7 @@ NFmiMultiPolygonAreaMask::~NFmiMultiPolygonAreaMask()
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask()
-    : NFmiAreaMaskImpl(), itsAreaPolygons(), itsAreaPolygonValues(), fInitialized(false)
-{
-}
+NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask() : fInitialized(false) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -79,8 +77,6 @@ NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask(const NFmiCalculationConditio
                                                    NFmiInfoData::Type theDataType,
                                                    BinaryOperator thePostBinaryOperator)
     : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
-      itsAreaPolygons(),
-      itsAreaPolygonValues(),
       fInitialized(false)
 {
 }
@@ -206,7 +202,7 @@ std::istream& NFmiMultiPolygonAreaMask::Read(std::istream& file)
   try
   {
     NFmiSvgPath* tmp = nullptr;
-    double value;
+    double value = NAN;
     Clear();
     do
     {

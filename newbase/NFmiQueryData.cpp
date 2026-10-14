@@ -63,7 +63,9 @@ struct BufferGuard
 // asetuksista.
 // Voivat heittää poikkeuksia.
 
-static void ForceBinaryFormatWrite(const NFmiQueryData &queryData)
+namespace
+{
+void ForceBinaryFormatWrite(const NFmiQueryData &queryData)
 {
   try
   {
@@ -79,6 +81,7 @@ static void ForceBinaryFormatWrite(const NFmiQueryData &queryData)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 void NFmiQueryData::Read()
 {
@@ -195,7 +198,6 @@ NFmiQueryData::NFmiQueryData()
     : itsRawData(nullptr),
       itsFirst(false),
       itsQueryInfo(nullptr),
-      itsLatLonCache(),
       itsLatLonCacheFlag(BOOST_ONCE_INIT)
 {
 }
@@ -209,11 +211,10 @@ NFmiQueryData::NFmiQueryData()
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryData::NFmiQueryData(const NFmiQueryInfo &theInfo)
+NFmiQueryData::NFmiQueryData(const NFmiQueryInfo& theInfo)
     : itsRawData(new NFmiRawData()),
       itsFirst(false),
       itsQueryInfo(new NFmiQueryInfo(theInfo)),
-      itsLatLonCache(),
       itsLatLonCacheFlag(BOOST_ONCE_INIT)
 {
 }
@@ -358,10 +359,8 @@ void NFmiQueryData::Destroy()
 {
   try
   {
-    if (itsQueryInfo)
       delete itsQueryInfo;
 
-    if (itsRawData)
       delete itsRawData;
   }
   catch (...)
@@ -400,11 +399,10 @@ bool NFmiQueryData::Init(const NFmiQueryInfo &theInfo)
 {
   try
   {
-    if (itsQueryInfo)
       delete itsQueryInfo;
 
     itsQueryInfo = theInfo.Clone();
-    if (itsRawData)
+
       delete itsRawData;
 
     itsRawData = new NFmiRawData();

@@ -379,7 +379,7 @@ bool IsInfoShipTypeData(NFmiFastQueryInfo &theInfo)
 {
   try
   {
-    if (theInfo.IsGrid() == false)
+    if (!theInfo.IsGrid())
     {
       auto prodId = static_cast<FmiProducerName>(theInfo.Producer()->GetIdent());
       if (prodId == kFmiSHIP || prodId == kFmiBUOY)
@@ -443,10 +443,7 @@ bool IsYearLongData(const std::shared_ptr<NFmiFastQueryInfo> &info)
   {
     const auto &timeDescriptor = info->TimeDescriptor();
     auto timeDiffInDays = timeDescriptor.LastTime().DifferenceInDays(timeDescriptor.FirstTime());
-    if (timeDiffInDays >= 364 && timeDiffInDays <= 366)
-      return true;
-
-    return false;
+    return timeDiffInDays >= 364 && timeDiffInDays <= 366;
   }
   catch (...)
   {
@@ -601,7 +598,7 @@ bool FindMovingSoundingDataTime(const std::shared_ptr<NFmiFastQueryInfo> &theInf
     timeStart.ChangeByMinutes(-30);
     unsigned long timeIndex1 = 0;
     unsigned long timeIndex2 = 0;
-    if (FindTimeIndicesForGivenTimeRange(theInfo, timeStart, 60, timeIndex1, timeIndex2) == false)
+    if (!FindTimeIndicesForGivenTimeRange(theInfo, timeStart, 60, timeIndex1, timeIndex2))
       return false;
 
     float lat = 0;

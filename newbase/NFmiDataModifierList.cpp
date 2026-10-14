@@ -33,7 +33,7 @@ NFmiDataModifierList::~NFmiDataModifierList() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierList::NFmiDataModifierList(NFmiCombinedParam* /* thePotentialCombinedParam */)
-    : NFmiDataModifier(), itsReturnValue(), itsList(), itsIter()
+
 {
   itsExpressionType = "list";
 }
@@ -56,7 +56,7 @@ bool NFmiDataModifierList::IsCombinedParam()
 
 bool NFmiDataModifierList::Add(NFmiDataModifier* theModifier)
 {
-  return itsList.AddEnd(theModifier) == true;
+  return itsList.AddEnd(theModifier);
 }
 
 // ----------------------------------------------------------------------
@@ -79,7 +79,7 @@ bool NFmiDataModifierList::Reset()
 
 bool NFmiDataModifierList::Next()
 {
-  return itsIter.Next() == true;
+  return itsIter.Next();
 }
 // ----------------------------------------------------------------------
 /*!
@@ -100,9 +100,7 @@ NFmiDataModifier* NFmiDataModifierList::Current()
 
 bool NFmiDataModifierList::Remove(bool fDeleteData)
 {
-  if (itsIter.Remove(fDeleteData))
-    return true;
-  return false;
+  return itsIter.Remove(fDeleteData);
 }
 
 // ----------------------------------------------------------------------

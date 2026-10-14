@@ -26,7 +26,7 @@ class NFmiDataModifierSum : public NFmiDataModifier
   float CalculationResult() override;
 
  protected:
-  float itsSum;
+  float itsSum = 0;
 
 };  // class NFmiDataModifierSum
 

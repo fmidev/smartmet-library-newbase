@@ -47,8 +47,7 @@ NFmiDataModifierWindChill::NFmiDataModifierWindChill(NFmiQueryInfo* theQueryInfo
                                                      const NFmiPoint& theLatLonPoint,
                                                      int theTeperatureParamId,
                                                      int theWindSpeedParamId)
-    : NFmiDataModifier(),
-      itsTemperatureParamId(theTeperatureParamId),
+    : itsTemperatureParamId(theTeperatureParamId),
       itsWindSpeedParamId(theWindSpeedParamId),
       itsLatLonPoint(theLatLonPoint),
       itsQueryInfo(theQueryInfo),

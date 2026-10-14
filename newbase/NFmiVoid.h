@@ -25,10 +25,10 @@ class NFmiVoid
   NFmiVoid();
   NFmiVoid& operator=(const NFmiVoid& theVoid);
 
-  void* itsVoid;
-  unsigned long itsNumber;
-  unsigned short itsUnitSize;
-  unsigned long itsSize;
+  void* itsVoid = nullptr;
+  unsigned long itsNumber = 0;
+  unsigned short itsUnitSize = 0;
+  unsigned long itsSize = 0;
 
  private:
   NFmiVoid(const NFmiVoid& theVoid);
@@ -49,7 +49,7 @@ inline NFmiVoid::~NFmiVoid() = default;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiVoid::NFmiVoid() : itsVoid(), itsNumber(), itsUnitSize(), itsSize() {}
+inline NFmiVoid::NFmiVoid() {}
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator performs a bitwise copy.

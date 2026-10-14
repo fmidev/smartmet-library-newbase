@@ -53,17 +53,7 @@ NFmiCombinedParam::~NFmiCombinedParam()
  */
 // ----------------------------------------------------------------------
 
-NFmiCombinedParam::NFmiCombinedParam(double theInfoVersion)
-    : itsSubParams(nullptr),
-      itsIntegrators(nullptr),
-      fIntegrationMode(false),
-      fIntegrationReady(false),
-      fIntegrationStarted(),
-      fDataOk(true),
-      fAutoUpdate(true),
-      itsInfoVersion(theInfoVersion)
-{
-}
+NFmiCombinedParam::NFmiCombinedParam(double theInfoVersion) : itsInfoVersion(theInfoVersion) {}
 
 // ----------------------------------------------------------------------
 /*!

@@ -42,7 +42,7 @@ NFmiQueryInfoSatel::~NFmiQueryInfoSatel()
  */
 // ----------------------------------------------------------------------
 
-NFmiQueryInfoSatel::NFmiQueryInfoSatel() : NFmiQueryInfo(), itsSatelName(nullptr) {}
+NFmiQueryInfoSatel::NFmiQueryInfoSatel() : itsSatelName(nullptr) {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor

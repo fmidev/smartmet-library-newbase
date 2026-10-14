@@ -39,7 +39,7 @@ class NFmiDataModifierBoolean : public NFmiDataModifier
   NFmiDataModifier* itsSecondValue;
   NFmiDataModifier* itsFirstValue;
   FmiModifierBoolOperations itsCondition;
-  bool itsBooleanValue;
+  bool itsBooleanValue = false;
 
  private:
   NFmiDataModifierBoolean(const NFmiDataModifierBoolean& theMod);

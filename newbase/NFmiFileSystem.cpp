@@ -11,6 +11,7 @@
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
 
+#include <algorithm>
 #include <filesystem>
 
 #include <cctype>  // for isalpha
@@ -121,6 +122,8 @@ namespace Unix
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 string extend_plain_regex(const string &thePattern)
 {
   string ret;
@@ -174,6 +177,7 @@ string regex_of_msdos_pattern(const string &theMsPattern)
     return extend_plain_regex(mspattern);
   }
 }
+}  // namespace
 
 }  // namespace Unix
 #endif
@@ -322,14 +326,14 @@ bool FileReadable(const string &theFile)
     return false;
 
 #ifdef UNIX
-  int rmask;
+  int rmask = 0;
   if (st.st_uid == getuid())
     rmask = S_IRUSR;
   else if (st.st_gid == getgid())
     rmask = S_IRGRP;
   else
     rmask = S_IROTH;
-  return ((st.st_mode & rmask) != 0 ? true : false);
+  return ((st.st_mode & rmask) != 0);
 #else
   return true;
 #endif
@@ -355,14 +359,14 @@ bool FileWritable(const string &theFile)
     return false;
 
 #ifdef UNIX
-  int wmask;
+  int wmask = 0;
   if (st.st_uid == getuid())
     wmask = S_IWUSR;
   else if (st.st_gid == getgid())
     wmask = S_IWGRP;
   else
     wmask = S_IWOTH;
-  return ((st.st_mode & wmask) != 0 ? true : false);
+  return ((st.st_mode & wmask) != 0);
 #else
   return true;
 #endif
@@ -388,14 +392,14 @@ bool FileExecutable(const string &theFile)
     return false;
 
 #ifdef UNIX
-  int xmask;
+  int xmask = 0;
   if (st.st_uid == getuid())
     xmask = S_IXUSR;
   else if (st.st_gid == getgid())
     xmask = S_IXGRP;
   else
     xmask = S_IXOTH;
-  return ((st.st_mode & xmask) != 0 ? true : false);
+  return ((st.st_mode & xmask) != 0);
 #else
   return true;
 #endif
@@ -527,7 +531,7 @@ long FileAge(const string &theFile)
 
 bool DirectoryExists(const string &theFile)
 {
-  if (theFile.empty() == true)
+  if (theFile.empty())
     return false;
   FMI_stat st;
 
@@ -568,14 +572,14 @@ bool DirectoryReadable(const string &theFile)
     return false;
 
 #ifdef UNIX
-  int rmask;
+  int rmask = 0;
   if (st.st_uid == getuid())
     rmask = S_IRUSR;
   else if (st.st_gid == getgid())
     rmask = S_IRGRP;
   else
     rmask = S_IROTH;
-  return ((st.st_mode & rmask) != 0 ? true : false);
+  return ((st.st_mode & rmask) != 0);
 #else
   return true;
 #endif
@@ -601,14 +605,14 @@ bool DirectoryWritable(const string &theFile)
     return false;
 
 #ifdef UNIX
-  int wmask;
+  int wmask = 0;
   if (st.st_uid == getuid())
     wmask = S_IWUSR;
   else if (st.st_gid == getgid())
     wmask = S_IWGRP;
   else
     wmask = S_IWOTH;
-  return ((st.st_mode & wmask) != 0 ? true : false);
+  return ((st.st_mode & wmask) != 0);
 #else
   return true;
 #endif
@@ -719,8 +723,7 @@ std::time_t NewestFileTime(const std::list<std::string> &theFileList, const std:
     if (FileReadable(filename))
     {
       time_t modtime = FileModificationTime(filename);
-      if (modtime > newesttime)
-        newesttime = modtime;
+      newesttime = std::max(modtime, newesttime);
     }
   }
   return newesttime;
@@ -1096,7 +1099,7 @@ time_t FindFile(const string &theFileFilter,
 
   // Return the desired age file (newest/oldest)
 
-  if (matches.size() == 0)
+  if (matches.empty())
     return 0;
   else
   {
@@ -1216,7 +1219,7 @@ bool ReadFile2String(const std::string &theFileName,
                      std::string &theFileContent,
                      long theMaxByteSize)
 {
-  if (theFileName != "")
+  if (!theFileName.empty())
   {
     size_t fileSize = FileSize(theFileName);
     ifstream in(theFileName.c_str(), std::ios::binary);
@@ -1246,7 +1249,7 @@ bool ReadFileStart2String(const std::string &theFileName,
                           std::string &theFileContent,
                           long theBytesFromStart)
 {
-  if (theFileName != "")
+  if (!theFileName.empty())
   {
     size_t fileSize = FileSize(theFileName);
     ifstream in(theFileName.c_str(), std::ios::binary);
@@ -1287,7 +1290,7 @@ bool ReadFileStart2String(const std::string &theFileName,
 
 bool CopyFile(const std::string &theSrcFileName, const std::string &theDstFileName)
 {
-  if (theSrcFileName != "" && theDstFileName != "")
+  if (!theSrcFileName.empty() && !theDstFileName.empty())
   {
     ifstream in(theSrcFileName.c_str(), std::ios::binary | std::ios::in);
     ofstream out(theDstFileName.c_str(), std::ios::binary | std::ios::out);
@@ -1471,7 +1474,7 @@ void CleanDirectory(const std::string &thePath,
   if (files.empty())
     return;
 
-  time_t currentTime;
+  time_t currentTime = 0;
   static_cast<void>(::time(&currentTime));
 
   for (auto& file : files)
@@ -1632,7 +1635,7 @@ std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &
   {
     std::string finalPath;
     finalPath = theWorkingDirectory;
-    if (theWorkingDirectory.size() &&
+    if (!theWorkingDirectory.empty() &&
         theWorkingDirectory[theWorkingDirectory.size() - 1] != kFmiDirectorySeparator)
 #ifdef WIN32
       if (theWorkingDirectory[theWorkingDirectory.size() - 1] != '/')
@@ -1649,7 +1652,7 @@ std::string MakeAbsolutePath(const std::string &theOrigPath, const std::string &
 // 3. Siinä on kirjain, ':' ja joko '\\' tai '/' eli windows device esim. C:/tmp
 bool IsAbsolutePath(const std::string &thePath)
 {
-  if (thePath.size())
+  if (!thePath.empty())
   {
     if (thePath[0] == '/' || thePath[0] == '\\')
       return true;

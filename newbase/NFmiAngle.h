@@ -80,7 +80,7 @@ class NFmiAngle
 
  protected:
   //! Itse kulma asteissa.
-  double itsValue;
+  double itsValue = 0;
 };
 
 // ======================================================================

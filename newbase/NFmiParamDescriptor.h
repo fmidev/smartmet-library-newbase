@@ -129,7 +129,7 @@ inline void NFmiParamDescriptor::Reset()
 
 inline NFmiDataIdent &NFmiParamDescriptor::Param(bool fIgnoreSubParam) const
 {
-  return *(itsParamBag->Current(fIgnoreSubParam == true));
+  return *(itsParamBag->Current(fIgnoreSubParam));
 }
 
 // ----------------------------------------------------------------------
@@ -141,7 +141,7 @@ inline NFmiDataIdent &NFmiParamDescriptor::Param(bool fIgnoreSubParam) const
 
 inline NFmiDataIdent &NFmiParamDescriptor::EditParam(bool fIgnoreSubParam)
 {
-  return *(itsParamBag->Current(fIgnoreSubParam == true));
+  return *(itsParamBag->Current(fIgnoreSubParam));
 }
 
 // ----------------------------------------------------------------------

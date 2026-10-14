@@ -21,7 +21,7 @@ NFmiStatusString::~NFmiStatusString() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiStatusString::NFmiStatusString() : NFmiString(), itsStatus(0) {}
+NFmiStatusString::NFmiStatusString() : itsStatus(0) {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor

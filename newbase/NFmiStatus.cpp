@@ -13,7 +13,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiStatus::NFmiStatus() : itsErrorLog(), itsWarningLog(), itsMessageLog() {}
+NFmiStatus::NFmiStatus() {}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor

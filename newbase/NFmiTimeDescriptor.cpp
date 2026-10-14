@@ -149,7 +149,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
     else if (itsTimeList)
     {
       itsActivity = new bool[itsTimeList->NumberOfItems()];
-      for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
+      for (int i = 0; i < itsTimeList->NumberOfItems(); i++)
         itsActivity[i] = true;
     }
   }
@@ -278,9 +278,8 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
  */
 // ----------------------------------------------------------------------
 
-NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor &theTimeDescriptor)
-    : NFmiDataDescriptor(),
-      itsOriginTimeBag(theTimeDescriptor.itsOriginTimeBag
+NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor& theTimeDescriptor)
+    : itsOriginTimeBag(theTimeDescriptor.itsOriginTimeBag
                            ? new NFmiTimeBag(*(theTimeDescriptor.itsOriginTimeBag))
                            : nullptr),
       itsValidTimeBag(theTimeDescriptor.itsValidTimeBag
@@ -381,7 +380,7 @@ void NFmiTimeDescriptor::ExtendTimeBag()
     delete[] itsActivity;
     itsActivity = new bool[itsValidTimeBag->GetSize()];
 
-    int i;
+    int i = 0;
     // All
     for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
       itsActivity[i] = true;
@@ -425,7 +424,7 @@ void NFmiTimeDescriptor::ReduseTimeBag()
     delete[] itsActivity;
     itsActivity = new bool[itsValidTimeBag->GetSize()];
 
-    int i;
+    int i = 0;
     // All
     for (i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
       itsActivity[i] = true;
@@ -1305,7 +1304,7 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
     }
     else if (itsTimeList)
     {
-      for (int i = 0; i < static_cast<int>(itsTimeList->NumberOfItems()); i++)
+      for (int i = 0; i < itsTimeList->NumberOfItems(); i++)
         file << itsActivity[i] << " ";
     }
 
@@ -1332,7 +1331,7 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 {
   try
   {
-    unsigned short theTimeListIdent;
+    unsigned short theTimeListIdent = 0;
     char dirty[30];
 
     Destroy();
@@ -1354,15 +1353,15 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
 
     file >> *itsOriginTimeBag;
 
-    unsigned long theIsLocalTime;
-    unsigned long dummy;
+    unsigned long theIsLocalTime = 0;
+    unsigned long dummy = 0;
 
     file >> theIsLocalTime >> itsIsInterpolation >> itsIsOriginLastest >> itsTimeBagIdent >>
         itsLocalTimeStep >> dummy >> dummy;
 
     itsIsLocalTime = FmiTimeLocalzation(theIsLocalTime);
 
-    if (itsTimeBagIdent == true)
+    if (itsTimeBagIdent)
     {
       {
         auto theSize = static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()

@@ -18,6 +18,7 @@
 #include "NFmiInterpolation.h"
 #include "NFmiParamBag.h"
 #include <macgyver/Exception.h>
+#include <cmath>
 
 #include <algorithm>
 #include <cmath>  // Mika: abs()
@@ -62,7 +63,9 @@ NFmiTotalWind& NFmiTotalWind::operator = (const NFmiTotalWind&) = default;
  */
 // ----------------------------------------------------------------------
 
-static double WeightedMean(double missingValue,
+namespace
+{
+double WeightedMean(double missingValue,
                            double value1,
                            float factor1,
                            double value2,
@@ -118,6 +121,7 @@ static double WeightedMean(double missingValue,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -381,11 +385,8 @@ bool NFmiTotalWind::FromWindVector(unsigned long theValue)
       unsigned int direction = WindDirectionFromWindVector(theValue);
       SetWindSpeedFromRealValue(speed);
       SetWindDirection(direction);
-      if ((speed != WindSpeedMissingValue() && direction != kT6BitMissing) ||
-          (speed == WindSpeedMissingValue() && direction == kT6BitMissing))
-        fDataOk = true;
-      else
-        fDataOk = false;
+      fDataOk = (speed != WindSpeedMissingValue() && direction != kT6BitMissing) ||
+                (speed == WindSpeedMissingValue() && direction == kT6BitMissing);
     }
     return fDataOk;
   }
@@ -1001,7 +1002,7 @@ bool NFmiTotalWind::SetToWeightedMean(NFmiCombinedParam *theCombinedParam1,
 
     float factor1 = fac1 / factorSum;
     float factor2 = fac2 / factorSum;
-    float factor3, factor4;
+    float factor3 = NAN, factor4 = NAN;
     if (fac3 == kFloatMissing)
       factor3 = kFloatMissing;
     else
@@ -1123,19 +1124,13 @@ bool NFmiTotalWind::WindDirection(unsigned long theValue)
       SetWindDirection(theValue);
       if (integerValue == 0 && WindSpeed() != 0)
         SetWindDirection(36);
-      if (WindSpeed() == WindSpeedMissingValue())
-        fDataOk = false;
-      else
-        fDataOk = true;
+      fDataOk = WindSpeed() != WindSpeedMissingValue();
 
       return true;
     }
 
     SetWindDirection(kT6BitMissing);
-    if (WindSpeed() == WindSpeedMissingValue())
-      fDataOk = false;
-    else
-      fDataOk = true;
+    fDataOk = WindSpeed() != WindSpeedMissingValue();
 
     return false;
   }
@@ -1165,19 +1160,13 @@ bool NFmiTotalWind::WindSpeed(unsigned long theValue)
       if (theValue == 0)
         SetWindDirection(0);  // tyyni
 
-      if (WindDirection() == kT6BitMissing)
-        fDataOk = false;
-      else
-        fDataOk = true;
+      fDataOk = WindDirection() != kT6BitMissing;
 
       return true;
     }
 
     SetWindSpeed(WindSpeedMissingValue());
-    if (WindDirection() == kT6BitMissing)
-      fDataOk = false;
-    else
-      fDataOk = true;
+    fDataOk = WindDirection() != kT6BitMissing;
 
     return false;
   }

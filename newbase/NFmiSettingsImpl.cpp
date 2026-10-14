@@ -388,8 +388,7 @@ std::string expand(const std::string& value,
  */
 // ----------------------------------------------------------------------
 
-NFmiSettingsImpl::NFmiSettingsImpl()
-    : itsFilename(DEFAULT_FILE), itsData(), itIsInitialized(false), itsNamespaces()
+NFmiSettingsImpl::NFmiSettingsImpl() : itsFilename(DEFAULT_FILE)
 {
   try
   {
@@ -774,7 +773,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
     string text = processor.GetString();
     istringstream input(text);
 
-    unsigned long words;
+    unsigned long words = 0;
     string var;
     while (true)
     {

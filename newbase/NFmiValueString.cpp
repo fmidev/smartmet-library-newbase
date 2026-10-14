@@ -79,7 +79,7 @@ NFmiValueString& NFmiValueString::operator = (const NFmiValueString&) = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString() : NFmiString(), itsValueType(eNull) {}
+NFmiValueString::NFmiValueString() : itsValueType(eNull) {}
 // ----------------------------------------------------------------------
 /*!
  * Constructor
@@ -140,8 +140,7 @@ NFmiValueString::NFmiValueString(const NFmiValueString &theValue)
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString(const short theValue, const char *theFormat)
-    : NFmiString(), itsValueType(eShort)
+NFmiValueString::NFmiValueString(const short theValue, const char* theFormat) : itsValueType(eShort)
 {
   try
   {
@@ -162,8 +161,7 @@ NFmiValueString::NFmiValueString(const short theValue, const char *theFormat)
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString(const int theValue, const char *theFormat)
-    : NFmiString(), itsValueType(eInt)
+NFmiValueString::NFmiValueString(const int theValue, const char* theFormat) : itsValueType(eInt)
 {
   try
   {
@@ -182,8 +180,7 @@ NFmiValueString::NFmiValueString(const int theValue, const char *theFormat)
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString(const long theValue, const char *theFormat)
-    : NFmiString(), itsValueType(eLong)
+NFmiValueString::NFmiValueString(const long theValue, const char* theFormat) : itsValueType(eLong)
 {
   try
   {
@@ -202,8 +199,7 @@ NFmiValueString::NFmiValueString(const long theValue, const char *theFormat)
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString(const float theValue, const char *theFormat)
-    : NFmiString(), itsValueType(eFloat)
+NFmiValueString::NFmiValueString(const float theValue, const char* theFormat) : itsValueType(eFloat)
 {
   try
   {
@@ -224,8 +220,8 @@ NFmiValueString::NFmiValueString(const float theValue, const char *theFormat)
  */
 // ----------------------------------------------------------------------
 
-NFmiValueString::NFmiValueString(const double theValue, const char *theFormat)
-    : NFmiString(), itsValueType(eDouble)
+NFmiValueString::NFmiValueString(const double theValue, const char* theFormat)
+    : itsValueType(eDouble)
 {
   try
   {
@@ -249,7 +245,7 @@ void NFmiValueString::SetValue(const short theValue, const char *theFormat)
   try
   {
     unsigned char valueString[16];
-    unsigned int valueLength;
+    unsigned int valueLength = 0;
 
 #ifdef _MSC_VER
     valueLength = ::_snprintf(
@@ -280,7 +276,7 @@ void NFmiValueString::SetValue(const int theValue, const char *theFormat)
   try
   {
     unsigned char valueString[16];
-    unsigned int valueLength;
+    unsigned int valueLength = 0;
 
 #ifdef _MSC_VER
     valueLength = ::_snprintf(
@@ -311,7 +307,7 @@ void NFmiValueString::SetValue(const float theValue, const char *theFormat)
   try
   {
     unsigned char valueString[64];
-    unsigned int valueLength;
+    unsigned int valueLength = 0;
 
 #ifdef _MSC_VER
     valueLength = ::_snprintf(
@@ -342,7 +338,7 @@ void NFmiValueString::SetValue(const long theValue, const char *theFormat)
   try
   {
     unsigned char valueString[16];
-    unsigned int valueLength;
+    unsigned int valueLength = 0;
 
 #ifdef _MSC_VER
     valueLength = ::_snprintf(
@@ -373,7 +369,7 @@ void NFmiValueString::SetValue(const double theValue, const char *theFormat)
   try
   {
     unsigned char valueString[310];
-    unsigned int valueLength;
+    unsigned int valueLength = 0;
 
 #ifdef _MSC_VER
     valueLength = ::_snprintf(
@@ -402,7 +398,7 @@ bool NFmiValueString::IsShort() const
 {
   try
   {
-    short returnValue;
+    short returnValue = 0;
 
     if (itsValueType == eShort)
       return true;
@@ -476,7 +472,7 @@ bool NFmiValueString::IsNumeric(int theStart, int theSize) const
       else
         digitFound = true;
 
-    return GetLen() && digitFound ? true : false;
+    return GetLen() && digitFound;
   }
   catch (...)
   {
@@ -527,7 +523,7 @@ bool NFmiValueString::IsInt(int theStart, int theSize) const
 {
   try
   {
-    int returnValue;
+    int returnValue = 0;
 
     if (!IsNumeric() || Search(reinterpret_cast<const unsigned char *>(".")))
       return false;
@@ -552,7 +548,7 @@ bool NFmiValueString::IsFloat(int theStart, int theSize) const
 {
   try
   {
-    float returnValue;
+    float returnValue = NAN;
 
     if (!IsNumeric())
       return false;
@@ -577,7 +573,7 @@ bool NFmiValueString::IsLong(int theStart, int theSize) const
 {
   try
   {
-    long returnValue;
+    long returnValue = 0;
 
     if (!IsNumeric())
       return false;
@@ -602,7 +598,7 @@ bool NFmiValueString::IsDouble(int theStart, int theSize) const
 {
   try
   {
-    double returnValue;
+    double returnValue = NAN;
 
     if (itsValueType == eDouble)
       return true;

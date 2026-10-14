@@ -55,7 +55,7 @@ void NFmiDataModifierMinPlace::Clear()
 
 float NFmiDataModifierMinPlace::CalculationResult()
 {
-  return itsExtremeValue != 3.4E+38f && !(!fMissingValuesAllowed && itsNumberOfMissingValues > 0)
+  return itsExtremeValue != 3.4E+38f && (fMissingValuesAllowed || itsNumberOfMissingValues <= 0)
              ? itsExtremeValue
              : kFloatMissing;
 }

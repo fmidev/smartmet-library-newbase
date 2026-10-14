@@ -46,8 +46,8 @@ class NFmiParamDataModifier : public NFmiDataModifier
  protected:
   NFmiDataIdent* itsParam;           // Omistaa/tuhoaa
   NFmiLevel* itsLevel;               // Omistaa/tuhoaa
-  NFmiDataModifierList* itsSubList;  // tässä voi olla mitä tahansa modifiereita esim. max tai min
-                                     // jne. // Omistaa/tuhoaa
+  NFmiDataModifierList* itsSubList = nullptr;  // tässä voi olla mitä tahansa modifiereita esim. max
+                                               // tai min jne. // Omistaa/tuhoaa
 
  private:
   NFmiParamDataModifier(const NFmiParamDataModifier& theMod);

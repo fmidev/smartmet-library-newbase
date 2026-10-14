@@ -70,8 +70,7 @@ class NFmiParam : public NFmiIndividual
 // ----------------------------------------------------------------------
 
 inline NFmiParam::NFmiParam()
-    : NFmiIndividual(),
-      itsMinValue(kFloatMissing),
+    : itsMinValue(kFloatMissing),
       itsMaxValue(kFloatMissing),
       itsScale(kFloatMissing),
       itsBase(kFloatMissing),
@@ -187,7 +186,7 @@ inline void NFmiParam::Precision(const NFmiString &newValue)
 
 inline bool NFmiParam::IsScaleBase() const
 {
-  return !(itsScale == kFloatMissing || itsBase == kFloatMissing);
+  return itsScale != kFloatMissing && itsBase != kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

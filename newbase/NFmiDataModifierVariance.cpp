@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiDataModifierVariance.h"
+
 #include "NFmiQueryInfo.h"
 #include "NFmiRegressionItem.h"
 #include <cmath>
@@ -67,7 +68,7 @@ double NFmiDataModifierVariance::FloatValue()
   double variance = NFmiRegressionModifier::FloatValue();
   if (variance == kFloatMissing)
     return variance;
-  double raw;
+  double raw = NAN;
   if (!fVarianceOnly)
   {
     raw = itsData->FloatValue();
@@ -97,7 +98,7 @@ double NFmiDataModifierVariance::GaussianRandom()
 
   static double V1, V2, S;
   static int phase = 0;
-  double X;
+  double X = NAN;
 
   if (phase == 0)
   {

@@ -39,8 +39,8 @@ class NFmiDataModifierMinMax : public NFmiDataModifier
   float CalculationResult() override;  // kysy erikseen min ja max!
 
  private:
-  float itsMinValue;
-  float itsMaxValue;
+  float itsMinValue = FLT_MAX;
+  float itsMaxValue = -FLT_MAX;
 
 };  // class NFmiDataModifierMinMax
 

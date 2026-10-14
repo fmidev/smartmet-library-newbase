@@ -41,8 +41,8 @@ class NFmiLocationCache
 
   NFmiPoint itsGridPoint;
   unsigned long itsLocationIndex;
-  bool fNoInterpolation;  // jos tämä on totta, ei tarvitse interpoloida paikan suhteen, arvot
-                          // locationIndex:istä kelpaa suoraan
+  bool fNoInterpolation = false;  // jos tämä on totta, ei tarvitse interpoloida paikan suhteen,
+                                  // arvot locationIndex:istä kelpaa suoraan
 };
 
 // NFmiTimeCache-luokkaa käytetään kun halutaan optimoida aikaan liittyviä interpolaatioita.
@@ -58,7 +58,7 @@ class NFmiTimeCache
 
   unsigned long itsTimeIndex1;
   unsigned long itsTimeIndex2;
-  float itsOffset;
+  float itsOffset = 1;
 };
 
 //! Undocumented

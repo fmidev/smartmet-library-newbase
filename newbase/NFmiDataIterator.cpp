@@ -31,10 +31,7 @@ NFmiDataIterator::~NFmiDataIterator() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataIterator::NFmiDataIterator(NFmiQueryInfo* theData)
-    : itsData(theData), itsMask(nullptr), fMaskInUse(false)
-{
-}
+NFmiDataIterator::NFmiDataIterator(NFmiQueryInfo* theData) : itsData(theData) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -53,10 +50,7 @@ void NFmiDataIterator::CheckIfMaskIsUsed()
 {
   try
   {
-    if (itsMask && itsMask->IsEnabled())
-      fMaskInUse = true;
-    else
-      fMaskInUse = false;
+    fMaskInUse = itsMask && itsMask->IsEnabled();
   }
   catch (...)
   {

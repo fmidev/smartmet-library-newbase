@@ -31,7 +31,7 @@ NFmiDataModifierStandardDeviation::~NFmiDataModifierStandardDeviation() = defaul
 // ----------------------------------------------------------------------
 
 NFmiDataModifierStandardDeviation::NFmiDataModifierStandardDeviation()
-    : NFmiDataModifier(), itsCounter(0), itsSum(0), itsSquaredSum(0)
+
 {
   fCalculationResultOk = false;
 }

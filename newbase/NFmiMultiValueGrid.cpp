@@ -27,7 +27,6 @@ NFmiMultiValuedGrid::~NFmiMultiValuedGrid()
 {
   try
   {
-    if (itsMultiData)
       delete itsMultiData;
   }
   catch (...)

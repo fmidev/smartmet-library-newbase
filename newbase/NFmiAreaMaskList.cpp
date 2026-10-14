@@ -28,7 +28,7 @@ NFmiAreaMaskList::~NFmiAreaMaskList() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiAreaMaskList::NFmiAreaMaskList() : itsMaskVector(), itsCurrentIndex(-1), fMaskInUse(false) {}
+NFmiAreaMaskList::NFmiAreaMaskList() {}
 
 NFmiAreaMaskList::NFmiAreaMaskList(const NFmiAreaMaskList &theOther) = default;
 
@@ -124,10 +124,7 @@ bool NFmiAreaMaskList::Next()
   try
   {
     itsCurrentIndex++;
-    if (static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size())
-      return true;
-
-    return false;
+    return static_cast<std::size_t>(itsCurrentIndex) < itsMaskVector.size();
   }
   catch (...)
   {
@@ -140,10 +137,7 @@ bool NFmiAreaMaskList::IsValidIndex(int theIndex)
 {
   try
   {
-    if (theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size())
-      return true;
-
-    return false;
+    return theIndex >= 0 && static_cast<std::size_t>(theIndex) < itsMaskVector.size();
   }
   catch (...)
   {

@@ -45,6 +45,8 @@
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 int DetectClassId(const Fmi::ProjInfo &proj)
 {
   auto name = proj.getString("proj");
@@ -248,6 +250,7 @@ NFmiArea *Create(const Fmi::SpatialReference &theSR)
       return new NFmiGdalArea("FMI", theSR, bl, tr);
   }
 }
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -287,7 +290,9 @@ void NFmiArea::SetXYArea(const NFmiRect &newArea)
   }
 }
 
-static void FixPacificLongitude(NFmiPoint &lonLat)
+namespace
+{
+void FixPacificLongitude(NFmiPoint &lonLat)
 {
   try
   {
@@ -302,6 +307,7 @@ static void FixPacificLongitude(NFmiPoint &lonLat)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 #if 0
 static void FixAtlanticLongitude(NFmiPoint &lonLat)
@@ -324,7 +330,7 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
 {
   try
   {
-    if (PacificView() && theArea->PacificView() == false)
+    if (PacificView() && !theArea->PacificView())
     {
       NFmiPoint topLeftLatlon = theArea->ToLatLon(theArea->TopLeft());
       ::FixPacificLongitude(topLeftLatlon);
@@ -336,7 +342,7 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
       NFmiRect rect(topLeft, bottomRight);
       return rect;
     }
-    else if (PacificView() == false && theArea->PacificView())
+    else if (!PacificView() && theArea->PacificView())
     {
       std::unique_ptr<NFmiArea> pacificAreaFromThis(DoForcePacificFix());
 
@@ -577,7 +583,7 @@ NFmiArea *NFmiArea::CreateNewArea(double theNewAspectRatioXperY,
   {
     double originalAspectRatio = WorldXYAspectRatio();
 
-    bool keepWidth;
+    bool keepWidth = false;
 
     if (fShrinkArea)
     {
@@ -660,7 +666,7 @@ NFmiArea* NFmiArea::CreateNewAreaByWorldRect(const NFmiRect& theWorldRect, bool 
       if (!IsInside(newBottomLeftLatLon) || !IsInside(newTopRightLatLon))
         return nullptr;
 
-    auto *newArea = static_cast<NFmiArea *>(NewArea(newBottomLeftLatLon, newTopRightLatLon));
+    auto* newArea = NewArea(newBottomLeftLatLon, newTopRightLatLon);
 
     if (fMustBeInside)
       if (!IsInside(*newArea))
@@ -788,10 +794,7 @@ bool NFmiArea::IsPacificLongitude(double theLongitude)
 {
   try
   {
-    if (theLongitude > 180 && theLongitude <= 360)
-      return true;
-    else
-      return false;
+    return theLongitude > 180 && theLongitude <= 360;
   }
   catch (...)
   {
@@ -1130,7 +1133,7 @@ NFmiArea::~NFmiArea() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiArea::NFmiArea() : itsXYRectArea(), fPacificView(false) {}
+NFmiArea::NFmiArea() : fPacificView(false) {}
 
 // ----------------------------------------------------------------------
 /*!

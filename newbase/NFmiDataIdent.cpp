@@ -66,7 +66,7 @@ NFmiDataIdent::NFmiDataIdent(const NFmiParam &theParam,
     {
       itsSecondaryProducers = new NFmiVoidPtrList;
       NFmiVoidPtrIterator it(theSecondaryProducerList);
-      void *vPt;
+      void* vPt = nullptr;
       while (it.Next(vPt))
         itsSecondaryProducers->AddEnd(
             static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
@@ -110,7 +110,7 @@ NFmiDataIdent::NFmiDataIdent(const NFmiDataIdent &theDataIdent)
     {
       itsSecondaryProducers = new NFmiVoidPtrList;
       NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
-      void *vPt;
+      void* vPt = nullptr;
       while (it.Next(vPt))
         itsSecondaryProducers->AddEnd(
             static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
@@ -140,7 +140,7 @@ void NFmiDataIdent::Destroy()
     if (itsSecondaryProducers)
     {
       NFmiVoidPtrIterator iter(itsSecondaryProducers);
-      void *vPt;  // iter.Reset() ??
+      void* vPt = nullptr;  // iter.Reset() ??
       while (iter.Next(vPt))
         delete (static_cast<NFmiProducer *>(vPt));
       delete itsSecondaryProducers;
@@ -268,7 +268,7 @@ NFmiDataIdent &NFmiDataIdent::operator=(const NFmiDataIdent &theDataIdent)
       {
         itsSecondaryProducers = new NFmiVoidPtrList;
         NFmiVoidPtrIterator it(theDataIdent.itsSecondaryProducers);
-        void *vPt;
+        void* vPt = nullptr;
         while (it.Next(vPt))
           itsSecondaryProducers->AddEnd(
               static_cast<void *>(new NFmiProducer(*static_cast<NFmiProducer *>(vPt))));
@@ -326,7 +326,7 @@ std::ostream &NFmiDataIdent::Write(std::ostream &file) const
         file << itsSecondaryProducers->NumberOfItems() << '\n';
 
         NFmiVoidPtrIterator theProdItem(*itsSecondaryProducers);
-        void *theVoid;
+        void* theVoid = nullptr;
         while (theProdItem.Next(theVoid))
           file << *(static_cast<NFmiProducer *>(theVoid));
       }
@@ -359,7 +359,7 @@ std::istream &NFmiDataIdent::Read(std::istream &file)
 {
   try
   {
-    unsigned long fReserve;
+    unsigned long fReserve = 0;
 
     Destroy();
 
@@ -387,7 +387,7 @@ std::istream &NFmiDataIdent::Read(std::istream &file)
         file >> *itsDataParams;
       }
 
-      long theNumberOfItems;
+      long theNumberOfItems = 0;
       file >> theNumberOfItems;
 
       if (theNumberOfItems)
@@ -589,7 +589,6 @@ void NFmiDataIdent::SetParam(const NFmiParam &theParam)
 {
   try
   {
-    if (itsParam)
       delete itsParam;
 
     itsParam = theParam.Clone();
@@ -611,7 +610,6 @@ void NFmiDataIdent::SetProducer(const NFmiProducer &theProducer)
 {
   try
   {
-    if (itsProducer)
       delete itsProducer;
 
     itsProducer = new NFmiProducer(theProducer);

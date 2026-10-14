@@ -104,24 +104,24 @@ class NFmiDataPool
   void DoEndianByteSwap();
 
  private:
-  unsigned long itsSize;  // number of floats
-  long itsIndex;          // index counter
-  float* itsData;
+  unsigned long itsSize = 0;  // number of floats
+  long itsIndex = -1;         // index counter
+  float* itsData = nullptr;
 
-  bool fFirst;
-  bool fLast;
+  bool fFirst = false;
+  bool fLast = false;
 
   double itsMinValue;
   double itsMaxValue;
 
-  int itsMissingValueIndex;
-  int itsCurrentMissingValueIndex;
+  int itsMissingValueIndex = 0;
+  int itsCurrentMissingValueIndex = 0;
 
-  double itsMissingValue[kMaxNumberOfDifferentMissingValues];
+  double itsMissingValue[kMaxNumberOfDifferentMissingValues] = {};
 
-  mutable bool fUseBinaryStorage;
-  bool fDoEndianByteSwap;  // tämä tieto asetetaan ulkoa käsin (eli qdata kysyy qinfolta, pitääkö
-                           // byte-swapata binääri dataa)
+  mutable bool fUseBinaryStorage = false;
+  bool fDoEndianByteSwap = false;  // tämä tieto asetetaan ulkoa käsin (eli qdata kysyy qinfolta,
+                                   // pitääkö byte-swapata binääri dataa)
 };
 
 // ----------------------------------------------------------------------

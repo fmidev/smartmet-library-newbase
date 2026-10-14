@@ -35,16 +35,15 @@ class NFmiSnapShotInterface
  protected:
   bool ReadData();
 
- protected:
-  bool fIsValid;
+  bool fIsValid = false;
 
  private:
   NFmiSnapShotInterface(const NFmiSnapShotInterface& theFace);
   NFmiSnapShotInterface& operator=(const NFmiSnapShotInterface theFace);
 
   time_t itsUpdateInterval;
-  NFmiQueryInfo* itsInfo;
-  NFmiQueryData* itsData;
+  NFmiQueryInfo* itsInfo = nullptr;
+  NFmiQueryData* itsData = nullptr;
   NFmiString itsDataFileName;
   NFmiString itsSourceDirectory;
   NFmiString itsWorkingDirectory;

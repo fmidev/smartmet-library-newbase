@@ -113,6 +113,8 @@
 #pragma once
 
 #include "NFmiDef.h"
+
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -151,7 +153,6 @@ class NFmiNearTreeImpl
 
   bool Farthest(value_type& theFarthest, const value_type& thePoint, double& theRadius) const;
 
- private:
   NFmiNearTreeImpl(const NFmiNearTreeImpl& theTree);
   NFmiNearTreeImpl& operator=(const NFmiNearTreeImpl& theTree);
 
@@ -249,8 +250,7 @@ void NFmiNearTreeImpl<T, F>::Insert(const T& theObject)
     // note that the next line assumes that itsMaxRight is
     // negative for a new node
 
-    if (itsMaxRight < dist_right)
-      itsMaxRight = dist_right;
+    itsMaxRight = std::max(itsMaxRight, dist_right);
     itsRightBranch->Insert(theObject);
   }
 
@@ -262,8 +262,7 @@ void NFmiNearTreeImpl<T, F>::Insert(const T& theObject)
     // note that the next line assumes that itsMaxLeft is
     // negative for a new node
 
-    if (itsMaxLeft < dist_left)
-      itsMaxLeft = dist_left;
+    itsMaxLeft = std::max(itsMaxLeft, dist_left);
 
     itsLeftBranch->Insert(theObject);
   }
@@ -495,7 +494,7 @@ bool NFmiNearTreeImpl<T, F>::Farthest(value_type& theFarthest,
                                       const value_type& thePoint,
                                       double& theRadius) const
 {
-  double tmpradius;
+  double tmpradius = NAN;
   bool found = false;
 
   // first test each of the left and right positions to see if

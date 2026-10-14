@@ -24,7 +24,7 @@ NFmiDataModifierMedian::~NFmiDataModifierMedian() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierMedian::NFmiDataModifierMedian(float theLimitProsent)
-    : NFmiDataModifier(), itsLimitProsent(theLimitProsent)
+    : itsLimitProsent(theLimitProsent)
 {
   fCalculationResultOk = false;
 }

@@ -552,11 +552,8 @@ bool NFmiRect::Intersect(const NFmiRect &theRect) const
 {
   try
   {
-    if (this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
-        this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top())
-      return true;
-    else
-      return false;
+    return this->Left() < theRect.Right() && this->Right() > theRect.Left() &&
+           this->Top() < theRect.Bottom() && this->Bottom() > theRect.Top();
   }
   catch (...)
   {

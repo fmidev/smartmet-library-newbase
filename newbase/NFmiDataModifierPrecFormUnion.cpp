@@ -33,11 +33,7 @@ NFmiDataModifierPrecFormUnion::~NFmiDataModifierPrecFormUnion() = default;
 
 NFmiDataModifierPrecFormUnion::NFmiDataModifierPrecFormUnion(FmiJoinOperator theJoinOperator,
                                                              bool missingValuesAlloved)
-    : NFmiDataModifier(theJoinOperator, missingValuesAlloved),
-      fIsRain(false),
-      fIsSleet(false),
-      fIsSnow(false),
-      fIsFreezing(false)
+    : NFmiDataModifier(theJoinOperator, missingValuesAlloved)
 {
 }
 

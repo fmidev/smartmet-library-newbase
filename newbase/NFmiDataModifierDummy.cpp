@@ -27,7 +27,7 @@ NFmiDataModifierDummy::~NFmiDataModifierDummy() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierDummy::NFmiDataModifierDummy() : NFmiDataModifier(), itsValue(kFloatMissing) {}
+NFmiDataModifierDummy::NFmiDataModifierDummy() : itsValue(kFloatMissing) {}
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented

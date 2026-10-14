@@ -40,13 +40,8 @@ NFmiDataModifier::NFmiDataModifier(FmiJoinOperator theJoinOperator,
                                    NFmiCombinedParam* thePotentialCombinedParam)
     : NFmiDataModifierBase(theJoinOperator),
       itsCombinedParam(thePotentialCombinedParam ? thePotentialCombinedParam->Clone() : nullptr),
-      fCalculationResultOk(true),
       fMissingValuesAllowed(missingValuesAllowed),
-      itsNumberOfMissingValues(0),
-      fIsCombinedParam(thePotentialCombinedParam ? true : false),
-      fIsLimitCheck(false),
-      itsLowerLimit(),
-      itsUpperLimit()
+      fIsCombinedParam(thePotentialCombinedParam != nullptr)
 {
 }
 
@@ -87,10 +82,8 @@ bool NFmiDataModifier::IsInside(float theValue) const
   if (!fIsLimitCheck)
     return true;
   else
-    return (((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
-            ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)))
-               ? false
-               : true;
+    return !(((itsLowerLimit != kFloatMissing) && (theValue < itsLowerLimit)) ||
+             ((itsUpperLimit != kFloatMissing) && (theValue > itsUpperLimit)));
 }
 
 // ----------------------------------------------------------------------

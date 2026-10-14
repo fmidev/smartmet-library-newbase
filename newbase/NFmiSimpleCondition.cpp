@@ -258,7 +258,9 @@ NFmiSingleCondition::NFmiSingleCondition(const NFmiSingleCondition &theOther)
 {
 }
 
-static void InitializePart(const std::shared_ptr<NFmiSimpleConditionPart>& part)
+namespace
+{
+void InitializePart(const std::shared_ptr<NFmiSimpleConditionPart>& part)
 {
   try
   {
@@ -270,6 +272,7 @@ static void InitializePart(const std::shared_ptr<NFmiSimpleConditionPart>& part)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 void NFmiSingleCondition::Initialize()
 {
@@ -297,7 +300,9 @@ NFmiSingleCondition *NFmiSingleCondition::Clone() const
   }
 }
 
-static bool EvaluateCondition(double value1, FmiMaskOperation operand, double value2)
+namespace
+{
+bool EvaluateCondition(double value1, FmiMaskOperation operand, double value2)
 {
   try
   {
@@ -333,7 +338,7 @@ static bool EvaluateCondition(double value1, FmiMaskOperation operand, double va
   }
 }
 
-static bool IsGreaterOperand(FmiMaskOperation operand)
+bool IsGreaterOperand(FmiMaskOperation operand)
 {
   try
   {
@@ -348,7 +353,7 @@ static bool IsGreaterOperand(FmiMaskOperation operand)
 // Note: only range option accepted are:
 // 1. In between case e.g. "limit1 < x < limit2", where operands can be < or <=
 // 2. Outside case e.g. "limit1 > x > limit2", where operands can be > or >=
-static bool EvaluateRangeCondition(double value1,
+bool EvaluateRangeCondition(double value1,
                                    FmiMaskOperation operand1,
                                    double value2,
                                    FmiMaskOperation operand2,
@@ -372,7 +377,7 @@ static bool EvaluateRangeCondition(double value1,
 }
 
 // value2:n pitää olla jotenkin value1:n ja previousValue1:n välissä
-static bool EvaluateContinuousEqualCase(double value1, double value2, double previousValue1)
+bool EvaluateContinuousEqualCase(double value1, double value2, double previousValue1)
 {
   if (value1 != kFloatMissing && value2 != kFloatMissing && previousValue1 != kFloatMissing)
   {
@@ -381,6 +386,7 @@ static bool EvaluateContinuousEqualCase(double value1, double value2, double pre
   }
   return false;
 }
+}  // namespace
 
 bool NFmiSingleCondition::CheckCondition(const NFmiCalculationParams &theCalculationParams,
                                          bool fUseTimeInterpolationAlways)
@@ -485,7 +491,9 @@ NFmiSimpleCondition::NFmiSimpleCondition(const NFmiSimpleCondition &theOther)
 {
 }
 
-static void InitializePart(const std::shared_ptr<NFmiSingleCondition>& condition)
+namespace
+{
+void InitializePart(const std::shared_ptr<NFmiSingleCondition>& condition)
 {
   try
   {
@@ -497,6 +505,7 @@ static void InitializePart(const std::shared_ptr<NFmiSingleCondition>& condition
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // T�t� kutsutaan konstruktorin j�lkeen, t�ss� alustetaan ainakin tieto siit� onko maski ns.
 // stationaarist� dataa
@@ -525,7 +534,9 @@ NFmiSimpleCondition *NFmiSimpleCondition::Clone() const
   }
 }
 
-static bool EvaluateBinaryCondition(bool condition1,
+namespace
+{
+bool EvaluateBinaryCondition(bool condition1,
                                     NFmiAreaMask::BinaryOperator conditionOperator,
                                     bool condition2)
 {
@@ -550,6 +561,7 @@ static bool EvaluateBinaryCondition(bool condition1,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+}  // namespace
 
 // Eri tapauksia varten omat tarkastelu funktiot
 bool NFmiSimpleCondition::CheckCondition(const NFmiCalculationParams &theCalculationParams,

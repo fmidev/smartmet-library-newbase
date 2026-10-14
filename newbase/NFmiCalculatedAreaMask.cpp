@@ -74,7 +74,7 @@ NFmiCalculatedAreaMask::~NFmiCalculatedAreaMask()
  */
 // ----------------------------------------------------------------------
 
-NFmiCalculatedAreaMask::NFmiCalculatedAreaMask() : NFmiAreaMaskImpl(), itsDataIdent(nullptr) {}
+NFmiCalculatedAreaMask::NFmiCalculatedAreaMask() : itsDataIdent(nullptr) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -156,10 +156,7 @@ bool NFmiCalculatedAreaMask::IsWantedParam(const NFmiDataIdent& theParam,
 {
   try
   {
-    if (itsDataIdent && (*itsDataIdent == theParam))
-      return true;
-
-    return false;
+    return itsDataIdent && (*itsDataIdent == theParam);
   }
   catch (...)
   {
@@ -212,7 +209,7 @@ const NFmiParam* NFmiCalculatedAreaMask::Param() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLatLonAreaMask::NFmiLatLonAreaMask() : NFmiCalculatedAreaMask() {}
+NFmiLatLonAreaMask::NFmiLatLonAreaMask() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -311,7 +308,7 @@ const NFmiString NFmiLatLonAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() : NFmiLatLonAreaMask(), itsTime() {}
+NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -336,7 +333,7 @@ NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiElevationAngleA
 
 NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask(const NFmiDataIdent& theParam,
                                                        const NFmiCalculationCondition& theOperation)
-    : NFmiLatLonAreaMask(theParam, theOperation), itsTime()
+    : NFmiLatLonAreaMask(theParam, theOperation)
 {
 }
 
@@ -449,7 +446,7 @@ const NFmiString NFmiElevationAngleAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiJulianDayAreaMask::NFmiJulianDayAreaMask() : NFmiElevationAngleAreaMask(), itsJulianDay(0) {}
+NFmiJulianDayAreaMask::NFmiJulianDayAreaMask() : itsJulianDay(0) {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -567,7 +564,7 @@ const NFmiString NFmiJulianDayAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() : NFmiElevationAngleAreaMask() {}
+NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -663,7 +660,7 @@ const NFmiString NFmiLocalHourAreaMask::MakeSubMaskString() const
 
 NFmiUtcHourAreaMask::~NFmiUtcHourAreaMask() = default;
 
-NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() : NFmiElevationAngleAreaMask() {}
+NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() {}
 
 NFmiUtcHourAreaMask::NFmiUtcHourAreaMask(const NFmiUtcHourAreaMask& theMask) = default;
 
@@ -713,7 +710,7 @@ const NFmiString NFmiUtcHourAreaMask::MakeSubMaskString() const
 
 NFmiMinuteAreaMask::~NFmiMinuteAreaMask() = default;
 
-NFmiMinuteAreaMask::NFmiMinuteAreaMask() : NFmiElevationAngleAreaMask() {}
+NFmiMinuteAreaMask::NFmiMinuteAreaMask() {}
 
 NFmiMinuteAreaMask::NFmiMinuteAreaMask(const NFmiMinuteAreaMask& theMask) = default;
 
@@ -769,7 +766,7 @@ const NFmiString NFmiMinuteAreaMask::MakeSubMaskString() const
 
 NFmiForecastHourAreaMask::NFmiForecastHourAreaMask(
     const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
+    : itsInfo(theInfo)
 {
 }
 
@@ -896,7 +893,7 @@ const NFmiString NFmiForecastHourAreaMask::MakeSubMaskString() const
 NFmiTimeStepAreaMask::~NFmiTimeStepAreaMask() = default;
 
 NFmiTimeStepAreaMask::NFmiTimeStepAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo)
+    : itsInfo(theInfo)
 {
 }
 
@@ -995,7 +992,7 @@ NFmiGridSizeAreaMask::~NFmiGridSizeAreaMask() = default;
 
 NFmiGridSizeAreaMask::NFmiGridSizeAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                            bool calcXValue)
-    : NFmiElevationAngleAreaMask(), itsInfo(theInfo), fCalcXValue(calcXValue)
+    : itsInfo(theInfo), fCalcXValue(calcXValue)
 {
 }
 

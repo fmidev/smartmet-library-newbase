@@ -29,6 +29,7 @@
 #include <stdexcept>
 #ifndef _MSC_VER
 #include <sys/mman.h>
+#include <cmath>
 #endif
 
 #if 0
@@ -102,7 +103,7 @@ class NFmiRawData::Pimple
   size_t itsSize{0};
   mutable bool itsSaveAsBinaryFlag{true};
   bool itsEndianSwapFlag{false};
-  std::string itsFileName{};  // to ease examining core dumps
+  std::string itsFileName;  // to ease examining core dumps
 };
 
 // ----------------------------------------------------------------------
@@ -182,7 +183,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     WriteLock lock(itsMutex);
 
     // Backward compatibility:
-    long datatype;
+    long datatype = 0;
     file >> datatype;
 
     file >> itsSaveAsBinaryFlag;
@@ -194,7 +195,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
       throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
     // Skip last newline charater after poolsize
-    char ch;
+    char ch = 0;
     file.get(ch);
 
     // Sanity check on the size of the data. Note that old querydata
@@ -248,11 +249,9 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
  */
 // ----------------------------------------------------------------------
 
-NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
+NFmiRawData::Pimple::Pimple(istream& file, size_t size, bool endianswap)
     : itsMutex(),
-      itsData(nullptr),
       itsMappedFile(nullptr),
-      itsOffset(0),
       itsSize(size),
 
       itsEndianSwapFlag(endianswap)
@@ -265,7 +264,7 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
     itsData = new float[itsSize];
 
     // Backward compatibility:
-    long datatype;
+    long datatype = 0;
     file >> datatype;
 
     // We trust everything to be at least version 6 by now
@@ -288,7 +287,7 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
         throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
       // Skip last newline charater after poolsize
-      char ch;
+      char ch = 0;
       file.get(ch);
 
       auto *ptr = reinterpret_cast<char *>(itsData);
@@ -300,7 +299,7 @@ NFmiRawData::Pimple::Pimple(istream &file, size_t size, bool endianswap)
 
     if (itsEndianSwapFlag)
     {
-      char tmp1, tmp2, tmp3, tmp4;
+      char tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
       auto *ptr = reinterpret_cast<char *>(itsData);
       for (size_t i = 3; i < itsSize * sizeof(float); i += 4)
       {
@@ -511,8 +510,8 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
     if (itsData)
       return itsData[index];
 
-    auto *addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
-    float value;
+    const auto* addr = itsMappedFile->const_data() + itsOffset + index * sizeof(float);
+    float value = NAN;
     memcpy(&value, addr, sizeof(float));
     return value;
 
@@ -538,7 +537,7 @@ bool NFmiRawData::Pimple::GetValues(size_t startIndex,
 
     values.resize(count);
 
-    const float *ptr;
+    const float* ptr = nullptr;
 
     if (itsData)
       ptr = itsData;
@@ -607,7 +606,7 @@ bool NFmiRawData::Pimple::GetValuesPartial(size_t startIndex,
 
     values.resize(rowCount * columnCount);
 
-    const float *ptr;
+    const float* ptr = nullptr;
 
     if (itsData)
       ptr = itsData;

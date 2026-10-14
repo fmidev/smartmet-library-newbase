@@ -106,8 +106,7 @@ using PNFmiTimeList = NFmiTimeList*;
 // ----------------------------------------------------------------------
 
 inline NFmiTimeList::NFmiTimeList()
-    : itsVectorList(),
-      itsIndex(-1)
+    : itsIndex(-1)
       //  : itsList(new NFmiVoidPtrList)
       //  , itsIter(0)
       ,

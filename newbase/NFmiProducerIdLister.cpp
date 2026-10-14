@@ -32,30 +32,23 @@ using namespace std;
 // Constructor/Destructor
 //--------------------------------------------------------
 NFmiProducerIdLister::NFmiProducerIdLister()
-    : itsTimes(),
-      itsProducerString(),
-      itsProducerIds(itsTimes.Size(), -1),
+    : itsProducerIds(itsTimes.Size(), -1),
       itsModelOriginTimes(itsTimes.Size(), NFmiMetTime(1900, 1, 1, 0, 0)),
       itsDefaultProducerId(-1)
 {
 }
 
-NFmiProducerIdLister::NFmiProducerIdLister(const NFmiTimeDescriptor &theTimes,
+NFmiProducerIdLister::NFmiProducerIdLister(const NFmiTimeDescriptor& theTimes,
                                            int theDefaultProducerId)
     : itsTimes(theTimes),
-      itsProducerString(),
       itsProducerIds(theTimes.Size(), theDefaultProducerId),
       itsModelOriginTimes(itsTimes.Size(), NFmiMetTime(1900, 1, 1, 0, 0)),
       itsDefaultProducerId(theDefaultProducerId)
 {
 }
 
-NFmiProducerIdLister::NFmiProducerIdLister(const std::string &theProducersString)
-    : itsTimes(),
-      itsProducerString(),
-      itsProducerIds(),
-      itsModelOriginTimes(),
-      itsDefaultProducerId(-1)
+NFmiProducerIdLister::NFmiProducerIdLister(const std::string& theProducersString)
+    : itsDefaultProducerId(-1)
 {
   try
   {
@@ -73,12 +66,7 @@ NFmiProducerIdLister::NFmiProducerIdLister(const NFmiProducerIdLister &theOther)
     = default;
 
 // Huom! pitäisi olla const info, mutta pari metodia pitää muuttaa ensin
-NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo &theInfo)
-    : itsTimes(),
-      itsProducerString(),
-      itsProducerIds(),
-      itsModelOriginTimes(),
-      itsDefaultProducerId(-1)
+NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo& theInfo) : itsDefaultProducerId(-1)
 {
   try
   {

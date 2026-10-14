@@ -35,19 +35,7 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataPool::NFmiDataPool()
-    : itsSize(0),
-      itsIndex(-1),
-      itsData(nullptr),
-      fFirst(false),
-      fLast(false),
-      itsMinValue(kFloatMissing),
-      itsMaxValue(kFloatMissing),
-      itsMissingValueIndex(),
-      itsCurrentMissingValueIndex(),
-      itsMissingValue(),
-      fUseBinaryStorage(false),
-      fDoEndianByteSwap()
+NFmiDataPool::NFmiDataPool() : itsMinValue(kFloatMissing), itsMaxValue(kFloatMissing)
 {
   ResetMissingValues();
   AddMissingValue(kFloatMissing);
@@ -249,10 +237,7 @@ bool NFmiDataPool::Next(unsigned long numberOfSteps)
 {
   try
   {
-    if (numberOfSteps && IsInside(itsIndex += numberOfSteps))
-      return true;
-
-    return false;
+    return numberOfSteps && IsInside(itsIndex += numberOfSteps);
   }
   catch (...)
   {
@@ -271,10 +256,7 @@ bool NFmiDataPool::Previous(unsigned long numberOfSteps)
 {
   try
   {
-    if (numberOfSteps && IsInside(itsIndex -= numberOfSteps))
-      return true;
-
-    return false;
+    return numberOfSteps && IsInside(itsIndex -= numberOfSteps);
   }
   catch (...)
   {
@@ -319,7 +301,7 @@ bool NFmiDataPool::MemCopy(unsigned long theNumber, float *theData)
 {
   try
   {
-    if (!(theNumber && itsData && (itsIndex != -1)))
+    if (!theNumber || !itsData || (itsIndex == -1))
       return false;
 
     if ((itsSize - itsIndex) >= theNumber)
@@ -496,7 +478,7 @@ bool NFmiDataPool::CalcMinMaxValues()
   try
   {
     unsigned long saveIndex = itsIndex;
-    double value;
+    double value = NAN;
 
     itsMaxValue = kMinDouble;
     itsMinValue = kMaxDouble;
@@ -508,11 +490,9 @@ bool NFmiDataPool::CalcMinMaxValues()
 
       if (!IsMissingValue(value))
       {
-        if (value > itsMaxValue)
-          itsMaxValue = value;
+        itsMaxValue = std::max(value, itsMaxValue);
 
-        if (value < itsMinValue)
-          itsMinValue = value;
+        itsMinValue = std::min(value, itsMinValue);
       }
     }
 
@@ -558,8 +538,8 @@ void NFmiDataPool::Normalize(double theInputMinValue,
     if (!clamped && inputRangeEqualsOutputRange)
       return;  // Unclamped input range equals output range - nothing to do !
 
-    float currentValue;
-    double transformedValue;
+    float currentValue = NAN;
+    double transformedValue = NAN;
     double outputRange = theOutputMaxValue - theOutputMinValue;
     double inputRange = theInputMaxValue - theInputMinValue;
     double inputOutputRatio = 0.0;
@@ -619,8 +599,8 @@ void NFmiDataPool::Transform(NFmiTransformList &theList)
     // in the data pool gets transformed as specified in the input transformation list.
     // Min and max values get changed accordingly.
 
-    double currentValue;
-    float newValue;
+    double currentValue = NAN;
+    float newValue = NAN;
 
     itsMaxValue = kMinDouble;
     itsMinValue = kMaxDouble;
@@ -759,7 +739,7 @@ bool NFmiDataPool::ReadTextData(unsigned long theNumber, const char *theFileName
       return false;
 
     itsSize = theNumber;
-    unsigned long i;
+    unsigned long i = 0;
 
     auto *floatdata = new float[theNumber];
 
@@ -998,7 +978,7 @@ std::istream &NFmiDataPool::Read(std::istream &file)
     Destroy();
 
     // Backward compatibility only
-    unsigned long theType;
+    unsigned long theType = 0;
     file >> theType;
 
     // We trust everything to be at least version 6 by now
@@ -1007,7 +987,7 @@ std::istream &NFmiDataPool::Read(std::istream &file)
     else
       fUseBinaryStorage = false;
 
-    int poolsize;
+    int poolsize = 0;
     file >> poolsize;
     if (poolsize % sizeof(float) != 0)
       throw Fmi::Exception(BCP, "Datapool size must be multiple of sizeof(float)");
@@ -1018,7 +998,7 @@ std::istream &NFmiDataPool::Read(std::istream &file)
 
     if (fUseBinaryStorage)
     {
-      char ch;
+      char ch = 0;
       file.get(ch);
       file.read(reinterpret_cast<char *>(itsData), itsSize * sizeof(float));
       DoEndianByteSwap();  // tarkistaa ensin, pitääkö swapata ensinkään!!
@@ -1061,8 +1041,8 @@ void NFmiDataPool::DoEndianByteSwap()
       // Mika: Lisätty swab operaatio
       if (itsSize > 1)
       {
-        char tmp1, tmp2, tmp3, tmp4;
-        char *ptr;
+        char tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
+        char* ptr = nullptr;
         ptr = reinterpret_cast<char *>(itsData);
         for (unsigned long i = 3; i < itsSize * sizeof(float); i += 4)
         {

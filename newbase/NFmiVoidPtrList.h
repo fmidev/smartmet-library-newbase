@@ -28,16 +28,16 @@ class NFmiVoidPtrData
   friend class NFmiVoidPtrIterator;
 
  public:
-  NFmiVoidPtrData(void* value) : itsDataValue(value), itsReferenceCount(0) {}
+  NFmiVoidPtrData(void* value) : itsDataValue(value) {}
   void* GetVoidPtr() { return itsDataValue; }
-  bool Remove() { return --itsReferenceCount ? false : true; }
+  bool Remove() { return --itsReferenceCount == 0; }
 
  private:
   NFmiVoidPtrData(const NFmiVoidPtrData& theData);
   NFmiVoidPtrData& operator=(const NFmiVoidPtrData& theData);
 
   void* itsDataValue;
-  int itsReferenceCount;
+  int itsReferenceCount = 0;
 };
 
 // ----------------------------------------------------------------------
@@ -61,8 +61,7 @@ class NFmiVoidPtrItem
       delete itsValue;
   }
 
-  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr)
-      : itsNextItem(item), itsValue()
+  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr) : itsNextItem(item)
   {
     itsValue = value;
     itsValue->itsReferenceCount++;
@@ -73,7 +72,7 @@ class NFmiVoidPtrItem
   NFmiVoidPtrItem& operator=(const NFmiVoidPtrItem& theItem);
 
   NFmiVoidPtrItem* itsNextItem;
-  NFmiVoidPtrData* itsValue;
+  NFmiVoidPtrData* itsValue = nullptr;
 };
 
 // ----------------------------------------------------------------------
@@ -114,10 +113,10 @@ class NFmiVoidPtrList
   virtual void DeleteItem();
 
  protected:
-  NFmiVoidPtrItem* itsFirstItem;
-  NFmiVoidPtrItem* itsCurrentItem;
-  NFmiVoidPtrItem* itsPreviousItem;
-  int itsNumberOffItems;
+  NFmiVoidPtrItem* itsFirstItem = nullptr;
+  NFmiVoidPtrItem* itsCurrentItem = nullptr;
+  NFmiVoidPtrItem* itsPreviousItem = nullptr;
+  int itsNumberOffItems = 0;
 
  private:
   NFmiVoidPtrList& operator=(const NFmiVoidPtrList& theList);

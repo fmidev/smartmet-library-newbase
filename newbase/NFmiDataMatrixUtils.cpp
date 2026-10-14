@@ -104,7 +104,7 @@ void PrettyPrint(std::ostream& s,
 
     s << static_cast<unsigned int>(columns) << " " << static_cast<unsigned int>(rows) << '\n';
 
-    if (printYInverted == false)
+    if (!printYInverted)
     {
       for (sz_type j = 0; j < rows; j++)
       {

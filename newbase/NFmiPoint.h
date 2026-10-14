@@ -113,7 +113,7 @@ inline bool NFmiPoint::operator==(const NFmiPoint &thePoint) const
 
 inline bool NFmiPoint::operator!=(const NFmiPoint &thePoint) const
 {
-  return !(itsX == thePoint.itsX && itsY == thePoint.itsY);
+  return itsX != thePoint.itsX || itsY != thePoint.itsY;
 }
 
 // ----------------------------------------------------------------------
@@ -193,8 +193,8 @@ inline void NFmiPoint::Y(double newValue)
 inline double NFmiPoint::Distance(const NFmiPoint &thePoint) const
 {
   using namespace std;
-  return double(sqrt((itsX - thePoint.X()) * (itsX - thePoint.X()) +
-                     (itsY - thePoint.Y()) * (itsY - thePoint.Y())));
+  return sqrt((itsX - thePoint.X()) * (itsX - thePoint.X()) +
+              (itsY - thePoint.Y()) * (itsY - thePoint.Y()));
 }
 
 // ----------------------------------------------------------------------

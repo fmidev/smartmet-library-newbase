@@ -29,7 +29,7 @@ NFmiDataModifierSingleExtremeValuesFilter::~NFmiDataModifierSingleExtremeValuesF
 // ----------------------------------------------------------------------
 
 NFmiDataModifierSingleExtremeValuesFilter::NFmiDataModifierSingleExtremeValuesFilter()
-    : NFmiDataModifier(), itsAvgModifier(), itsValue(), itsLimit()
+    : itsValue(), itsLimit()
 {
 }
 
@@ -45,7 +45,7 @@ NFmiDataModifierSingleExtremeValuesFilter::NFmiDataModifierSingleExtremeValuesFi
 
 NFmiDataModifierSingleExtremeValuesFilter::NFmiDataModifierSingleExtremeValuesFilter(
     float thePointValue, float theLimit)
-    : itsAvgModifier(), itsValue(thePointValue), itsLimit(theLimit)
+    : itsValue(thePointValue), itsLimit(theLimit)
 {
 }
 

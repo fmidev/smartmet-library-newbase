@@ -35,7 +35,6 @@ class NFmiDataModifierProb : public NFmiDataModifier
  protected:
   virtual bool CheckParams(double theValue);
 
- protected:
   void AddCounter(bool theCondition);
   unsigned long itsTotalCounter;
   unsigned long itsCounter;

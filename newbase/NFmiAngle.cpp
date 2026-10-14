@@ -33,7 +33,7 @@ using namespace std;
 // ======================================================================
 
 NFmiAngle::NFmiAngle(double theValue, FmiAngleUnit theUnit)
-    : itsValue(0)  // dummy to prevent advanced warnings
+
 {
   try
   {
@@ -184,7 +184,7 @@ NFmiWindDirection::NFmiWindDirection(double theValue, FmiAngleUnit theUnit)
  */
 // ======================================================================
 
-NFmiWindDirection::NFmiWindDirection(double theU, double theV) : NFmiAngle()
+NFmiWindDirection::NFmiWindDirection(double theU, double theV)
 {
   try
   {

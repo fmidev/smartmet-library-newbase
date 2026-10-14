@@ -40,11 +40,11 @@ class NFmiDataModifierCombi : public NFmiDataModifier
 
   float itsProbabilityScale;
   int itsNumberOfValues;
-  unsigned long itsTotalCounter;
-  float itsMin;
-  float itsMax;
-  float itsSum;
-  int* itsFrequencies;
+  unsigned long itsTotalCounter = 0;
+  float itsMin = 0.0f;
+  float itsMax = 0.0f;
+  float itsSum = 0.0f;
+  int* itsFrequencies = nullptr;
 
 };  // class NFmiDataModifierCombi
 

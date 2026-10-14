@@ -19,11 +19,11 @@ class NFmiModMeanCalculator
 
  private:
   float itsModulo;
-  bool itsValid;
-  int itsCount;
-  float itsLastValue;
-  float itsWeightedSum;
-  float itsWeightSum;
+  bool itsValid = true;
+  int itsCount = 0;
+  float itsLastValue = 0;
+  float itsWeightedSum = 0;
+  float itsWeightSum = 0;
 
 };  // NFmiModMeanCalculator
 

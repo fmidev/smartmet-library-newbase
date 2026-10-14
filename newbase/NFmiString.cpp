@@ -47,8 +47,8 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const unsigned char *aText, unsigned long len)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const unsigned char* aText, unsigned long len)
+    : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -69,8 +69,8 @@ NFmiString::NFmiString(const unsigned char *aText, unsigned long len)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const char *aText, unsigned long len)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const char* aText, unsigned long len)
+    : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -88,7 +88,7 @@ NFmiString::NFmiString(const char *aText, unsigned long len)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString() : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString() : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -110,7 +110,7 @@ NFmiString::NFmiString() : NFmiSortable(), fChar(), fLength(), fReservedLength(-
 // ----------------------------------------------------------------------
 
 NFmiString::NFmiString(unsigned long len, bool fSetLengthToRealStringLength)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+    : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -132,8 +132,7 @@ NFmiString::NFmiString(unsigned long len, bool fSetLengthToRealStringLength)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const unsigned char *aText)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const unsigned char* aText) : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -153,7 +152,7 @@ NFmiString::NFmiString(const unsigned char *aText)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const char *aText) : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const char* aText) : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -173,8 +172,7 @@ NFmiString::NFmiString(const char *aText) : NFmiSortable(), fChar(), fLength(), 
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const NFmiString &aString)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const NFmiString& aString) : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -194,8 +192,7 @@ NFmiString::NFmiString(const NFmiString &aString)
  */
 // ----------------------------------------------------------------------
 
-NFmiString::NFmiString(const std::string &str)
-    : NFmiSortable(), fChar(), fLength(), fReservedLength(-1)
+NFmiString::NFmiString(const std::string& str) : fChar(), fLength(), fReservedLength(-1)
 {
   try
   {
@@ -312,7 +309,7 @@ NFmiString &NFmiString::Add(const unsigned char *aChar)
       fReservedLength = fLength + strlen(reinterpret_cast<const char *>(aChar)) + 1;
       auto *aHelp = new unsigned char[fReservedLength];
       strcpy(reinterpret_cast<char *>(aHelp), reinterpret_cast<char *>(fChar));
-      delete[] static_cast<unsigned char *>(fChar);
+      delete[] fChar;
       fChar = aHelp;
     }
     strcat(reinterpret_cast<char *>(fChar), reinterpret_cast<const char *>(aChar));
@@ -406,7 +403,7 @@ void NFmiString::FillR(long theSize, unsigned char theChar)
     // Mika: Jostain syystä g++ kääntää väärin ilman castia
     if (theSize > static_cast<long>(fLength))
     {
-      unsigned char *theCharBuffer;
+      unsigned char* theCharBuffer = nullptr;
 
       theCharBuffer = new unsigned char[(theSize - fLength) + 1];
 
@@ -653,7 +650,7 @@ unsigned long NFmiString::Search(const unsigned char *searChar, unsigned long fr
     if (fromPos < 1 || fromPos > fLength)
       return 0;
 
-    unsigned char *findChar;
+    unsigned char* findChar = nullptr;
     findChar = reinterpret_cast<unsigned char *>(strstr(
         reinterpret_cast<char *>(fChar + fromPos - 1), reinterpret_cast<const char *>(searChar)));
 
@@ -679,7 +676,7 @@ unsigned long NFmiString::SearchLast(const unsigned char *searChar) const
 {
   try
   {
-    unsigned char *findChar;
+    unsigned char* findChar = nullptr;
     unsigned char *lastChar = nullptr;
 
     findChar = reinterpret_cast<unsigned char *>(
@@ -746,8 +743,8 @@ NFmiString &NFmiString::operator=(const char *FmiChar)
   try
   {
     if (FmiChar)
-      Set(reinterpret_cast<const unsigned char *>(FmiChar),
-          static_cast<unsigned long>(strlen(static_cast<const char *>(FmiChar))));
+      Set(reinterpret_cast<const unsigned char*>(FmiChar),
+          static_cast<unsigned long>(strlen(FmiChar)));
     return *this;
   }
   catch (...)
@@ -770,8 +767,7 @@ NFmiString &NFmiString::operator=(const unsigned char *FmiChar)
   try
   {
     if (FmiChar)
-      Set(static_cast<const unsigned char *>(FmiChar),
-          static_cast<unsigned long>(strlen(reinterpret_cast<const char *>(FmiChar))));
+      Set(FmiChar, static_cast<unsigned long>(strlen(reinterpret_cast<const char*>(FmiChar))));
     return *this;
   }
   catch (...)
@@ -841,8 +837,8 @@ std::istream &NFmiString::Read(std::istream &file)
 {
   try
   {
-    unsigned long theLength;
-    char space;
+    unsigned long theLength = 0;
+    char space = 0;
 
     file >> theLength;
     // Safety against an obsene string size
@@ -888,7 +884,7 @@ void NFmiString::UpperCase()
 {
   try
   {
-    char *p;
+    char* p = nullptr;
     p = reinterpret_cast<char *>(fChar);
     while (*p != '\0')
     {
@@ -927,7 +923,7 @@ void NFmiString::LowerCase()
 {
   try
   {
-    char *p;
+    char* p = nullptr;
     p = reinterpret_cast<char *>(fChar);
     while (*p != '\0')
     {
@@ -984,10 +980,7 @@ bool NFmiString::FirstCharIsUpper() const
   try
   {
     char c = fChar[0];
-    if ((c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305')
-      return true;
-
-    return false;
+    return (c >= 'A' && c <= 'Z') || c == '\304' || c == '\326' || c == '\305';
   }
   catch (...)
   {

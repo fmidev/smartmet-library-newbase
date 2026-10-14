@@ -16,10 +16,11 @@
 // ======================================================================
 
 #include "NFmiWebMercatorArea.h"
-#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <limits>
+#include <cmath>
 
 using namespace std;
 
@@ -31,15 +32,7 @@ const double kSemiAxis = 6378137.0;
  */
 // ----------------------------------------------------------------------
 
-NFmiWebMercatorArea::NFmiWebMercatorArea()
-    : NFmiArea(),
-      itsBottomLeftLatLon(),
-      itsTopRightLatLon(),
-      itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
-{
-}
+NFmiWebMercatorArea::NFmiWebMercatorArea() : itsXScaleFactor(), itsYScaleFactor() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -61,8 +54,7 @@ NFmiWebMercatorArea::NFmiWebMercatorArea(const NFmiPoint& theBottomLeftLatLon,
       itsBottomLeftLatLon(theBottomLeftLatLon),
       itsTopRightLatLon(theTopRightLatLon),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -174,7 +166,7 @@ const NFmiPoint NFmiWebMercatorArea::ToXY(const NFmiPoint& theLatLonPoint) const
   {
     // Transforms input geodetic coordinates (longitude,latitude) into local (relative)
     // coordinates on xy-plane.
-    double xLocal, yLocal;
+    double xLocal = NAN, yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
@@ -395,7 +387,7 @@ std::istream& NFmiWebMercatorArea::Read(std::istream& file)
 {
   try
   {
-    double dummy;
+    double dummy = NAN;
 
     NFmiArea::Read(file);
     file >> itsBottomLeftLatLon;
@@ -509,13 +501,10 @@ bool NFmiWebMercatorArea::operator==(const NFmiWebMercatorArea& theArea) const
 {
   try
   {
-    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-        (itsXScaleFactor == theArea.itsXScaleFactor) &&
-        (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-      return true;
-
-    return false;
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+           (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+           (itsXScaleFactor == theArea.itsXScaleFactor) &&
+           (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect);
   }
   catch (...)
   {

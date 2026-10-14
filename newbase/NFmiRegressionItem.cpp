@@ -35,13 +35,11 @@ NFmiRegressionItem::~NFmiRegressionItem() = default;
 // ----------------------------------------------------------------------
 
 NFmiRegressionItem::NFmiRegressionItem(double theCoefficient,
-                                       NFmiDataIdent *theDataIdent,
-                                       NFmiLevel *theLevel,
-                                       NFmiQueryInfo *theData)
+                                       NFmiDataIdent* theDataIdent,
+                                       NFmiLevel* theLevel,
+                                       NFmiQueryInfo* theData)
     : NFmiInfoModifier(theDataIdent, theLevel, theData),
-      itsReturnValue(),
-      itsCoefficient(theCoefficient),
-      itsConstant()
+      itsCoefficient(theCoefficient)
 {
 }
 

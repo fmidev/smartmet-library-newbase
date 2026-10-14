@@ -8,9 +8,7 @@ using namespace std;
 
 namespace
 {
-bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo,
-                               NFmiFastQueryInfo& destInfo,
-                               const NFmiFastInfoUtils::MetaWindParamUsage& metaWindParamUsage)
+bool RecalculateWindParameters(NFmiFastQueryInfo& sourceInfo, NFmiFastQueryInfo& destInfo)
 {
   try
   {
@@ -85,7 +83,7 @@ bool FixWinds(NFmiFastQueryInfo& sourceInfo)
     if (metaWindParamUsage.HasWindComponents() || metaWindParamUsage.HasWindVectorParam())
     {
       NFmiFastQueryInfo destInfo(sourceInfo);
-      return ::RecalculateWindParameters(sourceInfo, destInfo, metaWindParamUsage);
+      return ::RecalculateWindParameters(sourceInfo, destInfo);
     }
     return false;
   }

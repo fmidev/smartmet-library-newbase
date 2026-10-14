@@ -61,11 +61,7 @@ void TestModMinMax(const std::vector<float>& values, const std::pair<float, floa
 NFmiDataModifierModMinMax::~NFmiDataModifierModMinMax() = default;
 
 NFmiDataModifierModMinMax::NFmiDataModifierModMinMax(bool returnMinValue)
-    : NFmiDataModifier(),
-      itsRawValues(),
-      itsMinValue(kFloatMissing),
-      itsMaxValue(kFloatMissing),
-      fReturnMinValue(returnMinValue)
+    : itsMinValue(kFloatMissing), itsMaxValue(kFloatMissing), fReturnMinValue(returnMinValue)
 {
 }
 

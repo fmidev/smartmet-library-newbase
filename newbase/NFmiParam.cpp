@@ -182,7 +182,7 @@ std::istream &NFmiParam::Read(std::istream &file)
   try
   {
     NFmiIndividual::Read(file);
-    unsigned long theInterpolationMethod;
+    unsigned long theInterpolationMethod = 0;
 
     file >> itsMinValue >> itsMaxValue >> theInterpolationMethod;
     itsInterpolationMethod = FmiInterpolationMethod(theInterpolationMethod);

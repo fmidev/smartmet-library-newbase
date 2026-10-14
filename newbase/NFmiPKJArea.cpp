@@ -107,7 +107,7 @@
  */
 // ----------------------------------------------------------------------
 
-NFmiPKJArea::NFmiPKJArea() : NFmiKKJArea() {}
+NFmiPKJArea::NFmiPKJArea() {}
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor
@@ -444,7 +444,7 @@ bool NFmiPKJArea::operator==(const NFmiArea &theArea) const
 {
   try
   {
-    return NFmiKKJArea::operator==(static_cast<const NFmiArea &>(theArea));
+    return NFmiKKJArea::operator==(theArea);
   }
   catch (...)
   {
@@ -465,7 +465,7 @@ bool NFmiPKJArea::operator!=(const NFmiArea &theArea) const
 {
   try
   {
-    return NFmiKKJArea::operator!=(static_cast<const NFmiArea &>(theArea));
+    return NFmiKKJArea::operator!=(theArea);
   }
   catch (...)
   {

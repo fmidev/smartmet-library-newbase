@@ -29,7 +29,7 @@ class NFmiDataModifierExtreme : public NFmiDataModifier
   virtual bool IsNewExtreme(float) = 0;
 
  public:
-  float itsExtremeValue;
+  float itsExtremeValue = 0.0f;
   NFmiTime itsExtremeTime;
 
 };  // class NFmiDataModifierExtreme

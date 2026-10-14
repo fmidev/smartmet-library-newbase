@@ -138,16 +138,14 @@ class MyGrid
 struct CombinedParamStruct
 {  // tämä structi piti tehdä, että sain vähennettyä boost::in Thread:ille annettujen parametrin
   // määrää (max 9 parametria)
-  CombinedParamStruct() : weather1(false), weather2(false), wind1(false), wind2(false), wind3(false)
-  {
-  }
+  CombinedParamStruct() {}
 
-  bool weather1;  // tehdään weatherandcloudiness seuraavista: kFmiWeatherSymbol1,
-                  // kFmiTotalCloudCover, kFmiCloudSymbol ja kFmiFogSymbol
-  bool weather2;  // tehdään weatherandcloudiness seuraavista: kFmiWeatherSymbol3
-  bool wind1;     // tehdään totalwind seuraavista: kFmiWindVectorMS
-  bool wind2;     // tehdään totalwind seuraavista: kFmiWindDirection ja kFmiWindSpeedMS
-  bool wind3;     // tehdään totalwind seuraavista: kFmiWindUMS ja kFmiWindVMS
+  bool weather1 = false;  // tehdään weatherandcloudiness seuraavista: kFmiWeatherSymbol1,
+                          // kFmiTotalCloudCover, kFmiCloudSymbol ja kFmiFogSymbol
+  bool weather2 = false;  // tehdään weatherandcloudiness seuraavista: kFmiWeatherSymbol3
+  bool wind1 = false;     // tehdään totalwind seuraavista: kFmiWindVectorMS
+  bool wind2 = false;     // tehdään totalwind seuraavista: kFmiWindDirection ja kFmiWindSpeedMS
+  bool wind3 = false;     // tehdään totalwind seuraavista: kFmiWindUMS ja kFmiWindVMS
 };
 
 static const NFmiRect gMissingCropRect(kFloatMissing, kFloatMissing, kFloatMissing, kFloatMissing);
@@ -168,26 +166,26 @@ struct GridRecordData
   MyGrid itsOrigGrid;  // tämä on datan originaali gridi
   MyGrid itsGrid;  // tämä on haluttu datan gridi, joka yleensa sama kuin orig, mutta jos on haluttu
                    // cropata dataa, tässä croppi hila
-  bool fDoProjectionConversion;
+  bool fDoProjectionConversion = false;
   NFmiDataMatrix<float> itsGridData;
   NFmiRect itsLatlonCropRect;        // tähän talletetaan mahdollinen croppi recti
   NFmiPoint itsGridPointCropOffset;  // tähän talletetaan mahdollinen cropin offset originaali
                                      // gridin hila yksikössä
   double itsMissingValue;
-  bool fParamChanged;
+  bool fParamChanged = false;
   NFmiParam itsOrigParam;
 };
 
 class NFmiStopFunctor
 {
  public:
-  NFmiStopFunctor() : fStop(false) {}
+  NFmiStopFunctor() {}
   ~NFmiStopFunctor() {}
   bool Stop() const { return fStop; }
   void Stop(bool newValue) { fStop = newValue; }
 
  private:
-  bool fStop;
+  bool fStop = false;
 };
 
 class NFmiOperationProgress
@@ -318,20 +316,20 @@ class NFmiQueryDataUtil
     LimitChecker(float theLowerLimit, float theUpperLimit, bool theCircularValue = false);
     float GetInsideLimitsValue(float theValue) const;
 
-    inline float LowerLimit() const { return itsLowerLimit; }
-    inline void LowerLimit(float newValue)
+    float LowerLimit() const { return itsLowerLimit; }
+    void LowerLimit(float newValue)
     {
       itsLowerLimit = newValue;
       Update();
     }
-    inline float UpperLimit() const { return itsUpperLimit; }
-    inline void UpperLimit(float newValue)
+    float UpperLimit() const { return itsUpperLimit; }
+    void UpperLimit(float newValue)
     {
       itsUpperLimit = newValue;
       Update();
     }
-    inline bool CircularValue() const { return fCircularValue; }
-    inline void CircularValue(bool newValue)
+    bool CircularValue() const { return fCircularValue; }
+    void CircularValue(bool newValue)
     {
       fCircularValue = newValue;
       Update();
@@ -343,10 +341,9 @@ class NFmiQueryDataUtil
     float itsLowerLimit;
     float itsUpperLimit;
     bool fCircularValue;       // esim tuulen suunta menee ympäri rajojen
-    float itsLimitDifference;  // ympyrä laskuja varten
+    float itsLimitDifference = 0.0f;  // ympyrä laskuja varten
   };                           // class LimitChecker
 
- public:
   static void CheckIfStopped(NFmiStopFunctor *theStopFunctor);
   static void CheckIfStopped(NFmiThreadCallBacks *theThreadCallBacks);
   static void DoStepIt(NFmiThreadCallBacks *theThreadCallBacks);
@@ -356,9 +353,7 @@ class NFmiQueryDataUtil
   template <typename T>
   static bool IsEqualEnough(T value1, T value2, T usedEpsilon)
   {
-    if (::fabs(static_cast<double>(value1 - value2)) < usedEpsilon)
-      return true;
-    return false;
+    return static_cast<bool>(::fabs(static_cast<double>(value1 - value2)) < usedEpsilon);
   }
 
   static NFmiQueryData *ReadNewestData(const std::string &theFileFilter);

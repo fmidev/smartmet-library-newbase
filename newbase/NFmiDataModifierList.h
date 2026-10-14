@@ -33,7 +33,6 @@ class NFmiDataModifierList : public NFmiDataModifier
   void Calculate(float NotInUse) override;
   std::ostream& WriteExpressionBody(std::ostream& file) override;
 
- public:
   double FloatValue() override;
   bool Reset();
   bool Next();
@@ -43,7 +42,7 @@ class NFmiDataModifierList : public NFmiDataModifier
   unsigned long NumberOfItems();
 
  protected:
-  double itsReturnValue;
+  double itsReturnValue = 0.0;
   NFmiPtrList<NFmiDataModifier> itsList;
   NFmiPtrList<NFmiDataModifier>::Iterator itsIter;
 

@@ -24,7 +24,6 @@ class NFmiQueryInfo;
 class NFmiQueryData
 {
  public:
- public:
   void Read();                                      // reads from std::cin (standard input)
   void Write(bool forceBinaryFormat = true) const;  // writes to std::cout (standard output)
   void Write(const std::string &filename, bool forceBinaryFormat = true) const;

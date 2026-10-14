@@ -37,7 +37,7 @@ class NFmiLocationFinder
   LocationFinderMap itsPrimaryPoints;
   LocationFinderMap itsSecondaryPoints;
 
-  bool itsLastSearchFailed;  //!< Success indicator for the latest search
+  bool itsLastSearchFailed = false;  //!< Success indicator for the latest search
 
 };  // class NFmiLocationFinder
 

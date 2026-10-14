@@ -35,8 +35,8 @@ class NFmiDataModifierDescriptor : public NFmiDataDescriptor
   std::istream& Read(std::istream& file) override;
 
  protected:
-  NFmiParamDataModifierList* itsSystematicModifiers;  // Omistaa listan
-  NFmiParamDataModifierList* itsVarianceModifiers;    // Omistaa listan
+  NFmiParamDataModifierList* itsSystematicModifiers = nullptr;  // Omistaa listan
+  NFmiParamDataModifierList* itsVarianceModifiers = nullptr;    // Omistaa listan
 
  private:
   NFmiDataModifierDescriptor(const NFmiDataModifierDescriptor& theDesc);

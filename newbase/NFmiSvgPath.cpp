@@ -336,10 +336,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
  */
 // ----------------------------------------------------------------------
 
-NFmiSvgPath::NFmiSvgPath()
-    : itsData(), itsBBoxValid(false), itsMinX(0), itsMinY(0), itsMaxX(0), itsMaxY(0)
-{
-}
+NFmiSvgPath::NFmiSvgPath() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -437,7 +434,7 @@ std::ostream& NFmiSvgPath::Write(std::ostream& file) const
 {
   try
   {
-    if (itsData.size() > 0)
+    if (!itsData.empty())
     {
       file << '"';
       for (auto it = begin(); it != end(); ++it)

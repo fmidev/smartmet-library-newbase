@@ -30,7 +30,7 @@ class NFmiDataModifierExtremePlace : public NFmiDataModifier
   virtual bool IsNewExtreme(float) = 0;
 
  public:
-  float itsExtremeValue;
+  float itsExtremeValue = 0.0f;
   NFmiLocation itsExtremeLocation;
 
 };  // class NFmiDataModifierExtremePlace

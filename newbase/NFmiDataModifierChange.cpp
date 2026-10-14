@@ -22,7 +22,7 @@ NFmiDataModifierChange::~NFmiDataModifierChange() = default;
 // ----------------------------------------------------------------------
 
 NFmiDataModifierChange::NFmiDataModifierChange()
-    : itsFirstValueOK(false), itsFirstValue(kFloatMissing), itsLastValue(kFloatMissing)
+    : itsFirstValue(kFloatMissing), itsLastValue(kFloatMissing)
 {
 }
 

@@ -41,10 +41,7 @@ NFmiCommentStripper::NFmiCommentStripper(const std::string& theFileName,
                                          bool stripSlashAst,
                                          bool stripSlashAstNested,
                                          bool stripEndOfLineSpaces)
-    : itsMessage(),
-      itsString(),
-      itsFileName(""),
-      fStripPound(stripPound),
+    : fStripPound(stripPound),
       fStripNested(stripSlashAstNested),
       fStripDoubleSlash(stripDoubleSlash),
       fStripSlashAst(stripSlashAst),
@@ -69,10 +66,7 @@ NFmiCommentStripper::NFmiCommentStripper(bool stripPound,
                                          bool stripSlashAst,
                                          bool stripSlashAstNested,
                                          bool stripEndOfLineSpaces)
-    : itsMessage(),
-      itsString(),
-      itsFileName(""),
-      fStripPound(stripPound),
+    : fStripPound(stripPound),
       fStripNested(stripSlashAstNested),
       fStripDoubleSlash(stripDoubleSlash)  // oli aiemmin asetettu arvo stripSlashAst
       ,
@@ -400,10 +394,10 @@ bool NFmiCommentStripper::StripDoubleSlashes()  // from to endline
   try
   {
     string oldString(itsString);
-    string newString = "";
+    string newString;
     string doubleSlash = "//";
     string::size_type posbigalku = oldString.find(doubleSlash);
-    string::size_type posbigloppu;
+    string::size_type posbigloppu = 0;
     //	unsigned int len = theEndFilt.length();
 
     if (posbigalku == string::npos)
@@ -444,10 +438,10 @@ bool NFmiCommentStripper::StripPounds()  // from pound to end of line
   try
   {
     string oldString(itsString);
-    string newString = "";
+    string newString;
     string pound = "#";
     string::size_type posbigalku = oldString.find(pound);
-    string::size_type posbigloppu;
+    string::size_type posbigloppu = 0;
     //	unsigned int len = theEndFilt.length();
 
     if (posbigalku == string::npos)
@@ -488,9 +482,9 @@ bool NFmiCommentStripper::StripBlocks(const string& theBeginDirective,
   try
   {
     string oldString(itsString);
-    string newString = "";
+    string newString;
     string::size_type posbigalku = oldString.find(theBeginDirective);
-    string::size_type posbigloppu;
+    string::size_type posbigloppu = 0;
     string::size_type len = theEndDirective.length();
 
     if (posbigalku == string::npos)
@@ -537,9 +531,9 @@ bool NFmiCommentStripper::StripSubStrings(const string& theString)
   try
   {
     string oldString(itsString);
-    string newString = "";
+    string newString;
     string::size_type posbigalku = oldString.find(theString);
-    string::size_type posbigloppu;
+    string::size_type posbigloppu = 0;
     string::size_type len = theString.length();
 
     if (posbigalku == string::npos)
@@ -580,7 +574,7 @@ bool NFmiCommentStripper::StripNested(std::vector<unsigned long> theBeginPositio
   {
     auto startFiltsInd = theBeginPositions.begin();
     auto endFiltsInd = theEndPositions.begin();
-    int posStart, posEnd, startOfErase = 0;
+    int posStart = 0, posEnd = 0, startOfErase = 0;
     int eraseSum = 0;
     int level = 0;
     while (startFiltsInd != theBeginPositions.end() || endFiltsInd != theEndPositions.end())

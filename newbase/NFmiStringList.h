@@ -47,7 +47,7 @@ class NFmiStringList
   StorageType itsList;
 
   //! Note: For backward compatibility this index runs from 0 to N-1
-  unsigned int itsIndex;
+  unsigned int itsIndex = 0;
 
   void Destroy();
 
@@ -62,7 +62,7 @@ using PNFmiStringList = NFmiStringList*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStringList::NFmiStringList() : itsList(), itsIndex(0) {}
+inline NFmiStringList::NFmiStringList() {}
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented

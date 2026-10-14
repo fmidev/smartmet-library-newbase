@@ -31,7 +31,7 @@ NFmiDataModifierAllValidSum::~NFmiDataModifierAllValidSum() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierAllValidSum::NFmiDataModifierAllValidSum() : NFmiDataModifierSum(), itsCounter(0)
+NFmiDataModifierAllValidSum::NFmiDataModifierAllValidSum()
 {
   fMissingValuesAllowed = false;
 }

@@ -35,10 +35,7 @@ NFmiDataModifierBoolean::~NFmiDataModifierBoolean() = default;
 NFmiDataModifierBoolean::NFmiDataModifierBoolean(FmiModifierBoolOperations theCondition,
                                                  NFmiDataModifier* theFirstValue,
                                                  NFmiDataModifier* theSecondValue)
-    : itsSecondValue(theSecondValue),
-      itsFirstValue(theFirstValue),
-      itsCondition(theCondition),
-      itsBooleanValue()
+    : itsSecondValue(theSecondValue), itsFirstValue(theFirstValue), itsCondition(theCondition)
 {
   itsExpressionType = "boolean";
 }

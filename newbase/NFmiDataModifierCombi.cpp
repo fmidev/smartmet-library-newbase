@@ -13,7 +13,9 @@
 // ======================================================================
 
 #include "NFmiDataModifierCombi.h"
+
 #include "NFmiIntegrationSelector.h"
+#include <algorithm>
 
 // ----------------------------------------------------------------------
 /*!
@@ -23,7 +25,6 @@
 
 NFmiDataModifierCombi::~NFmiDataModifierCombi()
 {
-  if (itsFrequencies)
     delete[] itsFrequencies;
 }
 
@@ -46,12 +47,7 @@ NFmiDataModifierCombi::NFmiDataModifierCombi(unsigned int theNumberOfValues,
                                              NFmiCombinedParam* theCombinedParam)
     : NFmiDataModifier(theJoinOperator, missingValuesAllowed, theCombinedParam),
       itsProbabilityScale(theProbabilityScale),
-      itsNumberOfValues(theNumberOfValues),
-      itsTotalCounter(),
-      itsMin(),
-      itsMax(),
-      itsSum(),
-      itsFrequencies(nullptr)
+      itsNumberOfValues(theNumberOfValues)
 {
   if (itsNumberOfValues > 0)
     itsFrequencies = new int[itsNumberOfValues];
@@ -111,9 +107,7 @@ void NFmiDataModifierCombi::Clear()
 
 bool NFmiDataModifierCombi::CheckParams(double theValue) const
 {
-  if (theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0)
-    return false;
-  return true;
+  return !(theValue == kFloatMissing || theValue >= itsNumberOfValues || theValue < 0);
 }
 
 // ----------------------------------------------------------------------
@@ -131,11 +125,9 @@ void NFmiDataModifierCombi::Calculate(float theValue)
 
   itsSum += theValue;
 
-  if (theValue > itsMax)
-    itsMax = theValue;
+  itsMax = std::max(theValue, itsMax);
 
-  if (theValue < itsMin)
-    itsMin = theValue;
+  itsMin = std::min(theValue, itsMin);
 
   if (itsNumberOfValues)
   {

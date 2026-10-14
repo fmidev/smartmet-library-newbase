@@ -149,7 +149,6 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
                                       const NFmiMetTime &theInterpolationTime,
                                       bool useInterpolatedTime);
 
- protected:
   NFmiCalculationCondition itsMaskCondition;
   Type itsMaskType;
   NFmiInfoData::Type itsDataType;

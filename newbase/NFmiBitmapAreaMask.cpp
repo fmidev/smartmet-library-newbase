@@ -37,13 +37,7 @@ NFmiBitmapAreaMask::~NFmiBitmapAreaMask()
 // ----------------------------------------------------------------------
 
 NFmiBitmapAreaMask::NFmiBitmapAreaMask()
-    : NFmiAreaMaskImpl(),
-      itsBitmask(),
-      itsArea(nullptr),
-      itsGridXSize(0),
-      itsGridYSize(0),
-      itsDataIdent(nullptr),
-      itsLevel(nullptr)
+    : itsArea(nullptr), itsGridXSize(0), itsGridYSize(0), itsDataIdent(nullptr), itsLevel(nullptr)
 {
 }
 

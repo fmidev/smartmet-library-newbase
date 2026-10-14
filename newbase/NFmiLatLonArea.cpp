@@ -14,9 +14,10 @@
 
 #include "NFmiLatLonArea.h"
 #include "NFmiAreaFactory.h"
-#include <macgyver/Hash.h>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <cmath>
 
 #include <iostream>
 
@@ -33,15 +34,7 @@ NFmiLatLonArea::~NFmiLatLonArea() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiLatLonArea::NFmiLatLonArea()
-    : NFmiArea(),
-      itsBottomLeftLatLon(),
-      itsTopRightLatLon(),
-      itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
-{
-}
+NFmiLatLonArea::NFmiLatLonArea() : itsXScaleFactor(), itsYScaleFactor() {}
 
 // ----------------------------------------------------------------------
 /*!
@@ -54,17 +47,16 @@ NFmiLatLonArea::NFmiLatLonArea()
  */
 // ----------------------------------------------------------------------
 
-NFmiLatLonArea::NFmiLatLonArea(const NFmiPoint &theBottomLeftLatLon,
-                               const NFmiPoint &theTopRightLatLon,
-                               const NFmiPoint &theTopLeftXY,
-                               const NFmiPoint &theBottomRightXY,
+NFmiLatLonArea::NFmiLatLonArea(const NFmiPoint& theBottomLeftLatLon,
+                               const NFmiPoint& theTopRightLatLon,
+                               const NFmiPoint& theTopLeftXY,
+                               const NFmiPoint& theBottomRightXY,
                                bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsBottomLeftLatLon(theBottomLeftLatLon),
       itsTopRightLatLon(theTopRightLatLon),
       itsXScaleFactor(),
-      itsYScaleFactor(),
-      itsWorldRect()
+      itsYScaleFactor()
 {
   try
   {
@@ -329,7 +321,7 @@ std::istream &NFmiLatLonArea::Read(std::istream &file)
 {
   try
   {
-    double dummy;
+    double dummy = NAN;
 
     NFmiArea::Read(file);
     file >> itsBottomLeftLatLon;
@@ -434,13 +426,10 @@ bool NFmiLatLonArea::operator==(const NFmiLatLonArea &theArea) const
 {
   try
   {
-    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-        (itsXScaleFactor == theArea.itsXScaleFactor) &&
-        (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect))
-      return true;
-
-    return false;
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+           (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+           (itsXScaleFactor == theArea.itsXScaleFactor) &&
+           (itsYScaleFactor == theArea.itsYScaleFactor) && (itsWorldRect == theArea.itsWorldRect);
   }
   catch (...)
   {

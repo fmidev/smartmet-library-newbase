@@ -181,9 +181,8 @@ NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiArea &theArea,
  */
 // ----------------------------------------------------------------------
 
-NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor &theHPlaceDescriptor)
-    : NFmiDataDescriptor(),
-      itsLocationBag(theHPlaceDescriptor.itsLocationBag
+NFmiHPlaceDescriptor::NFmiHPlaceDescriptor(const NFmiHPlaceDescriptor& theHPlaceDescriptor)
+    : itsLocationBag(theHPlaceDescriptor.itsLocationBag
                          ? theHPlaceDescriptor.itsLocationBag->Clone()
                          : nullptr),
       itsArea(theHPlaceDescriptor.itsArea ? theHPlaceDescriptor.itsArea->Clone() : nullptr),
@@ -626,7 +625,7 @@ unsigned long NFmiHPlaceDescriptor::Index() const
       return static_cast<unsigned long>(0);
     if (IsGrid())
       //	return static_cast<unsigned long>(itsGrid->DataIndex()) - itsGrid->Base();
-      return static_cast<unsigned long>(itsGrid->DataIndex());
+      return itsGrid->DataIndex();
     return static_cast<unsigned long>(-1);
   }
   catch (...)
@@ -675,7 +674,7 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
   {
     if (IsLocation())
     {
-      bool tempBoolean;
+      bool tempBoolean = false;
       itsLocationBag->Reset();
 
       do
@@ -684,10 +683,7 @@ bool NFmiHPlaceDescriptor::Location(long theIdent)
         if (!tempBoolean)
           break;
       } while (!(itsLocationBag->Location()->GetIdent() == theIdent));
-      if (tempBoolean)
-        return true;
-      else
-        return false;
+      return tempBoolean;
     }
     else
       return false;
@@ -716,7 +712,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
 
     if (IsLocation())
     {
-      bool tempBoolean;
+      bool tempBoolean = false;
       itsLocationBag->Reset();
 
       do
@@ -732,10 +728,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiString &theName)
         theLocationUpperCase.UpperCase();
       } while (!(theLocationUpperCase == theUpperName));
 
-      if (tempBoolean)
-        return true;
-      else
-        return false;
+      return tempBoolean;
     }
     else
       return false;
@@ -789,7 +782,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
   {
     if (IsLocation())
     {
-      bool tempBoolean;
+      bool tempBoolean = false;
       itsLocationBag->Reset();
 
       do
@@ -801,10 +794,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
                                                                 // voidaan etsiä myös locationilla
                                                                 // stationeita
 
-      if (tempBoolean)
-        return true;
-      else
-        return false;
+      return tempBoolean;
     }
     else if (IsGrid())
       return itsGrid->NearestLatLon(theLocation.GetLongitude(), theLocation.GetLatitude());
@@ -1205,10 +1195,10 @@ std::istream &NFmiHPlaceDescriptor::Read(std::istream &file)
 {
   try
   {
-    unsigned long classId;
+    unsigned long classId = 0;
     unsigned char className[30];
-    long theDummy2, theDummy3;
-    long theSelectedTypeValue;
+    long theDummy2 = 0, theDummy3 = 0;
+    long theSelectedTypeValue = 0;
 
     Destroy();
 

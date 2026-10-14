@@ -64,8 +64,8 @@ NFmiMetTime::NFmiMetTime(const long timeStepInMinutes)
  */
 // ----------------------------------------------------------------------
 
-NFmiMetTime::NFmiMetTime(const Fmi::DateTime &theTime)
-    : NFmiTime(theTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
+NFmiMetTime::NFmiMetTime(const Fmi::DateTime& theTime)
+    : NFmiTime(theTime), itsNegativeRange(0), itsPositiveRange(0)
 {
   try
   {
@@ -105,8 +105,8 @@ Fmi::DateTime NFmiMetTime::PosixTime() const
  */
 // ----------------------------------------------------------------------
 
-NFmiMetTime::NFmiMetTime(const Fmi::LocalDateTime &theLocalTime)
-    : NFmiTime(theLocalTime), fTimeStepInMinutes(), itsNegativeRange(0), itsPositiveRange(0)
+NFmiMetTime::NFmiMetTime(const Fmi::LocalDateTime& theLocalTime)
+    : NFmiTime(theLocalTime), itsNegativeRange(0), itsPositiveRange(0)
 {
   try
   {
@@ -245,7 +245,7 @@ std::istream &NFmiMetTime::Read(std::istream &file)
 {
   try
   {
-    short year, month, day, hour, minutes, seconds;
+    short year = 0, month = 0, day = 0, hour = 0, minutes = 0, seconds = 0;
     file >> year >> month >> day >> hour >> minutes >> seconds;
     SetDate(year, month, day);
     SetTime(hour, minutes, seconds);
@@ -556,7 +556,7 @@ struct tm NFmiMetTime::GetSystemTime()
 {
   try
   {
-    time_t t;
+    time_t t = 0;
     static_cast<void>(time(&t));
     tm ret;
 
@@ -592,7 +592,7 @@ const NFmiTime NFmiMetTime::UTCTime(float theLongitude) const
   try
   {
     NFmiTime theTime(*this);
-    theTime.ChangeByHours(static_cast<short>(CalcZoneDifferenceHour(theLongitude)));
+    theTime.ChangeByHours(CalcZoneDifferenceHour(theLongitude));
 
     return theTime;
   }

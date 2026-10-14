@@ -27,10 +27,10 @@ class NFmiDataModifierPrecFormUnion : public NFmiDataModifier
   float Result() const;
 
  private:
-  bool fIsRain;
-  bool fIsSleet;
-  bool fIsSnow;
-  bool fIsFreezing;
+  bool fIsRain = false;
+  bool fIsSleet = false;
+  bool fIsSnow = false;
+  bool fIsFreezing = false;
 
 };  // class NFmiDataModifierPrecFormUnion
 

@@ -326,7 +326,7 @@ double NFmiStereographicArea::K(const double delta) const
 {
   try
   {
-    double D;
+    double D = NAN;
 
     D = DistanceFromPerspectivePointToCenterOfEarth();
     if ((D + (kRearth * delta)) != 0)

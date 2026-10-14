@@ -63,10 +63,10 @@ class NFmiGaussKruger
   double itsFalseNorthing;
 
   // Derived ellipsoid/series coefficients (computed in the constructor)
-  double itsE;      // first eccentricity
-  double itsA1;     // rectifying radius
-  double itsH1[4];  // forward Krueger series
-  double itsH2[4];  // inverse Krueger series
+  double itsE = 0.0;     // first eccentricity
+  double itsA1 = 0.0;    // rectifying radius
+  double itsH1[4] = {};  // forward Krueger series
+  double itsH2[4] = {};  // inverse Krueger series
 };
 
 // ======================================================================

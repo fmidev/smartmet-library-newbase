@@ -87,8 +87,8 @@
 // ======================================================================
 
 #include "NFmiAzimuthalArea.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -104,16 +104,9 @@ using namespace std;
 // ----------------------------------------------------------------------
 
 NFmiAzimuthalArea::NFmiAzimuthalArea()
-    : itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
-      itsBottomLeftWorldXY(),
-      itsXScaleFactor(),
+    : itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsRadialRange(),
-      itsCentralLongitude(),
-      itsCentralLatitude(),
-      itsTrueLatitude(),
       itsTrueLatScaleFactor()
 {
 }
@@ -139,17 +132,13 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiAzimuthalArea &theAzimuthalArea)
  * \param theBottomRightXY Undocumented
  */
 NFmiAzimuthalArea::NFmiAzimuthalArea(double theRadialRangeInMeters,
-                                     const NFmiPoint &theCenterLatLon,
-                                     const NFmiPoint &theTopLeftXY,
-                                     const NFmiPoint &theBottomRightXY,
+                                     const NFmiPoint& theCenterLatLon,
+                                     const NFmiPoint& theTopLeftXY,
+                                     const NFmiPoint& theBottomRightXY,
                                      bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
-      itsBottomLeftWorldXY(),
       itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsRadialRange(theRadialRangeInMeters),
       itsCentralLongitude(theCenterLatLon.X(), usePacificView),
       itsCentralLatitude(theCenterLatLon.Y()),
@@ -173,21 +162,19 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(double theRadialRangeInMeters,
  */
 // ----------------------------------------------------------------------
 
-NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
-                                     const NFmiPoint &theTopRightLatLon,
+NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
+                                     const NFmiPoint& theTopRightLatLon,
                                      const double theCentralLongitude,
-                                     const NFmiPoint &theTopLeftXY,
-                                     const NFmiPoint &theBottomRightXY,
+                                     const NFmiPoint& theTopLeftXY,
+                                     const NFmiPoint& theBottomRightXY,
                                      const double theCentralLatitude,
                                      const double theTrueLatitude,
                                      bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
       itsTopRightLatLon(theTopRightLatLon),
       itsBottomLeftLatLon(theBottomLeftLatLon),
-      itsBottomLeftWorldXY(),
       itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsRadialRange(0.),
       itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
@@ -211,20 +198,17 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
  */
 // ----------------------------------------------------------------------
 
-NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
+NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint& theBottomLeftLatLon,
                                      const double theCentralLongitude,
-                                     const NFmiPoint &theTopLeftXY,
-                                     const NFmiPoint &theBottomRightXY,
+                                     const NFmiPoint& theTopLeftXY,
+                                     const NFmiPoint& theBottomRightXY,
                                      const double theCentralLatitude,
                                      const double theTrueLatitude,
                                      bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsTopRightLatLon(),
       itsBottomLeftLatLon(theBottomLeftLatLon),
-      itsBottomLeftWorldXY(),
       itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsRadialRange(0.),
       itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
@@ -250,18 +234,14 @@ NFmiAzimuthalArea::NFmiAzimuthalArea(const NFmiPoint &theBottomLeftLatLon,
 
 NFmiAzimuthalArea::NFmiAzimuthalArea(const double theRadialRange,
                                      const double theCentralLongitude,
-                                     const NFmiPoint &theTopLeftXY,
-                                     const NFmiPoint &theBottomRightXY,
+                                     const NFmiPoint& theTopLeftXY,
+                                     const NFmiPoint& theBottomRightXY,
                                      const double theCentralLatitude,
                                      const double theTrueLatitude,
                                      bool usePacificView)
     : NFmiArea(theTopLeftXY, theBottomRightXY, usePacificView),
-      itsTopRightLatLon(),
-      itsBottomLeftLatLon(),
-      itsBottomLeftWorldXY(),
       itsXScaleFactor(),
       itsYScaleFactor(),
-      itsWorldRect(),
       itsRadialRange(theRadialRange),
       itsCentralLongitude(theCentralLongitude, usePacificView),
       itsCentralLatitude(theCentralLatitude),
@@ -310,7 +290,7 @@ const NFmiPoint NFmiAzimuthalArea::ToLatLon(const NFmiPoint &theXYPoint) const
 {
   try
   {
-    double xWorld, yWorld;
+    double xWorld = NAN, yWorld = NAN;
 
     // Transform local xy-coordinates into world xy-coordinates (meters).
 
@@ -407,9 +387,12 @@ const NFmiPoint NFmiAzimuthalArea::WorldXYToLatLon(const NFmiPoint &theXYPoint) 
 {
   try
   {
-    double lat0, lat, dlon, sinlat0, coslat0, coslat, delta;
-    double sinDelta, cosDelta, B, cosB, xWorld, yWorld, xWorldTangential, yWorldTangential, xyDist;
-    double dlonDeg, lonDeg, latDeg, trueLat, centralLat, centralLon;
+    double lat0 = NAN, lat = NAN, dlon = NAN, sinlat0 = NAN, coslat0 = NAN, coslat = NAN,
+           delta = NAN;
+    double sinDelta = NAN, cosDelta = NAN, B = NAN, cosB = NAN, xWorld = NAN, yWorld = NAN,
+           xWorldTangential = NAN, yWorldTangential = NAN, xyDist = NAN;
+    double dlonDeg = NAN, lonDeg = NAN, latDeg = NAN, trueLat = NAN, centralLat = NAN,
+           centralLon = NAN;
 
     trueLat = itsTrueLatitude.Value();
     centralLat = itsCentralLatitude.Value();
@@ -567,9 +550,10 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoi
 {
   try
   {
-    double k, lat0, lat, dlon, sinlat0, sinlat, coslat0, coslat, delta;
-    double xWorldTangential, yWorldTangential;
-    double xWorld, yWorld, trueLat, centralLat, centralLon;
+    double k = NAN, lat0 = NAN, lat = NAN, dlon = NAN, sinlat0 = NAN, sinlat = NAN, coslat0 = NAN,
+           coslat = NAN, delta = NAN;
+    double xWorldTangential = NAN, yWorldTangential = NAN;
+    double xWorld = NAN, yWorld = NAN, trueLat = NAN, centralLat = NAN, centralLon = NAN;
 
     trueLat = itsTrueLatitude.Value();
     centralLat = itsCentralLatitude.Value();
@@ -683,7 +667,7 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(const NFmiPoint &theLatLonPoint) const
 {
   try
   {
-    double xLocal, yLocal;
+    double xLocal = NAN, yLocal = NAN;
 
     // Transform input geodetic coordinates into world coordinates (meters) on xy-plane.
     NFmiPoint latlon(FixLongitude(theLatLonPoint.X()), theLatLonPoint.Y());
@@ -719,8 +703,8 @@ const NFmiPoint NFmiAzimuthalArea::RadialXYPoint(double theAzimuth, double theRa
 {
   try
   {
-    double startAngle;
-    double radianAngle;
+    double startAngle = NAN;
+    double radianAngle = NAN;
 
     // Start angle defaults to 0 deg. = North
     startAngle = 0.5 * kPii;
@@ -772,7 +756,7 @@ const NFmiPoint NFmiAzimuthalArea::ToXY(double theAzimuth, double theRadius) con
 {
   try
   {
-    double xLocal, yLocal;
+    double xLocal = NAN, yLocal = NAN;
 
     // First, transform azimuth and radius into world coordinates (meters) on xy-plane.
     NFmiPoint xyWorld(LatLonToWorldXY(theAzimuth, theRadius));
@@ -885,18 +869,15 @@ bool NFmiAzimuthalArea::operator==(const NFmiAzimuthalArea &theArea) const
 {
   try
   {
-    if ((itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
-        (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
-        (itsCentralLongitude.Value() == theArea.itsCentralLongitude.Value()) &&
-        (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
-        (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
-        (itsXScaleFactor == theArea.itsXScaleFactor) &&
-        (itsYScaleFactor == theArea.itsYScaleFactor) &&
-        (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
-        (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange))
-      return true;
-
-    return false;
+    return (itsBottomLeftLatLon == theArea.itsBottomLeftLatLon) &&
+           (itsTopRightLatLon == theArea.itsTopRightLatLon) &&
+           (itsCentralLongitude.Value() == theArea.itsCentralLongitude.Value()) &&
+           (itsCentralLatitude.Value() == theArea.itsCentralLatitude.Value()) &&
+           (itsTrueLatitude.Value() == theArea.itsTrueLatitude.Value()) &&
+           (itsXScaleFactor == theArea.itsXScaleFactor) &&
+           (itsYScaleFactor == theArea.itsYScaleFactor) &&
+           (itsBottomLeftWorldXY == theArea.itsBottomLeftWorldXY) &&
+           (itsWorldRect == theArea.itsWorldRect) && (itsRadialRange == theArea.itsRadialRange);
   }
   catch (...)
   {
@@ -1022,7 +1003,7 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
 {
   try
   {
-    double centralLatitude, trueLatitude, centralLongitude;
+    double centralLatitude = NAN, trueLatitude = NAN, centralLongitude = NAN;
 
     NFmiArea::Read(file);
 
@@ -1035,7 +1016,7 @@ std::istream &NFmiAzimuthalArea::Read(std::istream &file)
     // We trust everything to be at least version 6 by now
     if (DefaultFmiInfoVersion >= 5)
     {
-      unsigned long dummy;
+      unsigned long dummy = 0;
       file >> itsRadialRange >> dummy >> dummy;
     }
 

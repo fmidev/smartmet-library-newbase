@@ -25,7 +25,7 @@ class CoordinateMatrix;
 
 struct PacificPointFixerData
 {
-  PacificPointFixerData() : itsBottomLeftLatlon(), itsTopRightLatlon(), fIsPacific(false) {}
+  PacificPointFixerData() : fIsPacific(false) {}
   PacificPointFixerData(const NFmiPoint &theBottomLeftLatlon,
                         const NFmiPoint &theTopRightLatlon,
                         bool isPacific)
