@@ -17,6 +17,7 @@ class NFmiMap
   NFmiMap();
   NFmiMap(const NFmiMap &theMap);
   NFmiMap(const NFmiPoint &theOffset, const NFmiPoint &theScale);
+  NFmiMap& operator=(const NFmiMap&) = default;
 
   bool operator==(const NFmiMap &theMap) const;
   bool operator!=(const NFmiMap &theMap) const;

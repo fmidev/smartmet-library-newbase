@@ -142,6 +142,7 @@ bool NFmiFindFile::Find(const NFmiString& theFileMask)
     if (itsGlobBuffer)
       globfree(itsGlobBuffer);
     itsGlobBuffer = new glob_t;
+    // NOLINTNEXTLINE(concurrency-mt-unsafe): safe while no thread changes the locale or environment
     glob(theFindFileName, 0, nullptr, itsGlobBuffer);
     if (itsGlobBuffer->gl_pathc == 0)
     {

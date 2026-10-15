@@ -135,10 +135,10 @@ class NFmiTimeZoneRing
   NFmiPoint itsFirstPoint;
   NFmiPoint itsLastPoint;
   bool itsStarted{false};
-  double itsMinX;
-  double itsMinY;
-  double itsMaxX;
-  double itsMaxY;
+  double itsMinX = 0.0;
+  double itsMinY = 0.0;
+  double itsMaxX = 0.0;
+  double itsMaxY = 0.0;
 
 };  // class NFmiTimeZoneRing
 

@@ -340,6 +340,7 @@ NFmiTime NFmiLocation::LocalSolarTime(const NFmiMetTime &theTime)
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime t(static_cast<NFmiTime>(theTime));
     t.ChangeBySeconds(long(240 * itsLatlon.X()));
     return t;

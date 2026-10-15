@@ -10,6 +10,7 @@ class SpatialReference;
 class NFmiWGS84
 {
  public:
+  ~NFmiWGS84() = default;
   static const Fmi::SpatialReference& SpatialReference();
 
  private:

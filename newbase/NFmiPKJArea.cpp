@@ -142,7 +142,7 @@ NFmiPKJArea::NFmiPKJArea(const NFmiPoint &theBottomLeftLatLon,
         NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
                  CornerWorldXY(NFmiPoint(theTopRightLatLon.X(), theTopRightLatLon.Y())));
 
-    Init(true);
+    NFmiPKJArea::Init(true);
   }
   catch (...)
   {
@@ -174,7 +174,7 @@ NFmiPKJArea::NFmiPKJArea(const NFmiPoint &theBottomLeftLatLon,
                  CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())) +
                      NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-    Init(true);
+    NFmiPKJArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä, mitkä eivät
     // ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -206,7 +206,7 @@ NFmiPKJArea::NFmiPKJArea(const NFmiPoint &theBottomLeftWorldXY,
   {
     itsWorldRect = NFmiRect(theBottomLeftWorldXY, theTopRightWorldXY);
 
-    Init(true);
+    NFmiPKJArea::Init(true);
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
     // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä
     // uudestaan // 13.11.98/EL lisäsi

@@ -14,6 +14,7 @@ class NFmiDataModifierAllValidAvg : public NFmiDataModifierAvg
  public:
   ~NFmiDataModifierAllValidAvg() override;
   NFmiDataModifierAllValidAvg();
+  NFmiDataModifierAllValidAvg(const NFmiDataModifierAllValidAvg&) = default;
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;
 

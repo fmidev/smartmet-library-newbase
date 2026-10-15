@@ -60,7 +60,7 @@ NFmiLatLonArea::NFmiLatLonArea(const NFmiPoint& theBottomLeftLatLon,
 {
   try
   {
-    Init();
+    NFmiLatLonArea::Init();
   }
   catch (...)
   {
@@ -109,7 +109,13 @@ void NFmiLatLonArea::Init(bool fKeepWorldRect)
   {
     if (!fKeepWorldRect)
       itsWorldRect =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+          // construction
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
+                   // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+                   // construction
+                   // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
                    LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
 
     itsXScaleFactor = (Right() - Left()) / (itsTopRightLatLon.X() - itsBottomLeftLatLon.X());

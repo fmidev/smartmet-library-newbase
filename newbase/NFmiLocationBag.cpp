@@ -38,6 +38,7 @@ NFmiLocationBag::~NFmiLocationBag()
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     Destroy();
   }
   catch (...)
@@ -70,7 +71,7 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation &theLocation)
 {
   try
   {
-    AddLocation(theLocation);
+    NFmiLocationBag::AddLocation(theLocation);
   }
   catch (...)
   {
@@ -97,7 +98,7 @@ NFmiLocationBag::NFmiLocationBag(const NFmiStation* theLocationArray,
     itsLocations.reserve(numberOfLocations);
     for (unsigned long i = 0; i < numberOfLocations; i++)
     {
-      AddLocation(*theLocationArray);
+      NFmiLocationBag::AddLocation(*theLocationArray);
       // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
       // elements are exactly of the pointed-to type, there are no derived objects in it
       theLocationArray++;
@@ -128,7 +129,7 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocation* theLocationArray,
     itsLocations.reserve(numberOfLocations);
     for (unsigned long i = 0; i < numberOfLocations; i++)
     {
-      AddLocation(*theLocationArray);
+      NFmiLocationBag::AddLocation(*theLocationArray);
       // codechecker_false_positive [bugprone-pointer-arithmetic-on-polymorphic-object] the array
       // elements are exactly of the pointed-to type, there are no derived objects in it
       theLocationArray++;
@@ -159,7 +160,7 @@ NFmiLocationBag::NFmiLocationBag(NFmiLocation** theLocationArray, unsigned long 
   {
     itsLocations.reserve(numberOfLocations);
     for (unsigned long i = 0; i < numberOfLocations; i++)
-      AddLocation(*theLocationArray[i]);
+      NFmiLocationBag::AddLocation(*theLocationArray[i]);
   }
   catch (...)
   {
@@ -179,9 +180,11 @@ NFmiLocationBag::NFmiLocationBag(const NFmiLocationBag& theLocationBag) : NFmiSi
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     itsLocations.reserve(theLocationBag.itsLocations.size());
 
     for (auto* itsLocation : theLocationBag.itsLocations)
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       AddLocation(*itsLocation, false);
   }
   catch (...)

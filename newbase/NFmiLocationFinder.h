@@ -19,6 +19,7 @@ class NFmiLocationFinder
   ~NFmiLocationFinder();
   NFmiLocationFinder();
   NFmiLocationFinder(const NFmiLocationFinder& theLocationFinder);
+  NFmiLocationFinder& operator=(const NFmiLocationFinder&) = default;
 
   bool AddFile(const NFmiString& theFileName, bool lonFirst = true, bool optionalType = false);
   const NFmiPoint Find(const NFmiString& theName);

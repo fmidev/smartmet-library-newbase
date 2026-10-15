@@ -201,7 +201,7 @@ NFmiFastQueryInfo::NFmiFastQueryInfo(NFmiQueryData* data,
     InitFastInfo();
     // tehdään First, niin Info-iteraattori on heti käytettävissä (ja mm. levelit
     // osoittaa 1. leveliin, mikä unohtuu helposti käyttäjiltä)
-    First();
+    NFmiFastQueryInfo::First();
   }
   catch (...)
   {
@@ -359,10 +359,15 @@ bool NFmiFastQueryInfo::First()
   try
   {
     fUseSubParam = false;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     bool firstOK = true;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     firstOK &= FirstParam();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     firstOK &= FirstLocation();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     firstOK &= FirstLevel();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     firstOK &= FirstTime();
 
     return firstOK;
@@ -1338,7 +1343,9 @@ bool GetFirstAndSecondParamValues(NFmiFastQueryInfo *theInfo,
   try
   {
     float value = kFloatMissing;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     int valuesFound = 0;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     for (theInfo->ResetLevel(); theInfo->NextLevel();)
     {
       value = theInfo->FloatValue();
@@ -1370,6 +1377,7 @@ std::vector<unsigned long> FillTimeIndexies(NFmiFastQueryInfo *theInfo)
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     int timeSize = theInfo->SizeTimes();
     std::vector<unsigned long> timeIndexies;
     if (timeSize > 0)
@@ -1435,6 +1443,9 @@ std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
             xSize, xSize / 2, ySize / 2));  // laitetaan ensimmäiseksi hilan puoliväli, koska
                                             // reunoista puuttuu helposti dataa
         locationIndexies.push_back(0);      // laitetaan 1. hilapiste
+        // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+        // construction
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         locationIndexies.push_back(theInfo->SizeLocations() -
                                    1);  // laitetaan mukaan vielä viimeinen hilapiste
         if (xSize > 4 && ySize > 4)
@@ -1460,7 +1471,9 @@ std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
       return locationIndexies;
     }
 
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     // asema datalle palautetaan seuraavat paikka indeksit
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     int ssize = theInfo->SizeLocations();
     std::vector<unsigned long> locationIndexies;
     if (ssize > 0)
@@ -1508,9 +1521,12 @@ bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long theParamIndex
   try
   {
     bool rising = false;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     if (theInfo->RefRawData() && theInfo->ParamIndex(theParamIndex))
     {
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       unsigned long oldTimeIndex = theInfo->TimeIndex();
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       unsigned long oldLocationIndex = theInfo->LocationIndex();
       std::vector<unsigned long> timeIndexies(FillTimeIndexies(theInfo));  // jos ei heti tärppää
                                                                            // (on puuttuvaa dataa
@@ -1522,22 +1538,33 @@ bool IsParamValuesRising(NFmiFastQueryInfo *theInfo, unsigned long theParamIndex
       // pisteissä), pitää käydä ehkä useampia paikkoja läpi
       float firstValue = kFloatMissing;
       float secondValue = kFloatMissing;
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       for (unsigned long timeIndexie : timeIndexies)
       {
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         theInfo->TimeIndex(timeIndexie);
         for (unsigned long locIndexie : locIndexies)
+        // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+        // construction
         {
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           theInfo->LocationIndex(locIndexie);
           if (GetFirstAndSecondParamValues(theInfo, firstValue, secondValue))
           {
+            // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
             rising = secondValue > firstValue;
+            // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
             theInfo->TimeIndex(oldTimeIndex);
+            // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
             theInfo->LocationIndex(oldLocationIndex);
             return rising;
           }
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         }
       }
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       theInfo->TimeIndex(oldTimeIndex);
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       theInfo->LocationIndex(oldLocationIndex);
     }
     return rising;  // palautetaan 'false' arvo, vaikka ei ole tietoa, tämä on sitten oletus arvo
@@ -1557,13 +1584,20 @@ bool IsLevelValuesInRisingOrder(NFmiFastQueryInfo *theInfo)
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     unsigned long oldLevelIndex = theInfo->LevelIndex();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     theInfo->LevelIndex(0);
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     double pressureLevel1 = theInfo->Level()->LevelValue();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     theInfo->LevelIndex(1);
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     double pressureLevel2 = theInfo->Level()->LevelValue();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     bool rising = pressureLevel2 > pressureLevel1;
 
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     theInfo->LevelIndex(oldLevelIndex);
     return rising;
   }
@@ -1612,9 +1646,13 @@ void NFmiFastQueryInfo::InitFastInfo()
       unsigned long oldParamIndex = itsParamIndex;
 
       // tutkitaan onko level dataa ja jos on, löytyykö korkeus parametri
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsHeightParamIndex = static_cast<unsigned long>(-1);
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       if (Param(kFmiGeomHeight))
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         itsHeightParamIndex = itsParamIndex;
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       else if (Param(kFmiGeopHeight))
         itsHeightParamIndex = itsParamIndex;
       fHeightValueAvailable =
@@ -1623,13 +1661,18 @@ void NFmiFastQueryInfo::InitFastInfo()
       fHeightLevelDataAvailable = false;
       if (!fHeightValueAvailable && itsLevelSize > 1)
       {
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         unsigned long oldLevelIndex = itsLevelIndex;
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         if (Level()->LevelType() == kFmiHeight)
         {
           fHeightLevelDataAvailable = true;
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           itsHeightLevelDataHeights = CalcHeightLevelDataHeights();
         }
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         LevelIndex(oldLevelIndex);
       }
 
@@ -1640,7 +1683,9 @@ void NFmiFastQueryInfo::InitFastInfo()
         fHeightParamIsRising = IsLevelValuesInRisingOrder(this);
 
       // tutkitaan onko level dataa ja jos on, löytyykö paine parametri
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsPressureParamIndex = static_cast<unsigned long>(-1);
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       if (Param(kFmiPressure))
         itsPressureParamIndex = itsParamIndex;
       fPressureValueAvailable =
@@ -1648,13 +1693,18 @@ void NFmiFastQueryInfo::InitFastInfo()
       fPressureLevelDataAvailable = false;
       if (!fPressureValueAvailable && itsLevelSize > 1)
       {
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         unsigned long oldLevelIndex = itsLevelIndex;
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         if (Level()->LevelType() == kFmiPressureLevel)
         {
           fPressureLevelDataAvailable = true;
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           itsPressureLevelDataPressures = CalcPressureLevelDataPressures();
         }
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         LevelIndex(oldLevelIndex);
       }
 
@@ -1662,11 +1712,16 @@ void NFmiFastQueryInfo::InitFastInfo()
       if (fPressureValueAvailable)
         fPressureParamIsRising = IsParamValuesRising(this, itsPressureParamIndex);
       else if (fPressureLevelDataAvailable)
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         fPressureParamIsRising = IsLevelValuesInRisingOrder(this);
 
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       Param(kFmiLongitude);
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsLongitudeParamIndex = ParamIndex();
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       Param(kFmiLatitude);
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsLatitudeParamIndex = ParamIndex();
 
       itsParamIndex = oldParamIndex;
@@ -1696,9 +1751,12 @@ std::vector<float> NFmiFastQueryInfo::CalcPressureLevelDataPressures()
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     std::vector<float> pressureLevels;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     for (ResetLevel(); NextLevel();)
     {
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       pressureLevels.push_back(Level()->LevelValue());
     }
     return pressureLevels;
@@ -1714,9 +1772,12 @@ std::vector<float> NFmiFastQueryInfo::CalcHeightLevelDataHeights()
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     std::vector<float> heightLevels;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     for (ResetLevel(); NextLevel();)
     {
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       heightLevels.push_back(Level()->LevelValue());
     }
     return heightLevels;

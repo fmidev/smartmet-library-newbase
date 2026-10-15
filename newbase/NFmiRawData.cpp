@@ -64,6 +64,7 @@ class NFmiRawData::Pimple
   ~Pimple();
   Pimple();
   Pimple(const Pimple &other);
+  Pimple &operator=(const Pimple &) = delete;
   Pimple(istream &file, size_t size, bool endianswap);
   Pimple(const string &filename, istream &file, size_t size);
   bool Init(size_t size);

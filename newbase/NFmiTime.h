@@ -57,6 +57,7 @@ class NFmiTime : public NFmiStaticTime
   // (pitäisikö thehdä SetTime-metodi konstruktorin sijaan?)
 
   explicit NFmiTime(std::time_t theTime);
+  ~NFmiTime() override = default;
 
   // Use always even numbers between 0->12
   // 0 = Real length of the night (not implemented yet)

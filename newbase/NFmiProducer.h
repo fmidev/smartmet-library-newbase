@@ -25,6 +25,7 @@ class NFmiProducer : public NFmiIndividual
   explicit NFmiProducer(unsigned long theIdent, const NFmiString& theName = "Kennel");
 
   NFmiProducer& operator=(const NFmiProducer& theProducer);
+  ~NFmiProducer() override = default;
   bool operator==(const NFmiProducer& theProducer) const;
 
   const char* ClassName() const override;

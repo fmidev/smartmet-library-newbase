@@ -53,6 +53,7 @@ class NFmiMetTime : public NFmiTime
   bool IsEqual(const NFmiSortable& aFmiTest) const override;
 
   NFmiMetTime& operator=(const NFmiMetTime& /*aTime*/);
+  ~NFmiMetTime() override = default;
   NFmiMetTime& operator++();          // prefix
   NFmiMetTime& operator--();          // prefix
   const NFmiMetTime operator++(int);  // postfix

@@ -74,7 +74,7 @@ NFmiTransverseMercatorArea::NFmiTransverseMercatorArea(const NFmiPoint& theBotto
 {
   try
   {
-    Init();
+    NFmiTransverseMercatorArea::Init();
   }
   catch (...)
   {
@@ -100,7 +100,11 @@ void NFmiTransverseMercatorArea::Init(bool fKeepWorldRect)
                                     itsFalseNorthing);
 
     if (!fKeepWorldRect)
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsWorldRect =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+          // construction
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     itsXScaleFactor = Width() / itsWorldRect.Width();

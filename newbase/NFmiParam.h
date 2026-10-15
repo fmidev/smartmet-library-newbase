@@ -27,6 +27,7 @@ class NFmiParam : public NFmiIndividual
                      FmiInterpolationMethod theInterpolationMethod = kNearestPoint);
 
   NFmiParam &operator=(const NFmiParam &theParam);
+  ~NFmiParam() override = default;
   bool operator==(const NFmiParam &theParam) const;
   bool operator<(const NFmiParam &theParam) const;
 

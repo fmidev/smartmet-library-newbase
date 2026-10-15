@@ -27,6 +27,8 @@
 #include <algorithm>
 #include <cmath>
 
+// NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
+
 using namespace std;
 
 namespace
@@ -5299,5 +5301,7 @@ void NFmiWeatherAndCloudiness::SetPrecipitationProbabilityLimits(float firstLimi
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// NOLINTEND(cppcoreguidelines-pro-type-union-access)
 
 // ======================================================================

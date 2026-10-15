@@ -23,6 +23,8 @@
 #include <algorithm>
 #include <cmath>  // Mika: abs()
 
+// NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
+
 using namespace std;
 
 // ----------------------------------------------------------------------
@@ -1370,5 +1372,7 @@ unsigned long NFmiTotalWind::WindGustV6(double theValue)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// NOLINTEND(cppcoreguidelines-pro-type-union-access)
 
 // ======================================================================

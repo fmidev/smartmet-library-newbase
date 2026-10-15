@@ -23,6 +23,7 @@ class NFmiLagrange
   NFmiLagrange(const NFmiLagrange& theLagrange);
   NFmiLagrange(const double* si, const double* ti, double* yij, int sn, int tn);
   NFmiLagrange(const double* si, const double* yij, int sn);
+  NFmiLagrange& operator=(const NFmiLagrange&) = default;
 
   void Si(const double* si, bool isJustCopyNewInputData = false);
   void Ti(const double* ti, bool isJustCopyNewInputData = false);

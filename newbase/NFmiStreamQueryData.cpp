@@ -488,8 +488,10 @@ bool NFmiStreamQueryData::ReadIn(NFmiQueryData *theQueryData)
 
     if (theQueryData)
     {
-      itsOwnerData = true;
-      theQueryData = theTempData;
+      // Read into the given object (assigning to the pointer parameter lost the
+      // data and leaked it)
+      *theQueryData = *theTempData;
+      delete theTempData;
     }
     else
     {

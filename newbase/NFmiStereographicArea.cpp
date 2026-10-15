@@ -131,7 +131,7 @@ NFmiStereographicArea::NFmiStereographicArea(const NFmiPoint &theBottomLeftLatLo
 {
   try
   {
-    Init();
+    NFmiStereographicArea::Init();
   }
   catch (...)
   {
@@ -160,8 +160,9 @@ NFmiStereographicArea::NFmiStereographicArea(double theRadialRangeInMeters,
     // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
 
     itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+        (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+         kRearth * itsTrueLatitude.Sin()) /
+        (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
     NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
     itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
                                      centerWorldXY.Y() - theRadialRangeInMeters);
@@ -169,7 +170,7 @@ NFmiStereographicArea::NFmiStereographicArea(double theRadialRangeInMeters,
         itsBottomLeftWorldXY,
         itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-    Init(true);
+    NFmiStereographicArea::Init(true);
   }
   catch (...)
   {
@@ -209,15 +210,16 @@ NFmiStereographicArea::NFmiStereographicArea(const NFmiPoint &theBottomLeftLatLo
 {
   try
   {
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
+    itsTrueLatScaleFactor = (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth * itsTrueLatitude.Sin()) /
+                            (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth);  // 17.1.2001/EL
 
     itsBottomLeftWorldXY = LatLonToWorldXY(theBottomLeftLatLon);
     itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
                             itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-    Init(true);
+    NFmiStereographicArea::Init(true);
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
     // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
   }
@@ -257,9 +259,10 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
   {
     // Purpose: to create a square bounding the circle of radius theRadialRange
 
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
+    itsTrueLatScaleFactor = (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth * itsTrueLatitude.Sin()) /
+                            (NFmiStereographicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth);  // 17.1.2001/EL
 
     itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
                             NFmiPoint(itsRadialRange, itsRadialRange));
@@ -285,8 +288,10 @@ NFmiStereographicArea::NFmiStereographicArea(const double theRadialRange,
 /*!
  * \param fKeepWorldRect Undocumented
  */
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 // ----------------------------------------------------------------------
 
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 void NFmiStereographicArea::Init(bool fKeepWorldRect)
 {
   try
@@ -294,7 +299,9 @@ void NFmiStereographicArea::Init(bool fKeepWorldRect)
     if (!fKeepWorldRect)
     {
       itsTrueLatScaleFactor =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2001/EL
 
       itsWorldRect =

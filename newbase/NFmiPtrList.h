@@ -63,13 +63,12 @@ class NFmiPtrList
       itsData = theOther.itsData;
       theOther.itsData = tmp;
     }
+    ~Node() = default;
+    Node(const Node &theNode) = delete;
+    Node &operator=(const Node &theNode) = delete;
     Type *itsData;
     Node *itsPrevious;
     Node *itsNext;
-
-   private:
-    Node(const Node &theNode);
-    Node &operator=(const Node &theNode);
   };  // Node
   Node *itsStart;
   Node *itsEnd;
@@ -89,6 +88,7 @@ class NFmiPtrList
     // Lisäsin seuraavaan iteraattoriin toisen parametrin 8.9.99 /Mikael
     Iterator(Node *theNode, NFmiPtrList<Type> *theList) : itsList(theList), itsCurrent(theNode){};
     Iterator(const Iterator &theIter) : itsList(theIter.itsList), itsCurrent(theIter.itsCurrent){};
+    ~Iterator() = default;
 
     Iterator &operator=(const Iterator &theIter)
     {

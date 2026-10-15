@@ -42,7 +42,7 @@ NFmiLambertConformalConicArea::NFmiLambertConformalConicArea(const NFmiPoint &th
 {
   try
   {
-    Init();
+    NFmiLambertConformalConicArea::Init();
   }
   catch (...)
   {
@@ -73,7 +73,11 @@ void NFmiLambertConformalConicArea::Init(bool fKeepWorldRect)
     itsRho0 = itsRadius * itsF / pow(tan(quart_pi + lat0 / 2), itsN);
 
     if (!fKeepWorldRect)
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsWorldRect =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+          // construction
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     itsXScaleFactor = Width() / itsWorldRect.Width();

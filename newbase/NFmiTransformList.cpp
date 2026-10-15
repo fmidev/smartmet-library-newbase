@@ -188,7 +188,7 @@ NFmiTransformList::NFmiTransformList(int theMaxPairNumber)
 {
   try
   {
-    Allocate(theMaxPairNumber);
+    NFmiTransformList::Allocate(theMaxPairNumber);
   }
   catch (...)
   {
@@ -402,10 +402,12 @@ void NFmiTransformList::Init(int theMaxPairNumber)
  */
 // ----------------------------------------------------------------------
 
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 bool NFmiTransformList::Allocate(int theMaxPairNumber)
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     Init(theMaxPairNumber);
 
     if (itsCurrentIndex >= itsMaxPairNumber)

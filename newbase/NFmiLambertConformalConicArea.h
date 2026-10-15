@@ -62,10 +62,10 @@ class NFmiLambertConformalConicArea : public NFmiArea
  private:
   NFmiPoint itsBottomLeftLatLon;
   NFmiPoint itsTopRightLatLon;
-  double itsCentralLongitude;
-  double itsCentralLatitude;
-  double itsTrueLatitude1;
-  double itsTrueLatitude2;
+  double itsCentralLongitude = 0.0;
+  double itsCentralLatitude = 0.0;
+  double itsTrueLatitude1 = 0.0;
+  double itsTrueLatitude2 = 0.0;
   double itsRadius = kRearth;
   NFmiRect itsWorldRect;
 

@@ -18,6 +18,7 @@ class NFmiDataModifierExtreme : public NFmiDataModifier
   ~NFmiDataModifierExtreme() override;
   NFmiDataModifierExtreme();
   NFmiDataModifierExtreme(const NFmiDataModifierExtreme &theOther);
+  NFmiDataModifierExtreme& operator=(const NFmiDataModifierExtreme&) = default;
 
   void SetTime(NFmiQueryInfo *theQI);
   const NFmiTime GetTime() const;

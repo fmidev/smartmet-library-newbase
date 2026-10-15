@@ -83,12 +83,12 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
   double K(const double /* delta */) const override { return 1.; };
   double CalcDelta(const double /* xyDistance */) const override { return 0.; };
   double DistanceFromPerspectivePointToCenterOfEarth() const override { return 0.; };
-  double itsAzimuthAngle;
-  double itsLat0;
-  double itsLon0;
-  double itsSinLat0;
-  double itsCosLat0;
-  double itsVisibilityTerm;
+  double itsAzimuthAngle = 0.0;
+  double itsLat0 = 0.0;
+  double itsLon0 = 0.0;
+  double itsSinLat0 = 0.0;
+  double itsCosLat0 = 0.0;
+  double itsVisibilityTerm = 0.0;
   double itsZoomFactor;
   double itsGlobeRadius;
   NFmiPoint itsCurrentLatlonPoint;

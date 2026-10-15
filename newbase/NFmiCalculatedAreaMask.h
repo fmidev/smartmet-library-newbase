@@ -86,6 +86,7 @@ class NFmiJulianDayAreaMask : public NFmiElevationAngleAreaMask
   NFmiJulianDayAreaMask(const NFmiJulianDayAreaMask& theMask);
   NFmiJulianDayAreaMask(const NFmiDataIdent& theParam,
                         const NFmiCalculationCondition& theOperation);
+  NFmiJulianDayAreaMask& operator=(const NFmiJulianDayAreaMask&) = default;
   bool Time(const NFmiMetTime& theTime) override;
   NFmiAreaMask* Clone() const override;
 
@@ -105,6 +106,7 @@ class NFmiLocalHourAreaMask : public NFmiElevationAngleAreaMask
   NFmiLocalHourAreaMask(const NFmiLocalHourAreaMask& theMask);
   NFmiLocalHourAreaMask(const NFmiDataIdent& theParam,
                         const NFmiCalculationCondition& theOperation);
+  NFmiLocalHourAreaMask& operator=(const NFmiLocalHourAreaMask&) = default;
   NFmiAreaMask* Clone() const override;
 
  protected:
@@ -121,6 +123,7 @@ class NFmiUtcHourAreaMask : public NFmiElevationAngleAreaMask
   NFmiUtcHourAreaMask();
   NFmiUtcHourAreaMask(const NFmiUtcHourAreaMask& theMask);
   NFmiUtcHourAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
+  NFmiUtcHourAreaMask& operator=(const NFmiUtcHourAreaMask&) = default;
   NFmiAreaMask* Clone() const override;
 
  protected:
@@ -137,6 +140,7 @@ class NFmiMinuteAreaMask : public NFmiElevationAngleAreaMask
   NFmiMinuteAreaMask();
   NFmiMinuteAreaMask(const NFmiMinuteAreaMask& theMask);
   NFmiMinuteAreaMask(const NFmiDataIdent& theParam, const NFmiCalculationCondition& theOperation);
+  NFmiMinuteAreaMask& operator=(const NFmiMinuteAreaMask&) = default;
   NFmiAreaMask* Clone() const override;
 
  protected:

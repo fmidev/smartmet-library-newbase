@@ -31,10 +31,11 @@ class NFmiVoidPtrData
   NFmiVoidPtrData(void* value) : itsDataValue(value) {}
   void* GetVoidPtr() { return itsDataValue; }
   bool Remove() { return --itsReferenceCount == 0; }
+  ~NFmiVoidPtrData() = default;
+  NFmiVoidPtrData(const NFmiVoidPtrData& theData) = delete;
+  NFmiVoidPtrData& operator=(const NFmiVoidPtrData& theData) = delete;
 
  private:
-  NFmiVoidPtrData(const NFmiVoidPtrData& theData);
-  NFmiVoidPtrData& operator=(const NFmiVoidPtrData& theData);
 
   void* itsDataValue;
   int itsReferenceCount = 0;

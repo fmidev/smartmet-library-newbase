@@ -27,6 +27,7 @@ class NFmiVoidPtrList;
 class NFmiIntegrationSelector;
 
 //! Undocumented
+// NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
 class NFmiTotalWind : public NFmiCombinedParam
 {
  public:
@@ -431,5 +432,7 @@ inline void NFmiTotalWind::SetWindGust(unsigned long theValue)
   else
     SetWindGustV6(theValue);
 }
+
+// NOLINTEND(cppcoreguidelines-pro-type-union-access)
 
 // ======================================================================

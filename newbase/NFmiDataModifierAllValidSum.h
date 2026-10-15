@@ -14,6 +14,7 @@ class NFmiDataModifierAllValidSum : public NFmiDataModifierSum
  public:
   ~NFmiDataModifierAllValidSum() override;
   NFmiDataModifierAllValidSum();
+  NFmiDataModifierAllValidSum(const NFmiDataModifierAllValidSum&) = default;
 
   void Calculate(float theValue) override;
   void Calculate(NFmiQueryInfo* theQI) override;

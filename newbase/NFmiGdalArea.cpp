@@ -749,6 +749,9 @@ void NFmiGdalArea::init()
     // The needed world XY rectangle
 
     itsWorldRect =
+        // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+        // construction
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     // Initialize itsWKT

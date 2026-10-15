@@ -19,6 +19,8 @@ class NFmiProducerIdLister
   NFmiProducerIdLister(const NFmiTimeDescriptor &theTimes, int theDefaultProducerId);
   NFmiProducerIdLister(const std::string &theProducersString);
   NFmiProducerIdLister(const NFmiProducerIdLister &theOther);
+  NFmiProducerIdLister &operator=(const NFmiProducerIdLister &) = default;
+  ~NFmiProducerIdLister() = default;
   NFmiProducerIdLister(NFmiQueryInfo &theInfo);  // Huom! pitäisi olla const info, mutta pari
                                                  // metodia pitää muuttaa ensin
   const std::string MakeProducerIdString();

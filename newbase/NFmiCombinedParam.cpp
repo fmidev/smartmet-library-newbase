@@ -18,6 +18,8 @@
 #include "NFmiParamBag.h"
 #include "NFmiParamDataModifierList.h"
 #include <macgyver/Exception.h>
+#include <cstdint>
+#include <cstring>
 
 // ----------------------------------------------------------------------
 /*!
@@ -164,15 +166,11 @@ float NFmiCombinedParam::TransformedFloatValue()
 {
   try
   {
-    union converter
-    {
-      unsigned long ulongvalue;
-      float floatvalue;
-    };
-
-    converter tmp;
-    tmp.ulongvalue = LongValue();
-    return tmp.floatvalue;
+    // The float is stored in the low 32 bits
+    const auto bits = static_cast<std::uint32_t>(LongValue());
+    float value = 0;
+    std::memcpy(&value, &bits, sizeof(value));
+    return value;
   }
   catch (...)
   {
@@ -201,15 +199,9 @@ unsigned long NFmiCombinedParam::ConvertFloatToLong(float theValue)
     if (theValue == 32700.0F)
       return kTCombinedWeatherMissing;
 
-    union converter
-    {
-      unsigned long ulongvalue;
-      float floatvalue;
-    };
-
-    converter tmp;
-    tmp.floatvalue = theValue;
-    return tmp.ulongvalue;
+    std::uint32_t bits = 0;
+    std::memcpy(&bits, &theValue, sizeof(bits));
+    return bits;
   }
   catch (...)
   {

@@ -155,6 +155,7 @@ void NFmiStaticTime::_setCurrent()
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     struct tm xTime = GetSystemTime();
 
     SetYear(static_cast<short>(xTime.tm_year + 1900));
@@ -180,7 +181,7 @@ void NFmiStaticTime::_set2CurrentLocalTime(time_t theTime)
 {
   try
   {
-    struct tm xTime;
+    struct tm xTime{};
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
@@ -219,7 +220,7 @@ struct tm NFmiStaticTime::GetSystemTime()
   {
     time_t t = 0;
     static_cast<void>(time(&t));
-    tm ret;
+    tm ret{};
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
@@ -735,6 +736,7 @@ const NFmiString NFmiStaticTime::ToStr(const unsigned long theTimeMask) const
     if (kSecond & theTimeMask)
       theString += NFmiValueString(GetSec(), "%02d");
 
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the formatted text is wanted
     return theString;
   }
   catch (...)
@@ -876,7 +878,7 @@ std::ostream &NFmiStaticTime::Write(std::ostream &oStream) const
   try
   {
     // The UTC time
-    struct ::tm utc;
+    struct ::tm utc{};
     utc.tm_sec = fSec;
     utc.tm_min = fMin;
     utc.tm_hour = fHour;

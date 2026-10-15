@@ -240,6 +240,7 @@ bool NFmiCommentStripper::ReadAndStripFile(const string& theFileName)
   try
   {
     if (ReadFile(theFileName))
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       return Strip();
 
     return false;

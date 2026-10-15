@@ -190,8 +190,8 @@ NFmiOrthographicArea::NFmiOrthographicArea(const NFmiPoint &theBottomLeftLatLon,
     // Tässä konstruktorissa on tarkoitus käyttää perinteisempää
     // "nurkkapistekonstruktoria"
 
-    NFmiPoint bottomLeftWorldXY = LatLonToWorldXY(itsBottomLeftLatLon);
-    NFmiPoint topRightWorldXY = LatLonToWorldXY(itsTopRightLatLon);
+    NFmiPoint bottomLeftWorldXY = NFmiOrthographicArea::LatLonToWorldXY(itsBottomLeftLatLon);
+    NFmiPoint topRightWorldXY = NFmiOrthographicArea::LatLonToWorldXY(itsTopRightLatLon);
 
     // Lasketaan "keskipistearvot" CurrentCenter():lle MAAILMANKOORDINAATTIEN avulla
     // - *EI* latlon -keskileveys/korkeuskoordinaattien avulla
@@ -221,7 +221,9 @@ void NFmiOrthographicArea::Init(bool /* fKeepWorldRect */)
   try
   {
     double aspectRatio = Width() / Height();
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     itsZoomFactor = 1.0;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     double width = itsZoomFactor * 2. * GlobeRadius();
     double height = aspectRatio * width;
 
@@ -353,9 +355,12 @@ const NFmiPoint NFmiOrthographicArea::LatLonToWorldXY(const NFmiPoint &theLatLon
       // Reject the point.
       return NFmiPoint(kFloatMissing, kFloatMissing);
     }
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     // See "An Album of Map Projections" <----------------
 
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     double x = GlobeRadius() * coslat * sin(dlon);
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     double y = GlobeRadius() * (itsCosLat0 * sinlat - itsSinLat0 * coslat * cosdlon);
 
     if (itsAzimuthAngle != 0.)

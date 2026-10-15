@@ -122,7 +122,7 @@ NFmiGnomonicArea::NFmiGnomonicArea(const NFmiPoint &theBottomLeftLatLon,
 {
   try
   {
-    Init();
+    NFmiGnomonicArea::Init();
   }
   catch (...)
   {
@@ -164,15 +164,16 @@ NFmiGnomonicArea::NFmiGnomonicArea(const NFmiPoint &theBottomLeftLatLon,
   try
   {
     itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+        (NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+         kRearth * itsTrueLatitude.Sin()) /
+        (NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
     itsBottomLeftWorldXY =
         LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
     itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
                             itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-    Init(true);
+    NFmiGnomonicArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
     // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -213,14 +214,15 @@ NFmiGnomonicArea::NFmiGnomonicArea(const double theRadialRange,
   {
     // Purpose: to create a square bounding the circle of radius theRadialRange
 
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
+    itsTrueLatScaleFactor = (NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth * itsTrueLatitude.Sin()) /
+                            (NFmiGnomonicArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth);  // 17.1.2000/EL
 
     itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
                             NFmiPoint(itsRadialRange, itsRadialRange));
 
-    Init(true);
+    NFmiGnomonicArea::Init(true);
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
     // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
   }
@@ -504,14 +506,18 @@ std::istream &NFmiGnomonicArea::Read(std::istream &file)
  */
 // ----------------------------------------------------------------------
 
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 void NFmiGnomonicArea::Init(bool fKeepWorldRect)
 {
   try
   {
     if (!fKeepWorldRect)
     {
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsTrueLatScaleFactor =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
 
       itsWorldRect =

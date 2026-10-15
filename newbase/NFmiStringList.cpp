@@ -57,7 +57,7 @@ NFmiStringList::NFmiStringList(const NFmiStringList& theList) : itsIndex(0)
     const auto begin = theList.itsList.begin();
     const auto end = theList.itsList.end();
     for (StorageType::const_iterator iter = begin; iter != end; ++iter)
-      Add((*iter)->Clone());
+      NFmiStringList::Add((*iter)->Clone());
   }
   catch (...)
   {

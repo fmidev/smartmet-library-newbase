@@ -29,6 +29,7 @@ class NFmiQueryInfo;
 class NFmiIntegrationSelector;
 
 //! Undocumented
+// NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
 class NFmiWeatherAndCloudiness : public NFmiCombinedParam
 {
  public:
@@ -818,5 +819,7 @@ inline void NFmiWeatherAndCloudiness::SetThunderProbability(unsigned long theVal
   itsData.longType =
       static_cast<uint32_t>((itsData.longType & (~(0xF << 28))) | ((theValue & 0xF) << 28));
 }
+
+// NOLINTEND(cppcoreguidelines-pro-type-union-access)
 
 // ======================================================================

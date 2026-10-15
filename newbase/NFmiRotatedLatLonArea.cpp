@@ -211,7 +211,7 @@ NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLo
 {
   try
   {
-    Init();
+    NFmiRotatedLatLonArea::Init();
   }
   catch (...)
   {

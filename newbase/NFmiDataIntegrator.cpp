@@ -113,6 +113,7 @@ float Integrate(NFmiFastQueryInfo& theQI,
 
     theMainTimeModifier.Clear();
 
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime time1(theStartTime);
 
     if (!theQI.Time(time1))
@@ -412,6 +413,7 @@ float Integrate(NFmiFastQueryInfo& theQI,
     {
       theMainTimeModifier.Clear();
 
+      // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
       NFmiTime time1(theStartTime);
 
       if (!theQI.Time(time1))

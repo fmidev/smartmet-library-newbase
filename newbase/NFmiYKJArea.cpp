@@ -141,7 +141,7 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftLatLon,
     itsWorldRect =
         NFmiRect(CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())),
                  CornerWorldXY(NFmiPoint(theTopRightLatLon.X(), theTopRightLatLon.Y())));
-    Init();
+    NFmiYKJArea::Init();
   }
   catch (...)
   {
@@ -179,7 +179,7 @@ NFmiYKJArea::NFmiYKJArea(double theRadialRangeInMeters,
         bottomLeftWorldXY,
         bottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-    Init();
+    NFmiYKJArea::Init();
   }
   catch (...)
   {
@@ -213,7 +213,7 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftLatLon,
                  CornerWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y())) +
                      NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-    Init(true);
+    NFmiYKJArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
     // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -247,7 +247,7 @@ NFmiYKJArea::NFmiYKJArea(const NFmiPoint &theBottomLeftWorldXY,
   {
     itsWorldRect = NFmiRect(theBottomLeftWorldXY, theTopRightWorldXY);
 
-    Init(true);
+    NFmiYKJArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
     // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan

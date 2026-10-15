@@ -72,7 +72,7 @@ NFmiParamBag::NFmiParamBag(FmiParameterName* theParamArray, unsigned long number
       {
         itsParamsVector[i] = NFmiDataIdent(NFmiParam(theParamArray[i]));
       }
-      Reset();
+      NFmiParamBag::Reset();
     }
   }
   catch (...)
@@ -106,7 +106,7 @@ NFmiParamBag::NFmiParamBag(NFmiDataIdent* theParamArray, unsigned long numberOfP
         // elements are exactly of the pointed-to type, there are no derived objects in it
         itsParamsVector[i] = theParamArray[i];
       }
-      Reset();
+      NFmiParamBag::Reset();
     }
   }
   catch (...)
@@ -135,8 +135,11 @@ NFmiParamBag::NFmiParamBag(const NFmiParamBag& theBag)
     {
       long currentIndex = theBag.CurrentIndex();
       if (currentIndex >= 0 && currentIndex < long(GetSize()))
+        // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+        // construction
         SetCurrentIndex(currentIndex);
       else
+        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         Reset();
     }
   }
@@ -773,6 +776,8 @@ bool NFmiParamBag::SetActivities(NFmiParamBag& theParams,
             break;
           case kNot:  // eli asetetaan this:in aktiviteetti päinvastoin kuin se on theParamsissa
             this->Current(false)->SetActive(!theParams.Current(false)->IsActive());
+            break;
+          default:
             break;
         }
       }

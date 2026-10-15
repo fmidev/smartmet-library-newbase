@@ -57,6 +57,8 @@ struct BufferGuard
     }
   }
   ~BufferGuard() { strm.rdbuf()->pubsetbuf(nullptr, 0); }
+  BufferGuard(const BufferGuard&) = delete;
+  BufferGuard& operator=(const BufferGuard&) = delete;
 };
 
 // Staattiset versiot querydatan luku/kirjoituksesta, ottavat huomioon mm. VC++:n binääri

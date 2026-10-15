@@ -16,6 +16,8 @@ class NFmiPreProcessor : public NFmiCommentStripper
 {
  public:
   NFmiPreProcessor(const NFmiPreProcessor& theStripper);
+  NFmiPreProcessor& operator=(const NFmiPreProcessor&) = default;
+  ~NFmiPreProcessor() override = default;
 
   NFmiPreProcessor(bool stripPound = false,
                    bool stripDoubleSlash = true,

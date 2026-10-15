@@ -911,7 +911,7 @@ void NFmiTime::SetZoneDifferenceHour()
     // seconds, and daylight to a non-zero value if  standard  US
     // daylight savings time rules apply.
 
-    struct tm nowparts;
+    struct tm nowparts{};
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
@@ -977,7 +977,7 @@ short NFmiTime::CalcZoneDifferenceHour(float theLongitude) const
       return itsZoneDifferenceHour;  // tÃ¤mÃ¤ on virhetilanne, mutta ei tehdÃ¤ muuta kuin
                                      // palautetaan vanha arvo
 
-    struct tm newtime;
+    struct tm newtime{};
     time_t aclock = 0;
 
     (void)time(&aclock);
@@ -1272,6 +1272,7 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
       }
       ind += plusInd;
     }
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the formatted text is wanted
     return theString;
   }
   catch (...)

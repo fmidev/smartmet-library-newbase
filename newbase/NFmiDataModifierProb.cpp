@@ -43,7 +43,7 @@ NFmiDataModifierProb::NFmiDataModifierProb(FmiProbabilityCondition theCondition,
       its2Limit(theFirstLimit),
       itsCondition(theCondition)
 {
-  Clear();
+  NFmiDataModifierProb::Clear();
 }
 
 // ----------------------------------------------------------------------
@@ -70,7 +70,7 @@ NFmiDataModifierProb::NFmiDataModifierProb(FmiProbabilityCondition theCondition,
       its2Limit(theSecondLimit == kFloatMissing ? theFirstLimit : theSecondLimit),
       itsCondition(theCondition)
 {
-  Clear();
+  NFmiDataModifierProb::Clear();
 }
 
 // ----------------------------------------------------------------------

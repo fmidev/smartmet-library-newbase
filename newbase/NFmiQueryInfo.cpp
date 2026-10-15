@@ -479,7 +479,7 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData* theInfo,
     // tehdään First, niin Info-iteraattori on heti käytettävissä
     // (ja mm. levelit osoittaa 1. leveliin, mikä unohtuu helposti käyttäjiltä)
 
-    First();
+    NFmiQueryInfo::First();
   }
   catch (...)
   {
@@ -589,13 +589,13 @@ NFmiQueryInfo::NFmiQueryInfo(const string &filename)
     if (Fmi::is_compressed(filename))
     {
       Fmi::IStream filter(file, filename);
-      Read(filter);
+      NFmiQueryInfo::Read(filter);
       if (!filter.good())
         throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
     }
     else
     {
-      Read(file);
+      NFmiQueryInfo::Read(file);
       if (!file.good())
         throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
     }
@@ -690,11 +690,13 @@ void NFmiQueryInfo::Reset()
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 
 bool NFmiQueryInfo::First()
 {
   try
   {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     Reset();
     return (itsTimeDescriptor->Next() && itsParamDescriptor->Next() &&
             itsHPlaceDescriptor->Next() && itsVPlaceDescriptor->Next());
@@ -1519,8 +1521,10 @@ std::istream &NFmiQueryInfo::Read(std::istream &file)
     // VERSIOHALLINTAA
 
     unsigned long classIdent = 0;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     file >> classIdent >> dirty;
 
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     if (classIdent != ClassId())
     {
       if (classIdent != kNFmiRadarQueryInfo)
@@ -3143,6 +3147,7 @@ class TimeToModifyCalculator
                                                  // sen tähän, jos joskus tarvitaankin
   using WriteLock = std::unique_lock<MutexType>;
 
+  ~TimeToModifyCalculator() = default;
   TimeToModifyCalculator(const NFmiTimeDescriptor& theTimeDescriptor)
       : itsTimeDescriptor(theTimeDescriptor)
   {
@@ -3181,6 +3186,7 @@ class TimeToModifyCalculator
 
   TimeToModifyCalculator(const TimeToModifyCalculator &) =
       delete;  // ei toteuteta kopio konstruktoria
+  TimeToModifyCalculator &operator=(const TimeToModifyCalculator &) = delete;
 };
 
 namespace
@@ -3774,6 +3780,8 @@ float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, in
                 returnValue = resultWeather.TransformedFloatValue();
               }
               break;
+              default:
+                break;
             }
           }
           else if (interp == kNearestNonMissing)
@@ -4273,6 +4281,8 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
             returnValue = resultWeather.TransformedFloatValue();
           }
           break;
+          default:
+            break;
         }
       }
       else if (param ==
@@ -4487,7 +4497,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
       }
       else
       {
-        std::array<float, 4> values;
+        std::array<float, 4> values{};
         GetCachedValues(theLocationCache, values);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
         value = CachedLocationInterpolatedValue(values, theLocationCache, interp, parId);
@@ -4512,7 +4522,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiTimeCache &theTimeCache)
 
     // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
     unsigned long oldTimeIndex = TimeIndex();
-    std::array<float, 2> values;
+    std::array<float, 2> values{};
     GetCachedValues(theTimeCache, values);
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
@@ -4680,7 +4690,7 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::array<float, 4> &theVa
       if (theParId == kFmiWindDirection)
       {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
         Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-        std::array<float, 4> WSvalues;
+        std::array<float, 4> WSvalues{};
         GetCachedValues(theLocationCache, WSvalues);
         Param(theParId);  // palautetaan tuulensuunta takaisin parametriksi
         value = ::InterpolateWindDir(WSvalues, theValues, gpoint);
@@ -4872,8 +4882,8 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         }
         else
         {
-          std::array<float, 4> values1;
-          std::array<float, 4> values2;
+          std::array<float, 4> values1{};
+          std::array<float, 4> values2{};
           GetCachedValues(theLocationCache, theTimeCache, values1, values2);
           auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
           float value1 = CachedLocationInterpolatedValue(values1, theLocationCache, interp, parId);
@@ -5073,7 +5083,7 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiLocationCache &
         value = PressureLevelValue(P);
       else
       {
-        std::array<float, 4> values;
+        std::array<float, 4> values{};
         GetCachedPressureLevelValues(P, theLocationCache, values);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
         value = CachedLocationInterpolatedValue(values, theLocationCache, interp, parId);
@@ -5098,7 +5108,7 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P, const NFmiTimeCache &theT
 
     // metodin loputtua aika indeksi ei saa olla muuttunut, indeksi talteen tässä!!!
     unsigned long oldTimeIndex = TimeIndex();
-    std::array<float, 2> values;
+    std::array<float, 2> values{};
     GetCachedPressureLevelValues(P, theTimeCache, values);
     NFmiDataIdent &param = Param();
     FmiInterpolationMethod interp = param.GetParam()->InterpolationMethod();
@@ -5165,8 +5175,8 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P,
         value = CachedPressureLevelValue(P, theTimeCache);
       else
       {  // tehdään sitten sekä aika että paikka cached interpolaatio
-        std::array<float, 4> values1;
-        std::array<float, 4> values2;
+        std::array<float, 4> values1{};
+        std::array<float, 4> values2{};
         GetCachedPressureLevelValues(P, theLocationCache, theTimeCache, values1, values2);
         auto parId = static_cast<FmiParameterName>(param.GetParamIdent());
         float value1 = CachedLocationInterpolatedValue(values1, theLocationCache, interp, parId);

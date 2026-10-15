@@ -22,6 +22,7 @@ class NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
  public:
   ~NFmiDataModifierMaxPlace() override;
   NFmiDataModifierMaxPlace();
+  NFmiDataModifierMaxPlace(const NFmiDataModifierMaxPlace&) = default;
 
   void Clear() override;
 

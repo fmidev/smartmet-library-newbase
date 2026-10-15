@@ -23,6 +23,7 @@ class NFmiDataModifierMode : public NFmiDataModifier
   NFmiDataModifierMode();
   ~NFmiDataModifierMode() override;
   NFmiDataModifierMode(const NFmiDataModifierMode &theOther);
+  NFmiDataModifierMode& operator=(const NFmiDataModifierMode&) = default;
   NFmiDataModifier* Clone() const override;
 
  private:

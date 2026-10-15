@@ -713,7 +713,9 @@ inline void NFmiFastQueryInfo::ResetTime()
 
 inline bool NFmiFastQueryInfo::FirstParam(bool fIgnoreSubParam)
 {
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   ResetParam();
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   return NextParam(fIgnoreSubParam);
 }
 
@@ -741,7 +743,9 @@ inline bool NFmiFastQueryInfo::NextLocation()
 
 inline bool NFmiFastQueryInfo::FirstLocation()
 {
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   ResetLocation();
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   return NextLocation();
 }
 
@@ -753,7 +757,9 @@ inline bool NFmiFastQueryInfo::FirstLocation()
 
 inline bool NFmiFastQueryInfo::FirstLevel()
 {
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   ResetLevel();
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   return NextLevel();
 }
 
@@ -781,7 +787,9 @@ inline bool NFmiFastQueryInfo::NextTime()
 
 inline bool NFmiFastQueryInfo::FirstTime()
 {
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   ResetTime();
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   return NextTime();
 }
 

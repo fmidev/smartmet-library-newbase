@@ -54,6 +54,7 @@ class NFmiTimeBag : public NFmiSize
   const char* ClassName() const override;
 
   NFmiTimeBag &operator=(const NFmiTimeBag &theTimeBag);
+  ~NFmiTimeBag() override = default;
   bool operator==(const NFmiTimeBag &theTimeBag) const;
 
  private:

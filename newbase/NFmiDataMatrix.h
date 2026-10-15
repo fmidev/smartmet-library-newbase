@@ -79,6 +79,11 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
   {
   }
 
+  NFmiDataMatrix(NFmiDataMatrix<T>&& other) noexcept
+      : Base(std::move(other)), itsNX(other.itsNX), itsNY(other.itsNY)
+  {
+  }
+
   ~NFmiDataMatrix() = default;
 
   //! Return matrix width.

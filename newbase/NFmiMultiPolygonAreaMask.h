@@ -19,6 +19,8 @@ class NFmiMultiPolygonAreaMask : public NFmiAreaMaskImpl
 {
  public:
   ~NFmiMultiPolygonAreaMask() override;
+  NFmiMultiPolygonAreaMask(const NFmiMultiPolygonAreaMask &) = delete;
+  NFmiMultiPolygonAreaMask &operator=(const NFmiMultiPolygonAreaMask &) = delete;
 
   NFmiMultiPolygonAreaMask();
 

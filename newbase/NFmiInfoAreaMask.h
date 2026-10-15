@@ -57,6 +57,8 @@ class MetaParamDataHolderDoCheckStateRestorer
   {
     metaParamDataHolder_.setCheckMetaParamCalculation(originalCheckMetaParamCalculationState_);
   }
+  MetaParamDataHolderDoCheckStateRestorer(const MetaParamDataHolderDoCheckStateRestorer&) = delete;
+  MetaParamDataHolderDoCheckStateRestorer& operator=(const MetaParamDataHolderDoCheckStateRestorer&) = delete;
 };
 
 class NFmiInfoAreaMask : public NFmiAreaMaskImpl
@@ -376,6 +378,7 @@ class NFmiInfoAreaMaskPeekXY3 : public NFmiInfoAreaMask
   NFmiInfoAreaMaskPeekXY3(const NFmiInfoAreaMaskPeekXY3 &theOther);
   NFmiAreaMask *Clone() const override;
   NFmiInfoAreaMaskPeekXY3 &operator=(const NFmiInfoAreaMaskPeekXY2 &theMask) = delete;
+  NFmiInfoAreaMaskPeekXY3& operator=(const NFmiInfoAreaMaskPeekXY3&) = default;
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
   double Value(const NFmiCalculationParams &theCalculationParams,
@@ -522,6 +525,7 @@ class NFmiInfoAreaMaskAdvection : public NFmiInfoAreaMaskGrad
                             unsigned long thePossibleMetaParamId,
                             BinaryOperator thePostBinaryOperator);
   NFmiInfoAreaMaskAdvection(const NFmiInfoAreaMaskAdvection &theOther);
+  NFmiInfoAreaMaskAdvection& operator=(const NFmiInfoAreaMaskAdvection&) = default;
   NFmiAreaMask *Clone() const override;
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -587,6 +591,7 @@ class NFmiInfoAreaMaskRotor : public NFmiInfoAreaMaskGrad
                         unsigned long thePossibleMetaParamId,
                         BinaryOperator thePostBinaryOperator);
   NFmiInfoAreaMaskRotor(const NFmiInfoAreaMaskRotor &theOther);
+  NFmiInfoAreaMaskRotor& operator=(const NFmiInfoAreaMaskRotor&) = default;
   NFmiAreaMask *Clone() const override;
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -896,6 +901,7 @@ class NFmiInfoTimeIntegrator : public NFmiInfoAreaMaskMetFuncBase
                          int theEndTimeOffset,
                          unsigned long thePossibleMetaParamId);
   NFmiInfoTimeIntegrator(const NFmiInfoTimeIntegrator &theOther);
+  NFmiInfoTimeIntegrator& operator=(const NFmiInfoTimeIntegrator&) = default;
   NFmiAreaMask *Clone() const override;
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -948,6 +954,7 @@ class NFmiInfoRectAreaIntegrator : public NFmiInfoAreaMaskMetFuncBase
                              int theEndYOffset,
                              unsigned long thePossibleMetaParamId);
   NFmiInfoRectAreaIntegrator(const NFmiInfoRectAreaIntegrator &theOther);
+  NFmiInfoRectAreaIntegrator& operator=(const NFmiInfoRectAreaIntegrator&) = default;
   NFmiAreaMask *Clone() const override;
 
   // tätä kaytetaan smarttool-modifierin yhteydessä
@@ -1034,6 +1041,7 @@ class NFmiInfoAreaMaskAreaProbFunc : public NFmiInfoAreaMaskProbFunc
   NFmiInfoAreaMaskAreaProbFunc(const NFmiInfoAreaIntegrationFunc &theOther);
   NFmiAreaMask *Clone() const override;
   NFmiInfoAreaMaskAreaProbFunc &operator=(const NFmiInfoAreaMaskAreaProbFunc &theMask) = delete;
+  NFmiInfoAreaMaskAreaProbFunc(const NFmiInfoAreaMaskAreaProbFunc&) = default;
 
  protected:
   void DoIntegrationCalculations(float value) override;
@@ -1057,6 +1065,7 @@ class NFmiTimeShiftedInfoAreaMask : public NFmiInfoAreaMask
                               unsigned long thePossibleMetaParamId,
                               BinaryOperator thePostBinaryOperator);
   NFmiTimeShiftedInfoAreaMask(const NFmiTimeShiftedInfoAreaMask &theOther);
+  NFmiTimeShiftedInfoAreaMask& operator=(const NFmiTimeShiftedInfoAreaMask&) = default;
   NFmiAreaMask *Clone() const override;
   NFmiInfoAreaMask &operator=(const NFmiInfoAreaMask &theMask) = delete;
 

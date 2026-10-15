@@ -42,6 +42,7 @@ NFmiDataModifierExtreme::NFmiDataModifierExtreme(const NFmiDataModifierExtreme &
 void NFmiDataModifierExtreme::SetTime(NFmiQueryInfo *theQI)
 {
   if (theQI)
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     itsExtremeTime = theQI->Time();
 }
 

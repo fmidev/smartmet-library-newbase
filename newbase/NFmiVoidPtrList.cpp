@@ -30,7 +30,7 @@ NFmiVoidPtrList::NFmiVoidPtrList(const NFmiVoidPtrList &listItem)
 {
   try
   {
-    CopyList(listItem);
+    NFmiVoidPtrList::CopyList(listItem);
   }
   catch (...)
   {

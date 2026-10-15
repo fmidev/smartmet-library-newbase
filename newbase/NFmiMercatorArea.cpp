@@ -128,7 +128,7 @@ NFmiMercatorArea::NFmiMercatorArea(const NFmiPoint& theBottomLeftLatLon,
 {
   try
   {
-    Init();
+    NFmiMercatorArea::Init();
   }
   catch (...)
   {
@@ -187,7 +187,13 @@ void NFmiMercatorArea::Init(bool fKeepWorldRect)
 
     if (!fKeepWorldRect)
       itsWorldRect =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+          // construction
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon),
+                   // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
+                   // construction
+                   // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
                    LatLonToWorldXY(itsTopRightLatLon));  // 28.8.2001/Marko&Esa Lisätty laskuihin.
 
     itsXScaleFactor = Width() / itsWorldRect.Width();

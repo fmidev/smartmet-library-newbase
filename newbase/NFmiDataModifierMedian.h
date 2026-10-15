@@ -23,6 +23,7 @@ class NFmiDataModifierMedian : public NFmiDataModifier
   ~NFmiDataModifierMedian() override;
   NFmiDataModifierMedian(float theLimitProsent = 50.F);
   NFmiDataModifierMedian(const NFmiDataModifierMedian& theOther);
+  NFmiDataModifierMedian& operator=(const NFmiDataModifierMedian&) = default;
   NFmiDataModifier* Clone() const override;
 
   float Median();

@@ -61,8 +61,8 @@ NFmiTimeDescriptor::NFmiTimeDescriptor()
     NFmiMetTime timeNow;
     itsOriginTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
     itsValidTimeBag = new NFmiTimeBag(timeNow, timeNow, 60);
-    itsActivity = new bool[Size()];
-    for (int i = 0; i < static_cast<int>(Size()); i++)
+    itsActivity = new bool[NFmiTimeDescriptor::Size()];
+    for (int i = 0; i < static_cast<int>(NFmiTimeDescriptor::Size()); i++)
       itsActivity[i] = true;
   }
   catch (...)
@@ -862,6 +862,7 @@ NFmiTimeBag NFmiTimeDescriptor::GetActivePeriod()
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime saveTime(Time());
 
     NFmiTime firstTime;
@@ -869,9 +870,11 @@ NFmiTimeBag NFmiTimeDescriptor::GetActivePeriod()
 
     if (FirstActive())
     {
+      // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
       firstTime = Time();
       if (LastActive())
       {
+        // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
         lastTime = Time();
         NFmiTimeBag bag(firstTime, lastTime, ActiveResolution());
         Time(saveTime);
@@ -902,6 +905,7 @@ bool NFmiTimeDescriptor::SetActivePeriod(bool theActivityState, const NFmiTimeBa
   {
     bool tempBoolean = false;
 
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime saveTime = Time();
 
     for (int i = 0; i < static_cast<int>(itsValidTimeBag->GetSize()); i++)
@@ -978,6 +982,7 @@ bool NFmiTimeDescriptor::LastActive()
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     TFmiTime lastActive(Time());
     Reset();
     bool tempBoolean = false;
@@ -986,6 +991,7 @@ bool NFmiTimeDescriptor::LastActive()
       if (IsActive())
       {
         tempBoolean = true;
+        // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
         lastActive = Time();
       }
     }
@@ -1054,15 +1060,18 @@ const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
   {
     if (itsValidTimeBag)
     {
+      // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
       NFmiTime saveTime = Time();
       NFmiTime startTime;
       NFmiTime endTime;
 
       if (FirstActive())
       {
+        // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
         startTime = Time();
         if (NextActive())
         {
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
           endTime = Time();
         }
       }

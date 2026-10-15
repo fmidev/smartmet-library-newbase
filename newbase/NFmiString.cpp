@@ -953,17 +953,18 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
   {
     if (theUpperIndex < fLength)
     {
-      (void)setlocale(LC_ALL, "Finnish");
-      NFmiString theLetter(fChar);
 #ifndef UNIX
+      NFmiString theLetter(fChar);
+      (void)setlocale(LC_ALL, "Finnish");
       char *theChar = ::_strupr((char *)theLetter);
-
-#else
-      auto *theChar = static_cast<char *>(theLetter);
-      *theChar = toupper(*theChar);
-#endif
-      fChar[theUpperIndex] = theChar[theUpperIndex];
       (void)setlocale(LC_ALL, "C");
+      fChar[theUpperIndex] = theChar[theUpperIndex];
+#else
+      // The process-wide locale must not be changed here: other threads use it,
+      // and the "Finnish" locale name does not exist on Linux anyway
+      fChar[theUpperIndex] =
+          static_cast<unsigned char>(toupper(static_cast<unsigned char>(fChar[theUpperIndex])));
+#endif
     }
   }
   catch (...)

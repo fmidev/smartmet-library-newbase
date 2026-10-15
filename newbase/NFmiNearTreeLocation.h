@@ -31,10 +31,10 @@ class NFmiNearTreeLocation
   std::size_t GetIndex() const { return itsIndex; }
 
  private:
-  double itsX;
-  double itsY;
-  double itsZ;
-  std::size_t itsIndex;
+  double itsX = 0.0;
+  double itsY = 0.0;
+  double itsZ = 0.0;
+  std::size_t itsIndex = 0;
 };
 
 class NFmiNearTreeLocationDistance

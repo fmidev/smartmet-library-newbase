@@ -43,6 +43,7 @@ class NFmiDataModifierBase
   virtual ~NFmiDataModifierBase();
   NFmiDataModifierBase(const NFmiDataModifierBase& other);
   NFmiDataModifierBase(FmiJoinOperator theJoinOperator = kFmiAdd);
+  NFmiDataModifierBase& operator=(const NFmiDataModifierBase&) = default;
 
   FmiJoinOperator JoinOperator();
 

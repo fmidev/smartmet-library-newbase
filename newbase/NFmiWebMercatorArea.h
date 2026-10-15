@@ -22,6 +22,7 @@ class NFmiWebMercatorArea : public NFmiArea
                       const NFmiPoint &theTopLeftXY = NFmiPoint(0., 0.),
                       const NFmiPoint &theBottomRightXY = NFmiPoint(1., 1.),
                       bool usePacificView = false);
+  NFmiWebMercatorArea& operator=(const NFmiWebMercatorArea&) = default;
 
   NFmiArea* Clone() const override;
   const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;

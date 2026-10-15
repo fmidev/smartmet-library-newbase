@@ -26,7 +26,7 @@ class NFmiDataModifierAvgAbs : public NFmiDataModifier
  protected:
   long itsCounter = 0;
   float itsSum = 0;
-  float itsAverage;
+  float itsAverage = 0.0F;
 
 };  // class NFmiDataModifierAvgAbs
 

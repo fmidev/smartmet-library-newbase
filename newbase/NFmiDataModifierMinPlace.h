@@ -22,6 +22,7 @@ class NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
  public:
   ~NFmiDataModifierMinPlace() override;
   NFmiDataModifierMinPlace();
+  NFmiDataModifierMinPlace(const NFmiDataModifierMinPlace&) = default;
 
   void Clear() override;
 

@@ -186,6 +186,7 @@ void NFmiTimeBag::Reset(FmiDirection directionToIter)
     }
 
     if (itsResolution != 0)
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       itsSize = GetSize();
     else
       itsSize = 0;

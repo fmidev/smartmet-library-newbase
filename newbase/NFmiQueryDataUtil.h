@@ -171,7 +171,7 @@ struct GridRecordData
   NFmiRect itsLatlonCropRect;        // tähän talletetaan mahdollinen croppi recti
   NFmiPoint itsGridPointCropOffset;  // tähän talletetaan mahdollinen cropin offset originaali
                                      // gridin hila yksikössä
-  double itsMissingValue;
+  double itsMissingValue = 0.0;
   bool fParamChanged = false;
   NFmiParam itsOrigParam;
 };
@@ -180,7 +180,7 @@ class NFmiStopFunctor
 {
  public:
   NFmiStopFunctor() {}
-  ~NFmiStopFunctor() {}
+  ~NFmiStopFunctor() = default;
   bool Stop() const { return fStop; }
   void Stop(bool newValue) { fStop = newValue; }
 
@@ -227,6 +227,8 @@ class NFmiStopThreadException
  public:
   NFmiStopThreadException() = default;
   ~NFmiStopThreadException() {}
+  NFmiStopThreadException(const NFmiStopThreadException&) = default;
+  NFmiStopThreadException& operator=(const NFmiStopThreadException&) = default;
 };
 
 // Tämä luokka laskee worker-threadi parvelle aina kulloisenkin 'vapaan' laskettavan timeIndeksin.
@@ -242,6 +244,7 @@ class NFmiTimeIndexCalculator
 
   NFmiTimeIndexCalculator(unsigned long theTimeSize);
   NFmiTimeIndexCalculator(unsigned long theStartTimeIndex, unsigned long theEndTimeIndex);
+  ~NFmiTimeIndexCalculator() = default;
   bool GetCurrentTimeIndex(unsigned long &theTimeIndexOut);
 
  private:
@@ -271,6 +274,7 @@ class NFmiLocationIndexRangeCalculator
   NFmiLocationIndexRangeCalculator(unsigned long theStartLocationIndex,
                                    unsigned long theEndLocationIndex,
                                    unsigned long theChunkSize);
+  ~NFmiLocationIndexRangeCalculator() = default;
 
   bool GetCurrentLocationRange(unsigned long &theStartIndexOut, unsigned long &theEndIndexOut);
 

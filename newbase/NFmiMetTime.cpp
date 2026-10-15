@@ -559,7 +559,7 @@ struct tm NFmiMetTime::GetSystemTime()
   {
     time_t t = 0;
     static_cast<void>(time(&t));
-    tm ret;
+    tm ret{};
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or
@@ -592,6 +592,7 @@ const NFmiTime NFmiMetTime::UTCTime(float theLongitude) const
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime theTime(*this);
     theTime.ChangeByHours(CalcZoneDifferenceHour(theLongitude));
 
@@ -614,6 +615,7 @@ const NFmiTime NFmiMetTime::LocalTime(float theLongitude) const
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime theTime(*this);
     theTime.ChangeByHours(static_cast<short>(-CalcZoneDifferenceHour(theLongitude)));
 
@@ -636,6 +638,7 @@ const NFmiTime NFmiMetTime::LocalTime(const NFmiLocation &theLocation) const
 {
   try
   {
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted, not the time step
     NFmiTime theTime(*this);
     theTime.SetLocalPlace(static_cast<float>(theLocation.GetLongitude()));
     theTime.ChangeByHours(static_cast<short>(-theTime.GetZoneDifferenceHour()));
@@ -682,7 +685,7 @@ const NFmiTime NFmiMetTime::CorrectLocalTime() const
   try
   {
     // The UTC time
-    struct ::tm utc;
+    struct ::tm utc{};
     utc.tm_sec = GetSec();
     utc.tm_min = GetMin();
     utc.tm_hour = GetHour();
@@ -697,7 +700,7 @@ const NFmiTime NFmiMetTime::CorrectLocalTime() const
 
     // As local time
 
-    struct ::tm local;
+    struct ::tm local{};
 
 #ifdef _MSC_VER
     // OBS! There are no thread safe localtime(_r) or gmtime(_r) functions in MSVC++ 2008 (or

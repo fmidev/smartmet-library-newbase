@@ -170,6 +170,9 @@ fi
 - FmiRound is an inline function using std::lround: no double evaluation of the argument and correct rounding just below 0.5; weather and cloudiness averages are rounded with std::lround
 - Fixed mechanical clang-tidy findings (internal linkage, unused parameters, initialization, redundant code), no functional changes
 - Fixed clang-tidy style findings (loops, nested conditionals, dead code)
+- Fixed clang-tidy correctness findings (member initialization, rule of five, printf formats, dead stores)
+- NFmiStreamQueryData::ReadIn(data) now reads into the given object instead of losing and leaking the data
+- NFmiString::FirstCharToUpper no longer changes the process-wide locale and upper-cases the requested character
 
 * Sun Oct 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.11-1.fmi
 - Added metaparameter RoadWW (BRAINSTORM-2786)

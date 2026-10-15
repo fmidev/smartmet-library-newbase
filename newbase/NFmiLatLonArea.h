@@ -22,6 +22,7 @@ class NFmiLatLonArea : public NFmiArea
                  const NFmiPoint& theTopLeftXY = NFmiPoint(0., 0.),
                  const NFmiPoint& theBottomRightXY = NFmiPoint(1., 1.),
                  bool usePacificView = false);
+  NFmiLatLonArea& operator=(const NFmiLatLonArea&) = default;
 
   NFmiArea* Clone() const override;
   const NFmiPoint ToLatLon(const NFmiPoint& theXYPoint) const override;

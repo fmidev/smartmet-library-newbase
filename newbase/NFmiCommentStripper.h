@@ -31,6 +31,7 @@ class NFmiCommentStripper
                       bool stripEndOfLineSpaces = true);
 
   NFmiCommentStripper(const NFmiCommentStripper& theStripper);
+  NFmiCommentStripper& operator=(const NFmiCommentStripper&) = default;
 
   bool ReadFile(const std::string& theFileName);
   bool ReadFileCheckingOptions(const std::string& theFileName,
@@ -65,8 +66,8 @@ class NFmiCommentStripper
   bool fStripNested;
   bool fStripDoubleSlash;
   bool fStripSlashAst;
-  bool fStripEndOfLineSpaces;  // Marko Lisäsin falgin, koska oli ongelmia joissain tapauksissa, jos
-                               // spacet poistetaan.
+  bool fStripEndOfLineSpaces = false;  // Marko Lisäsin falgin, koska oli ongelmia joissain
+                                       // tapauksissa, jos spacet poistetaan.
 
 };  // class NFmiCommentStripper
 

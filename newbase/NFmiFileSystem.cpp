@@ -295,7 +295,7 @@ const string FileComplete(const string &theFile, const string &theSearchPath)
 
 bool FileExists(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;
@@ -314,7 +314,7 @@ bool FileExists(const string &theFile)
 
 bool FileReadable(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;
@@ -347,7 +347,7 @@ bool FileReadable(const string &theFile)
 
 bool FileWritable(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;
@@ -380,7 +380,7 @@ bool FileWritable(const string &theFile)
 
 bool FileExecutable(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;
@@ -435,7 +435,7 @@ size_t FileSize(const string &theFile)
 
 bool FileEmpty(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return true;
   return (st.st_size == 0);
@@ -453,7 +453,7 @@ bool FileEmpty(const string &theFile)
 
 time_t FileAccessTime(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
   FMI_stat_func(theFile.c_str(), &st);
   return st.st_atime;
 }
@@ -470,7 +470,7 @@ time_t FileAccessTime(const string &theFile)
 
 time_t FileModificationTime(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
   FMI_stat_func(theFile.c_str(), &st);
   return st.st_mtime;
 }
@@ -490,7 +490,7 @@ time_t FileModificationTime(const string &theFile)
 
 time_t FileChangedTime(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
   FMI_stat_func(theFile.c_str(), &st);
   return st.st_ctime;
 }
@@ -507,7 +507,7 @@ time_t FileChangedTime(const string &theFile)
 
 long FileAge(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return -1;
   time_t modtime = st.st_mtime;
@@ -530,7 +530,7 @@ bool DirectoryExists(const string &theFile)
 {
   if (theFile.empty())
     return false;
-  FMI_stat st;
+  FMI_stat st{};
 
   char ch = theFile[theFile.size() - 1];
   if (ch == '/' || ch == '\\')
@@ -560,7 +560,7 @@ bool DirectoryExists(const string &theFile)
 
 bool DirectoryReadable(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;
@@ -593,7 +593,7 @@ bool DirectoryReadable(const string &theFile)
 
 bool DirectoryWritable(const string &theFile)
 {
-  FMI_stat st;
+  FMI_stat st{};
 
   if (FMI_stat_func(theFile.c_str(), &st) != 0)
     return false;

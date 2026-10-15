@@ -25,6 +25,8 @@ class QueryInfoParamStateRestorer
  public:
   QueryInfoParamStateRestorer(NFmiQueryInfo &info);
   virtual ~QueryInfoParamStateRestorer();
+  QueryInfoParamStateRestorer(const QueryInfoParamStateRestorer&) = delete;
+  QueryInfoParamStateRestorer& operator=(const QueryInfoParamStateRestorer&) = delete;
 };
 
 class QueryInfoTotalStateRestorer : public QueryInfoParamStateRestorer
@@ -36,6 +38,8 @@ class QueryInfoTotalStateRestorer : public QueryInfoParamStateRestorer
  public:
   QueryInfoTotalStateRestorer(NFmiQueryInfo &info);
   ~QueryInfoTotalStateRestorer() override;
+  QueryInfoTotalStateRestorer(const QueryInfoTotalStateRestorer&) = delete;
+  QueryInfoTotalStateRestorer& operator=(const QueryInfoTotalStateRestorer&) = delete;
 };
 
 class MetaWindParamUsage

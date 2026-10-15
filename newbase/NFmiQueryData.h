@@ -764,6 +764,7 @@ inline std::ostream &operator<<(std::ostream &file, const NFmiQueryData &ob)
 
 inline std::istream &operator>>(std::istream &file, NFmiQueryData &ob)
 {
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
   return ob.Read(file);
 }
 

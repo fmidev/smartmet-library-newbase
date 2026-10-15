@@ -1087,10 +1087,10 @@ void NFmiInfoAreaMask::AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theI
         if (metaParamDataHolder.metaWindParamUsage().HasWsAndWd())
         {
           theInfo->Param(kFmiWindSpeedMS);
-          std::array<float, 4> wsValues;
+          std::array<float, 4> wsValues{};
           theInfo->GetCachedValues(theLocationCache, wsValues);
           theInfo->Param(kFmiWindDirection);
-          std::array<float, 4> wdValues;
+          std::array<float, 4> wdValues{};
           theInfo->GetCachedValues(theLocationCache, wdValues);
           for (std::size_t index = 0; index < wsValues.size(); index++)
           {
@@ -1112,16 +1112,18 @@ void NFmiInfoAreaMask::AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theI
                                  NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(
                                      wsValues[index], wdValues[index]));
                 break;
+              default:
+                break;
             }
           }
         }
         else if (metaParamDataHolder.metaWindParamUsage().HasWindComponents())
         {
           theInfo->Param(kFmiWindUMS);
-          std::array<float, 4> uValues;
+          std::array<float, 4> uValues{};
           theInfo->GetCachedValues(theLocationCache, uValues);
           theInfo->Param(kFmiWindVMS);
-          std::array<float, 4> vValues;
+          std::array<float, 4> vValues{};
           theInfo->GetCachedValues(theLocationCache, vValues);
           for (std::size_t index = 0; index < uValues.size(); index++)
           {
@@ -1143,13 +1145,15 @@ void NFmiInfoAreaMask::AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theI
                                  NFmiFastInfoUtils::CalcWindVectorFromWindComponents(
                     uValues[index], vValues[index]));
                 break;
+              default:
+                break;
             }
           }
         }
       }
       else
       {
-        std::array<float, 4> values;
+        std::array<float, 4> values{};
         theInfo->GetCachedValues(theLocationCache, values);
         for (float value : values)
           AddValueToModifier(theInfo, theFunctionModifier, value);
@@ -3006,6 +3010,8 @@ class SimpleConditionPreviousValueResetter
   {
   }
   ~SimpleConditionPreviousValueResetter() { simpleCondition_->ResetPreviousValue(); }
+  SimpleConditionPreviousValueResetter(const SimpleConditionPreviousValueResetter&) = delete;
+  SimpleConditionPreviousValueResetter& operator=(const SimpleConditionPreviousValueResetter&) = delete;
 };
 
 // Etsitään ne kohdat missä simple-condition menee päälle.
@@ -4598,6 +4604,7 @@ NFmiInfoAreaMaskAreaProbFunc::NFmiInfoAreaMaskAreaProbFunc(
 
 NFmiInfoAreaMaskAreaProbFunc::NFmiInfoAreaMaskAreaProbFunc(
     const NFmiInfoAreaIntegrationFunc &theOther)
+    // NOLINTNEXTLINE(cppcoreguidelines-slicing): built from the common base part
     : NFmiInfoAreaMaskProbFunc(theOther)
 {
 }

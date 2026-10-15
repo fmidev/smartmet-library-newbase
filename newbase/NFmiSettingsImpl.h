@@ -50,7 +50,7 @@ class NFmiSettingsImpl
   NFmiSettingsImpl& operator=(const NFmiSettingsImpl& theSettings);
 
   static void Create();
-  static void Die();
+  [[noreturn]] static void Die();
   static NFmiSettingsImpl* itsInstance;
 
   //! The type of the actual data

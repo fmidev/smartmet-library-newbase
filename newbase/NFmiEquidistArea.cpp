@@ -111,8 +111,9 @@ NFmiEquidistArea::NFmiEquidistArea(double theRadialRangeInMeters,
     // "bounding-boxin", jonka keskipisteenä on maantiet. piste 'theCenterLatLon'
 
     itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+        (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() +
+         kRearth * itsTrueLatitude.Sin()) /
+        (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
     NFmiPoint centerWorldXY = LatLonToWorldXY(NFmiPoint(theCenterLatLon.X(), theCenterLatLon.Y()));
     itsBottomLeftWorldXY = NFmiPoint(centerWorldXY.X() - theRadialRangeInMeters,
@@ -121,7 +122,7 @@ NFmiEquidistArea::NFmiEquidistArea(double theRadialRangeInMeters,
         itsBottomLeftWorldXY,
         itsBottomLeftWorldXY + NFmiPoint(2 * theRadialRangeInMeters, 2 * theRadialRangeInMeters));
 
-    Init(true);
+    NFmiEquidistArea::Init(true);
   }
   catch (...)
   {
@@ -160,7 +161,7 @@ NFmiEquidistArea::NFmiEquidistArea(const NFmiPoint &theBottomLeftLatLon,
 {
   try
   {
-    Init();
+    NFmiEquidistArea::Init();
   }
   catch (...)
   {
@@ -199,15 +200,16 @@ NFmiEquidistArea::NFmiEquidistArea(const NFmiPoint &theBottomLeftLatLon,
   try
   {
     itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
+        (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() +
+         kRearth * itsTrueLatitude.Sin()) /
+        (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
     itsBottomLeftWorldXY =
         LatLonToWorldXY(NFmiPoint(theBottomLeftLatLon.X(), theBottomLeftLatLon.Y()));
     itsWorldRect = NFmiRect(itsBottomLeftWorldXY,
                             itsBottomLeftWorldXY + NFmiPoint(theWidthInMeters, theHeightInMeters));
 
-    Init(true);
+    NFmiEquidistArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla tässä,
     // mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -242,14 +244,15 @@ NFmiEquidistArea::NFmiEquidistArea(const double theRadialRange,
   {
     // Purpose: to create a square bounding the circle of radius theRadialRange
 
-    itsTrueLatScaleFactor =
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
-        (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);  // 17.1.2000/EL
+    itsTrueLatScaleFactor = (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth * itsTrueLatitude.Sin()) /
+                            (NFmiEquidistArea::DistanceFromPerspectivePointToCenterOfEarth() +
+                             kRearth);  // 17.1.2000/EL
 
     itsWorldRect = NFmiRect(NFmiPoint(-itsRadialRange, -itsRadialRange),
                             NFmiPoint(itsRadialRange, itsRadialRange));
 
-    Init(true);
+    NFmiEquidistArea::Init(true);
 
     // 28.8.2001/Marko&Esa itsWorldRect on laskettu sellaisilla argumenteilla
     // tässä, mitkä eivät ole dataosia, joten sitä ei saa laskea Init:issä uudestaan
@@ -493,8 +496,10 @@ bool NFmiEquidistArea::operator!=(const NFmiArea &theArea) const
 /*!
  * \param fKeepWorldRect Undocumented
  */
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 // ----------------------------------------------------------------------
 
+// codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
 void NFmiEquidistArea::Init(bool fKeepWorldRect)
 {
   try
@@ -502,7 +507,9 @@ void NFmiEquidistArea::Init(bool fKeepWorldRect)
     if (!fKeepWorldRect)
     {
       itsTrueLatScaleFactor =
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth * itsTrueLatitude.Sin()) /
+          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           (DistanceFromPerspectivePointToCenterOfEarth() + kRearth);
 
       itsWorldRect =

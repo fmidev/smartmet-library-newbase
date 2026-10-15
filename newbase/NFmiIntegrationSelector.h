@@ -31,6 +31,7 @@ class NFmiIntegrationSelector
                           float theProbabilityScale = 100);
 
   NFmiIntegrationSelector(const NFmiIntegrationSelector& theSelector);
+  NFmiIntegrationSelector& operator=(const NFmiIntegrationSelector&) = default;
 
   FmiIntegrationSelector Type() const;
   FmiProbabilityCondition ProbabilityCondition() const;

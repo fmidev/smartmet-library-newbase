@@ -51,7 +51,7 @@ NFmiDataModifierCombi::NFmiDataModifierCombi(unsigned int theNumberOfValues,
 {
   if (itsNumberOfValues > 0)
     itsFrequencies = new int[itsNumberOfValues];
-  Clear();
+  NFmiDataModifierCombi::Clear();
 }
 
 // ----------------------------------------------------------------------

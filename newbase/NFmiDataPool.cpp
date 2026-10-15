@@ -155,6 +155,7 @@ bool NFmiDataPool::Init(unsigned long theNumber, const float *theData)
     if (!theNumber)
       return false;
 
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     Destroy();
 
     itsSize = theNumber;

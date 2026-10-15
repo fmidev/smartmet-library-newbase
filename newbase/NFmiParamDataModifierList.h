@@ -18,6 +18,8 @@ class NFmiParamDataModifierList
 {
  public:
   virtual ~NFmiParamDataModifierList();
+  NFmiParamDataModifierList(const NFmiParamDataModifierList &) = delete;
+  NFmiParamDataModifierList &operator=(const NFmiParamDataModifierList &) = delete;
   NFmiParamDataModifierList();
   bool Add(NFmiParamDataModifier* theModifier);
   bool Reset();

@@ -1035,12 +1035,15 @@ const string NFmiLogger::MakeBackupFileNameTimeStamp()
       switch (itsLogFileBackupTimePeriod)
       {
         case kHourly:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime).ToStr(kYYYYMMDDHH);
           break;
         case kDaily:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime).ToStr(kYYYYMMDD);
           break;
         case kMonthly:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime).ToStr(kLongYear + kMonth);
           break;
         case kNoPeriod:
@@ -1052,12 +1055,15 @@ const string NFmiLogger::MakeBackupFileNameTimeStamp()
       switch (itsLogFileBackupTimePeriod)
       {
         case kHourly:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime.UTCTime()).ToStr(kYYYYMMDDHH);
           break;
         case kDaily:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime.UTCTime()).ToStr(kYYYYMMDD);
           break;
         case kMonthly:
+          // NOLINTNEXTLINE(cppcoreguidelines-slicing): only the time is wanted
           str = static_cast<NFmiStaticTime>(itsLastLoggedTime.UTCTime()).ToStr(kLongYear + kMonth);
           break;
         case kNoPeriod:
