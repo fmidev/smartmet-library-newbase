@@ -544,7 +544,7 @@ bool NFmiQueryData::Next()
  */
 // ----------------------------------------------------------------------
 
-const NFmiMetTime NFmiQueryData::Time() const
+NFmiMetTime NFmiQueryData::Time() const
 {
   try
   {
@@ -679,7 +679,7 @@ float NFmiQueryData::Quality() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header1() const
+NFmiString NFmiQueryData::Header1() const
 {
   try
   {
@@ -702,7 +702,7 @@ const NFmiString NFmiQueryData::Header1() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header2() const
+NFmiString NFmiQueryData::Header2() const
 {
   try
   {
@@ -729,7 +729,7 @@ const NFmiString NFmiQueryData::Header2() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryData::Header3() const
+NFmiString NFmiQueryData::Header3() const
 {
   try
   {

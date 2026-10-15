@@ -22,11 +22,11 @@ class NFmiLambertEqualArea : public NFmiAzimuthalArea
 
   NFmiLambertEqualArea(const NFmiPoint& theBottomLeftLatLon,
                        const NFmiPoint& theTopRightLatLon,
-                       const double theCentralLongitude = 10.,
+                       double theCentralLongitude = 10.,
                        const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                        const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                       const double theCentralLatitude = 52.,
-                       const double theTrueLatitude = 90.,
+                       double theCentralLatitude = 52.,
+                       double theTrueLatitude = 90.,
                        bool usePacificView = false);
 
   NFmiLambertEqualArea(double theRadialRangeInMeters,
@@ -35,20 +35,20 @@ class NFmiLambertEqualArea : public NFmiAzimuthalArea
                        const NFmiPoint& theBottomRightXY);
 
   NFmiLambertEqualArea(const NFmiPoint& theBottomLeftLatLon,
-                       const double theWidthInMeters,
-                       const double theHeightInMeters,
-                       const double theCentralLongitude = 10.,
+                       double theWidthInMeters,
+                       double theHeightInMeters,
+                       double theCentralLongitude = 10.,
                        const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                        const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                       const double theCentralLatitude = 52.,
-                       const double theTrueLatitude = 90.);
+                       double theCentralLatitude = 52.,
+                       double theTrueLatitude = 90.);
 
-  NFmiLambertEqualArea(const double theRadialRange,
-                       const double theCentralLongitude = 10.,
+  NFmiLambertEqualArea(double theRadialRange,
+                       double theCentralLongitude = 10.,
                        const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                        const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                       const double theCentralLatitude = 52.,
-                       const double theTrueLatitude = 90.);
+                       double theCentralLatitude = 52.,
+                       double theTrueLatitude = 90.);
 
   void Init(bool fKeepWorldRect = false) override;
   NFmiArea* Clone() const override;
@@ -81,8 +81,8 @@ class NFmiLambertEqualArea : public NFmiAzimuthalArea
   std::size_t HashValue() const;
 
  protected:
-  double K(const double delta) const override;
-  double CalcDelta(const double xyDistance) const override;
+  double K(double delta) const override;
+  double CalcDelta(double xyDistance) const override;
   double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:

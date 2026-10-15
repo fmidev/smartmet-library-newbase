@@ -35,9 +35,9 @@ const double kDegToRad = 0.017453292;
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint torotlatlon(const NFmiPoint &theLatLonPoint,
-                            const NFmiPoint &thePole,
-                            bool usePacificView = false)
+NFmiPoint torotlatlon(const NFmiPoint& theLatLonPoint,
+                      const NFmiPoint& thePole,
+                      bool usePacificView = false)
 {
   try
   {
@@ -124,9 +124,9 @@ const NFmiPoint torotlatlon(const NFmiPoint &theLatLonPoint,
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint toreglatlon(const NFmiPoint &theRotLatLonPoint,
-                            const NFmiPoint &thePole,
-                            bool usePacificView = false)
+NFmiPoint toreglatlon(const NFmiPoint& theRotLatLonPoint,
+                      const NFmiPoint& thePole,
+                      bool usePacificView = false)
 {
   try
   {

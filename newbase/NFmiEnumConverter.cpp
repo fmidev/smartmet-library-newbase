@@ -198,7 +198,7 @@ int NFmiEnumConverter::ToEnum(const char *s)
  */
 // ----------------------------------------------------------------------
 
-const std::string NFmiEnumConverter::ToString(int theValue)
+std::string NFmiEnumConverter::ToString(int theValue)
 {
   try
   {

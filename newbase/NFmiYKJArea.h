@@ -30,8 +30,8 @@ class NFmiYKJArea : public NFmiKKJArea
               const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
   NFmiYKJArea(const NFmiPoint& theBottomLeftLatLon,
-              const double theWidthInMeters,
-              const double theHeightInMeters,
+              double theWidthInMeters,
+              double theHeightInMeters,
               const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
               const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F));
 
@@ -69,11 +69,11 @@ class NFmiYKJArea : public NFmiKKJArea
   std::size_t HashValue() const;
 
  protected:
-  int ZoneNumberByLongitude(const double lon) const override;
-  int ZoneNumberByEasting(const double easting) const override;
+  int ZoneNumberByLongitude(double lon) const override;
+  int ZoneNumberByEasting(double easting) const override;
 
  private:
-  const NFmiPoint CornerWorldXY(const NFmiPoint& latlonPoint) const;
+  NFmiPoint CornerWorldXY(const NFmiPoint& latlonPoint) const;
 
 };  // class NFmiYKJArea
 

@@ -87,7 +87,7 @@ NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo& theInfo) : itsDefaultP
  * tallettaa sen dataosaksi ja palauttaa kopion siihen. Jos ei voinut
  * rakentaa stringiä jostain syystä, palauttaa tyhjän stringin.
  */
-const std::string NFmiProducerIdLister::MakeProducerIdString()
+std::string NFmiProducerIdLister::MakeProducerIdString()
 {
   try
   {

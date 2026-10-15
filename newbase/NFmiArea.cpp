@@ -773,7 +773,7 @@ const NFmiAngle NFmiArea::TrueNorthAzimuth(const NFmiPoint &theLatLonPoint,
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::CenterLatLon() const
+NFmiPoint NFmiArea::CenterLatLon() const
 {
   try
   {
@@ -1172,7 +1172,7 @@ NFmiArea::NFmiArea(
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::TopLeft() const
+NFmiPoint NFmiArea::TopLeft() const
 {
   return itsXYRectArea.TopLeft();
 }
@@ -1182,7 +1182,7 @@ const NFmiPoint NFmiArea::TopLeft() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::BottomRight() const
+NFmiPoint NFmiArea::BottomRight() const
 {
   return itsXYRectArea.BottomRight();
 }
@@ -1192,7 +1192,7 @@ const NFmiPoint NFmiArea::BottomRight() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::TopRight() const
+NFmiPoint NFmiArea::TopRight() const
 {
   return itsXYRectArea.TopRight();
 }
@@ -1202,7 +1202,7 @@ const NFmiPoint NFmiArea::TopRight() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::BottomLeft() const
+NFmiPoint NFmiArea::BottomLeft() const
 {
   return itsXYRectArea.BottomLeft();
 }
@@ -1266,7 +1266,7 @@ bool NFmiArea::IsInside(const NFmiPoint &theLatLonPoint) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::TopLeftLatLon() const
+NFmiPoint NFmiArea::TopLeftLatLon() const
 {
   return ToLatLon(TopLeft());
 }
@@ -1276,7 +1276,7 @@ const NFmiPoint NFmiArea::TopLeftLatLon() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::TopRightLatLon() const
+NFmiPoint NFmiArea::TopRightLatLon() const
 {
   return ToLatLon(TopRight());
 }
@@ -1286,7 +1286,7 @@ const NFmiPoint NFmiArea::TopRightLatLon() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::BottomLeftLatLon() const
+NFmiPoint NFmiArea::BottomLeftLatLon() const
 {
   return ToLatLon(BottomLeft());
 }
@@ -1296,7 +1296,7 @@ const NFmiPoint NFmiArea::BottomLeftLatLon() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiArea::BottomRightLatLon() const
+NFmiPoint NFmiArea::BottomRightLatLon() const
 {
   return ToLatLon(BottomRight());
 }

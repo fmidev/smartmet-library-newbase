@@ -63,16 +63,16 @@ class NFmiArea
   bool IsInside(const NFmiPoint &theLatLonPoint) const;
   bool IsInside(const NFmiArea &theArea) const;
 
-  const NFmiPoint TopLeftLatLon() const;
-  const NFmiPoint TopRightLatLon() const;
-  const NFmiPoint BottomLeftLatLon() const;
-  const NFmiPoint BottomRightLatLon() const;
-  const NFmiPoint CenterLatLon() const;
+  NFmiPoint TopLeftLatLon() const;
+  NFmiPoint TopRightLatLon() const;
+  NFmiPoint BottomLeftLatLon() const;
+  NFmiPoint BottomRightLatLon() const;
+  NFmiPoint CenterLatLon() const;
 
-  const NFmiPoint TopLeft() const;
-  const NFmiPoint BottomRight() const;
-  const NFmiPoint TopRight() const;
-  const NFmiPoint BottomLeft() const;
+  NFmiPoint TopLeft() const;
+  NFmiPoint BottomRight() const;
+  NFmiPoint TopRight() const;
+  NFmiPoint BottomLeft() const;
 
   void Place(const NFmiPoint &newPlace);
   void Size(const NFmiPoint &newSize);

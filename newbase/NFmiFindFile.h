@@ -27,9 +27,9 @@ class NFmiFindFile
   bool Find(const NFmiString& theFileMask = "*.*");
   bool Next();
 
-  const NFmiString FileName();
-  const NFmiString PathName();
-  const NFmiString PathAndFileName();
+  NFmiString FileName();
+  NFmiString PathName();
+  NFmiString PathAndFileName();
 
  private:
   NFmiFindFile(const NFmiFindFile& theFile);

@@ -34,9 +34,9 @@ class NFmiStatus
   bool IsWarning() const;
   bool IsMessage() const;
 
-  const NFmiString ErrorLog() const;
-  const NFmiString WarningLog() const;
-  const NFmiString MessageLog() const;
+  NFmiString ErrorLog() const;
+  NFmiString WarningLog() const;
+  NFmiString MessageLog() const;
 
   virtual std::ostream& Write(std::ostream& file) const;
   virtual std::istream& Read(std::istream& file);

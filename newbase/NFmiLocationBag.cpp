@@ -688,8 +688,9 @@ struct LocationIndexDistanceGreater
  */
 // ----------------------------------------------------------------------
 
-const std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(
-    const NFmiLocation &theLocation, int theMaxWantedLocations, double theMaxDistance) const
+std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(const NFmiLocation& theLocation,
+                                                                  int theMaxWantedLocations,
+                                                                  double theMaxDistance) const
 {
   try
   {

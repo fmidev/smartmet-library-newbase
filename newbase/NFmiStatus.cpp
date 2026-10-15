@@ -122,7 +122,7 @@ void NFmiStatus::MessageLog(const char* theMessageLog)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::ErrorLog() const
+NFmiString NFmiStatus::ErrorLog() const
 {
   return itsErrorLog;
 }
@@ -132,7 +132,7 @@ const NFmiString NFmiStatus::ErrorLog() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::WarningLog() const
+NFmiString NFmiStatus::WarningLog() const
 {
   return itsWarningLog;
 }
@@ -142,7 +142,7 @@ const NFmiString NFmiStatus::WarningLog() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStatus::MessageLog() const
+NFmiString NFmiStatus::MessageLog() const
 {
   return itsMessageLog;
 }

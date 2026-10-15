@@ -20,12 +20,12 @@ class NFmiFileString : public NFmiString
 
   NFmiFileString& operator = (const NFmiFileString&);
 
-  const NFmiString Extension() const;
-  const NFmiString FileName() const;
-  const NFmiString Header() const;
-  const NFmiString Path() const;
-  const NFmiString Device() const;
-  const NFmiString Directory() const;
+  NFmiString Extension() const;
+  NFmiString FileName() const;
+  NFmiString Header() const;
+  NFmiString Path() const;
+  NFmiString Device() const;
+  NFmiString Directory() const;
 
   bool HasExtension() const;
   bool IsAbsolutePath() const;
@@ -49,7 +49,7 @@ class NFmiFileString : public NFmiString
   void NormalizeDelimiter();
   void ChangeScandinavian();
 
-  const NFmiString PathWithoutLastDirectory();
+  NFmiString PathWithoutLastDirectory();
 
 };  // class NFmiFileString
 

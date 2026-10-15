@@ -92,7 +92,7 @@ class NFmiLogger
   void UpdateFileNamesAndPaths(
       bool updatePath);  // tämä päivittää itsAbsolutLogFilePath:in ja itsCurrentLogFileName:n
   void MakeCurrentLogFileName();
-  const std::string MakeBackupFileFilter();
+  std::string MakeBackupFileFilter();
   bool CheckBackupSystem();  // tekee kaiken mahdollisen liittyen mahdollisiin backup systeemeihin
   bool CleanBackupFiles();
   bool LogMessage(const std::string &theMessage, Level theMessageLevel, int theDevices);
@@ -113,7 +113,7 @@ class NFmiLogger
 
   void GetLastLoggetTimeFromLogFile();  // kun logger käynnistyy, katsotaan loki-tiedostosta,
                                         // milloin on viimeksi tehty lokia
-  const std::string MakeBackupFileNameTimeStamp();
+  std::string MakeBackupFileNameTimeStamp();
 
   // Tähän voidaan biteillä tallettaa eritasoiset käytettävät logattavat viestitasot ks. enum Level.
   // esim. kImportantInfo + kError (2 + 64 = 66)

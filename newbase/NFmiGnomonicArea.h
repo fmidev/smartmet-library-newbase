@@ -22,28 +22,28 @@ class NFmiGnomonicArea : public NFmiAzimuthalArea
 
   NFmiGnomonicArea(const NFmiPoint& theBottomLeftLatLon,
                    const NFmiPoint& theTopRightLatLon,
-                   const double theCentralLongitude = 0.,
+                   double theCentralLongitude = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                   const double theCentralLatitude = 90.,
-                   const double theTrueLatitude = 60.,  // see ref [2]
+                   double theCentralLatitude = 90.,
+                   double theTrueLatitude = 60.,  // see ref [2]
                    bool usePacificView = false);
 
   NFmiGnomonicArea(const NFmiPoint& theBottomLeftLatLon,
-                   const double theWidthInMeters,
-                   const double theHeightInMeters,
-                   const double theCentralLongitude = 0.,
+                   double theWidthInMeters,
+                   double theHeightInMeters,
+                   double theCentralLongitude = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                   const double theCentralLatitude = 90.,
-                   const double theTrueLatitude = 60.);  // see ref [2]
+                   double theCentralLatitude = 90.,
+                   double theTrueLatitude = 60.);  // see ref [2]
 
-  NFmiGnomonicArea(const double theRadialRange,
-                   const double theCentralLongitude = 0.,
+  NFmiGnomonicArea(double theRadialRange,
+                   double theCentralLongitude = 0.,
                    const NFmiPoint& theTopLeftXY = NFmiPoint(0.F, 0.F),
                    const NFmiPoint& theBottomRightXY = NFmiPoint(1.F, 1.F),
-                   const double theCentralLatitude = 90.,
-                   const double theTrueLatitude = 60.);
+                   double theCentralLatitude = 90.,
+                   double theTrueLatitude = 60.);
 
   void Init(bool fKeepWorldRect = false) override;
   NFmiArea* NewArea(const NFmiPoint& theBottomLeftLatLon,
@@ -73,8 +73,8 @@ class NFmiGnomonicArea : public NFmiAzimuthalArea
   std::size_t HashValue() const;
 
  protected:
-  double K(const double delta) const override;
-  double CalcDelta(const double xyDistance) const override;
+  double K(double delta) const override;
+  double CalcDelta(double xyDistance) const override;
   double DistanceFromPerspectivePointToCenterOfEarth() const override;
 
  private:

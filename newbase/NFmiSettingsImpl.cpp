@@ -558,8 +558,8 @@ bool NFmiSettingsImpl::IsSet(const std::string& theName) const
  */
 // ----------------------------------------------------------------------
 
-const std::string NFmiSettingsImpl::Value(const std::string& theName,
-                                          const std::string& theAlternate) const
+std::string NFmiSettingsImpl::Value(const std::string& theName,
+                                    const std::string& theAlternate) const
 {
   try
   {
@@ -583,7 +583,7 @@ const std::string NFmiSettingsImpl::Value(const std::string& theName,
  */
 // ----------------------------------------------------------------------
 
-const std::string NFmiSettingsImpl::Require(const std::string& theName) const
+std::string NFmiSettingsImpl::Require(const std::string& theName) const
 {
   try
   {

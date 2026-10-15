@@ -37,12 +37,12 @@ class NFmiRect
   double Width() const;
   void Height(double theValue) { itsSize.Y(theValue); }
   void Width(double theValue) { itsSize.X(theValue); }
-  const NFmiPoint TopLeft() const;
-  const NFmiPoint BottomRight() const;
-  const NFmiPoint TopRight() const;
-  const NFmiPoint BottomLeft() const;
+  NFmiPoint TopLeft() const;
+  NFmiPoint BottomRight() const;
+  NFmiPoint TopRight() const;
+  NFmiPoint BottomLeft() const;
 
-  const NFmiPoint Corner(FmiDirection cornerIdent) const;
+  NFmiPoint Corner(FmiDirection cornerIdent) const;
 
   const NFmiPoint &Size() const;
   const NFmiPoint &Place() const;
@@ -50,24 +50,24 @@ class NFmiRect
   void Place(const NFmiPoint &newPlace);
   void Size(const NFmiPoint &newSize);
   void Center(const NFmiPoint &newCenter);
-  const NFmiPoint Center() const;
+  NFmiPoint Center() const;
 
   bool IsInside(const NFmiPoint &thePoint) const;
   bool IsInside(const NFmiRect &theRect) const;
   bool Intersect(const NFmiRect &theRect) const;
   bool IsEmpty() const;
-  const NFmiRect SmallestEnclosing(const NFmiRect &theRect) const;
-  const NFmiRect Intersection(const NFmiRect &theRect) const;
+  NFmiRect SmallestEnclosing(const NFmiRect& theRect) const;
+  NFmiRect Intersection(const NFmiRect& theRect) const;
 
-  const NFmiPoint NearestCorner(const NFmiPoint &thePoint) const;
+  NFmiPoint NearestCorner(const NFmiPoint& thePoint) const;
 
-  const NFmiRect ToAbs(const NFmiRect &theRect) const;
-  const NFmiPoint ToAbs(const NFmiPoint &thePoint) const;
+  NFmiRect ToAbs(const NFmiRect& theRect) const;
+  NFmiPoint ToAbs(const NFmiPoint& thePoint) const;
 
   bool AdjustAspectRatio(double theRatioXperY,
                          bool fKeepX = true,
                          FmiDirection theDirection = kTopLeft);
-  const NFmiPoint Project(const NFmiPoint &thePlace) const;
+  NFmiPoint Project(const NFmiPoint& thePlace) const;
 
   bool operator==(const NFmiRect &theRect) const;
   bool operator!=(const NFmiRect &theRect) const;
@@ -172,7 +172,7 @@ inline double NFmiRect::Right() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::TopLeft() const
+inline NFmiPoint NFmiRect::TopLeft() const
 {
   return itsPlace;
 }
@@ -182,7 +182,7 @@ inline const NFmiPoint NFmiRect::TopLeft() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::BottomRight() const
+inline NFmiPoint NFmiRect::BottomRight() const
 {
   return itsPlace + itsSize;
 }
@@ -192,7 +192,7 @@ inline const NFmiPoint NFmiRect::BottomRight() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::TopRight() const
+inline NFmiPoint NFmiRect::TopRight() const
 {
   return NFmiPoint(itsPlace.X() + itsSize.X(), itsPlace.Y());
 }
@@ -203,7 +203,7 @@ inline const NFmiPoint NFmiRect::TopRight() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::BottomLeft() const
+inline NFmiPoint NFmiRect::BottomLeft() const
 {
   return NFmiPoint(itsPlace.X(), itsPlace.Y() + itsSize.Y());
 }
@@ -215,7 +215,7 @@ inline const NFmiPoint NFmiRect::BottomLeft() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::Corner(FmiDirection cornerIdent) const
+inline NFmiPoint NFmiRect::Corner(FmiDirection cornerIdent) const
 {
   switch (cornerIdent)
   {
@@ -347,7 +347,7 @@ inline void NFmiRect::Size(const NFmiPoint &newSize)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::ToAbs(const NFmiPoint &theRelativePoint) const
+inline NFmiPoint NFmiRect::ToAbs(const NFmiPoint& theRelativePoint) const
 {
   return NFmiPoint(Left() + theRelativePoint.X() * Width(),
                    Top() + theRelativePoint.Y() * Height());
@@ -360,7 +360,7 @@ inline const NFmiPoint NFmiRect::ToAbs(const NFmiPoint &theRelativePoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiRect::ToAbs(const NFmiRect &theRelativeRect) const
+inline NFmiRect NFmiRect::ToAbs(const NFmiRect& theRelativeRect) const
 {
   return NFmiRect(Left() + theRelativeRect.Left() * Width(),
                   Top() + theRelativeRect.Top() * Height(),
@@ -434,7 +434,7 @@ inline bool NFmiRect::operator!=(const NFmiRect &theRect) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiRect::Center() const
+inline NFmiPoint NFmiRect::Center() const
 {
   return NFmiPoint(itsPlace.X() + (Width() / 2.), itsPlace.Y() + (Height() / 2.));
 }

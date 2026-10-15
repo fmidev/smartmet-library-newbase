@@ -918,7 +918,7 @@ std::string TrimAll(std::string &theString, bool replaceInsideNewlinesWithSpace)
  */
 // ----------------------------------------------------------------------
 
-const std::string ReadFile(std::istream &is)
+std::string ReadFile(std::istream& is)
 {
   try
   {
@@ -952,7 +952,7 @@ const std::string ReadFile(std::istream &is)
  */
 // ----------------------------------------------------------------------
 
-const std::string UrlEncode(const std::string &theString)
+std::string UrlEncode(const std::string& theString)
 {
   try
   {
@@ -994,7 +994,7 @@ const std::string UrlEncode(const std::string &theString)
  */
 // ----------------------------------------------------------------------
 
-const std::string UrlDecode(const std::string &theString)
+std::string UrlDecode(const std::string& theString)
 {
   try
   {
@@ -1038,7 +1038,7 @@ const std::string UrlDecode(const std::string &theString)
  */
 // ----------------------------------------------------------------------
 
-const std::map<std::string, std::string> ParseQueryString()
+std::map<std::string, std::string> ParseQueryString()
 {
   try
   {
@@ -1073,7 +1073,7 @@ const std::map<std::string, std::string> ParseQueryString()
  */
 // ----------------------------------------------------------------------
 
-const std::map<std::string, std::string> ParseQueryString(const std::string &theQueryString)
+std::map<std::string, std::string> ParseQueryString(const std::string& theQueryString)
 {
   try
   {
@@ -1116,7 +1116,7 @@ const std::map<std::string, std::string> ParseQueryString(const std::string &the
  */
 // ----------------------------------------------------------------------
 
-const std::vector<std::string> Split(const std::string &theString, const std::string &theSeparator)
+std::vector<std::string> Split(const std::string& theString, const std::string& theSeparator)
 {
   try
   {
@@ -1140,7 +1140,7 @@ const std::vector<std::string> Split(const std::string &theString, const std::st
  */
 // ----------------------------------------------------------------------
 
-const std::string Basename(const std::string &theFile)
+std::string Basename(const std::string& theFile)
 {
   try
   {
@@ -1166,7 +1166,7 @@ const std::string Basename(const std::string &theFile)
  */
 // ----------------------------------------------------------------------
 
-const std::string Suffix(const std::string &theFile)
+std::string Suffix(const std::string& theFile)
 {
   try
   {

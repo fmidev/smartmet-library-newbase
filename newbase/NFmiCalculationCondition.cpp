@@ -217,7 +217,7 @@ double NFmiCalculationCondition::MaskValue(double theValue) const
 
 // annetaan käytetyn parametrin nimi, valmistaa stringin, missä on ehdot näkyvissä
 
-const NFmiString NFmiCalculationCondition::MaskString(const NFmiString& theParamName) const
+NFmiString NFmiCalculationCondition::MaskString(const NFmiString& theParamName) const
 {
   try
   {

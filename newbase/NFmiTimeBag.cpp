@@ -288,8 +288,8 @@ bool NFmiTimeBag::CalcIntersection(const NFmiTimeBag &theBag2,
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimeBag NFmiTimeBag::GetIntersection(const NFmiMetTime &theStartLimit,
-                                               const NFmiMetTime &theEndLimit)
+NFmiTimeBag NFmiTimeBag::GetIntersection(const NFmiMetTime& theStartLimit,
+                                         const NFmiMetTime& theEndLimit)
 {
   try
   {

@@ -49,9 +49,9 @@ class NFmiLocation : public NFmiIndividual
   void SetLocation(const NFmiPoint& newLocation) { itsLatlon = newLocation; }
   // 9.8.04/EL -->
   void SetLocation(double theAzimuthInDegrees, double theDistanceInMeters, bool usePacificView);
-  const NFmiLocation GetLocation(double theAzimuthInDegrees,
-                                 double theDistanceInMeters,
-                                 bool usePacificView) const;
+  NFmiLocation GetLocation(double theAzimuthInDegrees,
+                           double theDistanceInMeters,
+                           bool usePacificView) const;
   // 9.8.04/EL <--
 
   double Distance(const NFmiLocation& theLocation) const;

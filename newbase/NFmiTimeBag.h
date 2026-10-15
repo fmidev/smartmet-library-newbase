@@ -29,8 +29,7 @@ class NFmiTimeBag : public NFmiSize
                                     int theStartTimeFunction = 0,
                                     int theEndTimeFunction = 0);  // should be const. Look at .cpp
   bool CalcIntersection(const NFmiTimeBag &theBag2, NFmiTimeBag &refBag, bool resolOfBag2 = false);
-  const NFmiTimeBag GetIntersection(const NFmiMetTime &theStartLimit,
-                                    const NFmiMetTime &theEndLimit);
+  NFmiTimeBag GetIntersection(const NFmiMetTime& theStartLimit, const NFmiMetTime& theEndLimit);
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
   unsigned long GetSize() const override;  //??? Tarvitaanko täällä? //should be const. Look at .cpp

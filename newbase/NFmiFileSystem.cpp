@@ -238,7 +238,7 @@ namespace NFmiFileSystem
  */
 // ----------------------------------------------------------------------
 
-const string FileComplete(const string &theFile, const string &theSearchPath)
+string FileComplete(const string& theFile, const string& theSearchPath)
 {
   // Safety
   if (theFile.empty() || theSearchPath.empty())
@@ -668,7 +668,7 @@ bool CreateDirectory(const string &thePath)
  */
 // ----------------------------------------------------------------------
 
-const string NewestFile(const string &thePath)
+string NewestFile(const string& thePath)
 {
   if (!DirectoryExists(thePath))
     return "";
@@ -809,7 +809,7 @@ std::string FirstPatternFileName(const std::string &thePattern)
  */
 // ----------------------------------------------------------------------
 
-const list<string> DirectoryFiles(const string &thePath)
+list<string> DirectoryFiles(const string& thePath)
 {
   list<string> out;
 
@@ -847,7 +847,7 @@ const list<string> DirectoryFiles(const string &thePath)
  */
 // ----------------------------------------------------------------------
 
-const std::list<std::string> PatternFiles(const std::string &thePattern)
+std::list<std::string> PatternFiles(const std::string& thePattern)
 {
   list<string> out;
 
@@ -985,7 +985,7 @@ const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::st
  */
 // ----------------------------------------------------------------------
 
-const std::list<std::string> Directories(const std::string &thePath)
+std::list<std::string> Directories(const std::string& thePath)
 {
   list<string> out;
 
@@ -1315,7 +1315,7 @@ bool CopyFile(const std::string &theSrcFileName, const std::string &theDstFileNa
  */
 // ----------------------------------------------------------------------
 
-const std::string TemporaryFile(const std::string &thePath)
+std::string TemporaryFile(const std::string& thePath)
 {
   if (!DirectoryReadable(thePath))
     throw Fmi::Exception(BCP, "Directory '" + thePath + "' does not exist or is not readable");
@@ -1368,7 +1368,7 @@ const std::string TemporaryFile(const std::string &thePath)
  */
 // ----------------------------------------------------------------------
 
-const std::string DirName(const std::string &theName)
+std::string DirName(const std::string& theName)
 {
   if (theName.empty())
     return ".";
@@ -1421,7 +1421,7 @@ const std::string DirName(const std::string &theName)
  */
 // ----------------------------------------------------------------------
 
-const std::string BaseName(const std::string &theName)
+std::string BaseName(const std::string& theName)
 {
   if (theName.empty())
     return theName;

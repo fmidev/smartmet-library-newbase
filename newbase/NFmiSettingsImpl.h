@@ -23,8 +23,8 @@ class NFmiSettingsImpl
   bool Init(const std::string& theFile = "") const;
   bool Read(const std::string& theFile) const;
 
-  const std::string Value(const std::string& theName, const std::string& theAlternate = "") const;
-  const std::string Require(const std::string& theName) const;
+  std::string Value(const std::string& theName, const std::string& theAlternate = "") const;
+  std::string Require(const std::string& theName) const;
   bool IsSet(const std::string& theName) const;
 
 #undef SearchPath  // win32 macro pitää undefinata

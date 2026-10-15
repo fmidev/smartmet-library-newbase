@@ -21,9 +21,9 @@ class NFmiMap
 
   bool operator==(const NFmiMap &theMap) const;
   bool operator!=(const NFmiMap &theMap) const;
-  const NFmiPoint Transform(const NFmiPoint &thePoint) const;
-  const NFmiPoint Reverse(const NFmiPoint &thePoint) const;
-  const NFmiRect Transform(const NFmiRect &theRect) const;
+  NFmiPoint Transform(const NFmiPoint& thePoint) const;
+  NFmiPoint Reverse(const NFmiPoint& thePoint) const;
+  NFmiRect Transform(const NFmiRect& theRect) const;
 
  private:
   NFmiPoint itsOffset;
@@ -76,7 +76,7 @@ inline bool NFmiMap::operator!=(const NFmiMap &theMap) const
  */
 //___________________________________________________________ Scaled
 
-inline const NFmiPoint NFmiMap::Transform(const NFmiPoint &thePoint) const
+inline NFmiPoint NFmiMap::Transform(const NFmiPoint& thePoint) const
 {
   NFmiPoint newPoint(thePoint);
   newPoint *= itsScale;
@@ -91,7 +91,7 @@ inline const NFmiPoint NFmiMap::Transform(const NFmiPoint &thePoint) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiRect NFmiMap::Transform(const NFmiRect &theRect) const
+inline NFmiRect NFmiMap::Transform(const NFmiRect& theRect) const
 {
   return NFmiRect(Transform(theRect.TopLeft()), Transform(theRect.BottomRight()));
 }
@@ -103,7 +103,7 @@ inline const NFmiRect NFmiMap::Transform(const NFmiRect &theRect) const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiMap::Reverse(const NFmiPoint &thePoint) const
+inline NFmiPoint NFmiMap::Reverse(const NFmiPoint& thePoint) const
 {
   NFmiPoint newPoint(thePoint);
   newPoint -= itsScale;

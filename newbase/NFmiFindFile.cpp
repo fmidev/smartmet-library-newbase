@@ -76,7 +76,7 @@ void NFmiFindFile::Path(const NFmiString& thePathName)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFindFile::FileName()
+NFmiString NFmiFindFile::FileName()
 {
   return itsFileName;
 }
@@ -87,7 +87,7 @@ const NFmiString NFmiFindFile::FileName()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFindFile::PathName()
+NFmiString NFmiFindFile::PathName()
 {
   return itsFilePath;
 }
@@ -98,7 +98,7 @@ const NFmiString NFmiFindFile::PathName()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFindFile::PathAndFileName()
+NFmiString NFmiFindFile::PathAndFileName()
 {
   try
   {

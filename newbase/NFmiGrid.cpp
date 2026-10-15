@@ -316,7 +316,7 @@ bool NFmiGrid::Init(NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
+NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
 {
   try
   {
@@ -344,7 +344,7 @@ const NFmiPoint NFmiGrid::XYToGrid(double x, double y) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
+NFmiPoint NFmiGrid::GridToXY(double x_, double y_) const
 {
   try
   {
@@ -543,7 +543,7 @@ bool NFmiGrid::AreGridsIdentical(const NFmiGrid &theOtherGrid) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint() const
+NFmiPoint NFmiGrid::RelativePoint() const
 {
   try
   {
@@ -567,7 +567,7 @@ const NFmiPoint NFmiGrid::RelativePoint() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
+NFmiPoint NFmiGrid::RelativePoint(unsigned long /* theIndex */) const
 {
   try
   {

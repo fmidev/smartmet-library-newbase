@@ -1038,9 +1038,9 @@ void NFmiLocation::SetLocation(double theAzimuthInDegrees,
   }
 }
 
-const NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
-                                             double theDistanceInMeters,
-                                             bool usePacificView) const
+NFmiLocation NFmiLocation::GetLocation(double theAzimuthInDegrees,
+                                       double theDistanceInMeters,
+                                       bool usePacificView) const
 {
   try
   {

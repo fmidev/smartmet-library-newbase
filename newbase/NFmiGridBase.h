@@ -47,8 +47,8 @@ class NFmiGridBase
   bool ResetLast();
   void Center();
 
-  const NFmiPoint FirstGridPoint() const;
-  const NFmiPoint LastGridPoint() const;
+  NFmiPoint FirstGridPoint() const;
+  NFmiPoint LastGridPoint() const;
 
   void FirstX();
   void FirstY();
@@ -147,7 +147,7 @@ class NFmiGridBase
   unsigned long DataIndex(unsigned long x, unsigned long y) const;
   unsigned long Index(unsigned long x, unsigned long y) const;
   bool Index(unsigned long theIndex);
-  const NFmiPoint GridPoint(unsigned long theLocationIndex) const;
+  NFmiPoint GridPoint(unsigned long theLocationIndex) const;
   bool operator==(const NFmiGridBase& theGrid) const;
 
   std::size_t HashValue() const;
@@ -700,7 +700,7 @@ inline void NFmiGridBase::Setf(bool boo)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGridBase::FirstGridPoint() const
+inline NFmiPoint NFmiGridBase::FirstGridPoint() const
 {
   return NFmiPoint(static_cast<double>(itsFirstX), static_cast<double>(itsFirstY));
 }
@@ -711,7 +711,7 @@ inline const NFmiPoint NFmiGridBase::FirstGridPoint() const
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiPoint NFmiGridBase::LastGridPoint() const
+inline NFmiPoint NFmiGridBase::LastGridPoint() const
 {
   return NFmiPoint(static_cast<double>(itsLastX), static_cast<double>(itsLastY));
 }

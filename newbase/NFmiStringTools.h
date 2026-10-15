@@ -43,15 +43,15 @@ std::string &TrimR(std::string &theString, char theChar = ' ');
 std::string &Trim(std::string &theString, char theChar = ' ');
 std::string TrimAll(std::string &theString, bool replaceInsideNewlinesWithSpace = false);
 
-const std::string ReadFile(std::istream &is);
+std::string ReadFile(std::istream& is);
 
-const std::string UrlDecode(const std::string &theString);
-const std::string UrlEncode(const std::string &theString);
-const std::map<std::string, std::string> ParseQueryString();
-const std::map<std::string, std::string> ParseQueryString(const std::string &theQueryString);
+std::string UrlDecode(const std::string& theString);
+std::string UrlEncode(const std::string& theString);
+std::map<std::string, std::string> ParseQueryString();
+std::map<std::string, std::string> ParseQueryString(const std::string& theQueryString);
 
-const std::string Basename(const std::string &theFile);
-const std::string Suffix(const std::string &theFile);
+std::string Basename(const std::string& theFile);
+std::string Suffix(const std::string& theFile);
 
 template <typename T>
 T Convert(const char *theThing);
@@ -63,13 +63,13 @@ template <typename T>
 std::string Convert(const T &theThing);
 
 template <typename T>
-const T Split(const std::string &theString, const std::string &theSeparator = std::string(","));
+T Split(const std::string& theString, const std::string& theSeparator = std::string(","));
 
-const std::vector<std::string> Split(const std::string &theString,
-                                     const std::string &theSeparator = std::string(","));
+std::vector<std::string> Split(const std::string& theString,
+                               const std::string& theSeparator = std::string(","));
 
 template <typename T>
-const std::string Join(const T &theWords, const std::string &theSeparator = std::string(""));
+std::string Join(const T& theWords, const std::string& theSeparator = std::string(""));
 
 }  // namespace NFmiStringTools
 
@@ -138,7 +138,7 @@ inline T Convert(const std::string &theThing)
 
 // Split string into container objects
 template <typename T>
-inline const T Split(const std::string &theString, const std::string &theSeparator)
+inline T Split(const std::string& theString, const std::string& theSeparator)
 {
   if (theSeparator.empty())
     throw Fmi::Exception(BCP, "Cannot split based on empty separator string");
@@ -164,7 +164,7 @@ inline const T Split(const std::string &theString, const std::string &theSeparat
 // Join string container back to a single string
 
 template <typename T>
-inline const std::string Join(const T &theWords, const std::string &theSeparator)
+inline std::string Join(const T& theWords, const std::string& theSeparator)
 {
   std::string ret;
   for (typename T::const_iterator it = theWords.begin(); it != theWords.end(); ++it)

@@ -11,7 +11,7 @@
 
 #define SPECIALIZE(X, Y)             \
   template <>                        \
-  inline const std::string Name<X>() \
+  inline std::string Name<X>()       \
   {                                  \
     return Y;                        \
   }
@@ -19,7 +19,7 @@
 namespace NFmiTypeNameTraits
 {
 template <typename T>
-inline const std::string Name()
+inline std::string Name()
 {
   return "(unknown)";
 }

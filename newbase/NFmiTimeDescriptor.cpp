@@ -1054,7 +1054,7 @@ bool NFmiTimeDescriptor::NextActive()
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
+NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
 {
   try
   {
@@ -1094,7 +1094,7 @@ const NFmiTimePerioid NFmiTimeDescriptor::ActiveResolution()
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
+NFmiTimePerioid NFmiTimeDescriptor::Resolution() const
 {
   try
   {

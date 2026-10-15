@@ -490,7 +490,7 @@ void NFmiString::SizeCheck(unsigned long len) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiString::GetChars(unsigned long firstChar, unsigned long length) const
+NFmiString NFmiString::GetChars(unsigned long firstChar, unsigned long length) const
 {
   try
   {

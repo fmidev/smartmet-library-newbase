@@ -838,9 +838,9 @@ bool NFmiTimeList::TimeInSearchRange(const NFmiMetTime &theTime,
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimeList NFmiTimeList::Combine(const NFmiTimeList& theList,
-                                         int theStartTimeFunction,
-                                         int theEndTimeFunction)
+NFmiTimeList NFmiTimeList::Combine(const NFmiTimeList& theList,
+                                   int theStartTimeFunction,
+                                   int theEndTimeFunction)
 {
   try
   {
@@ -1002,8 +1002,8 @@ const NFmiMetTime *NFmiTimeList::Time(int theIndex) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime &theStartLimit,
-                                                 const NFmiMetTime& theEndLimit) const
+NFmiTimeList NFmiTimeList::GetIntersection(const NFmiMetTime& theStartLimit,
+                                           const NFmiMetTime& theEndLimit) const
 {
   try
   {

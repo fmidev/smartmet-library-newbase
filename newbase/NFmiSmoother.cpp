@@ -57,8 +57,8 @@ NFmiSmoother::NFmiSmoother(const std::string& theSmootherName, int theFactor, fl
  */
 // ----------------------------------------------------------------------
 
-const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& thePts,
-                                                   const NFmiDataMatrix<float>& theValues) const
+NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& thePts,
+                                             const NFmiDataMatrix<float>& theValues) const
 {
   try
   {
@@ -90,8 +90,8 @@ const NFmiDataMatrix<float> NFmiSmoother::Smoothen(const Fmi::CoordinateMatrix& 
  */
 // ----------------------------------------------------------------------
 
-const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
-                                                const std::vector<float>& theY) const
+std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
+                                          const std::vector<float>& theY) const
 {
   try
   {
@@ -128,8 +128,8 @@ const std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
  */
 // ----------------------------------------------------------------------
 
-const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
-    const Fmi::CoordinateMatrix& thePts, const NFmiDataMatrix<float>& theValues) const
+NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(const Fmi::CoordinateMatrix& thePts,
+                                                   const NFmiDataMatrix<float>& theValues) const
 {
   try
   {
@@ -253,8 +253,8 @@ const NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(
  */
 // ----------------------------------------------------------------------
 
-const std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& theX,
-                                                      const std::vector<float>& theY) const
+std::vector<float> NFmiSmoother::SmoothenKernel(const std::vector<float>& theX,
+                                                const std::vector<float>& theY) const
 {
   try
   {
@@ -333,7 +333,7 @@ NFmiSmoother::NFmiSmootherMethod NFmiSmoother::SmootherValue(const string& theNa
  */
 // ----------------------------------------------------------------------
 
-const string NFmiSmoother::SmootherName(NFmiSmoother::NFmiSmootherMethod theSmoother)
+string NFmiSmoother::SmootherName(NFmiSmoother::NFmiSmootherMethod theSmoother)
 {
   try
   {

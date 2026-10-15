@@ -22,7 +22,7 @@ class NFmiEnumConverter
   NFmiEnumConverter(FmiEnumSpace theEnumspace = kParamNames);
 
   const char *ToCharPtr(int theValue);
-  const std::string ToString(int theValue);
+  std::string ToString(int theValue);
 
   int ToEnum(const char *s);
   int ToEnum(const std::string &theString) { return ToEnum(theString.c_str()); }

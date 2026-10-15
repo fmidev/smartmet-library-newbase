@@ -18,12 +18,12 @@ class NFmiParam : public NFmiIndividual
   NFmiParam(const NFmiParam &theParam);
 
   explicit NFmiParam(unsigned long theIdent,
-                     const NFmiString &theName = "Koiranpentu",
+                     const NFmiString& theName = "Koiranpentu",
                      double theMinValue = kFloatMissing,
                      double theMaxValue = kFloatMissing,
                      float theScale = kFloatMissing,
                      float theBase = kFloatMissing,
-                     const NFmiString itsPrecision = "%.1f",
+                     NFmiString itsPrecision = "%.1f",
                      FmiInterpolationMethod theInterpolationMethod = kNearestPoint);
 
   NFmiParam &operator=(const NFmiParam &theParam);

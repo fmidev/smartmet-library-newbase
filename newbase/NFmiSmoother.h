@@ -34,7 +34,7 @@ class NFmiSmoother
   NFmiSmoother(const std::string& theSmootherName, int theFactor = 1, float theRadius = 0.0);
 
   static NFmiSmootherMethod SmootherValue(const std::string& theName);
-  static const std::string SmootherName(NFmiSmootherMethod theSmoother);
+  static std::string SmootherName(NFmiSmootherMethod theSmoother);
 
   NFmiSmootherMethod Smoother() const;
   int Factor() const;
@@ -46,11 +46,10 @@ class NFmiSmoother
 
   // Smoothen the given data
 
-  const NFmiDataMatrix<float> Smoothen(const Fmi::CoordinateMatrix& thePts,
-                                       const NFmiDataMatrix<float>& theValues) const;
+  NFmiDataMatrix<float> Smoothen(const Fmi::CoordinateMatrix& thePts,
+                                 const NFmiDataMatrix<float>& theValues) const;
 
-  const std::vector<float> Smoothen(const std::vector<float>& theX,
-                                    const std::vector<float>& theY) const;
+  std::vector<float> Smoothen(const std::vector<float>& theX, const std::vector<float>& theY) const;
 
   float Weight(float distance) const;
 
@@ -58,11 +57,11 @@ class NFmiSmoother
   // Disable void constructor
   NFmiSmoother();
 
-  const NFmiDataMatrix<float> SmoothenKernel(const Fmi::CoordinateMatrix& thePts,
-                                             const NFmiDataMatrix<float>& theValues) const;
+  NFmiDataMatrix<float> SmoothenKernel(const Fmi::CoordinateMatrix& thePts,
+                                       const NFmiDataMatrix<float>& theValues) const;
 
-  const std::vector<float> SmoothenKernel(const std::vector<float>& theX,
-                                          const std::vector<float>& theY) const;
+  std::vector<float> SmoothenKernel(const std::vector<float>& theX,
+                                    const std::vector<float>& theY) const;
 
   // Data members
 

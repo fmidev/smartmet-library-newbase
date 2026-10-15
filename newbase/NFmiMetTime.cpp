@@ -287,7 +287,7 @@ NFmiMetTime &NFmiMetTime::operator++()
  */
 // ----------------------------------------------------------------------
 
-const NFmiMetTime NFmiMetTime::operator++(int)
+NFmiMetTime NFmiMetTime::operator++(int)
 {
   try
   {
@@ -325,7 +325,7 @@ NFmiMetTime &NFmiMetTime::operator--()  // prefix++
  */
 // ----------------------------------------------------------------------
 
-const NFmiMetTime NFmiMetTime::operator--(int)  // postfix++
+NFmiMetTime NFmiMetTime::operator--(int)  // postfix++
 {
   try
   {

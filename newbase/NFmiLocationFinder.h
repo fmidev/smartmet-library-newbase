@@ -22,7 +22,7 @@ class NFmiLocationFinder
   NFmiLocationFinder& operator=(const NFmiLocationFinder&) = default;
 
   bool AddFile(const NFmiString& theFileName, bool lonFirst = true, bool optionalType = false);
-  const NFmiPoint Find(const NFmiString& theName);
+  NFmiPoint Find(const NFmiString& theName);
   unsigned long FindWmo(const NFmiString& theName);
 
   bool Empty() const;

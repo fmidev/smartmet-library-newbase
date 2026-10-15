@@ -20,7 +20,7 @@ class NFmiDataModifierExtremePlace : public NFmiDataModifier
   NFmiDataModifierExtremePlace();
 
   void SetLocation(NFmiQueryInfo *theQI);
-  const NFmiLocation GetLocation() const;
+  NFmiLocation GetLocation() const;
   // virtual void Calculate(NFmiQueryInfo * theQI);
   // virtual void Calculate(float theValue);
   using NFmiDataModifier::Calculate;

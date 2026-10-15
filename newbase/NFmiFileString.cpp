@@ -113,7 +113,7 @@ bool NFmiFileString::IsAbsolutePath() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::Extension() const
+NFmiString NFmiFileString::Extension() const
 {
   try
   {
@@ -137,7 +137,7 @@ const NFmiString NFmiFileString::Extension() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::FileName() const
+NFmiString NFmiFileString::FileName() const
 {
   try
   {
@@ -160,7 +160,7 @@ const NFmiString NFmiFileString::FileName() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::Header() const
+NFmiString NFmiFileString::Header() const
 {
   try
   {
@@ -193,7 +193,7 @@ const NFmiString NFmiFileString::Header() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::Path() const
+NFmiString NFmiFileString::Path() const
 {
   try
   {
@@ -235,7 +235,7 @@ const NFmiString NFmiFileString::Path() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::Device() const
+NFmiString NFmiFileString::Device() const
 {
   try
   {
@@ -265,7 +265,7 @@ const NFmiString NFmiFileString::Device() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::PathWithoutLastDirectory()
+NFmiString NFmiFileString::PathWithoutLastDirectory()
 {
   try
   {
@@ -307,7 +307,7 @@ const NFmiString NFmiFileString::PathWithoutLastDirectory()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiFileString::Directory() const
+NFmiString NFmiFileString::Directory() const
 {
   try
   {

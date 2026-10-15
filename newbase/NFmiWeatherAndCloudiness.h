@@ -123,7 +123,7 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
                          NFmiCombinedParam* theWeatherAndCloudiness4 = nullptr,
                          float fac4 = kFloatMissing) override;
 
-  const NFmiWeatherAndCloudiness MeanWeather(
+  NFmiWeatherAndCloudiness MeanWeather(
       bool isTimePeriod,
       const NFmiWeatherAndCloudiness& theWeatherAndCloudiness1,
       float fac1,

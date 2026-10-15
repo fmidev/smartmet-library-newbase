@@ -17,13 +17,13 @@ class NFmiRotatedLatLonArea : public NFmiLatLonArea
   ~NFmiRotatedLatLonArea() override;
   NFmiRotatedLatLonArea();
   NFmiRotatedLatLonArea(const NFmiRotatedLatLonArea &theRotatedLatLonArea);
-  NFmiRotatedLatLonArea(const NFmiPoint &theBottomLeftLatLon,
-                        const NFmiPoint &theTopRightLatLon,
-                        const NFmiPoint &theSouthernPole =
+  NFmiRotatedLatLonArea(const NFmiPoint& theBottomLeftLatLon,
+                        const NFmiPoint& theTopRightLatLon,
+                        const NFmiPoint& theSouthernPole =
                             NFmiPoint(0., -30.),  // 25.4.02/EL: lon = 0, lat = 30 South
-                        const NFmiPoint &theTopLeftXY = NFmiPoint(0., 0.),
-                        const NFmiPoint &theBottomRightXY = NFmiPoint(1., 1.),
-                        const bool initiallyRotated = false,
+                        const NFmiPoint& theTopLeftXY = NFmiPoint(0., 0.),
+                        const NFmiPoint& theBottomRightXY = NFmiPoint(1., 1.),
+                        bool initiallyRotated = false,
                         bool usePacificView = false);
   NFmiRotatedLatLonArea& operator=(const NFmiRotatedLatLonArea&) = default;
 

@@ -906,7 +906,7 @@ bool NFmiLogger::IsCleaningTime()
  */
 // ----------------------------------------------------------------------
 
-const string NFmiLogger::MakeBackupFileFilter()
+string NFmiLogger::MakeBackupFileFilter()
 {
   try
   {
@@ -1024,7 +1024,7 @@ void NFmiLogger::MakeCurrentLogFileName()
  */
 // ----------------------------------------------------------------------
 
-const string NFmiLogger::MakeBackupFileNameTimeStamp()
+string NFmiLogger::MakeBackupFileNameTimeStamp()
 {
   try
   {

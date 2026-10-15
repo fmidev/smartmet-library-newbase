@@ -298,7 +298,7 @@ void NFmiYKJArea::Init(bool fKeepWorldRect)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiYKJArea::CornerWorldXY(const NFmiPoint &theLatLonPoint) const
+NFmiPoint NFmiYKJArea::CornerWorldXY(const NFmiPoint& theLatLonPoint) const
 {
   try
   {

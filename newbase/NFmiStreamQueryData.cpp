@@ -41,7 +41,7 @@ using namespace std;
 
 namespace
 {
-const string find_newest_querydata(const string &thePath)
+string find_newest_querydata(const string& thePath)
 {
   try
   {

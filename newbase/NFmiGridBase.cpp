@@ -533,7 +533,7 @@ void NFmiGridBase::CalcY(unsigned long theIndex)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiGridBase::GridPoint(unsigned long theLocationIndex) const
+NFmiPoint NFmiGridBase::GridPoint(unsigned long theLocationIndex) const
 {
   try
   {

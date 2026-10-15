@@ -799,15 +799,15 @@ float NFmiWeatherAndCloudiness::MeanFloatValue(
  */
 // ----------------------------------------------------------------------
 
-const NFmiWeatherAndCloudiness NFmiWeatherAndCloudiness::MeanWeather(
+NFmiWeatherAndCloudiness NFmiWeatherAndCloudiness::MeanWeather(
     bool isTimePeriod,
-    const NFmiWeatherAndCloudiness &theWeatherAndCloudiness1,
+    const NFmiWeatherAndCloudiness& theWeatherAndCloudiness1,
     float fac1,
-    const NFmiWeatherAndCloudiness &theWeatherAndCloudiness2,
+    const NFmiWeatherAndCloudiness& theWeatherAndCloudiness2,
     float fac2,
-    const NFmiWeatherAndCloudiness &theWeatherAndCloudiness3,
+    const NFmiWeatherAndCloudiness& theWeatherAndCloudiness3,
     float fac3,
-    const NFmiWeatherAndCloudiness &theWeatherAndCloudiness4,
+    const NFmiWeatherAndCloudiness& theWeatherAndCloudiness4,
     float fac4) const
 {
   try

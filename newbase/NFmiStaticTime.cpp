@@ -710,7 +710,7 @@ void NFmiStaticTime::FromStr(const NFmiString theTimeString, const unsigned long
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiStaticTime::ToStr(const unsigned long theTimeMask) const
+NFmiString NFmiStaticTime::ToStr(const unsigned long theTimeMask) const
 {
   try
   {

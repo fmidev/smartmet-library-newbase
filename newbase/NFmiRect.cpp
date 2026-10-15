@@ -120,7 +120,7 @@ void NFmiRect::Inflate(const NFmiPoint &theValue)
  */
 // ----------------------------------------------------------------------
 
-const NFmiPoint NFmiRect::NearestCorner(const NFmiPoint &thePoint) const
+NFmiPoint NFmiRect::NearestCorner(const NFmiPoint& thePoint) const
 {
   try
   {
@@ -226,7 +226,7 @@ bool NFmiRect::AdjustAspectRatio(double theRatioXperY, bool fKeepX, FmiDirection
  * \return The given point in rect's world coordinates.
  */
 // ----------------------------------------------------------------------
-const NFmiPoint NFmiRect::Project(const NFmiPoint &thePlace) const
+NFmiPoint NFmiRect::Project(const NFmiPoint& thePlace) const
 {
   try
   {
@@ -363,7 +363,7 @@ void NFmiRect::Center(const NFmiPoint &newCenter)
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
+NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect& theRect) const
 {
   try
   {
@@ -388,7 +388,7 @@ const NFmiRect NFmiRect::SmallestEnclosing(const NFmiRect &theRect) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiRect NFmiRect::Intersection(const NFmiRect &theRect) const
+NFmiRect NFmiRect::Intersection(const NFmiRect& theRect) const
 {
   try
   {

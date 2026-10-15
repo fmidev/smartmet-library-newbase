@@ -38,7 +38,7 @@ class NFmiCommentStripper
                                const std::string& theOptionBody,
                                std::set<std::string>& theOptionTexts);
   bool ReadAndStripFile(const std::string& theFileName);
-  const std::string GetMessage() const { return itsMessage; };
+  std::string GetMessage() const { return itsMessage; };
   const std::string& GetString() const { return itsString; };
   void SetString(const std::string& theString) { itsString = theString; };
   virtual bool Strip();

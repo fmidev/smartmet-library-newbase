@@ -28,7 +28,7 @@ class NFmiStationBag : public NFmiLocationBag
   bool SetCurrent(long theStation);
 
   bool Current(const NFmiStation &theStation);
-  const NFmiStation Current() const;
+  NFmiStation Current() const;
 
   bool AddStation(const NFmiStation &theStation);
 
@@ -86,7 +86,7 @@ inline std::istream &operator>>(std::istream &file, NFmiStationBag &ob)
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiStation NFmiStationBag::Current() const
+inline NFmiStation NFmiStationBag::Current() const
 {
   return *static_cast<NFmiStation *>(itsLocations[itsIndex]);
 }

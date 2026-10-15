@@ -748,7 +748,7 @@ namespace NFmiIndexMaskTools
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
+NFmiIndexMask MaskInside(const NFmiGrid& theGrid, const NFmiSvgPath& thePath)
 {
   try
   {
@@ -843,7 +843,7 @@ const NFmiIndexMask MaskInside(const NFmiGrid &theGrid, const NFmiSvgPath &thePa
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &thePath)
+NFmiIndexMask MaskOutside(const NFmiGrid& theGrid, const NFmiSvgPath& thePath)
 {
   try
   {
@@ -946,9 +946,7 @@ const NFmiIndexMask MaskOutside(const NFmiGrid &theGrid, const NFmiSvgPath &theP
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskExpand(const NFmiGrid &theGrid,
-                               const NFmiSvgPath &thePath,
-                               double theDistance)
+NFmiIndexMask MaskExpand(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, double theDistance)
 {
   try
   {
@@ -1050,9 +1048,7 @@ const NFmiIndexMask MaskExpand(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
-                               const NFmiSvgPath &thePath,
-                               double theDistance)
+NFmiIndexMask MaskShrink(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, double theDistance)
 {
   try
   {
@@ -1119,9 +1115,7 @@ const NFmiIndexMask MaskShrink(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
-                                 const NFmiSvgPath &thePath,
-                                 double theDistance)
+NFmiIndexMask MaskDistance(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, double theDistance)
 {
   try
   {
@@ -1180,9 +1174,7 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
-                                 const NFmiPoint &thePoint,
-                                 double theDistance)
+NFmiIndexMask MaskDistance(const NFmiGrid& theGrid, const NFmiPoint& thePoint, double theDistance)
 {
   try
   {
@@ -1230,9 +1222,9 @@ const NFmiIndexMask MaskDistance(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
-                                            const NFmiSvgPath &thePath,
-                                            std::vector<double> theDistances)
+std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid& theGrid,
+                                      const NFmiSvgPath& thePath,
+                                      std::vector<double> theDistances)
 {
   try
   {
@@ -1306,9 +1298,9 @@ const std::vector<NFmiIndexMask> MaskExpand(const NFmiGrid &theGrid,
  */
 // ----------------------------------------------------------------------
 
-const std::string MaskString(const NFmiIndexMask &theMask,
-                             unsigned long theWidth,
-                             unsigned long theHeight)
+std::string MaskString(const NFmiIndexMask& theMask,
+                       unsigned long theWidth,
+                       unsigned long theHeight)
 {
   try
   {
@@ -1348,9 +1340,9 @@ const std::string MaskString(const NFmiIndexMask &theMask,
  */
 // ----------------------------------------------------------------------
 
-const NFmiIndexMask MaskCondition(const NFmiGrid &theGrid,
-                                  NFmiFastQueryInfo &theInfo,
-                                  const NFmiCalculationCondition &theCondition)
+NFmiIndexMask MaskCondition(const NFmiGrid& theGrid,
+                            NFmiFastQueryInfo& theInfo,
+                            const NFmiCalculationCondition& theCondition)
 {
   try
   {

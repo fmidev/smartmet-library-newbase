@@ -43,7 +43,7 @@ size_t FileSize(const std::string &theFile);
 bool FileEmpty(const std::string &theFile);
 
 // Filename completion
-const std::string FileComplete(const std::string &theFile, const std::string &theSearchPath);
+std::string FileComplete(const std::string& theFile, const std::string& theSearchPath);
 
 std::time_t FileAccessTime(const std::string &theFile);
 std::time_t FileModificationTime(const std::string &theFile);
@@ -59,7 +59,7 @@ bool DirectoryReadable(const std::string &theFile);
 bool DirectoryWritable(const std::string &theFile);
 
 bool CreateDirectory(const std::string &thePath);
-const std::string NewestFile(const std::string &thePath);
+std::string NewestFile(const std::string& thePath);
 std::time_t NewestFileTime(const std::string &thePath);
 std::time_t NewestFileTime(const std::list<std::string> &theFileList, const std::string &thePath);
 std::string NewestFileName(const std::list<std::string> &theFileList, const std::string &thePath);
@@ -68,11 +68,11 @@ std::string NewestPatternFileName(const std::string &thePattern);
 std::string FirstPatternFileName(const std::string &thePattern);
 std::string PathFromPattern(const std::string &thePattern);
 std::string FileNameFromPath(const std::string &theTotalPathAndFileStr);
-const std::list<std::string> DirectoryFiles(const std::string &thePath);
-const std::list<std::string> PatternFiles(const std::string &thePattern);
+std::list<std::string> DirectoryFiles(const std::string& thePath);
+std::list<std::string> PatternFiles(const std::string& thePattern);
 const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::string &thePattern,
                                                                    std::time_t timeLimit);
-const std::list<std::string> Directories(const std::string &thePath);
+std::list<std::string> Directories(const std::string& thePath);
 
 bool RemoveFile(const std::string &theFile);
 bool RenameFile(const std::string &theOldFileName, const std::string &theNewFileName);
@@ -85,9 +85,9 @@ bool ReadFileStart2String(const std::string &theFileName,
                           std::string &theFileContent,
                           long theBytesFromStart);
 
-const std::string TemporaryFile(const std::string &thePath);
-const std::string BaseName(const std::string &theName);
-const std::string DirName(const std::string &theName);
+std::string TemporaryFile(const std::string& thePath);
+std::string BaseName(const std::string& theName);
+std::string DirName(const std::string& theName);
 
 void CleanDirectory(const std::string& thePath,
                     double theMaxFileAgeInHours,

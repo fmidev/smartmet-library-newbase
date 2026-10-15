@@ -52,7 +52,7 @@ void NFmiDataModifierExtreme::SetTime(NFmiQueryInfo *theQI)
  */
 // ----------------------------------------------------------------------
 
-const NFmiTime NFmiDataModifierExtreme::GetTime() const
+NFmiTime NFmiDataModifierExtreme::GetTime() const
 {
   return itsExtremeTime;
 }

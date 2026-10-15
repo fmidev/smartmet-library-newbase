@@ -30,7 +30,7 @@ class NFmiCalculationCondition
   bool IsMasked(double theValue) const;
   double MaskValue(double theValue) const;
   bool IsRampMask() const;
-  const NFmiString MaskString(const NFmiString& theParamName) const;
+  NFmiString MaskString(const NFmiString& theParamName) const;
 
   void Write(std::ostream& os) const;
   void Read(std::istream& is);

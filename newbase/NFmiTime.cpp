@@ -574,7 +574,7 @@ short NFmiTime::GetWeekday() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiTime::MonthName(const FmiLanguage theLanguage) const
+NFmiString NFmiTime::MonthName(const FmiLanguage theLanguage) const
 {
   try
   {
@@ -593,7 +593,7 @@ const NFmiString NFmiTime::MonthName(const FmiLanguage theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiTime::Weekday(const FmiLanguage theLanguage) const
+NFmiString NFmiTime::Weekday(const FmiLanguage theLanguage) const
 {
   try
   {
@@ -1292,9 +1292,9 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
-                                       NFmiString theFormat,
-                                       int &thePlusInd) const
+NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
+                                 NFmiString theFormat,
+                                 int& thePlusInd) const
 {
   try
   {
@@ -1342,7 +1342,7 @@ std::string NFmiTime::GetDictionaryString(const char *theMagicWord)
 
     std::string finalMagicWord(baseWords);
     finalMagicWord += theMagicWord;
-    return NFmiSettings::Optional<std::string>(finalMagicWord.c_str(), std::string("XXXXX"));
+    return NFmiSettings::Optional<std::string>(finalMagicWord, std::string("XXXXX"));
   }
   catch (...)
   {

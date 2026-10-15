@@ -43,11 +43,11 @@ class NFmiTimeList
   const NFmiMetTime &LastTime() const;
   int CurrentResolution() const;
 
-  const NFmiTimeList Combine(const NFmiTimeList& theList,
-                             int theStartTimeFunction = 0,
-                             int theEndTimeFunction = 0);
-  const NFmiTimeList GetIntersection(const NFmiMetTime &theStartLimit,
-                                     const NFmiMetTime& theEndLimit) const;
+  NFmiTimeList Combine(const NFmiTimeList& theList,
+                       int theStartTimeFunction = 0,
+                       int theEndTimeFunction = 0);
+  NFmiTimeList GetIntersection(const NFmiMetTime& theStartLimit,
+                               const NFmiMetTime& theEndLimit) const;
   void PruneTimes(int theMaxTimeCount, bool fFromEnd = true);
 
   int NumberOfItems() const;

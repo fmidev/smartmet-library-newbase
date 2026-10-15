@@ -21,7 +21,7 @@ class NFmiDataModifierExtreme : public NFmiDataModifier
   NFmiDataModifierExtreme& operator=(const NFmiDataModifierExtreme&) = delete;
 
   void SetTime(NFmiQueryInfo *theQI);
-  const NFmiTime GetTime() const;
+  NFmiTime GetTime() const;
   void Calculate(NFmiQueryInfo* theQI) override;
   void Calculate(float theValue) override;
   virtual void Calculate(float theValue, NFmiQueryInfo *theQI);

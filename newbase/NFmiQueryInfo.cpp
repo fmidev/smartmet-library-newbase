@@ -945,7 +945,7 @@ NFmiQueryInfo NFmiQueryInfo::Combine(const NFmiQueryInfo &theCombine)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::Owner()
+NFmiString NFmiQueryInfo::Owner()
 {
   try
   {
@@ -969,7 +969,7 @@ const NFmiString NFmiQueryInfo::Owner()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::TimeStamp()
+NFmiString NFmiQueryInfo::TimeStamp()
 {
   try
   {
@@ -996,7 +996,7 @@ const NFmiString NFmiQueryInfo::TimeStamp()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::Leader()
+NFmiString NFmiQueryInfo::Leader()
 {
   try
   {
@@ -1068,7 +1068,7 @@ NFmiStringList *NFmiQueryInfo::Header() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::Text() const
+NFmiString NFmiQueryInfo::Text() const
 {
   try
   {
@@ -1234,7 +1234,7 @@ bool NFmiQueryInfo::NextPostProc()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::PostProc() const
+NFmiString NFmiQueryInfo::PostProc() const
 {
   try
   {
@@ -5924,7 +5924,7 @@ bool NFmiQueryInfo::SetCurrentKeyValue(const NFmiString &newValue)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::GetCurrentKeyValue()
+NFmiString NFmiQueryInfo::GetCurrentKeyValue()
 {
   try
   {
@@ -6056,7 +6056,7 @@ bool NFmiQueryInfo::RemoveAllKeys(const NFmiString &theKey)
  */
 // ----------------------------------------------------------------------
 
-const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
+NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
 {
   try
   {
@@ -6094,7 +6094,7 @@ const NFmiStringList NFmiQueryInfo::GetAllKeys(bool fRemoveDuplicates)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::GetCurrentKey()
+NFmiString NFmiQueryInfo::GetCurrentKey()
 {
   try
   {
@@ -6123,8 +6123,7 @@ const NFmiString NFmiQueryInfo::GetCurrentKey()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::MakeKeyValueString(const NFmiString &theKey,
-                                                   const NFmiString &theValue)
+NFmiString NFmiQueryInfo::MakeKeyValueString(const NFmiString& theKey, const NFmiString& theValue)
 {
   try
   {
@@ -6304,7 +6303,7 @@ bool NFmiQueryInfo::ReplaceCurrentKeyValue(const NFmiString &newValue)
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::ExtractCurrentKeyValue()
+NFmiString NFmiQueryInfo::ExtractCurrentKeyValue()
 {
   try
   {
@@ -6337,7 +6336,7 @@ const NFmiString NFmiQueryInfo::ExtractCurrentKeyValue()
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiQueryInfo::ExtractCurrentKey()
+NFmiString NFmiQueryInfo::ExtractCurrentKey()
 {
   try
   {

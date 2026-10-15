@@ -824,7 +824,7 @@ NFmiValueString::operator double() const
  */
 // ----------------------------------------------------------------------
 
-const NFmiString NFmiValueString::GetStringWithMaxDecimalsSmartWay(double value, int maxDecimals)
+NFmiString NFmiValueString::GetStringWithMaxDecimalsSmartWay(double value, int maxDecimals)
 {
   try
   {

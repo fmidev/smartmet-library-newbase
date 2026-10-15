@@ -96,7 +96,7 @@ class NFmiQueryInfo
   bool ActivateLevel(bool newState);
   bool ActivateTime(bool newState);
   bool ActivateTimePeriod(bool newState, const NFmiTimeBag &period);
-  const NFmiTimeBag GetActiveTimePeriod();
+  NFmiTimeBag GetActiveTimePeriod();
 
   bool IsLocation() const;
   bool IsLevel() const;
@@ -228,21 +228,21 @@ class NFmiQueryInfo
                                     std::array<float, 4> &theValues2);
   // ****** Cached interpolation methods ***********************
 
-  void SetLocalTimes(const float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi
+  void SetLocalTimes(float theLongitude);  // Muuttaa ajan iteroinnin paikalliseksi
   bool IsLocalTime() const;
   unsigned long ForecastPeriod();
 
   // Header method
-  const NFmiString Owner();
-  const NFmiString TimeStamp();
-  const NFmiString Leader();
+  NFmiString Owner();
+  NFmiString TimeStamp();
+  NFmiString Leader();
 
   void Header(NFmiStringList *theHeader);
   NFmiStringList *Header() const;
 
   bool ResetText();
   bool NextText();
-  const NFmiString Text() const;
+  NFmiString Text() const;
 
   // PostProc method
   void PostProcText(NFmiStringList *thePostProc);
@@ -250,7 +250,7 @@ class NFmiQueryInfo
 
   bool ResetPostProc();
   bool NextPostProc();
-  const NFmiString PostProc() const;
+  NFmiString PostProc() const;
 
   size_t Size() const;
 
@@ -483,12 +483,12 @@ class NFmiQueryInfo
               const NFmiString &theValue,
               bool fClearDuplicatesFirst = false);
   bool SetCurrentKeyValue(const NFmiString &newValue);
-  const NFmiString GetCurrentKeyValue();
+  NFmiString GetCurrentKeyValue();
   bool RemoveCurrentKey();
   bool RemoveAllKeys();
   bool RemoveAllKeys(const NFmiString &theKey);
-  const NFmiStringList GetAllKeys(bool fRemoveDuplicates = false);
-  const NFmiString GetCurrentKey();
+  NFmiStringList GetAllKeys(bool fRemoveDuplicates = false);
+  NFmiString GetCurrentKey();
   bool DoEndianByteSwap() const;
 
   double InfoVersion() const;
@@ -522,14 +522,14 @@ class NFmiQueryInfo
   std::size_t GridHashValue() const;
 
  private:
-  const NFmiString MakeKeyValueString(const NFmiString &theKey, const NFmiString &theValue);
+  NFmiString MakeKeyValueString(const NFmiString& theKey, const NFmiString& theValue);
   bool FindFirstAnyKey();
   bool FindNextAnyKey();
   bool IsCurrentAnyKey();
   bool IsCurrentKey(const NFmiString &theKey);
   bool ReplaceCurrentKeyValue(const NFmiString &newValue);
-  const NFmiString ExtractCurrentKeyValue();
-  const NFmiString ExtractCurrentKey();
+  NFmiString ExtractCurrentKeyValue();
+  NFmiString ExtractCurrentKey();
 
  protected:
   float InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, int theMaxMinuteRange);
@@ -1228,7 +1228,7 @@ inline bool NFmiQueryInfo::ActivateTimePeriod(bool theActivityState, const NFmiT
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiTimeBag NFmiQueryInfo::GetActiveTimePeriod()
+inline NFmiTimeBag NFmiQueryInfo::GetActiveTimePeriod()
 {
   return itsTimeDescriptor->GetActivePeriod();
 }

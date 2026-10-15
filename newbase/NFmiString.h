@@ -33,7 +33,7 @@ class NFmiString : public NFmiSortable
   NFmiString &Add(const unsigned char *aChar);
 
   unsigned long GetLen() const;
-  const NFmiString GetChars(unsigned long firstChar, unsigned long length) const;
+  NFmiString GetChars(unsigned long firstChar, unsigned long length) const;
 
   char *GetCharsPtr(unsigned long firstChar, unsigned long length) const;
   const unsigned char *GetCharPtr() const;
@@ -64,13 +64,13 @@ class NFmiString : public NFmiSortable
   NFmiString& operator=(const NFmiString& /*aFmiString*/);
   NFmiString &operator+=(const unsigned char *aChar);
   NFmiString &operator+=(const char *aChar);
-  NFmiString &operator+=(const char aChar);
+  NFmiString& operator+=(char aChar);
   NFmiString& operator+=(const NFmiString& /*aFmiString*/);
 
   bool operator==(const NFmiString &other) const;
   bool operator==(const char *other) const;
 
-  unsigned char operator[](const unsigned long counter) const;
+  unsigned char operator[](unsigned long counter) const;
 
   operator char *() const;
   operator unsigned char *() const;
@@ -199,7 +199,7 @@ inline NFmiString &NFmiString::operator+=(const NFmiString &aFmiString)
 {
   if (this == &aFmiString)
   {
-    NFmiString tmpStr(aFmiString);
+    const NFmiString& tmpStr(aFmiString);
     Add(tmpStr.GetCharPtr());
     return *this;
   }

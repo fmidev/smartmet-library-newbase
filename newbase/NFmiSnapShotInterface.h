@@ -39,7 +39,7 @@ class NFmiSnapShotInterface
 
  private:
   NFmiSnapShotInterface(const NFmiSnapShotInterface& theFace);
-  NFmiSnapShotInterface& operator=(const NFmiSnapShotInterface theFace);
+  NFmiSnapShotInterface& operator=(NFmiSnapShotInterface theFace);
 
   time_t itsUpdateInterval;
   NFmiQueryInfo* itsInfo = nullptr;

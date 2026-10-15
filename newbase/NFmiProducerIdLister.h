@@ -23,7 +23,7 @@ class NFmiProducerIdLister
   ~NFmiProducerIdLister() = default;
   NFmiProducerIdLister(NFmiQueryInfo &theInfo);  // Huom! pitäisi olla const info, mutta pari
                                                  // metodia pitää muuttaa ensin
-  const std::string MakeProducerIdString();
+  std::string MakeProducerIdString();
   bool IntepretProducerIdString(const std::string &theString);
   bool ChangeTimeResolution(int theNewResolutionInMinutes);
   int ProducerId(const NFmiMetTime &theTime, bool fAllowInterpolation = false);

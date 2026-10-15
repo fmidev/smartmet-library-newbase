@@ -35,7 +35,7 @@ class NFmiParamBag : public NFmiSize
   bool Previous(bool fIgnoreSubParam);  // =true);
 
   FmiParameterName CurrentParam() const;
-  const NFmiString CurrentParamName() const;
+  NFmiString CurrentParamName() const;
   bool SetCurrent(FmiParameterName theParam, bool fIgnoreSubParam = true);
   bool SetCurrent(unsigned long theParam, bool fIgnoreSubParam = true);
 
@@ -106,7 +106,7 @@ inline bool NFmiParamBag::First()
  */
 // ----------------------------------------------------------------------
 
-inline const NFmiString NFmiParamBag::CurrentParamName() const
+inline NFmiString NFmiParamBag::CurrentParamName() const
 {
   return itsParamsVector[itsIndex].GetParamName();
 }
