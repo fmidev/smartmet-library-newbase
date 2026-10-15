@@ -40,7 +40,7 @@ class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
   NFmiAreaMask* Clone() const override;
 #ifdef UNIX
   // RHEL6 compiler bug fails the reference
-  void Init(std::shared_ptr<NFmiFastQueryInfo> theInfo,
+  void Init(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
             const NFmiCalculationCondition& theOperation);
 #else
   void Init(std::shared_ptr<NFmiFastQueryInfo>& theInfo,
@@ -70,7 +70,7 @@ class NFmiBitmapAreaMask : public NFmiAreaMaskImpl
       const override;  // tekee  param nimi tai vastaavan stringin pätkän
 
  private:
-  NFmiBitmapAreaMask& operator=(const NFmiBitmapAreaMask& theMask);
+  NFmiBitmapAreaMask& operator=(const NFmiBitmapAreaMask& theMask) = delete;
 
   void Destroy();
   int LatLon2Index(const NFmiPoint& theLatLon) const;

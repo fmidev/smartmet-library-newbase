@@ -25,8 +25,8 @@ class NFmiRegressionModifier : public NFmiInfoModifier
   NFmiDataModifierList* itsRegressionItems;
 
  private:
-  NFmiRegressionModifier(const NFmiRegressionModifier& theMod);
-  NFmiRegressionModifier& operator=(const NFmiRegressionModifier& theMod);
+  NFmiRegressionModifier(const NFmiRegressionModifier& theMod) = delete;
+  NFmiRegressionModifier& operator=(const NFmiRegressionModifier& theMod) = delete;
 
 };  // class NFmiRegressionModifier
 

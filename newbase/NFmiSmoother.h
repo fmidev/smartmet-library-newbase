@@ -55,7 +55,7 @@ class NFmiSmoother
 
  private:
   // Disable void constructor
-  NFmiSmoother();
+  NFmiSmoother() = delete;
 
   NFmiDataMatrix<float> SmoothenKernel(const Fmi::CoordinateMatrix& thePts,
                                        const NFmiDataMatrix<float>& theValues) const;

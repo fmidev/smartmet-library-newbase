@@ -569,8 +569,7 @@ int todec(unsigned char theHex)
       return (theHex - '0');
     if (theHex >= 'a' && theHex <= 'f')
       return (theHex - 'a' + 10);
-    else
-      return (theHex - 'A' + 10);
+    return (theHex - 'A' + 10);
   }
   catch (...)
   {

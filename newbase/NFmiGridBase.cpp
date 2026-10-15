@@ -33,7 +33,7 @@ const double kFmiEps = 0.0001;
 
 NFmiGridBase::NFmiGridBase(const NFmiGridBase &theGridBase)
     : itsData(theGridBase.itsData ? new NFmiDataPool(*(theGridBase.itsData)) : nullptr),
-      itsFloatData(nullptr),
+
       itsStartingCorner(theGridBase.itsStartingCorner),
       itsInterpolationMethod(theGridBase.itsInterpolationMethod),
       itsXNumber(theGridBase.itsXNumber),

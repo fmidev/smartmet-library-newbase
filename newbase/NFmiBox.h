@@ -38,7 +38,7 @@ class NFmiBox
   unsigned long itsSize;
 
  private:
-  NFmiBox &operator=(const NFmiBox &theBox);
+  NFmiBox& operator=(const NFmiBox& theBox) = delete;
 
   friend class NFmiBoxIterator;
 

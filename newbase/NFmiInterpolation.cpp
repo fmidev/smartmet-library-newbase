@@ -333,7 +333,7 @@ double BiLinear(double theX,
               (1 - dx) * dy * theTopLeft) /
              wsum;
     }
-    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+    if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
              theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
     {
       double wsum = ((1 - dx) * dy + dx * dy + dx * (1 - dy));
@@ -616,7 +616,7 @@ double ModBiLinear(double theX,
       calculator(static_cast<float>(theBottomRight), static_cast<float>(dx * (1 - dy)));
       return calculator();
     }
-    else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
+    if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
              theBottomLeft == kFloatMissing && theBottomRight != kFloatMissing)
     {
       if (1 - dx > dy)

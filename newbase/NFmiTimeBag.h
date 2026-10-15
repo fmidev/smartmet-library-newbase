@@ -16,9 +16,9 @@ class NFmiTimeBag : public NFmiSize
  public:
   NFmiTimeBag();
   NFmiTimeBag(const NFmiTimeBag &theBag);
-  NFmiTimeBag(const NFmiMetTime &theFirstTime,
-              const NFmiMetTime &theLastTime,
-              NFmiTimePerioid theTimeResolution);
+  NFmiTimeBag(const NFmiMetTime& theFirstTime,
+              const NFmiMetTime& theLastTime,
+              const NFmiTimePerioid& theTimeResolution);
 
   const NFmiMetTime &FirstTime() const;
   const NFmiMetTime &LastTime() const;
@@ -84,7 +84,7 @@ inline NFmiTimeBag::NFmiTimeBag()
 
 inline NFmiTimeBag::NFmiTimeBag(const NFmiMetTime& theFirstTime,
                                 const NFmiMetTime& theLastTime,
-                                NFmiTimePerioid theTimeResolution)
+                                const NFmiTimePerioid& theTimeResolution)
     : itsFirstTime(theFirstTime),
       itsCurrentTime(itsFirstTime),
       itsLastTime(theLastTime),

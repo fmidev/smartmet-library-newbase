@@ -30,14 +30,14 @@ class NFmiDataModifierMode : public NFmiDataModifier
   class Data
   {
    public:
-    Data() : itsValue(kFloatMissing), itsCounter(0){};
-    Data(float theValue) : itsValue(theValue), itsCounter(1){};
-    void Increase() { itsCounter++; };
-    float Value() const { return itsValue; };
-    void Value(float theValue) { itsValue = theValue; };
-    int Counter() const { return itsCounter; };
-    bool operator==(const Data &theData) const { return itsValue == theData.itsValue; };
-    bool operator<(const Data &theData) const { return itsValue < theData.itsValue; };
+    Data() : itsValue(kFloatMissing), itsCounter(0) {}
+    Data(float theValue) : itsValue(theValue), itsCounter(1) {}
+    void Increase() { itsCounter++; }
+    float Value() const { return itsValue; }
+    void Value(float theValue) { itsValue = theValue; }
+    int Counter() const { return itsCounter; }
+    bool operator==(const Data& theData) const { return itsValue == theData.itsValue; }
+    bool operator<(const Data& theData) const { return itsValue < theData.itsValue; }
 
    private:
     float itsValue;

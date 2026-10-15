@@ -246,7 +246,7 @@ bool NFmiProducerIdLister::ChangeTimeResolution(int theNewResolutionInMinutes)
       return false;
     if (ratio == 1)
       return true;  // ei tarvitse tehdä mitään!
-    else if (ratio > 1 && currentRes % theNewResolutionInMinutes != 0)
+    if (ratio > 1 && currentRes % theNewResolutionInMinutes != 0)
       return false;
     else if (ratio < 1 && theNewResolutionInMinutes % currentRes != 0)
       return false;

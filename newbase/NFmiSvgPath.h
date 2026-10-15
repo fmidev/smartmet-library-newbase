@@ -38,7 +38,7 @@ class NFmiSvgPath
     double itsY;
 
    private:
-    Element();
+    Element() = delete;
   };
 
   using value_type = Element;

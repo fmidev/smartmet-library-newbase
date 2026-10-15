@@ -39,8 +39,8 @@ class NFmiStreamQueryData
   NFmiFastQueryInfo* QueryInfoIter();
 
  private:
-  NFmiStreamQueryData(const NFmiStreamQueryData& theData);
-  NFmiStreamQueryData& operator=(const NFmiStreamQueryData& theData);
+  NFmiStreamQueryData(const NFmiStreamQueryData& theData) = delete;
+  NFmiStreamQueryData& operator=(const NFmiStreamQueryData& theData) = delete;
 
   NFmiQueryData* itsQueryData;
   NFmiFastQueryInfo* itsQueryDataIter;

@@ -688,8 +688,7 @@ float NFmiInfoAreaMask::CalcMetaParamValue(const NFmiCalculationParams &theCalcu
       {
         return CalcMetaParamHeightValue(UsedPressureLevelValue(), theCalculationParams);
       }
-      else
-        return CalcMetaParamPressureValue(UsedPressureLevelValue(), theCalculationParams);
+      return CalcMetaParamPressureValue(UsedPressureLevelValue(), theCalculationParams);
     }
     else
     {
@@ -2099,7 +2098,7 @@ double NFmiInfoAreaMaskGrad::Value(const NFmiCalculationParams &theCalculationPa
       // oikeasti vektori suure)
       return gradScalar;
     }
-    else if (itsMetFunctionDirection == DirectionX)
+    if (itsMetFunctionDirection == DirectionX)
       return gradX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella
                      // puuttuvia arvoja, koska arvot palautetaan vain sellaisenaan
     else if (itsMetFunctionDirection == DirectionY)
@@ -2379,7 +2378,7 @@ double NFmiInfoAreaMaskLaplace::Value(const NFmiCalculationParams &theCalculatio
     if (itsMetFunctionDirection == DirectionX)
       return laplaceX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella
                         // puuttuvia arvoja, koska arvot palautetaan vain sellaisenaan
-    else if (itsMetFunctionDirection == DirectionY)
+    if (itsMetFunctionDirection == DirectionY)
       return laplaceY;
 
     return kFloatMissing;
@@ -2464,7 +2463,7 @@ double NFmiInfoAreaMaskRotor::Value(const NFmiCalculationParams &theCalculationP
     if (itsMetFunctionDirection == DirectionX)
       return rotX;  // jos kyse oli X- tai Y-suuntaisesta laskuista, ei tarvitse tarkistella
                     // puuttuvia arvoja, koska arvot palautetaan vain sellaisenaan
-    else if (itsMetFunctionDirection == DirectionY)
+    if (itsMetFunctionDirection == DirectionY)
       return rotY;
 
     return kFloatMissing;
@@ -2851,14 +2850,13 @@ float NFmiInfoAreaMaskVertFunc::DoGetFunction(const NFmiLocationCache &theLocati
     {
       return static_cast<float>(PressureValue(theLevelValue, theCalculationParams));
     }
-    else
-    {  // else hybrid arvo suoraan
-      itsInfo->FirstLevel();
-      NFmiLevel aLevel(*itsInfo->Level());
-      aLevel.LevelValue(theLevelValue);
-      itsInfo->Level(aLevel);
-      return CalcCachedInterpolation(itsInfo, theLocationCache, &itsTimeCache);
-    }
+
+    // else hybrid arvo suoraan
+    itsInfo->FirstLevel();
+    NFmiLevel aLevel(*itsInfo->Level());
+    aLevel.LevelValue(theLevelValue);
+    itsInfo->Level(aLevel);
+    return CalcCachedInterpolation(itsInfo, theLocationCache, &itsTimeCache);
   }
   catch (...)
   {
@@ -3282,7 +3280,7 @@ class DoubleValueSearcher
           return primaryValue > itsExtremeValue;
         return primaryValue < itsExtremeValue;
       }
-      else if (primaryValue != kFloatMissing)
+      if (primaryValue != kFloatMissing)
         return true;
 
       return false;

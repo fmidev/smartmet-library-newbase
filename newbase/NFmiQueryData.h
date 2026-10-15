@@ -88,11 +88,11 @@ class NFmiQueryData
   unsigned long ParamSize() const;
   float Quality() const;
 
-  bool Param(NFmiDataIdent theDataIdent);
-  bool Location(NFmiLocation theLocation);
-  bool Station(NFmiStation theStation);
-  bool Time(NFmiMetTime theOriginTime);
-  bool Level(NFmiLevel theLevel);
+  bool Param(const NFmiDataIdent& theDataIdent);
+  bool Location(const NFmiLocation& theLocation);
+  bool Station(const NFmiStation& theStation);
+  bool Time(const NFmiMetTime& theOriginTime);
+  bool Level(const NFmiLevel& theLevel);
 
   float FloatValue();
 
@@ -460,7 +460,7 @@ inline unsigned long NFmiQueryData::ParamSize() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Param(NFmiDataIdent theDataIdent)
+inline bool NFmiQueryData::Param(const NFmiDataIdent& theDataIdent)
 {
   return (itsQueryInfo->Param(theDataIdent));
 }
@@ -472,7 +472,7 @@ inline bool NFmiQueryData::Param(NFmiDataIdent theDataIdent)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Location(NFmiLocation theLocation)
+inline bool NFmiQueryData::Location(const NFmiLocation& theLocation)
 {
   return (itsQueryInfo->Location(theLocation));
 }
@@ -496,7 +496,7 @@ inline bool NFmiQueryData::Location(const NFmiPoint &theLonLatPoint)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Station(NFmiStation theLocation)
+inline bool NFmiQueryData::Station(const NFmiStation& theLocation)
 {
   return (itsQueryInfo->Location(theLocation));
 }
@@ -508,7 +508,7 @@ inline bool NFmiQueryData::Station(NFmiStation theLocation)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Time(NFmiMetTime theValidTime)
+inline bool NFmiQueryData::Time(const NFmiMetTime& theValidTime)
 {
   return (itsQueryInfo->Time(theValidTime));
 }
@@ -520,7 +520,7 @@ inline bool NFmiQueryData::Time(NFmiMetTime theValidTime)
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiQueryData::Level(NFmiLevel theLevel)
+inline bool NFmiQueryData::Level(const NFmiLevel& theLevel)
 {
   return (itsQueryInfo->Level(theLevel));
 }

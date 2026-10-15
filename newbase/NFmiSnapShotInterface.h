@@ -25,8 +25,8 @@ class NFmiSnapShotInterface
  public:
   virtual ~NFmiSnapShotInterface();
   NFmiSnapShotInterface(NFmiString theDataFileName = "KEPA",
-                        NFmiString theWorkingDirectory = kFmiWorkingDirectory,
-                        NFmiString theSourceDirectory = kFmiSourceDirectory,
+                        const NFmiString& theWorkingDirectory = kFmiWorkingDirectory,
+                        const NFmiString& theSourceDirectory = kFmiSourceDirectory,
                         time_t theUpdateInterval = /*24*60**/ 60);
 
   bool IsValid();
@@ -38,8 +38,8 @@ class NFmiSnapShotInterface
   bool fIsValid = false;
 
  private:
-  NFmiSnapShotInterface(const NFmiSnapShotInterface& theFace);
-  NFmiSnapShotInterface& operator=(NFmiSnapShotInterface theFace);
+  NFmiSnapShotInterface(const NFmiSnapShotInterface& theFace) = delete;
+  NFmiSnapShotInterface& operator=(NFmiSnapShotInterface theFace) = delete;
 
   time_t itsUpdateInterval;
   NFmiQueryInfo* itsInfo = nullptr;

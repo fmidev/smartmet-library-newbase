@@ -153,8 +153,8 @@ class NFmiNearTreeImpl
 
   bool Farthest(value_type& theFarthest, const value_type& thePoint, double& theRadius) const;
 
-  NFmiNearTreeImpl(const NFmiNearTreeImpl& theTree);
-  NFmiNearTreeImpl& operator=(const NFmiNearTreeImpl& theTree);
+  NFmiNearTreeImpl(const NFmiNearTreeImpl& theTree) = delete;
+  NFmiNearTreeImpl& operator=(const NFmiNearTreeImpl& theTree) = delete;
 
   value_type* itsLeftObject = nullptr;         //!< first object stored in this node
   value_type* itsRightObject = nullptr;        //!< second object stored in this node

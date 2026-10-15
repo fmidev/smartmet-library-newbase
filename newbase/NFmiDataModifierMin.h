@@ -27,7 +27,7 @@ class NFmiDataModifierMin : public NFmiDataModifierExtreme
   bool IsNewExtreme(float value) override;
 
  private:
-  NFmiDataModifierMin& operator=(const NFmiDataModifierMin& theOther);
+  NFmiDataModifierMin& operator=(const NFmiDataModifierMin& theOther) = delete;
 
 };  // class NFmiDataModifierMin
 

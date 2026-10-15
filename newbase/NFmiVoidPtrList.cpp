@@ -26,7 +26,7 @@ NFmiVoidPtrList::NFmiVoidPtrList() {}
 // ----------------------------------------------------------------------
 
 NFmiVoidPtrList::NFmiVoidPtrList(const NFmiVoidPtrList &listItem)
-    : itsFirstItem(nullptr), itsCurrentItem(nullptr), itsPreviousItem(nullptr), itsNumberOffItems(0)
+
 {
   try
   {

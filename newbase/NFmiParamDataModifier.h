@@ -50,8 +50,8 @@ class NFmiParamDataModifier : public NFmiDataModifier
                                                // tai min jne. // Omistaa/tuhoaa
 
  private:
-  NFmiParamDataModifier(const NFmiParamDataModifier& theMod);
-  NFmiParamDataModifier& operator=(const NFmiParamDataModifier& theMod);
+  NFmiParamDataModifier(const NFmiParamDataModifier& theMod) = delete;
+  NFmiParamDataModifier& operator=(const NFmiParamDataModifier& theMod) = delete;
 
 };  // class NFmiParamDataModifier
 

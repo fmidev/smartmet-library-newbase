@@ -50,7 +50,7 @@ NFmiStringList::~NFmiStringList()
  */
 // ----------------------------------------------------------------------
 
-NFmiStringList::NFmiStringList(const NFmiStringList& theList) : itsIndex(0)
+NFmiStringList::NFmiStringList(const NFmiStringList& theList)
 {
   try
   {

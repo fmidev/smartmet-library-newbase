@@ -36,7 +36,7 @@ class NFmiDataModifierCombi : public NFmiDataModifier
   bool CheckParams(double theValue) const;
 
  private:
-  NFmiDataModifierCombi& operator=(const NFmiDataModifierCombi& theCombi);
+  NFmiDataModifierCombi& operator=(const NFmiDataModifierCombi& theCombi) = delete;
 
   float itsProbabilityScale;
   int itsNumberOfValues;

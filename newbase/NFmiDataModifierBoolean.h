@@ -42,8 +42,8 @@ class NFmiDataModifierBoolean : public NFmiDataModifier
   bool itsBooleanValue = false;
 
  private:
-  NFmiDataModifierBoolean(const NFmiDataModifierBoolean& theMod);
-  NFmiDataModifierBoolean& operator=(const NFmiDataModifierBoolean& theMod);
+  NFmiDataModifierBoolean(const NFmiDataModifierBoolean& theMod) = delete;
+  NFmiDataModifierBoolean& operator=(const NFmiDataModifierBoolean& theMod) = delete;
 
 };  // class NFmiDataModifierBoolean
 

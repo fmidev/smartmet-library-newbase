@@ -659,7 +659,7 @@ bool SeekStartingPoint(ifstream &in,
         {
           if (theDataStartsAfterString.size() == 1)
             return true;
-          else if (theDataStartsAfterString.size() == 2)
+          if (theDataStartsAfterString.size() == 2)
           {
             int secondChar = theDataStartsAfterString[1];
             if (in.peek() == secondChar)

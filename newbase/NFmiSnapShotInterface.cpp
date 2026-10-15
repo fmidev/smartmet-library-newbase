@@ -44,8 +44,8 @@ NFmiSnapShotInterface::~NFmiSnapShotInterface()
 // ----------------------------------------------------------------------
 
 NFmiSnapShotInterface::NFmiSnapShotInterface(NFmiString theDataFileName,
-                                             NFmiString theWorkingDirectory,
-                                             NFmiString theSourceDirectory,
+                                             const NFmiString& theWorkingDirectory,
+                                             const NFmiString& theSourceDirectory,
                                              time_t theUpdateInterval)
     : itsUpdateInterval(theUpdateInterval),
       itsSourceDirectory(theSourceDirectory),

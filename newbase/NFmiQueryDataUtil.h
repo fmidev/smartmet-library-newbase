@@ -254,9 +254,10 @@ class NFmiTimeIndexCalculator
   MutexType itsMutex;
   bool fNoMoreWork;
 
-  NFmiTimeIndexCalculator(const NFmiTimeIndexCalculator &);  // ei toteuteta kopio konstruktoria
-  NFmiTimeIndexCalculator &operator=(
-      NFmiTimeIndexCalculator const &);  // ei toteuteta sijoitus operaattoria
+  NFmiTimeIndexCalculator(const NFmiTimeIndexCalculator&) =
+      delete;  // ei toteuteta kopio konstruktoria
+  NFmiTimeIndexCalculator& operator=(NFmiTimeIndexCalculator const&) =
+      delete;  // ei toteuteta sijoitus operaattoria
 };
 
 // Tämä luokka laskee worker-threadi parvelle aina sopivan locationIndex-välin laskettavaksi.
@@ -287,9 +288,9 @@ class NFmiLocationIndexRangeCalculator
   bool fNoMoreWork;
 
   // ei toteuteta kopio konstruktoria
-  NFmiLocationIndexRangeCalculator(const NFmiLocationIndexRangeCalculator &);
+  NFmiLocationIndexRangeCalculator(const NFmiLocationIndexRangeCalculator&) = delete;
   // ei toteuteta sijoitus operaattoria
-  NFmiLocationIndexRangeCalculator &operator=(NFmiLocationIndexRangeCalculator const &);
+  NFmiLocationIndexRangeCalculator& operator=(NFmiLocationIndexRangeCalculator const&) = delete;
 };
 
 //! Undocumented
@@ -548,8 +549,8 @@ class NFmiQueryDataUtil
   static std::vector<std::string> GetFileNamesForCombinationWork(const std::string &theFileFilter);
   static std::shared_ptr<NFmiQueryData> GetNewestQueryData(const std::string &theFileFilter);
   static std::vector<std::shared_ptr<NFmiQueryData>> ReadQueryDataFilesForCombinationWork(
-      std::shared_ptr<NFmiQueryData> theBaseQData,
-      const std::string &theDirName,
+      const std::shared_ptr<NFmiQueryData>& theBaseQData,
+      const std::string& theDirName,
       const std::vector<std::string>& theFilesIn,
       NFmiStopFunctor *theStopFunctor,
       bool fDoRebuildCheck);

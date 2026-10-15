@@ -35,8 +35,8 @@ class NFmiDataModifierWindChill : public NFmiDataModifier
   void LatLon(const NFmiPoint& newLatLon);
 
  private:
-  NFmiDataModifierWindChill(const NFmiDataModifierWindChill& theMod);
-  NFmiDataModifierWindChill& operator=(const NFmiDataModifierWindChill& theMod);
+  NFmiDataModifierWindChill(const NFmiDataModifierWindChill& theMod) = delete;
+  NFmiDataModifierWindChill& operator=(const NFmiDataModifierWindChill& theMod) = delete;
 
   int itsTemperatureParamId;
   int itsWindSpeedParamId;

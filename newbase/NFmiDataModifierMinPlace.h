@@ -33,7 +33,7 @@ class NFmiDataModifierMinPlace : public NFmiDataModifierExtremePlace
   bool IsNewExtreme(float value) override;
 
  private:
-  NFmiDataModifierMinPlace& operator=(const NFmiDataModifierMinPlace& theOther);
+  NFmiDataModifierMinPlace& operator=(const NFmiDataModifierMinPlace& theOther) = delete;
 
 };  // class NFmiDataModifierMinPlace
 

@@ -62,15 +62,15 @@ class NFmiVoidPtrItem
       delete itsValue;
   }
 
-  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr) : itsNextItem(item)
+  NFmiVoidPtrItem(NFmiVoidPtrData* value, NFmiVoidPtrItem* item = nullptr)
+      : itsNextItem(item), itsValue(value)
   {
-    itsValue = value;
     itsValue->itsReferenceCount++;
   }
 
  private:
-  NFmiVoidPtrItem(const NFmiVoidPtrItem& theItem);
-  NFmiVoidPtrItem& operator=(const NFmiVoidPtrItem& theItem);
+  NFmiVoidPtrItem(const NFmiVoidPtrItem& theItem) = delete;
+  NFmiVoidPtrItem& operator=(const NFmiVoidPtrItem& theItem) = delete;
 
   NFmiVoidPtrItem* itsNextItem;
   NFmiVoidPtrData* itsValue = nullptr;
@@ -120,7 +120,7 @@ class NFmiVoidPtrList
   int itsNumberOffItems = 0;
 
  private:
-  NFmiVoidPtrList& operator=(const NFmiVoidPtrList& theList);
+  NFmiVoidPtrList& operator=(const NFmiVoidPtrList& theList) = delete;
 };
 
 // IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII

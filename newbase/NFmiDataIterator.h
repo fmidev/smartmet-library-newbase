@@ -37,8 +37,8 @@ class NFmiDataIterator
                             // käytössä vai ei (onko maski olemassa ja onko se enbloitu)
 
  private:
-  NFmiDataIterator(const NFmiDataIterator& theIterator);
-  NFmiDataIterator& operator=(const NFmiDataIterator& theIterator);
+  NFmiDataIterator(const NFmiDataIterator& theIterator) = delete;
+  NFmiDataIterator& operator=(const NFmiDataIterator& theIterator) = delete;
 
 };  // class NFmiDataIterator
 

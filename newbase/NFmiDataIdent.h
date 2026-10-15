@@ -77,7 +77,7 @@ class NFmiDataIdent
   const NFmiString &GetParamName() const;
   unsigned long GetParamIdent() const;
   unsigned long Type() const;
-  void Type(unsigned long theType) { itsType = static_cast<FmiParamType>(theType); };
+  void Type(unsigned long theType) { itsType = static_cast<FmiParamType>(theType); }
   bool IsIncremental() const;
   void SetIncrementalType(bool newState);
 

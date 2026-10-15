@@ -56,7 +56,8 @@ class NFmiPtrList
   {
    public:
     Node(Type* theData = nullptr, Node* thePrevious = nullptr, Node* theNext = nullptr)
-        : itsData(theData), itsPrevious(thePrevious), itsNext(theNext) {};
+        : itsData(theData), itsPrevious(thePrevious), itsNext(theNext) {
+    }
     void SwapData(Node &theOther)
     {
       Type *tmp = itsData;
@@ -86,8 +87,8 @@ class NFmiPtrList
 
     Iterator() : itsList(nullptr), itsCurrent(nullptr) {}
     // Lisäsin seuraavaan iteraattoriin toisen parametrin 8.9.99 /Mikael
-    Iterator(Node *theNode, NFmiPtrList<Type> *theList) : itsList(theList), itsCurrent(theNode){};
-    Iterator(const Iterator &theIter) : itsList(theIter.itsList), itsCurrent(theIter.itsCurrent){};
+    Iterator(Node* theNode, NFmiPtrList<Type>* theList) : itsList(theList), itsCurrent(theNode) {}
+    Iterator(const Iterator& theIter) : itsList(theIter.itsList), itsCurrent(theIter.itsCurrent) {}
     ~Iterator() = default;
 
     Iterator &operator=(const Iterator &theIter)
@@ -108,7 +109,7 @@ class NFmiPtrList
           return true;
       }
       return false;
-    };
+    }
 
     bool Previous()  // miten koodin saisi headerin hännille?
     {
@@ -119,10 +120,10 @@ class NFmiPtrList
           return true;
       }
       return false;
-    };
+    }
 
-    Type *CurrentPtr() { return itsCurrent->itsData; };
-    Type &Current() { return *itsCurrent->itsData; };
+    Type* CurrentPtr() { return itsCurrent->itsData; }
+    Type& Current() { return *itsCurrent->itsData; }
     bool AddBefore(Type *theItem)
     {
       if (!theItem)  // nolla-pointteria ei voi viedä listaan
@@ -143,7 +144,7 @@ class NFmiPtrList
       }
       itsList->itsCounter++;  // Lisäsin 8.9.99 Mikael
       return true;
-    };
+    }
 
     bool AddAfter(Type *theItem)
     {
@@ -165,7 +166,7 @@ class NFmiPtrList
       }
       itsList->itsCounter++;  // Lisäsin 8.9.99 Mikael
       return true;
-    };
+    }
 
     bool Remove(bool fDeleteData)  // poiston jälkeen current tulee olemaan previous-node
     {
@@ -211,7 +212,7 @@ class NFmiPtrList
   bool Swap(Iterator &iter1, Iterator &iter2);
 
  private:
-  NFmiPtrList &operator=(const NFmiPtrList &theList);
+  NFmiPtrList& operator=(const NFmiPtrList& theList) = delete;
 };
 
 /* // En tiedä oikeaa syntaksia, että Iterator-koodi saataisiin tänne!

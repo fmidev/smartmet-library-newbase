@@ -301,42 +301,42 @@ class NFmiQueryInfo
   // interpolointeja parametreista riippuen.
   // HUOM! Nämä NFmiQueryInfo-metodit eivät palauta kuin puuttuvaa, mutta lapsi-
   // luokka NFmiFastQueryInfo:ssa metodit toimivat oikein. En aio toteuttaa metodeja tässä luokassa.
-  virtual float HeightValue(float /* theHeight */) { return kFloatMissing; };
+  virtual float HeightValue(float /* theHeight */) { return kFloatMissing; }
   virtual float HeightValue(float /* theHeight */, const NFmiPoint & /* theLatlon */)
   {
     return kFloatMissing;
-  };
+  }
   virtual float HeightValue(float /* theHeight */,
                             const NFmiPoint & /* theLatlon */,
                             const NFmiMetTime & /* theTime */)
   {
     return kFloatMissing;
-  };
+  }
   virtual float HeightValue(float /* theHeight */, const NFmiMetTime & /* theTime */)
   {
     return kFloatMissing;
-  };
+  }
 
   // Tähän tulee joukko funktioita, jotka palauttavat aktiivisen parametrin
   // arvon haluttuun paine pintaan interpoloituna (log(p) interpolointi).
   // Metodeja on neljä, jotka tekevät erilaisia interpolointeja parametreista riippuen.
   // HUOM! Nämä NFmiQueryInfo-metodit eivät palauta kuin puuttuvaa, mutta lapsi-
   // luokka NFmiFastQueryInfo:ssa metodit toimivat oikein. En aio toteuttaa metodeja tässä luokassa.
-  virtual float PressureLevelValue(float /* P */) { return kFloatMissing; };
+  virtual float PressureLevelValue(float /* P */) { return kFloatMissing; }
   virtual float PressureLevelValue(float /* P */, const NFmiPoint & /* theLatlon */)
   {
     return kFloatMissing;
-  };
+  }
   virtual float PressureLevelValue(float /* P */,
                                    const NFmiPoint & /* theLatlon */,
                                    const NFmiMetTime & /* theTime */)
   {
     return kFloatMissing;
-  };
+  }
   virtual float PressureLevelValue(float /* P */, const NFmiMetTime & /* theTime */)
   {
     return kFloatMissing;
-  };
+  }
 
   virtual bool FindNearestTime(const NFmiMetTime &theTime,
                                FmiDirection theDirection = kCenter,
@@ -496,10 +496,10 @@ class NFmiQueryInfo
 
   // data tyyppien get- ja set-metodit liittyvät mm. maskeihin ja QInfon lapsi luokkiin.
   virtual NFmiInfoData::Type DataType() const { return NFmiInfoData::kNoDataType; }
-  virtual void DataType(NFmiInfoData::Type /* newType */){};
+  virtual void DataType(NFmiInfoData::Type /* newType */) {}
   // Lapsi luokat tarvitsevat tälläiset maski-metodit, tässä toteutetaan vain dummyna.
-  virtual void MaskType(unsigned long /* theMaskType */){};
-  virtual unsigned long MaskType() { return 0; };
+  virtual void MaskType(unsigned long /* theMaskType */) {}
+  virtual unsigned long MaskType() { return 0; }
 
   float CalcTimeOffsetToLastTime(const NFmiMetTime &theTime,
                                  const NFmiMetTime &time1,
@@ -616,7 +616,7 @@ class NFmiQueryInfo
   virtual bool IsSubParamUsed() const;
   // HUOM! tämä on viritys funktio, joka toimii oikeasti vasta NFmiFastQueryInfo:ssa
   // Sielläkin tämän käyttö on vaarallista, ellei tiedä mitä tekee.
-  virtual void SetIsSubParamUsed(bool /* newState */){};
+  virtual void SetIsSubParamUsed(bool /* newState */) {}
 
   // QueryDataReference
 

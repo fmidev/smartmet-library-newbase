@@ -17,7 +17,7 @@ NFmiNearTreeLocation::NFmiNearTreeLocation() = default;
 // ----------------------------------------------------------------------
 
 NFmiNearTreeLocation::NFmiNearTreeLocation(const NFmiLocation& theLocation, std::size_t theIndex)
-    : itsX(), itsY(), itsZ(), itsIndex(theIndex)
+    : itsIndex(theIndex)
 {
   try
   {

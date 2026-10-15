@@ -42,7 +42,7 @@ class NFmiQueryInfoSatel : public NFmiQueryInfo
   const char* ClassName() const override;
 
  private:
-  NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo);
+  NFmiQueryInfoSatel& operator=(const NFmiQueryInfoSatel& theInfo) = delete;
 
   void Destroy();
   NFmiString* itsSatelName;

@@ -32,8 +32,8 @@ class NFmiDataModifierWithModifier : public NFmiDataModifier
   int itsYRange;
 
  private:
-  NFmiDataModifierWithModifier(const NFmiDataModifierWithModifier& theMod);
-  NFmiDataModifierWithModifier& operator=(const NFmiDataModifierWithModifier& theMod);
+  NFmiDataModifierWithModifier(const NFmiDataModifierWithModifier& theMod) = delete;
+  NFmiDataModifierWithModifier& operator=(const NFmiDataModifierWithModifier& theMod) = delete;
 
 };  // class NFmiDataModifierWithModifier
 

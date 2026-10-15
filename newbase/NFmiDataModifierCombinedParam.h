@@ -32,8 +32,8 @@ class NFmiDataModifierCombinedParam : public NFmiDataModifier
   NFmiCombinedParam *itsCombinedParam;
 
  private:
-  NFmiDataModifierCombinedParam(const NFmiDataModifierCombinedParam &theParam);
-  NFmiDataModifierCombinedParam &operator=(const NFmiDataModifierCombinedParam &theParam);
+  NFmiDataModifierCombinedParam(const NFmiDataModifierCombinedParam& theParam) = delete;
+  NFmiDataModifierCombinedParam& operator=(const NFmiDataModifierCombinedParam& theParam) = delete;
 
 };  // class NFmiDataModifierCombinedParam
 

@@ -33,7 +33,7 @@ class NFmiDataModifierMaxPlace : public NFmiDataModifierExtremePlace
   bool IsNewExtreme(float value) override;
 
  private:
-  NFmiDataModifierMaxPlace& operator=(const NFmiDataModifierMaxPlace& theOther);
+  NFmiDataModifierMaxPlace& operator=(const NFmiDataModifierMaxPlace& theOther) = delete;
 
 };  // class NFmiDataModifierMaxPlace
 

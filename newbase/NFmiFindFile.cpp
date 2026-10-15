@@ -50,11 +50,7 @@ NFmiFindFile::~NFmiFindFile()
 // ----------------------------------------------------------------------
 
 NFmiFindFile::NFmiFindFile()
-    : itsFileFile(0)
-#ifdef UNIX
-      ,
-      itsGlobIndex(0),
-      itsGlobBuffer(nullptr)
+
 #endif
 {
 }

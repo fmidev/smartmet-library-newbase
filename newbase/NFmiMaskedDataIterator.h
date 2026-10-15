@@ -27,8 +27,8 @@ class NFmiMaskedDataIterator : public NFmiDataIterator
   NFmiIntegrationSelector* itsIntegrationSelector;
 
  private:
-  NFmiMaskedDataIterator(const NFmiMaskedDataIterator& theIter);
-  NFmiMaskedDataIterator& operator=(const NFmiMaskedDataIterator& theIter);
+  NFmiMaskedDataIterator(const NFmiMaskedDataIterator& theIter) = delete;
+  NFmiMaskedDataIterator& operator=(const NFmiMaskedDataIterator& theIter) = delete;
 
 };  // class NFmiMaskedDataIterator
 

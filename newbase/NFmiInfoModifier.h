@@ -28,8 +28,8 @@ class NFmiInfoModifier : public NFmiParamDataModifier
   NFmiQueryInfo* itsData;
 
  private:
-  NFmiInfoModifier(const NFmiInfoModifier& theMod);
-  NFmiInfoModifier& operator=(const NFmiInfoModifier& theMod);
+  NFmiInfoModifier(const NFmiInfoModifier& theMod) = delete;
+  NFmiInfoModifier& operator=(const NFmiInfoModifier& theMod) = delete;
 
 };  // class NFmiInfoModifier
 

@@ -19,7 +19,7 @@ class NFmiDataModifierAllValidAvg : public NFmiDataModifierAvg
   void Calculate(NFmiQueryInfo* theQI) override;
 
  private:
-  NFmiDataModifierAllValidAvg& operator=(const NFmiDataModifierAllValidAvg& theOther);
+  NFmiDataModifierAllValidAvg& operator=(const NFmiDataModifierAllValidAvg& theOther) = delete;
 
 };  // class NFmiDataModifierAllValidAvg
 

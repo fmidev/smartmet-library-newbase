@@ -67,9 +67,7 @@ NFmiCombinedParam::NFmiCombinedParam(double theInfoVersion) : itsInfoVersion(the
 
 NFmiCombinedParam::NFmiCombinedParam(const NFmiCombinedParam &theParam)
     : itsSubParams(theParam.itsSubParams ? new NFmiParamBag(*theParam.itsSubParams) : nullptr),
-      itsIntegrators(nullptr)  // Tässä pitäisi käyttää ParamModifierListin copy construktoria, vaan
-                               // ei ole vielä
-      ,
+
       fIntegrationMode(theParam.fIntegrationMode),
       fIntegrationReady(theParam.fIntegrationReady),
       fIntegrationStarted(theParam.fIntegrationStarted),

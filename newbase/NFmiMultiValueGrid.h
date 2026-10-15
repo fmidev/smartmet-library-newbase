@@ -39,8 +39,8 @@ class NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
   bool InterpolateToLatLonPoint(double newLon, double newLat, double& theValue);
 
  private:
-  NFmiMultiValuedGrid(const NFmiMultiValuedGrid& theGrid);
-  NFmiMultiValuedGrid& operator=(const NFmiMultiValuedGrid& theGrid);
+  NFmiMultiValuedGrid(const NFmiMultiValuedGrid& theGrid) = delete;
+  NFmiMultiValuedGrid& operator=(const NFmiMultiValuedGrid& theGrid) = delete;
 
   void UpDate();
   bool Save();

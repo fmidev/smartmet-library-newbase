@@ -366,7 +366,6 @@ void NFmiTimeDescriptor::ExtendTimeBag()
     unsigned long theResolution = !itsLocalTimeStep
                                       ? static_cast<unsigned long>(itsValidTimeBag->Resolution())
                                       : itsLocalTimeStep;
-    ;
 
     theFirstTime.ChangeByHours(-12);
     theFirstTime.SetTimeStep(

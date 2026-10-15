@@ -39,8 +39,8 @@ class NFmiDataModifierDescriptor : public NFmiDataDescriptor
   NFmiParamDataModifierList* itsVarianceModifiers = nullptr;    // Omistaa listan
 
  private:
-  NFmiDataModifierDescriptor(const NFmiDataModifierDescriptor& theDesc);
-  NFmiDataModifierDescriptor& operator=(const NFmiDataModifierDescriptor& theDesc);
+  NFmiDataModifierDescriptor(const NFmiDataModifierDescriptor& theDesc) = delete;
+  NFmiDataModifierDescriptor& operator=(const NFmiDataModifierDescriptor& theDesc) = delete;
 
 };  // class NFmiDataModifierDescriptor
 

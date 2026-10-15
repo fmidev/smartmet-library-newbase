@@ -166,7 +166,7 @@ void NFmiBitmapAreaMask::Destroy()
 
 #ifdef UNIX
 // RHEL6 compiler bug forces to omit the reference
-void NFmiBitmapAreaMask::Init(std::shared_ptr<NFmiFastQueryInfo> theInfo,
+void NFmiBitmapAreaMask::Init(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                               const NFmiCalculationCondition& theOperation)
 #else
 void NFmiBitmapAreaMask::Init(std::shared_ptr<NFmiFastQueryInfo>& theInfo,

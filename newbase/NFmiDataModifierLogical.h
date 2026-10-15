@@ -28,8 +28,8 @@ class NFmiDataModifierLogical : public NFmiDataModifier
   NFmiDataModifier* itsPrimaryModifier;
 
  private:
-  NFmiDataModifierLogical(const NFmiDataModifierLogical& theMod);
-  NFmiDataModifierLogical& operator=(const NFmiDataModifierLogical& theMod);
+  NFmiDataModifierLogical(const NFmiDataModifierLogical& theMod) = delete;
+  NFmiDataModifierLogical& operator=(const NFmiDataModifierLogical& theMod) = delete;
 
 };  // class NFmiDataModifierLogical
 

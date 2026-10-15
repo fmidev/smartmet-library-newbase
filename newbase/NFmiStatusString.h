@@ -22,7 +22,7 @@ class NFmiStatusString : public NFmiString
 
   long Status() const;
   const NFmiString& String();
-  unsigned long ClassId() const override { return kNFmiStatusString; };
+  unsigned long ClassId() const override { return kNFmiStatusString; }
   NFmiString* Clone() const override;
 
   std::ostream& Write(std::ostream& file) const override;

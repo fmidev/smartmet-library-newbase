@@ -219,7 +219,7 @@ class NFmiGridSizeAreaMask : public NFmiElevationAngleAreaMask
       itsInfo;       // kysyy vain editoitavan datan currentin ajan aika-askeleen tunneissa
   bool fCalcXValue;  // siis jos true, laskee etäisyyden x-suunnassa, muuten y-suunnassa
 
-  NFmiGridSizeAreaMask& operator=(const NFmiGridSizeAreaMask& theMask);
+  NFmiGridSizeAreaMask& operator=(const NFmiGridSizeAreaMask& theMask) = delete;
 };  // class NFmiGridSizeAreaMask
 
 // ======================================================================

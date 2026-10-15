@@ -166,7 +166,7 @@ float FmiSnowWaterRatio(float t, float ff)
         return 10;
       if (t > -5)
         return 11;
-      else if (t > -10)
+      if (t > -10)
         return 14;
       else if (t > -20)
         return 17;
@@ -179,7 +179,7 @@ float FmiSnowWaterRatio(float t, float ff)
         return 10;
       if (t > -10)
         return 12;
-      else if (t > -20)
+      if (t > -20)
         return 15;
       else
         return 13;
@@ -190,7 +190,7 @@ float FmiSnowWaterRatio(float t, float ff)
         return 10;
       if (t > -15)
         return 11;
-      else if (t > -20)
+      if (t > -20)
         return 14;
       else
         return 12;
@@ -407,8 +407,7 @@ float FmiDegreeDays(float value, int month)
       return kFloatMissing;
     if ((value > 12.) || (value > 10. && month < 7))
       return 0;
-    else
-      return 17.F - value;
+    return 17.F - value;
   }
   catch (...)
   {

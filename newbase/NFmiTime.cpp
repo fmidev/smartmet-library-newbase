@@ -1143,7 +1143,7 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
         ind++;
         continue;
       }
-      else if (noConversion)
+      if (noConversion)
       {
         theString += str1;
         ind++;
@@ -1293,7 +1293,7 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
 // ----------------------------------------------------------------------
 
 NFmiString NFmiTime::RelativeDay(FmiLanguage theLanguage,
-                                 NFmiString theFormat,
+                                 const NFmiString& theFormat,
                                  int& thePlusInd) const
 {
   try

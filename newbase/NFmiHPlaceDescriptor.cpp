@@ -483,10 +483,8 @@ NFmiPoint NFmiHPlaceDescriptor::LatLon(unsigned long theIndex) const
     {
       return itsGrid->LatLon(theIndex);
     }
-    else
-    {
-      return NFmiPoint(kFloatMissing, kFloatMissing);
-    }
+
+    return NFmiPoint(kFloatMissing, kFloatMissing);
   }
   catch (...)
   {
@@ -796,8 +794,7 @@ bool NFmiHPlaceDescriptor::Location(const NFmiLocation &theLocation)
     }
     if (IsGrid())
       return itsGrid->NearestLatLon(theLocation.GetLongitude(), theLocation.GetLatitude());
-    else
-      return false;
+    return false;
   }
   catch (...)
   {

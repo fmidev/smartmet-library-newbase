@@ -114,13 +114,13 @@ class NFmiAreaMaskImpl : public NFmiAreaMask
   }
   int IntegrationFunctionType() const override { return itsIntegrationFunctionType; }
   void IntegrationFunctionType(int newValue) override { itsIntegrationFunctionType = newValue; }
-  void SetArguments(std::vector<float> & /* theArgumentVector */) override{};
+  void SetArguments(std::vector<float>& /* theArgumentVector */) override {}
   int FunctionArgumentCount() const override { return itsFunctionArgumentCount; }
   void FunctionArgumentCount(int newValue) override { itsFunctionArgumentCount = newValue; }
   // HUOM! seuraavat toimivat oikeasti vain NFmiBinaryMask:in kanssa. Tässä vain tyhjät oletus
   // toteutukset.
-  void SetAll(bool /* theNewState */) override{};
-  void Mask(int /* theIndex */, bool /* newStatus */) override{};
+  void SetAll(bool /* theNewState */) override {}
+  void Mask(int /* theIndex */, bool /* newStatus */) override {}
   const std::shared_ptr<NFmiSimpleCondition> &SimpleCondition() const override
   {
     return itsSimpleCondition;

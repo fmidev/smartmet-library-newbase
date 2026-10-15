@@ -732,7 +732,7 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
     {
       stopHour = 11;
       angle2 = -1 * kFloatMissing;
-      ;  // angle2 must have a negative initial value in case of sunset (XOR-checking)
+      // angle2 must have a negative initial value in case of sunset (XOR-checking)
     }
 
     while (theSolarTime.GetHour() != stopHour)

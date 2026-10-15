@@ -1185,8 +1185,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
     {
       if (formTable[5] >= formTable[4])
         return kTFreezingRain;
-      else
-        return kTFreezingDrizzle;
+      return kTFreezingDrizzle;
     }
     else if (formTable[6] / sum > .3)
       return kTHail;
@@ -1204,7 +1203,7 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
 
       if (rainSnowRelation > 9.)  // rajat oli 20/80, nyt 10/90%
         return kTRain;
-      else if (rainSnowRelation < 1. / 9.)
+      if (rainSnowRelation < 1. / 9.)
         return kTSnow;
       else
         return kTSleet;
@@ -1836,8 +1835,7 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
 
         if (theTemperature >= y)
           return kTDrizzle;
-        else
-          return kTSnow;
+        return kTSnow;
       }
       case 26:
       {
@@ -1849,8 +1847,7 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
 
         if (theTemperature >= y)
           return kTSleet;
-        else
-          return kTSnow;
+        return kTSnow;
       }
       case 22:
       case 70:
@@ -1908,7 +1905,7 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
             (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
           return kTRain;
 
-        else if ((theTemperature <= 3.5 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
+        if ((theTemperature <= 3.5 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
                  (theTemperature <= 3.4 && theHumidity >= 41 && theHumidity <= 42) ||
                  (theTemperature <= 3.3 && theHumidity >= 43 && theHumidity <= 44) ||
                  (theTemperature <= 3.2 && theHumidity == 45) ||
@@ -2972,12 +2969,11 @@ unsigned long NFmiWeatherAndCloudiness::ThunderToHessaa() const
           return 64;
         return 62;
       }
-      else
-      {  // heikompaa ukkosta 61 ja 63
-        if (N >= 85)
-          return 63;
-        return 61;
-      }
+
+      // heikompaa ukkosta 61 ja 63
+      if (N >= 85)
+        return 63;
+      return 61;
     }
     // oletus oli että tähän metodiin tullaan vain jos ukkosen tn >= 30, joten tarkastetaan tämä
     // vielä erikseen

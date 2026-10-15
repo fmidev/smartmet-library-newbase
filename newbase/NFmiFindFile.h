@@ -32,8 +32,8 @@ class NFmiFindFile
   NFmiString PathAndFileName();
 
  private:
-  NFmiFindFile(const NFmiFindFile& theFile);
-  NFmiFindFile& operator=(const NFmiFindFile& theFile);
+  NFmiFindFile(const NFmiFindFile& theFile) = delete;
+  NFmiFindFile& operator=(const NFmiFindFile& theFile) = delete;
 
   std::string itsFileName;
   std::string itsFilePath;

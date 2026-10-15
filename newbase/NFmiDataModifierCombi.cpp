@@ -69,8 +69,8 @@ NFmiDataModifierCombi::NFmiDataModifierCombi(const NFmiDataModifierCombi& other)
       itsTotalCounter(other.itsTotalCounter),
       itsMin(other.itsMin),
       itsMax(other.itsMax),
-      itsSum(other.itsSum),
-      itsFrequencies(nullptr)
+      itsSum(other.itsSum)
+
 {
   if (itsNumberOfValues > 0)
   {

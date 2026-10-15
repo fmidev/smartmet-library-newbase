@@ -152,8 +152,8 @@ class NFmiNearTree
   void Flush() const;
 
  private:
-  NFmiNearTree(const NFmiNearTree& theTree);
-  NFmiNearTree& operator=(const NFmiNearTree& theTree);
+  NFmiNearTree(const NFmiNearTree& theTree) = delete;
+  NFmiNearTree& operator=(const NFmiNearTree& theTree) = delete;
 
   mutable NFmiNearTreeImpl<value_type, functor_type> itsImpl;
   using buffer_type = std::vector<value_type>;

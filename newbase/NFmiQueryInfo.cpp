@@ -5268,7 +5268,7 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
           if (param == kFmiWeatherAndCloudiness)
             return InterpolatedValueForWeatherAndCloudiness(
                 theTime, theMaxMinuteRange, gpoint, xShift, yShift);
-          else if (param == kFmiTotalWindMS)
+          if (param == kFmiTotalWindMS)
             return InterpolatedValueForTotalWind(
                 theTime, theMaxMinuteRange, gpoint, xShift, yShift);
 

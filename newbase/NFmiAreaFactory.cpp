@@ -207,7 +207,7 @@ double degrees_from_projparam(const string &inParam)
         return -boost::lexical_cast<double>(inParam.substr(0, length - 1));
       }
       // East
-      else if (boost::iends_with(inParam, "e"))
+      if (boost::iends_with(inParam, "e"))
       {
         return boost::lexical_cast<double>(inParam.substr(0, length - 1));
       }

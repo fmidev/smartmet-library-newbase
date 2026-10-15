@@ -123,7 +123,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   bool Time(const NFmiMetTime &theTime) override;
   bool IsWantedParam(const NFmiDataIdent& theParam,
                      const NFmiLevel* theLevel = nullptr) const override;
-  std::shared_ptr<NFmiFastQueryInfo> Info() override { return itsInfo; };
+  std::shared_ptr<NFmiFastQueryInfo> Info() override { return itsInfo; }
   void Info(const std::shared_ptr<NFmiFastQueryInfo> &newInfo);
   void UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo) override;
 

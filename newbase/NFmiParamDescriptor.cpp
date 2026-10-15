@@ -390,7 +390,7 @@ const NFmiParamDescriptor NFmiParamDescriptor::Combine(const NFmiParamDescriptor
       return NFmiParamDescriptor(itsParamBag->Combine(*(theCombine).itsParamBag));
     if (itsParamBag)
       return NFmiParamDescriptor(*itsParamBag);
-    else if (theCombine.itsParamBag)
+    if (theCombine.itsParamBag)
       return NFmiParamDescriptor(*theCombine.itsParamBag);
     else
       return NFmiParamDescriptor();

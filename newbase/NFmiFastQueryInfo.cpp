@@ -2522,8 +2522,7 @@ float InterpolationHelper(float theValue1, float theValue2, float theFactor1)
       // 0, ollaan theValue2:n ajassa kiinni
       if (theFactor1 <= 0.5)
         return theValue2;
-      else
-        return theValue1;
+      return theValue1;
     }
 
     return theFactor1 * theValue1 + (1 - theFactor1) * theValue2;
@@ -2903,8 +2902,8 @@ bool NFmiFastQueryInfo::GetLevelToVec(std::vector<float> &values)
   }
 }
 
-void NFmiFastQueryInfo::DoSubParamConversions(std::vector<float> &values,
-                                              std::string callingFunctionName) const
+void NFmiFastQueryInfo::DoSubParamConversions(std::vector<float>& values,
+                                              const std::string& callingFunctionName) const
 {
   if (IsSubParamUsed())
   {
@@ -4902,7 +4901,7 @@ float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
       return CalcLogModLinearInterpolatedValue(p1, p2, theP, value1, value2, 360);
     if (theParamId == kFmiWindVectorMS)
       return CalcLogInterpolatedWindWectorValue(p1, p2, theP, value1, value2);
-    else if (theInterpolationMethod == kLinearly)
+    if (theInterpolationMethod == kLinearly)
       return static_cast<float>(CalcLogInterpolatedValue(p1, p2, theP, value1, value2));
     else if (theInterpolationMethod == kNearestPoint)
     {

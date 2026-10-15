@@ -665,7 +665,7 @@ void NFmiStaticTime::XPrint(const char *str) const  // testausfunktio!!!!
  */
 // ----------------------------------------------------------------------
 
-void NFmiStaticTime::FromStr(const NFmiString theTimeString, const unsigned long theTimeMask)
+void NFmiStaticTime::FromStr(const NFmiString& theTimeString, const unsigned long theTimeMask)
 {
   try
   {

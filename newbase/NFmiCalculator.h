@@ -33,8 +33,8 @@ class NFmiCalculator
   NFmiDataModifier* CalculatedModifier();
 
  private:
-  NFmiCalculator(const NFmiCalculator& theCalculator);
-  NFmiCalculator& operator=(const NFmiCalculator& theCalculator);
+  NFmiCalculator(const NFmiCalculator& theCalculator) = delete;
+  NFmiCalculator& operator=(const NFmiCalculator& theCalculator) = delete;
 
   NFmiDataModifier* itsDataModifier;  // ei omista
   NFmiDataIterator* itsDataIterator;  // ei omista

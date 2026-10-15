@@ -351,13 +351,11 @@ const NFmiRect NFmiArea::XYArea(const NFmiArea *theArea) const
       NFmiRect rect(topLeft, bottomRight);
       return rect;
     }
-    else
-    {
-      NFmiPoint topLeft(ToXY(theArea->ToLatLon(theArea->TopLeft())));
-      NFmiPoint bottomRight(ToXY(theArea->ToLatLon(theArea->BottomRight())));
-      NFmiRect rect(topLeft, bottomRight);
-      return rect;
-    }
+
+    NFmiPoint topLeft(ToXY(theArea->ToLatLon(theArea->TopLeft())));
+    NFmiPoint bottomRight(ToXY(theArea->ToLatLon(theArea->BottomRight())));
+    NFmiRect rect(topLeft, bottomRight);
+    return rect;
   }
   catch (...)
   {
@@ -870,7 +868,7 @@ double NFmiArea::FixLongitude(double theLon) const
         return theLon - 360;
       return theLon;
     }
-    else if (theLon < 0)
+    if (theLon < 0)
       return theLon + 360;
     else
       return theLon;

@@ -44,10 +44,10 @@ class NFmiSettingsImpl
   NFmiSettingsImpl();
 
   //! Copy constructor is disabled - this is a singleton
-  NFmiSettingsImpl(const NFmiSettingsImpl& theSettings);
+  NFmiSettingsImpl(const NFmiSettingsImpl& theSettings) = delete;
 
   //! Assignment operator is disabled - this is a singleton
-  NFmiSettingsImpl& operator=(const NFmiSettingsImpl& theSettings);
+  NFmiSettingsImpl& operator=(const NFmiSettingsImpl& theSettings) = delete;
 
   static void Create();
   [[noreturn]] static void Die();

@@ -31,7 +31,7 @@ class NFmiVoid
   unsigned long itsSize = 0;
 
  private:
-  NFmiVoid(const NFmiVoid& theVoid);
+  NFmiVoid(const NFmiVoid& theVoid) = delete;
 
 };  // class NFmiVoid
 

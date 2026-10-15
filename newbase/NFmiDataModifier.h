@@ -69,7 +69,7 @@ class NFmiDataModifier : public NFmiDataModifierBase
   int itsNumberOfMissingValues = 0;
 
  private:
-  NFmiDataModifier& operator=(const NFmiDataModifier& theModifier);
+  NFmiDataModifier& operator=(const NFmiDataModifier& theModifier) = delete;
 
   bool fIsCombinedParam;
   bool fIsLimitCheck = false;

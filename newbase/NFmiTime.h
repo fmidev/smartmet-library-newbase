@@ -107,7 +107,9 @@ class NFmiTime : public NFmiStaticTime
   void DecodeCompareValue(long aCompareValue);
   void SetZoneDifferenceHour();
   short CalcZoneDifferenceHour(float theLongitude) const;
-  NFmiString RelativeDay(FmiLanguage theLanguage, NFmiString theFormat, int& thePlusInd) const;
+  NFmiString RelativeDay(FmiLanguage theLanguage,
+                         const NFmiString& theFormat,
+                         int& thePlusInd) const;
 
   static std::string GetDictionaryString(const char *theMagicWord);
 

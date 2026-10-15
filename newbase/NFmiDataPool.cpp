@@ -50,16 +50,12 @@ NFmiDataPool::NFmiDataPool() : itsMinValue(kFloatMissing), itsMaxValue(kFloatMis
 NFmiDataPool::NFmiDataPool(const NFmiDataPool &theDataPool)
     : itsSize(theDataPool.itsSize),
       itsIndex(theDataPool.itsIndex),
-      itsData(nullptr),
-      fFirst(false),
-      fLast(false),
+
       itsMinValue(theDataPool.itsMinValue),
       itsMaxValue(theDataPool.itsMaxValue),
-      itsMissingValueIndex(),
-      itsCurrentMissingValueIndex(),
-      itsMissingValue(),
-      fUseBinaryStorage(theDataPool.fUseBinaryStorage),
-      fDoEndianByteSwap()
+
+      fUseBinaryStorage(theDataPool.fUseBinaryStorage)
+
 {
   Init(itsSize, theDataPool.itsData);
   InitMissingValues(theDataPool);

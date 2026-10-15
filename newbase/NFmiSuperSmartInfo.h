@@ -76,7 +76,7 @@ class NFmiSuperSmartInfo : public NFmiFastQueryInfo
 #else
   // oli pakko kirjoittaa, koska muuten en voi kutsua SSInfo:lta tätä,
   // koska muitakin Param-metodeja on peittämässä tätä
-  NFmiDataIdent& Param() const override { return NFmiFastQueryInfo::Param(); };
+  NFmiDataIdent& Param() const override { return NFmiFastQueryInfo::Param(); }
 #endif
 
   bool Param(const NFmiParam& theParam) override;

@@ -776,7 +776,7 @@ bool NFmiPreProcessor::SetReplaceMap(const std::map<std::string, std::string> &t
  */
 // ----------------------------------------------------------------------
 
-bool NFmiPreProcessor::AddReplaceString(const std::string fromString, const std::string toString)
+bool NFmiPreProcessor::AddReplaceString(const std::string& fromString, const std::string& toString)
 {
   try
   {

@@ -35,8 +35,8 @@ class NFmiCmdLine
   int GetSpaceStringSize(const NFmiString& theString);
 
  private:
-  NFmiCmdLine(const NFmiCmdLine& theCmdLine);
-  NFmiCmdLine& operator=(const NFmiCmdLine& theCmdLine);
+  NFmiCmdLine(const NFmiCmdLine& theCmdLine) = delete;
+  NFmiCmdLine& operator=(const NFmiCmdLine& theCmdLine) = delete;
 
   int itsArgc;
   char** itsArgv;

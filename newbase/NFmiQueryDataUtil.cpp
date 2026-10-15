@@ -896,7 +896,7 @@ void ExtractLocationsFromLocationData(NFmiFastQueryInfo &theSourceInfo,
 template <typename T>
 struct IsMissingValue
 {
-  IsMissingValue(T theMissValue) : itsMissValue(theMissValue){};
+  IsMissingValue(T theMissValue) : itsMissValue(theMissValue) {}
   bool operator()(const T &theValue) const { return itsMissValue == theValue; }
   T itsMissValue;
 };
@@ -5099,10 +5099,9 @@ void NFmiQueryDataUtil::AddRange(NFmiThreadCallBacks *theThreadCallBacks, int va
 // Oletuksia: theFilesIn on tiedostojen uutuus järjestyksessä.
 // Jos theBaseQData:ssa on data, haetaan vain sen viimeistä dataa uudemmat queryDatat,
 // eli loopin voi lopettaa 1. missä ajat vanhempia (tiedostojen aika järjestys)
-std::vector<std::shared_ptr<NFmiQueryData>>
-NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
-    std::shared_ptr<NFmiQueryData> theBaseQData,
-    const std::string &theDirName,
+std::vector<std::shared_ptr<NFmiQueryData>> NFmiQueryDataUtil::ReadQueryDataFilesForCombinationWork(
+    const std::shared_ptr<NFmiQueryData>& theBaseQData,
+    const std::string& theDirName,
     const std::vector<std::string>& theFilesIn,
     NFmiStopFunctor *theStopFunctor,
     bool fDoRebuildCheck)
@@ -6649,8 +6648,7 @@ bool NFmiQueryDataUtil::AreAreasEqual(const NFmiArea *theArea1, const NFmiArea *
               return true;
             return false;
           }
-          else
-            return true;
+          return true;
         }
       }
     }
@@ -6676,7 +6674,7 @@ bool NFmiQueryDataUtil::AreAreasSameKind(const NFmiArea *theArea1, const NFmiAre
           return true;
         return false;
       }
-      else if (theArea1->ClassId() == theArea2->ClassId())
+      if (theArea1->ClassId() == theArea2->ClassId())
         return true;
     }
     return false;

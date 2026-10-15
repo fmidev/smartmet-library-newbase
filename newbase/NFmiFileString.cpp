@@ -217,8 +217,7 @@ NFmiString NFmiFileString::Path() const
         return GetChars(1, last);
       if (!IsAbsolutePath())  // suhteellinen polku ilman .-merkkiä alussa
         return GetChars(1, last);
-      else
-        return GetChars(first, (last + 1) - first);
+      return GetChars(first, (last + 1) - first);
     }
 
     return NFmiString();

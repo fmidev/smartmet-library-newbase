@@ -80,9 +80,9 @@ class NFmiOrthographicArea : public NFmiAzimuthalArea
   std::size_t HashValue() const;
 
  protected:
-  double K(const double /* delta */) const override { return 1.; };
-  double CalcDelta(const double /* xyDistance */) const override { return 0.; };
-  double DistanceFromPerspectivePointToCenterOfEarth() const override { return 0.; };
+  double K(const double /* delta */) const override { return 1.; }
+  double CalcDelta(const double /* xyDistance */) const override { return 0.; }
+  double DistanceFromPerspectivePointToCenterOfEarth() const override { return 0.; }
   double itsAzimuthAngle = 0.0;
   double itsLat0 = 0.0;
   double itsLon0 = 0.0;

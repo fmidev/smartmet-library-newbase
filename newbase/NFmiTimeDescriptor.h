@@ -56,7 +56,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   {
     Reset();
     Next();
-  };
+  }
 
   const NFmiMetTime &Time() const;
   bool Time(const NFmiMetTime &theTime);

@@ -196,7 +196,8 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   bool SetLevelFromVec(const std::vector<float> &values);
   bool GetLevelToVecPartial(size_t x1, size_t y1, size_t x2, size_t y2, std::vector<float> &values);
   bool GetCube(std::vector<float> &values);
-  void DoSubParamConversions(std::vector<float> &values, std::string callingFunctionName) const;
+  void DoSubParamConversions(std::vector<float>& values,
+                             const std::string& callingFunctionName) const;
 
   bool GetInterpolatedLevel(std::vector<float> &values, const NFmiMetTime &time);
   bool GetInterpolatedCube(std::vector<float> &values, const NFmiMetTime &t);
@@ -461,8 +462,8 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
     return {};
   }  // HUOM! ei saa palauttaa itsRefQueryData -data osaa shared-pointterissa, koska se deletoisi
      // lopuksi datan (TÄMÄ siis overridataan lapsessa!)
-  NFmiInfoData::Type DataType() const override { return itsDataType; };
-  void DataType(NFmiInfoData::Type newType) override { itsDataType = newType; };
+  NFmiInfoData::Type DataType() const override { return itsDataType; }
+  void DataType(NFmiInfoData::Type newType) override { itsDataType = newType; }
   // ElapsedTimeFromLoadInSeconds toteutetaan vasta lapsiluokassa
   // (SmartMet workstation koodeissa), negatiivisia arvoja pidetään puuttuvina
   virtual double ElapsedTimeFromLoadInSeconds() const { return -1; }
