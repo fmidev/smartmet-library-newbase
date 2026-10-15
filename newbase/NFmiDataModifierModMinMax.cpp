@@ -16,7 +16,7 @@ float GetModCaseMinMaxValue(const std::multiset<float>& rawValues, bool getMinBi
   if (getMinBigValue)
     return *minBigIter;
 
-    return *(--minBigIter);
+  return *(--minBigIter);
 }
 
 float GetMaxSmallValue(const std::multiset<float>& rawValues)
