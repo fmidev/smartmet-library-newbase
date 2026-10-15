@@ -817,7 +817,7 @@ inline void NFmiWeatherAndCloudiness::SetFogIntensity(unsigned long theValue)
 inline void NFmiWeatherAndCloudiness::SetThunderProbability(unsigned long theValue)
 {
   itsData.longType =
-      static_cast<uint32_t>((itsData.longType & (~(0xF << 28))) | ((theValue & 0xF) << 28));
+      static_cast<uint32_t>((itsData.longType & (~(0xFU << 28))) | ((theValue & 0xF) << 28));
 }
 
 // NOLINTEND(cppcoreguidelines-pro-type-union-access)

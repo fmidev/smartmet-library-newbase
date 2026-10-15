@@ -4147,7 +4147,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
       int index1 = 0;
       int index2 = 0;
       if ((index1 = timeList->FindNearestTimes(
-               theTime, theMaxMinuteRange ? theMaxMinuteRange : kLongMissing, time1, time2)) != -1)
+               theTime, theMaxMinuteRange ? theMaxMinuteRange : -1, time1, time2)) != -1)
       {
         FmiInterpolationMethod interpolationMethod = Param().GetParam()->InterpolationMethod();
         if (interpolationMethod == kNearestPoint || interpolationMethod == kNoneInterpolation)
