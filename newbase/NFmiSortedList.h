@@ -25,7 +25,7 @@ class NFmiSortedList : public NFmiVoidPtrList
   ~NFmiSortedList() override;
   NFmiSortedList(NFmiSortedList& theList);
   NFmiSortedList(FmiSortOrder theSortOrder = kAscending);
-  NFmiSortedList& operator=(const NFmiSortedList&) = default;
+  NFmiSortedList& operator=(const NFmiSortedList&) = delete;
 
   using NFmiVoidPtrList::Add;
   virtual bool Add(NFmiSortable* theItem, bool fAddDuplicates = true);

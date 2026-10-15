@@ -15,7 +15,7 @@ class NFmiDataModifierSum : public NFmiDataModifier
   ~NFmiDataModifierSum() override;
   NFmiDataModifierSum(FmiJoinOperator theJoinOperator = kFmiAdd, bool missingValuesAlloved = true);
   NFmiDataModifierSum(const NFmiDataModifierSum& theOther);
-  NFmiDataModifierSum& operator=(const NFmiDataModifierSum&) = default;
+  NFmiDataModifierSum& operator=(const NFmiDataModifierSum&) = delete;
   NFmiDataModifier* Clone() const override;
 
   float Sum() const;

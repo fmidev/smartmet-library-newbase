@@ -26,7 +26,7 @@ class NFmiDataModifierMinMax : public NFmiDataModifier
   ~NFmiDataModifierMinMax() override;
   NFmiDataModifierMinMax();
   NFmiDataModifierMinMax(const NFmiDataModifierMinMax& theOther);
-  NFmiDataModifierMinMax& operator=(const NFmiDataModifierMinMax&) = default;
+  NFmiDataModifierMinMax& operator=(const NFmiDataModifierMinMax&) = delete;
   NFmiDataModifier* Clone() const override;
 
   float MinValue() const;

@@ -79,9 +79,11 @@ class NFmiDataMatrix : public std::vector<std::vector<T>>
   {
   }
 
-  NFmiDataMatrix(NFmiDataMatrix<T>&& other) noexcept
-      : Base(std::move(other)), itsNX(other.itsNX), itsNY(other.itsNY)
+  NFmiDataMatrix(NFmiDataMatrix<T>&& other) noexcept : itsNX(other.itsNX), itsNY(other.itsNY)
   {
+    Base::swap(other);
+    other.itsNX = 0;
+    other.itsNY = 0;
   }
 
   ~NFmiDataMatrix() = default;

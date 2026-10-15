@@ -15,7 +15,7 @@ class NFmiDataModifierAvg : public NFmiDataModifier
   ~NFmiDataModifierAvg() override;
   NFmiDataModifierAvg();
   NFmiDataModifierAvg(const NFmiDataModifierAvg& theOther);
-  NFmiDataModifierAvg& operator=(const NFmiDataModifierAvg&) = default;
+  NFmiDataModifierAvg& operator=(const NFmiDataModifierAvg&) = delete;
   NFmiDataModifier* Clone() const override;
 
   float Avg() const;
