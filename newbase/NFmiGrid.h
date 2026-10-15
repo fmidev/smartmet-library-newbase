@@ -27,6 +27,8 @@ class NFmiLocationCache
  public:
   NFmiLocationCache();
   ~NFmiLocationCache();
+  NFmiLocationCache(const NFmiLocationCache&) = default;
+  NFmiLocationCache& operator=(const NFmiLocationCache&) = default;
 
   bool NoValue() const { return itsLocationIndex == gMissingIndex; }
   bool NoInterpolation() const { return fNoInterpolation; }
@@ -51,6 +53,8 @@ class NFmiTimeCache
  public:
   NFmiTimeCache();
   ~NFmiTimeCache();
+  NFmiTimeCache(const NFmiTimeCache&) = default;
+  NFmiTimeCache& operator=(const NFmiTimeCache&) = default;
 
   bool NoValue() const { return itsTimeIndex1 == gMissingIndex; }
   bool NoInterpolation() const { return itsTimeIndex1 == itsTimeIndex2; }
