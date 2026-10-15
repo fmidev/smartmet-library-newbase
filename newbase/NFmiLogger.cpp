@@ -219,8 +219,8 @@ void NFmiLogger::StoreToSettings()
                         NFmiStringTools::Convert(itsFatalErrorLabel),
                         true);
     }
-
-    throw Fmi::Exception(BCP, "Error in NFmiLogger::StoreToSettings, unable to store setting.");
+    else
+      throw Fmi::Exception(BCP, "Error in NFmiLogger::StoreToSettings, unable to store setting.");
   }
   catch (...)
   {
