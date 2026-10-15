@@ -45,7 +45,6 @@ class NFmiMultiPolygonAreaMask : public NFmiAreaMaskImpl
 
   std::vector<NFmiSvgPath *> itsAreaPolygons;  //!< Tässä on erilliset alueet svg-polkuina.
   std::vector<double> itsAreaPolygonValues;    //!< Tässä on kunkin alueen maski arvo.
-  bool fInitialized;                           //! Set when something has been read from a file
 
 };  // class NFmiMultiPolygonAreaMask
 

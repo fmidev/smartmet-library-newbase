@@ -59,7 +59,7 @@ NFmiMultiPolygonAreaMask::~NFmiMultiPolygonAreaMask()
  */
 // ----------------------------------------------------------------------
 
-NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask() : fInitialized(false) {}
+NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -76,8 +76,7 @@ NFmiMultiPolygonAreaMask::NFmiMultiPolygonAreaMask(const NFmiCalculationConditio
                                                    Type theMaskType,
                                                    NFmiInfoData::Type theDataType,
                                                    BinaryOperator thePostBinaryOperator)
-    : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
-      fInitialized(false)
+    : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator)
 {
 }
 

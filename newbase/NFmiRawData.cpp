@@ -32,21 +32,6 @@
 #include <cmath>
 #endif
 
-#if 0
-// paranoid mode
-typedef std::shared_mutex MutexType;
-typedef std::shared_lock<MutexType> ReadLock;
-typedef std::unique_lock<MutexType> WriteLock;
-#else
-// trust kernel to handle it
-struct FooBar
-{
-};
-using MutexType = FooBar;
-using ReadLock = FooBar;
-using WriteLock = FooBar;
-#endif
-
 using MappedFileParams = boost::iostreams::mapped_file_params;
 using MappedFile = Fmi::MappedFile;
 
@@ -97,7 +82,6 @@ class NFmiRawData::Pimple
   void Unmap() const;
 #endif
 
-  mutable MutexType itsMutex;
   mutable float *itsData{nullptr};                               // non-memory mapped data
   mutable boost::scoped_ptr<MappedFile> itsMappedFile{nullptr};  // memory mapped data
   size_t itsOffset{0};                                           // offset to raw data
@@ -132,7 +116,7 @@ NFmiRawData::Pimple::~Pimple()
  */
 // ----------------------------------------------------------------------
 
-NFmiRawData::Pimple::Pimple() : itsMutex(), itsMappedFile(nullptr) {}
+NFmiRawData::Pimple::Pimple() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -141,7 +125,7 @@ NFmiRawData::Pimple::Pimple() : itsMutex(), itsMappedFile(nullptr) {}
 // ----------------------------------------------------------------------
 
 NFmiRawData::Pimple::Pimple(const Pimple &other)
-    : itsMutex(), itsSize(other.itsSize), itsSaveAsBinaryFlag(other.itsSaveAsBinaryFlag)
+    : itsSize(other.itsSize), itsSaveAsBinaryFlag(other.itsSaveAsBinaryFlag)
 
 {
   try
@@ -149,7 +133,6 @@ NFmiRawData::Pimple::Pimple(const Pimple &other)
     // We assume copied data will be changed so that copying mmapping would
     // be a wasted effort
 
-    WriteLock lock(itsMutex);
     itsData = new float[itsSize];
 
     if (other.itsData != nullptr)
@@ -176,13 +159,11 @@ NFmiRawData::Pimple::Pimple(const Pimple &other)
 // ----------------------------------------------------------------------
 
 NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
-    : itsMutex(), itsSize(size), itsFileName(filename)
+    : itsSize(size), itsFileName(filename)
 
 {
   try
   {
-    WriteLock lock(itsMutex);
-
     // Backward compatibility:
     long datatype = 0;
     file >> datatype;
@@ -250,16 +231,13 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
 // ----------------------------------------------------------------------
 
 NFmiRawData::Pimple::Pimple(istream& file, size_t size, bool endianswap)
-    : itsMutex(),
-      itsMappedFile(nullptr),
+    : itsMappedFile(nullptr),
       itsSize(size),
 
       itsEndianSwapFlag(endianswap)
 {
   try
   {
-    WriteLock lock(itsMutex);
-
     delete itsData;
     itsData = new float[itsSize];
 
@@ -337,8 +315,6 @@ bool NFmiRawData::Pimple::Init(size_t size,
 {
   try
   {
-    WriteLock lock(itsMutex);
-
     // Update number of elements in the data
 
     itsSize = size;
@@ -399,8 +375,6 @@ bool NFmiRawData::Pimple::Init(size_t size)
 {
   try
   {
-    WriteLock lock(itsMutex);
-
     itsData = nullptr;
     itsSize = size;
     if (itsSize > 0)
@@ -437,7 +411,6 @@ void NFmiRawData::Pimple::SetBinaryStorage(bool flag) const
 {
   try
   {
-    WriteLock lock(itsMutex);
     itsSaveAsBinaryFlag = flag;
   }
   catch (...)
@@ -456,7 +429,6 @@ bool NFmiRawData::Pimple::IsBinaryStorageUsed() const
 {
   try
   {
-    ReadLock lock(itsMutex);
     return itsSaveAsBinaryFlag;
   }
   catch (...)
@@ -505,8 +477,6 @@ float NFmiRawData::Pimple::GetValue(size_t index) const
 {
   try
   {
-    ReadLock lock(itsMutex);
-
     if (index >= itsSize)
       return kFloatMissing;
 
@@ -548,8 +518,6 @@ bool NFmiRawData::Pimple::GetValues(size_t startIndex,
       ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
 
     {
-      ReadLock lock(itsMutex);
-
       size_t i = 0;
       std::generate(values.begin(), values.end(), [&] { return ptr[startIndex + (i++) * step]; });
 
@@ -586,8 +554,6 @@ bool NFmiRawData::Pimple::SetValues(size_t startIndex,
     ptr = reinterpret_cast<float *>(itsMappedFile->data() + itsOffset);
 
   {
-    WriteLock lock(itsMutex);
-
     for (size_t i = 0; i < count; i++)
       ptr[startIndex + i * step] = values[i];
   }
@@ -617,8 +583,6 @@ bool NFmiRawData::Pimple::GetValuesPartial(size_t startIndex,
       ptr = reinterpret_cast<const float *>(itsMappedFile->const_data() + itsOffset);
 
     {
-      ReadLock lock(itsMutex);
-
       size_t i = 0;
 
       for (size_t row = 0; row < rowCount; row++)
@@ -650,8 +614,6 @@ bool NFmiRawData::Pimple::SetValue(size_t index, float value)
 {
   try
   {
-    WriteLock lock(itsMutex);
-
     if (index >= itsSize)
       return false;
 
@@ -696,8 +658,6 @@ ostream &NFmiRawData::Pimple::Write(ostream &file) const
 {
   try
   {
-    ReadLock lock(itsMutex);
-
     // Backward compatibility when other than floats were supported
     const int kFloat = 6;
     file << kFloat << '\n';
@@ -748,8 +708,6 @@ void NFmiRawData::Pimple::Backup(char *ptr) const
   {
     if (itsData)
     {
-      ReadLock lock(itsMutex);
-
       // we assume data which is backed up is edited, so might as well unmap
 #ifdef NFMIRAWDATA_ENABLE_UNDO_REDO
       Unmap();
@@ -777,8 +735,6 @@ void NFmiRawData::Pimple::Undo(char *ptr)
   {
     if (itsData)
     {
-      WriteLock lock(itsMutex);
-
       // This may be slower than necessary when mmapped, but since Backup
       // unmaps this really should never actually unmap
 

@@ -24,9 +24,6 @@ class NFmiEditParam : public NFmiParam
   NFmiEditParam();
 
  private:
-  FmiMaskMethod itsMaskMethod = kFmiIsLessThan;
-  double itsMaskValue = 0.0;
-
 };  // class NFmiEditParam
 
 // ======================================================================
