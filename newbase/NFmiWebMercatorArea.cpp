@@ -115,7 +115,6 @@ void NFmiWebMercatorArea::Init(bool fKeepWorldRect)
       itsWorldRect =
           // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
           // construction
-          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
           NFmiRect(LatLonToWorldXY(itsBottomLeftLatLon), LatLonToWorldXY(itsTopRightLatLon));
 
     itsXScaleFactor = Width() / itsWorldRect.Width();

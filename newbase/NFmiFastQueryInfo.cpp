@@ -1445,7 +1445,6 @@ std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
         locationIndexies.push_back(0);      // laitetaan 1. hilapiste
         // codechecker_intentional [optin.cplusplus.VirtualCall] own versions intended in
         // construction
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
         locationIndexies.push_back(theInfo->SizeLocations() -
                                    1);  // laitetaan mukaan vielä viimeinen hilapiste
         if (xSize > 4 && ySize > 4)
@@ -1471,9 +1470,7 @@ std::vector<unsigned long> FillLocationIndexies(NFmiFastQueryInfo *theInfo)
       return locationIndexies;
     }
 
-    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     // asema datalle palautetaan seuraavat paikka indeksit
-    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
     int ssize = theInfo->SizeLocations();
     std::vector<unsigned long> locationIndexies;
     if (ssize > 0)
