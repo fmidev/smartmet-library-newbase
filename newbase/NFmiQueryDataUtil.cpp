@@ -635,6 +635,32 @@ void GetMatchingLocations(NFmiFastQueryInfo &theInfo1,
 }
 }  // namespace
 
+namespace
+{
+// Copy the non-missing values interpolated from info 1 to the given locations of info 2 for
+// all levels
+void CopyInterpolatedLevelValues(NFmiFastQueryInfo &area1Info,
+                                 NFmiFastQueryInfo &area2Info,
+                                 const std::vector<unsigned long> &locationIndexies,
+                                 const std::vector<NFmiPoint> &latlons)
+{
+  for (area1Info.ResetLevel(), area2Info.ResetLevel();
+       area1Info.NextLevel() && area2Info.NextLevel();)
+  {
+    size_t ssize = locationIndexies.size();
+    for (size_t i = 0; i < ssize; i++)
+    {
+      float value = area1Info.InterpolatedValue(latlons[i]);
+      if (!(value == kFloatMissing || value == kTCombinedWeatherFloatMissing))
+      {
+        area2Info.LocationIndex(locationIndexies[i]);
+        area2Info.FloatValue(value);
+      }
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Kirjoittaa area/grid 1:stä area/grid 2:een päälle, jos löytyy dataa
@@ -684,20 +710,7 @@ NFmiQueryData *NFmiQueryDataUtil::Area1QDOverArea2QD(NFmiQueryData *areaData1,
           {
             if (area1Info.Time(area2Info.Time()))
             {
-              for (area1Info.ResetLevel(), area2Info.ResetLevel();
-                   area1Info.NextLevel() && area2Info.NextLevel();)
-              {
-                size_t ssize = locationIndexies.size();
-                for (size_t i = 0; i < ssize; i++)
-                {
-                  float value = area1Info.InterpolatedValue(latlons[i]);
-                  if (!(value == kFloatMissing || value == kTCombinedWeatherFloatMissing))
-                  {
-                    area2Info.LocationIndex(locationIndexies[i]);
-                    area2Info.FloatValue(value);
-                  }
-                }
-              }
+              CopyInterpolatedLevelValues(area1Info, area2Info, locationIndexies, latlons);
             }
           }
         }
