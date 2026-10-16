@@ -4695,6 +4695,77 @@ bool NFmiWeatherAndCloudiness::HighClouds(unsigned long theValue)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Set a missing precipitation form to rain or snow based on the temperature
+ */
+// ----------------------------------------------------------------------
+
+void NFmiWeatherAndCloudiness::SetMissingPrecipitationFormFromTemperature()
+{
+  if (PrecipitationForm() == kT3BitMissing)
+  {
+    if (itsTemperature > 0)
+      SetPrecipitationForm(kTRain);
+    if (itsTemperature <= 0)
+      SetPrecipitationForm(kTSnow);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Update the cloudiness and the precipitation type and form for precipitation
+ *
+ * \param newRain True if precipitation was set where there was none
+ */
+// ----------------------------------------------------------------------
+
+void NFmiWeatherAndCloudiness::UpdateForPrecipitation(bool newRain)
+{
+  if (TotalCloudiness() == 0)
+  {
+    // Huom! 1.2.2000/Marko Laitoin säätömahdollisuuden kun luodaan sadetta,
+    // tuleeko pilvistä puolipilvistä vai täyspilveä ja tuleeko sateesta kuuroa vai tasaista
+    if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
+    {
+      if (fDefaultPrecipitationTypeIsLargeScale)
+        SetPrecipitationType(kTLargeScalePrecipitation);
+      else
+        SetPrecipitationType(kTConvectivePrecipitation);
+    }
+    SetMissingPrecipitationFormFromTemperature();  // puuttuva T -> vettä
+    if (fDefaultPrecipitationTypeIsLargeScale)
+      SetTotalCloudiness(10);
+    else
+      SetTotalCloudiness(5);
+  }
+
+  if (TotalCloudiness() >= 8)  // täyspilvistä
+  {
+    if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
+      SetPrecipitationType(kTLargeScalePrecipitation);
+    SetMissingPrecipitationFormFromTemperature();  // oletus vesisade
+  }
+
+  else if (TotalCloudiness() < 8 && TotalCloudiness() > 0)
+  {
+    if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
+      SetPrecipitationType(kTConvectivePrecipitation);
+    SetMissingPrecipitationFormFromTemperature();  // oletus vesisade
+
+    // Marko Laitoin tämän , jottä pilviä saadaan lisää kun
+    // sadetta lisätään jos N alle 50 tai 100% riippuen asetuksesta
+    if (newRain)  // HUOM! nyt vain uuden sateen tapuksessa, mutta ei esim. jos orig sade
+                  // oli puuttuvaa eli ollaan esim. interpolointia tekemässä
+    {
+      if (fDefaultPrecipitationTypeIsLargeScale)
+        SetTotalCloudiness(FmiMax(10UL, TotalCloudiness()));
+      else
+        SetTotalCloudiness(FmiMax(5UL, TotalCloudiness()));
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param theValue Undocumented
  * \return Undocumented
  */
@@ -4707,91 +4778,29 @@ bool NFmiWeatherAndCloudiness::TotalPrecipitation(unsigned long theValue)
     bool newRain = (TotalPrecipitation() == 0) && (theValue > 0) &&
                    (theValue != TotalPrecipitationMissingValue());
     // täällä on käytetty fAutoUpdatea
-    if (theValue != TotalPrecipitationMissingValue())
+    if (theValue == TotalPrecipitationMissingValue())
+      return false;
+
+    SetTotalPrecipitation(theValue);
+    CheckIfPrecipZeroAndCleanTypeAndForm();  // Onko tämä oikea kohta?????
+    if (TotalPrecipitation() == 0 && PrecipitationType() == kT2BitMissing &&
+        PrecipitationForm() == kT3BitMissing)  // ei sada
+      fDataOk = true;
+    else if (TotalPrecipitation() > 0 && TotalCloudiness() > 0 &&
+             PrecipitationType() != kT2BitMissing &&
+             PrecipitationForm() != kT3BitMissing)  // sataa
+      fDataOk = true;                               // autoUpdatea ei tarvita
+
+    else if (fAutoUpdate)  // tarvittaessa päivitetään muita parametreja
     {
-      SetTotalPrecipitation(theValue);
-      CheckIfPrecipZeroAndCleanTypeAndForm();  // Onko tämä oikea kohta?????
-      if (TotalPrecipitation() == 0 && PrecipitationType() == kT2BitMissing &&
-          PrecipitationForm() == kT3BitMissing)  // ei sada
-        fDataOk = true;
-      else if (TotalPrecipitation() > 0 && TotalCloudiness() > 0 &&
-               PrecipitationType() != kT2BitMissing &&
-               PrecipitationForm() != kT3BitMissing)  // sataa
-        fDataOk = true;                               // autoUpdatea ei tarvita
-
-      else if (fAutoUpdate)  // tarvittaessa päivitetään muita parametreja
-      {
-        if (TotalPrecipitation() > 0)
-        {
-          if (TotalCloudiness() == 0)
-          {
-            // Huom! 1.2.2000/Marko Laitoin säätömahdollisuuden kun luodaan sadetta,
-            // tuleeko pilvistä puolipilvistä vai täyspilveä ja tuleeko sateesta kuuroa vai tasaista
-            if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
-            {
-              if (fDefaultPrecipitationTypeIsLargeScale)
-                SetPrecipitationType(kTLargeScalePrecipitation);
-              else
-                SetPrecipitationType(kTConvectivePrecipitation);
-            }
-            if (PrecipitationForm() == kT3BitMissing)  // ei ole olomuotoa
-            {
-              if (itsTemperature > 0)  // puuttuva T -> vettä
-                SetPrecipitationForm(kTRain);
-              if (itsTemperature <= 0)
-                SetPrecipitationForm(kTSnow);
-            }
-            if (fDefaultPrecipitationTypeIsLargeScale)
-              SetTotalCloudiness(10);
-            else
-              SetTotalCloudiness(5);
-          }
-
-          if (TotalCloudiness() >= 8)  // täyspilvistä
-          {
-            if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
-              SetPrecipitationType(kTLargeScalePrecipitation);
-            if (PrecipitationForm() == kT3BitMissing)  // oletus vesisade
-            {
-              if (itsTemperature > 0)
-                SetPrecipitationForm(kTRain);
-              if (itsTemperature <= 0)
-                SetPrecipitationForm(kTSnow);
-            }
-          }
-
-          else if (TotalCloudiness() < 8 && TotalCloudiness() > 0)
-          {
-            if (PrecipitationType() == kT2BitMissing)  // ei ole tyyppiä
-              SetPrecipitationType(kTConvectivePrecipitation);
-            if (PrecipitationForm() == kT3BitMissing)  // oletus vesisade
-            {
-              if (itsTemperature > 0)
-                SetPrecipitationForm(kTRain);
-              if (itsTemperature <= 0)
-                SetPrecipitationForm(kTSnow);
-            }
-
-            // Marko Laitoin tämän , jottä pilviä saadaan lisää kun
-            // sadetta lisätään jos N alle 50 tai 100% riippuen asetuksesta
-            if (newRain)  // HUOM! nyt vain uuden sateen tapuksessa, mutta ei esim. jos orig sade
-                          // oli puuttuvaa eli ollaan esim. interpolointia tekemässä
-            {
-              if (fDefaultPrecipitationTypeIsLargeScale)
-                SetTotalCloudiness(FmiMax(10UL, TotalCloudiness()));
-              else
-                SetTotalCloudiness(FmiMax(5UL, TotalCloudiness()));
-            }
-          }
-        }
-        fDataOk = true;
-      }
-      else
-        fDataOk = false;
-
-      return true;
+      if (TotalPrecipitation() > 0)
+        UpdateForPrecipitation(newRain);
+      fDataOk = true;
     }
-    return false;
+    else
+      fDataOk = false;
+
+    return true;
   }
   catch (...)
   {

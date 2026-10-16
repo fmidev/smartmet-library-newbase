@@ -244,6 +244,8 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   bool MiddleClouds(unsigned long theValue);
   bool HighClouds(unsigned long theValue);
   bool TotalPrecipitation(unsigned long theValue);
+  void SetMissingPrecipitationFormFromTemperature();
+  void UpdateForPrecipitation(bool newRain);
   bool PrecipitationType(unsigned long theValue);
   bool PrecipitationForm(unsigned long theValue);
   bool ThunderProbability(unsigned long theValue);
