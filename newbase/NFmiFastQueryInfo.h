@@ -500,6 +500,8 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   void InitFastInfo();
   void InitHeightInfo();
   void InitPressureInfo();
+  float InterpolateBetweenPressureLevels(float P, float pressureValue, float lastPressure);
+  float InterpolateBetweenHeightLevels(float theHeight, float heightValue, float lastHeight);
   bool GetLevelIndexFromLevelPressures(double pressure, double &pInd);
   bool GetLevelIndexFromPressureParam(const NFmiPoint &theLatlon,
                                       const NFmiMetTime &theTime,

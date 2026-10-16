@@ -4293,6 +4293,51 @@ float NFmiFastQueryInfo::FindFirstHeightValue()
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate the value at pressure P between the current level and the previous level
+ */
+// ----------------------------------------------------------------------
+
+float NFmiFastQueryInfo::InterpolateBetweenPressureLevels(float P,
+                                                          float pressureValue,
+                                                          float lastPressure)
+{
+  // tee korkeus interpolointi nyt kun tiedetään halutut levelit
+  float value1 = FloatValue();
+
+  // Quick exit for exact match
+  if (pressureValue == P)
+    return value1;
+
+  PreviousLevel();
+  float value2 = FloatValue();
+
+  // Quick exit for exact match
+  if (lastPressure == P)
+    return value2;
+
+  FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
+  if (IsGrid() && interp == kLinearly)
+  {  // lineaarinen interpolointi
+    auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
+    if (param == kFmiWindVectorMS)
+      return CalcLogInterpolatedWindWectorValue(
+          pressureValue, lastPressure, P, value1, value2);
+    if (param == kFmiWindDirection || param == kFmiWaveDirection)
+    {
+      float factor = 1. - (::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue));
+      return static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
+    }
+    return static_cast<float>(
+        CalcLogInterpolatedValue(pressureValue, lastPressure, P, value1, value2));
+  }
+  // muut tapaukset eli nearest interpolointi
+  if (::fabs(P - pressureValue) < ::fabs(P - lastPressure))
+    return value1;
+  return value2;
+}
+
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
 float NFmiFastQueryInfo::PressureLevelValue(float P)
 {
@@ -4342,42 +4387,7 @@ float NFmiFastQueryInfo::PressureLevelValue(float P)
         }
 
         // tee korkeus interpolointi nyt kun tiedetään halutut levelit
-        float value1 = FloatValue();
-
-        // Quick exit for exact match
-        if (pressureValue == P)
-          return value1;
-
-        PreviousLevel();
-        float value2 = FloatValue();
-
-        // Quick exit for exact match
-        if (lastPressure == P)
-          return value2;
-
-        FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
-        if (IsGrid() && interp == kLinearly)
-        {  // lineaarinen interpolointi
-          auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
-          if (param == kFmiWindVectorMS)
-            return CalcLogInterpolatedWindWectorValue(
-                pressureValue, lastPressure, P, value1, value2);
-          if (param == kFmiWindDirection || param == kFmiWaveDirection)
-          {
-            float factor = 1. - (::fabs(P - lastPressure) / ::fabs(lastPressure - pressureValue));
-            value = static_cast<float>(NFmiInterpolation::ModLinear(factor, value1, value2, 360));
-          }
-          else
-            value = static_cast<float>(
-                CalcLogInterpolatedValue(pressureValue, lastPressure, P, value1, value2));
-        }
-        else
-        {  // muut tapaukset eli nearest interpolointi
-          if (::fabs(P - pressureValue) < ::fabs(P - lastPressure))
-            value = value1;
-          else
-            value = value2;
-        }
+        value = InterpolateBetweenPressureLevels(P, pressureValue, lastPressure);
       }
     }
     return value;
@@ -4561,6 +4571,38 @@ float NFmiFastQueryInfo::PressureLevelValue(float P, const NFmiMetTime &theTime)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate the value at the given height between the current level and the previous
+ *        level
+ */
+// ----------------------------------------------------------------------
+
+float NFmiFastQueryInfo::InterpolateBetweenHeightLevels(float theHeight,
+                                                        float heightValue,
+                                                        float lastHeight)
+{
+  float value1 = FloatValue();
+  PreviousLevel();
+  float value2 = FloatValue();
+
+  FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
+  if (IsGrid() && interp == kLinearly)
+  {  // lineaarinen interpolointi
+    float factor = ::fabs(theHeight - lastHeight) / ::fabs(lastHeight - heightValue);
+    auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
+    if (param == kFmiWindVectorMS)
+      return static_cast<float>(NFmiInterpolation::WindVector((1. - factor), value1, value2));
+    if (param == kFmiWindDirection || param == kFmiWaveDirection)
+      return static_cast<float>(NFmiInterpolation::ModLinear((1. - factor), value1, value2, 360));
+    return static_cast<float>(NFmiInterpolation::Linear((1. - factor), value1, value2));
+  }
+  // muut tapaukset eli nearest interpolointi
+  if (::fabs(theHeight - heightValue) < ::fabs(theHeight - lastHeight))
+    return value1;
+  return value2;
+}
+
 // TODO kFmiWindDirection tapaus pitää koodata käyttämään NFmiInterpolation::WindInterpolator:ia
 float NFmiFastQueryInfo::HeightValue(float theHeight)
 {
@@ -4600,32 +4642,7 @@ float NFmiFastQueryInfo::HeightValue(float theHeight)
           {             // tee korkeus interpolointi nyt kun tiedetään halutut levelit
             ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
             fUseSubParam = oldFSubParamUsed;
-            float value1 = FloatValue();
-            PreviousLevel();
-            float value2 = FloatValue();
-
-            FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
-            if (IsGrid() && interp == kLinearly)
-            {  // lineaarinen interpolointi
-              float factor = ::fabs(theHeight - lastHeight) / ::fabs(lastHeight - heightValue);
-              auto param = static_cast<FmiParameterName>(Param().GetParamIdent());
-              if (param == kFmiWindVectorMS)
-                value = static_cast<float>(
-                    NFmiInterpolation::WindVector((1. - factor), value1, value2));
-              else if (param == kFmiWindDirection || param == kFmiWaveDirection)
-                value = static_cast<float>(
-                    NFmiInterpolation::ModLinear((1. - factor), value1, value2, 360));
-              else
-                value =
-                    static_cast<float>(NFmiInterpolation::Linear((1. - factor), value1, value2));
-            }
-            else
-            {  // muut tapaukset eli nearest interpolointi
-              if (::fabs(theHeight - heightValue) < ::fabs(theHeight - lastHeight))
-                value = value1;
-              else
-                value = value2;
-            }
+            value = InterpolateBetweenHeightLevels(theHeight, heightValue, lastHeight);
             break;
           }
           lastHeight = heightValue;
