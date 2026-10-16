@@ -21,7 +21,6 @@
 #include <cmath>
 
 #include <algorithm>
-#include <cmath>  // Mika: abs()
 
 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
 

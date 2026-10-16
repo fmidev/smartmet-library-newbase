@@ -48,7 +48,6 @@
 #ifdef BOOST
 // Finding files is implemented in Linux using boost filesystem & regex
 #include <boost/algorithm/string/predicate.hpp>  //Lasse
-#include <filesystem>
 #include <boost/regex.hpp>
 #endif
 
@@ -62,7 +61,6 @@ extern "C"
 #include <io.h>
 #else
 #include <sys/dir.h>  // opendir() etc
-#include <sys/types.h>
 #include <cerrno>
 #include <unistd.h>
 #endif
