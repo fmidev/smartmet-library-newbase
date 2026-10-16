@@ -39,93 +39,87 @@
 #include <macgyver/Hash.h>
 #include <iostream>
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Detect legacy projection from PROJ.x information
- */
-// ----------------------------------------------------------------------
-
 namespace
 {
-int DetectClassId(const Fmi::ProjInfo &proj)
+// Accept WGS84 and sphere for legacy projections despite possible errors
+bool HasLegacyDatum(const Fmi::ProjInfo &proj)
 {
-  auto name = proj.getString("proj");
-  if (!name)
-    throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
-
-  // Accept WGS84 and sphere for legacy projections despite possible errors
-  bool ok = false;
   auto opt_datum = proj.getString("datum");
   if (opt_datum)
-    ok = (opt_datum == std::string("WGS84"));
-  else
-  {
-    auto opt_ellps = proj.getString("ellps");
-    if (opt_ellps)
-      ok = (opt_ellps == std::string("sphere"));
-    else
-    {
-      auto opt_R = proj.getDouble("R");  // any sphere will do
-      auto opt_a = proj.getDouble("a");  // a must equal b or b must be missing
-      auto opt_b = proj.getDouble("b");
-      ok = (opt_R > 0.0 || (opt_a > 0.0 && !opt_b) || (opt_a > 0.0 && opt_a == opt_b));
-    }
-  }
+    return (opt_datum == std::string("WGS84"));
 
-  if (ok)
+  auto opt_ellps = proj.getString("ellps");
+  if (opt_ellps)
+    return (opt_ellps == std::string("sphere"));
+
+  auto opt_R = proj.getDouble("R");  // any sphere will do
+  auto opt_a = proj.getDouble("a");  // a must equal b or b must be missing
+  auto opt_b = proj.getDouble("b");
+  return (opt_R > 0.0 || (opt_a > 0.0 && !opt_b) || (opt_a > 0.0 && opt_a == opt_b));
+}
+
+// Class id of a legacy projection with a legacy datum, or -1 if there is none
+int DetectLegacyDatumClassId(const std::string &name, const Fmi::ProjInfo &proj)
+{
+  if (name == "eqc")
+    return kNFmiLatLonArea;
+  if (name == "merc")
   {
-    if (*name == "eqc")
-      return kNFmiLatLonArea;
-    if (*name == "merc")
-    {
-      auto lat_ts = proj.getDouble("lat_ts");
-      auto lon_0 = proj.getDouble("lon_0");
-      if (lat_ts && lat_ts != 0.0)
-        return kNFmiGdalArea;
-      if (lon_0 && lon_0 != 0.0)
-        return kNFmiGdalArea;
-      return kNFmiMercatorArea;
-    }
-    if (*name == "stere")
-      return kNFmiStereographicArea;
-    if (*name == "aeqd")
-      return kNFmiEquiDistArea;
-    if (*name == "laea")
-      return kNFmiLambertEqualArea;
-    if (*name == "lcc")
-      return kNFmiLambertConformalConicArea;
-    if (*name == "gnom")
-      return kNFmiGnomonicArea;
-    if (*name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
-        proj.getDouble("o_lon_p") == 0.0)
-      return kNFmiRotatedLatLonArea;
+    auto lat_ts = proj.getDouble("lat_ts");
+    auto lon_0 = proj.getDouble("lon_0");
+    if (lat_ts && lat_ts != 0.0)
+      return kNFmiGdalArea;
+    if (lon_0 && lon_0 != 0.0)
+      return kNFmiGdalArea;
+    return kNFmiMercatorArea;
   }
+  if (name == "stere")
+    return kNFmiStereographicArea;
+  if (name == "aeqd")
+    return kNFmiEquiDistArea;
+  if (name == "laea")
+    return kNFmiLambertEqualArea;
+  if (name == "lcc")
+    return kNFmiLambertConformalConicArea;
+  if (name == "gnom")
+    return kNFmiGnomonicArea;
+  if (name == "ob_tran" && proj.getString("o_proj") == std::string("eqc") &&
+      proj.getDouble("o_lon_p") == 0.0)
+    return kNFmiRotatedLatLonArea;
+  return -1;
+}
+
+// True for the legacy YKJ projection
+bool IsYKJ(const std::string &name, const Fmi::ProjInfo &proj)
+{
   // We allow for two slightly different towgs84 strings, since legacy code uses more decimals than
   // PROJ.x prints
-  else if (*name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
-           proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
-           proj.getDouble("lon_0") == 27.0 &&
-           (proj.getString("towgs84") ==
-                std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964") ||
-            proj.getString("towgs84") ==
-                std::string("-96.062,-82.428,-121.753,4.801,0.345,-1.376,1.496")))
-    return kNFmiYKJArea;
+  return (name == "tmerc" && proj.getString("ellps") == std::string("intl") &&
+          proj.getDouble("x_0") == 3500000.0 && proj.getDouble("lat_0") == 0.0 &&
+          proj.getDouble("lon_0") == 27.0 &&
+          (proj.getString("towgs84") ==
+               std::string("-96.0617,-82.4278,-121.7535,4.80107,0.34543,-1.37646,1.4964") ||
+           proj.getString("towgs84") ==
+               std::string("-96.062,-82.428,-121.753,4.801,0.345,-1.376,1.496")));
+}
 
-  // ETRS-TM35FIN / EPSG:3067 (central meridian 27, scale 0.9996, false easting 500000).
-  // FMI treats this as a WGS84 transverse mercator, so route it to the native
-  // NFmiTransverseMercatorArea regardless of the datum/ellipsoid PROJ reports. This
-  // avoids the fragile NFmiGdalArea and does not rely on any +towgs84 datum shift.
-  //
-  // PROJ exports EPSG:3067 as UTM zone 35 (its projection is identical to UTM 35N:
-  // central meridian 27, k0=0.9996, false easting 500000), so accept that form too.
-  if (*name == "utm")
+// ETRS-TM35FIN / EPSG:3067 (central meridian 27, scale 0.9996, false easting 500000).
+// FMI treats this as a WGS84 transverse mercator, so route it to the native
+// NFmiTransverseMercatorArea regardless of the datum/ellipsoid PROJ reports. This
+// avoids the fragile NFmiGdalArea and does not rely on any +towgs84 datum shift.
+//
+// PROJ exports EPSG:3067 as UTM zone 35 (its projection is identical to UTM 35N:
+// central meridian 27, k0=0.9996, false easting 500000), so accept that form too.
+bool IsTM35FIN(const std::string &name, const Fmi::ProjInfo &proj)
+{
+  if (name == "utm")
   {
     auto zone = proj.getDouble("zone");
     auto south = proj.getString("south");
     if (zone == 35.0 && !south)
-      return kNFmiTransverseMercatorArea;
+      return true;
   }
-  if (*name == "tmerc")
+  if (name == "tmerc")
   {
     auto lon_0 = proj.getDouble("lon_0");
     auto lat_0 = proj.getDouble("lat_0");
@@ -135,8 +129,29 @@ int DetectClassId(const Fmi::ProjInfo &proj)
     auto k_0 = proj.getDouble("k_0");
     if (lon_0 == 27.0 && x_0 == 500000.0 && (k == 0.9996 || k_0 == 0.9996) &&
         (!lat_0 || lat_0 == 0.0) && (!y_0 || y_0 == 0.0))
-      return kNFmiTransverseMercatorArea;
+      return true;
   }
+  return false;
+}
+
+// Detect legacy projection from PROJ.x information
+int DetectClassId(const Fmi::ProjInfo &proj)
+{
+  auto name = proj.getString("proj");
+  if (!name)
+    throw Fmi::Exception(BCP, "Projection name not set, should be impossible");
+
+  if (HasLegacyDatum(proj))
+  {
+    auto id = DetectLegacyDatumClassId(*name, proj);
+    if (id >= 0)
+      return id;
+  }
+  else if (IsYKJ(*name, proj))
+    return kNFmiYKJArea;
+
+  if (IsTM35FIN(*name, proj))
+    return kNFmiTransverseMercatorArea;
 
   // Not a legacy projection, use PROJ.x
   return kNFmiGdalArea;
