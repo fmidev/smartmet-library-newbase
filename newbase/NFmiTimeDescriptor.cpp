@@ -1158,6 +1158,16 @@ NFmiTimeDescriptor &NFmiTimeDescriptor::operator=(const NFmiTimeDescriptor &theT
   }
 }
 
+namespace
+{
+// True if both values are set (non-zero) and differ from each other
+template <typename T>
+bool differ_when_both_set(const T &theValue1, const T &theValue2)
+{
+  return theValue1 && theValue2 && !(theValue1 == theValue2);
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Equality comparison
@@ -1172,31 +1182,12 @@ bool NFmiTimeDescriptor::operator==(const NFmiTimeDescriptor &theTimeDescriptor)
   try
   {
     bool retVal = true;
-    if (this->itsTimeBagIdent && theTimeDescriptor.itsTimeBagIdent)
-    {
-      if (!(this->itsTimeBagIdent == theTimeDescriptor.itsTimeBagIdent))
-        return false;
-    }
-    if (this->itsIsInterpolation && theTimeDescriptor.itsIsInterpolation)
-    {
-      if (!(this->itsIsInterpolation == theTimeDescriptor.itsIsInterpolation))
-        return false;
-    }
-    if (this->itsIsOriginLastest && theTimeDescriptor.itsIsOriginLastest)
-    {
-      if (!(this->itsIsOriginLastest == theTimeDescriptor.itsIsOriginLastest))
-        return false;
-    }
-    if (this->itsLocalTimeStep && theTimeDescriptor.itsLocalTimeStep)
-    {
-      if (!(this->itsLocalTimeStep == theTimeDescriptor.itsLocalTimeStep))
-        return false;
-    }
-    if (this->itsIsLocalTime && theTimeDescriptor.itsIsLocalTime)
-    {
-      if (!(this->itsIsLocalTime == theTimeDescriptor.itsIsLocalTime))
-        return false;
-    }
+    if (differ_when_both_set(itsTimeBagIdent, theTimeDescriptor.itsTimeBagIdent) ||
+        differ_when_both_set(itsIsInterpolation, theTimeDescriptor.itsIsInterpolation) ||
+        differ_when_both_set(itsIsOriginLastest, theTimeDescriptor.itsIsOriginLastest) ||
+        differ_when_both_set(itsLocalTimeStep, theTimeDescriptor.itsLocalTimeStep) ||
+        differ_when_both_set(itsIsLocalTime, theTimeDescriptor.itsIsLocalTime))
+      return false;
     if (this->itsValidTimeBag && theTimeDescriptor.itsValidTimeBag)
     {
       if (!(*(this->itsOriginTimeBag) == *(theTimeDescriptor.itsOriginTimeBag) &&
