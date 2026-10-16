@@ -3798,6 +3798,132 @@ bool NFmiFastQueryInfo::GetFixedPressureLevelIndex(const NFmiPoint &theLatlon,
   return pressure != kFloatMissing;
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetLevelIndex for pressure level data
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiFastQueryInfo::GetLevelIndexFromLevelPressures(double pressure, double &pInd)
+{
+  const double P_epsilon = 0.001;  // joskus interpoloinnit antavat ilmeisesti pieniä heittoja,
+  // jotka pitää ottaa huomioon, kun ollaan datan ala/ylä rajalla
+  float firstPressureValue = itsPressureLevelDataPressures[0];
+  // huom! isUnder on true myös jos P == 1. painearvo
+  bool isUnder = (firstPressureValue != kFloatMissing)
+                     ? (pressure <= firstPressureValue)
+                     : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
+                                                // sellainen arvo että voidaan jatkaa etsintöjä
+  if (fPressureParamIsRising ^ isUnder)
+  {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
+     // haluttu korkeus voi vielä löytyä
+    bool isUnderNow = isUnder;
+    float lastPressure = firstPressureValue;
+    float pressureValue = kFloatMissing;
+    bool foundWantedLevels = false;
+    int i = 0;
+    for (; i < static_cast<int>(itsPressureLevelDataPressures.size());
+         i++)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi leveleita (>20 ?) ja käyttäisi
+               // binary searchia
+    {
+      pressureValue = itsPressureLevelDataPressures[i];
+      if (pressureValue != kFloatMissing)
+        isUnderNow = (pressure - P_epsilon) <
+                     pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
+      if (isUnderNow !=
+          isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+      {
+        foundWantedLevels = true;
+        break;
+      }
+      lastPressure = pressureValue;
+    }  // end of for loop
+    if (foundWantedLevels)
+    {
+      double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
+      pInd = i - w;
+      return true;
+    }
+  }
+  return false;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetLevelIndex for data with a pressure parameter
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiFastQueryInfo::GetLevelIndexFromPressureParam(const NFmiPoint &theLatlon,
+                                                       const NFmiMetTime &theTime,
+                                                       double pressure,
+                                                       double &pInd)
+{
+  const double P_epsilon = 0.001;  // joskus interpoloinnit antavat ilmeisesti pieniä heittoja,
+  // jotka pitää ottaa huomioon, kun ollaan datan ala/ylä rajalla
+  // aluksi pitää järjestellä parametrin indeksi paine datan kohdalle ja
+  // ottaa currentti paramindex talteen ja oliko
+  // vanha parametri aliparametri, koska se nämä asetukset pitää laittaa kohdalleen
+  // sitten kun haetaan haluttua parametria oikeilta paine pinnoilta.
+  unsigned long oldParamIndex = ParamIndex();
+  bool oldFSubParamUsed = fUseSubParam;
+  ParamIndex(itsPressureParamIndex);
+  fUseSubParam = false;
+
+  FirstLevel();
+  float firstPressureValue = InterpolatedValue(theLatlon, theTime);
+  // huom! isUnder on true myös jos P == 1. painearvo
+  bool isUnder = (firstPressureValue != kFloatMissing)
+                     ? (pressure <= firstPressureValue)
+                     : !fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
+                                                 // sellainen arvo että voidaan jatkaa etsintöjä
+  if (fPressureParamIsRising ^ isUnder)
+  {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
+     // haluttu korkeus voi vielä löytyä
+    bool isUnderNow = isUnder;
+    float lastPressure = firstPressureValue;
+    float pressureValue = kFloatMissing;
+    bool foundWantedLevels = false;
+    for (ResetLevel(); NextLevel();)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
+                                      // leveleita (>20 ?) ja käyttäisi binary searchia
+    {
+      pressureValue = InterpolatedValue(theLatlon, theTime);
+      if (pressureValue != kFloatMissing)
+        isUnderNow = (pressure - P_epsilon) <
+                     pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
+      if (isUnderNow !=
+          isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
+      {
+        foundWantedLevels = true;
+        break;
+      }
+      lastPressure = pressureValue;
+    }  // end of for loop
+
+    if (!foundWantedLevels)
+    {
+      ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
+      fUseSubParam = oldFSubParamUsed;
+      pInd = -1;
+      return false;
+    }
+
+    // tee korkeus interpolointi nyt kun tiedetään halutut levelit
+    ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
+    fUseSubParam = oldFSubParamUsed;
+    //			if(!fPressureParamIsRising)
+    //				PreviousLevel();
+
+    double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
+    pInd = itsLevelIndex - w;
+    return true;
+  }
+  ParamIndex(oldParamIndex);
+  fUseSubParam = oldFSubParamUsed;
+  pInd = -1;
+  return false;
+}
+
 bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
                                       const NFmiMetTime &theTime,
                                       double pressure,
@@ -3805,111 +3931,10 @@ bool NFmiFastQueryInfo::GetLevelIndex(const NFmiPoint &theLatlon,
 {
   try
   {
-    const double P_epsilon = 0.001;  // joskus interpoloinnit antavat ilmeisesti pieniä heittoja,
-    // jotka pitää ottaa huomioon, kun ollaan datan ala/ylä rajalla
     if (fPressureLevelDataAvailable)
-    {
-      float firstPressureValue = itsPressureLevelDataPressures[0];
-      // huom! isUnder on true myös jos P == 1. painearvo
-      bool isUnder = (firstPressureValue != kFloatMissing)
-                         ? (pressure <= firstPressureValue)
-                         : fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
-                                                    // sellainen arvo että voidaan jatkaa etsintöjä
-      if (fPressureParamIsRising ^ isUnder)
-      {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
-         // haluttu korkeus voi vielä löytyä
-        bool isUnderNow = isUnder;
-        float lastPressure = firstPressureValue;
-        float pressureValue = kFloatMissing;
-        bool foundWantedLevels = false;
-        int i = 0;
-        for (; i < static_cast<int>(itsPressureLevelDataPressures.size());
-             i++)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi leveleita (>20 ?) ja käyttäisi
-                   // binary searchia
-        {
-          pressureValue = itsPressureLevelDataPressures[i];
-          if (pressureValue != kFloatMissing)
-            isUnderNow = (pressure - P_epsilon) <
-                         pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
-          if (isUnderNow !=
-              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
-          {
-            foundWantedLevels = true;
-            break;
-          }
-          lastPressure = pressureValue;
-        }  // end of for loop
-        if (foundWantedLevels)
-        {
-          double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
-          pInd = i - w;
-          return true;
-        }
-      }
-      return false;
-    }
+      return GetLevelIndexFromLevelPressures(pressure, pInd);
     if (fPressureValueAvailable)
-    {
-      // aluksi pitää järjestellä parametrin indeksi paine datan kohdalle ja
-      // ottaa currentti paramindex talteen ja oliko
-      // vanha parametri aliparametri, koska se nämä asetukset pitää laittaa kohdalleen
-      // sitten kun haetaan haluttua parametria oikeilta paine pinnoilta.
-      unsigned long oldParamIndex = ParamIndex();
-      bool oldFSubParamUsed = fUseSubParam;
-      ParamIndex(itsPressureParamIndex);
-      fUseSubParam = false;
-
-      FirstLevel();
-      float firstPressureValue = InterpolatedValue(theLatlon, theTime);
-      // huom! isUnder on true myös jos P == 1. painearvo
-      bool isUnder = (firstPressureValue != kFloatMissing)
-                         ? (pressure <= firstPressureValue)
-                         : !fPressureParamIsRising;  // jos 1. paine oli puuttuvaa, annetaan
-                                                     // sellainen arvo että voidaan jatkaa etsintöjä
-      if (fPressureParamIsRising ^ isUnder)
-      {  // jos risingHeight ja isUnder ovat joku molemmat true tai false, voidaan jatkaa, koska
-         // haluttu korkeus voi vielä löytyä
-        bool isUnderNow = isUnder;
-        float lastPressure = firstPressureValue;
-        float pressureValue = kFloatMissing;
-        bool foundWantedLevels = false;
-        for (ResetLevel(); NextLevel();)  // HUOM! tämän haun voisi optimoida, jos tarpeeksi
-                                          // leveleita (>20 ?) ja käyttäisi binary searchia
-        {
-          pressureValue = InterpolatedValue(theLatlon, theTime);
-          if (pressureValue != kFloatMissing)
-            isUnderNow = (pressure - P_epsilon) <
-                         pressureValue;  // pieni virhemarginaali (P_epsilon) piti laittaa
-          if (isUnderNow !=
-              isUnder)  // nyt mentiin kriittisen pisteen ohi, nyt voidaan tehdä laskut
-          {
-            foundWantedLevels = true;
-            break;
-          }
-          lastPressure = pressureValue;
-        }  // end of for loop
-
-        if (!foundWantedLevels)
-        {
-          ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
-          fUseSubParam = oldFSubParamUsed;
-          pInd = -1;
-          return false;
-        }
-
-        // tee korkeus interpolointi nyt kun tiedetään halutut levelit
-        ParamIndex(oldParamIndex);  // laitetaan haluttu parametri taas 'päälle'
-        fUseSubParam = oldFSubParamUsed;
-        //			if(!fPressureParamIsRising)
-        //				PreviousLevel();
-
-        double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
-        pInd = itsLevelIndex - w;
-        return true;
-      }
-      ParamIndex(oldParamIndex);
-      fUseSubParam = oldFSubParamUsed;
-    }
+      return GetLevelIndexFromPressureParam(theLatlon, theTime, pressure, pInd);
     pInd = -1;
     return false;
   }

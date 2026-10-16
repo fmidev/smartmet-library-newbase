@@ -500,6 +500,11 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
   void InitFastInfo();
   void InitHeightInfo();
   void InitPressureInfo();
+  bool GetLevelIndexFromLevelPressures(double pressure, double &pInd);
+  bool GetLevelIndexFromPressureParam(const NFmiPoint &theLatlon,
+                                      const NFmiMetTime &theTime,
+                                      double pressure,
+                                      double &pInd);
   std::vector<float> CalcPressureLevelDataPressures();
   std::vector<float> CalcHeightLevelDataHeights();
   float FindFirstPressureValue();
