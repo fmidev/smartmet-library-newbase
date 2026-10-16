@@ -2436,6 +2436,104 @@ void SpaceOutDataWithSmoother(NFmiFastQueryInfo & /* theSourceInfo */,
 }
 }  // namespace
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Calculate the modifier result over the box around the current source point
+ *
+ * With a mask only the values with the same mask status as the current value are used.
+ */
+// ----------------------------------------------------------------------
+
+float CalcBoxModifierValue(NFmiFastQueryInfo &theSourceInfo,
+                           NFmiDataModifier *theModifier,
+                           const NFmiCalculationCondition &theMaskCondition,
+                           bool useMask,
+                           int left,
+                           int top,
+                           int right,
+                           int bottom)
+{
+  theModifier->Clear();
+  if (useMask)
+  {
+    bool maskOn = theMaskCondition.IsMasked(theSourceInfo.FloatValue());
+    for (int j = top; j <= bottom; j++)
+    {
+      for (int i = left; i <= right; i++)
+      {
+        float tmp = theSourceInfo.PeekLocationValue(i, j);
+        if (maskOn && theMaskCondition.IsMasked(tmp))
+          theModifier->Calculate(tmp);
+        else if (!maskOn && !theMaskCondition.IsMasked(tmp))
+          theModifier->Calculate(tmp);
+      }
+    }
+    return theModifier->CalculationResult();
+  }
+
+  for (int j = top; j <= bottom; j++)
+  {
+    for (int i = left; i <= right; i++)
+      theModifier->Calculate(theSourceInfo.PeekLocationValue(i, j));
+  }
+  return theModifier->CalculationResult();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fill the destination with modifier results over boxes around the nearest source points
+ */
+// ----------------------------------------------------------------------
+
+void SpaceOutDataWithModifier(NFmiFastQueryInfo &theSourceInfo,
+                              NFmiFastQueryInfo &destInfo,
+                              NFmiDataModifier *theModifier,
+                              const NFmiRect &theDataGatheringRange,
+                              const NFmiCalculationCondition &theMaskCondition)
+{
+  auto bottom = static_cast<int>(
+      theDataGatheringRange.Bottom());  // otettu ulos silmukoista optimointia varten
+  auto top =
+      static_cast<int>(theDataGatheringRange.Top());  // otettu ulos silmukoista optimointia varten
+  auto left =
+      static_cast<int>(theDataGatheringRange.Left());  // otettu ulos silmukoista optimointia varten
+  auto right = static_cast<int>(
+      theDataGatheringRange.Right());  // otettu ulos silmukoista optimointia varten
+  float value = kFloatMissing;
+  bool useMask = (theMaskCondition.Condition() != kFmiNoMaskOperation &&
+                  theMaskCondition.Condition() != kFmiMaskAll);
+  for (destInfo.ResetLocation(); destInfo.NextLocation();)
+  {
+    if (!theSourceInfo.NearestPoint(destInfo.LatLon()))
+      continue;
+
+    for (theSourceInfo.ResetParam(), destInfo.ResetParam();
+         theSourceInfo.NextParam() && destInfo.NextParam();)
+    {
+      bool combinedParam =
+          theSourceInfo.Param().GetParam()->InterpolationMethod() == kByCombinedParam;
+      for (theSourceInfo.ResetLevel(), destInfo.ResetLevel();
+           theSourceInfo.NextLevel() && destInfo.NextLevel();)
+      {
+        for (theSourceInfo.ResetTime(), destInfo.ResetTime();
+             theSourceInfo.NextTime() && destInfo.NextTime();)
+        {
+          // ********* yhdistelmä parametreja ei vielä hoideta!!! *******
+          if (combinedParam)
+            value = kFloatMissing;
+          else
+            value = CalcBoxModifierValue(
+                theSourceInfo, theModifier, theMaskCondition, useMask, left, top, right, bottom);
+          destInfo.FloatValue(value);
+        }
+      }
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Laskee saadusta datasta uuden (haluttuun hilaväliin). Käyttää annettua
@@ -2495,74 +2593,8 @@ NFmiQueryData *NFmiQueryDataUtil::SpaceOutData(NFmiFastQueryInfo &theSourceInfo,
         if (theModifierId == 101 || theModifierId == 102)
           SpaceOutDataWithSmoother(theSourceInfo, destInfo, theModifierId, theAreaFactor, theRange);
         else if (theModifier)
-        {
-          auto bottom = static_cast<int>(
-              theDataGatheringRange.Bottom());  // otettu ulos silmukoista optimointia varten
-          auto top = static_cast<int>(
-              theDataGatheringRange.Top());  // otettu ulos silmukoista optimointia varten
-          auto left = static_cast<int>(
-              theDataGatheringRange.Left());  // otettu ulos silmukoista optimointia varten
-          auto right = static_cast<int>(
-              theDataGatheringRange.Right());  // otettu ulos silmukoista optimointia varten
-          float value = kFloatMissing;
-          bool useMask = (theMaskCondition.Condition() != kFmiNoMaskOperation &&
-                          theMaskCondition.Condition() != kFmiMaskAll);
-          for (destInfo.ResetLocation(); destInfo.NextLocation();)
-          {
-            if (theSourceInfo.NearestPoint(destInfo.LatLon()))
-            {
-              for (theSourceInfo.ResetParam(), destInfo.ResetParam();
-                   theSourceInfo.NextParam() && destInfo.NextParam();)
-              {
-                bool combinedParam =
-                    theSourceInfo.Param().GetParam()->InterpolationMethod() == kByCombinedParam;
-                for (theSourceInfo.ResetLevel(), destInfo.ResetLevel();
-                     theSourceInfo.NextLevel() && destInfo.NextLevel();)
-                {
-                  for (theSourceInfo.ResetTime(), destInfo.ResetTime();
-                       theSourceInfo.NextTime() && destInfo.NextTime();)
-                  {
-                    if (combinedParam)
-                    {  // ********* tämä haara vielä toteuttamatta, eli yhdistelmä parametreja ei
-                       // vielä hoideta!!! *******
-                      value = kFloatMissing;
-                    }
-                    else
-                    {
-                      theModifier->Clear();
-                      if (useMask)
-                      {
-                        bool maskOn = theMaskCondition.IsMasked(theSourceInfo.FloatValue());
-                        for (int j = top; j <= bottom; j++)
-                        {
-                          for (int i = left; i <= right; i++)
-                          {
-                            float tmp = theSourceInfo.PeekLocationValue(i, j);
-                            if (maskOn && theMaskCondition.IsMasked(tmp))
-                              theModifier->Calculate(tmp);
-                            else if (!maskOn && !theMaskCondition.IsMasked(tmp))
-                              theModifier->Calculate(tmp);
-                          }
-                        }
-                        value = theModifier->CalculationResult();
-                      }
-                      else
-                      {
-                        for (int j = top; j <= bottom; j++)
-                        {
-                          for (int i = left; i <= right; i++)
-                            theModifier->Calculate(theSourceInfo.PeekLocationValue(i, j));
-                        }
-                        value = theModifier->CalculationResult();
-                      }
-                    }
-                    destInfo.FloatValue(value);
-                  }
-                }
-              }
-            }
-          }
-        }
+          SpaceOutDataWithModifier(
+              theSourceInfo, destInfo, theModifier, theDataGatheringRange, theMaskCondition);
       }
     }
     return newData;
@@ -2614,9 +2646,9 @@ NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &theTimeDes
 }
 
 // Copy the values of the current time from source 1, or from source 2 if missing
-void CopyFirstNonMissingValues(NFmiFastQueryInfo& destInfo,
-                               NFmiFastQueryInfo& theSourceInfo1,
-                               NFmiFastQueryInfo& theSourceInfo2,
+void CopyFirstNonMissingValues(NFmiFastQueryInfo &destInfo,
+                               NFmiFastQueryInfo &theSourceInfo1,
+                               NFmiFastQueryInfo &theSourceInfo2,
                                bool useInfo1,
                                bool useInfo2)
 {

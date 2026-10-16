@@ -244,7 +244,7 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryData &theData)
  */
 // ----------------------------------------------------------------------
 
-void NFmiQueryData::ReadFile(const string& filename, bool theMemoryMapFlag)
+void NFmiQueryData::ReadFile(const string &filename, bool theMemoryMapFlag)
 {
   ifstream file(filename.c_str(), ios::in | ios::binary);
   if (!file)
