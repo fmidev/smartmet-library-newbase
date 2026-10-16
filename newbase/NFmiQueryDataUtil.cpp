@@ -1796,6 +1796,115 @@ bool InterpolateSimilarDataToSmallerTimeResolution(NFmiFastQueryInfo *theDestina
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Calculate the time factors needed in Lagrange interpolation
+ *
+ * The source must be set to the time preceding the interpolated time.
+ */
+// ----------------------------------------------------------------------
+
+void CalcLagrangeTimeFactors(NFmiFastQueryInfo &theSource,
+                             unsigned long lagrangeTimeIndex,
+                             std::vector<double> &timeFactors)
+{
+  if (lagrangeTimeIndex == 0)  // case: annettu index timebagin alku rajalla, eli tehdään
+                               // interpolointi 3:lla arvolla
+  {
+    timeFactors.resize(3);
+    NFmiMetTime time_0(theSource.Time());
+    theSource.NextTime();
+    NFmiMetTime time_1(theSource.Time());
+    theSource.NextTime();
+    NFmiMetTime time_2(theSource.Time());
+    timeFactors[0] = 0;
+    timeFactors[1] = time_1.DifferenceInMinutes(time_0);
+    timeFactors[2] = time_2.DifferenceInMinutes(time_0);
+  }
+  else if (lagrangeTimeIndex == theSource.SizeTimes() - 2)  // case: annettu index timebagin
+                                                            // loppu rajalla, eli tehdään
+                                                            // interpolointi 3:lla arvolla
+  {
+    timeFactors.resize(3);
+    NFmiMetTime time_0(theSource.Time());
+    theSource.PreviousTime();
+    NFmiMetTime time_m1(theSource.Time());
+    theSource.NextTime();
+    theSource.NextTime();
+    NFmiMetTime time_1(theSource.Time());
+    timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
+    timeFactors[1] = 0;
+    timeFactors[2] = time_1.DifferenceInMinutes(time_0);
+  }
+  else  // muuten tehdään normaali 4:n pisteen interpolointi
+  {
+    timeFactors.resize(4);
+    NFmiMetTime time_0(theSource.Time());
+    theSource.PreviousTime();
+    NFmiMetTime time_m1(theSource.Time());
+    theSource.NextTime();
+    theSource.NextTime();
+    NFmiMetTime time_1(theSource.Time());
+    theSource.NextTime();
+    NFmiMetTime time_2(theSource.Time());
+    timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
+    timeFactors[1] = 0;
+    timeFactors[2] = time_1.DifferenceInMinutes(time_0);
+    timeFactors[3] = time_2.DifferenceInMinutes(time_0);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fill the current parameter of the destination at the current time
+ */
+// ----------------------------------------------------------------------
+
+void FillCurrentParamWCTR(NFmiFastQueryInfo &theDestination,
+                          NFmiFastQueryInfo &theSource,
+                          const NFmiMetTime &currentTime,
+                          bool timeFound,
+                          int theMaxTimeSearchRangeInMinutes,
+                          FmiInterpolationMethod theInterpolationMethod,
+                          unsigned long lagrangeTimeIndex,
+                          double lagrangeTimePosition,
+                          std::vector<double> &timeFactors)
+{
+  const NFmiParam *tmpParam = theDestination.Param().GetParam();
+  NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
+      static_cast<float>(tmpParam->MinValue()),
+      static_cast<float>(tmpParam->MaxValue()),
+      IsParamCircularValued(tmpParam));
+  FmiInterpolationMethod paramInterpMethod =
+      theDestination.Param().GetParam()->InterpolationMethod();
+  if (!theSource.Param(*theDestination.Param().GetParam()))
+    return;
+
+  for (theDestination.ResetLocation(), theSource.ResetLocation();
+       theDestination.NextLocation() && theSource.NextLocation();)
+  {
+    for (theDestination.ResetLevel(), theSource.ResetLevel();
+         theDestination.NextLevel() && theSource.NextLevel();)
+    {
+      if (timeFound)
+        theDestination.FloatValue(theSource.FloatValue());
+      else
+      {
+        float tempV = TimeInterpolationValueWCTR(theSource,
+                                                 currentTime,
+                                                 theInterpolationMethod,
+                                                 theMaxTimeSearchRangeInMinutes,
+                                                 lagrangeTimeIndex,
+                                                 lagrangeTimePosition,
+                                                 paramInterpMethod,
+                                                 checkerWithLagrangeInterpolation,
+                                                 timeFactors);
+        theDestination.FloatValue(tempV);
+      }
+    }
+  }
+}
+
 // luo vaihtuva aikaresoluutioisesta (WCTR=With Changing Time Resolution) datasta tasaväliaikaista
 // dataa
 bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
@@ -1854,88 +1963,21 @@ bool MakeSimilarTimeBagDataFromWCTRData(NFmiFastQueryInfo &theDestination,
 
         theSource.TimeIndex(lagrangeTimeIndex);  // source pitää asettaa vielä oikeaan aikaan, että
                                                  // timeFactorit voidaan laskea
-        if (lagrangeTimeIndex == 0)  // case: annettu index timebagin alku rajalla, eli tehdään
-                                     // interpolointi 3:lla arvolla
-        {
-          timeFactors.resize(3);
-          NFmiMetTime time_0(theSource.Time());
-          theSource.NextTime();
-          NFmiMetTime time_1(theSource.Time());
-          theSource.NextTime();
-          NFmiMetTime time_2(theSource.Time());
-          timeFactors[0] = 0;
-          timeFactors[1] = time_1.DifferenceInMinutes(time_0);
-          timeFactors[2] = time_2.DifferenceInMinutes(time_0);
-        }
-        else if (lagrangeTimeIndex == theSource.SizeTimes() - 2)  // case: annettu index timebagin
-                                                                  // loppu rajalla, eli tehdään
-                                                                  // interpolointi 3:lla arvolla
-        {
-          timeFactors.resize(3);
-          NFmiMetTime time_0(theSource.Time());
-          theSource.PreviousTime();
-          NFmiMetTime time_m1(theSource.Time());
-          theSource.NextTime();
-          theSource.NextTime();
-          NFmiMetTime time_1(theSource.Time());
-          timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
-          timeFactors[1] = 0;
-          timeFactors[2] = time_1.DifferenceInMinutes(time_0);
-        }
-        else  // muuten tehdään normaali 4:n pisteen interpolointi
-        {
-          timeFactors.resize(4);
-          NFmiMetTime time_0(theSource.Time());
-          theSource.PreviousTime();
-          NFmiMetTime time_m1(theSource.Time());
-          theSource.NextTime();
-          theSource.NextTime();
-          NFmiMetTime time_1(theSource.Time());
-          theSource.NextTime();
-          NFmiMetTime time_2(theSource.Time());
-          timeFactors[0] = time_m1.DifferenceInMinutes(time_0);
-          timeFactors[1] = 0;
-          timeFactors[2] = time_1.DifferenceInMinutes(time_0);
-          timeFactors[3] = time_2.DifferenceInMinutes(time_0);
-        }
+        CalcLagrangeTimeFactors(theSource, lagrangeTimeIndex, timeFactors);
       }
 
       for (theDestination.ResetParam();
            theDestination.NextParam();)  // juoksutetaan parametrit läpi
       {
-        const NFmiParam *tmpParam = theDestination.Param().GetParam();
-        NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
-            static_cast<float>(tmpParam->MinValue()),
-            static_cast<float>(tmpParam->MaxValue()),
-            IsParamCircularValued(tmpParam));
-        FmiInterpolationMethod paramInterpMethod =
-            theDestination.Param().GetParam()->InterpolationMethod();
-        if (theSource.Param(*theDestination.Param().GetParam()))
-        {
-          for (theDestination.ResetLocation(), theSource.ResetLocation();
-               theDestination.NextLocation() && theSource.NextLocation();)
-          {
-            for (theDestination.ResetLevel(), theSource.ResetLevel();
-                 theDestination.NextLevel() && theSource.NextLevel();)
-            {
-              if (timeFound)
-                theDestination.FloatValue(theSource.FloatValue());
-              else
-              {
-                float tempV = TimeInterpolationValueWCTR(theSource,
-                                                         currentTime,
-                                                         theInterpolationMethod,
-                                                         theMaxTimeSearchRangeInMinutes,
-                                                         lagrangeTimeIndex,
-                                                         lagrangeTimePosition,
-                                                         paramInterpMethod,
-                                                         checkerWithLagrangeInterpolation,
-                                                         timeFactors);
-                theDestination.FloatValue(tempV);
-              }
-            }
-          }
-        }
+        FillCurrentParamWCTR(theDestination,
+                             theSource,
+                             currentTime,
+                             timeFound,
+                             theMaxTimeSearchRangeInMinutes,
+                             theInterpolationMethod,
+                             lagrangeTimeIndex,
+                             lagrangeTimePosition,
+                             timeFactors);
         //				else // HUOM! ei vakava virhe (joten kommentissa)
         //					status = false; // parametrilista ei ollut
         // täydellinen sourcedatassa (pitää varautua moiseen!)
