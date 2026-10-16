@@ -1788,6 +1788,116 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
   }
 }
 
+namespace
+{
+// Drizzle or snow (synop code 20) based on temperature and humidity
+unsigned long DrizzleOrSnowForm(float theTemperature, float theHumidity)
+{
+  if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
+    return kT3BitMissing;
+
+  long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
+                  0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
+
+  if (theTemperature >= y)
+    return kTDrizzle;
+  return kTSnow;
+}
+
+// Sleet or snow (synop code 26) based on temperature and humidity
+unsigned long SleetOrSnowForm(float theTemperature, float theHumidity)
+{
+  if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
+    return kT3BitMissing;
+
+  long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
+                  0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
+
+  if (theTemperature >= y)
+    return kTSleet;
+  return kTSnow;
+}
+
+// Temperature limit for a humidity range [min,max]
+struct HumidityRangeLimit
+{
+  double temperature;
+  double minHumidity;
+  double maxHumidity;
+};
+
+// Rain if the temperature is at least the limit for the humidity range
+const HumidityRangeLimit rain_limits[] = {
+    {3.6, -HUGE_VAL, 40},
+    {3.5, 41, 42},
+    {3.4, 43, 44},
+    {3.3, 45, 45},
+    {3.2, 46, 46},
+    {3.1, 47, 47},
+    {3.0, 48, 48},
+    {2.8, 49, 49},
+    {2.6, 50, 50},
+    {0.6, 51, 60},
+    {0.7, 61, 74},
+    {0.8, 75, 78},
+    {0.9, 79, 82},
+    {1, 83, 90},
+};
+
+// Snow if the temperature is at most the limit for the humidity range
+const HumidityRangeLimit snow_limits[] = {
+    {3.5, -HUGE_VAL, 40},
+    {3.4, 41, 42},
+    {3.3, 43, 44},
+    {3.2, 45, 45},
+    {3.1, 46, 46},
+    {3.0, 47, 47},
+    {2.9, 48, 48},
+    {2.7, 49, 49},
+    {2.5, 50, 50},
+    {0.5, 51, 60},
+    {0.6, 61, 72},
+    {0.3, 73, 74},
+    {0.2, 75, 78},
+    {0.1, 79, 79},
+    {0, 80, 80},
+    {-0.3, 81, 81},
+    {-0.5, 82, 82},
+    {-0.6, 83, 83},
+    {-0.7, 84, 85},
+    {-0.8, 86, 87},
+    {-0.9, 88, 90},
+    {-1.6, 91, 91},
+    {-1.8, 92, 92},
+    {-1.9, 93, 93},
+    {-2, 94, 95},
+    {-2.1, 96, 97},
+    {-2.2, 98, HUGE_VAL},
+};
+
+bool InHumidityRange(const HumidityRangeLimit &theLimit, float theHumidity)
+{
+  return theHumidity >= theLimit.minHumidity && theHumidity <= theLimit.maxHumidity;
+}
+
+// Precipitation form for thunder (synop codes 95 and 97) based on temperature and humidity
+unsigned long ThunderPrecipitationForm(float theTemperature, float theHumidity)
+{
+  if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
+    return kT3BitMissing;
+
+  for (const auto &limit : rain_limits)
+    if (theTemperature >= limit.temperature && InHumidityRange(limit, theHumidity))
+      return kTRain;
+
+  for (const auto &limit : snow_limits)
+    if (theTemperature <= limit.temperature && InHumidityRange(limit, theHumidity))
+      return kTSnow;
+
+  return kTSleet;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \param theSynopWeatherCode Undocumented
@@ -1830,29 +1940,9 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
       case 57:
         return kTFreezingDrizzle;
       case 20:
-      {
-        if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-          return kT3BitMissing;
-
-        long double y = -154.26 + 9.5583 * theHumidity - 0.19816 * pow(theHumidity, 2) +
-                        0.0017163 * pow(theHumidity, 3) - 0.0000053613 * pow(theHumidity, 4);
-
-        if (theTemperature >= y)
-          return kTDrizzle;
-        return kTSnow;
-      }
+        return DrizzleOrSnowForm(theTemperature, theHumidity);
       case 26:
-      {
-        if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-          return kT3BitMissing;
-
-        long double y = +59.020 - 2.4723 * theHumidity + 0.043376 * pow(theHumidity, 2) -
-                        0.00035229 * pow(theHumidity, 3) + 0.0000010723 * pow(theHumidity, 4);
-
-        if (theTemperature >= y)
-          return kTSleet;
-        return kTSnow;
-      }
+        return SleetOrSnowForm(theTemperature, theHumidity);
       case 22:
       case 70:
       case 71:
@@ -1889,58 +1979,7 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationForm(
         return kTRain;
       case 95:
       case 97:
-      {
-        if ((theTemperature == kFloatMissing) || (theHumidity == kFloatMissing))
-          return kT3BitMissing;
-
-        if ((theTemperature >= 3.6 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
-            (theTemperature >= 3.5 && theHumidity >= 41 && theHumidity <= 42) ||
-            (theTemperature >= 3.4 && theHumidity >= 43 && theHumidity <= 44) ||
-            (theTemperature >= 3.3 && theHumidity == 45) ||
-            (theTemperature >= 3.2 && theHumidity == 46) ||
-            (theTemperature >= 3.1 && theHumidity == 47) ||
-            (theTemperature >= 3.0 && theHumidity == 48) ||
-            (theTemperature >= 2.8 && theHumidity == 49) ||
-            (theTemperature >= 2.6 && theHumidity == 50) ||
-            (theTemperature >= 0.6 && theHumidity >= 51 && theHumidity <= 60) ||
-            (theTemperature >= 0.7 && theHumidity >= 61 && theHumidity <= 74) ||
-            (theTemperature >= 0.8 && theHumidity >= 75 && theHumidity <= 78) ||
-            (theTemperature >= 0.9 && theHumidity >= 79 && theHumidity <= 82) ||
-            (theTemperature >= 1 && theHumidity >= 83 && theHumidity <= 90))
-          return kTRain;
-
-        if ((theTemperature <= 3.5 /*&& theHumidity>=39*/ && theHumidity <= 40) ||
-                 (theTemperature <= 3.4 && theHumidity >= 41 && theHumidity <= 42) ||
-                 (theTemperature <= 3.3 && theHumidity >= 43 && theHumidity <= 44) ||
-                 (theTemperature <= 3.2 && theHumidity == 45) ||
-                 (theTemperature <= 3.1 && theHumidity == 46) ||
-                 (theTemperature <= 3.0 && theHumidity == 47) ||
-                 (theTemperature <= 2.9 && theHumidity == 48) ||
-                 (theTemperature <= 2.7 && theHumidity == 49) ||
-                 (theTemperature <= 2.5 && theHumidity == 50) ||
-                 (theTemperature <= 0.5 && theHumidity >= 51 && theHumidity <= 60) ||
-                 (theTemperature <= 0.6 && theHumidity >= 61 && theHumidity <= 72) ||
-                 (theTemperature <= 0.3 && theHumidity >= 73 && theHumidity <= 74) ||
-                 (theTemperature <= 0.2 && theHumidity >= 75 && theHumidity <= 78) ||
-                 (theTemperature <= 0.1 && theHumidity == 79) ||
-                 (theTemperature <= 0 && theHumidity == 80) ||
-                 (theTemperature <= -0.3 && theHumidity == 81) ||
-                 (theTemperature <= -0.5 && theHumidity == 82) ||
-                 (theTemperature <= -0.6 && theHumidity == 83) ||
-                 (theTemperature <= -0.7 && theHumidity >= 84 && theHumidity <= 85) ||
-                 (theTemperature <= -0.8 && theHumidity >= 86 && theHumidity <= 87) ||
-                 (theTemperature <= -0.9 && theHumidity >= 88 && theHumidity <= 90) ||
-                 (theTemperature <= -1.6 && theHumidity == 91) ||
-                 (theTemperature <= -1.8 && theHumidity == 92) ||
-                 (theTemperature <= -1.9 && theHumidity == 93) ||
-                 (theTemperature <= -2 && theHumidity >= 94 && theHumidity <= 95) ||
-                 (theTemperature <= -2.1 && theHumidity >= 96 && theHumidity <= 97) ||
-                 (theTemperature <= -2.2 && theHumidity >= 98 /*&& theHumidity<=100*/))
-          return kTSnow;
-
-        else
-          return kTSleet;
-      }
+        return ThunderPrecipitationForm(theTemperature, theHumidity);
       // 	case 20:     //Sensuroitu=tihkusadetta (ei jäätävää) tai lumijyväsiä
       case 50:
       case 51:
