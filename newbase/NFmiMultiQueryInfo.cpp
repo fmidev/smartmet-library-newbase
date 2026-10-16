@@ -538,50 +538,51 @@ bool NFmiMultiQueryInfo::TimeToNearestStep(const NFmiMetTime &theTime,
 
     // Algorithm from NFmiTimeList::FindNearestTime
 
-    if (pos != itsMultiIndexes.end())
+    if (pos == itsMultiIndexes.end())
     {
-      if (theDirection == kBackward && theTime < pos->valid_time)
+      if (theTimeRangeInMinutes == kLongMissing)
       {
-        if (pos != itsMultiIndexes.begin())
-        {
+        TimeIndex(itsMultiIndexes.size() - 1);
+        return true;
+      }
+
+      // tässä pitäisi olla vielä else haara, joka tarkistaa kelpaako aika jos se on listan
+      // ulkopuolöella, mutta tarpeeksi lähellä
+      return false;
+    }
+
+    if (theDirection == kBackward && theTime < pos->valid_time)
+    {
+      if (pos != itsMultiIndexes.begin())
+      {
+        --pos;
+        if (pos == itsMultiIndexes.end())  // en tiedä toimiiko siten, että jos tekee startissa
+                                           // --, menee ohi vectorin
+          ++pos;
+      }
+    }
+    else if (theDirection == kCenter)
+    {
+      int index = pos - itsMultiIndexes.begin();
+      if (index > 0)
+      {
+        double diff1 = theTime.DifferenceInMinutes(itsMultiIndexes[index].valid_time);
+        double diff2 = theTime.DifferenceInMinutes(itsMultiIndexes[index - 1].valid_time);
+        if (fabs(diff2) < fabs(diff1))
           --pos;
-          if (pos == itsMultiIndexes.end())  // en tiedä toimiiko siten, että jos tekee startissa
-                                             // --, menee ohi vectorin
-            ++pos;
-        }
       }
-      else if (theDirection == kCenter)
-      {
-        int index = pos - itsMultiIndexes.begin();
-        if (index > 0)
-        {
-          double diff1 = theTime.DifferenceInMinutes(itsMultiIndexes[index].valid_time);
-          double diff2 = theTime.DifferenceInMinutes(itsMultiIndexes[index - 1].valid_time);
-          if (fabs(diff2) < fabs(diff1))
-            --pos;
-        }
-      }
-      // HUOM! else eli muuten tai theDirection == kForward vaihtoehto puuttuu!!!!
-
-      int indexFinal = pos - itsMultiIndexes.begin();
-      if (indexFinal != -1 && theTimeRangeInMinutes != kLongMissing)
-      {
-        double diffFinal = theTime.DifferenceInMinutes(itsMultiIndexes[indexFinal].valid_time);
-        if (fabs(diffFinal) > theTimeRangeInMinutes)
-          return false;
-      }
-      TimeIndex(indexFinal);
-      return true;
     }
-    if (theTimeRangeInMinutes == kLongMissing)
+    // HUOM! else eli muuten tai theDirection == kForward vaihtoehto puuttuu!!!!
+
+    int indexFinal = pos - itsMultiIndexes.begin();
+    if (indexFinal != -1 && theTimeRangeInMinutes != kLongMissing)
     {
-      TimeIndex(itsMultiIndexes.size() - 1);
-      return true;
+      double diffFinal = theTime.DifferenceInMinutes(itsMultiIndexes[indexFinal].valid_time);
+      if (fabs(diffFinal) > theTimeRangeInMinutes)
+        return false;
     }
-
-    // tässä pitäisi olla vielä else haara, joka tarkistaa kelpaako aika jos se on listan
-    // ulkopuolöella, mutta tarpeeksi lähellä
-    return false;
+    TimeIndex(indexFinal);
+    return true;
   }
   catch (...)
   {
