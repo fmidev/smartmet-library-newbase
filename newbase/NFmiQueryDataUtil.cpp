@@ -4685,6 +4685,35 @@ NFmiDataModifier *CreateModifier(int theFilterId)
 }
 }  // namespace
 
+namespace
+{
+// Copy the calculated source values for all parameters, locations, levels and times
+void CopyCalculatedValues(NFmiSuperSmartInfo &sourceInfo,
+                          NFmiFastQueryInfo &destInfo,
+                          bool doCalculation,
+                          bool doTimeIntegration)
+{
+  for (destInfo.ResetParam(), sourceInfo.ResetParam();
+       destInfo.NextParam() && sourceInfo.NextParam();)
+  {
+    for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+         destInfo.NextLocation() && sourceInfo.NextLocation();)
+    {
+      for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+           destInfo.NextLevel() && sourceInfo.NextLevel();)
+      {
+        for (destInfo.ResetTime(), sourceInfo.ResetTime();
+             destInfo.NextTime() && sourceInfo.NextTime();)
+        {
+          float value = sourceInfo.FloatValue(false, doCalculation, doTimeIntegration, false);
+          destInfo.FloatValue(value);
+        }
+      }
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  *  Tämä ohjelma lukee stdin:in annetun qdatan, luo uuden datan jossa sama
@@ -4756,24 +4785,7 @@ NFmiQueryData *NFmiQueryDataUtil::DoTimeFiltering(NFmiQueryData *theSourceData,
         NFmiCalculator calculator(&timeIterator, modifier);
         sourceInfo.TimeIntegrationCalculator(&calculator);
 
-        for (destInfo.ResetParam(), sourceInfo.ResetParam();
-             destInfo.NextParam() && sourceInfo.NextParam();)
-        {
-          for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-               destInfo.NextLocation() && sourceInfo.NextLocation();)
-          {
-            for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-                 destInfo.NextLevel() && sourceInfo.NextLevel();)
-            {
-              for (destInfo.ResetTime(), sourceInfo.ResetTime();
-                   destInfo.NextTime() && sourceInfo.NextTime();)
-              {
-                float value = sourceInfo.FloatValue(false, false, true, false);
-                destInfo.FloatValue(value);
-              }
-            }
-          }
-        }
+        CopyCalculatedValues(sourceInfo, destInfo, false, true);
       }
     }
     return data;
@@ -4849,24 +4861,7 @@ NFmiQueryData *NFmiQueryDataUtil::DoAreaFiltering(NFmiQueryData *theSourceData,
         NFmiCalculator calculator(&areaIterator, modifier);
         sourceInfo.SetCalculator(&calculator);
 
-        for (destInfo.ResetParam(), sourceInfo.ResetParam();
-             destInfo.NextParam() && sourceInfo.NextParam();)
-        {
-          for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-               destInfo.NextLocation() && sourceInfo.NextLocation();)
-          {
-            for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-                 destInfo.NextLevel() && sourceInfo.NextLevel();)
-            {
-              for (destInfo.ResetTime(), sourceInfo.ResetTime();
-                   destInfo.NextTime() && sourceInfo.NextTime();)
-              {
-                float value = sourceInfo.FloatValue(false, true, false, false);
-                destInfo.FloatValue(value);
-              }
-            }
-          }
-        }
+        CopyCalculatedValues(sourceInfo, destInfo, true, false);
       }
     }
     return data;
