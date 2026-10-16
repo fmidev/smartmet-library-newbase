@@ -827,6 +827,22 @@ NFmiIndexMask MaskInside(const NFmiGrid& theGrid, const NFmiSvgPath& thePath)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Insert all the grid indices into the mask
+ */
+// ----------------------------------------------------------------------
+
+namespace
+{
+void InsertAll(NFmiIndexMask& mask, unsigned long nx, unsigned long ny)
+{
+  for (unsigned long j = 0; j < ny; j++)
+    for (unsigned long i = 0; i < nx; i++)
+      mask.insert(j * nx + i);
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return area outside the path
  *
  * If the path is empty, the mask is full
@@ -871,50 +887,48 @@ NFmiIndexMask MaskOutside(const NFmiGrid& theGrid, const NFmiSvgPath& thePath)
     const unsigned long nx = theGrid.XNumber();
     const unsigned long ny = theGrid.YNumber();
 
+    // An empty path means everything is outside
     if (thePath.empty())
     {
-      for (unsigned long j = 0; j < ny; j++)
-        for (unsigned long i = 0; i < nx; i++)
-          mask.insert(j * nx + i);
+      InsertAll(mask, nx, ny);
+      return mask;
     }
-    else
-    {
-      for (unsigned long j = 0; j < ny; j++)
-        for (unsigned long i = 0; i < nx; i++)
+
+    for (unsigned long j = 0; j < ny; j++)
+      for (unsigned long i = 0; i < nx; i++)
+      {
+        const unsigned long idx = j * nx + i;
+        const NFmiPoint p = theGrid.LatLon(idx);
+
+        const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
+
+        bool recalculate = true;
+
+        if (lastPointOn)
         {
-          const unsigned long idx = j * nx + i;
-          const NFmiPoint p = theGrid.LatLon(idx);
-
-          const NFmiPoint xy = theGrid.GridToWorldXY(i, j);
-
-          bool recalculate = true;
-
-          if (lastPointOn)
+          double distance = xy.Distance(lastPoint);
+          if (distance < lastDistance)
           {
-            double distance = xy.Distance(lastPoint);
-            if (distance < lastDistance)
-            {
-              recalculate = false;
-              if (!lastInside)
-                mask.insert(idx);
-            }
-          }
-
-          if (recalculate)
-          {
-            NFmiPoint nearest;
-            tree.NearestPoint(nearest, xy);
-
-            lastPointOn = true;
-            lastPoint = xy;
-            lastInside = NFmiSvgTools::IsInside(thePath, p);
-            lastDistance = xy.Distance(nearest);
-
+            recalculate = false;
             if (!lastInside)
               mask.insert(idx);
           }
         }
-    }
+
+        if (recalculate)
+        {
+          NFmiPoint nearest;
+          tree.NearestPoint(nearest, xy);
+
+          lastPointOn = true;
+          lastPoint = xy;
+          lastInside = NFmiSvgTools::IsInside(thePath, p);
+          lastDistance = xy.Distance(nearest);
+
+          if (!lastInside)
+            mask.insert(idx);
+        }
+      }
     return mask;
   }
   catch (...)
