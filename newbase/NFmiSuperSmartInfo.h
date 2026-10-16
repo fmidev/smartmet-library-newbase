@@ -202,6 +202,9 @@ class NFmiSuperSmartInfo : public NFmiFastQueryInfo
   NFmiCombinedParam* CalculationCombinedValue();
 
  private:
+  // test string for an unmasked location (HelperBinaryMaskTestString)
+  const char* UnmaskedTestString(int theLocationIndex);
+
   // kutsu tätä aina kun aika muuttuu SSInfossa!!!!
   void TimeChanged(unsigned long theOldTimeIndex);
 

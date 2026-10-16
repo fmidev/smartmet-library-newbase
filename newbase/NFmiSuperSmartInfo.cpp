@@ -1800,6 +1800,28 @@ void NFmiSuperSmartInfo::CalcXYMaskBoundingBox()
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test string for an unmasked location: the mask bounding box is drawn
+ *        with '|' and '-', other locations are ','
+ */
+// ----------------------------------------------------------------------
+
+const char* NFmiSuperSmartInfo::UnmaskedTestString(int theLocationIndex)
+{
+  int x = 0;
+  int y = 0;
+  if (!LocationIndex2XYPosition(theLocationIndex, &x, &y))
+    return ",";
+  if ((x == itsXYMaskBoundingBox.Left() || x == itsXYMaskBoundingBox.Right()) &&
+      (y <= itsXYMaskBoundingBox.Bottom() && y >= itsXYMaskBoundingBox.Top()))
+    return "|";
+  if ((x >= itsXYMaskBoundingBox.Left() && x <= itsXYMaskBoundingBox.Right()) &&
+      (y == itsXYMaskBoundingBox.Bottom() || y == itsXYMaskBoundingBox.Top()))
+    return "-";
+  return ",";
+}
+
+// ----------------------------------------------------------------------
+/*!
  * Testi funktio. Tekee stringin tietylle epävarmuudelle tehdystä
  * harvennusmaskista
  *
@@ -1833,8 +1855,6 @@ NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFa
       int i = 0;
       string rowStr;
       std::vector<string> lines;
-      int x = 0;
-      int y = 0;
       for (ResetLocation(); NextLocation();)
       {
         locIndex = LocationIndex();
@@ -1847,21 +1867,7 @@ NFmiString NFmiSuperSmartInfo::HelperBinaryMaskTestString(int theUsedVariationFa
         else if (status2)
           rowStr += "C";
         else
-        {
-          if (LocationIndex2XYPosition(locIndex, &x, &y))
-          {
-            if ((x == itsXYMaskBoundingBox.Left() || x == itsXYMaskBoundingBox.Right()) &&
-                (y <= itsXYMaskBoundingBox.Bottom() && y >= itsXYMaskBoundingBox.Top()))
-              rowStr += "|";
-            else if ((x >= itsXYMaskBoundingBox.Left() && x <= itsXYMaskBoundingBox.Right()) &&
-                     (y == itsXYMaskBoundingBox.Bottom() || y == itsXYMaskBoundingBox.Top()))
-              rowStr += "-";
-            else
-              rowStr += ",";
-          }
-          else
-            rowStr += ",";
-        }
+          rowStr += UnmaskedTestString(locIndex);
         i++;
         if (i % itsGridXNumber == 0)
         {
