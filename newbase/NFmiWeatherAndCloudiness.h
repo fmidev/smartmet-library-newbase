@@ -274,6 +274,12 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
                                         unsigned long theOtherHessaa);
   unsigned long LargeScaleOverCastHessaa(unsigned long thePrecipitation);
   unsigned long PartlyCloudyHessaa();
+  struct WeightedPeriodSums;
+  template <typename Factor>
+  void AddToWeightedPeriodSums(WeightedPeriodSums& sums,
+                               const NFmiWeatherAndCloudiness& weather,
+                               Factor factor) const;
+  void SetFromWeightedPeriodSums(const WeightedPeriodSums& sums, bool considerMax);
   double IntegratedSubValueOrMissing(FmiParameterName theParam,
                                      NFmiIntegrationSelector* theSelector);
   double SubValueOrMissing(FmiParameterName theParam);

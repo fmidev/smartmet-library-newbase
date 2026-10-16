@@ -2174,6 +2174,162 @@ unsigned long NFmiWeatherAndCloudiness::CalcSynopPrecipitationAmount(
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Weighted sums of the weather components over a period
+ */
+// ----------------------------------------------------------------------
+
+struct NFmiWeatherAndCloudiness::WeightedPeriodSums
+{
+  double totalCloudinessSum = 0.;
+  double lowCloudsSum = 0.;
+  double middleCloudsSum = 0.;
+  double highCloudsSum = 0.;
+  double totalPrecipitationSum = 0.;
+  double precipitationTypeSum = 0.;
+  double thunderProbabilitySum = 0.;
+  double fogIntensitySum = 0.;
+  double precipitationForms[FmiNumberOfPrecipitationForms] = {};
+
+  double totalCloudinessFactorSum = 0;
+  double lowCloudsFactorSum = 0;
+  double middleCloudsFactorSum = 0;
+  double highCloudsFactorSum = 0;
+  double totalPrecipitationFactorSum = 0;
+  double precipitationTypeFactorSum = 0;
+  double thunderProbabilityFactorSum = 0;
+  double fogIntensityFactorSum = 0;
+  double maxPrecipitation = 0.;
+  double maxThunder = 0.;
+};
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the non-missing components of the weather with the given weight
+ *
+ * The weight type is a template parameter, since the products are calculated
+ * in the precision of the weight.
+ */
+// ----------------------------------------------------------------------
+
+template <typename Factor>
+void NFmiWeatherAndCloudiness::AddToWeightedPeriodSums(WeightedPeriodSums &sums,
+                                                       const NFmiWeatherAndCloudiness &weather,
+                                                       Factor factor) const
+{
+  if (weather.TotalCloudiness() != kT4BitMissing)
+  {
+    sums.totalCloudinessSum += weather.TotalCloudiness() * factor;
+    sums.totalCloudinessFactorSum += factor;
+  }
+  if (weather.LowClouds() != kT4BitMissing)
+  {
+    sums.lowCloudsSum += weather.LowClouds() * factor;
+    sums.lowCloudsFactorSum += factor;
+  }
+  if (weather.MiddleClouds() != kT4BitMissing)
+  {
+    sums.middleCloudsSum += weather.MiddleClouds() * factor;
+    sums.middleCloudsFactorSum += factor;
+  }
+  if (weather.HighClouds() != HighCloudsMissingValue())
+  {
+    sums.highCloudsSum += weather.HighClouds() * factor;
+    sums.highCloudsFactorSum += factor;
+  }
+  if (weather.TotalPrecipitation() != TotalPrecipitationMissingValue())
+  {
+    double prec = PrecipitationScale(weather.TotalPrecipitation());
+    sums.maxPrecipitation = FmiMax(sums.maxPrecipitation, prec);
+    sums.totalPrecipitationSum += prec * factor;
+    sums.totalPrecipitationFactorSum += factor;
+  }
+  if (weather.PrecipitationType() != kT2BitMissing)
+  {
+    sums.precipitationTypeSum += weather.PrecipitationType() * factor;
+    sums.precipitationTypeFactorSum += factor;
+  }
+  if (weather.PrecipitationForm() != kT3BitMissing &&
+      weather.TotalPrecipitation() != TotalPrecipitationMissingValue())
+  {  // painotus sademäärän mukaan
+    sums.precipitationForms[weather.PrecipitationForm()] +=
+        PrecipitationScale(weather.TotalPrecipitation()) * factor;
+  }
+  if (weather.ThunderProbability() != kTThunderProbabilityMissing)
+  {
+    double thunder = weather.ThunderProbability() * 10.;  // 29.5.00
+    sums.thunderProbabilitySum += thunder * factor;
+    sums.thunderProbabilityFactorSum += factor;
+    sums.maxThunder = FmiMax(sums.maxThunder, thunder);
+  }
+  if (weather.FogIntensity() != kT2BitMissing)
+  {
+    sums.fogIntensitySum += weather.FogIntensity() * factor;
+    sums.fogIntensityFactorSum += factor;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the weather from the weighted period sums
+ */
+// ----------------------------------------------------------------------
+
+void NFmiWeatherAndCloudiness::SetFromWeightedPeriodSums(const WeightedPeriodSums& sums,
+                                                         bool considerMax)
+{
+  //	pitäisi olla joku resetointi ensin
+  itsData.longType = kTCombinedWeatherMissing;  // riittääkö?
+
+  if (sums.lowCloudsFactorSum > 0.)
+    SetLowClouds(
+        static_cast<unsigned long>(std::lround(sums.lowCloudsSum / sums.lowCloudsFactorSum)));
+  if (sums.middleCloudsFactorSum > 0.)
+    SetMiddleClouds(
+        static_cast<unsigned long>(std::lround(sums.middleCloudsSum / sums.middleCloudsFactorSum)));
+  if (sums.highCloudsFactorSum > 0.)
+    SetHighClouds(
+        static_cast<unsigned long>(std::lround(sums.highCloudsSum / sums.highCloudsFactorSum)));
+  if (sums.totalCloudinessFactorSum > 0.)
+    SetTotalCloudiness(static_cast<unsigned long>(
+        std::lround(sums.totalCloudinessSum / sums.totalCloudinessFactorSum)));
+  if (sums.precipitationTypeFactorSum > 0.)
+    SetPrecipitationType(static_cast<unsigned long>(
+        std::lround(sums.precipitationTypeSum / sums.precipitationTypeFactorSum)));
+
+  if (sums.totalPrecipitationFactorSum > 0.)
+  {
+    double mmWithMax = NAN;
+    if (considerMax)
+      mmWithMax =
+          (sums.maxPrecipitation + sums.totalPrecipitationSum / sums.totalPrecipitationFactorSum) /
+          2.;
+    else
+      mmWithMax = sums.totalPrecipitationSum /
+                  sums.totalPrecipitationFactorSum;  // 16.11.99 oli maxPr.. !!!
+
+    SubValue(mmWithMax + 0.01, kFmiPrecipitation1h);  // 25.5.00 pieni pyöristyslisä
+  }
+
+  SetPrecipitationForm(PrecipitationFormFromWeightTable(sums.precipitationForms));
+
+  if (sums.thunderProbabilityFactorSum > 0.)
+  {
+    double thunderWithMax = NAN;
+    if (considerMax)
+      thunderWithMax =
+          (sums.maxThunder + sums.thunderProbabilitySum / sums.thunderProbabilityFactorSum) / 2.;
+    else
+      thunderWithMax = sums.thunderProbabilitySum / sums.thunderProbabilityFactorSum;
+
+    SubValue(thunderWithMax, kFmiProbabilityThunderstorm);
+  }
+  if (sums.fogIntensityFactorSum > 0.)
+    SetFogIntensity(
+        static_cast<unsigned long>(std::lround(sums.fogIntensitySum / sums.fogIntensityFactorSum)));
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param info Undocumented
  * \param theLonLat Undocumented
  * \param theStartTime Undocumented
@@ -2204,28 +2360,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     double halfPeriod = theEndTime.DifferenceInHours(theStartTime) / 2.;
     middleTime.ChangeByHours(static_cast<long>(halfPeriod));
 
-    double totalCloudinessSum = 0.;
-    double lowCloudsSum = 0.;
-    double middleCloudsSum = 0.;
-    double highCloudsSum = 0.;
-    double totalPrecipitationSum = 0.;
-    double precipitationTypeSum = 0.;
-    double thunderProbabilitySum = 0.;
-    double fogIntensitySum = 0.;
-    double precipitationForms[FmiNumberOfPrecipitationForms];
-    for (double &precipitationForm : precipitationForms)
-      precipitationForm = 0;
-
-    double totalCloudinessFactorSum = 0;
-    double lowCloudsFactorSum = 0;
-    double middleCloudsFactorSum = 0;
-    double highCloudsFactorSum = 0;
-    double totalPrecipitationFactorSum = 0;
-    double precipitationTypeFactorSum = 0;
-    double thunderProbabilityFactorSum = 0;
-    double fogIntensityFactorSum = 0;
-    double maxPrecipitation = 0.;
-    double maxThunder = 0.;
+    WeightedPeriodSums sums;
     double factor = NAN;
 
     if (!newInfo->TimeToNearestStep(theStartTime))
@@ -2259,103 +2394,14 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
                      factor2;
           }
 
-          if (weather->TotalCloudiness() != kT4BitMissing)
-          {
-            totalCloudinessSum += weather->TotalCloudiness() * factor;
-            totalCloudinessFactorSum += factor;
-          }
-          if (weather->LowClouds() != kT4BitMissing)
-          {
-            lowCloudsSum += weather->LowClouds() * factor;
-            lowCloudsFactorSum += factor;
-          }
-          if (weather->MiddleClouds() != kT4BitMissing)
-          {
-            middleCloudsSum += weather->MiddleClouds() * factor;
-            middleCloudsFactorSum += factor;
-          }
-          if (weather->HighClouds() != HighCloudsMissingValue())
-          {
-            highCloudsSum += weather->HighClouds() * factor;
-            highCloudsFactorSum += factor;
-          }
-          if (weather->TotalPrecipitation() != TotalPrecipitationMissingValue())
-          {
-            double prec = PrecipitationScale(weather->TotalPrecipitation());
-            maxPrecipitation = FmiMax(maxPrecipitation, prec);
-            totalPrecipitationSum += prec * factor;
-            totalPrecipitationFactorSum += factor;
-          }
-          if (weather->PrecipitationType() != kT2BitMissing)
-          {
-            precipitationTypeSum += weather->PrecipitationType() * factor;
-            precipitationTypeFactorSum += factor;
-          }
-          if (weather->PrecipitationForm() != kT3BitMissing &&
-              weather->TotalPrecipitation() != TotalPrecipitationMissingValue())
-          {  // painotus sademäärän mukaan
-            precipitationForms[weather->PrecipitationForm()] +=
-                PrecipitationScale(weather->TotalPrecipitation()) * factor;
-          }
-          if (weather->ThunderProbability() != kTThunderProbabilityMissing)
-          {
-            double thunder = weather->ThunderProbability() * 10.;  // 29.5.00
-            thunderProbabilitySum += thunder * factor;
-            thunderProbabilityFactorSum += factor;
-            maxThunder = FmiMax(maxThunder, thunder);
-          }
-          if (weather->FogIntensity() != kT2BitMissing)
-          {
-            fogIntensitySum += weather->FogIntensity() * factor;
-            fogIntensityFactorSum += factor;
-          }
+          AddToWeightedPeriodSums(sums, *weather, factor);
         }
       }
       if (!newInfo->NextTime())
         break;
     }
 
-    //	pitäisi olla joku resetointi ensin
-    itsData.longType = kTCombinedWeatherMissing;  // riittääkö?
-
-    if (lowCloudsFactorSum > 0.)
-      SetLowClouds(static_cast<unsigned long>(std::lround(lowCloudsSum / lowCloudsFactorSum)));
-    if (middleCloudsFactorSum > 0.)
-      SetMiddleClouds(static_cast<unsigned long>(std::lround(middleCloudsSum / middleCloudsFactorSum)));
-    if (highCloudsFactorSum > 0.)
-      SetHighClouds(static_cast<unsigned long>(std::lround(highCloudsSum / highCloudsFactorSum)));
-    if (totalCloudinessFactorSum > 0.)
-      SetTotalCloudiness(
-          static_cast<unsigned long>(std::lround(totalCloudinessSum / totalCloudinessFactorSum)));
-    if (precipitationTypeFactorSum > 0.)
-      SetPrecipitationType(
-          static_cast<unsigned long>(std::lround(precipitationTypeSum / precipitationTypeFactorSum)));
-
-    if (totalPrecipitationFactorSum > 0.)
-    {
-      double mmWithMax = NAN;
-      if (considerMax)
-        mmWithMax = (maxPrecipitation + totalPrecipitationSum / totalPrecipitationFactorSum) / 2.;
-      else
-        mmWithMax = totalPrecipitationSum / totalPrecipitationFactorSum;
-
-      SubValue(mmWithMax + 0.01, kFmiPrecipitation1h);
-    }
-
-    SetPrecipitationForm(PrecipitationFormFromWeightTable(precipitationForms));
-
-    if (thunderProbabilityFactorSum > 0.)
-    {
-      double thunderWithMax = NAN;
-      if (considerMax)
-        thunderWithMax = (maxThunder + thunderProbabilitySum / thunderProbabilityFactorSum) / 2.;
-      else
-        thunderWithMax = thunderProbabilitySum / thunderProbabilityFactorSum;
-
-      SubValue(thunderWithMax, kFmiProbabilityThunderstorm);
-    }
-    if (fogIntensityFactorSum > 0.)
-      SetFogIntensity(static_cast<unsigned long>(std::lround(fogIntensitySum / fogIntensityFactorSum)));
+    SetFromWeightedPeriodSums(sums, considerMax);
 
     delete newInfo;
     return true;
@@ -2399,28 +2445,7 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
     startTime.ChangeByHours(-halfPeriod);
     endTime.ChangeByHours(halfPeriod);
 
-    double totalCloudinessSum = 0.;
-    double lowCloudsSum = 0.;
-    double middleCloudsSum = 0.;
-    double highCloudsSum = 0.;
-    double totalPrecipitationSum = 0.;
-    double precipitationTypeSum = 0.;
-    double thunderProbabilitySum = 0.;
-    double fogIntensitySum = 0.;
-    double precipitationForms[FmiNumberOfPrecipitationForms];
-    for (double &precipitationForm : precipitationForms)
-      precipitationForm = 0;
-
-    double totalCloudinessFactorSum = 0;
-    double lowCloudsFactorSum = 0;
-    double middleCloudsFactorSum = 0;
-    double highCloudsFactorSum = 0;
-    double totalPrecipitationFactorSum = 0;
-    double precipitationTypeFactorSum = 0;
-    double thunderProbabilityFactorSum = 0;
-    double fogIntensityFactorSum = 0;
-    double maxPrecipitation = 0.;
-    double maxThunder = 0.;
+    WeightedPeriodSums sums;
     float factor = NAN;
 
     if (!newInfo->TimeToNearestStep(startTime) || !newInfo->TimeToNearestStep(endTime))
@@ -2454,104 +2479,14 @@ bool NFmiWeatherAndCloudiness::SetToWeightedPeriod(NFmiQueryInfo *info,
                      factor2;
           }
 
-          if (weather->TotalCloudiness() != kT4BitMissing)
-          {
-            totalCloudinessSum += weather->TotalCloudiness() * factor;
-            totalCloudinessFactorSum += factor;
-          }
-          if (weather->LowClouds() != kT4BitMissing)
-          {
-            lowCloudsSum += weather->LowClouds() * factor;
-            lowCloudsFactorSum += factor;
-          }
-          if (weather->MiddleClouds() != kT4BitMissing)
-          {
-            middleCloudsSum += weather->MiddleClouds() * factor;
-            middleCloudsFactorSum += factor;
-          }
-          if (weather->HighClouds() != HighCloudsMissingValue())
-          {
-            highCloudsSum += weather->HighClouds() * factor;
-            highCloudsFactorSum += factor;
-          }
-          if (weather->TotalPrecipitation() != TotalPrecipitationMissingValue())
-          {
-            double prec = PrecipitationScale(weather->TotalPrecipitation());
-            maxPrecipitation = FmiMax(maxPrecipitation, prec);
-            totalPrecipitationSum += prec * factor;
-            totalPrecipitationFactorSum += factor;
-          }
-          if (weather->PrecipitationType() != kT2BitMissing)
-          {
-            precipitationTypeSum += weather->PrecipitationType() * factor;
-            precipitationTypeFactorSum += factor;
-          }
-          if (weather->PrecipitationForm() != kT3BitMissing &&
-              weather->TotalPrecipitation() != TotalPrecipitationMissingValue())
-          {  // painotus sademäärän mukaan
-            precipitationForms[weather->PrecipitationForm()] +=
-                PrecipitationScale(weather->TotalPrecipitation()) * factor;
-          }
-          if (weather->ThunderProbability() != kTThunderProbabilityMissing)
-          {
-            double thunder = weather->ThunderProbability() * 10.;  // 29.5.00
-            thunderProbabilitySum += thunder * factor;
-            thunderProbabilityFactorSum += factor;
-            maxThunder = FmiMax(maxThunder, thunder);
-          }
-          if (weather->FogIntensity() != kT2BitMissing)
-          {
-            fogIntensitySum += weather->FogIntensity() * factor;
-            fogIntensityFactorSum += factor;
-          }
+          AddToWeightedPeriodSums(sums, *weather, factor);
         }
       }
       if (!newInfo->NextTime())
         break;
     }
 
-    //	pitäisi olla joku resetointi ensin
-    itsData.longType = kTCombinedWeatherMissing;  // riittääkö?
-
-    if (lowCloudsFactorSum > 0.)
-      SetLowClouds(static_cast<unsigned long>(std::lround(lowCloudsSum / lowCloudsFactorSum)));
-    if (middleCloudsFactorSum > 0.)
-      SetMiddleClouds(static_cast<unsigned long>(std::lround(middleCloudsSum / middleCloudsFactorSum)));
-    if (highCloudsFactorSum > 0.)
-      SetHighClouds(static_cast<unsigned long>(std::lround(highCloudsSum / highCloudsFactorSum)));
-    if (totalCloudinessFactorSum > 0.)
-      SetTotalCloudiness(
-          static_cast<unsigned long>(std::lround(totalCloudinessSum / totalCloudinessFactorSum)));
-    if (precipitationTypeFactorSum > 0.)
-      SetPrecipitationType(
-          static_cast<unsigned long>(std::lround(precipitationTypeSum / precipitationTypeFactorSum)));
-
-    if (totalPrecipitationFactorSum > 0.)
-    {
-      double mmWithMax = NAN;
-      if (considerMax)
-        mmWithMax = (maxPrecipitation + totalPrecipitationSum / totalPrecipitationFactorSum) / 2.;
-      else
-        mmWithMax =
-            totalPrecipitationSum / totalPrecipitationFactorSum;  // 16.11.99 oli maxPr.. !!!
-
-      SubValue(mmWithMax + 0.01, kFmiPrecipitation1h);  // 25.5.00 pieni pyöristyslisä
-    }
-
-    SetPrecipitationForm(PrecipitationFormFromWeightTable(precipitationForms));
-
-    if (thunderProbabilityFactorSum > 0.)
-    {
-      double thunderWithMax = NAN;
-      if (considerMax)
-        thunderWithMax = (maxThunder + thunderProbabilitySum / thunderProbabilityFactorSum) / 2.;
-      else
-        thunderWithMax = thunderProbabilitySum / thunderProbabilityFactorSum;
-
-      SubValue(thunderWithMax, kFmiProbabilityThunderstorm);
-    }
-    if (fogIntensityFactorSum > 0.)
-      SetFogIntensity(static_cast<unsigned long>(std::lround(fogIntensitySum / fogIntensityFactorSum)));
+    SetFromWeightedPeriodSums(sums, considerMax);
 
     delete newInfo;
     return true;
