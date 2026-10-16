@@ -709,6 +709,79 @@ bool NFmiGrid::SwapData(FmiDirection theStartingCorner, bool walkXDimFirst)
   }
 }
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Decode a raw integer value of the given size starting from buffer[pos]
+ *
+ * \param step +1 for little endian data, -1 for big endian data (pos is then the last byte)
+ */
+// ----------------------------------------------------------------------
+
+double DecodeRawInteger(const std::vector<char> &buffer,
+                        unsigned int pos,
+                        int step,
+                        unsigned long theElementSizeInBytes,
+                        bool isSigned)
+{
+  double dvalue = 0.0;
+  double scale = 1.0;
+  for (unsigned int b = 0; b < theElementSizeInBytes; b++)
+  {
+    unsigned char ch = buffer[pos];
+    pos += step;
+    if (isSigned && (b + 1 == theElementSizeInBytes))
+    {
+      dvalue += (ch & 0x7F) * scale;
+      if ((ch & 0x80) != 0)
+        dvalue = -dvalue;  // safe, since loop ends now
+    }
+    else
+      dvalue += ch * scale;
+    scale *= 256;
+  }
+  return dvalue;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Decode a row of raw integer data into floats
+ */
+// ----------------------------------------------------------------------
+
+void DecodeRawRow(const std::vector<char> &buffer,
+                  unsigned long theElementSizeInBytes,
+                  bool isLittleEndian,
+                  bool isSigned,
+                  double theBeforeConversionMissingValue,
+                  float theAfterConversionMissingValue,
+                  float theConversionScale,
+                  float theConversionBase,
+                  std::vector<float> &floatData)
+{
+  int offset = (isLittleEndian ? 0 : theElementSizeInBytes - 1);
+  int step = (isLittleEndian ? 1 : -1);
+
+  for (unsigned int elem = 0; elem < floatData.size(); elem++)
+  {
+    unsigned int pos = elem * theElementSizeInBytes + offset;
+    double dvalue = DecodeRawInteger(buffer, pos, step, theElementSizeInBytes, isSigned);
+
+    if (dvalue == theBeforeConversionMissingValue)
+      floatData[elem] = kFloatMissing;
+    else
+    {
+      auto value = static_cast<float>(dvalue * theConversionScale + theConversionBase);
+      if (value == theAfterConversionMissingValue)
+        floatData[elem] = kFloatMissing;
+      else
+        floatData[elem] = value;
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Gridin alustus integertyyppisen raakadata-tiedostosta (kirjoitettu
@@ -779,40 +852,15 @@ bool NFmiGrid::Init(const std::string &theFileName,
             break;
           }
 
-          int offset = (isLittleEndian ? 0 : theElementSizeInBytes - 1);
-          int step = (isLittleEndian ? 1 : -1);
-
-          for (unsigned int elem = 0; elem < nx; elem++)
-          {
-            double dvalue = 0.0;
-            unsigned int pos = elem * theElementSizeInBytes + offset;
-            double scale = 1.0;
-            for (unsigned int b = 0; b < theElementSizeInBytes; b++)
-            {
-              unsigned char ch = buffer[pos];
-              pos += step;
-              if (isSigned && (b + 1 == theElementSizeInBytes))
-              {
-                dvalue += (ch & 0x7F) * scale;
-                if ((ch & 0x80) != 0)
-                  dvalue = -dvalue;  // safe, since loop ends now
-              }
-              else
-                dvalue += ch * scale;
-              scale *= 256;
-            }
-
-            if (dvalue == theBeforeConversionMissingValue)
-              floatData[elem] = kFloatMissing;
-            else
-            {
-              auto value = static_cast<float>(dvalue * theConversionScale + theConversionBase);
-              if (value == theAfterConversionMissingValue)
-                floatData[elem] = kFloatMissing;
-              else
-                floatData[elem] = value;
-            }
-          }
+          DecodeRawRow(buffer,
+                       theElementSizeInBytes,
+                       isLittleEndian,
+                       isSigned,
+                       theBeforeConversionMissingValue,
+                       theAfterConversionMissingValue,
+                       theConversionScale,
+                       theConversionBase,
+                       floatData);
 
           for (unsigned long j = 0; j < floatData.size(); j++)
             itsData->FloatValue(i * nx + j, floatData[j]);
