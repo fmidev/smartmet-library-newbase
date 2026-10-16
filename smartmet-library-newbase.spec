@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.15
+Version: 26.10.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -39,13 +39,13 @@ BuildRequires: gdal312-devel
 BuildRequires: geos313-devel
 BuildRequires: make
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-macgyver-devel >= 26.10.15
-BuildRequires: smartmet-library-gis-devel >= 26.10.15
+BuildRequires: smartmet-library-macgyver-devel >= 26.10.16
+BuildRequires: smartmet-library-gis-devel >= 26.10.16
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 26.10.15
-Requires: smartmet-library-gis >= 26.10.15
+Requires: smartmet-library-macgyver >= 26.10.16
+Requires: smartmet-library-gis >= 26.10.16
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -59,10 +59,10 @@ Requires: geos313
 #TestRequires: gdal312-libs
 #TestRequires: make
 #TestRequires: postgresql15-libs
-#TestRequires: smartmet-library-gis-devel >= 26.10.15
-#TestRequires: smartmet-library-macgyver-devel >= 26.10.15
-#TestRequires: smartmet-library-macgyver >= 26.10.15
-#TestRequires: smartmet-library-gis >= 26.10.15
+#TestRequires: smartmet-library-gis-devel >= 26.10.16
+#TestRequires: smartmet-library-macgyver-devel >= 26.10.16
+#TestRequires: smartmet-library-macgyver >= 26.10.16
+#TestRequires: smartmet-library-gis >= 26.10.16
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -118,8 +118,8 @@ rm -rf $RPM_BUILD_ROOT
 Summary: FMI newbase development files
 Provides: %{SPECNAME}-devel
 Requires: %{SPECNAME} = %{version}-%{release}
-Requires: smartmet-library-gis-devel >= 26.10.15
-Requires: smartmet-library-macgyver-devel >= 26.10.15
+Requires: smartmet-library-gis-devel >= 26.10.16
+Requires: smartmet-library-macgyver-devel >= 26.10.16
 Obsoletes: libsmartmet-newbase-devel < 16.12.19
 
 %description -n %{SPECNAME}-devel
@@ -165,6 +165,13 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
+- NFmiLogger::StoreToSettings no longer throws after storing the settings
+- Removed unused members (NFmiEditParam mask settings, NFmiMultiPolygonAreaMask::fInitialized,
+  index calculator start indices) and the disabled locking code of NFmiRawData
+- Fixed compiler warnings and clang-tidy findings (unused code, unreachable code, empty statements, member initialization, parameter passing, noexcept), no functional changes
+- ABI change: parameters passed by const reference or by value, removed unused members and defaulted copy operations, dependent packages must be rebuilt
+
 * Thu Oct 15 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.15-1.fmi
 - Declare member functions and parameters const where nothing is modified (const correctness), no functional changes
 - FmiRound is an inline function using std::lround: no double evaluation of the argument and correct rounding just below 0.5; weather and cloudiness averages are rounded with std::lround
