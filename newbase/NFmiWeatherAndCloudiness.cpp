@@ -2927,6 +2927,101 @@ bool NFmiWeatherAndCloudiness::CheckHessaa(unsigned long theValue) const
   }
 }
 
+namespace
+{
+// Snow shower hsade code for the given precipitation intensity code
+unsigned long SnowShowerHsade(unsigned long hsade)
+{
+  if (hsade >= 63)
+    return 86;
+  return 85;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hsade code for large scale precipitation
+ *
+ * \param hsade The precipitation intensity code (60, 63 or 65)
+ */
+// ----------------------------------------------------------------------
+
+unsigned long NFmiWeatherAndCloudiness::LargeScaleHsade(unsigned long hsade) const
+{
+  if (IsRain())  // vettä
+  {
+    // hsade = hsade;
+  }
+  else if (IsSleet())  // räntää
+  {
+    hsade = 68;
+  }
+  else if (IsSnow())  // lunta
+  {
+    hsade += 10;
+  }
+  // ukkoset myös tänne ainakin toistaiseksi (laura 23091999)
+  if (IsThunder() && ThunderProbability() >= 8)
+    return 97;
+  if (IsThunder() && ThunderProbability() >= 4)
+    return 95;
+  return hsade;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hsade code for showers
+ *
+ * \param hsade The precipitation intensity code (60, 63 or 65)
+ */
+// ----------------------------------------------------------------------
+
+unsigned long NFmiWeatherAndCloudiness::ShowerHsade(unsigned long hsade) const
+{
+  if (ThunderProbability() != kTThunderProbabilityMissing &&
+      ThunderProbability() >= 8)  // tarkista luku!!
+  {
+    if (IsSnow())
+      return SnowShowerHsade(hsade);
+    return 97;
+  }
+  if (ThunderProbability() != kTThunderProbabilityMissing && ThunderProbability() >= 4)
+  {
+    if (IsSnow())
+      return SnowShowerHsade(hsade);
+    if (PrecipitationForm() != kT3BitMissing)
+      return 95;
+    return hsade;
+  }
+
+  // ei ukkosta
+  if (IsSnow())
+    return SnowShowerHsade(hsade);
+  if (IsSleet())
+  {
+    // 22.01.2002/Viljo Showers of rain and snow mixed were not handled att all
+    // 83     Shower(s) of rain and snow mixed, slight
+    // 84     Shower(s) of rain and snow mixed, moderate or heavy
+    if (hsade >= 63)
+      return 84;
+    return 83;
+  }
+  if (PrecipitationForm() != kT3BitMissing)
+  {
+    // 22.01.2002/Viljo adds next comments:
+    // 80     Rain shower(s), slight
+    // 81     Rain shower(s), moderate or heavy
+    // 82     Rain shower(s), violent
+    // 02.10.2002/Viljo and Marko made the change
+    if (hsade == 63)
+      return 81;  // lisäsin uuden 'kohtalaista' kuuroa koodin
+    if (hsade > 63)  // 31.10.2002/Viljo adds missing else
+      return 82;
+    return 80;
+  }
+  return hsade;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -2938,128 +3033,48 @@ unsigned long NFmiWeatherAndCloudiness::ToHsade() const
   try
   {
     unsigned long hsade = kUnsignedLongMissing;
-    if (CalcTotalPrecipitation() == kTNoPrecipitation)
-      hsade = 0;
-    else if (CalcTotalPrecipitation() == kTSomePrecipitation)
-      hsade = 60;
-    else if (CalcTotalPrecipitation() == kTModeratePrecipitation)
-      hsade = 63;
-    else if (CalcTotalPrecipitation() == kTMuchPrecipitation)
-      hsade = 65;
-    if (hsade >= 60 && hsade <= 65)
+    switch (CalcTotalPrecipitation())
     {
-      if (IsLargeScale())
-      {
-        if (IsRain())  // vettä
-        {
-          //hsade = hsade;
-        }
-        else if (IsSleet())  // räntää
-        {
-          hsade = 68;
-        }
-        else if (IsSnow())  // lunta
-        {
-          hsade += 10;
-        }
-        // ukkoset myös tänne ainakin toistaiseksi (laura 23091999)
-        if (IsThunder() && ThunderProbability() >= 8)
-          hsade = 97;
-        else if (IsThunder() && ThunderProbability() >= 4)
-          hsade = 95;
-      }
-      else  // kuuroja
-      {
-        if (ThunderProbability() != kTThunderProbabilityMissing &&
-            ThunderProbability() >= 8)  // tarkista luku!!
-        {
-          if (IsSnow())
-          {
-            if (hsade >= 63)
-              hsade = 86;
-            else
-              hsade = 85;
-          }
-          else
-            hsade = 97;
-        }
-        else if (ThunderProbability() != kTThunderProbabilityMissing && ThunderProbability() >= 4)
-        {
-          if (IsSnow())
-          {
-            if (hsade >= 63)
-              hsade = 86;
-            else
-              hsade = 85;
-          }
-          else if (PrecipitationForm() != kT3BitMissing)
-          {
-            hsade = 95;
-          }
-        }
-        else  // ei ukkosta
-        {
-          if (IsSnow())
-          {
-            if (hsade >= 63)
-              hsade = 86;
-            else
-              hsade = 85;
-          }
-          else if (IsSleet())
-          {
-            // 22.01.2002/Viljo Showers of rain and snow mixed were not handled att all
-            // 83     Shower(s) of rain and snow mixed, slight
-            // 84     Shower(s) of rain and snow mixed, moderate or heavy
-            if (hsade >= 63)
-              hsade = 84;
-            else
-              hsade = 83;
-          }
-          else if (PrecipitationForm() != kT3BitMissing)
-          {
-            // 22.01.2002/Viljo adds next comments:
-            // 80     Rain shower(s), slight
-            // 81     Rain shower(s), moderate or heavy
-            // 82     Rain shower(s), violent
-            // 02.10.2002/Viljo and Marko made the change
-            if (hsade == 63)
-              hsade = 81;         // lisäsin uuden 'kohtalaista' kuuroa koodin
-            else if (hsade > 63)  // 31.10.2002/Viljo adds missing else
-              hsade = 82;
-            else
-              hsade = 80;
-          }
-        }
-      }
-      if (PrecipitationForm() == kTDrizzle)
-      {
-        // lumijyväset puuttuu!!
-        if (hsade <= 61)
-          hsade -= 10;
-        else if (itsTemperature < -1)  // suuret tihkut kuuroiksi
-          hsade = 85;
-        else
-          hsade = 80;
-      }
-      if (hsade >= 60 && hsade <= 65)  // 18.1.2000/Marko lisäsi jäätämis jutut
-      {
-        if (PrecipitationForm() == kTFreezingRain)
-        {
-          if (hsade <= 61)
-            hsade = 66;
-          else
-            hsade = 67;
-        }
-        if (PrecipitationForm() == kTFreezingDrizzle)
-        {
-          if (hsade <= 61)
-            hsade = 56;
-          else
-            hsade = 57;
-        }
-      }  // 18.1.2000/Marko lisäsi jäätämis jutut
+      case kTNoPrecipitation:
+        hsade = 0;
+        break;
+      case kTSomePrecipitation:
+        hsade = 60;
+        break;
+      case kTModeratePrecipitation:
+        hsade = 63;
+        break;
+      case kTMuchPrecipitation:
+        hsade = 65;
+        break;
+      default:
+        break;
     }
+    if (hsade < 60 || hsade > 65)
+      return hsade;
+
+    if (IsLargeScale())
+      hsade = LargeScaleHsade(hsade);
+    else  // kuuroja
+      hsade = ShowerHsade(hsade);
+
+    if (PrecipitationForm() == kTDrizzle)
+    {
+      // lumijyväset puuttuu!!
+      if (hsade <= 61)
+        hsade -= 10;
+      else if (itsTemperature < -1)  // suuret tihkut kuuroiksi
+        hsade = 85;
+      else
+        hsade = 80;
+    }
+    if (hsade >= 60 && hsade <= 65)  // 18.1.2000/Marko lisäsi jäätämis jutut
+    {
+      if (PrecipitationForm() == kTFreezingRain)
+        hsade = (hsade <= 61 ? 66 : 67);
+      if (PrecipitationForm() == kTFreezingDrizzle)
+        hsade = (hsade <= 61 ? 56 : 57);
+    }  // 18.1.2000/Marko lisäsi jäätämis jutut
     return hsade;
   }
   catch (...)
