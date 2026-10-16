@@ -3199,6 +3199,222 @@ std::vector<unsigned long> GetParamIndexVector(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
+// Source parameter indexes needed for building weatherandcloudiness
+struct WeatherSourceIndexes
+{
+  unsigned long temperatureIndex = 0;
+  unsigned long precipitationIndex = 0;
+  unsigned long precipitation1hIndex = 0;
+  unsigned long precipitation3hIndex = 0;
+  unsigned long precipitation6hIndex = 0;
+  unsigned long clParIndex = 0;
+  unsigned long cmParIndex = 0;
+  unsigned long chParIndex = 0;
+  unsigned long rhIndex = 0;
+};
+
+// Source values which are kept from the previous point if they are not available
+struct WeatherSourceState
+{
+  float clouds = kFloatMissing;
+  float fog = kFloatMissing;
+  float temperature = kFloatMissing;
+  float totalClouds = kFloatMissing;
+};
+
+// Establish the source parameter indexes
+WeatherSourceIndexes GetWeatherSourceIndexes(NFmiFastQueryInfo &theSourceInfo)
+{
+  WeatherSourceIndexes indexes;
+  theSourceInfo.Param(kFmiTemperature);
+  indexes.temperatureIndex = theSourceInfo.ParamIndex();
+
+  theSourceInfo.Param(kFmiPrecipitationRate);
+  indexes.precipitationIndex = theSourceInfo.ParamIndex();
+  theSourceInfo.Param(kFmiPrecipitation1h);
+  indexes.precipitation1hIndex = theSourceInfo.ParamIndex();
+  theSourceInfo.Param(kFmiPrecipitation3h);
+  indexes.precipitation3hIndex = theSourceInfo.ParamIndex();
+  theSourceInfo.Param(kFmiPrecipitation6h);
+  indexes.precipitation6hIndex = theSourceInfo.ParamIndex();
+
+  theSourceInfo.Param(kFmiLowCloudCover);
+  indexes.clParIndex = theSourceInfo.ParamIndex();
+  theSourceInfo.Param(kFmiMediumCloudCover);
+  indexes.cmParIndex = theSourceInfo.ParamIndex();
+  theSourceInfo.Param(kFmiHighCloudCover);
+  indexes.chParIndex = theSourceInfo.ParamIndex();
+
+  theSourceInfo.Param(kFmiHumidity);
+  indexes.rhIndex = theSourceInfo.ParamIndex();
+  return indexes;
+}
+
+// Read the weather symbol, using kFmiWeatherSymbol2 if kFmiWeatherSymbol1 is missing
+float ReadHSade(NFmiFastQueryInfo &theSourceInfo)
+{
+  float hSade = kFloatMissing;
+  if (theSourceInfo.Param(kFmiWeatherSymbol1))
+  {
+    hSade = theSourceInfo.FloatValue();
+    if (hSade == kFloatMissing && theSourceInfo.Param(kFmiWeatherSymbol2))
+      hSade = theSourceInfo.FloatValue();
+  }
+  return hSade;
+}
+
+// Read an accumulated precipitation converted to hourly precipitation
+float ReadHourlyPrecipitation(NFmiFastQueryInfo &theSourceInfo,
+                              unsigned long theParamIndex,
+                              float theHours)
+{
+  if (!theSourceInfo.ParamIndex(theParamIndex))
+    return kFloatMissing;
+  float tmp = theSourceInfo.FloatValue();
+  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
+  return (tmp == kFloatMissing) ? kFloatMissing : tmp / theHours;
+}
+
+// Read the precipitation in priority order 1h, rate, 3h and 6h
+float ReadPrecipitation(NFmiFastQueryInfo &theSourceInfo, const WeatherSourceIndexes &indexes)
+{
+  float precipitation = kFloatMissing;
+  float precipitation1h = kFloatMissing;
+  if (theSourceInfo.ParamIndex(indexes.precipitationIndex))
+    precipitation = theSourceInfo.FloatValue();
+  if (theSourceInfo.ParamIndex(indexes.precipitation1hIndex))
+    precipitation1h = theSourceInfo.FloatValue();
+  float precipitation3h =
+      ReadHourlyPrecipitation(theSourceInfo, indexes.precipitation3hIndex, 3.F);
+  float precipitation6h =
+      ReadHourlyPrecipitation(theSourceInfo, indexes.precipitation6hIndex, 6.F);
+
+  if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
+    return precipitation1h;
+  if (precipitation != kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
+    return precipitation;
+  if (precipitation3h != kFloatMissing)  // 3. priority 3h sateelle
+    return precipitation3h;
+  return precipitation6h;  // 4. priority 6h sateelle
+}
+
+// Default cloud symbol from the total cloudiness
+float DefaultCloudSymbol(float totalClouds)
+{
+  const int defaultCloudType = 302;  // tämä on alapilveä pilvityyppiä 2 (kumpupilvi?)
+  if (totalClouds <= 30)
+    return 1000 + defaultCloudType;
+  if (totalClouds <= 70)
+    return 2000 + defaultCloudType;
+  return 3000 + defaultCloudType;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Precipitation form from the temperature and humidity using the formula of the radar group
+ *
+ * \return 62 (rain), 68 (sleet) or 72 (snow)
+ */
+// ----------------------------------------------------------------------
+
+float PrecipitationHSadeFromTemperatureAndHumidity(NFmiFastQueryInfo &theSourceInfo,
+                                                   const WeatherSourceIndexes &indexes,
+                                                   WeatherSourceState &state)
+{
+  float hSade = 62;  // alustetaan sade vesisateeksi
+  theSourceInfo.ParamIndex(indexes.temperatureIndex);
+  state.temperature = theSourceInfo.FloatValue();
+  theSourceInfo.ParamIndex(indexes.rhIndex);
+  float rh = theSourceInfo.FloatValue();
+  if (state.temperature != kFloatMissing && rh != kFloatMissing)
+  {
+    auto xFactor =
+        static_cast<float>(1.0 - 1.0 / (1.0 + ::exp(22.0 - 2.7 * state.temperature - 0.2 * rh)));
+    if (xFactor >= 0.8F)
+      hSade = 72;  // 72 = lumisadetta
+    else if (xFactor >= 0.2F && xFactor < 0.8F)
+      hSade = 68;  // 68 = räntää
+  }
+  return hSade;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Build the weather at the current point of the source info
+ *
+ * \param thePrecipitation Set to the precipitation used
+ */
+// ----------------------------------------------------------------------
+
+NFmiWeatherAndCloudiness MakeWeatherAtCurrentPoint(NFmiFastQueryInfo &theSourceInfo,
+                                                   const WeatherSourceIndexes &indexes,
+                                                   WeatherSourceState &state,
+                                                   bool fAllowLessParamsWhenCreatingWeather,
+                                                   double destInfoVersion,
+                                                   float &thePrecipitation)
+{
+  float hSade = ReadHSade(theSourceInfo);
+  float precipitation = ReadPrecipitation(theSourceInfo, indexes);
+  thePrecipitation = precipitation;
+
+  if (theSourceInfo.Param(kFmiCloudSymbol))
+    state.clouds = theSourceInfo.FloatValue();
+  if (theSourceInfo.Param(kFmiFogSymbol))
+    state.fog = theSourceInfo.FloatValue();
+  if (theSourceInfo.Param(kFmiTotalCloudCover))
+    state.totalClouds = theSourceInfo.FloatValue();
+  if (theSourceInfo.Param(kFmiTemperature))
+    state.temperature = theSourceInfo.FloatValue();
+
+  bool doHSade1Fix = (hSade == kFloatMissing && precipitation != kFloatMissing);
+  bool doHSade1ZeroOnRainFix = (hSade == 0 && precipitation > 0);
+
+  if (fAllowLessParamsWhenCreatingWeather || doHSade1Fix || doHSade1ZeroOnRainFix)
+  {  // nyt pitää säveltää muutamat parametrit, jos on sallittu tehdä w&C parametri
+     // vähemmistä aineksista
+    if (state.clouds == kFloatMissing && state.totalClouds != kFloatMissing)
+      state.clouds = DefaultCloudSymbol(state.totalClouds);
+
+    // lasketaan tarvittaessa sateenolomuoto tutkaryhmän käyttämästa T ja RH kaavasta
+    if (hSade == kFloatMissing || doHSade1ZeroOnRainFix)
+    {
+      if (precipitation <= 0)
+        hSade = 0;
+      else if ((precipitation != kFloatMissing && precipitation > 0) || doHSade1ZeroOnRainFix)
+        hSade = PrecipitationHSadeFromTemperatureAndHumidity(theSourceInfo, indexes, state);
+    }
+    state.fog = 0;
+  }
+  if (hSade == kFloatMissing && state.clouds != kFloatMissing && state.totalClouds != kFloatMissing)
+    hSade = 0;  // pika fixi, en korjaa weatherandcloudiness konstruktoria, vaan korjaan
+                // parametreja tässä
+  NFmiWeatherAndCloudiness weather(state.clouds,
+                                   hSade,
+                                   state.temperature,
+                                   state.totalClouds,
+                                   state.fog,
+                                   precipitation,
+                                   destInfoVersion);  //, true);
+
+  // asetetaan vielä mahdolliset ala-, keski- ja yläpilvet
+  if (indexes.clParIndex != gMissingIndex)
+  {
+    theSourceInfo.ParamIndex(indexes.clParIndex);
+    weather.SubValue(theSourceInfo.FloatValue(), kFmiLowCloudCover);
+  }
+  if (indexes.cmParIndex != gMissingIndex)
+  {
+    theSourceInfo.ParamIndex(indexes.cmParIndex);
+    weather.SubValue(theSourceInfo.FloatValue(), kFmiMediumCloudCover);
+  }
+  if (indexes.chParIndex != gMissingIndex)
+  {
+    theSourceInfo.ParamIndex(indexes.chParIndex);
+    weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
+  }
+  return weather;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theSourceInfo Undocumented
@@ -3218,37 +3434,12 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
   {
     double destInfoVersion = theDestInfo.InfoVersion();
     NFmiWeatherAndCloudiness weather(destInfoVersion);
-    float clouds = kFloatMissing;
-    float hSade = kFloatMissing;
-    float fog = kFloatMissing;
 
-    float temperature = kFloatMissing;
-    theSourceInfo.Param(kFmiTemperature);
-    unsigned long temperatureIndex = theSourceInfo.ParamIndex();
+    // Note: these values are deliberately kept from the previous point if the parameter
+    // is not available
+    WeatherSourceState state;
 
-    float totalClouds = kFloatMissing;
-    float precipitation = kFloatMissing;
-    theSourceInfo.Param(kFmiPrecipitationRate);
-    unsigned long precipitationIndex = theSourceInfo.ParamIndex();
-    float precipitation1h = kFloatMissing;
-    theSourceInfo.Param(kFmiPrecipitation1h);
-    unsigned long precipitation1hIndex = theSourceInfo.ParamIndex();
-    float precipitation3h = kFloatMissing;
-    theSourceInfo.Param(kFmiPrecipitation3h);
-    unsigned long precipitation3hIndex = theSourceInfo.ParamIndex();
-    float precipitation6h = kFloatMissing;
-    theSourceInfo.Param(kFmiPrecipitation6h);
-    unsigned long precipitation6hIndex = theSourceInfo.ParamIndex();
-
-    theSourceInfo.Param(kFmiLowCloudCover);
-    unsigned long clParIndex = theSourceInfo.ParamIndex();
-    theSourceInfo.Param(kFmiMediumCloudCover);
-    unsigned long cmParIndex = theSourceInfo.ParamIndex();
-    theSourceInfo.Param(kFmiHighCloudCover);
-    unsigned long chParIndex = theSourceInfo.ParamIndex();
-
-    theSourceInfo.Param(kFmiHumidity);
-    unsigned long rhIndex = theSourceInfo.ParamIndex();
+    WeatherSourceIndexes indexes = GetWeatherSourceIndexes(theSourceInfo);
 
     theDestInfo.Param(kFmiWeatherAndCloudiness);
     unsigned long destWeatherAndcloudinessParIndex = theDestInfo.ParamIndex();
@@ -3265,176 +3456,41 @@ void WeatherAndCloudinessFromManyParams(NFmiFastQueryInfo &theSourceInfo,
 
     // käydään läpi infon Paramit kFmiWeatherSymbol1, kFmiCloudSymbol, kFmiFogSymbol ja
     // kFmiTotalCloudCover
-    if (theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex))
+    if (!theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex))
+      return;
+
+    for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
+         theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
     {
-      for (theSourceInfo.ResetLocation(), theDestInfo.ResetLocation();
-           theSourceInfo.NextLocation() && theDestInfo.NextLocation();)
+      for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
+           theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
       {
-        for (theSourceInfo.ResetLevel(), theDestInfo.ResetLevel();
-             theSourceInfo.NextLevel() && theDestInfo.NextLevel();)
+        theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex);
+
+        float precipitation = kFloatMissing;
+        weather = MakeWeatherAtCurrentPoint(theSourceInfo,
+                                            indexes,
+                                            state,
+                                            fAllowLessParamsWhenCreatingWeather,
+                                            destInfoVersion,
+                                            precipitation);
+
+        // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
+        if (!precipFormParamIndexVector.empty())
+          ::SetSubParamValue(
+              theSourceInfo, weather, precipFormParamIndexVector, kFmiPrecipitationForm);
+        if (!fogParamIndexVector.empty())
+          ::SetSubParamValue(theSourceInfo, weather, fogParamIndexVector, kFmiFogIntensity);
+        if (!potParamIndexVector.empty())
+          ::SetSubParamValue(
+              theSourceInfo, weather, potParamIndexVector, kFmiProbabilityThunderstorm);
+
+        theDestInfo.FloatValue(weather.TransformedFloatValue());
+
+        if (fDoaccuratePrecip && precipitation != kFloatMissing &&
+            theDestInfo.ParamIndex(destAccurePrecipParIndex))
         {
-          theDestInfo.ParamIndex(destWeatherAndcloudinessParIndex);
-          hSade = kFloatMissing;
-          // float precipDividor = 1;
-          if (theSourceInfo.Param(kFmiWeatherSymbol1))
-          {
-            hSade = theSourceInfo.FloatValue();
-            if (hSade == kFloatMissing)
-            {
-              if (theSourceInfo.Param(kFmiWeatherSymbol2))
-              {
-                hSade = theSourceInfo.FloatValue();
-              }
-            }
-          }
-
-          precipitation = kFloatMissing;
-          precipitation1h = kFloatMissing;
-          precipitation3h = kFloatMissing;
-          precipitation6h = kFloatMissing;
-          if (theSourceInfo.ParamIndex(precipitationIndex))
-          {
-            precipitation = theSourceInfo.FloatValue();
-          }
-          if (theSourceInfo.ParamIndex(precipitation1hIndex))
-          {
-            precipitation1h = theSourceInfo.FloatValue();
-          }
-          if (theSourceInfo.ParamIndex(precipitation3hIndex))
-          {
-            float tmp = theSourceInfo.FloatValue();
-            precipitation3h =
-                (tmp == kFloatMissing)
-                    ? kFloatMissing
-                    : tmp / 3.F;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
-          }
-          if (theSourceInfo.ParamIndex(precipitation6hIndex))
-          {
-            float tmp = theSourceInfo.FloatValue();
-            precipitation6h =
-                (tmp == kFloatMissing)
-                    ? kFloatMissing
-                    : tmp / 6.F;  // nykyään halutaan tuntisateita siksi jaetaan tuntien määrällä
-          }
-
-          if (precipitation1h != kFloatMissing)  // kFmiPrecipitation1h on ykkös prioriteetilla
-            precipitation = precipitation1h;
-          else if (precipitation ==
-                   kFloatMissing)  // kFmiPrecipitationRate on kakkos prioriteetilla
-          {
-            if (precipitation3h != kFloatMissing)  // 3. priority 3h sateelle
-            {
-              precipitation = precipitation3h;
-              // precipDividor = 3;
-            }
-            else if (precipitation6h != kFloatMissing)  // 4. priority 6h sateelle
-            {
-              precipitation = precipitation6h;
-              // precipDividor = 6;
-            }
-          }
-
-          if (theSourceInfo.Param(kFmiCloudSymbol))
-            clouds = theSourceInfo.FloatValue();
-          if (theSourceInfo.Param(kFmiFogSymbol))
-            fog = theSourceInfo.FloatValue();
-          if (theSourceInfo.Param(kFmiTotalCloudCover))
-            totalClouds = theSourceInfo.FloatValue();
-          if (theSourceInfo.Param(kFmiTemperature))
-            temperature = theSourceInfo.FloatValue();
-
-          bool doHSade1Fix = false;
-          if (hSade == kFloatMissing && precipitation != kFloatMissing)
-            doHSade1Fix = true;
-          bool doHSade1ZeroOnRainFix = false;
-          if (hSade == 0 && precipitation > 0)
-            doHSade1ZeroOnRainFix = true;
-
-          if (fAllowLessParamsWhenCreatingWeather || doHSade1Fix || doHSade1ZeroOnRainFix)
-          {  // nyt pitää säveltää muutamat parametrit, jos on sallittu tehdä w&C parametri
-             // vähemmistä
-            // aineksista
-            if (clouds == kFloatMissing && totalClouds != kFloatMissing)
-            {
-              const int defaultCloudType = 302;  // tämä on alapilveä pilvityyppiä 2 (kumpupilvi?)
-              if (totalClouds <= 30)
-                clouds = 1000 + defaultCloudType;
-              else if (totalClouds <= 70)
-                clouds = 2000 + defaultCloudType;
-              else
-                clouds = 3000 + defaultCloudType;
-            }
-
-            // lasketaan tarvittaessa sateenolomuoto tutkaryhmän käyttämästa T ja RH kaavasta
-            if (hSade == kFloatMissing || doHSade1ZeroOnRainFix)
-            {
-              if (precipitation <= 0)
-                hSade = 0;
-              else if ((precipitation != kFloatMissing && precipitation > 0) ||
-                       doHSade1ZeroOnRainFix)
-              {
-                hSade = 62;  // alustetaan sade vesisateeksi
-                theSourceInfo.ParamIndex(temperatureIndex);
-                temperature = theSourceInfo.FloatValue();
-                theSourceInfo.ParamIndex(rhIndex);
-                float rh = theSourceInfo.FloatValue();
-                if (temperature != kFloatMissing && rh != kFloatMissing)
-                {
-                  auto xFactor = static_cast<float>(
-                      1.0 - 1.0 / (1.0 + ::exp(22.0 - 2.7 * temperature - 0.2 * rh)));
-                  if (xFactor >= 0.8F)
-                    hSade = 72;  // 72 = lumisadetta
-                  else if (xFactor >= 0.2F && xFactor < 0.8F)
-                    hSade = 68;  // 68 = räntää
-                }
-              }
-            }
-            fog = 0;
-          }
-          if (hSade == kFloatMissing && clouds != kFloatMissing && totalClouds != kFloatMissing)
-            hSade = 0;  // pika fixi, en korjaa weatherandcloudiness konstruktoria, vaan korjaan
-                        // parametreja tässä
-          weather = NFmiWeatherAndCloudiness(clouds,
-                                             hSade,
-                                             temperature,
-                                             totalClouds,
-                                             fog,
-                                             precipitation,
-                                             destInfoVersion);  //, true);
-
-          // asetetaan vielä mahdolliset ala-, keski- ja yläpilvet
-          if (clParIndex != gMissingIndex)
-          {
-            theSourceInfo.ParamIndex(clParIndex);
-            weather.SubValue(theSourceInfo.FloatValue(), kFmiLowCloudCover);
-          }
-          if (cmParIndex != gMissingIndex)
-          {
-            theSourceInfo.ParamIndex(cmParIndex);
-            weather.SubValue(theSourceInfo.FloatValue(), kFmiMediumCloudCover);
-          }
-          if (chParIndex != gMissingIndex)
-          {
-            theSourceInfo.ParamIndex(chParIndex);
-            weather.SubValue(theSourceInfo.FloatValue(), kFmiHighCloudCover);
-          }
-          // tässä on optimoitu mahd. sateen olomuoto arvojen hakua
-          if (!precipFormParamIndexVector.empty())
-            ::SetSubParamValue(
-                theSourceInfo, weather, precipFormParamIndexVector, kFmiPrecipitationForm);
-          if (!fogParamIndexVector.empty())
-            ::SetSubParamValue(theSourceInfo, weather, fogParamIndexVector, kFmiFogIntensity);
-          if (!potParamIndexVector.empty())
-            ::SetSubParamValue(
-                theSourceInfo, weather, potParamIndexVector, kFmiProbabilityThunderstorm);
-
-          theDestInfo.FloatValue(weather.TransformedFloatValue());
-
-          if (fDoaccuratePrecip && precipitation != kFloatMissing &&
-              theDestInfo.ParamIndex(destAccurePrecipParIndex))
-          {
-            theDestInfo.FloatValue(precipitation);
-          }
+          theDestInfo.FloatValue(precipitation);
         }
       }
     }
