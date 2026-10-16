@@ -925,6 +925,36 @@ NFmiIndexMask MaskOutside(const NFmiGrid& theGrid, const NFmiSvgPath& thePath)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Decide from the previous point whether the distance must be recalculated
+ *
+ * If the point is known to be within the expanded area it is inserted into the mask.
+ */
+// ----------------------------------------------------------------------
+
+namespace
+{
+bool expand_needs_recalculation(NFmiIndexMask& mask,
+                                unsigned long idx,
+                                double distance,
+                                double lastDistance,
+                                bool lastInside,
+                                double theDistance)
+{
+  if (lastInside)
+  {
+    if (distance < lastDistance + theDistance * 1000)
+    {
+      mask.insert(idx);
+      return false;
+    }
+    return true;
+  }
+  return (distance >= lastDistance - theDistance * 1000);
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return area inside the path plus surrounding area
  *
  * If the path is empty, so is the mask
@@ -996,21 +1026,8 @@ NFmiIndexMask MaskExpand(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, do
         bool recalculate = true;
 
         if (lastPointOn)
-        {
-          double distance = xy.Distance(lastPoint);
-          if (lastInside)
-          {
-            if (distance < lastDistance + theDistance * 1000)
-            {
-              recalculate = false;
-              mask.insert(idx);
-            }
-          }
-          else
-          {
-            recalculate = (distance >= lastDistance - theDistance * 1000);
-          }
-        }
+          recalculate = expand_needs_recalculation(
+              mask, idx, xy.Distance(lastPoint), lastDistance, lastInside, theDistance);
 
         if (recalculate)
         {
