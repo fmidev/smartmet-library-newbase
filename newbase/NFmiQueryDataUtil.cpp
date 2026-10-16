@@ -5826,6 +5826,84 @@ NFmiQueryData *NFmiQueryDataUtil::CombineAcceptedTimeStepQueryData(
 
 namespace
 {
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish the source time indexes of the target times. -1 implies time is not
+ *        available. If theTimeInterpolation is given, it is set to true for target times
+ *        that must be interpolated from the source.
+ */
+// ----------------------------------------------------------------------
+
+void CalcTimeIndexes(NFmiFastQueryInfo &theSourceInfo,
+                     NFmiFastQueryInfo &theTargetInfo,
+                     unsigned long theStartTimeIndex,
+                     unsigned long theEndTimeIndex,
+                     std::vector<long> &theTimeIndexes,
+                     std::vector<bool> *theTimeInterpolation)
+{
+  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  {
+    if (theTargetInfo.TimeIndex(i))
+    {
+      if (theSourceInfo.Time(theTargetInfo.Time()))
+        theTimeIndexes[i] = theSourceInfo.TimeIndex();
+      else if (theTimeInterpolation)
+        (*theTimeInterpolation)[i] = theSourceInfo.IsInside(theTargetInfo.Time());
+    }
+  }
+}
+
+// Copy the values of the current location and level for all times found from the source
+void CopyTimeValues(NFmiFastQueryInfo &theSourceInfo,
+                    NFmiFastQueryInfo &theTargetInfo,
+                    const std::vector<long> &timeindexes,
+                    unsigned long theStartTimeIndex,
+                    unsigned long theEndTimeIndex)
+{
+  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  {
+    if (timeindexes[i] >= 0)
+    {
+      theTargetInfo.TimeIndex(i);
+      theSourceInfo.TimeIndex(timeindexes[i]);
+      theTargetInfo.FloatValue(theSourceInfo.FloatValue());
+    }
+  }
+}
+
+// Fill the values of the current location and level for all times, interpolating in time
+// when needed
+void FillTimeValuesWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
+                                         NFmiFastQueryInfo &theTargetInfo,
+                                         const std::vector<NFmiTimeCache> &theTimeCacheVector,
+                                         const std::vector<long> &timeindexes,
+                                         const std::vector<bool> &timeinterpolation,
+                                         unsigned long theStartTimeIndex,
+                                         unsigned long theEndTimeIndex)
+{
+  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  {
+    if (!theTargetInfo.TimeIndex(i))
+      continue;
+
+    if (!timeinterpolation[i])
+    {
+      if (timeindexes[i] >= 0)
+      {
+        theSourceInfo.TimeIndex(timeindexes[i]);
+        auto value = theSourceInfo.FloatValue();
+        theTargetInfo.FloatValue(value);
+      }
+    }
+    else
+    {
+      const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+      auto value = theSourceInfo.CachedInterpolation(timeCache);
+      theTargetInfo.FloatValue(value);
+    }
+  }
+}
+
 void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
                                              NFmiFastQueryInfo &theTargetInfo,
                                              unsigned long theStartTimeIndex,
@@ -5851,17 +5929,8 @@ void FillGridDataWithoutInterpolation(NFmiFastQueryInfo &theSourceInfo,
           for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
             if (theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-              {
-                if (timeindexes[i] >= 0)
-                {
-                  theTargetInfo.TimeIndex(i);
-                  theSourceInfo.TimeIndex(timeindexes[i]);
-                  theTargetInfo.FloatValue(theSourceInfo.FloatValue());
-                }
-              }
-            }
+              CopyTimeValues(
+                  theSourceInfo, theTargetInfo, timeindexes, theStartTimeIndex, theEndTimeIndex);
           }
         }
       }
@@ -5884,17 +5953,12 @@ void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
     // Establish output timeindexes up front for speed. -1 implies time is not available
     std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
     std::vector<bool> timeinterpolation(theEndTimeIndex + 1, false);
-
-    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-    {
-      if (theTargetInfo.TimeIndex(i))
-      {
-        if (theSourceInfo.Time(theTargetInfo.Time()))
-          timeindexes[i] = theSourceInfo.TimeIndex();
-        else
-          timeinterpolation[i] = theSourceInfo.IsInside(theTargetInfo.Time());
-      }
-    }
+    CalcTimeIndexes(theSourceInfo,
+                    theTargetInfo,
+                    theStartTimeIndex,
+                    theEndTimeIndex,
+                    timeindexes,
+                    &timeinterpolation);
 
     for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
     {
@@ -5905,29 +5969,13 @@ void FillGridDataWithTimeInterpolation(NFmiFastQueryInfo &theSourceInfo,
           for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
             if (theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-              {
-                if (!theTargetInfo.TimeIndex(i))
-                  continue;
-
-                if (!timeinterpolation[i])
-                {
-                  if (timeindexes[i] >= 0)
-                  {
-                    theSourceInfo.TimeIndex(timeindexes[i]);
-                    auto value = theSourceInfo.FloatValue();
-                    theTargetInfo.FloatValue(value);
-                  }
-                }
-                else
-                {
-                  const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-                  auto value = theSourceInfo.CachedInterpolation(timeCache);
-                  theTargetInfo.FloatValue(value);
-                }
-              }
-            }
+              FillTimeValuesWithTimeInterpolation(theSourceInfo,
+                                                  theTargetInfo,
+                                                  theTimeCacheVector,
+                                                  timeindexes,
+                                                  timeinterpolation,
+                                                  theStartTimeIndex,
+                                                  theEndTimeIndex);
           }
         }
       }
@@ -5948,6 +5996,101 @@ struct IndexMapping
 
 namespace
 {
+// ----------------------------------------------------------------------
+/*!
+ * \brief Build the target to source location mapping sorted based on source data grid ordering
+ */
+// ----------------------------------------------------------------------
+
+std::vector<IndexMapping> MakeSortedIndexMappings(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix)
+{
+  const auto targetXSize = theTargetInfo.GridXNumber();
+
+  std::vector<IndexMapping> index_mappings;
+
+  theSourceInfo.First();
+  theTargetInfo.First();
+  for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+  {
+    const auto target_idx = theTargetInfo.LocationIndex();
+
+    const auto &locCache =
+        theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
+
+    const auto source_idx = locCache.itsLocationIndex;
+    IndexMapping idxmap{source_idx, target_idx};
+    index_mappings.push_back(std::move(idxmap));
+  }
+
+  // Sort based on source data grid ordering
+
+  std::sort(index_mappings.begin(),
+            index_mappings.end(),
+            [](const IndexMapping &lhs, const IndexMapping &rhs)
+            { return lhs.source < rhs.source; });
+  return index_mappings;
+}
+
+// Fill the values of the current location and level for all times found from the source,
+// interpolating in space
+void FillTimeValuesWithLocationInterpolation(NFmiFastQueryInfo &theSourceInfo,
+                                             NFmiFastQueryInfo &theTargetInfo,
+                                             const NFmiLocationCache &locCache,
+                                             const std::vector<long> &timeindexes,
+                                             unsigned long theStartTimeIndex,
+                                             unsigned long theEndTimeIndex)
+{
+  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  {
+    if (!theTargetInfo.TimeIndex(i) || timeindexes[i] < 0)
+      continue;
+
+    theSourceInfo.TimeIndex(timeindexes[i]);
+    auto value = theSourceInfo.CachedInterpolation(locCache);
+    theTargetInfo.FloatValue(value);
+  }
+}
+
+// Fill the values of the current location and level for all times, interpolating in space
+// and in time when needed
+void FillTimeValuesWithTimeAndLocationInterpolation(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    const NFmiLocationCache &locCache,
+    const std::vector<NFmiTimeCache> &theTimeCacheVector,
+    const std::vector<long> &timeindexes,
+    const std::vector<bool> &timeinterpolation,
+    unsigned long theStartTimeIndex,
+    unsigned long theEndTimeIndex)
+{
+  for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
+  {
+    if (!theTargetInfo.TimeIndex(i))
+      continue;
+
+    if (!timeinterpolation[i])
+    {
+      // location interpolation but no time interpolation
+      if (timeindexes[i] >= 0)
+      {
+        theSourceInfo.TimeIndex(timeindexes[i]);
+        auto value = theSourceInfo.CachedInterpolation(locCache);
+        theTargetInfo.FloatValue(value);
+      }
+    }
+    else
+    {
+      // location and time interpolation
+      const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
+      auto value = theSourceInfo.CachedInterpolation(locCache, timeCache);
+      theTargetInfo.FloatValue(value);
+    }
+  }
+}
+
 void FillGridDataWithLocationInterpolation(
     NFmiFastQueryInfo &theSourceInfo,
     NFmiFastQueryInfo &theTargetInfo,
@@ -5959,15 +6102,8 @@ void FillGridDataWithLocationInterpolation(
   {
     // Establish output timeindexes up front for speed. -1 implies time is not available
     std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
-
-    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-    {
-      if (theTargetInfo.TimeIndex(i))
-      {
-        if (theSourceInfo.Time(theTargetInfo.Time()))
-          timeindexes[i] = theSourceInfo.TimeIndex();
-      }
-    }
+    CalcTimeIndexes(
+        theSourceInfo, theTargetInfo, theStartTimeIndex, theEndTimeIndex, timeindexes, nullptr);
 
     const auto targetXSize = theTargetInfo.GridXNumber();
 
@@ -5975,29 +6111,9 @@ void FillGridDataWithLocationInterpolation(
     // and memory mapped. Split processing based on parameter, their respecive data is in continous
     // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
-    // Build the location to location mapping
-    std::vector<IndexMapping> index_mappings;
-
-    theSourceInfo.First();
-    theTargetInfo.First();
-    for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
-    {
-      const auto target_idx = theTargetInfo.LocationIndex();
-
-      const auto &locCache =
-          theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
-
-      const auto source_idx = locCache.itsLocationIndex;
-      IndexMapping idxmap{source_idx, target_idx};
-      index_mappings.push_back(std::move(idxmap));
-    }
-
-    // Sort based on source data grid ordering
-
-    std::sort(index_mappings.begin(),
-              index_mappings.end(),
-              [](const IndexMapping &lhs, const IndexMapping &rhs)
-              { return lhs.source < rhs.source; });
+    // Build the location to location mapping sorted based on source data grid ordering
+    std::vector<IndexMapping> index_mappings =
+        MakeSortedIndexMappings(theSourceInfo, theTargetInfo, theLocationCacheMatrix);
 
     // Then process each param, location, level and time
 
@@ -6016,17 +6132,12 @@ void FillGridDataWithLocationInterpolation(
           for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
             if (theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-              {
-                if (!theTargetInfo.TimeIndex(i) || timeindexes[i] < 0)
-                  continue;
-
-                theSourceInfo.TimeIndex(timeindexes[i]);
-                auto value = theSourceInfo.CachedInterpolation(locCache);
-                theTargetInfo.FloatValue(value);
-              }
-            }
+              FillTimeValuesWithLocationInterpolation(theSourceInfo,
+                                                      theTargetInfo,
+                                                      locCache,
+                                                      timeindexes,
+                                                      theStartTimeIndex,
+                                                      theEndTimeIndex);
           }
         }
       }
@@ -6051,17 +6162,12 @@ void FillGridDataWithTimeAndLocationInterpolation(
     // Establish output timeindexes up front for speed. -1 implies time is not available
     std::vector<long> timeindexes(theEndTimeIndex + 1, -1);
     std::vector<bool> timeinterpolation(theEndTimeIndex + 1, false);
-
-    for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-    {
-      if (theTargetInfo.TimeIndex(i))
-      {
-        if (theSourceInfo.Time(theTargetInfo.Time()))
-          timeindexes[i] = theSourceInfo.TimeIndex();
-        else
-          timeinterpolation[i] = theSourceInfo.IsInside(theTargetInfo.Time());
-      }
-    }
+    CalcTimeIndexes(theSourceInfo,
+                    theTargetInfo,
+                    theStartTimeIndex,
+                    theEndTimeIndex,
+                    timeindexes,
+                    &timeinterpolation);
 
     const auto targetXSize = theTargetInfo.GridXNumber();
 
@@ -6069,29 +6175,9 @@ void FillGridDataWithTimeAndLocationInterpolation(
     // and memory mapped. Split processing based on parameter, their respecive data is in continous
     // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
-    // Build the location to location mapping
-    std::vector<IndexMapping> index_mappings;
-
-    theSourceInfo.First();
-    theTargetInfo.First();
-    for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
-    {
-      const auto target_idx = theTargetInfo.LocationIndex();
-
-      const auto &locCache =
-          theLocationCacheMatrix[target_idx % targetXSize][target_idx / targetXSize];
-
-      const auto source_idx = locCache.itsLocationIndex;
-      IndexMapping idxmap{source_idx, target_idx};
-      index_mappings.push_back(std::move(idxmap));
-    }
-
-    // Sort based on source data grid ordering
-
-    std::sort(index_mappings.begin(),
-              index_mappings.end(),
-              [](const IndexMapping &lhs, const IndexMapping &rhs)
-              { return lhs.source < rhs.source; });
+    // Build the location to location mapping sorted based on source data grid ordering
+    std::vector<IndexMapping> index_mappings =
+        MakeSortedIndexMappings(theSourceInfo, theTargetInfo, theLocationCacheMatrix);
 
     // Then process each param, location, level and time
 
@@ -6110,31 +6196,14 @@ void FillGridDataWithTimeAndLocationInterpolation(
           for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
           {
             if (theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              for (unsigned long i = theStartTimeIndex; i <= theEndTimeIndex; i++)
-              {
-                if (!theTargetInfo.TimeIndex(i))
-                  continue;
-
-                if (!timeinterpolation[i])
-                {
-                  // location interpolation but no time interpolation
-                  if (timeindexes[i] >= 0)
-                  {
-                    theSourceInfo.TimeIndex(timeindexes[i]);
-                    auto value = theSourceInfo.CachedInterpolation(locCache);
-                    theTargetInfo.FloatValue(value);
-                  }
-                }
-                else
-                {
-                  // location and time interpolation
-                  const auto &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-                  auto value = theSourceInfo.CachedInterpolation(locCache, timeCache);
-                  theTargetInfo.FloatValue(value);
-                }
-              }
-            }
+              FillTimeValuesWithTimeAndLocationInterpolation(theSourceInfo,
+                                                             theTargetInfo,
+                                                             locCache,
+                                                             theTimeCacheVector,
+                                                             timeindexes,
+                                                             timeinterpolation,
+                                                             theStartTimeIndex,
+                                                             theEndTimeIndex);
           }
         }
       }
