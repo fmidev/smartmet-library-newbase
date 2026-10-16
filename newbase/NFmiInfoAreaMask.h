@@ -861,6 +861,13 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
                                            const NFmiMetTime &theInterpolationTime,
                                            bool useInterpolatedTime);
   double DoObservationAreaMaskCalculations(const NFmiCalculationParams &theCalculationParams);
+  void DoObservationTimeLoopCalculations(
+      const std::shared_ptr<NFmiFastQueryInfo> &info,
+      NFmiCalculationParams &simpleConditionCalculationPointParams,
+      unsigned long startTimeIndex,
+      unsigned long endTimeIndex,
+      bool allowTimeInterpolation,
+      const NFmiMetTime &interpolationTime);
   double CalcAreaProbability() const;
   float CalculationPointValueForObservation(const std::shared_ptr<NFmiFastQueryInfo> &info);
 

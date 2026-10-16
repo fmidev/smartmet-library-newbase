@@ -4029,6 +4029,39 @@ bool IsSynopDataCase(const std::shared_ptr<NFmiFastQueryInfo> &info)
 }
 }  // namespace
 
+// Do the probability calculations for all the times of the current observation location
+void NFmiInfoAreaMaskProbFunc::DoObservationTimeLoopCalculations(
+    const std::shared_ptr<NFmiFastQueryInfo> &info,
+    NFmiCalculationParams &simpleConditionCalculationPointParams,
+    unsigned long startTimeIndex,
+    unsigned long endTimeIndex,
+    bool allowTimeInterpolation,
+    const NFmiMetTime &interpolationTime)
+{
+  for (unsigned long timeIndex = startTimeIndex; timeIndex <= endTimeIndex; timeIndex++)
+  {
+    info->TimeIndex(timeIndex);
+    ::SetSimpleConditionCalculationTime(simpleConditionCalculationPointParams,
+                                        allowTimeInterpolation,
+                                        interpolationTime,
+                                        info);
+    if (simpleConditionCalculationPointParams.UsedLatlon() != NFmiPoint::gMissingLatlon)
+    {
+      float value = CalculationPointValueForObservation(info);
+      if (value != kFloatMissing)
+      {
+        // Jos kyse prob laskuista, joissa käytetään simple-condition ehtoa,
+        // laskuria pitää kasvattaa tässä, en ole varma sotkeeko tämä jotain muuta tapausta.
+        // value != missing on huono tarkastus, koska simple-condition laskuissa voi olla
+        // muita parametreja käytössä, mutta en tiedä mitä muuta tässä voisi tarkastella.
+        itsTotalCalculatedGridPoints++;
+      }
+      if (SimpleConditionCheck(simpleConditionCalculationPointParams))
+        DoIntegrationCalculations(value);
+    }
+  }
+}
+
 double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
     const NFmiCalculationParams &theCalculationParams)
 {
@@ -4067,28 +4100,12 @@ double NFmiInfoAreaMaskProbFunc::DoObservationAreaMaskCalculations(
         // Jos tarvitaan simple-condition laskuja, pitää niitä varten olla paikka tallessa
         simpleConditionCalculationPointParams.SetModifiedLatlon(info->LatLon(), true);
 
-        for (unsigned long timeIndex = startTimeIndex; timeIndex <= endTimeIndex; timeIndex++)
-        {
-          info->TimeIndex(timeIndex);
-          ::SetSimpleConditionCalculationTime(simpleConditionCalculationPointParams,
-                                              allowTimeInterpolation,
-                                              interpolationTime,
-                                              info);
-          if (simpleConditionCalculationPointParams.UsedLatlon() != NFmiPoint::gMissingLatlon)
-          {
-            float value = CalculationPointValueForObservation(info);
-            if (value != kFloatMissing)
-            {
-              // Jos kyse prob laskuista, joissa käytetään simple-condition ehtoa,
-              // laskuria pitää kasvattaa tässä, en ole varma sotkeeko tämä jotain muuta tapausta.
-              // value != missing on huono tarkastus, koska simple-condition laskuissa voi olla
-              // muita parametreja käytössä, mutta en tiedä mitä muuta tässä voisi tarkastella.
-              itsTotalCalculatedGridPoints++;
-            }
-            if (SimpleConditionCheck(simpleConditionCalculationPointParams))
-              DoIntegrationCalculations(value);
-          }
-        }
+        DoObservationTimeLoopCalculations(info,
+                                          simpleConditionCalculationPointParams,
+                                          startTimeIndex,
+                                          endTimeIndex,
+                                          allowTimeInterpolation,
+                                          interpolationTime);
         if (NFmiInfoAreaMaskProbFunc::CheckTimeIndicesForLoopBreak(startTimeIndex, endTimeIndex))
           break;
       }
