@@ -1052,6 +1052,152 @@ bool NFmiTime::IsNight(const NFmiLocation& theLocation, unsigned short theResolu
 }
 
 // ======================================================================
+namespace
+{
+// Lower case copy of the string
+NFmiString LowerCased(NFmiString theString)
+{
+  theString.LowerCase();
+  return theString;
+}
+
+// Upper case copy of the string
+NFmiString UpperCased(NFmiString theString)
+{
+  theString.UpperCase();
+  return theString;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Append the value of a four character format code such as YYYY
+ *
+ * \param thePlusInd Incremented by the extra characters used by relative day codes
+ * \return False if the code is not a four character code
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiTime::AppendFourCharTimeCode(const NFmiString &theTimeCode,
+                                      int ind,
+                                      FmiLanguage theLanguage,
+                                      NFmiString &theString,
+                                      int &thePlusInd) const
+{
+  NFmiString str4 = theTimeCode.GetChars(ind, 4);
+  if (str4 == NFmiString("YYYY") || str4 == NFmiString("yyyy"))
+    theString += NFmiValueString(GetYear(), "%04d");
+  else if (str4 == NFmiString("Wwww"))
+    theString += Weekday(theLanguage);
+  else if (str4 == NFmiString("wwww"))
+    theString += LowerCased(Weekday(theLanguage));
+  else if (str4 == NFmiString("WWWW"))
+    theString += UpperCased(Weekday(theLanguage));
+  else if (str4 == NFmiString("Nnnn"))
+    theString += MonthName(theLanguage);
+  else if (str4 == NFmiString("nnnn"))
+    theString += LowerCased(MonthName(theLanguage));
+  else if (str4 == NFmiString("NNNN"))
+    theString += UpperCased(MonthName(theLanguage));
+  else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") || str4 == NFmiString("TTTT"))
+  {
+    int subPlusInd = 0;
+    NFmiString str6 = theTimeCode.GetChars(ind, 6);
+    theString += RelativeDay(theLanguage, str6, subPlusInd);
+    thePlusInd += subPlusInd;
+  }
+  else
+    return false;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Append the value of a three character format code such as Nnn
+ *
+ * \return False if the code is not a three character code
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiTime::AppendThreeCharTimeCode(const NFmiString &str3,
+                                       FmiLanguage theLanguage,
+                                       NFmiString &theString) const
+{
+  if (str3 == NFmiString("Nnn"))
+    theString += MonthName(theLanguage).GetChars(1, 3);
+  else if (str3 == NFmiString("nnn"))
+    theString += LowerCased(MonthName(theLanguage).GetChars(1, 3));
+  else if (str3 == NFmiString("NNN"))
+    theString += UpperCased(MonthName(theLanguage).GetChars(1, 3));
+  else if (str3 == NFmiString("Www"))
+    theString += Weekday(theLanguage).GetChars(1, 3);
+  else if (str3 == NFmiString("www"))
+    theString += LowerCased(Weekday(theLanguage).GetChars(1, 3));
+  else if (str3 == NFmiString("WWW"))
+    theString += UpperCased(Weekday(theLanguage).GetChars(1, 3));
+  else
+    return false;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Append the value of a two character format code such as YY
+ *
+ * \return False if the code is not a two character code
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiTime::AppendTwoCharTimeCode(const NFmiString &str2,
+                                     FmiLanguage theLanguage,
+                                     NFmiString &theString) const
+{
+  if (str2 == NFmiString("YY") || str2 == NFmiString("yy"))
+    theString += NFmiValueString(GetYear(), "%02d").GetChars(3, 2);
+  else if (str2 == NFmiString("MM"))
+    theString += NFmiValueString(GetMonth(), "%02d");
+  else if (str2 == NFmiString("DD") || str2 == NFmiString("dd"))
+    theString += NFmiValueString(GetDay(), "%02d");
+  else if (str2 == NFmiString("HH") || str2 == NFmiString("hh"))
+    theString += NFmiValueString(GetHour(), "%02d");
+  else if (str2 == NFmiString("mm"))
+    theString += NFmiValueString(GetMin(), "%02d");
+  else if (str2 == NFmiString("SS"))
+    theString += NFmiValueString(GetSec(), "%02d");
+  else if (str2 == NFmiString("Ww"))
+    theString += Weekday(theLanguage).GetChars(1, 2);
+  else if (str2 == NFmiString("ww"))
+    theString += LowerCased(Weekday(theLanguage).GetChars(1, 2));
+  else if (str2 == NFmiString("WW"))
+    theString += UpperCased(Weekday(theLanguage).GetChars(1, 2));
+  else if (str2 == NFmiString("kk"))
+    theString += atNotation[theLanguage - 1];
+  else
+    return false;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Append the value of a one character format code such as M, or the character itself
+ */
+// ----------------------------------------------------------------------
+
+void NFmiTime::AppendOneCharTimeCode(const NFmiString &str1, NFmiString &theString) const
+{
+  if (str1 == NFmiString("M"))
+    theString += NFmiValueString(GetMonth(), "%d");
+  else if (str1 == NFmiString("D"))
+    theString += NFmiValueString(GetDay(), "%d");
+  else if (str1 == NFmiString("H"))
+    theString += NFmiValueString(GetHour(), "%d");
+  else if (str1 == NFmiString("I"))
+    theString += NFmiValueString(GetWeekday(), "%01d");
+  else
+    theString += str1;
+  // pitÃ¤isi ottaa ruotsista pÃ¤ivÃ¤n jÃ¤lkeinen piste pois
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Generates a time string also containing other arbitrary text fragments
@@ -1114,15 +1260,9 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
     bool noConversion = false;
     int ind = 1;
     int len = theTimeCode.GetLen();
-    NFmiString str6;
-    NFmiString str4;
-    NFmiString str3;
-    NFmiString str2;
     NFmiString str1;
-    NFmiString strh;
     NFmiValueString theString;
     int plusInd = 0;
-    int subPlusInd = 0;
 
     while (ind <= len)
     {
@@ -1150,123 +1290,18 @@ const NFmiString NFmiTime::ToStr(const NFmiString theTimeCode, const FmiLanguage
         continue;
       }
 
-      str4 = theTimeCode.GetChars(ind, 4);
+      // Try the longest matching format code first
       plusInd = 4;
-      if (str4 == NFmiString("YYYY") || str4 == NFmiString("yyyy"))
-        theString += NFmiValueString(GetYear(), "%04d");
-      else if (str4 == NFmiString("Wwww"))
-        theString += Weekday(theLanguage);
-      else if (str4 == NFmiString("wwww"))
+      if (!AppendFourCharTimeCode(theTimeCode, ind, theLanguage, theString, plusInd))
       {
-        strh = Weekday(theLanguage);
-        strh.LowerCase();
-        theString += strh;
-      }
-      else if (str4 == NFmiString("WWWW"))
-      {
-        strh = Weekday(theLanguage);
-        strh.UpperCase();
-        theString += strh;
-      }
-      else if (str4 == NFmiString("Nnnn"))
-        theString += MonthName(theLanguage);
-      else if (str4 == NFmiString("nnnn"))
-      {
-        strh = MonthName(theLanguage);
-        strh.LowerCase();
-        theString += strh;
-      }
-      else if (str4 == NFmiString("NNNN"))
-      {
-        strh = MonthName(theLanguage);
-        strh.UpperCase();
-        theString += strh;
-      }
-      else if (str4 == NFmiString("Tttt") || str4 == NFmiString("tttt") ||
-               str4 == NFmiString("TTTT"))
-      {
-        str6 = theTimeCode.GetChars(ind, 6);
-        theString += RelativeDay(theLanguage, str6, subPlusInd);
-        plusInd += subPlusInd;
-      }
-      else
-      {
-        str3 = theTimeCode.GetChars(ind, 3);
-        plusInd += -1;
-        if (str3 == NFmiString("Nnn"))
-          theString += MonthName(theLanguage).GetChars(1, 3);
-        else if (str3 == NFmiString("nnn"))
+        plusInd = 3;
+        if (!AppendThreeCharTimeCode(theTimeCode.GetChars(ind, 3), theLanguage, theString))
         {
-          strh = MonthName(theLanguage).GetChars(1, 3);
-          strh.LowerCase();
-          theString += strh;
-        }
-        else if (str3 == NFmiString("NNN"))
-        {
-          strh = MonthName(theLanguage).GetChars(1, 3);
-          strh.UpperCase();
-          theString += strh;
-        }
-        else if (str3 == NFmiString("Www"))
-          theString += Weekday(theLanguage).GetChars(1, 3);
-        else if (str3 == NFmiString("www"))
-        {
-          strh = Weekday(theLanguage).GetChars(1, 3);
-          strh.LowerCase();
-          theString += strh;
-        }
-        else if (str3 == NFmiString("WWW"))
-        {
-          strh = Weekday(theLanguage).GetChars(1, 3);
-          strh.UpperCase();
-          theString += strh;
-        }
-        else
-        {
-          str2 = theTimeCode.GetChars(ind, 2);
-          plusInd += -1;
-          if (str2 == NFmiString("YY") || str2 == NFmiString("yy"))
-            theString += NFmiValueString(GetYear(), "%02d").GetChars(3, 2);
-          else if (str2 == NFmiString("MM"))
-            theString += NFmiValueString(GetMonth(), "%02d");
-          else if (str2 == NFmiString("DD") || str2 == NFmiString("dd"))
-            theString += NFmiValueString(GetDay(), "%02d");
-          else if (str2 == NFmiString("HH") || str2 == NFmiString("hh"))
-            theString += NFmiValueString(GetHour(), "%02d");
-          else if (str2 == NFmiString("mm"))
-            theString += NFmiValueString(GetMin(), "%02d");
-          else if (str2 == NFmiString("SS"))
-            theString += NFmiValueString(GetSec(), "%02d");
-          else if (str2 == NFmiString("Ww"))
-            theString += Weekday(theLanguage).GetChars(1, 2);
-          else if (str2 == NFmiString("ww"))
+          plusInd = 2;
+          if (!AppendTwoCharTimeCode(theTimeCode.GetChars(ind, 2), theLanguage, theString))
           {
-            strh = Weekday(theLanguage).GetChars(1, 2);
-            strh.LowerCase();
-            theString += strh;
-          }
-          else if (str2 == NFmiString("WW"))
-          {
-            strh = Weekday(theLanguage).GetChars(1, 2);
-            strh.UpperCase();
-            theString += strh;
-          }
-          else if (str2 == NFmiString("kk"))
-            theString += atNotation[theLanguage - 1];
-          else
-          {
-            plusInd += -1;
-            if (str1 == NFmiString("M"))
-              theString += NFmiValueString(GetMonth(), "%d");
-            else if (str1 == NFmiString("D"))
-              theString += NFmiValueString(GetDay(), "%d");
-            else if (str1 == NFmiString("H"))
-              theString += NFmiValueString(GetHour(), "%d");
-            else if (str1 == NFmiString("I"))
-              theString += NFmiValueString(GetWeekday(), "%01d");
-            else
-              theString += str1;
-            // pitÃ¤isi ottaa ruotsista pÃ¤ivÃ¤n jÃ¤lkeinen piste pois
+            plusInd = 1;
+            AppendOneCharTimeCode(str1, theString);
           }
         }
       }

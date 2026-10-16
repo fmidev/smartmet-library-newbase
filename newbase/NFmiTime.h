@@ -114,6 +114,19 @@ class NFmiTime : public NFmiStaticTime
   static std::string GetDictionaryString(const char *theMagicWord);
 
  private:
+  bool AppendFourCharTimeCode(const NFmiString &theTimeCode,
+                              int ind,
+                              FmiLanguage theLanguage,
+                              NFmiString &theString,
+                              int &thePlusInd) const;
+  bool AppendThreeCharTimeCode(const NFmiString &str3,
+                               FmiLanguage theLanguage,
+                               NFmiString &theString) const;
+  bool AppendTwoCharTimeCode(const NFmiString &str2,
+                             FmiLanguage theLanguage,
+                             NFmiString &theString) const;
+  void AppendOneCharTimeCode(const NFmiString &str1, NFmiString &theString) const;
+
   short itsZoneDifferenceHour;
 
 };  // class NFmiTime
