@@ -2575,6 +2575,35 @@ NFmiTimeDescriptor MakeWantedTimeDescriptor(const NFmiTimeDescriptor &theTimeDes
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// Copy the values of the current time from source 1, or from source 2 if missing
+void CopyFirstNonMissingValues(NFmiFastQueryInfo& destInfo,
+                               NFmiFastQueryInfo& theSourceInfo1,
+                               NFmiFastQueryInfo& theSourceInfo2,
+                               bool useInfo1,
+                               bool useInfo2)
+{
+  for (destInfo.ResetParam(), theSourceInfo1.ResetParam(), theSourceInfo2.ResetParam();
+       destInfo.NextParam() && theSourceInfo1.NextParam() && theSourceInfo2.NextParam();)
+  {
+    for (destInfo.ResetLocation(), theSourceInfo1.ResetLocation(), theSourceInfo2.ResetLocation();
+         destInfo.NextLocation() && theSourceInfo1.NextLocation() && theSourceInfo2.NextLocation();)
+    {
+      for (destInfo.ResetLevel(), theSourceInfo1.ResetLevel(), theSourceInfo2.ResetLevel();
+           destInfo.NextLevel() && theSourceInfo1.NextLevel() && theSourceInfo2.NextLevel();)
+      {
+        float value = kFloatMissing;
+        if (useInfo1)
+          value = theSourceInfo1.FloatValue();
+
+        if (value == kFloatMissing && useInfo2)
+          value = theSourceInfo2.FloatValue();
+
+        destInfo.FloatValue(value);
+      }
+    }
+  }
+}
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -2663,30 +2692,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineTimes(NFmiFastQueryInfo &theSourceInfo1
           if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
             continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-          for (destInfo.ResetParam(), theSourceInfo1.ResetParam(), theSourceInfo2.ResetParam();
-               destInfo.NextParam() && theSourceInfo1.NextParam() && theSourceInfo2.NextParam();)
-          {
-            for (destInfo.ResetLocation(),
-                 theSourceInfo1.ResetLocation(),
-                 theSourceInfo2.ResetLocation();
-                 destInfo.NextLocation() && theSourceInfo1.NextLocation() &&
-                 theSourceInfo2.NextLocation();)
-            {
-              for (destInfo.ResetLevel(), theSourceInfo1.ResetLevel(), theSourceInfo2.ResetLevel();
-                   destInfo.NextLevel() && theSourceInfo1.NextLevel() &&
-                   theSourceInfo2.NextLevel();)
-              {
-                float value = kFloatMissing;
-                if (useInfo1)
-                  value = theSourceInfo1.FloatValue();
-
-                if (value == kFloatMissing && useInfo2)
-                  value = theSourceInfo2.FloatValue();
-
-                destInfo.FloatValue(value);
-              }
-            }
-          }
+          CopyFirstNonMissingValues(destInfo, theSourceInfo1, theSourceInfo2, useInfo1, useInfo2);
         }
       }
     }
