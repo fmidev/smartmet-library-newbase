@@ -2679,7 +2679,73 @@ bool IsInsideLimits(float low, float high, float value)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+// Update the index of the level closest to the given limit unless an exact level has been found
+void UpdateClosestLevel(float theLimit,
+                        float theLevelValue,
+                        unsigned long theLevelIndex,
+                        float &theMinDiff,
+                        unsigned long &theClosestLevelIndex)
+{
+  if (theMinDiff > 0)  // ei ole vielä löytynyt tarkkaa leveliä
+  {
+    float currentDiff = ::fabs(theLimit - theLevelValue);
+    if (currentDiff < theMinDiff)
+    {
+      theMinDiff = currentDiff;
+      theClosestLevelIndex = theLevelIndex;
+    }
+  }
+}
 }  // namespace
+
+// Search the model level index range for the level value limits
+void NFmiInfoAreaMaskVertFunc::SearchModelLevels()
+{
+  itsInfo->LastLevel();
+  float lastExistingLevelValue = itsInfo->Level()->LevelValue();
+
+  itsInfo->FirstLevel();
+  float firstExistingLevelValue = itsInfo->Level()->LevelValue();
+
+  if (firstExistingLevelValue > lastExistingLevelValue)
+    std::swap(firstExistingLevelValue, lastExistingLevelValue);
+
+  if (itsStartLevelValue > itsEndLevelValue)
+    std::swap(itsStartLevelValue, itsEndLevelValue);
+
+  itsStartLevelValue = std::max(itsStartLevelValue, firstExistingLevelValue);
+
+  itsEndLevelValue = std::min(itsEndLevelValue, lastExistingLevelValue);
+
+  // float closestInsideStartLevelValue = kFloatMissing;
+  float minStartDiff = 99999999.F;
+  // float closestInsideEndLevelValue = kFloatMissing;
+  float minEndDiff = 99999999.F;
+  for (itsInfo->ResetLevel(); itsInfo->NextLevel();)
+  {
+    const NFmiLevel *aLevel = itsInfo->Level();
+
+    if (::IsInsideLimits(itsStartLevelValue, itsEndLevelValue, aLevel->LevelValue()))
+    {
+      // alarajan etsintä koodia
+      ::UpdateClosestLevel(itsStartLevelValue,
+                           aLevel->LevelValue(),
+                           itsInfo->LevelIndex(),
+                           minStartDiff,
+                           itsStartLevelIndex);
+
+      // ylärajan etsintä koodia
+      ::UpdateClosestLevel(itsEndLevelValue,
+                           aLevel->LevelValue(),
+                           itsInfo->LevelIndex(),
+                           minEndDiff,
+                           itsEndLevelIndex);
+    }
+  }
+
+  if (itsStartLevelIndex > itsEndLevelIndex)
+    std::swap(itsStartLevelIndex, itsEndLevelIndex);
+}
 
 void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocationCache)
 {
@@ -2689,60 +2755,7 @@ void NFmiInfoAreaMaskVertFunc::SearchLevels(const NFmiLocationCache &theLocation
     {
       if (itsUsedHeightParId == kFmiModelLevel)
       {
-        itsInfo->LastLevel();
-        float lastExistingLevelValue = itsInfo->Level()->LevelValue();
-
-        itsInfo->FirstLevel();
-        float firstExistingLevelValue = itsInfo->Level()->LevelValue();
-
-        if (firstExistingLevelValue > lastExistingLevelValue)
-          std::swap(firstExistingLevelValue, lastExistingLevelValue);
-
-        if (itsStartLevelValue > itsEndLevelValue)
-          std::swap(itsStartLevelValue, itsEndLevelValue);
-
-        itsStartLevelValue = std::max(itsStartLevelValue, firstExistingLevelValue);
-
-        itsEndLevelValue = std::min(itsEndLevelValue, lastExistingLevelValue);
-
-        // float closestInsideStartLevelValue = kFloatMissing;
-        float minStartDiff = 99999999.F;
-        // float closestInsideEndLevelValue = kFloatMissing;
-        float minEndDiff = 99999999.F;
-        for (itsInfo->ResetLevel(); itsInfo->NextLevel();)
-        {
-          const NFmiLevel *aLevel = itsInfo->Level();
-
-          if (::IsInsideLimits(itsStartLevelValue, itsEndLevelValue, aLevel->LevelValue()))
-          {
-            // alarajan etsintä koodia
-            if (minStartDiff > 0)  // ei ole vielä löytynyt tarkkaa leveliä
-            {
-              float currentDiff = ::fabs(itsStartLevelValue - aLevel->LevelValue());
-              if (currentDiff < minStartDiff)
-              {
-                // closestInsideStartLevelValue = aLevel->LevelValue();
-                minStartDiff = currentDiff;
-                itsStartLevelIndex = itsInfo->LevelIndex();
-              }
-            }
-
-            // ylärajan etsintä koodia
-            if (minEndDiff > 0)  // ei ole vielä löytynyt tarkkaa leveliä
-            {
-              float currentDiff = ::fabs(itsEndLevelValue - aLevel->LevelValue());
-              if (currentDiff < minEndDiff)
-              {
-                // closestInsideEndLevelValue = aLevel->LevelValue();
-                minEndDiff = currentDiff;
-                itsEndLevelIndex = itsInfo->LevelIndex();
-              }
-            }
-          }
-        }
-
-        if (itsStartLevelIndex > itsEndLevelIndex)
-          std::swap(itsStartLevelIndex, itsEndLevelIndex);
+        SearchModelLevels();
       }
       else
       {

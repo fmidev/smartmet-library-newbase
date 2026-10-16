@@ -670,6 +670,7 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
 
   void FindCalculatedLeves(const NFmiLocationCache &theLocationCache);
   void SearchLevels(const NFmiLocationCache &theLocationCache);
+  void SearchModelLevels();
   void SetLevelValues();
   float DoGetFunction(const NFmiLocationCache &theLocationCache,
                       const NFmiCalculationParams &theCalculationParams,
