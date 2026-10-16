@@ -1348,44 +1348,63 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractTimes(const NFmiQueryData *theSourceDat
 
 namespace
 {
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fill missing destination values at the current time from the source
+ *
+ * The parameters, locations and levels of the infos are iterated in parallel.
+ *
+ * \return False if some value remained missing
+ */
+// ----------------------------------------------------------------------
+
+template <typename SourceValueGetter>
+bool FillMissingValuesAtCurrentTime(NFmiFastQueryInfo *theDestination,
+                                    NFmiFastQueryInfo *theSource,
+                                    SourceValueGetter getSourceValue)
+{
+  bool fullFill = true;
+  for (theDestination->ResetParam(), theSource->ResetParam();
+       theDestination->NextParam() && theSource->NextParam();)
+  {
+    for (theDestination->ResetLocation(), theSource->ResetLocation();
+         theDestination->NextLocation() && theSource->NextLocation();)
+    {
+      for (theDestination->ResetLevel(), theSource->ResetLevel();
+           theDestination->NextLevel() && theSource->NextLevel();)
+      {
+        float value = theDestination->FloatValue();
+        if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
+        {
+          float sourceValue = getSourceValue();
+          if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
+            fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
+                               // datasta puuttuu vielä
+          else
+            theDestination->FloatValue(sourceValue);
+        }
+      }
+    }
+  }
+  return fullFill;
+}
+
 bool FillSimilarDataWithDifferentTimeEnds(NFmiFastQueryInfo *theDestination,
                                           NFmiFastQueryInfo *theSource)
 {
   try
   {
-    bool fullFill = false;
-    if (theDestination && theSource)
+    if (!(theDestination && theSource))
+      return false;
+
+    bool fullFill = true;
+    for (theDestination->ResetTime(); theDestination->NextTime();)
     {
-      float value = kFloatMissing;
-      float sourceValue = kFloatMissing;
-      fullFill = true;
-      for (theDestination->ResetTime(); theDestination->NextTime();)
-      {
-        theSource->Time(theDestination->Time());
-        for (theDestination->ResetParam(), theSource->ResetParam();
-             theDestination->NextParam() && theSource->NextParam();)
-        {
-          for (theDestination->ResetLocation(), theSource->ResetLocation();
-               theDestination->NextLocation() && theSource->NextLocation();)
-          {
-            for (theDestination->ResetLevel(), theSource->ResetLevel();
-                 theDestination->NextLevel() && theSource->NextLevel();)
-            {
-              value = theDestination->FloatValue();
-              if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
-              {
-                sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
-                                                        // kohdallaan vain fastqueryinfossa!!!
-                if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
-                  fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
-                                     // datasta puuttuu vielä
-                else
-                  theDestination->FloatValue(sourceValue);
-              }
-            }
-          }
-        }
-      }
+      theSource->Time(theDestination->Time());
+      // palauttaa puuttuvaa jos aika ei ollut kohdallaan vain fastqueryinfossa!!!
+      if (!FillMissingValuesAtCurrentTime(
+              theDestination, theSource, [&]() { return theSource->FloatValue(); }))
+        fullFill = false;
     }
     return fullFill;
   }
@@ -1426,41 +1445,21 @@ bool InterpolateSimilarDataToLargerTimeResolution(NFmiFastQueryInfo *theDestinat
 {
   try
   {
-    bool fullFill = false;
-    if (theDestination && theSource)
+    if (!(theDestination && theSource))
+      return false;
+
+    bool fullFill = true;
+    NFmiDataModifierMode modeModifier;
+    for (theDestination->ResetTime(); theDestination->NextTime();)
     {
-      float value = kFloatMissing;
-      float sourceValue = kFloatMissing;
-      fullFill = true;
-      NFmiDataModifierMode modeModifier;
-      for (theDestination->ResetTime(); theDestination->NextTime();)
-      {
-        NFmiMetTime t(theDestination->Time());
-        theSource->Time(t);
-        for (theDestination->ResetParam(), theSource->ResetParam();
-             theDestination->NextParam() && theSource->NextParam();)
-        {
-          for (theDestination->ResetLocation(), theSource->ResetLocation();
-               theDestination->NextLocation() && theSource->NextLocation();)
-          {
-            for (theDestination->ResetLevel(), theSource->ResetLevel();
-                 theDestination->NextLevel() && theSource->NextLevel();)
-            {
-              value = theDestination->FloatValue();
-              if (value == kFloatMissing || value == kTCombinedWeatherFloatMissing)
-              {
-                sourceValue = theSource->InterpolatedValue(t, theMaxTimeSearchRangeInMinutes);
-                if (sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing)
-                  fullFill = false;  // yhdenkin kerran kun menee tänne, tiedetään että jokin osa
-                                     // datasta puuttuu vielä
-                else
-                  theDestination->FloatValue(sourceValue);
-              }
-            }  // for(location)-looppi
-          }    // for(param)-looppi
-        }      // for(level)-looppi
-      }        // for(time)-looppi
-    }
+      NFmiMetTime t(theDestination->Time());
+      theSource->Time(t);
+      if (!FillMissingValuesAtCurrentTime(
+              theDestination,
+              theSource,
+              [&]() { return theSource->InterpolatedValue(t, theMaxTimeSearchRangeInMinutes); }))
+        fullFill = false;
+    }  // for(time)-looppi
     return fullFill;
   }
   catch (...)
@@ -1672,6 +1671,58 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Fill the values of the current parameter at time t, interpolating in time if
+ *        the time was not found from the source or the source value is missing
+ */
+// ----------------------------------------------------------------------
+
+void InterpolateCurrentParamToTime(NFmiFastQueryInfo* theDestination,
+                                   NFmiFastQueryInfo* theSource,
+                                   const NFmiMetTime& t,
+                                   bool timeStatus,
+                                   FmiInterpolationMethod theInterpolationMethod,
+                                   int theMaxTimeSearchRangeInMinutes,
+                                   unsigned long lagrangeTimeIndex,
+                                   double lagrangeTimePosition)
+{
+  const NFmiParam* tmpParam = theDestination->Param().GetParam();
+  NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
+      static_cast<float>(tmpParam->MinValue()),
+      static_cast<float>(tmpParam->MaxValue()),
+      IsParamCircularValued(tmpParam));
+  FmiInterpolationMethod paramInterpMethod =
+      theDestination->Param().GetParam()->InterpolationMethod();
+  for (theDestination->ResetLocation(), theSource->ResetLocation();
+       theDestination->NextLocation() && theSource->NextLocation();)
+  {
+    for (theDestination->ResetLevel(), theSource->ResetLevel();
+         theDestination->NextLevel() && theSource->NextLevel();)
+    {
+      float sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
+                                                    // kohdallaan vain fastqueryinfossa!!!
+      if (timeStatus &&
+          !(sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing))
+      {
+        theDestination->FloatValue(sourceValue);
+      }
+      else  // pitää interpoloida
+      {
+        float tempV = TimeInterpolationValue(*theSource,
+                                             t,
+                                             theInterpolationMethod,
+                                             theMaxTimeSearchRangeInMinutes,
+                                             lagrangeTimeIndex,
+                                             lagrangeTimePosition,
+                                             paramInterpMethod,
+                                             checkerWithLagrangeInterpolation);
+        theDestination->FloatValue(tempV);
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  *  Interpoloi kaiken minkä voi sourcesta dest:iin.
  *  Oletus infot muuten samanlaisia, paitsi alku ja loppuajat  voivat poiketa.
  *  Sourcen aikaresoluutio on suurempi destinationin.
@@ -1702,7 +1753,6 @@ bool InterpolateSimilarDataToSmallerTimeResolution(NFmiFastQueryInfo *theDestina
     bool fullFill = false;
     if (theDestination && theSource)
     {
-      float sourceValue = kFloatMissing;
       bool useLagrange = theInterpolationMethod == kLagrange;
       unsigned long lagrangeTimeIndex = 0;  // tähän laitetaan interpoloitavaa aikaa lähin edeltävän
                                             // ajan aikaindeksi, joka löytyy lähdedatasta
@@ -1727,40 +1777,14 @@ bool InterpolateSimilarDataToSmallerTimeResolution(NFmiFastQueryInfo *theDestina
         for (theDestination->ResetParam(), theSource->ResetParam();
              theDestination->NextParam() && theSource->NextParam();)
         {
-          const NFmiParam *tmpParam = theDestination->Param().GetParam();
-          NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
-              static_cast<float>(tmpParam->MinValue()),
-              static_cast<float>(tmpParam->MaxValue()),
-              IsParamCircularValued(tmpParam));
-          FmiInterpolationMethod paramInterpMethod =
-              theDestination->Param().GetParam()->InterpolationMethod();
-          for (theDestination->ResetLocation(), theSource->ResetLocation();
-               theDestination->NextLocation() && theSource->NextLocation();)
-          {
-            for (theDestination->ResetLevel(), theSource->ResetLevel();
-                 theDestination->NextLevel() && theSource->NextLevel();)
-            {
-              sourceValue = theSource->FloatValue();  // palauttaa puuttuvaa jos aika ei ollut
-                                                      // kohdallaan vain fastqueryinfossa!!!
-              if (timeStatus &&
-                  !(sourceValue == kFloatMissing || sourceValue == kTCombinedWeatherFloatMissing))
-              {
-                theDestination->FloatValue(sourceValue);
-              }
-              else  // pitää interpoloida
-              {
-                float tempV = TimeInterpolationValue(*theSource,
-                                                     t,
-                                                     theInterpolationMethod,
-                                                     theMaxTimeSearchRangeInMinutes,
-                                                     lagrangeTimeIndex,
-                                                     lagrangeTimePosition,
-                                                     paramInterpMethod,
-                                                     checkerWithLagrangeInterpolation);
-                theDestination->FloatValue(tempV);
-              }
-            }
-          }
+          InterpolateCurrentParamToTime(theDestination,
+                                        theSource,
+                                        t,
+                                        timeStatus,
+                                        theInterpolationMethod,
+                                        theMaxTimeSearchRangeInMinutes,
+                                        lagrangeTimeIndex,
+                                        lagrangeTimePosition);
         }
       }
     }
