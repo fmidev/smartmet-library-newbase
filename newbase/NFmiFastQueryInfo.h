@@ -507,6 +507,9 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                           float v,
                           FmiParameterName id,
                           NFmiDataMatrix<float> &theValues);
+  float GridPointValue(const NFmiPoint &theLatLon,
+                       const NFmiMetTime &theInterpolatedTime,
+                       bool timeInterpolationNeeded);
 
   unsigned long itsParamIndex;  // indeksit 'resetoidaan' antamalla arvoksi -1, joka on isoin
                                 // unsigned long, arvo on 4294967295

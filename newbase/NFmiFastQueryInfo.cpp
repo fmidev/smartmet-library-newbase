@@ -3090,6 +3090,70 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(
   }
 }
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate cropped values in time obeying the rules of discrete data
+ *        and combined parameters
+ */
+// ----------------------------------------------------------------------
+
+void InterpolateCroppedValues(NFmiDataMatrix<float> &values,
+                              const NFmiDataMatrix<float> &values1,
+                              const NFmiDataMatrix<float> &values2,
+                              float factor,
+                              unsigned long param,
+                              FmiInterpolationMethod interp,
+                              double infoVersion)
+{
+  auto nx = static_cast<int>(values.NX());
+  auto ny = static_cast<int>(values.NY());
+
+  if (param == kFmiTotalWindMS)
+  {
+    NFmiTotalWind resultWind(infoVersion);
+    for (int j = 0; j < ny; j++)
+      for (int i = 0; i < nx; i++)
+      {
+        NFmiTotalWind tempWind1(values1[i][j], kFmiPackedWind, infoVersion);
+        NFmiTotalWind tempWind2(values2[i][j], kFmiPackedWind, infoVersion);
+        resultWind.SetToWeightedMean(
+            &tempWind1, factor, &tempWind2, 1 - factor, &tempWind1, 0, &tempWind1, 0);
+        values[i][j] = resultWind.TransformedFloatValue();
+      }
+  }
+  else if (param == kFmiWeatherAndCloudiness)
+  {
+    NFmiWeatherAndCloudiness resultWeather(infoVersion);
+    for (int j = 0; j < ny; j++)
+      for (int i = 0; i < nx; i++)
+      {
+        NFmiWeatherAndCloudiness tempWeather1(
+            values1[i][j], kFmiPackedWeather, kFloatMissing, infoVersion);
+        NFmiWeatherAndCloudiness tempWeather2(
+            values2[i][j], kFmiPackedWeather, kFloatMissing, infoVersion);
+        resultWeather.SetToWeightedMean(
+            &tempWeather1, factor, &tempWeather2, 1 - factor, &tempWeather1, 0, &tempWeather1, 0);
+        values[i][j] = resultWeather.TransformedFloatValue();
+      }
+  }
+  else if (interp != kLinearly)
+  {
+    if (factor > 0.5)
+      values = values1;
+    else
+      values = values2;
+  }
+  else
+  {
+    for (int j = 0; j < ny; j++)
+      for (int i = 0; i < nx; i++)
+        values[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
+  }
+}
+}  // namespace
+
 NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(const NFmiMetTime &theInterpolatedTime,
                                                        int x1,
                                                        int y1,
@@ -3153,47 +3217,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CroppedValues(const NFmiMetTime &theInt
     FmiInterpolationMethod interp = Param().GetParam()->InterpolationMethod();
     unsigned long param = Param().GetParam()->GetIdent();
 
-    if (param == kFmiTotalWindMS)
-    {
-      NFmiTotalWind resultWind(itsInfoVersion);
-      for (int j = 0; j < ny; j++)
-        for (int i = 0; i < nx; i++)
-        {
-          NFmiTotalWind tempWind1(values1[i][j], kFmiPackedWind, itsInfoVersion);
-          NFmiTotalWind tempWind2(values2[i][j], kFmiPackedWind, itsInfoVersion);
-          resultWind.SetToWeightedMean(
-              &tempWind1, factor, &tempWind2, 1 - factor, &tempWind1, 0, &tempWind1, 0);
-          values[i][j] = resultWind.TransformedFloatValue();
-        }
-    }
-    else if (param == kFmiWeatherAndCloudiness)
-    {
-      NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);
-      for (int j = 0; j < ny; j++)
-        for (int i = 0; i < nx; i++)
-        {
-          NFmiWeatherAndCloudiness tempWeather1(
-              values1[i][j], kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-          NFmiWeatherAndCloudiness tempWeather2(
-              values2[i][j], kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-          resultWeather.SetToWeightedMean(
-              &tempWeather1, factor, &tempWeather2, 1 - factor, &tempWeather1, 0, &tempWeather1, 0);
-          values[i][j] = resultWeather.TransformedFloatValue();
-        }
-    }
-    else if (interp != kLinearly)
-    {
-      if (factor > 0.5)
-        values = values1;
-      else
-        values = values2;
-    }
-    else
-    {
-      for (int j = 0; j < ny; j++)
-        for (int i = 0; i < nx; i++)
-          values[i][j] = InterpolationHelper(values1[i][j], values2[i][j], factor);
-    }
+    InterpolateCroppedValues(values, values1, values2, factor, param, interp, itsInfoVersion);
 
     TimeIndex(timeInterpolationData.oldTimeIndex);
     return values;
@@ -6187,6 +6211,21 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::PressureValues(const NFmiGrid &theWante
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolated value at the given point, interpolated in time too if requested
+ */
+// ----------------------------------------------------------------------
+
+float NFmiFastQueryInfo::GridPointValue(const NFmiPoint &theLatLon,
+                                        const NFmiMetTime &theInterpolatedTime,
+                                        bool timeInterpolationNeeded)
+{
+  if (timeInterpolationNeeded)
+    return InterpolatedValue(theLatLon, theInterpolatedTime, 180);
+  return InterpolatedValue(theLatLon);
+}
+
 NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGrid,
                                                     const NFmiMetTime &theInterpolatedTime)
 {
@@ -6224,9 +6263,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       float *vPtr = vValues.get();
 
       for (usedGrid.Reset(); usedGrid.Next(); vPtr++)
-        *vPtr = timeInterpolationNeeded
-                    ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
-                    : InterpolatedValue(usedGrid.LatLon());
+        *vPtr = GridPointValue(usedGrid.LatLon(), theInterpolatedTime, timeInterpolationNeeded);
 
       // Get U values
 
@@ -6238,9 +6275,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
       float *uPtr = uValues.get();
 
       for (usedGrid.Reset(); usedGrid.Next(); uPtr++)
-        *uPtr = timeInterpolationNeeded
-                    ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
-                    : InterpolatedValue(usedGrid.LatLon());
+        *uPtr = GridPointValue(usedGrid.LatLon(), theInterpolatedTime, timeInterpolationNeeded);
 
       // Rotate
 
@@ -6264,9 +6299,8 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::GridValues(const NFmiGrid &theWantedGri
 
       for (usedGrid.Reset(); usedGrid.Next();)
       {
-        float value = timeInterpolationNeeded
-                          ? InterpolatedValue(usedGrid.LatLon(), theInterpolatedTime, 180)
-                          : InterpolatedValue(usedGrid.LatLon());
+        float value =
+            GridPointValue(usedGrid.LatLon(), theInterpolatedTime, timeInterpolationNeeded);
         values[usedGrid.Index() % usedGrid.XNumber()][usedGrid.Index() / usedGrid.XNumber()] =
             value;
       }
