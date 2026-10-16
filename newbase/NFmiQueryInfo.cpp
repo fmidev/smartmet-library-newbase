@@ -2832,33 +2832,31 @@ void NFmiQueryInfo::CalcTimeData(NFmiDataModifier *theModifier, NFmiTimeBag *the
 {
   try
   {
-    if (theTimeBag)
-    {
-      if (static_cast<unsigned long>(theTimeBag->Resolution()) == TimeResolution())
-      {
-        theTimeBag->First();
-        for (bool more = true; more; more = theTimeBag->Next())
-        {
-          if (Time(theTimeBag->CurrentTime()))
-            break;
-        }
-        for (bool more = true; more; more = theTimeBag->Next() && NextTime())
-        {
-          theModifier->Calculate(FloatValue());
-        }
-      }
-      else
-      {
-        for (theTimeBag->Reset(); theTimeBag->Next();)
-        {
-          if (Time(theTimeBag->CurrentTime()))
-            theModifier->Calculate(FloatValue());
-        }
-      }
-    }
-    else
+    if (!theTimeBag)
     {
       for (ResetTime(); NextTime();)
+        theModifier->Calculate(FloatValue());
+      return;
+    }
+
+    if (static_cast<unsigned long>(theTimeBag->Resolution()) == TimeResolution())
+    {
+      theTimeBag->First();
+      for (bool more = true; more; more = theTimeBag->Next())
+      {
+        if (Time(theTimeBag->CurrentTime()))
+          break;
+      }
+      for (bool more = true; more; more = theTimeBag->Next() && NextTime())
+      {
+        theModifier->Calculate(FloatValue());
+      }
+      return;
+    }
+
+    for (theTimeBag->Reset(); theTimeBag->Next();)
+    {
+      if (Time(theTimeBag->CurrentTime()))
         theModifier->Calculate(FloatValue());
     }
   }
