@@ -4791,6 +4791,75 @@ float NFmiQueryInfo::CachedLocationInterpolatedValue(std::array<float, 4> &theVa
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Time interpolation of combined parameters for cached interpolation
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::CachedCombinedParamTimeInterpolatedValue(float theValue1,
+                                                              float theValue2,
+                                                              float offset,
+                                                              FmiParameterName theParId)
+{
+  if (theParId == kFmiTotalWindMS)
+  {  // korjasin käyttämään SetToWeightedMean-metodia, joka laskee u- ja v-komponenttien avulla
+    NFmiTotalWind resultWind(itsInfoVersion);
+    NFmiTotalWind tempWind1(theValue1, kFmiPackedWind, itsInfoVersion);
+    NFmiTotalWind tempWind2(theValue2, kFmiPackedWind, itsInfoVersion);
+    resultWind.SetToWeightedMean(
+        &tempWind1, 1 - offset, &tempWind2, offset, &tempWind1, 0, &tempWind1, 0);
+    return resultWind.TransformedFloatValue();
+  }
+
+  // kFmiWeatherAndCloudiness:
+  NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);  // Marko testi
+  NFmiWeatherAndCloudiness tempWeather1(
+      theValue1, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
+  NFmiWeatherAndCloudiness tempWeather2(
+      theValue2, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
+
+  resultWeather.SetToWeightedMean(
+      &tempWeather1, 1 - offset, &tempWeather2, offset, &tempWeather1, 0, &tempWeather1, 0);
+  return resultWeather.TransformedFloatValue();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Linear time interpolation of non-missing values for cached interpolation
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::CachedLinearTimeInterpolatedValue(float theValue1,
+                                                       float theValue2,
+                                                       const NFmiTimeCache &theTimeCache,
+                                                       FmiParameterName theParId)
+{
+  float offset = theTimeCache.itsOffset;
+  if (theParId == kFmiWindDirection)
+  {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
+    unsigned long oldTimeIndex = TimeIndex();
+    Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
+    TimeIndex(theTimeCache.itsTimeIndex1);
+    float ws1 = FloatValue();
+    TimeIndex(theTimeCache.itsTimeIndex2);
+    float ws2 = FloatValue();
+    TimeIndex(oldTimeIndex);
+    Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+    NFmiInterpolation::WindInterpolator windInterpolator;
+    windInterpolator.operator()(ws1, theValue1, offset);
+    windInterpolator.operator()(ws2, theValue2, (1 - offset));
+    return static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain tuulen
+    // suunta (tämä pitää tehdä
+    // jotenkin fiksummin)
+  }
+  if (theParId == kFmiWaveDirection)
+    return static_cast<float>(NFmiInterpolation::ModLinear(offset, theValue1, theValue2, 360));
+  if (theParId == kFmiWindVectorMS)
+    return static_cast<float>(NFmiInterpolation::WindVector(offset, theValue1, theValue2));
+  return static_cast<float>(NFmiInterpolation::Linear(offset, theValue1, theValue2));
+}
+
 float NFmiQueryInfo::CachedTimeInterpolatedValue(float theValue1,
                                                  float theValue2,
                                                  const NFmiTimeCache &theTimeCache,
@@ -4799,105 +4868,23 @@ float NFmiQueryInfo::CachedTimeInterpolatedValue(float theValue1,
 {
   try
   {
-    float value = kFloatMissing;
     float offset = theTimeCache.itsOffset;
     if (theInterpolationMethod == kByCombinedParam)
-    {
-      if (theParId == kFmiTotalWindMS)
-      {  // korjasin käyttämään SetToWeightedMean-metodia, joka laskee u- ja v-komponenttien avulla
-        NFmiTotalWind resultWind(itsInfoVersion);
-        NFmiTotalWind tempWind1(theValue1, kFmiPackedWind, itsInfoVersion);
-        NFmiTotalWind tempWind2(theValue2, kFmiPackedWind, itsInfoVersion);
-        resultWind.SetToWeightedMean(
-            &tempWind1, 1 - offset, &tempWind2, offset, &tempWind1, 0, &tempWind1, 0);
-        value = resultWind.TransformedFloatValue();
-      }
-      else
-      {                                                          // kFmiWeatherAndCloudiness:
-        NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);  // Marko testi
-        NFmiWeatherAndCloudiness tempWeather1(
-            theValue1, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-        NFmiWeatherAndCloudiness tempWeather2(
-            theValue2, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
+      return CachedCombinedParamTimeInterpolatedValue(theValue1, theValue2, offset, theParId);
 
-        resultWeather.SetToWeightedMean(
-            &tempWeather1, 1 - offset, &tempWeather2, offset, &tempWeather1, 0, &tempWeather1, 0);
-        value = resultWeather.TransformedFloatValue();
-      }
-    }
-    else
-    {
-      if (theValue1 == kFloatMissing && theValue2 == kFloatMissing)
-        value = kFloatMissing;
-      else if (theValue1 == kFloatMissing)
-      {
-        if (offset > 0.5)
-          value = theValue2;
-        else
-          value = kFloatMissing;
-      }
-      else if (theValue2 == kFloatMissing)
-      {
-        if (offset <= 0.5)
-          value = theValue1;
-        else
-          value = kFloatMissing;
-      }
-      else
-      {
-        if (theInterpolationMethod == kNearestNonMissing)
-        {
-          if (offset <= 0.5)
-          {
-            value = theValue1;
-            if (value == kFloatMissing)
-              value = theValue2;
-          }
-          else
-          {
-            value = theValue2;
-            if (value == kFloatMissing)
-              value = theValue1;
-          }
-        }
-        else if (theInterpolationMethod != kLinearly)
-        {
-          if (offset <= 0.5)
-            value = theValue1;
-          else
-            value = theValue2;
-        }
-        else  // muuten lineaarinen interpolointi
-        {
-          if (theParId == kFmiWindDirection)
-          {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
-            unsigned long oldTimeIndex = TimeIndex();
-            Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-            TimeIndex(theTimeCache.itsTimeIndex1);
-            float ws1 = FloatValue();
-            TimeIndex(theTimeCache.itsTimeIndex2);
-            float ws2 = FloatValue();
-            TimeIndex(oldTimeIndex);
-            Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
-            NFmiInterpolation::WindInterpolator windInterpolator;
-            windInterpolator.operator()(ws1, theValue1, offset);
-            windInterpolator.operator()(ws2, theValue2, (1 - offset));
-            value =
-                static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain tuulen
-            // suunta (tämä pitää tehdä
-            // jotenkin fiksummin)
-          }
-          else if (theParId == kFmiWaveDirection)
-            value =
-                static_cast<float>(NFmiInterpolation::ModLinear(offset, theValue1, theValue2, 360));
-          else if (theParId == kFmiWindVectorMS)
-            value = static_cast<float>(NFmiInterpolation::WindVector(offset, theValue1, theValue2));
-          else
-            value = static_cast<float>(NFmiInterpolation::Linear(offset, theValue1, theValue2));
-        }
-      }
-    }
-    return value;
+    if (theValue1 == kFloatMissing && theValue2 == kFloatMissing)
+      return kFloatMissing;
+    if (theValue1 == kFloatMissing)
+      return (offset > 0.5 ? theValue2 : kFloatMissing);
+    if (theValue2 == kFloatMissing)
+      return (offset <= 0.5 ? theValue1 : kFloatMissing);
+
+    // Both values are non-missing, hence also kNearestNonMissing returns the nearest value
+    if (theInterpolationMethod != kLinearly)
+      return (offset <= 0.5 ? theValue1 : theValue2);
+
+    // muuten lineaarinen interpolointi
+    return CachedLinearTimeInterpolatedValue(theValue1, theValue2, theTimeCache, theParId);
   }
   catch (...)
   {

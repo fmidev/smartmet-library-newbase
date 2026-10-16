@@ -686,6 +686,14 @@ class NFmiQueryInfo
   void ActivateLocations(NFmiHPlaceDescriptor *theHPlaceDescriptor);
   void ActivateLevels(NFmiVPlaceDescriptor *theVPlaceDescriptor);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
+  float CachedCombinedParamTimeInterpolatedValue(float theValue1,
+                                                 float theValue2,
+                                                 float offset,
+                                                 FmiParameterName theParId);
+  float CachedLinearTimeInterpolatedValue(float theValue1,
+                                          float theValue2,
+                                          const NFmiTimeCache &theTimeCache,
+                                          FmiParameterName theParId);
   float CornerInterpolatedValue(const NFmiMetTime &theTime,
                                 int theMaxMinuteRange,
                                 const NFmiPoint &gpoint,
