@@ -4208,6 +4208,102 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate combined parameter values in time
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::InterpolateCombinedValues(unsigned long param,
+                                               float offset1,
+                                               float theValue1,
+                                               float theValue2)
+{
+  switch (param)
+  {
+    case kFmiTotalWindMS:
+    {  // korjasin käyttämään SetToWeightedMean-metodia, joka laskee u- ja v-komponenttien
+       // avulla
+      NFmiTotalWind resultWind(itsInfoVersion);
+      NFmiTotalWind tempWind1(theValue1, kFmiPackedWind, itsInfoVersion);
+      NFmiTotalWind tempWind2(theValue2, kFmiPackedWind, itsInfoVersion);
+      resultWind.SetToWeightedMean(
+          &tempWind1, offset1, &tempWind2, 1 - offset1, &tempWind1, 0, &tempWind1, 0);
+      return resultWind.TransformedFloatValue();
+    }
+    case kFmiWeatherAndCloudiness:
+    {
+      NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);  // Marko testi
+      NFmiWeatherAndCloudiness tempWeather1(
+          theValue1, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
+      NFmiWeatherAndCloudiness tempWeather2(
+          theValue2, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
+
+      resultWeather.SetToWeightedMean(&tempWeather1,
+                                      offset1,
+                                      &tempWeather2,
+                                      1 - offset1,
+                                      &tempWeather1,
+                                      0,
+                                      &tempWeather1,
+                                      0);
+      return resultWeather.TransformedFloatValue();
+    }
+    default:
+      break;
+  }
+  return kFloatMissing;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate non-missing values in time
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::InterpolateValidValues(const NFmiDataIdent &theDataIdent,
+                                            FmiInterpolationMethod interp,
+                                            float offset1,
+                                            float theValue1,
+                                            float theValue2)
+{
+  float returnValue = kFloatMissing;
+  // 30.10.2000/Marko Muutin ottamaan huomioon combinedparam jutut ja epälineaariset parametrit
+  unsigned long param = theDataIdent.GetParam()->GetIdent();
+  if (interp == kByCombinedParam ||
+      param == kFmiTotalWindMS)  // HUOM!!!! totalwindillä ei ole tätä arvoa (korjaa!)
+  {
+    returnValue = InterpolateCombinedValues(param, offset1, theValue1, theValue2);
+  }
+  else if (param ==
+           kFmiWindVectorMS)  // windvector laskut interpoloituina, vaikka se on 'nearest'
+    returnValue =
+        static_cast<float>(NFmiInterpolation::WindVector(1 - offset1, theValue1, theValue2));
+  else if (interp != kLinearly)
+  {
+    if (offset1 <= 0.5)
+      returnValue = theValue2;
+    else
+      returnValue = theValue1;
+  }
+  else  // muuten lineaarinen interpolointi
+  {
+    if (param == kFmiWindVectorMS)
+    {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
+      returnValue =
+          static_cast<float>(NFmiInterpolation::WindVector(1 - offset1, theValue1, theValue2));
+    }
+    else if (param == kFmiWindDirection || param == kFmiWaveDirection)
+    {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
+      returnValue =
+          static_cast<float>(NFmiInterpolation::ModLinear(1 - offset1, theValue1, theValue2));
+    }
+    else
+      returnValue = (offset1 * theValue1 + (1.F - offset1) * theValue2);
+  }
+  return returnValue;
+}
+
 float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
                                  const NFmiMetTime &theTime,
                                  const NFmiMetTime &theTime1,
@@ -4251,75 +4347,7 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
       return theValue1;
     }
     else
-    {
-      // 30.10.2000/Marko Muutin ottamaan huomioon combinedparam jutut ja epälineaariset parametrit
-      unsigned long param = theDataIdent.GetParam()->GetIdent();
-      if (interp == kByCombinedParam ||
-          param == kFmiTotalWindMS)  // HUOM!!!! totalwindillä ei ole tätä arvoa (korjaa!)
-      {
-        switch (param)
-        {
-          case kFmiTotalWindMS:
-          {  // korjasin käyttämään SetToWeightedMean-metodia, joka laskee u- ja v-komponenttien
-             // avulla
-            NFmiTotalWind resultWind(itsInfoVersion);
-            NFmiTotalWind tempWind1(theValue1, kFmiPackedWind, itsInfoVersion);
-            NFmiTotalWind tempWind2(theValue2, kFmiPackedWind, itsInfoVersion);
-            resultWind.SetToWeightedMean(
-                &tempWind1, offset1, &tempWind2, 1 - offset1, &tempWind1, 0, &tempWind1, 0);
-            returnValue = resultWind.TransformedFloatValue();
-          }
-          break;
-          case kFmiWeatherAndCloudiness:
-          {
-            NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);  // Marko testi
-            NFmiWeatherAndCloudiness tempWeather1(
-                theValue1, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-            NFmiWeatherAndCloudiness tempWeather2(
-                theValue2, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-
-            resultWeather.SetToWeightedMean(&tempWeather1,
-                                            offset1,
-                                            &tempWeather2,
-                                            1 - offset1,
-                                            &tempWeather1,
-                                            0,
-                                            &tempWeather1,
-                                            0);
-            returnValue = resultWeather.TransformedFloatValue();
-          }
-          break;
-          default:
-            break;
-        }
-      }
-      else if (param ==
-               kFmiWindVectorMS)  // windvector laskut interpoloituina, vaikka se on 'nearest'
-        returnValue =
-            static_cast<float>(NFmiInterpolation::WindVector(1 - offset1, theValue1, theValue2));
-      else if (interp != kLinearly)
-      {
-        if (offset1 <= 0.5)
-          returnValue = theValue2;
-        else
-          returnValue = theValue1;
-      }
-      else  // muuten lineaarinen interpolointi
-      {
-        if (param == kFmiWindVectorMS)
-        {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
-          returnValue =
-              static_cast<float>(NFmiInterpolation::WindVector(1 - offset1, theValue1, theValue2));
-        }
-        else if (param == kFmiWindDirection || param == kFmiWaveDirection)
-        {  // HUOM!! korjaa koodeja niin että kFmiWindDirection -parametrilla ei tätä kutsuta!!!!
-          returnValue =
-              static_cast<float>(NFmiInterpolation::ModLinear(1 - offset1, theValue1, theValue2));
-        }
-        else
-          returnValue = (offset1 * theValue1 + (1.F - offset1) * theValue2);
-      }
-    }
+      returnValue = InterpolateValidValues(theDataIdent, interp, offset1, theValue1, theValue2);
     return returnValue;
   }
   catch (...)

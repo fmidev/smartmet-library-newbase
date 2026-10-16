@@ -672,6 +672,15 @@ class NFmiQueryInfo
   friend class NFmiDBServer;
 
  private:
+  float InterpolateCombinedValues(unsigned long param,
+                                  float offset1,
+                                  float theValue1,
+                                  float theValue2);
+  float InterpolateValidValues(const NFmiDataIdent &theDataIdent,
+                               FmiInterpolationMethod interp,
+                               float offset1,
+                               float theValue1,
+                               float theValue2);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
   float InterpolatedValueBetweenTimes(const NFmiMetTime &theTime,
                                       const NFmiMetTime &time1,
