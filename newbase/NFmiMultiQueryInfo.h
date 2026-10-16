@@ -167,6 +167,7 @@ class NFmiMultiQueryInfo : public NFmiFastQueryInfo
 
   void Init(const std::list<std::string>& theFiles);
   void Init();
+  bool IsNewerData(std::size_t i, std::size_t j) const;
 
   // This is needed only for comparing file modification times
   std::vector<time_t> itsFileModificationTimes;

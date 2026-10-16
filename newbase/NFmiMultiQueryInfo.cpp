@@ -188,6 +188,24 @@ void NFmiMultiQueryInfo::Init(const std::list<std::string> &theFiles)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test whether data i is newer than data j by origin time or file modification time
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiMultiQueryInfo::IsNewerData(std::size_t i, std::size_t j) const
+{
+  if (itsInfos[i]->OriginTime() > itsInfos[j]->OriginTime())
+    return true;
+  if (itsInfos[i]->OriginTime() == itsInfos[j]->OriginTime())
+  {
+    if (!itsFileModificationTimes.empty())  // may not be available
+      return (itsFileModificationTimes[i] > itsFileModificationTimes[j]);
+  }
+  return false;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize the rest once NFmiFastQueryInfo objects are initialized
  */
 // ----------------------------------------------------------------------
@@ -222,38 +240,27 @@ void NFmiMultiQueryInfo::Init()
                                             HPlaceDescriptor() == itsInfos[i]->HPlaceDescriptor() &&
                                             VPlaceDescriptor() == itsInfos[i]->VPlaceDescriptor()));
 
-      if (acceptable)
+      if (!acceptable)
+        continue;
+
+      // Try to insert all times into the set of unique times
+      NFmiFastQueryInfo &qi = *itsInfos[i];
+      for (qi.ResetTime(); qi.NextTime();)
       {
-        // Try to insert all times into the set of unique times
-        NFmiFastQueryInfo &qi = *itsInfos[i];
-        for (qi.ResetTime(); qi.NextTime();)
+        const NFmiMetTime &t = qi.ValidTime();
+        MultiIndex idx(t, i, qi.TimeIndex());
+
+        auto res = time_index.insert(idx);
+
+        // Resolve conflict when multiple datas provide the same valid time
+        if (!res.second)
         {
-          const NFmiMetTime &t = qi.ValidTime();
-          MultiIndex idx(t, i, qi.TimeIndex());
+          std::size_t old_index = res.first->info_index;
 
-          auto res = time_index.insert(idx);
-
-          // Resolve conflict when multiple datas provide the same valid time
-          if (!res.second)
+          if (IsNewerData(i, old_index))
           {
-            std::size_t old_index = res.first->info_index;
-
-            bool replace_data = false;
-
-            if (itsInfos[i]->OriginTime() > itsInfos[old_index]->OriginTime())
-              replace_data = true;
-            else if (itsInfos[i]->OriginTime() == itsInfos[old_index]->OriginTime())
-            {
-              if (!itsFileModificationTimes.empty())  // may not be available
-                if (itsFileModificationTimes[i] > itsFileModificationTimes[old_index])
-                  replace_data = true;
-            }
-
-            if (replace_data)
-            {
-              time_index.erase(res.first);
-              time_index.insert(idx);
-            }
+            time_index.erase(res.first);
+            time_index.insert(idx);
           }
         }
       }
