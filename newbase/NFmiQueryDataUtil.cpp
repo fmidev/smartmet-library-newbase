@@ -5545,6 +5545,37 @@ void CombineTimeStepDatas(
   }
 }
 
+// Copy all the slices (time, level, param) of the info found from the combined data
+void CopySlices(NFmiFastQueryInfo &fInfo,
+                NFmiFastQueryInfo &combFastInfo,
+                NFmiStopFunctor *theStopFunctor)
+{
+  for (fInfo.ResetTime(); fInfo.NextTime();)
+  {
+    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+    if (combFastInfo.Time(fInfo.Time()))
+    {
+      for (fInfo.ResetLevel(); fInfo.NextLevel();)
+      {
+        if (combFastInfo.Level(*fInfo.Level()))
+        {
+          for (fInfo.ResetParam(); fInfo.NextParam();)
+          {
+            if (combFastInfo.Param(
+                    static_cast<FmiParameterName>(fInfo.Param().GetParamIdent())))
+            {
+              NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
+              // oletus vielä nyt että hpalceDesc:it samanlaisia
+              auto values = fInfo.Values();
+              combFastInfo.SetValues(values);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 void CombineSliceDatas(NFmiQueryData &theData,
                               const std::vector<std::shared_ptr<NFmiFastQueryInfo>>& theFInfoVector,
                               NFmiStopFunctor *theStopFunctor)
@@ -5565,30 +5596,7 @@ void CombineSliceDatas(NFmiQueryData &theData,
         // käymään sen läpi varmuuden vuoksi kokonaan ja katsomaan jokaisen slicen kohdalla meneekö
         // se
         // tulos dataan
-        for (fInfo.ResetTime(); fInfo.NextTime();)
-        {
-          NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-          if (combFastInfo.Time(fInfo.Time()))
-          {
-            for (fInfo.ResetLevel(); fInfo.NextLevel();)
-            {
-              if (combFastInfo.Level(*fInfo.Level()))
-              {
-                for (fInfo.ResetParam(); fInfo.NextParam();)
-                {
-                  if (combFastInfo.Param(
-                          static_cast<FmiParameterName>(fInfo.Param().GetParamIdent())))
-                  {
-                    NFmiQueryDataUtil::CheckIfStopped(theStopFunctor);
-                    // oletus vielä nyt että hpalceDesc:it samanlaisia
-                    auto values = fInfo.Values();
-                    combFastInfo.SetValues(values);
-                  }
-                }
-              }
-            }
-          }
-        }
+        CopySlices(fInfo, combFastInfo, theStopFunctor);
       }
     }
   }
