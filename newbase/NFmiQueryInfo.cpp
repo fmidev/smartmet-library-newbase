@@ -5245,6 +5245,105 @@ float NFmiQueryInfo::CachedPressureLevelValue(float P,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Interpolate in space from the time interpolated values of the surrounding grid points
+ *
+ * The info is assumed to be at the grid point nearest to gpoint.
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::CornerInterpolatedValue(const NFmiMetTime &theTime,
+                                             int theMaxMinuteRange,
+                                             const NFmiPoint &gpoint,
+                                             int xShift,
+                                             int yShift,
+                                             FmiParameterName param,
+                                             FmiInterpolationMethod interp)
+{
+  float theValue = kFloatMissing;
+  // tämä liikkuminen on melkoista viritystä
+  MoveLeft(xShift);
+  MoveDown(yShift);
+  float bottomLeftValue = InterpolatedValue(theTime, theMaxMinuteRange);
+  MoveRight(1);
+  float bottomRightValue = InterpolatedValue(theTime, theMaxMinuteRange);
+  MoveUp(1);
+  float topRightValue = InterpolatedValue(theTime, theMaxMinuteRange);
+  MoveLeft(1);
+  float topLeftValue = InterpolatedValue(theTime, theMaxMinuteRange);
+
+  if (param == kFmiWindDirection)
+  {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
+    Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
+    float tlWS = InterpolatedValue(theTime, theMaxMinuteRange);  // aloitetaan top-leftistä
+                                                                 // ja haetaan kaikki nurkat
+                                                                 // move-komennoilla
+    MoveRight(1);
+    float trWS = InterpolatedValue(theTime, theMaxMinuteRange);  // top-right
+    MoveDown(1);
+    float brWS = InterpolatedValue(theTime, theMaxMinuteRange);  // bottom-right
+    MoveLeft(1);
+    float blWS = InterpolatedValue(theTime, theMaxMinuteRange);  // bottom-left
+    Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+    double dx = gpoint.X() - floor(gpoint.X());
+    double dy = gpoint.Y() - floor(gpoint.Y());
+    NFmiInterpolation::WindInterpolator windInterpolator;
+    windInterpolator.operator()(blWS, bottomLeftValue, (1 - dx) * (1 - dy));
+    windInterpolator.operator()(brWS, bottomRightValue, dx * (1 - dy));
+    windInterpolator.operator()(trWS, topRightValue, dx * dy);
+    windInterpolator.operator()(tlWS, topLeftValue, (1 - dx) * dy);
+
+    theValue = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain
+    // tuulen suunta (tämä pitää
+    // tehdä jotenkin fiksummin)
+  }
+  else if (param == kFmiWaveDirection)
+  {
+    theValue =
+        static_cast<float>(NFmiInterpolation::ModBiLinear(gpoint.X() - floor(gpoint.X()),
+                                                          gpoint.Y() - floor(gpoint.Y()),
+                                                          topLeftValue,
+                                                          topRightValue,
+                                                          bottomLeftValue,
+                                                          bottomRightValue));
+  }
+  else if (param == kFmiWindVectorMS)
+  {
+    theValue =
+        static_cast<float>(NFmiInterpolation::WindVector(gpoint.X() - floor(gpoint.X()),
+                                                         gpoint.Y() - floor(gpoint.Y()),
+                                                         topLeftValue,
+                                                         topRightValue,
+                                                         bottomLeftValue,
+                                                         bottomRightValue));
+  }
+  else
+  {
+    if (interp == kNearestNonMissing)
+    {
+      theValue = static_cast<float>(
+          NFmiInterpolation::NearestNonMissing(gpoint.X() - floor(gpoint.X()),
+                                               gpoint.Y() - floor(gpoint.Y()),
+                                               topLeftValue,
+                                               topRightValue,
+                                               bottomLeftValue,
+                                               bottomRightValue));
+    }
+    else
+    {
+      theValue =
+          static_cast<float>(NFmiInterpolation::BiLinear(gpoint.X() - floor(gpoint.X()),
+                                                         gpoint.Y() - floor(gpoint.Y()),
+                                                         topLeftValue,
+                                                         topRightValue,
+                                                         bottomLeftValue,
+                                                         bottomRightValue));
+    }
+  }
+  return theValue;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param theLatLonPoint Haluttu piste, mihin arvo halutaan.
  * \param theTime Haluttu aika, johon arvo halutaan.
  * \param theMaxMinuteRange Aika rajoitin aikainterpolointiin.
@@ -5282,133 +5381,53 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiPoint &theLatLonPoint,
 
     bool wcParam = IsSubParamUsed() && ::IsWeatherSubParam(*this);
 
-    if (IsGrid() && ((interp != kNoneInterpolation && interp != kNearestPoint) || wcParam ||
-                     param == kFmiWindVectorMS))
+    bool useGridInterpolation =
+        IsGrid() && ((interp != kNoneInterpolation && interp != kNearestPoint) || wcParam ||
+                     param == kFmiWindVectorMS);
+
+    NFmiPoint gpoint;
+    if (!useGridInterpolation || !Location(theLatLonPoint, &gpoint))
     {
-      NFmiPoint gpoint;
-      if (Location(theLatLonPoint, &gpoint))
-      {
-        // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
-        if (fabs(gpoint.X() - round(gpoint.X())) < 0.00001 &&
-            fabs(gpoint.Y() - round(gpoint.Y())) < 0.00001)
-          return InterpolatedValue(theTime, theMaxMinuteRange);
-
-        // Location(theLatLonPoint)-metodi asettaa lähimpään hilapisteeseen, josta seuraa se,
-        // että PeekLocationValue:lle pitää laskea mahdollinen siirtymä
-        int xShift = static_cast<int>(round(gpoint.X())) - static_cast<int>(gpoint.X());
-        int yShift = static_cast<int>(round(gpoint.Y())) - static_cast<int>(gpoint.Y());
-
-        if (wcParam)  // interp == kByCombinedParam) //16.9.99 tämä haara/Lasse // 1999.09.21/Marko
-                      // Miten näistä pääsee eroon?
-        {
-          SetIsSubParamUsed(false);
-          NFmiWeatherAndCloudiness tmpWeather(itsInfoVersion);
-          tmpWeather.TransformFromFloatValue(InterpolatedValueForWeatherAndCloudiness(
-              theTime, theMaxMinuteRange, gpoint, xShift, yShift));
-          SetIsSubParamUsed(true);
-          return static_cast<float>(tmpWeather.SubValue(param));
-
-          //				return InterpolatedValueForCombinedParam(gpoint, xShift,
-          // yShift);
-        }
-        if (interp == kByCombinedParam)
-        {
-          if (param == kFmiWeatherAndCloudiness)
-            return InterpolatedValueForWeatherAndCloudiness(
-                theTime, theMaxMinuteRange, gpoint, xShift, yShift);
-          if (param == kFmiTotalWindMS)
-            return InterpolatedValueForTotalWind(
-                theTime, theMaxMinuteRange, gpoint, xShift, yShift);
-
-          return theValue;
-        }
-        else
-        {
-          // tämä liikkuminen on melkoista viritystä
-          MoveLeft(xShift);
-          MoveDown(yShift);
-          float bottomLeftValue = InterpolatedValue(theTime, theMaxMinuteRange);
-          MoveRight(1);
-          float bottomRightValue = InterpolatedValue(theTime, theMaxMinuteRange);
-          MoveUp(1);
-          float topRightValue = InterpolatedValue(theTime, theMaxMinuteRange);
-          MoveLeft(1);
-          float topLeftValue = InterpolatedValue(theTime, theMaxMinuteRange);
-
-          if (param == kFmiWindDirection)
-          {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
-            Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-            float tlWS = InterpolatedValue(theTime, theMaxMinuteRange);  // aloitetaan top-leftistä
-                                                                         // ja haetaan kaikki nurkat
-                                                                         // move-komennoilla
-            MoveRight(1);
-            float trWS = InterpolatedValue(theTime, theMaxMinuteRange);  // top-right
-            MoveDown(1);
-            float brWS = InterpolatedValue(theTime, theMaxMinuteRange);  // bottom-right
-            MoveLeft(1);
-            float blWS = InterpolatedValue(theTime, theMaxMinuteRange);  // bottom-left
-            Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
-            double dx = gpoint.X() - floor(gpoint.X());
-            double dy = gpoint.Y() - floor(gpoint.Y());
-            NFmiInterpolation::WindInterpolator windInterpolator;
-            windInterpolator.operator()(blWS, bottomLeftValue, (1 - dx) * (1 - dy));
-            windInterpolator.operator()(brWS, bottomRightValue, dx * (1 - dy));
-            windInterpolator.operator()(trWS, topRightValue, dx * dy);
-            windInterpolator.operator()(tlWS, topLeftValue, (1 - dx) * dy);
-
-            theValue = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa vain
-            // tuulen suunta (tämä pitää
-            // tehdä jotenkin fiksummin)
-          }
-          else if (param == kFmiWaveDirection)
-          {
-            theValue =
-                static_cast<float>(NFmiInterpolation::ModBiLinear(gpoint.X() - floor(gpoint.X()),
-                                                                  gpoint.Y() - floor(gpoint.Y()),
-                                                                  topLeftValue,
-                                                                  topRightValue,
-                                                                  bottomLeftValue,
-                                                                  bottomRightValue));
-          }
-          else if (param == kFmiWindVectorMS)
-          {
-            theValue =
-                static_cast<float>(NFmiInterpolation::WindVector(gpoint.X() - floor(gpoint.X()),
-                                                                 gpoint.Y() - floor(gpoint.Y()),
-                                                                 topLeftValue,
-                                                                 topRightValue,
-                                                                 bottomLeftValue,
-                                                                 bottomRightValue));
-          }
-          else
-          {
-            if (interp == kNearestNonMissing)
-            {
-              theValue = static_cast<float>(
-                  NFmiInterpolation::NearestNonMissing(gpoint.X() - floor(gpoint.X()),
-                                                       gpoint.Y() - floor(gpoint.Y()),
-                                                       topLeftValue,
-                                                       topRightValue,
-                                                       bottomLeftValue,
-                                                       bottomRightValue));
-            }
-            else
-            {
-              theValue =
-                  static_cast<float>(NFmiInterpolation::BiLinear(gpoint.X() - floor(gpoint.X()),
-                                                                 gpoint.Y() - floor(gpoint.Y()),
-                                                                 topLeftValue,
-                                                                 topRightValue,
-                                                                 bottomLeftValue,
-                                                                 bottomRightValue));
-            }
-          }
-          return theValue;
-        }
-      }
+      Location(theLatLonPoint);
+      return InterpolatedValue(theTime, theMaxMinuteRange);
     }
-    Location(theLatLonPoint);
-    return InterpolatedValue(theTime, theMaxMinuteRange);
+
+    // optimointia, jos ollaan tarpeeksi lähellä hilaa, palautetaan suoraan hilan arvo
+    if (fabs(gpoint.X() - round(gpoint.X())) < 0.00001 &&
+        fabs(gpoint.Y() - round(gpoint.Y())) < 0.00001)
+      return InterpolatedValue(theTime, theMaxMinuteRange);
+
+    // Location(theLatLonPoint)-metodi asettaa lähimpään hilapisteeseen, josta seuraa se,
+    // että PeekLocationValue:lle pitää laskea mahdollinen siirtymä
+    int xShift = static_cast<int>(round(gpoint.X())) - static_cast<int>(gpoint.X());
+    int yShift = static_cast<int>(round(gpoint.Y())) - static_cast<int>(gpoint.Y());
+
+    if (wcParam)  // interp == kByCombinedParam) //16.9.99 tämä haara/Lasse // 1999.09.21/Marko
+                  // Miten näistä pääsee eroon?
+    {
+      SetIsSubParamUsed(false);
+      NFmiWeatherAndCloudiness tmpWeather(itsInfoVersion);
+      tmpWeather.TransformFromFloatValue(InterpolatedValueForWeatherAndCloudiness(
+          theTime, theMaxMinuteRange, gpoint, xShift, yShift));
+      SetIsSubParamUsed(true);
+      return static_cast<float>(tmpWeather.SubValue(param));
+
+      //				return InterpolatedValueForCombinedParam(gpoint, xShift,
+      // yShift);
+    }
+    if (interp == kByCombinedParam)
+    {
+      if (param == kFmiWeatherAndCloudiness)
+        return InterpolatedValueForWeatherAndCloudiness(
+            theTime, theMaxMinuteRange, gpoint, xShift, yShift);
+      if (param == kFmiTotalWindMS)
+        return InterpolatedValueForTotalWind(
+            theTime, theMaxMinuteRange, gpoint, xShift, yShift);
+
+      return theValue;
+    }
+    return CornerInterpolatedValue(
+        theTime, theMaxMinuteRange, gpoint, xShift, yShift, param, interp);
   }
   catch (...)
   {

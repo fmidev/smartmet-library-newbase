@@ -682,6 +682,13 @@ class NFmiQueryInfo
                                float theValue1,
                                float theValue2);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
+  float CornerInterpolatedValue(const NFmiMetTime &theTime,
+                                int theMaxMinuteRange,
+                                const NFmiPoint &gpoint,
+                                int xShift,
+                                int yShift,
+                                FmiParameterName param,
+                                FmiInterpolationMethod interp);
   float InterpolatedValueBetweenTimes(const NFmiMetTime &theTime,
                                       const NFmiMetTime &time1,
                                       const NFmiMetTime &time2,
