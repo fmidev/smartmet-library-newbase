@@ -44,6 +44,13 @@ bool fDefaultPrecipitationTypeIsLargeScale = false;
 const float gMinimumPrecipitationForV6 = 0.1F;
 const float gMinimumPrecipitationForV7 = 0.015F;
 
+// The minimum precipitation which counts as rain in the given querydata version
+
+float minimum_precipitation(double theInfoVersion)
+{
+  return (theInfoVersion >= 7.) ? gMinimumPrecipitationForV7 : gMinimumPrecipitationForV6;
+}
+
 // Return the value as a double, or kFloatMissing if it is the missing value
 
 double value_or_missing(unsigned long theValue, unsigned long theMissingValue)
@@ -363,14 +370,12 @@ NFmiWeatherAndCloudiness::NFmiWeatherAndCloudiness(float theCloudSymbol,
             CalcSynopPrecipitationAmount(static_cast<unsigned long>(theHSade))));
       else if (thePrecipitation != kFloatMissing)
       {
-        if (theHSade == 0 && thePrecipitation >= ((itsInfoVersion >= 7.)
-                                                      ? gMinimumPrecipitationForV7
-                                                      : gMinimumPrecipitationForV6))  // Marko testi
+        if (theHSade == 0 &&
+            thePrecipitation >= minimum_precipitation(itsInfoVersion))  // Marko testi
         {
           thePrecipitation = 0;
         }
-        else if (thePrecipitation < ((itsInfoVersion >= 7.) ? gMinimumPrecipitationForV7
-                                                            : gMinimumPrecipitationForV6) ||
+        else if (thePrecipitation < minimum_precipitation(itsInfoVersion) ||
                  TotalCloudiness() == 0 || theHSade == 0)  // Marko testi
         {
           thePrecipitation = 0;
