@@ -40,9 +40,11 @@
 #include <macgyver/StringConversion.h>
 #include <cctype>
 #include <cerrno>
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include <map>
 #include <vector>
 // atoi()
 
@@ -66,6 +68,78 @@ bool parse_coordinate(const std::string &field, double &value)
     return false;
   value = result;
   return true;
+}
+// Split the line from tabulators into a vector
+vector<string> split_tab_fields(const string &line)
+{
+  vector<string> fields;
+
+  string::size_type pos1 = 0;
+  while (pos1 < line.size())
+  {
+    string::size_type pos2 = line.find('\t', pos1);
+    if (pos2 == string::npos)
+      pos2 = line.size();
+    fields.push_back(line.substr(pos1, pos2 - pos1));
+    pos1 = pos2 + 1;
+  }
+  return fields;
+}
+
+// Split the line from white spaces into a vector, stopping after the first coordinate pair.
+// firstCoord is set to one past the index of the first numeric field (0 if there is none).
+vector<string> split_optional_fields(const string &line,
+                                     vector<string>::size_type maxwords,
+                                     vector<string>::size_type &firstCoord)
+{
+  vector<string> fields;
+
+  string::size_type pos1 = 0;
+  string::size_type pos2 = 0;
+  firstCoord = 0;
+  pos1 = line.find_first_not_of('\t', pos2);
+  while (pos1 < line.size())
+  {
+    pos2 = line.find_first_of('\t', pos1);
+    if (pos2 == string::npos)
+      pos2 = line.size();
+    fields.push_back(line.substr(pos1, pos2 - pos1));
+    if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
+    {
+      firstCoord = fields.size();  // you must know which words shall be converted to doubles
+    }
+
+    if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
+      break;  // mahdolliset kommentit pois
+    pos1 = line.find_first_not_of('\t', pos2);
+  }
+  return fields;
+}
+
+// Add the first count non-empty names in lower case into the maps, the first name being primary
+void add_names(const vector<string> &fields,
+               vector<string>::size_type count,
+               const NFmiPoint &lonlat,
+               map<string, NFmiPoint> &primaryPoints,
+               map<string, NFmiPoint> &secondaryPoints)
+{
+  for (vector<string>::size_type idx = 0; idx < count; idx++)
+  {
+    string word = fields[idx];
+    if (word.empty())
+      continue;
+
+    // Convert the name to lower case
+
+    word = NFmiStringTools::LowerCase(word);
+
+    // And add it into the maps
+
+    if (idx == 0)
+      primaryPoints.insert(make_pair(word, lonlat));
+    else
+      secondaryPoints.insert(make_pair(word, lonlat));
+  }
 }
 }  // namespace
 
@@ -162,17 +236,7 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
 
       // Split the line from tabulators into a vector
 
-      vector<string> fields;
-
-      string::size_type pos1 = 0;
-      while (pos1 < line.size())
-      {
-        string::size_type pos2 = line.find('\t', pos1);
-        if (pos2 == string::npos)
-          pos2 = line.size();
-        fields.push_back(line.substr(pos1, pos2 - pos1));
-        pos1 = pos2 + 1;
-      }
+      vector<string> fields = split_tab_fields(line);
 
       // We require 6 text fields + 2 number fields + optional extra fields
 
@@ -195,23 +259,7 @@ bool NFmiLocationFinder::AddFile(const NFmiString& theFileName,
       // Then add all non-empty names into the internal container
 
       NFmiPoint lonlat(longitude, latitude);
-      for (unsigned int idx = 0; idx < maxlocations; idx++)
-      {
-        string word = fields[idx];
-        if (word.empty())
-          continue;
-
-        // Convert the name to lower case
-
-        word = NFmiStringTools::LowerCase(word);
-
-        // And add it into the maps
-
-        if (idx == 0)
-          itsPrimaryPoints.insert(make_pair(word, lonlat));
-        else
-          itsSecondaryPoints.insert(make_pair(word, lonlat));
-      }
+      add_names(fields, maxlocations, lonlat, itsPrimaryPoints, itsSecondaryPoints);
     }  // Next line loop
 
     // Done inserting
@@ -268,27 +316,13 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
 
       // Split the line from white spaces into a vector
 
-      vector<string> fields;
-
-      string::size_type pos1 = 0;
-      string::size_type pos2 = 0;
       vector<string>::size_type firstCoord = 0;
-      pos1 = line.find_first_not_of('\t', pos2);
-      while (pos1 < line.size())
-      {
-        pos2 = line.find_first_of('\t', pos1);
-        if (pos2 == string::npos)
-          pos2 = line.size();
-        fields.push_back(line.substr(pos1, pos2 - pos1));
-        if (line.substr(pos1, 1).find_first_of("01234567890-+.", 0) == 0 && firstCoord == 0)
-        {
-          firstCoord = fields.size();  // you must know which words shall be converted to doubles
-        }
+      vector<string> fields = split_optional_fields(line, maxwords, firstCoord);
 
-        if ((fields.size() > maxwords) || ((firstCoord > 0) && (fields.size() > firstCoord)))
-          break;  // mahdolliset kommentit pois
-        pos1 = line.find_first_not_of('\t', pos2);
-      }
+      // Skip lines without a coordinate pair, they would be indexed out of bounds
+
+      if (firstCoord == 0 || firstCoord >= fields.size())
+        continue;
 
       // We require 1-6 text fields + 2 number fields + optional extra fields
 
@@ -311,23 +345,11 @@ bool NFmiLocationFinder::AddFileOfOptionalType(const NFmiString& theFileName, bo
       // Then add all non-empty names into the internal container
 
       NFmiPoint lonlat(longitude, latitude);
-      for (unsigned int idx = 0; idx < maxlocations && idx < firstCoord - 1; idx++)
-      {
-        string word = fields[idx];
-        if (word.empty())
-          continue;
-
-        // Convert the name to lower case
-
-        word = NFmiStringTools::LowerCase(word);
-
-        // And add it into the map
-
-        if (idx == 0)
-          itsPrimaryPoints.insert(make_pair(word, lonlat));
-        else
-          itsSecondaryPoints.insert(make_pair(word, lonlat));
-      }
+      add_names(fields,
+                std::min<vector<string>::size_type>(maxlocations, firstCoord - 1),
+                lonlat,
+                itsPrimaryPoints,
+                itsSecondaryPoints);
     }  // Next line loop
 
     // Done inserting
