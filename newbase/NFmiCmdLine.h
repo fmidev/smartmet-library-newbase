@@ -37,6 +37,7 @@ class NFmiCmdLine
  private:
   NFmiCmdLine(const NFmiCmdLine& theCmdLine) = delete;
   NFmiCmdLine& operator=(const NFmiCmdLine& theCmdLine) = delete;
+  bool ParseOptions(int& i);
 
   int itsArgc;
   char** itsArgv;

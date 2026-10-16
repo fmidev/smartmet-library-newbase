@@ -250,6 +250,71 @@ NFmiCmdLine::NFmiCmdLine(int argc, const char** argv, const char* optallow)
 
 // ----------------------------------------------------------------------
 /*!
+ * Parse the option letters and values starting from argument i. Returns
+ * false after logging an error for an illegal or incomplete option.
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiCmdLine::ParseOptions(int &i)
+{
+  const char *p = nullptr;
+  itsOptionCount = 0;
+  //  while (true)
+  for (;;)  // Marko muutti erilaiseksi iki-luupiksi ja poisti varoituksen
+  {
+    if (i >= itsArgc)
+      break;
+    if (itsArgv[i][0] != '-')
+      break;
+    if (strlen(itsArgv[i]) == 1)
+    {
+      ++i;
+      break;
+    }
+
+    if ((p = strchr(itsOptionsAllowed, itsArgv[i][1])) == nullptr)
+    {
+      char e[256];
+#ifdef _MSC_VER
+      ::_snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
+#else
+      ::snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
+#endif
+      e[sizeof(e) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
+      itsStatus.ErrorLog(e);
+      return false;
+    }
+    itsOptionLetters[itsOptionCount] = *p;
+    i++;
+    const char mode = *(p + 1);
+
+    if (mode == ':' || mode == '!')  // We allow a value associated to this option letter
+    {
+      if (i < itsArgc)  // If we still have something on the command line
+      {
+        if (mode == '!' || itsArgv[i][0] != '-')  // We do have a value for the previous option
+        {
+          itsOptionValues[itsOptionCount] = new char[strlen(itsArgv[i]) + 1];
+          strcpy(itsOptionValues[itsOptionCount], itsArgv[i]);
+          i++;
+        }
+      }
+      else if (mode == '!')
+      {
+        NFmiString msg("NFmiCmdLine::Init: Argument for option ");
+        msg += itsArgv[i - 1];
+        msg += " missing";
+        itsStatus.ErrorLog(msg.CharPtr());
+        return false;
+      }
+    }
+    itsOptionCount++;
+  }
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param argc Undocumented
  * \param argv Undocumented
  * \param optallow Undocumented
@@ -296,58 +361,8 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
 
     // Dig Out & save option letters & values
     i = 1;
-    itsOptionCount = 0;
-    //  while (true)
-    for (;;)  // Marko muutti erilaiseksi iki-luupiksi ja poisti varoituksen
-    {
-      if (i >= itsArgc)
-        break;
-      if (itsArgv[i][0] != '-')
-        break;
-      if (strlen(itsArgv[i]) == 1)
-      {
-        ++i;
-        break;
-      }
-
-      if ((p = strchr(itsOptionsAllowed, itsArgv[i][1])) == nullptr)
-      {
-        char e[256];
-#ifdef _MSC_VER
-        ::_snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-#else
-        ::snprintf(e, sizeof(e) - 1, "NFmiCmdLine::NFmiCmdLine: Illegal option %s\n", itsArgv[i]);
-#endif
-        e[sizeof(e) - 1] = 0;  // pitää varmistaa että päättyy 0-merkkiin!!!!
-        itsStatus.ErrorLog(e);
-        return;
-      }
-      itsOptionLetters[itsOptionCount] = *p;
-      i++;
-      const char mode = *(p + 1);
-
-      if (mode == ':' || mode == '!')  // We allow a value associated to this option letter
-      {
-        if (i < itsArgc)  // If we still have something on the command line
-        {
-          if (mode == '!' || itsArgv[i][0] != '-')  // We do have a value for the previous option
-          {
-            itsOptionValues[itsOptionCount] = new char[strlen(itsArgv[i]) + 1];
-            strcpy(itsOptionValues[itsOptionCount], itsArgv[i]);
-            i++;
-          }
-        }
-        else if (mode == '!')
-        {
-          NFmiString msg("NFmiCmdLine::Init: Argument for option ");
-          msg += itsArgv[i - 1];
-          msg += " missing";
-          itsStatus.ErrorLog(msg.CharPtr());
-          return;
-        }
-      }
-      itsOptionCount++;
-    }
+    if (!ParseOptions(i))
+      return;
 
     itsParameterCount = itsArgc - i;
     int j = 0;
