@@ -25,7 +25,7 @@
 Summary: newbase library
 Name: %{SPECNAME}
 Version: 26.10.16
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-2.fmi
+- Copy assignments that are implicitly deleted are declared deleted instead of defaulted
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-1.fmi
 - NFmiLogger::StoreToSettings no longer throws after storing the settings
 - Removed unused members (NFmiEditParam mask settings, NFmiMultiPolygonAreaMask::fInitialized,
