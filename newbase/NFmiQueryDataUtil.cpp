@@ -3756,6 +3756,124 @@ void RemoveOptionalParameters(NFmiFastQueryInfo &theSourceInfo,
   }
 }
 
+// Remove the parameter from the bag if it is there
+void RemoveParam(NFmiParamBag &bag, FmiParameterName theParam)
+{
+  if (bag.SetCurrent(theParam))
+    bag.Remove();
+}
+
+// Add the combined parameter of type T to the bag
+template <typename T>
+void AddCombinedParam(NFmiFastQueryInfo &theSourceInfo, NFmiParamBag &bag)
+{
+  T tmp;  // tässä ei ole infoversiosta väliä!
+  NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
+  bag.Add(*saaParam);
+  delete saaParam;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Replace the parameters needed for building totalwind with totalwind
+ */
+// ----------------------------------------------------------------------
+
+void AddTotalWindParam(NFmiFastQueryInfo &theSourceInfo,
+                       NFmiParamBag &bag,
+                       bool *theWind1,
+                       bool *theWind2,
+                       bool *theWind3,
+                       FmiParameterName theWindGustParId)
+{
+  // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
+  if (theSourceInfo.Param(kFmiWindVectorMS))
+  {
+    *theWind1 = true;
+    RemoveParam(bag, kFmiWindVectorMS);
+    AddCombinedParam<NFmiTotalWind>(theSourceInfo, bag);
+  }
+  else if (theSourceInfo.Param(kFmiWindDirection) && theSourceInfo.Param(kFmiWindSpeedMS))
+  {
+    *theWind2 = true;
+    RemoveParam(bag, kFmiWindDirection);
+    RemoveParam(bag, kFmiWindSpeedMS);
+    AddCombinedParam<NFmiTotalWind>(theSourceInfo, bag);
+  }
+  else if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS))
+  {
+    *theWind3 = true;
+    RemoveParam(bag, kFmiWindUMS);
+    RemoveParam(bag, kFmiWindVMS);
+    AddCombinedParam<NFmiTotalWind>(theSourceInfo, bag);
+  }
+
+  // katsotaan vielä windGust tilanne
+  if (theWindGustParId != kFmiBadParameter && (*theWind1 || *theWind2 || *theWind3))
+  {
+    // poista windgust parametri uudesta parambagistä, koska sillä rakennetaan totalwindia
+    if (theSourceInfo.Param(theWindGustParId))
+      RemoveParam(bag, theWindGustParId);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Replace the parameters needed for building weatherandcloudiness with it
+ */
+// ----------------------------------------------------------------------
+
+void AddWeatherAndCloudinessParam(NFmiFastQueryInfo &theSourceInfo,
+                                  NFmiParamBag &bag,
+                                  bool *theWeather1,
+                                  bool *theWeather2,
+                                  bool fKeepCloudSymbolParameter,
+                                  bool fAllowLessParamsWhenCreatingWeather,
+                                  bool fDoaccuratePrecip)
+{
+  if (WantedWeatherAndCloudinessParamsFound(theSourceInfo, fAllowLessParamsWhenCreatingWeather))
+  {
+    *theWeather1 = true;
+
+    // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
+    // weatherandcloudiness
+    RemoveParam(bag, kFmiWeatherSymbol1);
+    RemoveParam(bag, kFmiTotalCloudCover);
+    if (!fKeepCloudSymbolParameter)
+      RemoveParam(bag, kFmiCloudSymbol);
+    RemoveParam(bag, kFmiFogSymbol);
+
+    // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
+    RemoveParam(bag, kFmiWeatherSymbol2);
+    RemoveParam(bag, kFmiPrecipitationRate);
+    RemoveParam(bag, kFmiPrecipitation1h);
+    RemoveParam(bag, kFmiPrecipitation3h);
+    RemoveParam(bag, kFmiPrecipitation6h);
+    // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
+    RemoveParam(bag, kFmiLowCloudCover);
+    RemoveParam(bag, kFmiMediumCloudCover);
+    RemoveParam(bag, kFmiHighCloudCover);
+
+    AddCombinedParam<NFmiWeatherAndCloudiness>(theSourceInfo, bag);
+    if (fDoaccuratePrecip)
+    {
+      NFmiDataIdent accuratePrecip(
+          NFmiParam(kFmiPrecipitationRate, "exact rr1h", 0, kFloatMissing, 1, 0, "%.2f", kLinearly),
+          *theSourceInfo.Producer());
+      bag.Add(accuratePrecip);
+    }
+  }
+  else if (theSourceInfo.Param(kFmiWeatherSymbol3))
+  {
+    *theWeather2 = true;
+
+    // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
+    // weatherandcloudiness
+    RemoveParam(bag, kFmiWeatherSymbol3);
+    AddCombinedParam<NFmiWeatherAndCloudiness>(theSourceInfo, bag);
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theSourceInfo Undocumented
@@ -3795,125 +3913,17 @@ NFmiParamBag CheckAndMakeCombinedParamBag(NFmiFastQueryInfo &theSourceInfo,
     NFmiParamBag bag(theSourceInfo.ParamBag());
 
     if (fDoTotalWind)
-    {
-      if (theSourceInfo.Param(kFmiWindVectorMS))
-      {
-        *theWind1 = true;
+      AddTotalWindParam(theSourceInfo, bag, theWind1, theWind2, theWind3, theWindGustParId);
 
-        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-        if (bag.SetCurrent(kFmiWindVectorMS))
-          bag.Remove();
-
-        NFmiTotalWind tmp;
-        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-        bag.Add(*saaParam);
-        delete saaParam;
-      }
-      else if (theSourceInfo.Param(kFmiWindDirection) && theSourceInfo.Param(kFmiWindSpeedMS))
-      {
-        *theWind2 = true;
-
-        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-        if (bag.SetCurrent(kFmiWindDirection))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiWindSpeedMS))
-          bag.Remove();
-
-        NFmiTotalWind tmp;
-        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-        bag.Add(*saaParam);
-        delete saaParam;
-      }
-      else if (theSourceInfo.Param(kFmiWindUMS) && theSourceInfo.Param(kFmiWindVMS))
-      {
-        *theWind3 = true;
-
-        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan totalwind
-        if (bag.SetCurrent(kFmiWindUMS))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiWindVMS))
-          bag.Remove();
-
-        NFmiTotalWind tmp;
-        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-        bag.Add(*saaParam);
-        delete saaParam;
-      }
-
-      // katsotaan vielä windGust tilanne
-      if (theWindGustParId != kFmiBadParameter && (*theWind1 || *theWind2 || *theWind3))
-      {
-        if (theSourceInfo.Param(theWindGustParId))
-        {
-          // poista windgust parametri uudesta parambagistä, koska sillä rakennetaan totalwindia
-          if (bag.SetCurrent(theWindGustParId))
-            bag.Remove();
-        }
-      }
-    }
     if (fDoWeatherAndCloudiness)
     {
-      if (WantedWeatherAndCloudinessParamsFound(theSourceInfo, fAllowLessParamsWhenCreatingWeather))
-      {
-        *theWeather1 = true;
-
-        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
-        // weatherandcloudiness
-        if (bag.SetCurrent(kFmiWeatherSymbol1))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiTotalCloudCover))
-          bag.Remove();
-        if ((!fKeepCloudSymbolParameter) && bag.SetCurrent(kFmiCloudSymbol))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiFogSymbol))
-          bag.Remove();
-
-        // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
-        if (bag.SetCurrent(kFmiWeatherSymbol2))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiPrecipitationRate))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiPrecipitation1h))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiPrecipitation3h))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiPrecipitation6h))
-          bag.Remove();
-        // nämä poistetaan myös, koska niitä käytetään rakennettaessa w&c:tä
-        if (bag.SetCurrent(kFmiLowCloudCover))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiMediumCloudCover))
-          bag.Remove();
-        if (bag.SetCurrent(kFmiHighCloudCover))
-          bag.Remove();
-
-        NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
-        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-        bag.Add(*saaParam);
-        delete saaParam;
-        if (fDoaccuratePrecip)
-        {
-          NFmiDataIdent accuratePrecip(
-              NFmiParam(
-                  kFmiPrecipitationRate, "exact rr1h", 0, kFloatMissing, 1, 0, "%.2f", kLinearly),
-              *theSourceInfo.Producer());
-          bag.Add(accuratePrecip);
-        }
-      }
-      else if (theSourceInfo.Param(kFmiWeatherSymbol3))
-      {
-        *theWeather2 = true;
-
-        // poista seuraavat parametrit uudesta parambagistä, koska niillä rakennetaan
-        // weatherandcloudiness
-        if (bag.SetCurrent(kFmiWeatherSymbol3))
-          bag.Remove();
-
-        NFmiWeatherAndCloudiness tmp;  // tässä ei ole infoversiosta väliä!
-        NFmiDataIdent *saaParam = tmp.CreateParam(*theSourceInfo.Producer());
-        bag.Add(*saaParam);
-        delete saaParam;
-      }
+      AddWeatherAndCloudinessParam(theSourceInfo,
+                                   bag,
+                                   theWeather1,
+                                   theWeather2,
+                                   fKeepCloudSymbolParameter,
+                                   fAllowLessParamsWhenCreatingWeather,
+                                   fDoaccuratePrecip);
 
       // katsotaan vielä precipitation form parametrin tilanne, onko niitä vektorissa ja
       // poistetaanko niitä (positiiviset arvot) vai ei (negatiiviset arvot)
