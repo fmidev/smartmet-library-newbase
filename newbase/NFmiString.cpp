@@ -962,8 +962,7 @@ void NFmiString::FirstCharToUpper(unsigned long theUpperIndex)
 #else
       // The process-wide locale must not be changed here: other threads use it,
       // and the "Finnish" locale name does not exist on Linux anyway
-      fChar[theUpperIndex] =
-          static_cast<unsigned char>(toupper(static_cast<unsigned char>(fChar[theUpperIndex])));
+      fChar[theUpperIndex] = static_cast<unsigned char>(toupper(fChar[theUpperIndex]));
 #endif
     }
   }

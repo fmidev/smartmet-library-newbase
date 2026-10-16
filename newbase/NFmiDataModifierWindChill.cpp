@@ -91,7 +91,6 @@ void NFmiDataModifierWindChill::Calculate(float /* theValue */)
     // muutu???)
     itsQueryInfo->Location(oldLatlon);  // kommentoi tämä kun uusi versio käytössä!!!!!!!!!
   }
-  return;
 }
 
 // ----------------------------------------------------------------------

@@ -21,7 +21,7 @@ bool CheckForStationaryData(const std::shared_ptr<NFmiAreaMask> &mask)
   }
 }
 
-static bool UseTimeInterpolation(bool maskIsStationaryData, bool normalInterpolationCondition)
+bool UseTimeInterpolation(bool maskIsStationaryData, bool normalInterpolationCondition)
 {
   try
   {
