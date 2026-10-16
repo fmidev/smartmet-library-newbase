@@ -805,6 +805,30 @@ bool NFmiLogger::CleanBackupFiles()
   }
 }
 
+namespace
+{
+// True if the backup period of the current time differs from that of the last logged time
+bool IsBackupPeriodChanged(NFmiLogger::Period thePeriod,
+                           const NFmiTime &theCurrentTime,
+                           const NFmiTime &theLastLoggedTime,
+                           int diffInHours)
+{
+  switch (thePeriod)
+  {
+    case NFmiLogger::kHourly:
+      return (theCurrentTime.GetHour() != theLastLoggedTime.GetHour() || diffInHours >= 1);
+    case NFmiLogger::kDaily:
+      return (theCurrentTime.GetDay() != theLastLoggedTime.GetDay() || diffInHours >= 24);
+    case NFmiLogger::kMonthly:
+      return (theCurrentTime.GetMonth() != theLastLoggedTime.GetMonth() ||
+              diffInHours >= 31 * 24);
+    case NFmiLogger::kNoPeriod:
+      break;
+  }
+  return false;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented
@@ -819,49 +843,12 @@ bool NFmiLogger::IsFileBackUpTime()
   {
     int diffInHours = itsCurrentTime.DifferenceInHours(itsLastLoggedTime);
     if (fUseLocalTime)
-    {
-      switch (itsLogFileBackupTimePeriod)
-      {
-        case kHourly:
-          if (itsCurrentTime.GetHour() != itsLastLoggedTime.GetHour() || diffInHours >= 1)
-            return true;
-          break;
-        case kDaily:
-          if (itsCurrentTime.GetDay() != itsLastLoggedTime.GetDay() || diffInHours >= 24)
-            return true;
-          break;
-        case kMonthly:
-          if (itsCurrentTime.GetMonth() != itsLastLoggedTime.GetMonth() || diffInHours >= 31 * 24)
-            return true;
-          break;
-        case kNoPeriod:
-          break;
-      }
-    }
-    else
-    {
-      switch (itsLogFileBackupTimePeriod)
-      {
-        case kHourly:
-          if (itsCurrentTime.UTCTime().GetHour() != itsLastLoggedTime.UTCTime().GetHour() ||
-              diffInHours >= 1)
-            return true;
-          break;
-        case kDaily:
-          if (itsCurrentTime.UTCTime().GetDay() != itsLastLoggedTime.UTCTime().GetDay() ||
-              diffInHours >= 24)
-            return true;
-          break;
-        case kMonthly:
-          if (itsCurrentTime.UTCTime().GetMonth() != itsLastLoggedTime.UTCTime().GetMonth() ||
-              diffInHours >= 31 * 24)
-            return true;
-          break;
-        case kNoPeriod:
-          break;
-      }
-    }
-    return false;
+      return IsBackupPeriodChanged(
+          itsLogFileBackupTimePeriod, itsCurrentTime, itsLastLoggedTime, diffInHours);
+    return IsBackupPeriodChanged(itsLogFileBackupTimePeriod,
+                                 itsCurrentTime.UTCTime(),
+                                 itsLastLoggedTime.UTCTime(),
+                                 diffInHours);
   }
   catch (...)
   {
