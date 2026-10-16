@@ -57,6 +57,7 @@ class NFmiCommentStripper
   bool CollectStringPositions(const std::string& theSearchString,
                               std::vector<unsigned long>& theResVector);
   void StripBomMarkersFromStart();
+  void StripEndOfLineSpaces();
 
  protected:
   std::string itsMessage;

@@ -269,56 +269,59 @@ bool NFmiCommentStripper::Strip()
     string filt_elem3("*/");
     if (fStripSlashAst)
     {
-      if (fStripNested)
-      {
-        if (!CollectAndStripNested(filt_elem2, filt_elem3))
-          return false;
-      }
-      else
-      {
-        if (!StripBlocks(filt_elem2, filt_elem3))
-          return false;
-      }
-    }
-    if (fStripPound)
-    {
-      if (!StripPounds())
+      bool ok = (fStripNested ? CollectAndStripNested(filt_elem2, filt_elem3)
+                              : StripBlocks(filt_elem2, filt_elem3));
+      if (!ok)
         return false;
     }
-    if (fStripDoubleSlash)
-    {
-      if (!StripDoubleSlashes())
-        return false;
-    }
+    if (fStripPound && !StripPounds())
+      return false;
+    if (fStripDoubleSlash && !StripDoubleSlashes())
+      return false;
 
     if (fStripEndOfLineSpaces)
-    {
-      // Mika: 07.02.2002:
-      // Lopuksi poistetaan tarpeeton whitespace:
-      // Kun tulee \n vastaan, peruutetaan spacet pois ja jätetään korkeintaan
-      // 3 peräkkäistä \n merkkiä
-      unsigned int j = 2;
+      StripEndOfLineSpaces();
 
-      for (unsigned int i = 2; i < itsString.size(); i++)
-      {
-        if (itsString[i] != '\n')
-          itsString[j++] = itsString[i];
-        else
-        {
-          for (; j > 1 && (itsString[j - 1] == ' ' || itsString[j - 1] == '\t'); j--)
-            ;
-          if ((j >= 1 && itsString[j - 1] != '\n') || (j >= 2 && itsString[j - 2] != '\n'))
-            itsString[j++] = itsString[i];
-        }
-      }
-      itsString.resize(j);
-    }
     return true;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Remove whitespace at line ends and leave at most 3 consecutive newlines
+ */
+// ----------------------------------------------------------------------
+
+void NFmiCommentStripper::StripEndOfLineSpaces()
+{
+  // Mika: 07.02.2002:
+  // Lopuksi poistetaan tarpeeton whitespace:
+  // Kun tulee \n vastaan, peruutetaan spacet pois ja jätetään korkeintaan
+  // 3 peräkkäistä \n merkkiä
+  // Strings shorter than the two preserved characters are left as is, previously they were
+  // padded with null characters
+  if (itsString.size() < 2)
+    return;
+
+  unsigned int j = 2;
+
+  for (unsigned int i = 2; i < itsString.size(); i++)
+  {
+    if (itsString[i] != '\n')
+      itsString[j++] = itsString[i];
+    else
+    {
+      for (; j > 1 && (itsString[j - 1] == ' ' || itsString[j - 1] == '\t'); j--)
+        ;
+      if ((j >= 1 && itsString[j - 1] != '\n') || (j >= 2 && itsString[j - 2] != '\n'))
+        itsString[j++] = itsString[i];
+    }
+  }
+  itsString.resize(j);
 }
 
 void NFmiCommentStripper::StripBomMarkersFromStart()
