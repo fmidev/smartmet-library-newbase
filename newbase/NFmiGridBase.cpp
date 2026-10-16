@@ -1271,6 +1271,50 @@ bool NFmiGridBase::Swap()
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Replace the values of the current numOfSteps x numOfSteps block by their mean
+ */
+// ----------------------------------------------------------------------
+
+void NFmiGridBase::MeanFilterBlock(unsigned long numOfSteps)
+{
+  try
+  {
+    double sum = 0;
+    double num = 0;
+    unsigned long dx = 0;
+    unsigned long dy = 0;
+    for (dy = 0; dy < numOfSteps; dy++)
+    {
+      for (dx = 0; dx < numOfSteps; dx++)
+      {
+        double tmp = FloatValue(dx, dy);
+        if (tmp != kFloatMissing)
+        {
+          sum += tmp;
+          num++;
+        }
+      }
+    }
+    if (!num)
+      return;
+
+    sum = sum / num;
+    for (dy = 0; dy < numOfSteps; dy++)
+    {
+      for (dx = 0; dx < numOfSteps; dx++)
+      {
+        itsData->FloatValue(DataIndex(itsCurrentX + dx, itsCurrentY + dy), float(sum));
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param numOfSteps Undocumented
  */
 // ----------------------------------------------------------------------
@@ -1285,33 +1329,7 @@ void NFmiGridBase::MeanFilter(unsigned long numOfSteps)
       FirstX();
       for (bool moreInner = true; moreInner; moreInner = Right(numOfSteps))
       {
-        double sum = 0;
-        double num = 0;
-        unsigned long dx = 0;
-        unsigned long dy = 0;
-        for (dy = 0; dy < numOfSteps; dy++)
-        {
-          for (dx = 0; dx < numOfSteps; dx++)
-          {
-            double tmp = FloatValue(dx, dy);
-            if (tmp != kFloatMissing)
-            {
-              sum += tmp;
-              num++;
-            }
-          }
-        }
-        if (!num)
-          continue;
-
-        sum = sum / num;
-        for (dy = 0; dy < numOfSteps; dy++)
-        {
-          for (dx = 0; dx < numOfSteps; dx++)
-          {
-            itsData->FloatValue(DataIndex(itsCurrentX + dx, itsCurrentY + dy), float(sum));
-          }
-        }
+        MeanFilterBlock(numOfSteps);
       }
     }
   }

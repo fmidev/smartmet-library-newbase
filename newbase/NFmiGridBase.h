@@ -181,6 +181,8 @@ class NFmiGridBase
   NFmiGridBase& operator=(const NFmiGridBase& theBase);
 
  private:
+  void MeanFilterBlock(unsigned long numOfSteps);
+
   //  bool itsBase;
   bool fWaitX = true;
   bool fWaitY = true;
