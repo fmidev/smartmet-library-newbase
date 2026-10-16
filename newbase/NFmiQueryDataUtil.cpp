@@ -1676,16 +1676,16 @@ float TimeInterpolationValueWCTR(NFmiFastQueryInfo &theInfo,
  */
 // ----------------------------------------------------------------------
 
-void InterpolateCurrentParamToTime(NFmiFastQueryInfo* theDestination,
-                                   NFmiFastQueryInfo* theSource,
-                                   const NFmiMetTime& t,
+void InterpolateCurrentParamToTime(NFmiFastQueryInfo *theDestination,
+                                   NFmiFastQueryInfo *theSource,
+                                   const NFmiMetTime &t,
                                    bool timeStatus,
                                    FmiInterpolationMethod theInterpolationMethod,
                                    int theMaxTimeSearchRangeInMinutes,
                                    unsigned long lagrangeTimeIndex,
                                    double lagrangeTimePosition)
 {
-  const NFmiParam* tmpParam = theDestination->Param().GetParam();
+  const NFmiParam *tmpParam = theDestination->Param().GetParam();
   NFmiQueryDataUtil::LimitChecker checkerWithLagrangeInterpolation(
       static_cast<float>(tmpParam->MinValue()),
       static_cast<float>(tmpParam->MaxValue()),
@@ -6522,6 +6522,71 @@ void NFmiQueryDataUtil::FillGridData(NFmiQueryData* theSource,
 
 namespace
 {
+// Fill the current level of the target interpolating in space (and in time if requested)
+void FillLevelWithLocationInterpolation(
+    NFmiFastQueryInfo &theSourceInfo,
+    NFmiFastQueryInfo &theTargetInfo,
+    bool fDoLocationInterpolation,
+    bool doTimeInterpolation,
+    const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+    const NFmiTimeCache &timeCache)
+{
+  unsigned long targetXSize = theTargetInfo.GridXNumber();
+  for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
+  {
+    float value = kFloatMissing;
+    const NFmiLocationCache &locCache =
+        theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
+                              [theTargetInfo.LocationIndex() / targetXSize];
+    if (fDoLocationInterpolation && doTimeInterpolation)
+      value = theSourceInfo.CachedInterpolation(locCache, timeCache);
+    else if (fDoLocationInterpolation)
+      value = theSourceInfo.CachedInterpolation(locCache);
+    theTargetInfo.FloatValue(value);
+  }
+}
+
+// Fill all parameters and levels of the current target time
+void FillSingleTimeGridData(NFmiFastQueryInfo &theSourceInfo,
+                            NFmiFastQueryInfo &theTargetInfo,
+                            bool fDoLocationInterpolation,
+                            bool doTimeInterpolation,
+                            bool doGroundData,
+                            const NFmiMetTime &targetTime,
+                            const NFmiDataMatrix<NFmiLocationCache> &theLocationCacheMatrix,
+                            const NFmiTimeCache &timeCache,
+                            NFmiDataMatrix<float> &gridValues)
+{
+  for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
+  {
+    if (theSourceInfo.Param(static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
+    {
+      for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
+      {
+        if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
+        {
+          if (fDoLocationInterpolation == false)
+          {
+            if (doTimeInterpolation)
+              gridValues = theSourceInfo.Values(targetTime);
+            else
+              gridValues = theSourceInfo.Values();
+
+            theTargetInfo.SetValues(gridValues);
+          }
+          else  // interpoloidaan paikan suhteen
+            FillLevelWithLocationInterpolation(theSourceInfo,
+                                               theTargetInfo,
+                                               fDoLocationInterpolation,
+                                               doTimeInterpolation,
+                                               theLocationCacheMatrix,
+                                               timeCache);
+        }
+      }
+    }
+  }
+}
+
 void FillSingleTimeGridDataInThread(
     NFmiFastQueryInfo &theSourceInfo,
     NFmiFastQueryInfo &theTargetInfo,
@@ -6538,7 +6603,6 @@ void FillSingleTimeGridDataInThread(
       (theSourceInfo.SizeLevels() == 1) &&
       (theTargetInfo.SizeLevels() ==
        1);  // jos molemmissa datoissa vain yksi leveli, se voidaan jättää tarkastamatta
-  unsigned long targetXSize = theTargetInfo.GridXNumber();
   unsigned long workedTimeIndex = 0;
   for (; theTimeIndexCalculator.GetCurrentTimeIndex(workedTimeIndex);)
   {
@@ -6561,43 +6625,15 @@ void FillSingleTimeGridDataInThread(
             true)
     {
       const NFmiTimeCache &timeCache = theTimeCacheVector[theTargetInfo.TimeIndex()];
-      for (theTargetInfo.ResetParam(); theTargetInfo.NextParam();)
-      {
-        if (theSourceInfo.Param(
-                static_cast<FmiParameterName>(theTargetInfo.Param().GetParamIdent())))
-        {
-          for (theTargetInfo.ResetLevel(); theTargetInfo.NextLevel();)
-          {
-            if (doGroundData || theSourceInfo.Level(*theTargetInfo.Level()))
-            {
-              if (fDoLocationInterpolation == false)
-              {
-                if (doTimeInterpolation)
-                  gridValues = theSourceInfo.Values(targetTime);
-                else
-                  gridValues = theSourceInfo.Values();
-
-                theTargetInfo.SetValues(gridValues);
-              }
-              else
-              {  // interpoloidaan paikan suhteen
-                for (theTargetInfo.ResetLocation(); theTargetInfo.NextLocation();)
-                {
-                  float value = kFloatMissing;
-                  const NFmiLocationCache &locCache =
-                      theLocationCacheMatrix[theTargetInfo.LocationIndex() % targetXSize]
-                                            [theTargetInfo.LocationIndex() / targetXSize];
-                  if (fDoLocationInterpolation && doTimeInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache, timeCache);
-                  else if (fDoLocationInterpolation)
-                    value = theSourceInfo.CachedInterpolation(locCache);
-                  theTargetInfo.FloatValue(value);
-                }
-              }
-            }
-          }
-        }
-      }
+      FillSingleTimeGridData(theSourceInfo,
+                             theTargetInfo,
+                             fDoLocationInterpolation,
+                             doTimeInterpolation,
+                             doGroundData,
+                             targetTime,
+                             theLocationCacheMatrix,
+                             timeCache,
+                             gridValues);
     }
   }
 }

@@ -1072,9 +1072,9 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryI
 
 // Add the meta wind parameter extreme values calculated from wind speed and direction
 void NFmiInfoAreaMask::AddExtremeValuesFromWsAndWd(
-    std::shared_ptr<NFmiFastQueryInfo>& theInfo,
-    std::shared_ptr<NFmiDataModifier>& theFunctionModifier,
-    const NFmiLocationCache& theLocationCache)
+    std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+    const NFmiLocationCache &theLocationCache)
 {
   theInfo->Param(kFmiWindSpeedMS);
   std::array<float, 4> wsValues{};
@@ -1110,9 +1110,9 @@ void NFmiInfoAreaMask::AddExtremeValuesFromWsAndWd(
 
 // Add the meta wind parameter extreme values calculated from wind components
 void NFmiInfoAreaMask::AddExtremeValuesFromWindComponents(
-    std::shared_ptr<NFmiFastQueryInfo>& theInfo,
-    std::shared_ptr<NFmiDataModifier>& theFunctionModifier,
-    const NFmiLocationCache& theLocationCache)
+    std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+    std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+    const NFmiLocationCache &theLocationCache)
 {
   theInfo->Param(kFmiWindUMS);
   std::array<float, 4> uValues{};

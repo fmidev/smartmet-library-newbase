@@ -2274,7 +2274,7 @@ void NFmiWeatherAndCloudiness::AddToWeightedPeriodSums(WeightedPeriodSums &sums,
  */
 // ----------------------------------------------------------------------
 
-void NFmiWeatherAndCloudiness::SetFromWeightedPeriodSums(const WeightedPeriodSums& sums,
+void NFmiWeatherAndCloudiness::SetFromWeightedPeriodSums(const WeightedPeriodSums &sums,
                                                          bool considerMax)
 {
   //	pitäisi olla joku resetointi ensin
