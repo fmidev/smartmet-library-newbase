@@ -1265,6 +1265,28 @@ NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1
   }
 }
 
+namespace
+{
+// Copy all the parameter, location and level values of the current times
+void CopyCurrentTimeValues(NFmiFastQueryInfo &sourceInfo, NFmiFastQueryInfo &destInfo)
+{
+  for (destInfo.ResetParam(), sourceInfo.ResetParam();
+       destInfo.NextParam() && sourceInfo.NextParam();)
+  {
+    for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
+         destInfo.NextLocation() && sourceInfo.NextLocation();)
+    {
+      for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
+           destInfo.NextLevel() && sourceInfo.NextLevel();)
+      {
+        float value = sourceInfo.FloatValue();
+        destInfo.FloatValue(value);
+      }
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  *  Irroittaa halutut ajat querydatasta
@@ -1298,22 +1320,7 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractTimes(const NFmiQueryData *theSourceDat
       for (destInfo.ResetTime(); destInfo.NextTime();)
       {
         if (sourceInfo.Time(destInfo.Time()))
-        {
-          for (destInfo.ResetParam(), sourceInfo.ResetParam();
-               destInfo.NextParam() && sourceInfo.NextParam();)
-          {
-            for (destInfo.ResetLocation(), sourceInfo.ResetLocation();
-                 destInfo.NextLocation() && sourceInfo.NextLocation();)
-            {
-              for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
-                   destInfo.NextLevel() && sourceInfo.NextLevel();)
-              {
-                float value = sourceInfo.FloatValue();
-                destInfo.FloatValue(value);
-              }
-            }
-          }
-        }
+          CopyCurrentTimeValues(sourceInfo, destInfo);
       }
       if (destData)  // lisataan tuottaja id tieto, jos lahdedatasta sita loytyy
         AddProducerIds(destInfo, sourceInfo);
