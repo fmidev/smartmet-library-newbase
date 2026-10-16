@@ -4121,6 +4121,51 @@ bool NFmiQueryInfo::CalcTimeCache(NFmiQueryInfo &theTargetInfo,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate the value in time between the time indexes index1 and index1+1
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::InterpolatedValueBetweenTimes(const NFmiMetTime &theTime,
+                                                   const NFmiMetTime &time1,
+                                                   const NFmiMetTime &time2,
+                                                   int index1)
+{
+  try
+  {
+    TimeIndex(index1);
+    float value1 = FloatValue();
+    int index2 = index1 + 1;
+    TimeIndex(index2);
+    float value2 = FloatValue();
+    if ((value1 == kFloatMissing || value1 == kTCombinedWeatherFloatMissing) &&
+        (value2 == kFloatMissing || value2 == kTCombinedWeatherFloatMissing))
+      return kFloatMissing;
+
+    if (Param().GetParamIdent() != kFmiWindDirection)
+      return Interpolate(Param(), theTime, time1, time2, value1, value2);
+
+    // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
+    Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
+    TimeIndex(index1);  // otetaan 1. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
+    float ws1 = FloatValue();
+    TimeIndex(index2);  // otetaan 2. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
+    float ws2 = FloatValue();
+    Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+    NFmiInterpolation::WindInterpolator windInterpolator;
+    float offset1 = CalcTimeOffsetToLastTime(theTime, time1, time2);
+    windInterpolator.operator()(ws1, value1, offset1);
+    windInterpolator.operator()(ws2, value2, (1 - offset1));
+    // meitä kiinnostaa vain tuulen suunta (tämä pitää tehdä jotenkin fiksummin)
+    return static_cast<float>(windInterpolator.Direction());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
                                                    int theMaxMinuteRange)
 {
@@ -4143,7 +4188,6 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
       NFmiMetTime time2 = NFmiMetTime::gMissingTime;
 
       int index1 = 0;
-      int index2 = 0;
       if ((index1 = timeList->FindNearestTimes(
                theTime, theMaxMinuteRange ? theMaxMinuteRange : -1, time1, time2)) != -1)
       {
@@ -4151,41 +4195,7 @@ float NFmiQueryInfo::InterpolatedValueFromTimeList(const NFmiMetTime &theTime,
         if (interpolationMethod == kNearestPoint || interpolationMethod == kNoneInterpolation)
           returnValue = PeekValue(Index(ParamIndex(), LocationIndex(), LevelIndex(), index1));
         else
-        {
-          TimeIndex(index1);
-          float value1 = FloatValue();
-          index2 = index1 + 1;
-          TimeIndex(index2);
-          float value2 = FloatValue();
-          if ((value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing) ||
-              (value2 != kFloatMissing && value2 != kTCombinedWeatherFloatMissing))
-          {
-            if (Param().GetParamIdent() == kFmiWindDirection)
-            {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
-              Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-              TimeIndex(
-                  index1);  // otetaan 1. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
-              float ws1 = FloatValue();
-              TimeIndex(
-                  index2);  // otetaan 2. tuulen nopeus samalta ajalta kuin vastaava tuulen suunta
-              float ws2 = FloatValue();
-              Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
-              NFmiInterpolation::WindInterpolator windInterpolator;
-              float offset1 = CalcTimeOffsetToLastTime(theTime, time1, time2);
-              windInterpolator.operator()(ws1, value1, offset1);
-              windInterpolator.operator()(ws2, value2, (1 - offset1));
-              returnValue = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa
-                                                                               // vain tuulen suunta
-                                                                               // (tämä
-              // pitää tehdä jotenkin
-              // fiksummin)
-            }
-            else
-              returnValue = Interpolate(Param(), theTime, time1, time2, value1, value2);
-          }
-          else
-            returnValue = kFloatMissing;
-        }
+          returnValue = InterpolatedValueBetweenTimes(theTime, time1, time2, index1);
       }
     }
 

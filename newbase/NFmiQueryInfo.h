@@ -672,6 +672,11 @@ class NFmiQueryInfo
   friend class NFmiDBServer;
 
  private:
+  float InterpolatedValueBetweenTimes(const NFmiMetTime &theTime,
+                                      const NFmiMetTime &time1,
+                                      const NFmiMetTime &time2,
+                                      int index1);
+
   //  bool fUseStaticDataMask; // 2012.1.19 Marko Poistetaan käytöstä itsStaticDataMask -luokka,
   //  koska se on ilmeisesti turhaa (SuperSmartInfo käyttää tätä)
   long itsTimeUnCertaintyStart;
