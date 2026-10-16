@@ -157,6 +157,58 @@ int DetectClassId(const Fmi::ProjInfo &proj)
   return kNFmiGdalArea;
 }
 
+// Create a legacy rotated latlon area, or a GDAL area if the rotation is not supported
+NFmiArea *CreateRotatedLatLonArea(const Fmi::SpatialReference &theSR,
+                                  const NFmiPoint &bl,
+                                  const NFmiPoint &tr)
+{
+  const auto &proj = theSR.projInfo();
+  auto clon = proj.getDouble("lon_0");
+  auto o_lon_p = proj.getDouble("o_lon_p");
+  auto o_lat_p = proj.getDouble("o_lat_p");
+  if (!o_lon_p)
+    o_lon_p = 0;
+  if (!o_lat_p)
+    o_lat_p = 90;
+  if (!clon)
+    clon = 0;
+
+  if (o_lon_p != 0.0)
+    return new NFmiGdalArea("FMI", theSR, bl, tr);
+
+  NFmiPoint spole(*clon, -*o_lat_p);
+  return NFmiAreaTools::CreateLegacyRotatedLatLonArea(bl, tr, spole);
+}
+
+// Create a legacy transverse mercator area
+NFmiArea *CreateTransverseMercatorArea(const Fmi::ProjInfo &proj,
+                                       const NFmiPoint &bl,
+                                       const NFmiPoint &tr)
+{
+  double lon_0 = 27.0;
+  double k0 = 0.9996;
+  double fe = 500000.0;
+  double fn = 0.0;
+  if (proj.getString("proj") == std::string("utm"))
+  {
+    auto zone = proj.getDouble("zone");
+    lon_0 = 6.0 * zone.value_or(35.0) - 183.0;  // UTM zone central meridian
+  }
+  else
+  {
+    auto clon = proj.getDouble("lon_0");
+    auto k = proj.getDouble("k");
+    auto k_0 = proj.getDouble("k_0");
+    auto x_0 = proj.getDouble("x_0");
+    auto y_0 = proj.getDouble("y_0");
+    lon_0 = clon.value_or(27.0);
+    k0 = k ? *k : k_0.value_or(0.9996);
+    fe = x_0.value_or(500000.0);
+    fn = y_0.value_or(0.0);
+  }
+  return NFmiAreaTools::CreateLegacyTransverseMercatorArea(bl, tr, lon_0, k0, fe, fn);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Create a legacy projection from a spatial reference with dummy corners
@@ -182,20 +234,20 @@ NFmiArea *Create(const Fmi::SpatialReference &theSR)
       auto clat = proj.getDouble("lat_0");
       auto tlat = proj.getDouble("lat_ts");
       return NFmiAreaTools::CreateLegacyStereographicArea(
-          bl, tr, clon ? *clon : 0, clat ? *clat : 90, tlat ? *tlat : 60);
+          bl, tr, clon.value_or(0), clat.value_or(90), tlat.value_or(60));
     }
     case kNFmiEquiDistArea:
     {
       auto clon = proj.getDouble("lon_0");
       auto clat = proj.getDouble("lat_0");
-      return NFmiAreaTools::CreateLegacyEquiDistArea(bl, tr, clon ? *clon : 0, clat ? *clat : 90);
+      return NFmiAreaTools::CreateLegacyEquiDistArea(bl, tr, clon.value_or(0), clat.value_or(90));
     }
     case kNFmiLambertEqualArea:
     {
       auto clon = proj.getDouble("lon_0");
       auto clat = proj.getDouble("lat_0");
       return NFmiAreaTools::CreateLegacyLambertEqualArea(
-          bl, tr, clon ? *clon : 0, clat ? *clat : 9);
+          bl, tr, clon.value_or(0), clat.value_or(9));
     }
     case kNFmiLambertConformalConicArea:
     {
@@ -208,59 +260,20 @@ NFmiArea *Create(const Fmi::SpatialReference &theSR)
       if (!lat1)
         lat1 = lat2;
       return NFmiAreaTools::CreateLegacyLambertConformalConicArea(
-          bl, tr, clon ? *clon : 0, clat ? *clat : 0, lat1 ? *lat1 : 0, lat2 ? *lat2 : 0);
+          bl, tr, clon.value_or(0), clat.value_or(0), lat1.value_or(0), lat2.value_or(0));
     }
     case kNFmiGnomonicArea:
     {
       auto clon = proj.getDouble("lon_0");
       auto clat = proj.getDouble("lat_0");
-      return NFmiAreaTools::CreateLegacyGnomonicArea(bl, tr, clon ? *clon : 0, clat ? *clat : 90);
+      return NFmiAreaTools::CreateLegacyGnomonicArea(bl, tr, clon.value_or(0), clat.value_or(90));
     }
     case kNFmiRotatedLatLonArea:
-    {
-      auto clon = proj.getDouble("lon_0");
-      auto o_lon_p = proj.getDouble("o_lon_p");
-      auto o_lat_p = proj.getDouble("o_lat_p");
-      if (!o_lon_p)
-        o_lon_p = 0;
-      if (!o_lat_p)
-        o_lat_p = 90;
-      if (!clon)
-        clon = 0;
-
-      if (o_lon_p != 0.0)
-        return new NFmiGdalArea("FMI", theSR, bl, tr);
-
-      NFmiPoint spole(*clon, -*o_lat_p);
-      return NFmiAreaTools::CreateLegacyRotatedLatLonArea(bl, tr, spole);
-    }
+      return CreateRotatedLatLonArea(theSR, bl, tr);
     case kNFmiYKJArea:
       return NFmiAreaTools::CreateLegacyYKJArea(bl, tr);
     case kNFmiTransverseMercatorArea:
-    {
-      double lon_0 = 27.0;
-      double k0 = 0.9996;
-      double fe = 500000.0;
-      double fn = 0.0;
-      if (proj.getString("proj") == std::string("utm"))
-      {
-        auto zone = proj.getDouble("zone");
-        lon_0 = 6.0 * (zone ? *zone : 35.0) - 183.0;  // UTM zone central meridian
-      }
-      else
-      {
-        auto clon = proj.getDouble("lon_0");
-        auto k = proj.getDouble("k");
-        auto k_0 = proj.getDouble("k_0");
-        auto x_0 = proj.getDouble("x_0");
-        auto y_0 = proj.getDouble("y_0");
-        lon_0 = clon ? *clon : 27.0;
-        k0 = k ? *k : k_0.value_or(0.9996);
-        fe = x_0 ? *x_0 : 500000.0;
-        fn = y_0 ? *y_0 : 0.0;
-      }
-      return NFmiAreaTools::CreateLegacyTransverseMercatorArea(bl, tr, lon_0, k0, fe, fn);
-    }
+      return CreateTransverseMercatorArea(proj, bl, tr);
     default:
       return new NFmiGdalArea("FMI", theSR, bl, tr);
   }
