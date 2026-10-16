@@ -121,6 +121,45 @@ bool NFmiCalculationCondition::IsMasked(double theValue) const
   }
 }
 
+namespace
+{
+// Mask value for a boolean condition
+double MaskResult(bool theCondition)
+{
+  return (theCondition ? 1 : 0);
+}
+
+// Linear ramp from 0 at the lower limit to 1 at the upper limit
+double RisingRamp(double theValue, double theLowerLimit, double theUpperLimit)
+{
+  if (theValue <= theLowerLimit)
+    return 0.;
+  if (theValue > theLowerLimit && theValue <= theUpperLimit)
+    return (theValue - theLowerLimit) / (theUpperLimit - theLowerLimit);
+  return 1.;
+}
+
+// Linear ramp from 1 at the lower limit to 0 at the upper limit
+double LoweringRamp(double theValue, double theLowerLimit, double theUpperLimit)
+{
+  if (theValue <= theLowerLimit)
+    return 1.;
+  if (theValue > theLowerLimit && theValue <= theUpperLimit)
+    return 1. - (theValue - theLowerLimit) / (theUpperLimit - theLowerLimit);
+  return 0.;
+}
+
+// Linear ramp from -1 at the lower limit to 1 at the upper limit
+double DoubleRamp(double theValue, double theLowerLimit, double theUpperLimit)
+{
+  if (theValue <= theLowerLimit)
+    return -1.;
+  if (theValue > theLowerLimit && theValue < theUpperLimit)
+    return 2 * ((theValue - theLowerLimit) / (theUpperLimit - theLowerLimit)) - 1;
+  return 1.;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -146,53 +185,41 @@ double NFmiCalculationCondition::MaskValue(double theValue) const
       case kFmiNoMaskOperation:
         return 1.;
       case kFmiMaskEqual:
-        return (round(theValue) == itsLowerLimit ? 1 : 0);  // kuinka suurella tarkkuudella???
+        return MaskResult(round(theValue) == itsLowerLimit);  // kuinka suurella tarkkuudella???
       case kFmiMaskNotEqual:
-        return (round(theValue) != itsLowerLimit ? 1 : 0);  // kuinka suurella tarkkuudella???
+        return MaskResult(round(theValue) != itsLowerLimit);  // kuinka suurella tarkkuudella???
       case kFmiMaskGreaterThan:
-        return (theValue > itsLowerLimit ? 1 : 0);
+        return MaskResult(theValue > itsLowerLimit);
       case kFmiMaskLessThan:
-        return (theValue < itsLowerLimit ? 1 : 0);
+        return MaskResult(theValue < itsLowerLimit);
       case kFmiMaskGreaterOrEqualThan:
-        return (theValue >= itsLowerLimit ? 1 : 0);
+        return MaskResult(theValue >= itsLowerLimit);
       case kFmiMaskLessOrEqualThan:
-        return (theValue <= itsLowerLimit ? 1 : 0);
+        return MaskResult(theValue <= itsLowerLimit);
       case kFmiMaskGreaterThanAndLessThan:
-        return (theValue > itsLowerLimit && theValue < itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue > itsLowerLimit && theValue < itsUpperLimit);
       case kFmiMaskGreaterOrEqualAndLessOrEqual:
-        return (theValue >= itsLowerLimit && theValue <= itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue >= itsLowerLimit && theValue <= itsUpperLimit);
       case kFmiMaskGreaterOrEqualAndLessThan:
-        return (theValue >= itsLowerLimit && theValue < itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue >= itsLowerLimit && theValue < itsUpperLimit);
       case kFmiMaskGreaterThanAndLessOrEqual:
-        return (theValue > itsLowerLimit && theValue <= itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue > itsLowerLimit && theValue <= itsUpperLimit);
       case kFmiMaskLessThanOrGreaterThan:
-        return (theValue < itsLowerLimit || theValue > itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue < itsLowerLimit || theValue > itsUpperLimit);
       case kFmiMaskLessOrEqualOrGreaterOrEqual:
-        return (theValue <= itsLowerLimit || theValue >= itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue <= itsLowerLimit || theValue >= itsUpperLimit);
       case kFmiMaskLessOrEqualOrGreaterThan:
-        return (theValue <= itsLowerLimit || theValue > itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue <= itsLowerLimit || theValue > itsUpperLimit);
       case kFmiMaskLessThanOrGreaterOrEqual:
-        return (theValue < itsLowerLimit || theValue >= itsUpperLimit ? 1 : 0);
+        return MaskResult(theValue < itsLowerLimit || theValue >= itsUpperLimit);
       case kFmiMaskRisingRamp:
-        if (theValue <= itsLowerLimit)
-          return 0.;
-        if (theValue > itsLowerLimit && theValue <= itsUpperLimit)
-          return (theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit);
-        return 1.;
+        return RisingRamp(theValue, itsLowerLimit, itsUpperLimit);
       case kFmiMaskLoweringRamp:
-        if (theValue <= itsLowerLimit)
-          return 1.;
-        if (theValue > itsLowerLimit && theValue <= itsUpperLimit)
-          return 1. - (theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit);
-        return 0.;
+        return LoweringRamp(theValue, itsLowerLimit, itsUpperLimit);
       case kFmiMaskEqualOrEqual:
-        return (round(theValue) == itsLowerLimit || round(theValue) == itsUpperLimit ? 1 : 0);
+        return MaskResult(round(theValue) == itsLowerLimit || round(theValue) == itsUpperLimit);
       case kFmiMaskDoubleRamp:
-        if (theValue <= itsLowerLimit)
-          return -1.;
-        if (theValue > itsLowerLimit && theValue < itsUpperLimit)
-          return 2 * ((theValue - itsLowerLimit) / (itsUpperLimit - itsLowerLimit)) - 1;
-        return 1.;
+        return DoubleRamp(theValue, itsLowerLimit, itsUpperLimit);
       case kFmiMaskAll:
         return 1;
       case kFmiMaskContinuousEqual:
