@@ -171,6 +171,7 @@ class NFmiQueryData
   NFmiQueryInfo *itsQueryInfo;
 
   void MakeLatLonCache() const;
+  void ReadFile(const std::string &filename, bool theMemoryMapFlag);
   mutable std::shared_ptr<std::vector<NFmiPoint> > itsLatLonCache;
   mutable boost::once_flag itsLatLonCacheFlag;
 

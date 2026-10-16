@@ -240,6 +240,62 @@ NFmiQueryData::NFmiQueryData(const NFmiQueryData &theData)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Read the querydata from the given file
+ */
+// ----------------------------------------------------------------------
+
+void NFmiQueryData::ReadFile(const string& filename, bool theMemoryMapFlag)
+{
+  ifstream file(filename.c_str(), ios::in | ios::binary);
+  if (!file)
+    throw Fmi::Exception(BCP, "Could not open '" + filename + "' for reading");
+
+#ifdef WIN32
+  auto bg = BufferGuard(file);
+#endif
+
+  itsQueryInfo = new NFmiQueryInfo;
+
+  if (Fmi::is_compressed(filename))
+  {
+    Fmi::IStream filter(file, filename);
+    filter >> *itsQueryInfo;
+    itsRawData = new NFmiRawData(filter, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
+    if (!filter.good())
+      throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
+  }
+  else
+  {
+    // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
+
+    file >> *itsQueryInfo;
+
+    bool use_mmap = theMemoryMapFlag;
+
+    if (itsQueryInfo->InfoVersion() < 6)
+      use_mmap = false;
+
+    if (itsQueryInfo->DoEndianByteSwap())
+      use_mmap = false;
+
+    if (use_mmap)
+    {
+      itsRawData = new NFmiRawData(filename, file, itsQueryInfo->Size());
+    }
+    else
+    {
+      itsRawData = new NFmiRawData(file, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
+    }
+
+    if (!file.good())
+      throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
+
+    file.close();
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Construct from file
  */
 // ----------------------------------------------------------------------
@@ -266,54 +322,7 @@ NFmiQueryData::NFmiQueryData(const string &thePath, bool theMemoryMapFlag)
 
       try
       {
-        ifstream file(filename.c_str(), ios::in | ios::binary);
-        if (!file)
-          throw Fmi::Exception(BCP, "Could not open '" + filename + "' for reading");
-
-#ifdef WIN32
-        auto bg = BufferGuard(file);
-#endif
-
-        itsQueryInfo = new NFmiQueryInfo;
-
-        if (Fmi::is_compressed(filename))
-        {
-          Fmi::IStream filter(file, filename);
-          filter >> *itsQueryInfo;
-          itsRawData =
-              new NFmiRawData(filter, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
-          if (!filter.good())
-            throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
-        }
-        else
-        {
-          // Olion sisäinen infoversio numero jää itsQueryInfo:on talteen.
-
-          file >> *itsQueryInfo;
-
-          bool use_mmap = theMemoryMapFlag;
-
-          if (itsQueryInfo->InfoVersion() < 6)
-            use_mmap = false;
-
-          if (itsQueryInfo->DoEndianByteSwap())
-            use_mmap = false;
-
-          if (use_mmap)
-          {
-            itsRawData = new NFmiRawData(filename, file, itsQueryInfo->Size());
-          }
-          else
-          {
-            itsRawData =
-                new NFmiRawData(file, itsQueryInfo->Size(), itsQueryInfo->DoEndianByteSwap());
-          }
-
-          if (!file.good())
-            throw Fmi::Exception(BCP, "Error while reading '" + filename + "'");
-
-          file.close();
-        }
+        ReadFile(filename, theMemoryMapFlag);
       }
       catch (...)
       {
