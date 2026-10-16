@@ -149,6 +149,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   void Destroy();
 
  private:
+  void ReadActivity(std::istream& file, int theSize);
   // ----
   // data
   // ----

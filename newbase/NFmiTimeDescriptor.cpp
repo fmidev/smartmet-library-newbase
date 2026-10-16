@@ -1330,6 +1330,23 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Allocate and read the activity flags of the given number of times
+ */
+// ----------------------------------------------------------------------
+
+void NFmiTimeDescriptor::ReadActivity(std::istream &file, int theSize)
+{
+  itsActivity = new bool[theSize];
+  // We trust everything to be at least version 6 by now
+  for (int i = 0; i < theSize; i++)
+    if (DefaultFmiInfoVersion >= 3)
+      file >> itsActivity[i];
+    else
+      itsActivity[i] = true;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * Read new object contents from the given input stream
  *
  * \param file The input stream to read from
@@ -1376,27 +1393,13 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
       {
         auto theSize = static_cast<int>(itsValidTimeBag ? itsValidTimeBag->GetSize()
                                                         : itsTimeList->NumberOfItems());
-        itsActivity = new bool[theSize];
-        // We trust everything to be at least version 6 by now
-        for (int i = 0; i < theSize; i++)
-          if (DefaultFmiInfoVersion >= 3)
-            file >> itsActivity[i];
-          else
-            itsActivity[i] = true;
+        ReadActivity(file, theSize);
       }
     }
     else
     {
       if (itsOriginTimeBag != nullptr)
-      {
-        itsActivity = new bool[static_cast<int>(itsOriginTimeBag->GetSize())];
-        // We trust everything to be at least version 6 by now
-        for (int i = 0; i < static_cast<int>(itsOriginTimeBag->GetSize()); i++)
-          if (DefaultFmiInfoVersion >= 3)
-            file >> itsActivity[i];
-          else
-            itsActivity[i] = true;
-      }
+        ReadActivity(file, static_cast<int>(itsOriginTimeBag->GetSize()));
       else
         itsActivity = nullptr;
     }
