@@ -850,6 +850,33 @@ int NFmiTotalWind::PartSum(int value1, int value2, float factor1, float factor2,
   }
 }
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Weighted mean of wind directions (in 10 degree units) on different sides of 180 degrees
+ */
+// ----------------------------------------------------------------------
+
+double WindDirectionMeanAcrossNorth(unsigned long dir1, unsigned long dir2, float factor)
+{
+  double meanValue = 0.F;
+  // Mika: cast välttämätön g++ kääntäjällä
+  if (abs(static_cast<int>(dir1) - static_cast<int>(dir2)) > 18)
+  {
+    if (dir1 < dir2)
+      meanValue = ((dir1 + 36) * (1 - factor) + dir2 * factor);
+    else
+      meanValue = ((dir2 + 36) * (factor) + dir1 * (1 - factor));
+    if (meanValue > 36)
+      meanValue = meanValue - 36;
+  }
+  else
+    meanValue = dir1 * (1 - factor) + dir2 * factor;
+  return meanValue;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \param dir1 Undocumented
@@ -863,11 +890,6 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
 {
   try
   {
-    double meanValue = 0.F;
-
-    short lkm1 = 0;  // alle 180 astetta
-    short lkm2 = 0;  // yli 180 astetta
-
     unsigned long dirTable[2];
     dirTable[0] = dir1;
     dirTable[1] = dir2;
@@ -878,7 +900,7 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
         return kTVariableWind;
       return dir2;  // ei tarvitse laskea mitään
     }
-    else if (dir2 == kTVariableWind)
+    if (dir2 == kTVariableWind)
     {
       if (factor == 1)
         return kTVariableWind;
@@ -891,37 +913,16 @@ unsigned long NFmiTotalWind::WindDirectionMean(unsigned long dir1, unsigned long
       return dir2;             // ei tarvitse laskea mitään
     }
 
-    for (unsigned long i : dirTable)  // katsotaan kummalla puolella 180:aa astetta arvot ovat
-    {
-      if (i != kT6BitMissing)
-      {
-        if (i < 18)
-          lkm1++;
-        else if (i >= 18)
-          lkm2++;
-      }
-      else
-        return kT6BitMissing;  // ei voi laskea keskiarvoa, kun vaan toinen on olemassa
-    }
-    if (lkm1 == 0 && lkm2 == 0)
+    // ei voi laskea keskiarvoa, kun vaan toinen on olemassa
+    if (dir2 == kT6BitMissing)
       return kT6BitMissing;
-    if (lkm1 == 0 || lkm2 == 0)  // molemmat samalla puolella
+
+    // katsotaan kummalla puolella 180:aa astetta arvot ovat
+    double meanValue = 0.F;
+    if ((dirTable[0] < 18) == (dirTable[1] < 18))  // molemmat samalla puolella
       meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
     else  // 360 astetta ylittyy
-    {
-      // Mika: cast välttämätön g++ kääntäjällä
-      if (abs(static_cast<int>(dirTable[0]) - static_cast<int>(dirTable[1])) > 18)
-      {
-        if (dirTable[0] < dirTable[1])
-          meanValue = ((dirTable[0] + 36) * (1 - factor) + dirTable[1] * factor);
-        else
-          meanValue = ((dirTable[1] + 36) * (factor) + dirTable[0] * (1 - factor));
-        if (meanValue > 36)
-          meanValue = meanValue - 36;
-      }
-      else
-        meanValue = dirTable[0] * (1 - factor) + dirTable[1] * factor;
-    }
+      meanValue = WindDirectionMeanAcrossNorth(dirTable[0], dirTable[1], factor);
 
     return static_cast<unsigned long>(meanValue);
   }
