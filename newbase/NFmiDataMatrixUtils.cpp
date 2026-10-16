@@ -26,6 +26,20 @@ double FixIndexOnEdges(double index, size_t matrixSize)
   }
 }
 
+// Print the values of the row separated by spaces
+void PrintRow(std::ostream& s, const NFmiDataMatrix<float>& m, NFmiDataMatrix<float>::size_type j)
+{
+  for (NFmiDataMatrix<float>::size_type i = 0; i < m.NX(); i++)
+    s << m[i][j] << " ";
+  s << '\n';
+}
+
+// Print the column indexes separated by spaces
+void PrintColumnIndexes(std::ostream& s, NFmiDataMatrix<float>::size_type columns)
+{
+  for (NFmiDataMatrix<float>::size_type i = 0; i < columns; i++)
+    s << i << " ";
+}
 }  // namespace
 
 namespace DataMatrixUtils
@@ -105,11 +119,7 @@ void PrettyPrint(std::ostream& s,
     if (!printYInverted)
     {
       for (sz_type j = 0; j < rows; j++)
-      {
-        for (sz_type i = 0; i < columns; i++)
-          s << m[i][j] << " ";
-        s << '\n';
-      }
+        PrintRow(s, m, j);
     }
     else
     {  // tulostus käänteisessä rivi-järjestyksessä
@@ -117,19 +127,14 @@ void PrettyPrint(std::ostream& s,
       {
         if (printIndexAxies)
           s << j << "\t";
-        for (sz_type i = 0; i < columns; i++)
-          s << m[i][j] << " ";
-        s << '\n';
+        PrintRow(s, m, j);
 
         if (j == 0)  // luulen että koska j on unsigned tyyppinen, pitää tässä tarkastella 0-riviä,
                      // koska for-loopissa j-- lauseke ei ikinä vie j:n arvoa negatiiviseksi
                      // (kierähtää 0:sta tosi isoksi luvuksi)
         {
           if (printIndexAxies)
-          {
-            for (sz_type i = 0; i < columns; i++)
-              s << i << " ";
-          }
+            PrintColumnIndexes(s, columns);
           break;
         }
       }
