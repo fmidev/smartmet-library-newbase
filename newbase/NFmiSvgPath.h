@@ -73,6 +73,8 @@ class NFmiSvgPath
   storage_type& GetData() { return itsData; }
 
  private:
+  void UpdateBoundingBox() const;
+
   storage_type itsData;
 
   // Hidden bounding box information for faster isInside implementation

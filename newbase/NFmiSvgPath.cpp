@@ -183,6 +183,29 @@ bool GetPolygonStringFromStream(istream& theInput, string& thePolygonDataStr)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Read a coordinate pair optionally separated by a comma
+ *
+ * \return False if the reading failed
+ */
+// ----------------------------------------------------------------------
+
+bool ReadSvgCoordinates(stringstream& strStream, double& x, double& y)
+{
+  strStream >> x;
+  if (strStream.fail())
+    return false;
+
+  if (!EatWhiteSpaces(strStream))
+    return false;
+
+  if (strStream.peek() == ',')
+    strStream.get();
+  strStream >> y;
+  return !strStream.fail();
+}
+
+// ----------------------------------------------------------------------
+/*!
  *  Käytetään SVG-formaattia talletuksessa.
  *  Bezieriereitä ja ympyröitä ei ole toteutettu.
  *  Polygonin tiedosto formaatti on seuraava:
@@ -274,17 +297,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
         case NFmiSvgPath::kElementMoveto:
         case NFmiSvgPath::kElementLineto:
         {
-          strStream >> x;
-          if (strStream.fail())
-            return false;
-
-          if (!EatWhiteSpaces(strStream))
-            return false;
-
-          if (strStream.peek() == ',')
-            strStream.get();
-          strStream >> y;
-          if (strStream.fail())
+          if (!ReadSvgCoordinates(strStream, x, y))
             return false;
 
           if (isRelative)
@@ -494,6 +507,42 @@ std::istream& NFmiSvgPath::Read(std::istream& file)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Calculate the bounding box of the path
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSvgPath::UpdateBoundingBox() const
+{
+  for (const auto& it : itsData)
+  {
+    switch (it.itsType)
+    {
+      case kElementNotValid:
+      case kElementClosePath:
+        break;
+      case kElementMoveto:
+      case kElementLineto:
+      {
+        if (!itsBBoxValid)
+        {
+          itsMinX = itsMaxX = it.itsX;
+          itsMinY = itsMaxY = it.itsY;
+          itsBBoxValid = true;
+        }
+        else
+        {
+          itsMinX = FmiMin(itsMinX, it.itsX);
+          itsMinY = FmiMin(itsMinY, it.itsY);
+          itsMaxX = FmiMax(itsMaxX, it.itsX);
+          itsMaxY = FmiMax(itsMaxY, it.itsY);
+        }
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Testaa onko annettu piste polun sisällä
  *
  *  Perus Isinside algoritmi on haettu osoitteesta
@@ -520,34 +569,7 @@ bool NFmiSvgPath::IsInside(const NFmiPoint& thePoint) const
     // Ensin pitää varmistaa, että bounding box on ajan tasalla
 
     if (!itsBBoxValid)
-    {
-      for (const auto& it : itsData)
-      {
-        switch (it.itsType)
-        {
-          case kElementNotValid:
-          case kElementClosePath:
-            break;
-          case kElementMoveto:
-          case kElementLineto:
-          {
-            if (!itsBBoxValid)
-            {
-              itsMinX = itsMaxX = it.itsX;
-              itsMinY = itsMaxY = it.itsY;
-              itsBBoxValid = true;
-            }
-            else
-            {
-              itsMinX = FmiMin(itsMinX, it.itsX);
-              itsMinY = FmiMin(itsMinY, it.itsY);
-              itsMaxX = FmiMax(itsMaxX, it.itsX);
-              itsMaxY = FmiMax(itsMaxY, it.itsY);
-            }
-          }
-        }
-      }
-    }
+      UpdateBoundingBox();
 
     // Käytetään bounding boksia hyväksi
 
