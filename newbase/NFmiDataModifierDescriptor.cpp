@@ -33,7 +33,7 @@ NFmiDataModifierDescriptor::~NFmiDataModifierDescriptor()
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierDescriptor::NFmiDataModifierDescriptor() {}
+NFmiDataModifierDescriptor::NFmiDataModifierDescriptor() = default;
 
 // ----------------------------------------------------------------------
 /*!

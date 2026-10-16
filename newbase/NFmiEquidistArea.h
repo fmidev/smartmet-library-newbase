@@ -93,7 +93,7 @@ inline NFmiEquidistArea::~NFmiEquidistArea() = default;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiEquidistArea::NFmiEquidistArea() {}
+inline NFmiEquidistArea::NFmiEquidistArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * \return Undocumented

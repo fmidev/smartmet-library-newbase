@@ -49,7 +49,7 @@ inline NFmiVoid::~NFmiVoid() = default;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiVoid::NFmiVoid() {}
+inline NFmiVoid::NFmiVoid() = default;
 // ----------------------------------------------------------------------
 /*!
  * Assignment operator performs a bitwise copy.

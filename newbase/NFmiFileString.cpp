@@ -220,7 +220,7 @@ NFmiString NFmiFileString::Path() const
       return GetChars(first, (last + 1) - first);
     }
 
-    return NFmiString();
+    return {};
   }
   catch (...)
   {
@@ -239,7 +239,7 @@ NFmiString NFmiFileString::Device() const
   try
   {
 #ifdef UNIX
-    return NFmiString();  // linux/unix/mac ei ole devicea, joten palautetaan tyhjä
+    return {};            // linux/unix/mac ei ole devicea, joten palautetaan tyhjä
 #else                     // windowsissa on device
     unsigned long last;
     unsigned char find[2] = ":";
@@ -292,7 +292,7 @@ NFmiString NFmiFileString::PathWithoutLastDirectory()
       return GetChars(first, (nextLast + 1) - first);
     }
 
-    return NFmiString();
+    return {};
   }
   catch (...)
   {
@@ -327,7 +327,7 @@ NFmiString NFmiFileString::Directory() const
     }
     if (last > first)
       return GetChars(first + 1, last - (first + 1));
-    return NFmiString();
+    return {};
   }
   catch (...)
   {

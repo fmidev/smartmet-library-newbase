@@ -138,7 +138,7 @@ class MyGrid
 struct CombinedParamStruct
 {  // tämä structi piti tehdä, että sain vähennettyä boost::in Thread:ille annettujen parametrin
   // määrää (max 9 parametria)
-  CombinedParamStruct() {}
+  CombinedParamStruct() = default;
 
   bool weather1 = false;  // tehdään weatherandcloudiness seuraavista: kFmiWeatherSymbol1,
                           // kFmiTotalCloudCover, kFmiCloudSymbol ja kFmiFogSymbol
@@ -179,7 +179,7 @@ struct GridRecordData
 class NFmiStopFunctor
 {
  public:
-  NFmiStopFunctor() {}
+  NFmiStopFunctor() = default;
   ~NFmiStopFunctor() = default;
   bool Stop() const { return fStop; }
   void Stop(bool newValue) { fStop = newValue; }
@@ -226,7 +226,7 @@ class NFmiStopThreadException
 {
  public:
   NFmiStopThreadException() = default;
-  ~NFmiStopThreadException() {}
+  ~NFmiStopThreadException() = default;
   NFmiStopThreadException(const NFmiStopThreadException&) = default;
   NFmiStopThreadException& operator=(const NFmiStopThreadException&) = default;
 };
@@ -248,7 +248,6 @@ class NFmiTimeIndexCalculator
   bool GetCurrentTimeIndex(unsigned long &theTimeIndexOut);
 
  private:
-  unsigned long itsStartTimeIndex;
   unsigned long itsEndTimeIndex;
   unsigned long itsCurrentTimeIndex;
   MutexType itsMutex;
@@ -280,7 +279,6 @@ class NFmiLocationIndexRangeCalculator
   bool GetCurrentLocationRange(unsigned long &theStartIndexOut, unsigned long &theEndIndexOut);
 
  private:
-  unsigned long itsStartLocationIndex;
   unsigned long itsEndLocationIndex;
   unsigned long itsCurrentLocationIndex;
   unsigned long itsChunkSize;

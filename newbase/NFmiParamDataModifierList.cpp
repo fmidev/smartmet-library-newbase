@@ -41,7 +41,7 @@ NFmiParamDataModifierList::~NFmiParamDataModifierList()
  */
 // ----------------------------------------------------------------------
 
-NFmiParamDataModifierList::NFmiParamDataModifierList() {}
+NFmiParamDataModifierList::NFmiParamDataModifierList() = default;
 
 // ----------------------------------------------------------------------
 /*!

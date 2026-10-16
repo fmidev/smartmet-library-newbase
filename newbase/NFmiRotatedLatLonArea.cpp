@@ -176,7 +176,7 @@ NFmiPoint toreglatlon(const NFmiPoint& theRotLatLonPoint,
  */
 // ----------------------------------------------------------------------
 
-NFmiRotatedLatLonArea::NFmiRotatedLatLonArea() {}
+NFmiRotatedLatLonArea::NFmiRotatedLatLonArea() = default;
 NFmiRotatedLatLonArea::NFmiRotatedLatLonArea(const NFmiRotatedLatLonArea &theRotatedLatLonArea)
 
     = default;

@@ -17,6 +17,7 @@ class NFmiDataModifierChange : public NFmiDataModifier
   ~NFmiDataModifierChange() override;
   NFmiDataModifierChange();
   NFmiDataModifierChange(const NFmiDataModifierChange&) = default;
+  NFmiDataModifierChange& operator=(const NFmiDataModifierChange&) = default;
   NFmiDataModifier* Clone() const override;
 
   void Calculate(float theValue) override;

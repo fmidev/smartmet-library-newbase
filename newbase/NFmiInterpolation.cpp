@@ -339,7 +339,6 @@ double BiLinear(double theX,
       double wsum = ((1 - dx) * dy + dx * dy + dx * (1 - dy));
       return (dx * (1 - dy) * theBottomRight + (1 - dx) * dy * theTopLeft + dx * dy * theTopRight) /
              wsum;
-      ;
     }
     else if (theTopLeft != kFloatMissing && theTopRight != kFloatMissing &&
              theBottomLeft != kFloatMissing && theBottomRight == kFloatMissing)
@@ -651,7 +650,7 @@ double ModBiLinear(double theX,
  */
 // ----------------------------------------------------------------------
 
-WindInterpolator::WindInterpolator() {}
+WindInterpolator::WindInterpolator() = default;
 
 // ----------------------------------------------------------------------
 /*!

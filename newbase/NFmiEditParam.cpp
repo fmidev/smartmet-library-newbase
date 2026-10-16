@@ -20,7 +20,7 @@
 #include "NFmiEditParam.h"
 
 //! Constructor
-NFmiEditParam::NFmiEditParam() {}
+NFmiEditParam::NFmiEditParam() = default;
 //! Destructor
 NFmiEditParam::~NFmiEditParam() = default;
 // ======================================================================

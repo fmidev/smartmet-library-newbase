@@ -137,12 +137,8 @@ inline NFmiMetTime::NFmiMetTime(const long datePart, const long timePart)
 // ----------------------------------------------------------------------
 
 inline NFmiMetTime::NFmiMetTime(const NFmiMetTime& aMetTime)
-    : NFmiTime(aMetTime),
-      fTimeStepInMinutes(aMetTime.fTimeStepInMinutes),
-      itsNegativeRange(aMetTime.itsNegativeRange),
-      itsPositiveRange(aMetTime.itsPositiveRange)
-{
-}
+
+    = default;
 
 // ----------------------------------------------------------------------
 /*!

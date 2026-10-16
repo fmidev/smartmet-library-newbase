@@ -52,8 +52,8 @@ class NFmiLogger
 
   ~NFmiLogger();
   NFmiLogger();
-  NFmiLogger(const std::string &theLogFilePath,
-             const std::string &theLogFileBaseName,
+  NFmiLogger(std::string theLogFilePath,
+             std::string theLogFileBaseName,
              bool theUseBackupSystem,
              bool theCleanBackupFiles,
              Period theLoggingPeriod);

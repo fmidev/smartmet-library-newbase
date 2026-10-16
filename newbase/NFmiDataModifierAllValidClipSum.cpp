@@ -32,7 +32,7 @@ NFmiDataModifierAllValidClipSum::~NFmiDataModifierAllValidClipSum() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierAllValidClipSum::NFmiDataModifierAllValidClipSum() {}
+NFmiDataModifierAllValidClipSum::NFmiDataModifierAllValidClipSum() = default;
 
 // ----------------------------------------------------------------------
 /*!

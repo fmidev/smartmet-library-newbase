@@ -29,7 +29,7 @@ NFmiDataModifierMinMax::~NFmiDataModifierMinMax() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierMinMax::NFmiDataModifierMinMax() {}
+NFmiDataModifierMinMax::NFmiDataModifierMinMax() = default;
 
 NFmiDataModifierMinMax::NFmiDataModifierMinMax(const NFmiDataModifierMinMax& theOther)
 

@@ -62,7 +62,7 @@ using PNFmiStringList = NFmiStringList*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiStringList::NFmiStringList() {}
+inline NFmiStringList::NFmiStringList() = default;
 // ----------------------------------------------------------------------
 /*!
  * \param theIndex Undocumented

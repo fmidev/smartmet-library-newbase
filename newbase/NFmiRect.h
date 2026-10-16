@@ -111,7 +111,7 @@ using PNFmiRect = NFmiRect*;
  */
 // ----------------------------------------------------------------------
 
-inline NFmiRect::NFmiRect() {}
+inline NFmiRect::NFmiRect() = default;
 // ----------------------------------------------------------------------
 /*!
  * \param theTopLeftCorner Undocumented

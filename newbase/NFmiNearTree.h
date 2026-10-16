@@ -168,9 +168,7 @@ class NFmiNearTree
 // ----------------------------------------------------------------------
 
 template <typename T, typename F>
-NFmiNearTree<T, F>::~NFmiNearTree()
-{
-}
+NFmiNearTree<T, F>::~NFmiNearTree() = default;
 
 // ----------------------------------------------------------------------
 /*!

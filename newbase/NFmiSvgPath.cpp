@@ -338,7 +338,7 @@ bool ExtractSvgPath(NFmiSvgPath& thePath, const string& theSvgPathString)
  */
 // ----------------------------------------------------------------------
 
-NFmiSvgPath::NFmiSvgPath() {}
+NFmiSvgPath::NFmiSvgPath() = default;
 
 // ----------------------------------------------------------------------
 /*!

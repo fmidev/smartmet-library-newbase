@@ -302,7 +302,7 @@ NFmiTimeBag NFmiTimeBag::GetIntersection(const NFmiMetTime& theStartLimit,
         return NFmiTimeBag(startTime, endTime, Resolution());
       }
     }
-    return NFmiTimeBag();
+    return {};
   }
   catch (...)
   {

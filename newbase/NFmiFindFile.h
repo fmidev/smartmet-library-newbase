@@ -38,7 +38,7 @@ class NFmiFindFile
   std::string itsFileName;
   std::string itsFilePath;
 
-  long itsFileFile = 0;
+  [[maybe_unused]] long itsFileFile = 0;  // used only on Windows
 
 #ifdef UNIX
   unsigned int itsGlobIndex = 0;

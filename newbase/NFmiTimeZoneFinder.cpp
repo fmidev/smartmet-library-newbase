@@ -412,7 +412,7 @@ bool NFmiTimeZonePolygon::Inside(const NFmiPoint& thePoint) const
 class NFmiTimeZoneFinderPimple
 {
  public:
-  NFmiTimeZoneFinderPimple() {}
+  NFmiTimeZoneFinderPimple() = default;
   float Find(const NFmiPoint& thePoint) const;
 
   using storage_type = list<NFmiTimeZonePolygon>;

@@ -76,7 +76,7 @@ using namespace std;
  */
 // ----------------------------------------------------------------------
 
-NFmiGnomonicArea::NFmiGnomonicArea() {}
+NFmiGnomonicArea::NFmiGnomonicArea() = default;
 // ----------------------------------------------------------------------
 /*!
  * Copy constructor

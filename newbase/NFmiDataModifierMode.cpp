@@ -15,7 +15,7 @@
 #include "NFmiDataModifierMode.h"
 #include <algorithm>
 
-NFmiDataModifierMode::NFmiDataModifierMode() {}
+NFmiDataModifierMode::NFmiDataModifierMode() = default;
 NFmiDataModifierMode::~NFmiDataModifierMode() = default;
 NFmiDataModifierMode::NFmiDataModifierMode(const NFmiDataModifierMode& theOther)
 

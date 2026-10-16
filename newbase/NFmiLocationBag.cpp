@@ -53,7 +53,7 @@ NFmiLocationBag::~NFmiLocationBag()
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationBag::NFmiLocationBag() {}
+NFmiLocationBag::NFmiLocationBag() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -709,7 +709,7 @@ std::vector<pair<int, double> > NFmiLocationBag::NearestLocations(const NFmiLoca
     if (theMaxWantedLocations != -1 && theMaxDistance == kFloatMissing)
     {
       if (tempValues.empty())
-        return std::vector<pair<int, double> >();
+        return {};
 
       // halutaan n kpl lahimpiä paikkoja
       int usedCount = theMaxWantedLocations;

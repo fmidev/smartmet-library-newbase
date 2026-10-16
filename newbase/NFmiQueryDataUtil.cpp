@@ -231,8 +231,7 @@ bool NFmiThreadCallBacks::WaitUntilInitialized()
 }
 
 NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theTimeSize)
-    : itsStartTimeIndex(0),
-      itsEndTimeIndex(theTimeSize - 1),
+    : itsEndTimeIndex(theTimeSize - 1),
       itsCurrentTimeIndex(0),
       fNoMoreWork((theTimeSize > 0) ? false : true)
 {
@@ -240,8 +239,7 @@ NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theTimeSize)
 
 NFmiTimeIndexCalculator::NFmiTimeIndexCalculator(unsigned long theStartTimeIndex,
                                                  unsigned long theEndTimeIndex)
-    : itsStartTimeIndex(theStartTimeIndex),
-      itsEndTimeIndex(theEndTimeIndex),
+    : itsEndTimeIndex(theEndTimeIndex),
       itsCurrentTimeIndex(theStartTimeIndex),
       fNoMoreWork((theStartTimeIndex <= theEndTimeIndex) ? false : true)
 {
@@ -270,8 +268,7 @@ bool NFmiTimeIndexCalculator::GetCurrentTimeIndex(unsigned long &theTimeIndexOut
 
 NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(unsigned long theLocationSize,
                                                                    unsigned long theChunkSize)
-    : itsStartLocationIndex(0),
-      itsEndLocationIndex(theLocationSize - 1),
+    : itsEndLocationIndex(theLocationSize - 1),
       itsCurrentLocationIndex(0),
       itsChunkSize(theChunkSize),
       fNoMoreWork((theLocationSize > 0) ? false : true)
@@ -282,8 +279,7 @@ NFmiLocationIndexRangeCalculator::NFmiLocationIndexRangeCalculator(
     unsigned long theStartLocationIndex,
     unsigned long theEndLocationIndex,
     unsigned long theChunkSize)
-    : itsStartLocationIndex(theStartLocationIndex),
-      itsEndLocationIndex(theEndLocationIndex),
+    : itsEndLocationIndex(theEndLocationIndex),
       itsCurrentLocationIndex(theStartLocationIndex),
       itsChunkSize(theChunkSize),
       fNoMoreWork((theStartLocationIndex <= theEndLocationIndex) ? false : true)

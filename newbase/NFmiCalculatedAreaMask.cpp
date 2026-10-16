@@ -209,7 +209,7 @@ const NFmiParam* NFmiCalculatedAreaMask::Param() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLatLonAreaMask::NFmiLatLonAreaMask() {}
+NFmiLatLonAreaMask::NFmiLatLonAreaMask() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -307,7 +307,7 @@ const NFmiString NFmiLatLonAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() {}
+NFmiElevationAngleAreaMask::NFmiElevationAngleAreaMask() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -563,7 +563,7 @@ const NFmiString NFmiJulianDayAreaMask::MakeSubMaskString() const
  */
 // ----------------------------------------------------------------------
 
-NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() {}
+NFmiLocalHourAreaMask::NFmiLocalHourAreaMask() = default;
 
 // ----------------------------------------------------------------------
 /*!
@@ -659,7 +659,7 @@ const NFmiString NFmiLocalHourAreaMask::MakeSubMaskString() const
 
 NFmiUtcHourAreaMask::~NFmiUtcHourAreaMask() = default;
 
-NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() {}
+NFmiUtcHourAreaMask::NFmiUtcHourAreaMask() = default;
 
 NFmiUtcHourAreaMask::NFmiUtcHourAreaMask(const NFmiUtcHourAreaMask& theMask) = default;
 
@@ -709,7 +709,7 @@ const NFmiString NFmiUtcHourAreaMask::MakeSubMaskString() const
 
 NFmiMinuteAreaMask::~NFmiMinuteAreaMask() = default;
 
-NFmiMinuteAreaMask::NFmiMinuteAreaMask() {}
+NFmiMinuteAreaMask::NFmiMinuteAreaMask() = default;
 
 NFmiMinuteAreaMask::NFmiMinuteAreaMask(const NFmiMinuteAreaMask& theMask) = default;
 

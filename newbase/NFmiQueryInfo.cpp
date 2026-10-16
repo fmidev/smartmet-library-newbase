@@ -950,7 +950,7 @@ NFmiString NFmiQueryInfo::Owner()
   try
   {
     if (!itsHeaderText)
-      return NFmiString();
+      return {};
 
     if (!itsHeaderText->Reset())
       return NFmiString("Unsigned");
@@ -974,7 +974,7 @@ NFmiString NFmiQueryInfo::TimeStamp()
   try
   {
     if (!itsHeaderText)
-      return NFmiString();
+      return {};
 
     if (!itsHeaderText->Reset())
       return NFmiString("Unsigned");
@@ -1001,7 +1001,7 @@ NFmiString NFmiQueryInfo::Leader()
   try
   {
     if (!itsHeaderText)
-      return NFmiString();
+      return {};
 
     if (!itsHeaderText->Reset())
       return NFmiString("Unsigned");
@@ -1073,7 +1073,7 @@ NFmiString NFmiQueryInfo::Text() const
   try
   {
     if (!itsHeaderText)
-      return NFmiString();
+      return {};
 
     return *(itsHeaderText->Current());
   }
@@ -1239,7 +1239,7 @@ NFmiString NFmiQueryInfo::PostProc() const
   try
   {
     if (!itsPostProc)
-      return NFmiString();
+      return {};
 
     return *(itsPostProc->Current());
   }

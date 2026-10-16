@@ -82,7 +82,7 @@ NFmiLocationFinder::~NFmiLocationFinder() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiLocationFinder::NFmiLocationFinder() {}
+NFmiLocationFinder::NFmiLocationFinder() = default;
 
 // ----------------------------------------------------------------------
 /*!

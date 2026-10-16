@@ -28,7 +28,7 @@ NFmiDataModifierExtreme::~NFmiDataModifierExtreme() = default;
  */
 // ----------------------------------------------------------------------
 
-NFmiDataModifierExtreme::NFmiDataModifierExtreme() {}
+NFmiDataModifierExtreme::NFmiDataModifierExtreme() = default;
 NFmiDataModifierExtreme::NFmiDataModifierExtreme(const NFmiDataModifierExtreme &theOther)
 
     = default;

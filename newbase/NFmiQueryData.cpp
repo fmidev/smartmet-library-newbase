@@ -688,7 +688,7 @@ NFmiString NFmiQueryData::Header1() const
     if (itsQueryInfo->NextText())
       return itsQueryInfo->Text();
 
-    return NFmiString();
+    return {};
   }
   catch (...)
   {
@@ -715,7 +715,7 @@ NFmiString NFmiQueryData::Header2() const
         return itsQueryInfo->Text();
       }
     }
-    return NFmiString();
+    return {};
   }
   catch (...)
   {
@@ -745,7 +745,7 @@ NFmiString NFmiQueryData::Header3() const
         }
       }
     }
-    return NFmiString();
+    return {};
   }
   catch (...)
   {
