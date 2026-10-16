@@ -4330,6 +4330,45 @@ float NFmiQueryInfo::Interpolate(const NFmiDataIdent &theDataIdent,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Copy the value at the current point of the combined data from this data, or from
+ *        the other data if this data does not contain the point
+ */
+// ----------------------------------------------------------------------
+
+void NFmiQueryInfo::CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo)
+{
+  if (combinedInfo->IsGrid())
+  {
+    if (Time(combinedInfo->Time()) && Param(combinedInfo->Param()) &&
+        Location(combinedInfo->LatLon()))
+    {
+      combinedInfo->FloatValue(FloatValue());
+    }
+    else if (theOtherInfo->Time(combinedInfo->Time()) &&
+             theOtherInfo->Param(combinedInfo->Param()) &&
+             theOtherInfo->Location(combinedInfo->LatLon()))
+    {
+      combinedInfo->FloatValue(theOtherInfo->FloatValue());
+    }
+  }
+  else
+  {
+    if (Time(combinedInfo->Time()) && Param(combinedInfo->Param()) &&
+        Location(*combinedInfo->Location()))
+    {
+      combinedInfo->FloatValue(FloatValue());
+    }
+    else if (theOtherInfo->Time(combinedInfo->Time()) &&
+             theOtherInfo->Param(combinedInfo->Param()) &&
+             theOtherInfo->Location(*combinedInfo->Location()))
+    {
+      combinedInfo->FloatValue(theOtherInfo->FloatValue());
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param theOtherInfo Undocumented
  * \return Undocumented
  */
@@ -4363,34 +4402,7 @@ NFmiQueryData *NFmiQueryInfo::CreateCombinedData(NFmiQueryInfo *theOtherInfo)
       {
         for (combinedInfo->ResetLocation(); combinedInfo->NextLocation();)
         {
-          if (combinedInfo->IsGrid())
-          {
-            if (Time(combinedInfo->Time()) && Param(combinedInfo->Param()) &&
-                Location(combinedInfo->LatLon()))
-            {
-              combinedInfo->FloatValue(FloatValue());
-            }
-            else if (theOtherInfo->Time(combinedInfo->Time()) &&
-                     theOtherInfo->Param(combinedInfo->Param()) &&
-                     theOtherInfo->Location(combinedInfo->LatLon()))
-            {
-              combinedInfo->FloatValue(theOtherInfo->FloatValue());
-            }
-          }
-          else
-          {
-            if (Time(combinedInfo->Time()) && Param(combinedInfo->Param()) &&
-                Location(*combinedInfo->Location()))
-            {
-              combinedInfo->FloatValue(FloatValue());
-            }
-            else if (theOtherInfo->Time(combinedInfo->Time()) &&
-                     theOtherInfo->Param(combinedInfo->Param()) &&
-                     theOtherInfo->Location(*combinedInfo->Location()))
-            {
-              combinedInfo->FloatValue(theOtherInfo->FloatValue());
-            }
-          }
+          CopyCombinedValue(combinedInfo, theOtherInfo);
         }
       }
     }
