@@ -4555,6 +4555,28 @@ NFmiQueryData *NFmiQueryDataUtil::FqdV7ToV6(NFmiFastQueryInfo &theSourceInfo)
 
 namespace
 {
+// ----------------------------------------------------------------------
+/*!
+ * \brief Smoothen the time series at the current param, location and level
+ */
+// ----------------------------------------------------------------------
+
+void smoothen_time_series(NFmiFastQueryInfo &sourceInfo,
+                          NFmiFastQueryInfo &destInfo,
+                          const NFmiSmoother &smoother,
+                          const std::vector<float> &relTimeLocation,
+                          std::vector<float> &values)
+{
+  int i = 0;
+  for (sourceInfo.ResetTime(); sourceInfo.NextTime(); i++)
+    values[i] = sourceInfo.FloatValue();  // täytetään ensin aikasarjavektori datalla
+
+  std::vector<float> result = smoother.Smoothen(relTimeLocation, values);
+  i = 0;
+  for (destInfo.ResetTime(); destInfo.NextTime(); i++)
+    destInfo.FloatValue(result[i]);  // täytetään tulosdata tasoitetulla aikasarjalla
+}
+
 NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
                                            int theTimeOffsetStartInMinutes,
                                            int theTimeOffsetEndInMinutes,
@@ -4589,7 +4611,6 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
       // jotka alkavat 0:sta ja kasvavat aina yhdellä
 
       std::vector<float> values(sizeTimes);
-      std::vector<float> result;
       NFmiSmoother smoother(static_cast<NFmiSmoother::NFmiSmootherMethod>(theSmootherMethod),
                             static_cast<int>(theFactor),
                             static_cast<float>(stepNumber / 2));  // NFmiSmoother tasoittaa dataa
@@ -4607,14 +4628,7 @@ NFmiQueryData *DoTimeFilteringWithSmoother(NFmiQueryData *theSourceData,
           for (destInfo.ResetLevel(), sourceInfo.ResetLevel();
                destInfo.NextLevel() && sourceInfo.NextLevel();)
           {
-            int i = 0;
-            for (sourceInfo.ResetTime(); sourceInfo.NextTime(); i++)
-              values[i] = sourceInfo.FloatValue();  // täytetään ensin aikasarjavektori datalla
-
-            result = smoother.Smoothen(relTimeLocation, values);
-            i = 0;
-            for (destInfo.ResetTime(); destInfo.NextTime(); i++)
-              destInfo.FloatValue(result[i]);  // täytetään tulosdata tasoitetulla aikasarjalla
+            smoothen_time_series(sourceInfo, destInfo, smoother, relTimeLocation, values);
           }
         }
       }
