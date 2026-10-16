@@ -1607,6 +1607,94 @@ bool IsLevelValuesInRisingOrder(NFmiFastQueryInfo *theInfo)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Initialize the height parameter and height level information
+ */
+// ----------------------------------------------------------------------
+
+void NFmiFastQueryInfo::InitHeightInfo()
+{
+  // tutkitaan onko level dataa ja jos on, löytyykö korkeus parametri
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+  itsHeightParamIndex = static_cast<unsigned long>(-1);
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+  if (Param(kFmiGeomHeight))
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    itsHeightParamIndex = itsParamIndex;
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+  else if (Param(kFmiGeopHeight))
+    itsHeightParamIndex = itsParamIndex;
+  fHeightValueAvailable =
+      (itsLevelSize > 1) && (itsHeightParamIndex != static_cast<unsigned long>(-1));
+
+  fHeightLevelDataAvailable = false;
+  if (!fHeightValueAvailable && itsLevelSize > 1)
+  {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    unsigned long oldLevelIndex = itsLevelIndex;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    if (Level()->LevelType() == kFmiHeight)
+    {
+      fHeightLevelDataAvailable = true;
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+      itsHeightLevelDataHeights = CalcHeightLevelDataHeights();
+    }
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    LevelIndex(oldLevelIndex);
+  }
+
+  fHeightParamIsRising = false;
+  if (fHeightValueAvailable)
+    fHeightParamIsRising = IsParamValuesRising(this, itsHeightParamIndex);
+  else if (fHeightLevelDataAvailable)
+    fHeightParamIsRising = IsLevelValuesInRisingOrder(this);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize the pressure parameter and pressure level information
+ */
+// ----------------------------------------------------------------------
+
+void NFmiFastQueryInfo::InitPressureInfo()
+{
+  // tutkitaan onko level dataa ja jos on, löytyykö paine parametri
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+  itsPressureParamIndex = static_cast<unsigned long>(-1);
+  // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+  if (Param(kFmiPressure))
+    itsPressureParamIndex = itsParamIndex;
+  fPressureValueAvailable =
+      (itsLevelSize > 1) && (itsPressureParamIndex != static_cast<unsigned long>(-1));
+  fPressureLevelDataAvailable = false;
+  if (!fPressureValueAvailable && itsLevelSize > 1)
+  {
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    unsigned long oldLevelIndex = itsLevelIndex;
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    if (Level()->LevelType() == kFmiPressureLevel)
+    {
+      fPressureLevelDataAvailable = true;
+      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+      itsPressureLevelDataPressures = CalcPressureLevelDataPressures();
+    }
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    LevelIndex(oldLevelIndex);
+  }
+
+  fPressureParamIsRising = false;
+  if (fPressureValueAvailable)
+    fPressureParamIsRising = IsParamValuesRising(this, itsPressureParamIndex);
+  else if (fPressureLevelDataAvailable)
+    // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
+    fPressureParamIsRising = IsLevelValuesInRisingOrder(this);
+}
+
+// ----------------------------------------------------------------------
+/*!
  *
  */
 // ----------------------------------------------------------------------
@@ -1642,75 +1730,8 @@ void NFmiFastQueryInfo::InitFastInfo()
 
       unsigned long oldParamIndex = itsParamIndex;
 
-      // tutkitaan onko level dataa ja jos on, löytyykö korkeus parametri
-      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-      itsHeightParamIndex = static_cast<unsigned long>(-1);
-      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-      if (Param(kFmiGeomHeight))
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        itsHeightParamIndex = itsParamIndex;
-      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-      else if (Param(kFmiGeopHeight))
-        itsHeightParamIndex = itsParamIndex;
-      fHeightValueAvailable =
-          (itsLevelSize > 1) && (itsHeightParamIndex != static_cast<unsigned long>(-1));
-
-      fHeightLevelDataAvailable = false;
-      if (!fHeightValueAvailable && itsLevelSize > 1)
-      {
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        unsigned long oldLevelIndex = itsLevelIndex;
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        if (Level()->LevelType() == kFmiHeight)
-        {
-          fHeightLevelDataAvailable = true;
-          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-          itsHeightLevelDataHeights = CalcHeightLevelDataHeights();
-        }
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        LevelIndex(oldLevelIndex);
-      }
-
-      fHeightParamIsRising = false;
-      if (fHeightValueAvailable)
-        fHeightParamIsRising = IsParamValuesRising(this, itsHeightParamIndex);
-      else if (fHeightLevelDataAvailable)
-        fHeightParamIsRising = IsLevelValuesInRisingOrder(this);
-
-      // tutkitaan onko level dataa ja jos on, löytyykö paine parametri
-      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-      itsPressureParamIndex = static_cast<unsigned long>(-1);
-      // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-      if (Param(kFmiPressure))
-        itsPressureParamIndex = itsParamIndex;
-      fPressureValueAvailable =
-          (itsLevelSize > 1) && (itsPressureParamIndex != static_cast<unsigned long>(-1));
-      fPressureLevelDataAvailable = false;
-      if (!fPressureValueAvailable && itsLevelSize > 1)
-      {
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        unsigned long oldLevelIndex = itsLevelIndex;
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        LevelIndex(0);  // asetetaan varmuuden vuoksi 1. leveliin
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        if (Level()->LevelType() == kFmiPressureLevel)
-        {
-          fPressureLevelDataAvailable = true;
-          // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-          itsPressureLevelDataPressures = CalcPressureLevelDataPressures();
-        }
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        LevelIndex(oldLevelIndex);
-      }
-
-      fPressureParamIsRising = false;
-      if (fPressureValueAvailable)
-        fPressureParamIsRising = IsParamValuesRising(this, itsPressureParamIndex);
-      else if (fPressureLevelDataAvailable)
-        // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
-        fPressureParamIsRising = IsLevelValuesInRisingOrder(this);
+      InitHeightInfo();
+      InitPressureInfo();
 
       // codechecker_intentional [optin.cplusplus.VirtualCall] intended in construction
       Param(kFmiLongitude);
@@ -4941,6 +4962,25 @@ float GetValueAtPressure(NFmiDataMatrix<float> &theParValues,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+// Fill level j of the cross section matrix from the current level of the info
+void FillCrossSectionLevel(NFmiFastQueryInfo &theInfo,
+                           const std::vector<NFmiPoint> &thePoints,
+                           const NFmiMetTime &theTime,
+                           bool fTimeFound,
+                           unsigned int j,
+                           NFmiDataMatrix<float> &values)
+{
+  float tmpValue = 0.F;
+  for (unsigned int i = 0; i < values.NX(); i++)
+  {
+    if (fTimeFound)
+      tmpValue = theInfo.InterpolatedValue(thePoints[i]);
+    else
+      tmpValue = theInfo.InterpolatedValue(thePoints[i], theTime, 360);
+    values[i][j] = tmpValue;
+  }
+}
 }  // namespace
 
 // Täyttää annetun matriisin halutun ajan ja parametrin poikkileikkaus datalla.
@@ -4954,7 +4994,6 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
     NFmiDataMatrix<float> values(thePoints.size(), theInfo.SizeLevels(), kFloatMissing);
     if (theInfo.IsInside(theTime))
     {
-      float tmpValue = 0.F;
       bool fTimeFound = theInfo.Time(theTime);
       theInfo.FirstLevel();  // pitää varmistaa, että voidaan kysyä level tietoa
       if ((theInfo.HeightDataAvailable() && theInfo.HeightParamIsRising()) ||
@@ -4964,14 +5003,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
         for (unsigned int j = 0; j < values.NY(); j++)
         {
           theInfo.NextLevel();
-          for (unsigned int i = 0; i < values.NX(); i++)
-          {
-            if (fTimeFound)
-              tmpValue = theInfo.InterpolatedValue(thePoints[i]);
-            else
-              tmpValue = theInfo.InterpolatedValue(thePoints[i], theTime, 360);
-            values[i][j] = tmpValue;
-          }
+          FillCrossSectionLevel(theInfo, thePoints, theTime, fTimeFound, j, values);
         }
       }
       else  // yleensä esim. hybridi datassa on levelit ylhäältä als, joten data pitää täyttää
@@ -4981,14 +5013,7 @@ NFmiDataMatrix<float> NFmiFastQueryInfo::CalcCrossSectionLeveldata(
         // vastin pari
         for (unsigned int j = 0; j < values.NY(); j++)
         {
-          for (unsigned int i = 0; i < values.NX(); i++)
-          {
-            if (fTimeFound)
-              tmpValue = theInfo.InterpolatedValue(thePoints[i]);
-            else
-              tmpValue = theInfo.InterpolatedValue(thePoints[i], theTime, 360);
-            values[i][j] = tmpValue;
-          }
+          FillCrossSectionLevel(theInfo, thePoints, theTime, fTimeFound, j, values);
           theInfo.PreviousLevel();  // previous vasta loopin tällä puolella!!!
         }
       }

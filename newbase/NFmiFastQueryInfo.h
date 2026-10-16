@@ -498,6 +498,8 @@ class NFmiFastQueryInfo : public NFmiQueryInfo
                                    const unsigned long &theLevelIndex,
                                    const unsigned long &theTimeIndex) const;
   void InitFastInfo();
+  void InitHeightInfo();
+  void InitPressureInfo();
   std::vector<float> CalcPressureLevelDataPressures();
   std::vector<float> CalcHeightLevelDataHeights();
   float FindFirstPressureValue();
