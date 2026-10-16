@@ -472,64 +472,43 @@ bool NFmiPreProcessor::StripDoubleEnds(const string &theBeginDirective,
   try
   {
     string oldString(itsString);
+
+    // Nothing to strip if there are no begin directives
+    if (oldString.find(theBeginDirective) == string::npos)
+      return true;
+
     string newString;
-    string::size_type posbigalku = oldString.find(theBeginDirective);
-    string::size_type posbigloppu = 0;
-    string::size_type posbigloppu2 = 0;
     string::size_type len = theEndDirective.length();
     string::size_type len2 = theEndDirective2.length();
-    string::size_type curLen = 0;
 
-    if (posbigalku == string::npos)
-      itsString = oldString;
-    else
+    while (true)
     {
-      while (posbigalku != string::npos)
+      string::size_type posbigalku = oldString.find(theBeginDirective);
+      if (posbigalku == string::npos)
       {
-        posbigalku = oldString.find(theBeginDirective);
-
-        if (posbigalku == string::npos)
-          posbigloppu = string::npos;
-        else
-          posbigloppu = oldString.find(theEndDirective, posbigalku);
-
-        if (posbigloppu == string::npos && posbigalku != string::npos)
-        {
-          itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
-          return false;
-        }
-        if (posbigalku == string::npos && posbigloppu != string::npos)
-        {
-          itsMessage = "ERROR in " + itsFileName + ": " + theBeginDirective + " missing";
-          return false;
-        }
-
-        if (posbigalku != string::npos)
-          posbigloppu2 = oldString.find(theEndDirective2, posbigalku);
-        else
-          posbigloppu2 = string::npos;
-
-        if (posbigalku == string::npos)
-        {
-          newString += oldString;
-        }
-        else
-        {
-          if (posbigloppu < posbigloppu2 || posbigloppu2 == string::npos)
-          {
-            curLen = len;
-          }
-          else
-          {
-            posbigloppu = posbigloppu2;
-            curLen = len2;
-          }
-          newString += oldString.substr(0, posbigalku);
-          oldString = oldString.substr(posbigloppu + curLen);
-        }
+        newString += oldString;
+        break;
       }
-      itsString = newString;
+
+      string::size_type posbigloppu = oldString.find(theEndDirective, posbigalku);
+      if (posbigloppu == string::npos)
+      {
+        itsMessage = "ERROR in " + itsFileName + ": " + theEndDirective + " missing";
+        return false;
+      }
+
+      // Use the alternative end directive if it comes first
+      string::size_type posbigloppu2 = oldString.find(theEndDirective2, posbigalku);
+      string::size_type curLen = len;
+      if (posbigloppu2 <= posbigloppu)
+      {
+        posbigloppu = posbigloppu2;
+        curLen = len2;
+      }
+      newString += oldString.substr(0, posbigalku);
+      oldString = oldString.substr(posbigloppu + curLen);
     }
+    itsString = newString;
     return true;
   }
   catch (...)
