@@ -43,6 +43,15 @@ bool fDefaultPrecipitationTypeIsLargeScale = false;
 
 const float gMinimumPrecipitationForV6 = 0.1F;
 const float gMinimumPrecipitationForV7 = 0.015F;
+
+// Return the value as a double, or kFloatMissing if it is the missing value
+
+double value_or_missing(unsigned long theValue, unsigned long theMissingValue)
+{
+  if (theValue != theMissingValue)
+    return theValue;
+  return kFloatMissing;
+}
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -1217,6 +1226,29 @@ unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromWeightTable(
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Mark snow and/or rain to be present if the weather is not fair
+ */
+// ----------------------------------------------------------------------
+
+void NFmiWeatherAndCloudiness::AccumulatePrecipitationForm(
+    const NFmiWeatherAndCloudiness &theWeatherAndCloudiness, bool &snow, bool &rain)
+{
+  if (!theWeatherAndCloudiness.IsFair())
+  {
+    if (theWeatherAndCloudiness.PrecipitationForm() == kTSleet)
+    {
+      snow = true;
+      rain = true;
+    }
+    else if (theWeatherAndCloudiness.PrecipitationForm() == kTSnow)
+      snow = true;
+    else
+      rain = true;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param theWeatherAndCloudiness1 Undocumented
  * \param fac1 Undocumented
  * \param theWeatherAndCloudiness2 Undocumented
@@ -1329,42 +1361,9 @@ unsigned long NFmiWeatherAndCloudiness::TimeIntegratedHessaa(
 
     bool snow = false;
     bool rain = false;
-    if (!theWeatherAndCloudiness1.IsFair())
-    {
-      if (theWeatherAndCloudiness1.PrecipitationForm() == kTSleet)
-      {
-        snow = true;
-        rain = true;
-      }
-      else if (theWeatherAndCloudiness1.PrecipitationForm() == kTSnow)
-        snow = true;
-      else
-        rain = true;
-    }
-    if (!theWeatherAndCloudiness2.IsFair())
-    {
-      if (theWeatherAndCloudiness2.PrecipitationForm() == kTSleet)
-      {
-        snow = true;
-        rain = true;
-      }
-      else if (theWeatherAndCloudiness2.PrecipitationForm() == kTSnow)
-        snow = true;
-      else
-        rain = true;
-    }
-    if (!theWeatherAndCloudiness3.IsFair())
-    {
-      if (theWeatherAndCloudiness3.PrecipitationForm() == kTSleet)
-      {
-        snow = true;
-        rain = true;
-      }
-      else if (theWeatherAndCloudiness3.PrecipitationForm() == kTSnow)
-        snow = true;
-      else
-        rain = true;
-    }
+    AccumulatePrecipitationForm(theWeatherAndCloudiness1, snow, rain);
+    AccumulatePrecipitationForm(theWeatherAndCloudiness2, snow, rain);
+    AccumulatePrecipitationForm(theWeatherAndCloudiness3, snow, rain);
     if (snow && rain)
       newWeatherAndCloudiness.SetPrecipitationForm(kTSleet);
     else if (snow)
@@ -4115,69 +4114,44 @@ double NFmiWeatherAndCloudiness::RawSubValue(FmiParameterName theParam)
 {
   try
   {
-    unsigned long tempValue = 0;
     double returnValue = kFloatMissing;
     switch (theParam)
     {
       case kFmiTotalCloudCover:
-        tempValue = TotalCloudiness();
-        if (tempValue != kT4BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(TotalCloudiness(), kT4BitMissing);
         break;
       case kFmiLowCloudCover:
-        tempValue = LowClouds();
-        if (tempValue != kT4BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(LowClouds(), kT4BitMissing);
         break;
       case kFmiMediumCloudCover:
-        tempValue = MiddleClouds();
-        if (tempValue != kT4BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(MiddleClouds(), kT4BitMissing);
         break;
       case kFmiHighCloudCover:
-        tempValue = HighClouds();
-        if (tempValue != HighCloudsMissingValue())
-          returnValue = tempValue;
+        returnValue = value_or_missing(HighClouds(), HighCloudsMissingValue());
         break;
       case kFmiPrecipitation1h:
-        tempValue = TotalPrecipitation();
-        if (tempValue != TotalPrecipitationMissingValue())
-          returnValue = tempValue;
+        returnValue = value_or_missing(TotalPrecipitation(), TotalPrecipitationMissingValue());
         break;
       case kFmiPrecipitationType:
-        tempValue = PrecipitationType();
-        if (tempValue != kT2BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(PrecipitationType(), kT2BitMissing);
         break;
       case kFmiPrecipitationForm:
-        tempValue = PrecipitationForm();
-        if (tempValue != kT3BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(PrecipitationForm(), kT3BitMissing);
         break;
       case kFmiProbabilityThunderstorm:
-        tempValue = ThunderProbability();
-        if (tempValue != kTThunderProbabilityMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(ThunderProbability(), kTThunderProbabilityMissing);
         break;
       case kFmiFogIntensity:
-        tempValue = FogIntensity();
-        if (tempValue != kT2BitMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(FogIntensity(), kT2BitMissing);
         break;
       case kFmiWeatherSymbol3:
-        tempValue = ToHessaa();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(ToHessaa(), kUnsignedLongMissing);
         break;
       case kFmiWeatherSymbol1:  // hsade
-        tempValue = ToHsade();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(ToHsade(), kUnsignedLongMissing);
         break;
       case kFmiMiddleAndLowCloudCover:  // ala- ja keskipilvet
-        tempValue = LowAndMiddleClouds();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
+        returnValue = value_or_missing(LowAndMiddleClouds(), kUnsignedLongMissing);
         break;
       default:
         break;

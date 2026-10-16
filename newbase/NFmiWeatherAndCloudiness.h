@@ -329,6 +329,9 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   unsigned long TotalPrecipitationV7() const;
   unsigned long PrecipitationType() const;
   unsigned long PrecipitationForm() const;
+  static void AccumulatePrecipitationForm(const NFmiWeatherAndCloudiness& theWeatherAndCloudiness,
+                                          bool& snow,
+                                          bool& rain);
   unsigned long FogIntensity() const;
   unsigned long ThunderProbability() const;
 
