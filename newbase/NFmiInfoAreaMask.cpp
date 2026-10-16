@@ -1070,6 +1070,82 @@ bool NFmiInfoAreaMask::CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryI
   }
 }
 
+// Add the meta wind parameter extreme values calculated from wind speed and direction
+void NFmiInfoAreaMask::AddExtremeValuesFromWsAndWd(
+    std::shared_ptr<NFmiFastQueryInfo>& theInfo,
+    std::shared_ptr<NFmiDataModifier>& theFunctionModifier,
+    const NFmiLocationCache& theLocationCache)
+{
+  theInfo->Param(kFmiWindSpeedMS);
+  std::array<float, 4> wsValues{};
+  theInfo->GetCachedValues(theLocationCache, wsValues);
+  theInfo->Param(kFmiWindDirection);
+  std::array<float, 4> wdValues{};
+  theInfo->GetCachedValues(theLocationCache, wdValues);
+  for (std::size_t index = 0; index < wsValues.size(); index++)
+  {
+    switch (metaParamDataHolder.possibleMetaParamId())
+    {
+      case kFmiWindUMS:
+        AddValueToModifier(theInfo,
+                           theFunctionModifier,
+                           NFmiFastInfoUtils::CalcU(wsValues[index], wdValues[index]));
+        break;
+      case kFmiWindVMS:
+        AddValueToModifier(theInfo,
+                           theFunctionModifier,
+                           NFmiFastInfoUtils::CalcV(wsValues[index], wdValues[index]));
+        break;
+      case kFmiWindVectorMS:
+        AddValueToModifier(theInfo,
+                           theFunctionModifier,
+                           NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(wsValues[index],
+                                                                                  wdValues[index]));
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+// Add the meta wind parameter extreme values calculated from wind components
+void NFmiInfoAreaMask::AddExtremeValuesFromWindComponents(
+    std::shared_ptr<NFmiFastQueryInfo>& theInfo,
+    std::shared_ptr<NFmiDataModifier>& theFunctionModifier,
+    const NFmiLocationCache& theLocationCache)
+{
+  theInfo->Param(kFmiWindUMS);
+  std::array<float, 4> uValues{};
+  theInfo->GetCachedValues(theLocationCache, uValues);
+  theInfo->Param(kFmiWindVMS);
+  std::array<float, 4> vValues{};
+  theInfo->GetCachedValues(theLocationCache, vValues);
+  for (std::size_t index = 0; index < uValues.size(); index++)
+  {
+    switch (metaParamDataHolder.possibleMetaParamId())
+    {
+      case kFmiWindSpeedMS:
+        AddValueToModifier(theInfo,
+                           theFunctionModifier,
+                           NFmiFastInfoUtils::CalcWS(uValues[index], vValues[index]));
+        break;
+      case kFmiWindDirection:
+        AddValueToModifier(theInfo,
+                           theFunctionModifier,
+                           NFmiFastInfoUtils::CalcWD(uValues[index], vValues[index]));
+        break;
+      case kFmiWindVectorMS:
+        AddValueToModifier(
+            theInfo,
+            theFunctionModifier,
+            NFmiFastInfoUtils::CalcWindVectorFromWindComponents(uValues[index], vValues[index]));
+        break;
+      default:
+        break;
+    }
+  }
+}
+
 // min ja max funktioille voidaan laskuissa ottaa interpoloidun arvon sijasta kaikki interpolaatio
 // pistettä ympäröivät arvot sellaisenaan. Interpolaatio kun muuttaa min/max arvoja ikävästi
 // neljästä luvusta lasketuksi painotetuksi keskiarvoksi.
@@ -1084,71 +1160,9 @@ void NFmiInfoAreaMask::AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theI
       if (metaParamDataHolder.isMetaParameterCalculationNeeded())
       {
         if (metaParamDataHolder.metaWindParamUsage().HasWsAndWd())
-        {
-          theInfo->Param(kFmiWindSpeedMS);
-          std::array<float, 4> wsValues{};
-          theInfo->GetCachedValues(theLocationCache, wsValues);
-          theInfo->Param(kFmiWindDirection);
-          std::array<float, 4> wdValues{};
-          theInfo->GetCachedValues(theLocationCache, wdValues);
-          for (std::size_t index = 0; index < wsValues.size(); index++)
-          {
-            switch (metaParamDataHolder.possibleMetaParamId())
-            {
-              case kFmiWindUMS:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                    NFmiFastInfoUtils::CalcU(wsValues[index], wdValues[index]));
-                break;
-              case kFmiWindVMS:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                    NFmiFastInfoUtils::CalcV(wsValues[index], wdValues[index]));
-                break;
-              case kFmiWindVectorMS:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                                 NFmiFastInfoUtils::CalcWindVectorFromSpeedAndDirection(
-                                     wsValues[index], wdValues[index]));
-                break;
-              default:
-                break;
-            }
-          }
-        }
+          AddExtremeValuesFromWsAndWd(theInfo, theFunctionModifier, theLocationCache);
         else if (metaParamDataHolder.metaWindParamUsage().HasWindComponents())
-        {
-          theInfo->Param(kFmiWindUMS);
-          std::array<float, 4> uValues{};
-          theInfo->GetCachedValues(theLocationCache, uValues);
-          theInfo->Param(kFmiWindVMS);
-          std::array<float, 4> vValues{};
-          theInfo->GetCachedValues(theLocationCache, vValues);
-          for (std::size_t index = 0; index < uValues.size(); index++)
-          {
-            switch (metaParamDataHolder.possibleMetaParamId())
-            {
-              case kFmiWindSpeedMS:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                    NFmiFastInfoUtils::CalcWS(uValues[index], vValues[index]));
-                break;
-              case kFmiWindDirection:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                    NFmiFastInfoUtils::CalcWD(uValues[index], vValues[index]));
-                break;
-              case kFmiWindVectorMS:
-              AddValueToModifier(theInfo,
-                                 theFunctionModifier,
-                                 NFmiFastInfoUtils::CalcWindVectorFromWindComponents(
-                    uValues[index], vValues[index]));
-                break;
-              default:
-                break;
-            }
-          }
-        }
+          AddExtremeValuesFromWindComponents(theInfo, theFunctionModifier, theLocationCache);
       }
       else
       {
@@ -3032,51 +3046,51 @@ float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
     int foundCount = 0;
     unsigned long realStartLevelIndex =
         GetNonMissingStartLevelIndex(theLocationCache, theCalculationParams);
-    if (realStartLevelIndex != gMissingIndex)
+    // Jos aloitusleveliä ei löydy, palautetaan missing tai nolla löytöä
+    if (realStartLevelIndex == gMissingIndex)
+      return findHeight ? kFloatMissing : 0.0F;
+
+    // Otetaan 1. levelin arvot previous-muuttujiin, jotta loopitus voidaan alkaa toisesta ilman
+    // kikkailuja
+    itsInfo->LevelIndex(realStartLevelIndex);
+    previousLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
+    previousLevelHeigth = GetLevelHeightValue(theLocationCache);
+    // Jos 1. levelin kohdalla on tilanne jo päällä, laitetaan sen tiedot talteen ja kasvatetaan
+    // löytölaskuria
+    if (previousLevelCondition && previousLevelHeigth != kFloatMissing)
     {
-      // Otetaan 1. levelin arvot previous-muuttujiin, jotta loopitus voidaan alkaa toisesta ilman
-      // kikkailuja
-      itsInfo->LevelIndex(realStartLevelIndex);
-      previousLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
-      previousLevelHeigth = GetLevelHeightValue(theLocationCache);
-      // Jos 1. levelin kohdalla on tilanne jo päällä, laitetaan sen tiedot talteen ja kasvatetaan
-      // löytölaskuria
-      if (previousLevelCondition && previousLevelHeigth != kFloatMissing)
+      foundCount++;
+      foundHeight = previousLevelHeigth;
+      if (findHeight && search_nth_value == 1) 
+        return foundHeight;
+    }
+
+    VerticalIterationBreakingData iterationBreaking(true);
+    // Lambda funktio joka annetaan iterointi metodille
+    auto findValueFunction = [&]()
+    {
+      currentLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
+      currentLevelHeigth = GetLevelHeightValue(theLocationCache);
+      if (currentLevelHeigth == kFloatMissing)
+        return;
+      // simple-condition tila muuttunut niin tilanne on mennyt päälle ja otetaan tilanne talteen
+      if (previousLevelCondition != currentLevelCondition)
       {
         foundCount++;
-        foundHeight = previousLevelHeigth;
-        if (findHeight && search_nth_value == 1) 
-          return foundHeight;
+        // Laitetaan löytökorkeudeksi sen levelin arvo missä simple-condition oli päällä
+        foundHeight = currentLevelCondition ? currentLevelHeigth : previousLevelHeigth;
+        // Jos etsitään tiettyä esim. 3. löytöä ja foundCount pääsee 3:een, palautetaan
+        // välittömästi arvo
+        if (search_nth_value > 0 && search_nth_value <= foundCount)
+          iterationBreaking.stopIteration = true;
       }
-
-      VerticalIterationBreakingData iterationBreaking(true);
-      // Lambda funktio joka annetaan iterointi metodille
-      auto findValueFunction = [&]()
-      {
-        currentLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
-        currentLevelHeigth = GetLevelHeightValue(theLocationCache);
-        // simple-condition tila muuttunut niin tilanne on mennyt päälle ja otetaan tilanne talteen
-        if (currentLevelHeigth != kFloatMissing)
-        {
-          if (previousLevelCondition != currentLevelCondition)
-          {
-            foundCount++;
-            // Laitetaan löytökorkeudeksi sen levelin arvo missä simple-condition oli päällä
-            foundHeight = currentLevelCondition ? currentLevelHeigth : previousLevelHeigth;
-            // Jos etsitään tiettyä esim. 3. löytöä ja foundCount pääsee 3:een, palautetaan
-            // välittömästi arvo
-            if (search_nth_value > 0 && search_nth_value <= foundCount)
-              iterationBreaking.stopIteration = true;
-          }
-          previousLevelCondition = currentLevelCondition;
-          previousLevelHeigth = currentLevelHeigth;
-        }
-      };
-      IterateLevelsFromGroundUpward(findValueFunction,
-                                    iterationBreaking,
-                                    static_cast<int>(realStartLevelIndex + itsLevelIncrement),
-                                    theCalculationParams);
-    }
+      previousLevelCondition = currentLevelCondition;
+      previousLevelHeigth = currentLevelHeigth;
+    };
+    IterateLevelsFromGroundUpward(findValueFunction,
+                                  iterationBreaking,
+                                  static_cast<int>(realStartLevelIndex + itsLevelIncrement),
+                                  theCalculationParams);
     // Palautetaan viimeisin löytynyt arvo (tai missing, jos ei löytynyt yhtään)
     if (findHeight)
       return foundHeight;

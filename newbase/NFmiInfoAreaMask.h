@@ -184,6 +184,12 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   float CalcMetaParamCachedInterpolation(std::shared_ptr<NFmiFastQueryInfo> &theUsedInfo,
                                          const NFmiLocationCache &theLocationCache,
                                          const NFmiTimeCache *theTimeCache);
+  void AddExtremeValuesFromWsAndWd(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                   std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+                                   const NFmiLocationCache &theLocationCache);
+  void AddExtremeValuesFromWindComponents(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
+                                          std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
+                                          const NFmiLocationCache &theLocationCache);
   void AddExtremeValues(std::shared_ptr<NFmiFastQueryInfo> &theInfo,
                         std::shared_ptr<NFmiDataModifier> &theFunctionModifier,
                         const NFmiLocationCache &theLocationCache);
