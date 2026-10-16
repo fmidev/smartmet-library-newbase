@@ -137,6 +137,47 @@ float FmiDewPointFMI(float t, float rh)
   }
 }
 
+namespace
+{
+// Snow water ratio for wind speeds below 10 knots
+float SnowWaterRatioWeakWind(float t)
+{
+  if (t > 0)
+    return 10;
+  if (t > -5)
+    return 11;
+  if (t > -10)
+    return 14;
+  if (t > -20)
+    return 17;
+  return 15;
+}
+
+// Snow water ratio for wind speeds from 10 to 20 knots
+float SnowWaterRatioModerateWind(float t)
+{
+  if (t > -5)
+    return 10;
+  if (t > -10)
+    return 12;
+  if (t > -20)
+    return 15;
+  return 13;
+}
+
+// Snow water ratio for wind speeds of 20 knots or more
+float SnowWaterRatioStrongWind(float t)
+{
+  if (t > -10)
+    return 10;
+  if (t > -15)
+    return 11;
+  if (t > -20)
+    return 14;
+  return 12;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Calculate water to snow conversion factor
@@ -161,40 +202,10 @@ float FmiSnowWaterRatio(float t, float ff)
     const float knot = 0.51444444444444444444F;
 
     if (ff < 10 * knot)
-    {
-      if (t > 0)
-        return 10;
-      if (t > -5)
-        return 11;
-      if (t > -10)
-        return 14;
-      else if (t > -20)
-        return 17;
-      else
-        return 15;
-    }
-    else if (ff < 20 * knot)
-    {
-      if (t > -5)
-        return 10;
-      if (t > -10)
-        return 12;
-      if (t > -20)
-        return 15;
-      else
-        return 13;
-    }
-    else
-    {
-      if (t > -10)
-        return 10;
-      if (t > -15)
-        return 11;
-      if (t > -20)
-        return 14;
-      else
-        return 12;
-    }
+      return SnowWaterRatioWeakWind(t);
+    if (ff < 20 * knot)
+      return SnowWaterRatioModerateWind(t);
+    return SnowWaterRatioStrongWind(t);
   }
   catch (...)
   {
