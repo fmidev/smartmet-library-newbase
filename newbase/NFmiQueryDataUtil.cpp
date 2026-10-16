@@ -1086,6 +1086,37 @@ NFmiQueryData *NFmiQueryDataUtil::ExtractLocations(NFmiQueryData *theSourceData,
   }
 }
 
+namespace
+{
+// Copy the location and level values of the current parameter and time, the second data being
+// prioritized
+void CopyPrioritizedParamValues(NFmiFastQueryInfo &destInfo,
+                                NFmiFastQueryInfo &sourceInfo1,
+                                NFmiFastQueryInfo &sourceInfo2,
+                                bool useInfo1,
+                                bool useInfo2)
+{
+  for (destInfo.ResetLocation(), sourceInfo1.ResetLocation(), sourceInfo2.ResetLocation();
+       destInfo.NextLocation() && sourceInfo1.NextLocation() && sourceInfo2.NextLocation();)
+  {
+    for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
+         destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
+    {
+      float value = kFloatMissing;
+      float value1 = sourceInfo1.FloatValue();
+      float value2 = sourceInfo2.FloatValue();
+      if (useInfo2 &&
+          value2 != kFloatMissing)  // kakkosdata on priorisoitu korkeammalle (persa halusi)
+        value = value2;
+      else if (useInfo1 && value1 != kFloatMissing)
+        value = value1;
+
+      destInfo.FloatValue(value);
+    }
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Luo annetuista datoista uuden datan siten että parametrit ovat yhdistetty.
@@ -1119,58 +1150,41 @@ NFmiQueryData *NFmiQueryDataUtil::CombineParams(NFmiQueryData *theSourceData1,
         dataInfo1
             ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
     NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-    if (destData)
+    if (!destData)
+      return destData;
+
+    NFmiFastQueryInfo sourceInfo1(theSourceData1);
+    NFmiFastQueryInfo sourceInfo2(theSourceData2);
+    NFmiFastQueryInfo destInfo(destData);
+    bool useInfo1 = false;
+    bool useInfo2 = false;
+    for (destInfo.ResetParam(); destInfo.NextParam();)
     {
-      NFmiFastQueryInfo sourceInfo1(theSourceData1);
-      NFmiFastQueryInfo sourceInfo2(theSourceData2);
-      NFmiFastQueryInfo destInfo(destData);
-      bool useInfo1 = false;
-      bool useInfo2 = false;
-      for (destInfo.ResetParam(); destInfo.NextParam();)
+      if (sourceInfo1.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
+                                                            // jolloin palautetaan NFmiParam,
+                                                            // jolloin etsittäessä parametria
+                                                            // tarkastellaan vain param-id:tä
+        useInfo1 = true;
+      if (sourceInfo2.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
+                                                            // jolloin palautetaan NFmiParam,
+                                                            // jolloin etsittäessä parametria
+                                                            // tarkastellaan vain param-id:tä
+        useInfo2 = true;
+      if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+        continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+
+      for (destInfo.ResetTime(); destInfo.NextTime();)
       {
-        if (sourceInfo1.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
-                                                              // jolloin palautetaan NFmiParam,
-                                                              // jolloin etsittäessä parametria
-                                                              // tarkastellaan vain param-id:tä
-          useInfo1 = true;
-        if (sourceInfo2.Param(*destInfo.Param().GetParam()))  // pyytää infolta Param().GetParam(),
-                                                              // jolloin palautetaan NFmiParam,
-                                                              // jolloin etsittäessä parametria
-                                                              // tarkastellaan vain param-id:tä
-          useInfo2 = true;
-        if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+        bool timeFound = false;
+        if (useInfo1 && sourceInfo1.Time(destInfo.Time()))
+          timeFound = true;
+        if (useInfo2 && sourceInfo2.Time(destInfo.Time()))
+          timeFound = true;
+        if (!timeFound ||
+            !(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
           continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-        for (destInfo.ResetTime(); destInfo.NextTime();)
-        {
-          bool timeFound = false;
-          if (useInfo1 && sourceInfo1.Time(destInfo.Time()))
-            timeFound = true;
-          if (useInfo2 && sourceInfo2.Time(destInfo.Time()))
-            timeFound = true;
-          if (!timeFound ||
-              !(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-            continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-
-          for (destInfo.ResetLocation(), sourceInfo1.ResetLocation(), sourceInfo2.ResetLocation();
-               destInfo.NextLocation() && sourceInfo1.NextLocation() && sourceInfo2.NextLocation();)
-          {
-            for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
-                 destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
-            {
-              float value = kFloatMissing;
-              float value1 = sourceInfo1.FloatValue();
-              float value2 = sourceInfo2.FloatValue();
-              if (useInfo2 &&
-                  value2 != kFloatMissing)  // kakkosdata on priorisoitu korkeammalle (persa halusi)
-                value = value2;
-              else if (useInfo1 && value1 != kFloatMissing)
-                value = value1;
-
-              destInfo.FloatValue(value);
-            }
-          }
-        }
+        CopyPrioritizedParamValues(destInfo, sourceInfo1, sourceInfo2, useInfo1, useInfo2);
       }
     }
     return destData;
@@ -1180,6 +1194,63 @@ NFmiQueryData *NFmiQueryDataUtil::CombineParams(NFmiQueryData *theSourceData1,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+namespace
+{
+// Copy the level values of the current parameter, location and time from the prioritized
+// data, or from the other data if the value is missing
+void CopyPrioritizedLevelValues(NFmiFastQueryInfo &destInfo,
+                                NFmiFastQueryInfo &sourceInfo1,
+                                NFmiFastQueryInfo &sourceInfo2,
+                                int thePriorisedDataNumber)
+{
+  for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
+       destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
+  {
+    float value1 = sourceInfo1.FloatValue();
+    float value2 = sourceInfo2.FloatValue();
+    float value = (thePriorisedDataNumber == 2) ? value2 : value1;
+    if (value == kFloatMissing)  // jos priorisoitu data oli puuttuvaa, annetaan sitten se toinen
+      value = (thePriorisedDataNumber == 2) ? value1 : value2;
+
+    destInfo.FloatValue(value);
+  }
+}
+
+// Copy the values of the current location for all parameters, times and levels
+void CombineLocationValues(NFmiFastQueryInfo &destInfo,
+                           NFmiFastQueryInfo &sourceInfo1,
+                           NFmiFastQueryInfo &sourceInfo2,
+                           bool useInfo1,
+                           bool useInfo2,
+                           int thePriorisedDataNumber)
+{
+  //				for(destInfo.ResetParam(), sourceInfo1.ResetParam(),
+  // sourceInfo2.ResetParam(); destInfo.NextParam() && sourceInfo1.NextParam() &&
+  // sourceInfo2.NextParam();)
+  for (destInfo.ResetParam(); destInfo.NextParam();)
+  {
+    // asetetaan sourceinfot osoittamaan oikeaan parametriin, jos sellainen löytyy
+    sourceInfo1.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
+    sourceInfo2.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
+
+    for (destInfo.ResetTime(), sourceInfo1.ResetTime();
+         destInfo.NextTime() && sourceInfo1.NextTime();)
+    {  // source1:stä voidaan juoksuttaa samalla aika loopilla koska timedesc on otettu
+       // sieltä,
+       // mutta source2:lta pitää aina kysyä!
+      bool useInfo2Time = true;
+      if (!sourceInfo2.Time(destInfo.Time()))
+        useInfo2Time = false;
+      if (!(useInfo1 ||
+            (useInfo2 && useInfo2Time)))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+        continue;                         // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+
+      CopyPrioritizedLevelValues(destInfo, sourceInfo1, sourceInfo2, thePriorisedDataNumber);
+    }
+  }
+}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -1215,60 +1286,26 @@ NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1
         dataInfo1
             ->InfoVersion());  // pidetään infoversio samana, muuten menee interpoloinnit pieleen!
     NFmiQueryData *destData = CreateEmptyData(tmpInfo);
-    if (destData)
+    if (!destData)
+      return destData;
+
+    NFmiFastQueryInfo sourceInfo1(theSourceData1);
+    NFmiFastQueryInfo sourceInfo2(theSourceData2);
+    NFmiFastQueryInfo destInfo(destData);
+    for (destInfo.ResetLocation(); destInfo.NextLocation();)
     {
-      NFmiFastQueryInfo sourceInfo1(theSourceData1);
-      NFmiFastQueryInfo sourceInfo2(theSourceData2);
-      NFmiFastQueryInfo destInfo(destData);
-      for (destInfo.ResetLocation(); destInfo.NextLocation();)
-      {
-        bool useInfo1 = false;
-        bool useInfo2 = false;
-        // TODO Muuta latlon-hauksi?!?!
-        if (sourceInfo1.Location(*destInfo.Location()))
-          useInfo1 = true;
-        if (sourceInfo2.Location(*destInfo.Location()))
-          useInfo2 = true;
-        if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-          continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
+      bool useInfo1 = false;
+      bool useInfo2 = false;
+      // TODO Muuta latlon-hauksi?!?!
+      if (sourceInfo1.Location(*destInfo.Location()))
+        useInfo1 = true;
+      if (sourceInfo2.Location(*destInfo.Location()))
+        useInfo2 = true;
+      if (!(useInfo1 || useInfo2))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
+        continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-        //				for(destInfo.ResetParam(), sourceInfo1.ResetParam(),
-        // sourceInfo2.ResetParam(); destInfo.NextParam() && sourceInfo1.NextParam() &&
-        // sourceInfo2.NextParam();)
-        for (destInfo.ResetParam(); destInfo.NextParam();)
-        {
-          // asetetaan sourceinfot osoittamaan oikeaan parametriin, jos sellainen löytyy
-          sourceInfo1.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
-          sourceInfo2.Param(static_cast<FmiParameterName>(destInfo.Param().GetParamIdent()));
-
-          for (destInfo.ResetTime(), sourceInfo1.ResetTime();
-               destInfo.NextTime() && sourceInfo1.NextTime();)
-          {  // source1:stä voidaan juoksuttaa samalla aika loopilla koska timedesc on otettu
-             // sieltä,
-             // mutta source2:lta pitää aina kysyä!
-            bool useInfo2Time = true;
-            if (!sourceInfo2.Time(destInfo.Time()))
-              useInfo2Time = false;
-            if (!(useInfo1 ||
-                  (useInfo2 &&
-                   useInfo2Time)))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
-              continue;             // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
-
-            for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
-                 destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
-            {
-              float value1 = sourceInfo1.FloatValue();
-              float value2 = sourceInfo2.FloatValue();
-              float value = (thePriorisedDataNumber == 2) ? value2 : value1;
-              if (value ==
-                  kFloatMissing)  // jos priorisoitu data oli puuttuvaa, annetaan sitten se toinen
-                value = (thePriorisedDataNumber == 2) ? value1 : value2;
-
-              destInfo.FloatValue(value);
-            }
-          }
-        }
-      }
+      CombineLocationValues(
+          destInfo, sourceInfo1, sourceInfo2, useInfo1, useInfo2, thePriorisedDataNumber);
     }
     return destData;
   }
