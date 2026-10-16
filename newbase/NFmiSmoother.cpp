@@ -113,6 +113,97 @@ std::vector<float> NFmiSmoother::Smoothen(const std::vector<float>& theX,
   }
 }
 
+namespace
+{
+// From how may sectors do we require values?
+// Should not exceed the number of bits in an integer
+
+const int nsectors = 4;
+const float pi = 3.14159265358979323F;
+const auto factor = static_cast<float>(nsectors / (2.0 * pi));
+
+// Weighted sums of nearby values
+struct KernelSums
+{
+  float zsum = 0.0;  // weighted sum of function values
+  float wsum = 0.0;  // sum of the weights
+  int sectors = 0;   // bitmask of the sectors with values
+};
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Accumulate the valid values of row j+dj within the search radius of (x,y)
+ *
+ * The row is searched outwards from column i until two consecutive values are outside the radius.
+ *
+ * \return The number of values within the search radius
+ */
+// ----------------------------------------------------------------------
+
+int AccumulateKernelRow(const NFmiSmoother& theSmoother,
+                        const Fmi::CoordinateMatrix& thePts,
+                        const NFmiDataMatrix<float>& theValues,
+                        unsigned int i,
+                        unsigned int j,
+                        int dj,
+                        float x,
+                        float y,
+                        KernelSums& sums)
+{
+  int xmisses = 0;
+  int xgoods = 0;
+  for (int di = 0; static_cast<unsigned int>(abs(di)) < theValues.NX(); di = NEXTDIR(di))
+  {
+    if (xmisses >= 2)
+      break;
+
+    // Test against grid bounds
+
+    if (static_cast<int>(i) + di < 0 || static_cast<int>(j) + dj < 0 ||
+        i + di >= theValues.NX() || j + dj >= theValues.NY())
+    {
+      xmisses++;
+      continue;
+    }
+
+    // Test the coordinate and the value are valid
+
+    if (thePts.x(i + di, j + dj) == kFloatMissing ||
+        thePts.y(i + di, j + dj) == kFloatMissing ||
+        theValues[i + di][j + dj] == kFloatMissing)
+      continue;
+
+    // See if within search radius
+
+    auto dx = static_cast<float>(thePts.x(i + di, j + dj) - x);
+    auto dy = static_cast<float>(thePts.y(i + di, j + dj) - y);
+
+    float dist = sqrt(dx * dx + dy * dy);
+
+    if (dist > theSmoother.Radius())
+      xmisses++;
+    else
+    {
+      xmisses = 0;
+      xgoods++;
+
+      float weight = theSmoother.Weight(dist);
+
+      sums.wsum += weight;
+      sums.zsum += weight * theValues[i + di][j + dj];
+
+      // The sector in question (0..nsectors-1)
+
+      int sector = static_cast<int>((atan2(dx, dy) + pi) * factor) % nsectors;
+      // Set the bit on for this sector
+
+      sums.sectors |= (1 << sector);
+    }
+  }
+  return xgoods;
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Smoothen the given data with near neighbourhood weighted interpolation.
@@ -137,13 +228,6 @@ NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(const Fmi::CoordinateMatrix& 
 
     NFmiDataMatrix<float> values(theValues.NX(), theValues.NY());
 
-    // From how may sectors do we require values?
-    // Should not exceed the number of bits in an integer
-
-    const int nsectors = 4;
-    const float pi = 3.14159265358979323F;
-    const auto factor = static_cast<float>(nsectors / (2.0 * pi));
-
     // Bitmask indicating full set of sectors:
 
     const int allsectors = (1 << nsectors) - 1;
@@ -156,67 +240,16 @@ NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(const Fmi::CoordinateMatrix& 
         auto x = static_cast<float>(thePts.x(i, j));
         auto y = static_cast<float>(thePts.y(i, j));
 
-        float zsum = 0.0;  // weighted sum of function values
-        float wsum = 0.0;  // sum of the weights
+        KernelSums sums;
 
         // Search the grid for nearby values
 
-        int sectors = 0;
         int ymisses = 0;
         for (int dj = 0; static_cast<unsigned int>(abs(dj)) < theValues.NY(); dj = NEXTDIR(dj))
         {
           if (ymisses >= 2)
             break;
-          int xmisses = 0;
-          int xgoods = 0;
-          for (int di = 0; static_cast<unsigned int>(abs(di)) < theValues.NX(); di = NEXTDIR(di))
-          {
-            if (xmisses >= 2)
-              break;
-
-            // Test against grid bounds
-
-            if (static_cast<int>(i) + di < 0 || static_cast<int>(j) + dj < 0 ||
-                i + di >= theValues.NX() || j + dj >= theValues.NY())
-            {
-              xmisses++;
-              continue;
-            }
-
-            // Test the coordinate and the value are valid
-
-            if (thePts.x(i + di, j + dj) == kFloatMissing ||
-                thePts.y(i + di, j + dj) == kFloatMissing ||
-                theValues[i + di][j + dj] == kFloatMissing)
-              continue;
-
-            // See if within search radius
-
-            auto dx = static_cast<float>(thePts.x(i + di, j + dj) - x);
-            auto dy = static_cast<float>(thePts.y(i + di, j + dj) - y);
-
-            float dist = sqrt(dx * dx + dy * dy);
-
-            if (dist > Radius())
-              xmisses++;
-            else
-            {
-              xmisses = 0;
-              xgoods++;
-
-              float weight = Weight(dist);
-
-              wsum += weight;
-              zsum += weight * theValues[i + di][j + dj];
-
-              // The sector in question (0..nsectors-1)
-
-              int sector = static_cast<int>((atan2(dx, dy) + pi) * factor) % nsectors;
-              // Set the bit on for this sector
-
-              sectors |= (1 << sector);
-            }
-          }
+          int xgoods = AccumulateKernelRow(*this, thePts, theValues, i, j, dj, x, y, sums);
           if (xgoods == 0)
             ymisses++;
           else
@@ -224,8 +257,8 @@ NFmiDataMatrix<float> NFmiSmoother::SmoothenKernel(const Fmi::CoordinateMatrix& 
         }
         // If got all desired sectors, then we can handle the sum
 
-        if ((sectors == allsectors) && (wsum > 0.0))
-          values[i][j] = zsum / wsum;
+        if ((sums.sectors == allsectors) && (sums.wsum > 0.0))
+          values[i][j] = sums.zsum / sums.wsum;
         else
           values[i][j] = theValues[i][j];
       }
