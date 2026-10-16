@@ -261,6 +261,16 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   unsigned long TotalCloudinessToHessaa() const;
   unsigned long ThunderToHessaa() const;
   unsigned long TotalPrecipitationToHessaa() const;
+  bool KnownPrecipitationFormHessaa(unsigned long theSnowHessaa,
+                                    unsigned long theSleetHessaa,
+                                    unsigned long theOtherHessaa,
+                                    unsigned long &theHessaa);
+  unsigned long PrecipitationFormFromTemperatureHessaa(unsigned long theRainHessaa,
+                                                       unsigned long theSnowHessaa);
+  unsigned long PrecipitationFormHessaa(unsigned long theSnowHessaa,
+                                        unsigned long theSleetHessaa,
+                                        unsigned long theOtherHessaa);
+  unsigned long LargeScaleOverCastHessaa(unsigned long thePrecipitation);
   unsigned long PartlyCloudyHessaa();
   unsigned long HalfCloudyHessaa();
   unsigned long OverCastHessaa();

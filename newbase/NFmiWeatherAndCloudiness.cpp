@@ -2580,6 +2580,100 @@ unsigned long NFmiWeatherAndCloudiness::TotalPrecipitationToHessaa() const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Hessaa code for a known precipitation form
+ *
+ * Sets fDataOk to true if the form is known.
+ *
+ * \return False if the precipitation form is missing
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiWeatherAndCloudiness::KnownPrecipitationFormHessaa(unsigned long theSnowHessaa,
+                                                            unsigned long theSleetHessaa,
+                                                            unsigned long theOtherHessaa,
+                                                            unsigned long &theHessaa)
+{
+  if (IsSnow())
+    theHessaa = theSnowHessaa;
+  else if (IsSleet())
+    theHessaa = theSleetHessaa;
+  else if (PrecipitationForm() != kT3BitMissing)
+    theHessaa = theOtherHessaa;
+  else
+    return false;
+  fDataOk = true;
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the missing precipitation form from the temperature
+ *
+ * \return The hessaa code for rain or snow
+ */
+// ----------------------------------------------------------------------
+
+unsigned long NFmiWeatherAndCloudiness::PrecipitationFormFromTemperatureHessaa(
+    unsigned long theRainHessaa, unsigned long theSnowHessaa)
+{
+  if (itsTemperature > -1)  // saa olla puuttuvakin
+  {
+    SetPrecipitationForm(kTRain);
+    return theRainHessaa;
+  }
+  SetPrecipitationForm(kTSnow);
+  return theSnowHessaa;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hessaa code by the precipitation form, the form being set from the temperature
+ *        if it is missing and automatic updates are on
+ */
+// ----------------------------------------------------------------------
+
+unsigned long NFmiWeatherAndCloudiness::PrecipitationFormHessaa(unsigned long theSnowHessaa,
+                                                                unsigned long theSleetHessaa,
+                                                                unsigned long theOtherHessaa)
+{
+  unsigned long hessaa = kUnsignedLongMissing;
+  if (KnownPrecipitationFormHessaa(theSnowHessaa, theSleetHessaa, theOtherHessaa, hessaa))
+    return hessaa;
+  if (fAutoUpdate)  // olomuoto puuttuva
+  {
+    hessaa = PrecipitationFormFromTemperatureHessaa(theOtherHessaa, theSnowHessaa);
+    fDataOk = true;
+    return hessaa;
+  }
+  fDataOk = false;  // sateen olomuoto puuttuu
+  return hessaa;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the precipitation type to large scale and the form to rain unless it is snow or
+ *        sleet, and return the overcast hessaa code
+ */
+// ----------------------------------------------------------------------
+
+unsigned long NFmiWeatherAndCloudiness::LargeScaleOverCastHessaa(unsigned long thePrecipitation)
+{
+  SetPrecipitationType(kTLargeScalePrecipitation);
+  if (!IsSnow() && !IsSleet())  // jos ei sada lunta
+  {
+    SetPrecipitationForm(kTRain);  // asetataan vesisadetta
+    return 30 + thePrecipitation;
+  }
+  if (IsSleet())  // jos ei sada lunta
+  {
+    SetPrecipitationForm(kTSleet);  // asetataan vesisadetta
+    return 80 + thePrecipitation;
+  }
+  return 50 + thePrecipitation;  // olomuoto on jo lumi
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
@@ -2589,97 +2683,14 @@ unsigned long NFmiWeatherAndCloudiness::PartlyCloudyHessaa()
   try
   {
     unsigned long hessaa = kUnsignedLongMissing;
-    if (IsConvective())  // tyyppi on jo asetettu
-    {
-      if (IsSnow())
-      {
-        hessaa = 40;  // sataa, konv, lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 70;  // sataa, konv, räntää
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 20;  // sataa, konv, vettä tai tihkua
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)  // olomuoto puuttuva
-      {
-        if (itsTemperature > -1)  // saa olla puuttuvakin
-        {
-          SetPrecipitationForm(kTRain);
-          hessaa = 20;
-        }
-        else
-        {
-          SetPrecipitationForm(kTSnow);
-          hessaa = 40;
-        }
-        fDataOk = true;
-      }
-      else
-        fDataOk = false;  // sateen olomuoto puuttuu
-    }
-    // seuraavan voisi yhdistää edelliseen
-    else if (PrecipitationType() == kTLargeScalePrecipitation)
-    {
-      if (IsSnow())
-      {
-        hessaa = 40;  // 50; //lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 70;  // räntää
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 20;  // 30;  //sataa, konv, vettä tai tihkua
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)  // olomuoto puuttuva
-      {
-        if (itsTemperature > -1)  // saa olla puuttuvakin
-        {
-          SetPrecipitationForm(kTRain);
-          hessaa = 20;  // 30;
-        }
-        else
-        {
-          SetPrecipitationForm(kTSnow);
-          hessaa = 40;  // 50;
-        }
-        fDataOk = true;
-      }
-      else
-        fDataOk = false;  // sateen olomuoto puuttuu
-    }
+    // konvektiivinen ja laaja-alainen sade käsitellään samalla tavalla
+    if (IsConvective() || PrecipitationType() == kTLargeScalePrecipitation)
+      hessaa = PrecipitationFormHessaa(40, 70, 20);  // sataa lunta, räntää tai vettä/tihkua
     else if (fAutoUpdate)
     {
       SetPrecipitationType(kTConvectivePrecipitation);
-      if (PrecipitationForm() == kT3BitMissing)
-      {
-        if (itsTemperature > -1)  // saa olla puuttuvakin
-        {
-          SetPrecipitationForm(kTRain);
-          hessaa = 20;
-        }
-        else
-        {
-          SetPrecipitationForm(kTSnow);
-          hessaa = 40;
-        }
-      }
-      else if (IsSnow())
-        hessaa = 40;
-      else if (IsSleet())
-        hessaa = 70;
-      else
-        hessaa = 20;
+      if (!KnownPrecipitationFormHessaa(40, 70, 20, hessaa))
+        hessaa = PrecipitationFormFromTemperatureHessaa(20, 40);
       fDataOk = true;
     }
     else
@@ -2712,97 +2723,14 @@ unsigned long NFmiWeatherAndCloudiness::HalfCloudyHessaa()
     unsigned long preci = TotalPrecipitationToHessaa();
     if (preci == kUnsignedLongMissing)  // ei sada sittenkään
       fDataOk = false;
-    else if (IsConvective())
-    {
-      if (IsSnow())
-      {
-        hessaa = 40 + preci;  // sataa lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 70 + preci;  // sataa lunta
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 20 + preci;  // ei sada lunta, vaan jotain muuta
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)
-      {
-        if (PrecipitationForm() == kT3BitMissing)  // jos ei sada lunta
-        {
-          if (itsTemperature > -1)  // saa olla puuttuvakin
-          {
-            SetPrecipitationForm(kTRain);
-            hessaa = 20 + preci;
-          }
-          else
-          {
-            SetPrecipitationForm(kTSnow);
-            hessaa = 40 + preci;
-          }
-        }
-        fDataOk = true;
-      }
-      else
-        fDataOk = false;  // sateen olomuoto puuttuu
-    }
-    // yhdistä seuraava edelliseen
-    else if (PrecipitationType() == kTLargeScalePrecipitation)
-    {
-      if (IsSnow())  // entäs räntä??
-      {
-        hessaa = 40 + preci;  // 50+preci; //sataa lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 70 + preci;  // 50+preci; //sataa räntää
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 20 + preci;  // 30+preci; //ei sada lunta, vaan jotain muuta
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)
-      {
-        if (PrecipitationForm() == kT3BitMissing)  // jos ei sada lunta
-        {
-          if (itsTemperature > -1)  // saa olla puuttuvakin
-          {
-            SetPrecipitationForm(kTRain);
-            hessaa = 20 + preci;  // 30+preci;
-          }
-          else
-          {
-            SetPrecipitationForm(kTSnow);
-            hessaa = 40 + preci;  // 50+preci;
-          }
-        }
-        fDataOk = true;
-      }
-      else
-        fDataOk = false;  // sateen olomuoto puuttuu
-    }
+    // konvektiivinen ja laaja-alainen sade käsitellään samalla tavalla
+    else if (IsConvective() || PrecipitationType() == kTLargeScalePrecipitation)
+      hessaa = PrecipitationFormHessaa(40 + preci, 70 + preci, 20 + preci);
     else if (fAutoUpdate)
     {
       SetPrecipitationType(kTConvectivePrecipitation);
       if (PrecipitationForm() == kT3BitMissing)  // jos ei sada lunta
-      {
-        if (itsTemperature > -1)  // saa olla puuttuvakin
-        {
-          SetPrecipitationForm(kTRain);
-          hessaa = 20 + preci;
-        }
-        else
-        {
-          SetPrecipitationForm(kTSnow);
-          hessaa = 40 + preci;
-        }
-      }
+        hessaa = PrecipitationFormFromTemperatureHessaa(20 + preci, 40 + preci);
       else if (!IsSnow() && !IsSleet())
       {
         SetPrecipitationForm(kTRain);  // asetataan vesisadetta
@@ -2844,38 +2772,12 @@ unsigned long NFmiWeatherAndCloudiness::OverCastHessaa()
     }
     if (!IsConvective() && PrecipitationType() != kT2BitMissing)
     {
-      if (IsSnow())
+      // sataa lunta, räntää tai muuta kuin lunta
+      if (KnownPrecipitationFormHessaa(50 + preci, 80 + preci, 30 + preci, hessaa))
+        return hessaa;
+      if (fAutoUpdate)  // ja olomuotoa ei ole määritetty
       {
-        hessaa = 50 + preci;  // sataa lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 80 + preci;  // sataa lunta
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 30 + preci;  // sataa muuta kuin lunta
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)  // ja olomuotoa ei ole määritetty
-      {
-        SetPrecipitationType(kTLargeScalePrecipitation);
-
-        if (!IsSnow() && !IsSleet())  // jos ei sada lunta
-        {
-          SetPrecipitationForm(kTRain);  // asetataan vesisadetta
-          hessaa = 30 + preci;
-        }
-        else if (IsSleet())  // jos ei sada lunta
-        {
-          SetPrecipitationForm(kTSleet);  // asetataan vesisadetta
-          hessaa = 80 + preci;
-        }
-        else
-          hessaa = 50 + preci;
-
+        hessaa = LargeScaleOverCastHessaa(preci);
         fDataOk = true;
       }
       else
@@ -2883,53 +2785,15 @@ unsigned long NFmiWeatherAndCloudiness::OverCastHessaa()
     }
     else if (IsConvective())
     {
-      if (IsSnow())
-      {
-        hessaa = 50 + preci;  // 40+preci; //sataa lunta
-        fDataOk = true;
-      }
-      else if (IsSleet())
-      {
-        hessaa = 80 + preci;
-        fDataOk = true;
-      }
-      else if (PrecipitationForm() != kT3BitMissing)
-      {
-        hessaa = 30 + preci;  // 20+preci; //sataa muuta kuin lunta
-        fDataOk = true;
-      }
-      else if (fAutoUpdate)  // ja olomuotoa ei ole määritetty
-      {
-        if (itsTemperature > -1)
-        {
-          SetPrecipitationForm(kTRain);  // asetataan vesisadetta
-          hessaa = 30 + preci;           // 20+preci;
-        }
-        else
-        {
-          SetPrecipitationForm(kTSnow);  // asetataan vesisadetta
-          hessaa = 50 + preci;           // 40+preci;
-        }
-      }
+      if (KnownPrecipitationFormHessaa(50 + preci, 80 + preci, 30 + preci, hessaa))
+        return hessaa;
+      if (fAutoUpdate)  // ja olomuotoa ei ole määritetty
+        hessaa = PrecipitationFormFromTemperatureHessaa(30 + preci, 50 + preci);
       else
         fDataOk = false;  // sateen olomuoto puuttuu
     }
     else if (fAutoUpdate)
-    {
-      SetPrecipitationType(kTLargeScalePrecipitation);
-      if (!IsSnow() && !IsSleet())  // jos ei sada lunta
-      {
-        SetPrecipitationForm(kTRain);  // asetataan vesisadetta
-        hessaa = 30 + preci;
-      }
-      else if (IsSleet())  // jos ei sada lunta
-      {
-        SetPrecipitationForm(kTSleet);  // asetataan vesisadetta
-        hessaa = 80 + preci;
-      }
-      else
-        hessaa = 50 + preci;  // olomuoto on jo lumi
-    }
+      hessaa = LargeScaleOverCastHessaa(preci);
     else
       fDataOk = false;  // konvektiivista sadetta ja täyspilvistä tai tyyppi puuttuu
 
