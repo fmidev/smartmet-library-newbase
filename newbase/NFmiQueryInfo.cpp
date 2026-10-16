@@ -3677,183 +3677,179 @@ float NFmiQueryInfo::InterpolatedValue(const NFmiMetTime &theTime, int theMaxMin
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Search the nearest non-missing value backwards from the time bag offset
+ *
+ * \param theOffset The offset to start from, set to the offset of the found value
+ * \return The value, or missing if not found or too far from the wanted time
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::SearchTimeBagValueBackward(int &theOffset,
+                                                int timeIndex,
+                                                float wantedTimeOffsetFloat,
+                                                int timeResolution,
+                                                int theMaxMinuteRange)
+{
+  float value1 = kFloatMissing;
+  for (int i = theOffset; i + timeIndex >= 0; i--)
+  {
+    theOffset = i;
+    value1 = PeekTimeValue(i);
+    if (value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing)
+    {
+      if (theMaxMinuteRange && theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
+        value1 = kFloatMissing;
+      break;
+    }
+    value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+  }
+  return value1;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Search the nearest non-missing value forwards from the time bag offset
+ *
+ * \param theOffset The offset to start from, set to the offset of the found value
+ * \return The value, or missing if not found or too far from the wanted time
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::SearchTimeBagValueForward(int &theOffset,
+                                               int timeIndex,
+                                               int sizeTimes,
+                                               float wantedTimeOffsetFloat,
+                                               int timeResolution,
+                                               int theMaxMinuteRange)
+{
+  float value2 = kFloatMissing;
+  for (int i = theOffset; i + timeIndex < sizeTimes; i++)
+  {
+    theOffset = i;
+    value2 = PeekTimeValue(i);
+    if (value2 != kFloatMissing && value2 != kTCombinedWeatherFloatMissing)
+    {
+      if (theMaxMinuteRange && theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
+        value2 = kFloatMissing;
+      break;
+    }
+    value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
+  }
+  return value2;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Interpolate between the non-missing values at the given time bag offsets
+ *
+ * \param theCurrentValue The value returned for unknown combined parameters
+ */
+// ----------------------------------------------------------------------
+
+float NFmiQueryInfo::InterpolateTimeBagValues(float theCurrentValue,
+                                              float value1,
+                                              float value2,
+                                              float wantedTimeOffsetFloat,
+                                              int backwardOffset,
+                                              int forwardOffset)
+{
+  float offset1 = (forwardOffset - wantedTimeOffsetFloat) / (forwardOffset - backwardOffset);
+
+  // 30.10.2000/Marko Muutin ottamaan huomioon combinedparam jutut ja epälineaariset
+  // parametrit
+  NFmiParam *parameter = Param().GetParam();
+  FmiInterpolationMethod interp = parameter->InterpolationMethod();
+  unsigned long param = parameter->GetIdent();
+  if (interp == kByCombinedParam ||
+      param == kFmiTotalWindMS)  // HUOM!!!! totalwindillä ei ole tätä arvoa (korjaa!)
+  {
+    if (param == kFmiTotalWindMS || param == kFmiWeatherAndCloudiness)
+      return InterpolateCombinedValues(param, offset1, value1, value2);
+    return theCurrentValue;
+  }
+
+  // Both values are non-missing, hence also kNearestNonMissing returns the nearest value
+  if (interp != kLinearly)
+    return (offset1 > 0.5 ? value1 : value2);
+
+  // muuten lineaarinen interpolointi
+  if (param == kFmiWindDirection)
+  {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
+    Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
+    float ws1 = PeekTimeValue(backwardOffset);
+    float ws2 = PeekTimeValue(forwardOffset);
+    Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
+    NFmiInterpolation::WindInterpolator windInterpolator;
+    windInterpolator.operator()(ws1, value1, offset1);
+    windInterpolator.operator()(ws2, value2, (1 - offset1));
+    // meitä kiinnostaa vain tuulen suunta (tämä pitää tehdä jotenkin fiksummin)
+    return static_cast<float>(windInterpolator.Direction());
+  }
+  if (param == kFmiWaveDirection)
+    return static_cast<float>(NFmiInterpolation::ModLinear(offset1, value1, value2, 360));
+  if (param == kFmiWindVectorMS)
+    return static_cast<float>(NFmiInterpolation::WindVector(offset1, value1, value2));
+  return (offset1 * value1 + (1.F - offset1) * value2);
+}
+
 float NFmiQueryInfo::InterpolatedValueFromTimeBag(const NFmiMetTime &theTime, int theMaxMinuteRange)
 {
   try
   {
     NFmiTimeBag *timeBag = itsTimeDescriptor->ValidTimeBag();
-    if (timeBag && timeBag->IsInside(theTime))
+    if (!(timeBag && timeBag->IsInside(theTime)))
+      return kFloatMissing;
+
+    int sizeTimes = SizeTimes();
+    int timeIndex = TimeIndex();
+    if (timeIndex == -1 || sizeTimes < timeIndex)
     {
-      int sizeTimes = SizeTimes();
-      int timeIndex = TimeIndex();
-      if (timeIndex == -1 || sizeTimes < timeIndex)
-      {
-        // eli jos aika osoittaa kuuseen, laitetaan aika osoittamaan
-        // 1. aikaan ja otetaan indeksi uudestaan
-        FirstTime();
-        timeIndex = TimeIndex();
-      }
-      float returnValue = kFloatMissing;
-      NFmiMetTime firstTime(timeBag->FirstTime());
-      int timeResolution = timeBag->Resolution();
-      // timeResolution voi olla 0, jos timeBagissa on vain yksi aika, tai jos alku ja loppu aika
-      // ovat samoja. Pitää estää 0:lla jako
-      if (timeResolution == 0)
-        return kFloatMissing;
-      int minuteOffSetOfWantedTimeInTimeBag =
-          theTime.DifferenceInMinutes(firstTime) - (timeResolution * timeIndex);
-      float wantedTimeOffsetFloat = float(minuteOffSetOfWantedTimeInTimeBag) / timeResolution;
-      int wantedTimeOffset = minuteOffSetOfWantedTimeInTimeBag / timeResolution;
-      auto backwardOffset = static_cast<int>(floor(wantedTimeOffsetFloat));
-      auto forwardOffset = static_cast<int>(ceil(wantedTimeOffsetFloat));
-      if (backwardOffset == forwardOffset)
-        forwardOffset++;
-      if (minuteOffSetOfWantedTimeInTimeBag % timeResolution ==
-          0)  // jos haluttu aika menee tasa aikasteppiin
-      {
-        backwardOffset = wantedTimeOffset - 1;
-        forwardOffset = wantedTimeOffset + 1;
-        returnValue = PeekTimeValue(wantedTimeOffset);
-      }
-      if (returnValue == kFloatMissing || returnValue == kTCombinedWeatherFloatMissing)
-      {
-        // aletaan etsiä lähimpiä arvoja molemmista suunnista
-        int i = 0;
-        float value1 = kFloatMissing;
-        float value2 = kFloatMissing;
-        for (i = backwardOffset; i + timeIndex >= 0; i--)
-        {
-          backwardOffset = i;
-          value1 = PeekTimeValue(i);
-          if (value1 != kFloatMissing && value1 != kTCombinedWeatherFloatMissing)
-          {
-            if (theMaxMinuteRange &&
-                theMaxMinuteRange < (wantedTimeOffsetFloat - i) * timeResolution)
-              value1 = kFloatMissing;
-            break;
-          }
-          value1 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
-        }
-        for (i = forwardOffset; i + timeIndex < sizeTimes; i++)
-        {
-          forwardOffset = i;
-          value2 = PeekTimeValue(i);
-          if (value2 != kFloatMissing && value2 != kTCombinedWeatherFloatMissing)
-          {
-            if (theMaxMinuteRange &&
-                theMaxMinuteRange < (i - wantedTimeOffsetFloat) * timeResolution)
-              value2 = kFloatMissing;
-            break;
-          }
-          value2 = kFloatMissing;  // tarkastus helpottuu myöhemmin, kun vain yksi missing arvo
-        }
-        if (value1 == kFloatMissing || value2 == kFloatMissing)
-          returnValue = kFloatMissing;
-        else
-        {
-          float offset1 =
-              (forwardOffset - wantedTimeOffsetFloat) / (forwardOffset - backwardOffset);
-
-          // 30.10.2000/Marko Muutin ottamaan huomioon combinedparam jutut ja epälineaariset
-          // parametrit
-          NFmiParam *parameter = Param().GetParam();
-          FmiInterpolationMethod interp = parameter->InterpolationMethod();
-          unsigned long param = parameter->GetIdent();
-          if (interp == kByCombinedParam ||
-              param == kFmiTotalWindMS)  // HUOM!!!! totalwindillä ei ole tätä arvoa (korjaa!)
-          {
-            switch (param)
-            {
-              case kFmiTotalWindMS:
-              {  // korjasin käyttämään SetToWeightedMean-metodia, joka laskee u- ja v-komponenttien
-                // avulla
-                NFmiTotalWind resultWind(itsInfoVersion);
-                NFmiTotalWind tempWind1(value1, kFmiPackedWind, itsInfoVersion);
-                NFmiTotalWind tempWind2(value2, kFmiPackedWind, itsInfoVersion);
-                resultWind.SetToWeightedMean(
-                    &tempWind1, offset1, &tempWind2, 1 - offset1, &tempWind1, 0, &tempWind1, 0);
-                returnValue = resultWind.TransformedFloatValue();
-              }
-              break;
-              case kFmiWeatherAndCloudiness:
-              {
-                NFmiWeatherAndCloudiness resultWeather(itsInfoVersion);  // Marko testi
-                NFmiWeatherAndCloudiness tempWeather1(
-                    value1, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-                NFmiWeatherAndCloudiness tempWeather2(
-                    value2, kFmiPackedWeather, kFloatMissing, itsInfoVersion);
-
-                resultWeather.SetToWeightedMean(&tempWeather1,
-                                                offset1,
-                                                &tempWeather2,
-                                                1 - offset1,
-                                                &tempWeather1,
-                                                0,
-                                                &tempWeather1,
-                                                0);
-                returnValue = resultWeather.TransformedFloatValue();
-              }
-              break;
-              default:
-                break;
-            }
-          }
-          else if (interp == kNearestNonMissing)
-          {
-            if (offset1 > 0.5)
-            {
-              returnValue = value1;
-              if (returnValue == kFloatMissing)
-                returnValue = value2;
-            }
-            else
-            {
-              returnValue = value2;
-              if (returnValue == kFloatMissing)
-                returnValue = value1;
-            }
-          }
-          else if (interp != kLinearly)
-          {
-            if (offset1 > 0.5)
-              returnValue = value1;
-            else
-              returnValue = value2;
-          }
-          else  // muuten lineaarinen interpolointi
-          {
-            if (param == kFmiWindDirection)
-            {  // tehdään wind-dir laskut WD ja WS avulla jolloin interpolointi on parempaa
-              Param(kFmiWindSpeedMS);  // asetetaan parametriksi väliaikaisesti tuulennopeus
-              float ws1 = PeekTimeValue(backwardOffset);
-              float ws2 = PeekTimeValue(forwardOffset);
-              Param(kFmiWindDirection);  // palautetaan tuulensuunta takaisin parametriksi
-              NFmiInterpolation::WindInterpolator windInterpolator;
-              windInterpolator.operator()(ws1, value1, offset1);
-              windInterpolator.operator()(ws2, value2, (1 - offset1));
-              returnValue = static_cast<float>(windInterpolator.Direction());  // meitä kiinnostaa
-                                                                               // vain tuulen suunta
-              // (tämä pitää tehdä
-              // jotenkin fiksummin)
-            }
-            else if (param == kFmiWaveDirection)
-            {
-              returnValue =
-                  static_cast<float>(NFmiInterpolation::ModLinear(offset1, value1, value2, 360));
-            }
-            else if (param == kFmiWindVectorMS)
-            {
-              returnValue =
-                  static_cast<float>(NFmiInterpolation::WindVector(offset1, value1, value2));
-            }
-            else
-              returnValue = (offset1 * value1 + (1.F - offset1) * value2);
-          }
-        }
-      }
-      return returnValue;
+      // eli jos aika osoittaa kuuseen, laitetaan aika osoittamaan
+      // 1. aikaan ja otetaan indeksi uudestaan
+      FirstTime();
+      timeIndex = TimeIndex();
     }
-    return kFloatMissing;
+    float returnValue = kFloatMissing;
+    NFmiMetTime firstTime(timeBag->FirstTime());
+    int timeResolution = timeBag->Resolution();
+    // timeResolution voi olla 0, jos timeBagissa on vain yksi aika, tai jos alku ja loppu aika
+    // ovat samoja. Pitää estää 0:lla jako
+    if (timeResolution == 0)
+      return kFloatMissing;
+    int minuteOffSetOfWantedTimeInTimeBag =
+        theTime.DifferenceInMinutes(firstTime) - (timeResolution * timeIndex);
+    float wantedTimeOffsetFloat = float(minuteOffSetOfWantedTimeInTimeBag) / timeResolution;
+    int wantedTimeOffset = minuteOffSetOfWantedTimeInTimeBag / timeResolution;
+    auto backwardOffset = static_cast<int>(floor(wantedTimeOffsetFloat));
+    auto forwardOffset = static_cast<int>(ceil(wantedTimeOffsetFloat));
+    if (backwardOffset == forwardOffset)
+      forwardOffset++;
+    if (minuteOffSetOfWantedTimeInTimeBag % timeResolution ==
+        0)  // jos haluttu aika menee tasa aikasteppiin
+    {
+      backwardOffset = wantedTimeOffset - 1;
+      forwardOffset = wantedTimeOffset + 1;
+      returnValue = PeekTimeValue(wantedTimeOffset);
+    }
+    if (returnValue != kFloatMissing && returnValue != kTCombinedWeatherFloatMissing)
+      return returnValue;
+
+    // aletaan etsiä lähimpiä arvoja molemmista suunnista
+    float value1 = SearchTimeBagValueBackward(
+        backwardOffset, timeIndex, wantedTimeOffsetFloat, timeResolution, theMaxMinuteRange);
+    float value2 = SearchTimeBagValueForward(forwardOffset,
+                                             timeIndex,
+                                             sizeTimes,
+                                             wantedTimeOffsetFloat,
+                                             timeResolution,
+                                             theMaxMinuteRange);
+    if (value1 == kFloatMissing || value2 == kFloatMissing)
+      return kFloatMissing;
+
+    return InterpolateTimeBagValues(
+        returnValue, value1, value2, wantedTimeOffsetFloat, backwardOffset, forwardOffset);
   }
   catch (...)
   {

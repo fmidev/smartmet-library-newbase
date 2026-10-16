@@ -686,6 +686,23 @@ class NFmiQueryInfo
   void ActivateLocations(NFmiHPlaceDescriptor *theHPlaceDescriptor);
   void ActivateLevels(NFmiVPlaceDescriptor *theVPlaceDescriptor);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
+  float SearchTimeBagValueBackward(int &theOffset,
+                                   int timeIndex,
+                                   float wantedTimeOffsetFloat,
+                                   int timeResolution,
+                                   int theMaxMinuteRange);
+  float SearchTimeBagValueForward(int &theOffset,
+                                  int timeIndex,
+                                  int sizeTimes,
+                                  float wantedTimeOffsetFloat,
+                                  int timeResolution,
+                                  int theMaxMinuteRange);
+  float InterpolateTimeBagValues(float theCurrentValue,
+                                 float value1,
+                                 float value2,
+                                 float wantedTimeOffsetFloat,
+                                 int backwardOffset,
+                                 int forwardOffset);
   void ReplaceCurrentParamData(NFmiQueryInfo *theReplaceData);
   void ReplaceCurrentTimeData(NFmiQueryInfo *theReplaceData);
   float CachedCombinedParamTimeInterpolatedValue(float theValue1,
