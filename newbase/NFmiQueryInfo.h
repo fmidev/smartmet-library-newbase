@@ -681,6 +681,10 @@ class NFmiQueryInfo
                                float offset1,
                                float theValue1,
                                float theValue2);
+  void ActivateParams(NFmiParamDescriptor *theParamDescriptor);
+  void ActivateTimes(NFmiTimeDescriptor *theTimeDescriptor);
+  void ActivateLocations(NFmiHPlaceDescriptor *theHPlaceDescriptor);
+  void ActivateLevels(NFmiVPlaceDescriptor *theVPlaceDescriptor);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
   float CornerInterpolatedValue(const NFmiMetTime &theTime,
                                 int theMaxMinuteRange,

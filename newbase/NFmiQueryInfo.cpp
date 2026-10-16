@@ -358,6 +358,74 @@ NFmiQueryInfo::NFmiQueryInfo(const NFmiParamDescriptor& theParamDescriptor,
   }
 }
 
+// Activate only the parameters of the given descriptor
+void NFmiQueryInfo::ActivateParams(NFmiParamDescriptor *theParamDescriptor)
+{
+  itsParamDescriptor->Reset();
+  while (itsParamDescriptor->Next())
+    itsParamDescriptor->SetActivity(false);
+
+  theParamDescriptor->Reset();
+  while (theParamDescriptor->Next())
+  {
+    if (Param(theParamDescriptor->Param()))
+    {
+      itsParamDescriptor->SetActivity(true);
+    }
+  }
+}
+
+// Activate only the times of the given descriptor
+void NFmiQueryInfo::ActivateTimes(NFmiTimeDescriptor *theTimeDescriptor)
+{
+  itsTimeDescriptor->Reset();
+  while (itsTimeDescriptor->Next())
+    itsTimeDescriptor->SetActivity(false);
+
+  theTimeDescriptor->Reset();
+  while (theTimeDescriptor->Next())
+  {
+    if (Time(theTimeDescriptor->Time()))
+    {
+      itsTimeDescriptor->SetActivity(true);
+    }
+  }
+}
+
+// Activate only the locations of the given descriptor
+void NFmiQueryInfo::ActivateLocations(NFmiHPlaceDescriptor *theHPlaceDescriptor)
+{
+  itsHPlaceDescriptor->Reset();
+  while (itsHPlaceDescriptor->Next())
+    itsHPlaceDescriptor->SetActivity(false);
+
+  theHPlaceDescriptor->Reset();
+  while (theHPlaceDescriptor->Next())
+  {
+    if (Location(*(theHPlaceDescriptor->Location())))
+    {
+      itsHPlaceDescriptor->SetActivity(true);
+    }
+  }
+}
+
+// Activate only the levels of the given descriptor
+void NFmiQueryInfo::ActivateLevels(NFmiVPlaceDescriptor *theVPlaceDescriptor)
+{
+  itsVPlaceDescriptor->Reset();
+  while (itsVPlaceDescriptor->Next())
+    itsVPlaceDescriptor->SetActivity(false);
+
+  theVPlaceDescriptor->Reset();
+  while (theVPlaceDescriptor->Next())
+  {
+    if (Level(*(theVPlaceDescriptor->Level())))
+    {
+      itsVPlaceDescriptor->SetActivity(true);
+    }
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theInfo Undocumented
@@ -407,68 +475,16 @@ NFmiQueryInfo::NFmiQueryInfo(NFmiQueryData* theInfo,
   try
   {
     if (theParamDescriptor != nullptr && itsParamDescriptor != nullptr)
-    {
-      itsParamDescriptor->Reset();
-      while (itsParamDescriptor->Next())
-        itsParamDescriptor->SetActivity(false);
-
-      theParamDescriptor->Reset();
-      while (theParamDescriptor->Next())
-      {
-        if (Param(theParamDescriptor->Param()))
-        {
-          itsParamDescriptor->SetActivity(true);
-        }
-      }
-    }
+      ActivateParams(theParamDescriptor);
 
     if (theTimeDescriptor != nullptr && itsTimeDescriptor != nullptr)
-    {
-      itsTimeDescriptor->Reset();
-      while (itsTimeDescriptor->Next())
-        itsTimeDescriptor->SetActivity(false);
-
-      theTimeDescriptor->Reset();
-      while (theTimeDescriptor->Next())
-      {
-        if (Time(theTimeDescriptor->Time()))
-        {
-          itsTimeDescriptor->SetActivity(true);
-        }
-      }
-    }
+      ActivateTimes(theTimeDescriptor);
 
     if (theHPlaceDescriptor != nullptr && itsHPlaceDescriptor != nullptr)
-    {
-      itsHPlaceDescriptor->Reset();
-      while (itsHPlaceDescriptor->Next())
-        itsHPlaceDescriptor->SetActivity(false);
-
-      theHPlaceDescriptor->Reset();
-      while (theHPlaceDescriptor->Next())
-      {
-        if (Location(*(theHPlaceDescriptor->Location())))
-        {
-          itsHPlaceDescriptor->SetActivity(true);
-        }
-      }
-    }
+      ActivateLocations(theHPlaceDescriptor);
 
     if (theVPlaceDescriptor != nullptr && itsVPlaceDescriptor != nullptr)
-    {
-      itsVPlaceDescriptor->Reset();
-      while (itsVPlaceDescriptor->Next())
-        itsVPlaceDescriptor->SetActivity(false);
-
-      theVPlaceDescriptor->Reset();
-      while (theVPlaceDescriptor->Next())
-      {
-        if (Level(*(theVPlaceDescriptor->Level())))
-        {
-          itsVPlaceDescriptor->SetActivity(true);
-        }
-      }
-    }
+      ActivateLevels(theVPlaceDescriptor);
 
     if (theInfo->Info()->Header())
       itsHeaderText.reset(new NFmiStringList(*(theInfo->Info()->Header())));
