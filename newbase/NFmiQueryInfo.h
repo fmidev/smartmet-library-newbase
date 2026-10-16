@@ -686,6 +686,8 @@ class NFmiQueryInfo
   void ActivateLocations(NFmiHPlaceDescriptor *theHPlaceDescriptor);
   void ActivateLevels(NFmiVPlaceDescriptor *theVPlaceDescriptor);
   void CopyCombinedValue(NFmiQueryInfo *combinedInfo, NFmiQueryInfo *theOtherInfo);
+  void ReplaceCurrentParamData(NFmiQueryInfo *theReplaceData);
+  void ReplaceCurrentTimeData(NFmiQueryInfo *theReplaceData);
   float CachedCombinedParamTimeInterpolatedValue(float theValue1,
                                                  float theValue2,
                                                  float offset,

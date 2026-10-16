@@ -5577,6 +5577,62 @@ void NFmiQueryInfo::SetProducer(const NFmiProducer &newProducer)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Replace all the locations of the current parameter, level and time with the
+ *        non-missing values of the replacing data
+ */
+// ----------------------------------------------------------------------
+
+void NFmiQueryInfo::ReplaceCurrentParamData(NFmiQueryInfo *theReplaceData)
+{
+  ResetLocation();
+
+  while (NextLocation())
+  {
+    if (theReplaceData->IsGrid())
+    {
+      float Float2Value = theReplaceData->InterpolatedValue(LatLon());
+      if (Float2Value != kFloatMissing)
+      {
+        FloatValue(Float2Value);
+      }
+    }
+    else
+    {
+      if (theReplaceData->Location(*Location()))
+      {
+        if (theReplaceData->FloatValue() != kFloatMissing)
+        {
+          FloatValue(theReplaceData->FloatValue());
+        }
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Replace all the parameters and locations of the current level and time with the
+ *        non-missing values of the replacing data
+ */
+// ----------------------------------------------------------------------
+
+void NFmiQueryInfo::ReplaceCurrentTimeData(NFmiQueryInfo *theReplaceData)
+{
+  ResetParam();
+
+  while (NextParam())
+  {
+    if (!theReplaceData->Param(Param()))
+      if (!theReplaceData->Param(*Param().GetParam()))  // 18.8.2000/Marko lisäsi, koska
+                                                        // tuottaja ei saa vaikuttaa tässä
+        continue;
+
+    ReplaceCurrentParamData(theReplaceData);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \param theReplaceData Undocumented
  * \param theTimeBag Undocumented
  */
@@ -5610,8 +5666,6 @@ bool NFmiQueryInfo::ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *theT
       TheLastTime = theTimeBag->LastTime();
     }
 
-    float Float2Value = NAN;
-
     First();
     theReplaceData->First();
 
@@ -5625,47 +5679,14 @@ bool NFmiQueryInfo::ReplaceData(NFmiQueryInfo *theReplaceData, NFmiTimeBag *theT
       ResetTime();
       while (NextTime() && TheLastTime.DifferenceInHours(ValidTime()) >= 0)
       {
-        if (TheFirstTime.DifferenceInHours(ValidTime()) <= 0)
-        {
-          if (!theReplaceData->Time(Time()))
-            continue;
+        if (TheFirstTime.DifferenceInHours(ValidTime()) > 0)
+          continue;
+        if (!theReplaceData->Time(Time()))
+          continue;
 
-          ResetParam();
-
-          while (NextParam())
-          {
-            if (!theReplaceData->Param(Param()))
-              if (!theReplaceData->Param(*Param().GetParam()))  // 18.8.2000/Marko lisäsi, koska
-                                                                // tuottaja ei saa vaikuttaa tässä
-                continue;
-
-            ResetLocation();
-
-            while (NextLocation())
-            {
-              if (theReplaceData->IsGrid())
-              {
-                Float2Value = theReplaceData->InterpolatedValue(LatLon());
-                if (Float2Value != kFloatMissing)
-                {
-                  FloatValue(Float2Value);
-                }
-              }
-              else
-              {
-                if (theReplaceData->Location(*Location()))
-                {
-                  if (theReplaceData->FloatValue() != kFloatMissing)
-                  {
-                    FloatValue(theReplaceData->FloatValue());
-                  }
-                }
-              }
-            }
-          }
-        }  //  if TheFirstTime
-      }    // next Time
-    }      // next Level
+        ReplaceCurrentTimeData(theReplaceData);
+      }  // next Time
+    }    // next Level
     return true;
   }
   catch (...)
