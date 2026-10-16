@@ -57,6 +57,13 @@ class NFmiTimeBag : public NFmiSize
   bool operator==(const NFmiTimeBag &theTimeBag) const;
 
  private:
+  bool SelectNearestTimeAround(const NFmiMetTime &theTime,
+                               FmiDirection theDirection,
+                               unsigned long theTimeRangeInMinutes);
+  bool SelectNearestTimeOutside(const NFmiMetTime &theTime,
+                                FmiDirection theDirection,
+                                unsigned long theTimeRangeInMinutes);
+
   NFmiMetTime itsFirstTime;
   NFmiMetTime itsCurrentTime;
   NFmiMetTime itsLastTime;

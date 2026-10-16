@@ -391,6 +391,83 @@ void NFmiTimeBag::MoveByMinutes(long minutes)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Select the nearest time when the current time is the first one after theTime
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiTimeBag::SelectNearestTimeAround(const NFmiMetTime &theTime,
+                                          FmiDirection theDirection,
+                                          unsigned long theTimeRangeInMinutes)
+{
+  bool noTimeRange = (theTimeRangeInMinutes == kUnsignedLongMissing);
+  if (theDirection == kForward)
+    return (noTimeRange || CurrentTime().DifferenceInMinutes(theTime) <=
+                               static_cast<long>(theTimeRangeInMinutes));
+  if (theDirection == kBackward)
+  {
+    Previous();
+    return (noTimeRange || theTime.DifferenceInMinutes(CurrentTime()) <=
+                               static_cast<long>(theTimeRangeInMinutes));
+  }
+  // finds the nearest time to theTime (e.g. theDirection == kCenter)
+  long deltaT2 = CurrentTime().DifferenceInMinutes(theTime);
+  Previous();
+  long deltaT1 = theTime.DifferenceInMinutes(CurrentTime());
+  if (deltaT1 <= deltaT2)
+    return (noTimeRange || deltaT1 <= static_cast<long>(theTimeRangeInMinutes));
+  Next();
+  return (noTimeRange || deltaT2 <= static_cast<long>(theTimeRangeInMinutes));
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Select the nearest time when theTime is outside the timebag
+ */
+// ----------------------------------------------------------------------
+
+bool NFmiTimeBag::SelectNearestTimeOutside(const NFmiMetTime &theTime,
+                                           FmiDirection theDirection,
+                                           unsigned long theTimeRangeInMinutes)
+{
+  bool noTimeRange = (theTimeRangeInMinutes == kUnsignedLongMissing);
+  bool timeIsLeftFromTimeBag = (theTime < FirstTime());
+  Reset();
+  if (theDirection == kBackward)
+  {
+    if (!timeIsLeftFromTimeBag)
+    {
+      Reset(kBackward);
+      Previous();
+    }
+    else
+      return false;
+  }
+  else if (theDirection == kForward)
+  {
+    if (timeIsLeftFromTimeBag)
+      Next();
+    else
+      return false;
+  }
+  else  // if(theDirection == kCenter) // seeks the nearest time to theTime
+  {
+    if (!timeIsLeftFromTimeBag)
+    {
+      Reset(kBackward);
+      Previous();
+    }
+    else       // if(timeIsLeftFromTimeBag)
+      Next();  // the first time of this timebag
+  }
+  if (noTimeRange || labs(theTime.DifferenceInMinutes(CurrentTime())) <=
+                         static_cast<long>(theTimeRangeInMinutes))
+    return true;
+
+  return false;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * This method seeks the nearest time of this timebag to theTime
  * given as a parameter considering also theDirection and
  * theTimeRangeInMinutes. The method is moved here from the class
@@ -415,7 +492,6 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
 {
   try
   {
-    bool noTimeRange = (theTimeRangeInMinutes == kUnsignedLongMissing);
     Reset();
     if (IsInside(theTime))
     {
@@ -424,64 +500,12 @@ bool NFmiTimeBag::FindNearestTime(const NFmiMetTime &theTime,
         if (CurrentTime() == theTime)
           return true;
         if (CurrentTime() > theTime)
-        {
-          if (theDirection == kForward)
-            return (noTimeRange || CurrentTime().DifferenceInMinutes(theTime) <=
-                                       static_cast<long>(theTimeRangeInMinutes));
-          if (theDirection == kBackward)
-          {
-            Previous();
-            return (noTimeRange || theTime.DifferenceInMinutes(CurrentTime()) <=
-                                       static_cast<long>(theTimeRangeInMinutes));
-          }
-          // finds the nearest time to theTime (e.g. theDirection == kCenter)
-          long deltaT2 = CurrentTime().DifferenceInMinutes(theTime);
-          Previous();
-          long deltaT1 = theTime.DifferenceInMinutes(CurrentTime());
-          if (deltaT1 <= deltaT2)
-            return (noTimeRange || deltaT1 <= static_cast<long>(theTimeRangeInMinutes));
-          Next();
-          return (noTimeRange || deltaT2 <= static_cast<long>(theTimeRangeInMinutes));
-        }
+          return SelectNearestTimeAround(theTime, theDirection, theTimeRangeInMinutes);
       }
     }
 
     // theTime wasn't inside of this timebag
-
-    bool timeIsLeftFromTimeBag = (theTime < FirstTime());
-    Reset();
-    if (theDirection == kBackward)
-    {
-      if (!timeIsLeftFromTimeBag)
-      {
-        Reset(kBackward);
-        Previous();
-      }
-      else
-        return false;
-    }
-    else if (theDirection == kForward)
-    {
-      if (timeIsLeftFromTimeBag)
-        Next();
-      else
-        return false;
-    }
-    else  // if(theDirection == kCenter) // seeks the nearest time to theTime
-    {
-      if (!timeIsLeftFromTimeBag)
-      {
-        Reset(kBackward);
-        Previous();
-      }
-      else       // if(timeIsLeftFromTimeBag)
-        Next();  // the first time of this timebag
-    }
-    if (noTimeRange || labs(theTime.DifferenceInMinutes(CurrentTime())) <=
-                           static_cast<long>(theTimeRangeInMinutes))
-      return true;
-
-    return false;
+    return SelectNearestTimeOutside(theTime, theDirection, theTimeRangeInMinutes);
   }
   catch (...)
   {
