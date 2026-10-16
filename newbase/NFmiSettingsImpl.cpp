@@ -719,6 +719,196 @@ bool NFmiSettingsImpl::Init(const std::string& theFilename) const
   }
 }
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Read words until a non variable name token is found
+ *
+ * \param words Set to the number of variable name words read
+ * \param var Set to the first word of the variable name if there is one
+ * \return The token ending the variable name
+ */
+// ----------------------------------------------------------------------
+
+string ReadNameAndToken(istringstream &input, unsigned long &words, string &var)
+{
+  string token;
+  for (words = 0; true; ++words)
+  {
+    input >> token;
+
+    if (!input.good())
+      break;
+
+    if (token == "}" || token == "{" || token == "=" || token == "+=")
+      break;
+    if (words == 0 && token == "use")
+      break;
+    if (words == 0)
+      var = token;
+  }
+  return token;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract a variable name containing multiple words
+ *
+ * \param startpos The input position where the name starts
+ * \param token The token which ended the name
+ */
+// ----------------------------------------------------------------------
+
+string ReadMultiWordName(istringstream &input, size_t startpos, const string &token)
+{
+  size_t endpos = input.tellg();
+  size_t sz = static_cast<long>(endpos) - startpos - token.size();
+
+  input.seekg(startpos, ios::beg);
+  std::vector<char> buffer(sz + 1);
+  input.read(&buffer[0], sz);
+  buffer[sz] = '\0';
+  input.seekg(endpos, ios::beg);
+
+  string var = &buffer[0];
+  boost::algorithm::trim(var);
+
+  if (var.find('\n') != string::npos)
+    throw Fmi::Exception(BCP, "Variable name '" + var + "' contains a newline");
+  return var;
+}
+
+// Join the words of the line with single spaces
+string JoinWords(const string &line)
+{
+  istringstream lineinput(line);
+  string val;
+  string word;
+  while (lineinput >> word)
+  {
+    if (!val.empty())
+      val += ' ';
+    val += word;
+  }
+  return val;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Mark the variable to originate from the given file, which overrides any
+ *        changed value
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSettingsImpl::SetOrigin(const string &theVariable, const string &theFilename) const
+{
+  // save the origin of the variable, possibly overriding any old value
+  pair<FileMap::iterator, bool> result = itsFilenames.insert(make_pair(theVariable, theFilename));
+  if (!result.second)
+    result.first->second = theFilename;
+
+  // The value is now from file, and hence does not have a changed value
+  itsChangedVariables.erase(theVariable);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Handle the start of the namespace named by the variable
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSettingsImpl::BeginNamespace(unsigned long words, const string &var) const
+{
+  if (words == 0)
+    throw Fmi::Exception(BCP, "Must start namespace after a variable name");
+
+  if (itsNamespaces.empty())
+    itsNamespaces.push_front(var);
+  else
+    itsNamespaces.push_front(itsNamespaces.front() + "::" + var);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Handle the end of the current namespace
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSettingsImpl::EndNamespace(unsigned long words, const string &var) const
+{
+  if (words > 0)
+    throw Fmi::Exception(BCP, "Name space ended after variable name '" + var + "'");
+
+  if (itsNamespaces.empty())
+    throw Fmi::Exception(BCP, "Too many }'s in the settings");
+  itsNamespaces.pop_front();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Handle "use namespace" by copying all variables from the given namespace to this one
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSettingsImpl::UseNamespace(istringstream &input, const string &filename) const
+{
+  if (itsNamespaces.empty())
+    throw Fmi::Exception(BCP, "Cannot use 'use' outside namespaces");
+
+  // Copy all variables from the given namespace to this one
+  string nspace;
+  input >> nspace;
+
+  for (auto &it : itsData)
+  {
+    if (it.first.substr(0, nspace.size()) == nspace)
+    {
+      string suffix = it.first.substr(nspace.size());
+      if (!suffix.empty())
+      {
+        string newvar = itsNamespaces.front() + suffix;
+        InternalSet(newvar, it.second);
+        SetOrigin(newvar, filename);
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Handle an assignment with = or += of the rest of the line to the variable
+ */
+// ----------------------------------------------------------------------
+
+void NFmiSettingsImpl::AssignVariable(istringstream &input,
+                                      const string &token,
+                                      unsigned long words,
+                                      const string &var,
+                                      const string &filename) const
+{
+  if (words == 0)
+    throw Fmi::Exception(BCP, "Assignment without variable name encountered");
+
+  string line;
+  getline(input, line);
+
+  string val = JoinWords(line);
+
+  string fullvarname = (itsNamespaces.empty() ? var : itsNamespaces.front() + "::" + var);
+
+  if (token == "=")
+    InternalSet(fullvarname, val);
+  else
+  {
+    string tmpval = "$(" + var + ")," + val;
+    InternalSet(fullvarname, tmpval);
+  }
+
+  SetOrigin(fullvarname, filename);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * Read the given filename. Returns false on failure. The algorithm
@@ -778,21 +968,7 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
       // Extract variable name by seeking the next non variable name token
       size_t startpos = input.tellg();
 
-      string token;
-      for (words = 0; true; ++words)
-      {
-        input >> token;
-
-        if (!input.good())
-          break;
-
-        if (token == "}" || token == "{" || token == "=" || token == "+=")
-          break;
-        if (words == 0 && token == "use")
-          break;
-        if (words == 0)
-          var = token;
-      }
+      string token = ReadNameAndToken(input, words, var);
 
       if (!input.good())
       {
@@ -803,107 +979,16 @@ bool NFmiSettingsImpl::Read(const std::string& theFilename) const
 
       // Extract name containing multiple words
       if (words > 1)
-      {
-        size_t endpos = input.tellg();
-        size_t sz = static_cast<long>(endpos) - startpos - token.size();
-
-        input.seekg(startpos, ios::beg);
-        std::vector<char> buffer(sz + 1);
-        input.read(&buffer[0], sz);
-        buffer[sz] = '\0';
-        input.seekg(endpos, ios::beg);
-
-        var = &buffer[0];
-        boost::algorithm::trim(var);
-
-        if (var.find('\n') != string::npos)
-          throw Fmi::Exception(BCP, "Variable name '" + var + "' contains a newline");
-      }
+        var = ReadMultiWordName(input, startpos, token);
 
       if (token == "}")
-      {
-        if (words > 0)
-          throw Fmi::Exception(BCP, "Name space ended after variable name '" + var + "'");
-
-        if (itsNamespaces.empty())
-          throw Fmi::Exception(BCP, "Too many }'s in the settings");
-        itsNamespaces.pop_front();
-      }
+        EndNamespace(words, var);
       else if (token == "use")
-      {
-        if (itsNamespaces.empty())
-          throw Fmi::Exception(BCP, "Cannot use 'use' outside namespaces");
-
-        // Copy all variables from the given namespace to this one
-        string nspace;
-        input >> nspace;
-
-        for (auto& it : itsData)
-        {
-          if (it.first.substr(0, nspace.size()) == nspace)
-          {
-            string suffix = it.first.substr(nspace.size());
-            if (!suffix.empty())
-            {
-              string newvar = itsNamespaces.front() + suffix;
-              InternalSet(newvar, it.second);
-
-              pair<FileMap::iterator, bool> result =
-                  itsFilenames.insert(make_pair(newvar, filename));
-              if (!result.second)
-                result.first->second = filename;
-              itsChangedVariables.erase(newvar);
-            }
-          }
-        }
-      }
+        UseNamespace(input, filename);
       else if (token == "=" || token == "+=")
-      {
-        if (words == 0)
-          throw Fmi::Exception(BCP, "Assignment without variable name encountered");
-
-        string line;
-        getline(input, line);
-
-        istringstream lineinput(line);
-        string val;
-        string word;
-        while (lineinput >> word)
-        {
-          if (!val.empty())
-            val += ' ';
-          val += word;
-        }
-
-        string fullvarname = (itsNamespaces.empty() ? var : itsNamespaces.front() + "::" + var);
-
-        if (token == "=")
-          InternalSet(fullvarname, val);
-        else
-        {
-          string tmpval = "$(" + var + ")," + val;
-          InternalSet(fullvarname, tmpval);
-        }
-
-        // save the origin of the variable, possibly overriding any old value
-        pair<FileMap::iterator, bool> result =
-            itsFilenames.insert(make_pair(fullvarname, filename));
-        if (!result.second)
-          result.first->second = filename;
-
-        // The value is now from file, and hence does not have a changed value
-        itsChangedVariables.erase(fullvarname);
-      }
+        AssignVariable(input, token, words, var, filename);
       else if (token == "{")
-      {
-        if (words == 0)
-          throw Fmi::Exception(BCP, "Must start namespace after a variable name");
-
-        if (itsNamespaces.empty())
-          itsNamespaces.push_front(var);
-        else
-          itsNamespaces.push_front(itsNamespaces.front() + "::" + var);
-      }
+        BeginNamespace(words, var);
       else
         throw Fmi::Exception(BCP,
                              "Expecting = or { after variable name '" + var +

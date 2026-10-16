@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDef.h"
+#include <iosfwd>
 #include <list>
 #include <map>
 #include <set>
@@ -39,6 +40,15 @@ class NFmiSettingsImpl
   ~NFmiSettingsImpl();
 
   void InternalSet(const std::string& theName, const std::string& theValue) const;
+  void SetOrigin(const std::string& theVariable, const std::string& theFilename) const;
+  void UseNamespace(std::istringstream& input, const std::string& filename) const;
+  void AssignVariable(std::istringstream& input,
+                      const std::string& token,
+                      unsigned long words,
+                      const std::string& var,
+                      const std::string& filename) const;
+  void BeginNamespace(unsigned long words, const std::string& var) const;
+  void EndNamespace(unsigned long words, const std::string& var) const;
 
   //! Default constructor is private - this is a singleton
   NFmiSettingsImpl();
