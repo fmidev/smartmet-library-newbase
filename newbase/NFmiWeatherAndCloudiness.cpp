@@ -3807,6 +3807,105 @@ unsigned long NFmiWeatherAndCloudiness::IntegratedHessaa(NFmiIntegrationSelector
   }
 }
 
+namespace
+{
+// Value scaled from 0-10 to percentages if requested, or missing
+double scaled_or_missing(unsigned long theValue, unsigned long theMissingValue, bool scaleIt)
+{
+  if (theValue != theMissingValue && theValue != kUnsignedLongMissing)
+    return scaleIt ? 10 * theValue : theValue;
+  return kFloatMissing;
+}
+
+// Value or missing
+double unscaled_or_missing(unsigned long theValue, unsigned long theMissingValue)
+{
+  if (theValue != theMissingValue && theValue != kUnsignedLongMissing)
+    return theValue;
+  return kFloatMissing;
+}
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief SubValue integrated with the given selector
+ */
+// ----------------------------------------------------------------------
+
+double NFmiWeatherAndCloudiness::IntegratedSubValueOrMissing(FmiParameterName theParam,
+                                                              NFmiIntegrationSelector *theSelector)
+{
+  bool scaleIt = (theSelector->Type() != kFmiProb);
+  switch (theParam)
+  {
+    case kFmiTotalCloudCover:
+    case kFmiPrecipitation1h:
+    case kFmiProbabilityThunderstorm:
+      return IntegratedSubValue(theParam, theSelector);
+    case kFmiLowCloudCover:
+    case kFmiMediumCloudCover:
+    case kFmiHighCloudCover:
+      return scaled_or_missing(IntegratedSubValue(theParam, theSelector), kT4BitMissing, scaleIt);
+    case kFmiPrecipitationType:
+    case kFmiFogIntensity:
+      return unscaled_or_missing(IntegratedSubValue(theParam, theSelector), kT2BitMissing);
+    case kFmiPrecipitationForm:
+      return unscaled_or_missing(IntegratedSubValue(theParam, theSelector), kT3BitMissing);
+    case kFmiWeatherSymbol3:
+      return unscaled_or_missing(IntegratedHessaa(theSelector), kUnsignedLongMissing);
+    case kFmiWeatherSymbol1:  // hsade
+      return unscaled_or_missing(IntegratedHsade(theSelector), kUnsignedLongMissing);
+    case kFmiMiddleAndLowCloudCover:  // ala- ja keskipilvet
+      return unscaled_or_missing(IntegratedSubValue(theParam, theSelector), kUnsignedLongMissing);
+    default:
+      return kFloatMissing;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief SubValue without integration
+ */
+// ----------------------------------------------------------------------
+
+double NFmiWeatherAndCloudiness::SubValueOrMissing(FmiParameterName theParam)
+{
+  switch (theParam)
+  {
+    case kFmiTotalCloudCover:
+      return TotalCloudinessValue();
+    case kFmiLowCloudCover:
+      return scaled_or_missing(LowClouds(), kT4BitMissing, true);
+    case kFmiMediumCloudCover:
+      return scaled_or_missing(MiddleClouds(), kT4BitMissing, true);
+    case kFmiHighCloudCover:
+    {
+      unsigned long tempValue = HighClouds();
+      if (itsInfoVersion >= 7.)
+        return HighCloudsV7(tempValue);  // versio 7:lle on jo skaalaus tehty
+      return scaled_or_missing(tempValue, kT4BitMissing, true);
+    }
+    case kFmiPrecipitation1h:
+      return Precipitation1hValue();
+    case kFmiPrecipitationType:
+      return unscaled_or_missing(PrecipitationType(), kT2BitMissing);
+    case kFmiPrecipitationForm:
+      return unscaled_or_missing(PrecipitationForm(), kT3BitMissing);
+    case kFmiProbabilityThunderstorm:
+      return ThunderProbabilityValue();
+    case kFmiFogIntensity:
+      return unscaled_or_missing(FogIntensity(), kT2BitMissing);
+    case kFmiWeatherSymbol3:
+      return unscaled_or_missing(ToHessaa(), kUnsignedLongMissing);
+    case kFmiWeatherSymbol1:  // hsade
+      return unscaled_or_missing(ToHsade(), kUnsignedLongMissing);
+    case kFmiMiddleAndLowCloudCover:  // ala- ja keskipilvet
+      return unscaled_or_missing(LowAndMiddleClouds(), kUnsignedLongMissing);
+    default:
+      return kFloatMissing;
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \param theParam Undocumented
@@ -3820,114 +3919,9 @@ double NFmiWeatherAndCloudiness::SubValue(FmiParameterName theParam,
 {
   try
   {
-    unsigned long tempValue = 0;
-    double returnValue = kFloatMissing;
-    bool scaleIt = true;
-    if (theSelector && theSelector->Type() == kFmiProb)
-      scaleIt = false;
-    switch (theParam)
-    {
-      case kFmiTotalCloudCover:
-        if (theSelector)
-          returnValue = IntegratedSubValue(theParam, theSelector);
-        else
-          returnValue = TotalCloudinessValue();
-        break;
-      case kFmiLowCloudCover:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = LowClouds();
-        if (tempValue != kT4BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = scaleIt ? 10 * tempValue : tempValue;
-        break;
-      case kFmiMediumCloudCover:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = MiddleClouds();
-        if (tempValue != kT4BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = scaleIt ? 10 * tempValue : tempValue;
-        break;
-      case kFmiHighCloudCover:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-        {
-          tempValue = HighClouds();
-          if (itsInfoVersion >= 7.)
-          {
-            returnValue = HighCloudsV7(tempValue);
-            break;  // versio 7:lle on jo skaalaus tehty
-          }
-        }
-        if (tempValue != kT4BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = scaleIt ? 10 * tempValue : tempValue;
-        break;
-      case kFmiPrecipitation1h:
-        if (theSelector)
-          returnValue = IntegratedSubValue(theParam, theSelector);
-        else
-          returnValue = Precipitation1hValue();
-        break;
-      case kFmiPrecipitationType:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = PrecipitationType();
-        if (tempValue != kT2BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      case kFmiPrecipitationForm:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = PrecipitationForm();
-        if (tempValue != kT3BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      case kFmiProbabilityThunderstorm:
-        if (theSelector)
-          returnValue = IntegratedSubValue(theParam, theSelector);
-        else
-          returnValue = ThunderProbabilityValue();
-        break;
-      case kFmiFogIntensity:
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = FogIntensity();
-        if (tempValue != kT2BitMissing && tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      case kFmiWeatherSymbol3:
-        if (theSelector)
-          tempValue = IntegratedHessaa(theSelector);
-        else
-          tempValue = ToHessaa();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      case kFmiWeatherSymbol1:  // hsade
-        if (theSelector)
-          tempValue = IntegratedHsade(theSelector);
-        else
-          tempValue = ToHsade();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      case kFmiMiddleAndLowCloudCover:  // ala- ja keskipilvet
-        if (theSelector)
-          tempValue = IntegratedSubValue(theParam, theSelector);
-        else
-          tempValue = LowAndMiddleClouds();
-        if (tempValue != kUnsignedLongMissing)
-          returnValue = tempValue;
-        break;
-      default:
-        break;
-    }
-    return returnValue;
+    if (theSelector)
+      return IntegratedSubValueOrMissing(theParam, theSelector);
+    return SubValueOrMissing(theParam);
   }
   catch (...)
   {

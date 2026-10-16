@@ -274,6 +274,9 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
                                         unsigned long theOtherHessaa);
   unsigned long LargeScaleOverCastHessaa(unsigned long thePrecipitation);
   unsigned long PartlyCloudyHessaa();
+  double IntegratedSubValueOrMissing(FmiParameterName theParam,
+                                     NFmiIntegrationSelector* theSelector);
+  double SubValueOrMissing(FmiParameterName theParam);
   unsigned long LargeScaleHsade(unsigned long hsade) const;
   unsigned long ShowerHsade(unsigned long hsade) const;
   unsigned long HalfCloudyHessaa();
