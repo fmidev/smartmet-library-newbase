@@ -3498,6 +3498,25 @@ unsigned long NFmiWeatherAndCloudiness::LowAndMiddleClouds() const
   }
 }
 
+namespace
+{
+// Value in tenths (percentage to 0-10 scale), or the missing value
+unsigned long TenthsValue(double theValue, unsigned long theMissingValue)
+{
+  if (theValue == kFloatMissing)
+    return theMissingValue;
+  return static_cast<unsigned long>(FmiMax(0, round(theValue / 10.0)));
+}
+
+// Non-negative value, or the missing value
+unsigned long NonNegativeValue(double theValue, unsigned long theMissingValue)
+{
+  if (theValue == kFloatMissing)
+    return theMissingValue;
+  return static_cast<unsigned long>(FmiMax(0.0, theValue));
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \param theValue Undocumented
@@ -3514,23 +3533,13 @@ bool NFmiWeatherAndCloudiness::SubValue(double theValue, FmiParameterName thePar
     switch (theParam)
     {
       case kFmiTotalCloudCover:
-        if (theValue == kFloatMissing)
-          returnValue = TotalCloudiness(kT4BitMissing);
-        else
-          returnValue =
-              TotalCloudiness(static_cast<unsigned long>(FmiMax(0, round(theValue / 10.0))));
+        returnValue = TotalCloudiness(TenthsValue(theValue, kT4BitMissing));
         break;
       case kFmiLowCloudCover:
-        if (theValue == kFloatMissing)
-          returnValue = LowClouds(kT4BitMissing);
-        else
-          returnValue = LowClouds(static_cast<unsigned long>(FmiMax(0, round(theValue / 10.0))));
+        returnValue = LowClouds(TenthsValue(theValue, kT4BitMissing));
         break;
       case kFmiMediumCloudCover:
-        if (theValue == kFloatMissing)
-          returnValue = MiddleClouds(kT4BitMissing);
-        else
-          returnValue = MiddleClouds(static_cast<unsigned long>(FmiMax(0, round(theValue / 10.0))));
+        returnValue = MiddleClouds(TenthsValue(theValue, kT4BitMissing));
         break;
       case kFmiHighCloudCover:
       {
@@ -3554,35 +3563,19 @@ bool NFmiWeatherAndCloudiness::SubValue(double theValue, FmiParameterName thePar
           returnValue = TotalPrecipitation(PrecipitationScale(theValue));
         break;
       case kFmiPrecipitationType:
-        if (theValue == kFloatMissing)
-          returnValue = PrecipitationType(kT2BitMissing);
-        else
-          returnValue = PrecipitationType(static_cast<unsigned long>(FmiMax(0.0, theValue)));
+        returnValue = PrecipitationType(NonNegativeValue(theValue, kT2BitMissing));
         break;
       case kFmiPrecipitationForm:
-        if (theValue == kFloatMissing)
-          returnValue = PrecipitationForm(kT3BitMissing);
-        else
-          returnValue = PrecipitationForm(static_cast<unsigned long>(FmiMax(0.0, theValue)));
+        returnValue = PrecipitationForm(NonNegativeValue(theValue, kT3BitMissing));
         break;
       case kFmiProbabilityThunderstorm:
-        if (theValue == kFloatMissing)
-          returnValue = ThunderProbability(kT4BitMissing);
-        else
-          returnValue =
-              ThunderProbability(static_cast<unsigned long>(FmiMax(0, round(theValue / 10.0))));
+        returnValue = ThunderProbability(TenthsValue(theValue, kT4BitMissing));
         break;
       case kFmiFogIntensity:
-        if (theValue == kFloatMissing)
-          returnValue = FogIntensity(kT2BitMissing);
-        else
-          returnValue = FogIntensity(static_cast<unsigned long>(FmiMax(0.0, theValue)));
+        returnValue = FogIntensity(NonNegativeValue(theValue, kT2BitMissing));
         break;
       case kFmiWeatherSymbol3:
-        if (theValue == kFloatMissing)
-          returnValue = FromHessaa(kUnsignedLongMissing);
-        else
-          returnValue = FromHessaa(static_cast<unsigned long>(FmiMax(0.0, theValue)));
+        returnValue = FromHessaa(NonNegativeValue(theValue, kUnsignedLongMissing));
         break;
       default:
         break;
