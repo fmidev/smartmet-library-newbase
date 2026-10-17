@@ -106,7 +106,7 @@ subclasses:
 - **`NFmiLocation`**, **`NFmiLocationBag`** — point locations for
   station data.
 - **`NFmiLocationFinder`** — lookup by name / coordinates.
-- **`NFmiPoint`**, **`NFmiVector`** — 2-D coordinate primitives.
+- **`NFmiPoint`** — 2-D coordinate primitive.
 
 ## 9. Time
 
@@ -153,7 +153,7 @@ A reusable masking system used for area-restricted calculations:
 - **`NFmiMetMath`** — meteorological math (e.g. wind components,
   potential temperature, mixing ratios).
 - **`NFmiAngle`** — angle arithmetic with wraparound.
-- **`NFmiVector`**, **`NFmiPoint`** — vector / point math.
+- **`NFmiPoint`** — point math.
 
 ## 14. String & I/O utilities
 
@@ -191,8 +191,9 @@ A reusable masking system used for area-restricted calculations:
 
 Under `examples/`:
 
-- **`example_NFmiPoint`** / **`example_NFmiVector`** — basic math
-  primitives.
+- **`example_NFmiPoint`** — basic math primitives
+  (`example_NFmiVector` refers to the removed `NFmiVector` class and
+  no longer builds).
 - **`example_NFmiSettings`** / **`example_NFmiSettingsImpl`** —
   settings file usage.
 - **`example_NFmiMetMath`** — meteorological math.
@@ -205,7 +206,7 @@ Under `examples/`:
 
 ## 19. Testing
 
-- **~32 standalone test executables** under `test/*Test.cpp`.
+- **~37 standalone test executables** under `test/*Test.cpp`.
 - **Framework**: FMI's own `regression/tframe.h` (not Boost.Test).
 - **Per-test build**:
   `make -C test NFmiFastQueryInfoTest && ./test/NFmiFastQueryInfoTest`.

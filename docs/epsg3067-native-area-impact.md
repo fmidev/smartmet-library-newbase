@@ -1,7 +1,9 @@
 # Native EPSG:3067 (ETRS-TM35FIN) area — impact analysis
 
-**Status:** design / pre-implementation. **Decision taken:** add a native transverse-mercator
-`NFmiArea` subclass so EPSG:3067 stops falling back to `NFmiGdalArea`.
+**Status:** implemented as `NFmiTransverseMercatorArea` (class id 85). EPSG:3067 is detected by
+`IsTM35FIN()` in `DetectClassId()` and created as the native class by `NFmiArea::Create()`, and
+`NFmiAreaFactory` reads its `AreaStr()` back. The analysis below is kept as written before the
+implementation: its file and line references point to the code of that time.
 
 ## 1. Why
 
