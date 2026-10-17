@@ -24,8 +24,8 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.16
-Release: 2%{?dist}.fmi
+Version: 26.10.17
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-library-newbase
@@ -44,8 +44,8 @@ BuildRequires: smartmet-library-gis-devel >= 26.10.16
 %if %{with tests}
 BuildRequires: smartmet-library-regression
 %endif
-Requires: smartmet-library-macgyver >= 26.10.16
-Requires: smartmet-library-gis >= 26.10.16
+Requires: smartmet-library-macgyver >= 26.10.17
+Requires: smartmet-library-gis >= 26.10.17
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
 Requires: %{smartmet_boost}-system
@@ -61,8 +61,8 @@ Requires: geos313
 #TestRequires: postgresql15-libs
 #TestRequires: smartmet-library-gis-devel >= 26.10.16
 #TestRequires: smartmet-library-macgyver-devel >= 26.10.16
-#TestRequires: smartmet-library-macgyver >= 26.10.16
-#TestRequires: smartmet-library-gis >= 26.10.16
+#TestRequires: smartmet-library-macgyver >= 26.10.17
+#TestRequires: smartmet-library-gis >= 26.10.17
 #TestRequires: smartmet-library-regression
 #TestRequires: smartmet-timezones
 #TestRequires: zlib-devel
@@ -165,6 +165,10 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
+- Split functions with a cognitive complexity above 25 into smaller helpers, no functional changes
+- ABI change: new or changed members in installed headers, dependent packages must be rebuilt
+
 * Fri Oct 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.16-2.fmi
 - Copy assignments that are implicitly deleted are declared deleted instead of defaulted
 
