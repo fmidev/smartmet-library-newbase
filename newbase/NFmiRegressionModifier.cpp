@@ -22,6 +22,41 @@
 #include <algorithm>
 #include <cmath>
 
+namespace
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create a regression item for the given parameter
+ *
+ * The modifiers store copies of the given identity and level, so the
+ * identity can live on the stack.
+ */
+// ----------------------------------------------------------------------
+
+NFmiRegressionItem *NewRegressionItem(double theCoefficient,
+                                      FmiParameterName theParam,
+                                      NFmiLevel *theLevel,
+                                      NFmiQueryInfo *theData)
+{
+  NFmiDataIdent ident{NFmiParam(theParam)};
+  return new NFmiRegressionItem(theCoefficient, &ident, theLevel, theData);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Create an info modifier for the given parameter
+ */
+// ----------------------------------------------------------------------
+
+NFmiInfoModifier *NewInfoModifier(FmiParameterName theParam,
+                                  NFmiLevel *theLevel,
+                                  NFmiQueryInfo *theData)
+{
+  NFmiDataIdent ident{NFmiParam(theParam)};
+  return new NFmiInfoModifier(&ident, theLevel, theData);
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * Destructor
@@ -62,22 +97,18 @@ NFmiRegressionModifier::NFmiRegressionModifier(NFmiDataIdent *theParam,
     {
       auto *firstAlternative = new NFmiDataModifierList;
       firstAlternative->Add(new NFmiDataModifierConstant(3.0, kFmiAdd));
-      firstAlternative->Add(new NFmiRegressionItem(
-          -0.02, new NFmiDataIdent(NFmiParam(kFmiTotalCloudCover)), itsLevel, itsData));
-      firstAlternative->Add(new NFmiRegressionItem(
-          -0.8, new NFmiDataIdent(NFmiParam(kFmiWindSpeedMS)), itsLevel, itsData));
+      firstAlternative->Add(NewRegressionItem(-0.02, kFmiTotalCloudCover, itsLevel, itsData));
+      firstAlternative->Add(NewRegressionItem(-0.8, kFmiWindSpeedMS, itsLevel, itsData));
 
       auto *secondAlternative = new NFmiDataModifierList;
       secondAlternative->Add(new NFmiRegressionItem(5.0));
-      secondAlternative->Add(new NFmiRegressionItem(
-          -0.03, new NFmiDataIdent(NFmiParam(kFmiTotalCloudCover)), itsLevel, itsData));
-      secondAlternative->Add(new NFmiRegressionItem(
-          -0.5, new NFmiDataIdent(NFmiParam(kFmiWindSpeedMS)), itsLevel, itsData));
+      secondAlternative->Add(NewRegressionItem(-0.03, kFmiTotalCloudCover, itsLevel, itsData));
+      secondAlternative->Add(NewRegressionItem(-0.5, kFmiWindSpeedMS, itsLevel, itsData));
 
-      auto* conditionData =
-          new NFmiInfoModifier(new NFmiDataIdent(NFmiParam(kFmiTemperature)), itsLevel, itsData);
-      auto *condition = new NFmiDataModifierBoolean(
-          kFmiModifierValueGreaterThan, conditionData, new NFmiRegressionItem(14.0));
+      auto *conditionData = NewInfoModifier(kFmiTemperature, itsLevel, itsData);
+      auto *conditionLimit = new NFmiRegressionItem(14.0);
+      auto *condition =
+          new NFmiDataModifierBoolean(kFmiModifierValueGreaterThan, conditionData, conditionLimit);
       auto *alternatives =
           new NFmiDataModifierLogical(condition, firstAlternative, secondAlternative);
       itsRegressionItems->Add(alternatives);

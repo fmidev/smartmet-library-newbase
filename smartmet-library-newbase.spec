@@ -24,7 +24,7 @@
 
 Summary: newbase library
 Name: %{SPECNAME}
-Version: 26.10.17
+Version: 26.10.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -165,6 +165,9 @@ for dir in /usr/lib64/python3*/site-packages; do if [ -L $dir/newbase.so ] ; the
 fi
 
 %changelog
+* Sun Oct 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.18-1.fmi
+- NFmiRegressionModifier: the temporary parameter identities of the regression items are no longer leaked
+
 * Sat Oct 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.10.17-1.fmi
 - Split functions with a cognitive complexity above 25 into smaller helpers, no functional changes
 - ABI change: new or changed members in installed headers, dependent packages must be rebuilt
