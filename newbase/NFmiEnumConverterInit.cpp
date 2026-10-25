@@ -1070,6 +1070,7 @@ void NFmiEnumConverter::Impl::initParamNames()
       { "RoadWarning4", kFmiRoadWarning4},
       { "RoadWarning5", kFmiRoadWarning5},
       { "RoadWarning6", kFmiRoadWarning6},
+      { "RoadWaWa", kFmiRoadWaWa},
       { "RoadWW", kFmiRoadWW},
       { "Roughness", kFmiRoughness},
       { "RowNumber", kFmiRowNumber},
