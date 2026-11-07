@@ -409,7 +409,7 @@ struct AreaCorners
   NFmiPoint topright;
   NFmiPoint corner1;
   NFmiPoint corner2;
-  bool usePacificView;
+  bool usePacificView = false;
 };
 
 // ----------------------------------------------------------------------
