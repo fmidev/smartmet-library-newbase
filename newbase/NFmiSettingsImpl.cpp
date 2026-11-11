@@ -8,7 +8,7 @@
  * \class NFmiSettingsImpl
  *
  * NFmiSettingsImpl is a singleton whose purpose is to read configuration files
- * and establish parameter - value correspondances which the user can query.
+ * and establish parameter - value correspondences which the user can query.
  * The main idea is to provide default paths, files and application specific
  * defaults via a configuration file instead of hard coding directly into
  * the source code. This is particularly important due to platform specific
@@ -126,7 +126,7 @@
  * \endcode
  * NFmiSettingsImpl will understand the block structure to mean each
  * variable name is a namespace type specifier to be prepended
- * to all variable names withing the block that follows.
+ * to all variable names within the block that follows.
  * The namespaces may be nested arbitrarily.
  *
  * Finally, often different namespaces have many similar settings,
@@ -304,7 +304,7 @@ string findfile(const std::string& filename, const std::list<std::string>& searc
 /*!
  * \brief Expand variable value
  *
- * All occurrances of ${variablename} will be expanded
+ * All occurrences of ${variablename} will be expanded
  * using the given map of name-value pairs. If the variable
  * is not defined in the map, an exception is thrown.
  *

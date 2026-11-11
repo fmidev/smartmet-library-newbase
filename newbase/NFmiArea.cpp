@@ -1177,7 +1177,7 @@ NFmiArea::NFmiArea(const NFmiPoint &theTopLeftCorner,
 
 // ----------------------------------------------------------------------
 /*!
- * Constuctor based on edge coordinates
+ * Constructor based on edge coordinates
  *
  * \param theLeft The left edge X-coordinate
  * \param theTop The top edge Y-coordinate
@@ -1512,7 +1512,7 @@ std::string NFmiArea::SimpleWKT() const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Dummy for ABI compability with the WGS84 branch
+ * \brief Dummy for ABI compatibility with the WGS84 branch
  */
 // ----------------------------------------------------------------------
 

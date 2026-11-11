@@ -76,7 +76,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   // ------------------------------------------------------------------------------------
   // If OriginTime (or ValidTime) is a list, method OriginTime() (or ValidTime() ) is
   // equivalent with Time(); it returns the current list item.
-  // If OriginTime (or ValidTime) is'nt a list, it always returns the constant time
+  // If OriginTime (or ValidTime) isn't a list, it always returns the constant time
   // ------------------------------------------------------------------------------------
 
   const NFmiMetTime &OriginTime() const;

@@ -86,7 +86,7 @@ NFmiOrthographicArea::NFmiOrthographicArea() : itsZoomFactor(), itsGlobeRadius(k
  * Copy constructor
  *
  * \param thePerspectiveArea The object being copied
- * \todo Use intitialization lists
+ * \todo Use initialization lists
  */
 // ----------------------------------------------------------------------
 

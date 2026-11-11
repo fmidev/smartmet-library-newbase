@@ -158,7 +158,7 @@ inline NFmiLocationBag *NFmiLocationBag::Clone() const
 /*!
  * Test if the bag contains any locations
  *
- * \return True if the bag contains atleast 1 location
+ * \return True if the bag contains at least 1 location
  */
 // ----------------------------------------------------------------------
 

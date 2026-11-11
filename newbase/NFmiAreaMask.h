@@ -81,7 +81,7 @@ class NFmiAreaMask
     NoType,                    //!< Error condition
     InfoVariable,              //!< A parameter in the queryinfo
     ResultInfoVariable,        //!< A parameter in the queryinfo (unused?)
-    CalculatedVariable,        //!< Calculatable variable (sun angle etc)
+    CalculatedVariable,        //!< Calculable variable (sun angle etc)
     Assigment,                 //!< Assignment operator
     Operator,                  //!< +, -, *, /, %, ^ etc
     UnaryOperator,             //!< unary + and -
@@ -123,7 +123,7 @@ class NFmiAreaMask
   {
     NotOperation,
     Add,  //!< Addition (+)
-    Sub,  //!< Substraction (-)
+    Sub,  //!< Subtraction (-)
     Div,  //!< Division (/)
     Mul,  //!< Multiplication (*)
     Mod,  //!< Modulo (%)
@@ -195,7 +195,7 @@ class NFmiAreaMask
     TimeVertHyb,  //!< aika+vertikaali-hakua hybrid-pintojen mukaan hakien
     Occurrence,  //!< aika-väli + aluehaku datasta, laskee kuinka monta kertaa tarkastelupisteessä
     Occurrence2,  //!< Sama kuin edellä, mutta tarkoitettu toistaiseksi vain hiladatalle (käytetään
-                  //!< occurance with simple-condition funktion kanssa)
+                  //!< occurrence with simple-condition funktion kanssa)
     PeekT,       //!< 'Kurkistetaan' arvo halutun aikahypyn [h] päästä
     Resolution,  //!< Tällä asetetaan macroParamin lasketun hilan toive resoluutio, joko jostain
                  //! datasta tai suoraan kilometreinä.
@@ -244,9 +244,9 @@ class NFmiAreaMask
   enum MetFunctionDirection
   {
     NoDirection,    // default value, not defined
-    DirectionX,     // calcualtions are made only in x-direction or along the latitude
-    DirectionY,     // calcualtions are made only in y-direction or along the longitude
-    DirectionXandY  // calcualtions are made both x- and y-directions
+    DirectionX,     // calculations are made only in x-direction or along the latitude
+    DirectionY,     // calculations are made only in y-direction or along the longitude
+    DirectionXandY  // calculations are made both x- and y-directions
   };
 
   //! Regular unary functions applicable to variables and expressions

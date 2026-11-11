@@ -615,7 +615,7 @@ const NFmiPoint NFmiAzimuthalArea::LatLonToWorldXY(const NFmiPoint &theLatLonPoi
       // Polar (=normal) case, that is, lat0 = FmiRad(90 deg).
       // NOTE! This polar case COULD be computed just the way non-polar case is computed
       // by just assigning lat0 = FmiRad(90).
-      // Howewer, since sin(lat0) == 1 and cos(lat0) == 0,
+      // However, since sin(lat0) == 1 and cos(lat0) == 0,
       // this is the reduced and somewhat faster way of computing the normal case:
 
       delta = sinlat;

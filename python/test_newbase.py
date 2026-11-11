@@ -90,7 +90,7 @@ coordDict={"statId":[0000],"lon":[26.6136],"lat":[67.3928],"name":["point0000"]}
 forecastFileName="test_data.sqd.xz"
 # Forecast data is saved in nested dictionary. 
 # First level is point id and third the variable number ("time" for timestamp)
-# For example, to get surface tempreature forecast  for point 0001 use 
+# For example, to get surface temperature forecast  for point 0001 use 
 # data['10001']['648'] 
 forecast_data=readQueryData(forecastFileName,coordDict,Variables)
 

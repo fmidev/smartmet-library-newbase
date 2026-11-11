@@ -211,7 +211,7 @@ double NFmiLocation::CalcDeclinationAngle(const NFmiTime &theSolarTime)
  * atzimuth angle = 0 when the Sun is in the North.
  * There's also an odd correction term anEqualizerTerm (Laura Thölix:
  * pro gradu, page 16), which perhaps somehow compensates the inaccurate
- * calculation of the yearAngle (a measure to the Earths circulaton around the Sun).
+ * calculation of the yearAngle (a measure to the Earths circulation around the Sun).
  * See also comments of the method NFmiLocation::CalcDeclinationAngle().
  *
  * \param theSolarTime a local solar time for this NFmiLocation
@@ -391,7 +391,7 @@ NFmiMetTime NFmiLocation::UtcTimeFromSolarTime(const NFmiTime &theSolarTime)
  * and the bool& isCurrentDay sets to false.
  *
  * \param theTime, UTC-time
- * \param isCurrentDay, true if the returnig time fits into the current day, others false
+ * \param isCurrentDay, true if the returning time fits into the current day, others false
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
@@ -428,7 +428,7 @@ NFmiMetTime NFmiLocation::TimeOfSunrise(const NFmiMetTime &theTime, bool &isCurr
  * and the bool& isCurrentDay sets to false.
  *
  * \param theTime Undocumented
- * \param isCurrentDay, true if the returnig time fits into the current day, others false
+ * \param isCurrentDay, true if the returning time fits into the current day, others false
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
@@ -711,7 +711,7 @@ NFmiMetTime NFmiLocation::LastTimeOfSunrise(const NFmiMetTime &theTime,
  *  Next iterative searching of the sunrise or the sunset isn't sophisticated but
  *  simple. If the sunrise have to been found, backwards iteration begins from
  *  tempSolarTime = 12 and in case of sunset from  tempSolarTime = 24 (next midnight).
- *  Iterations time step is 1 hour and lenght 12 hours. When the hour of sunrise or
+ *  Iterations time step is 1 hour and length 12 hours. When the hour of sunrise or
  *  sunset has been found, iterates minutes (forwards).
  *
  *	Sunrise: beginHour =12:00, stopHour = 23:00 (previous night)
@@ -752,7 +752,7 @@ void NFmiLocation::CalcSunriseOrSunsetTime(NFmiTime &theSolarTime)
             return;
           }
           angle1 = angle2;
-        }  // beginnig of the next hour is already handled
+        }  // beginning of the next hour is already handled
       }
       angle2 = angle1;
     }

@@ -79,7 +79,7 @@ NFmiPoint torotlatlon(const NFmiPoint& theLatLonPoint,
     return NFmiPoint(tmp.Value(), lat);
 
 #else
-    // This methode is copied from the Hirlam-subroutine GEOROT
+    // This method is copied from the Hirlam-subroutine GEOROT
     // Also functions, if only longitude of the pole is rotated, but is prevented
 
     NFmiLatitude YPole = NFmiLatitude(thePole.Y());

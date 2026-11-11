@@ -64,7 +64,7 @@
  *_____________________________________________________________________________
  * 2.7	virtual bool Allocate(int theMaxPairNumber);
  *
- * Alocates memory for list arrays
+ * Allocates memory for list arrays
  *
  *
  *
@@ -119,7 +119,7 @@
  *		double outputValue = List.Transform(80.5);
  *
  *		At first Transform() will find out the correct input data range.
- *		Linear interpolation is used to find out the piecewise tranformed output value on
+ *		Linear interpolation is used to find out the piecewise transformed output value on
  *the
  *		output range. Finally the output value is returned and assigned to variable
  *outputValue.

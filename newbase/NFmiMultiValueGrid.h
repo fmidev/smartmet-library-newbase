@@ -27,7 +27,7 @@ class NFmiMultiValuedGrid : public NFmiGrid, private NFmiQueryInfo
 
   bool FirstValue();  // Resets Param,Time and Level but not location
 
-  // Ambiquos methods inhereted primarily from NFmiGrid
+  // Ambiquos methods inherited primarily from NFmiGrid
 
   bool First() override;                // resets Grid
   unsigned long Size() const override;  // Grid Size

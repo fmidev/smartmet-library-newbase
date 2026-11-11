@@ -9,7 +9,7 @@
  *
  * String with status attribute and start and end positions (given outside).
  * This is utility class used to hold info about smaller parts of bigger
- * string (e.g. NFmiString "EFHK 100009 12012KT CAVOK=") can be devided to
+ * string (e.g. NFmiString "EFHK 100009 12012KT CAVOK=") can be divided to
  * smaller parts NFmiStatusPositionString("12012KT",kWindError,13,19) ).
  *
  */

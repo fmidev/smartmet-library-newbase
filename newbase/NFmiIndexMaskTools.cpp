@@ -1135,7 +1135,7 @@ NFmiIndexMask MaskShrink(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, do
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Return area withing given distance from path
+ * \brief Return area within given distance from path
  *
  * If the path is empty, so is the mask.
  *
@@ -1196,7 +1196,7 @@ NFmiIndexMask MaskDistance(const NFmiGrid& theGrid, const NFmiSvgPath& thePath, 
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Return area withing given distance from point
+ * \brief Return area within given distance from point
  *
  * \param theGrid The grid
  * \param thePoint The point

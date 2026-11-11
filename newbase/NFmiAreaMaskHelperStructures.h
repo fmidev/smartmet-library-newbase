@@ -51,7 +51,7 @@ class NFmiCalculationParams
   // sen originaali latlon pisteen pointteri, jota sitten voidaan käyttää tarkemmissa
   // etäisyyslaskuissa, sen sijaan että käytettäisiin laskentahilan lähimmän pisteen koordinaatteja.
   // Tämä estää tulosten satunnaisen oloisen vaihtelun, kun laskenta hila muuttaa ja etäisyys
-  // perusteiset laskennan tulokset muuttuvat (esim. etäisyydet occurance laskentojen hakusäteen
+  // perusteiset laskennan tulokset muuttuvat (esim. etäisyydet occurrence laskentojen hakusäteen
   // suhteen).
   const NFmiPoint *itsActualCalculationPoint = nullptr;
   // Synop datoilla voi olla monia eri datoja (esim. Suomessa suomi+euro+maailma datat).

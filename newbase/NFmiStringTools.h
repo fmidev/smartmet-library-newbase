@@ -100,7 +100,7 @@ inline bool Convert<bool>(const char *theThing)
   throw Fmi::Exception(BCP, "Failed to convert " + std::string(theThing) + " to boolean");
 }
 
-// This is requred so that "a b c" remains "a b c"
+// This is required so that "a b c" remains "a b c"
 
 template <>
 inline std::string Convert<std::string>(const char *theThing)

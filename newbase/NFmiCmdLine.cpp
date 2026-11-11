@@ -332,7 +332,7 @@ void NFmiCmdLine::Init(int argc, const char **argv, const char *optallow)
     itsArgc = argc;
     itsArgv = new char *[itsArgc];
     // To make it simple, prepare to have all of argvs
-    // either options or parameters. Ususally there will be both
+    // either options or parameters. Usually there will be both
     itsOptionLetters = new char[itsArgc];
     itsOptionValues = new char *[itsArgc];
     itsParameters = new char *[itsArgc];

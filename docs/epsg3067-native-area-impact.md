@@ -140,7 +140,7 @@ already scoped from source recon:
   library; it powers both the batch tools and the engine.
 - **Serving path:** monochrome radar is a 1-parameter `NFmiQueryData`, so it rides qengine's Q/contour/
   raster/GetFeatureInfo path unchanged. Two options that share the same reader:
-  - **S1** — batch-convert to `.sqd` + plain qengine (today's accrate/fmippn pattern). Ships fastest,
+  - **S1** — batch-convert to `.sqd` + plain qengine (today's accurate/fmippn pattern). Ships fastest,
     zero server code; persists (see §2 rule), and ×4 disk (byte→float).
   - **S2** — read GeoTIFF/ODIM directly in a qengine `type=` extension; no disk doubling, no lag; the
     "beat GeoServer at scale" path. **S2 is where the native area pays off with zero file-format risk.**

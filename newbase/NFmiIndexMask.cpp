@@ -562,7 +562,7 @@ NFmiIndexMask operator^(const NFmiIndexMask& theLhs, const NFmiIndexMask& theRhs
  *
  * Moves current mask to wanted direction but you can move it only by
  * grid-points (you have store original grid size in order to this to work).
- * If you move somethin outside the edge, that something will vanish. Nothing
+ * If you move something outside the edge, that something will vanish. Nothing
  * will come out side the edges except 'emptyness'.
  *
  * \code

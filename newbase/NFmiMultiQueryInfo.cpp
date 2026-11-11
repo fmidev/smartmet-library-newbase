@@ -266,7 +266,7 @@ void NFmiMultiQueryInfo::Init()
       }
     }
 
-    // time -> index set correspondance is now established, initialize the data structures
+    // time -> index set correspondence is now established, initialize the data structures
     // accordingly
 
     // int j = 0;

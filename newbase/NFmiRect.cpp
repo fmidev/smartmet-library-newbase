@@ -261,9 +261,9 @@ NFmiRect &NFmiRect::operator+=(const NFmiPoint &thePoint)
 
 // ----------------------------------------------------------------------
 /*!
- * Substraction operator
+ * Subtraction operator
  *
- * \param thePoint The coordinates being substracted
+ * \param thePoint The coordinates being subtracted
  * \return The resulting rectangle
  */
 // ----------------------------------------------------------------------
@@ -310,9 +310,9 @@ NFmiRect &NFmiRect::operator+=(const NFmiRect &theRect)
 
 // ----------------------------------------------------------------------
 /*!
- * Substraction operator
+ * Subtraction operator
  *
- * \param theRect The rectangle being substracted
+ * \param theRect The rectangle being subtracted
  * \result The resulting rectangle
  */
 // ----------------------------------------------------------------------
@@ -474,7 +474,7 @@ NFmiRect operator+(const NFmiPoint &leftPoint, const NFmiRect &rightRect)
 
 // ----------------------------------------------------------------------
 /*!
- * Substraction of a point and a rectangle
+ * Subtraction of a point and a rectangle
  *
  * \param leftPoint Undocumented
  * \param rightRect Undocumented
@@ -522,7 +522,7 @@ NFmiRect operator+(const NFmiRect &leftRect, const NFmiPoint &rightPoint)
 
 // ----------------------------------------------------------------------
 /*!
- * Substraction of a rectangle and a point
+ * Subtraction of a rectangle and a point
  *
  * \param leftRect Undocumented
  * \param rightPoint Undocumented

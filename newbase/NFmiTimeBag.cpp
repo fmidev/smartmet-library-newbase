@@ -473,7 +473,7 @@ bool NFmiTimeBag::SelectNearestTimeOutside(const NFmiMetTime &theTime,
  * theTimeRangeInMinutes. The method is moved here from the class
  * NFmiTimeDescriptor where it has been made by Lasse. The new
  * parameter theTimeRangeInMinutes has the default value kLongMissing.
- * In addition theDirection has also the defaul value kCenter, when
+ * In addition theDirection has also the default value kCenter, when
  * seeks the nearest time step of this timebag. If theTime was outside
  * of this timebag but inside theTimeRangeInMinutes taking into
  * consideration theDirection, this timebag sets to the first or to

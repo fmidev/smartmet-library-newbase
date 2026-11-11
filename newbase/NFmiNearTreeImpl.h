@@ -72,13 +72,13 @@
  *
  * if(NearestPoint(result,NFmiPoint(x0,y0),100))
  * {
- *   // result is the closest point to x0,y0 withing the radius of 100
+ *   // result is the closest point to x0,y0 within the radius of 100
  * }
  *
  * std::vector<NFmiPoint> results;
  * if(NearestPoints(results,NFmiPoint(x0,y0),100) > 0)
  * {
- *   // results now contains atleast one point within radius 100
+ *   // results now contains at least one point within radius 100
  * }
  *
  * Note that in general the NFmiNearTreeImpl takes two template parameters,
@@ -86,7 +86,7 @@
  * the distance. The default value of the functor is NFmiNearTreeImpl<T>,
  * where T is the value type. The default implementation for type T
  * assumes there are X() and Y() accessors in the value type, and that
- * the distance is the 2D Euclidian distance.
+ * the distance is the 2D Euclidean distance.
  *
  * The user may specialize the functor externally. For example, assume
  * there is a Point class which has the accessors written in lower case.
@@ -213,7 +213,7 @@ void NFmiNearTreeImpl<T, F>::Clear()
  * later searching.
  *
  *  Three possibilities exist:
- *   -# put the datum into the left postion (first test),
+ *   -# put the datum into the left position (first test),
  *   -# into the right position, or
  *   -# into a node descending from the nearer of those positions
  *      when they are both already used.
@@ -358,7 +358,7 @@ unsigned long NFmiNearTreeImpl<T, F>::NearestPoints(std::vector<value_type>& the
  * \param theClosest The vector of closest objects
  * \param thePoint The probe point
  * \param theRadius The maximum search radius
- * \return The number of closest points withing the search radius
+ * \return The number of closest points within the search radius
  */
 // ----------------------------------------------------------------------
 

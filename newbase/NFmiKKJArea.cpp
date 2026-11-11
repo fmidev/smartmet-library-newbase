@@ -21,7 +21,7 @@
  *
  * Projection used is Gauss-Krueger projection with Hayford's International Reference ellipsoid.
  *
- * INHERETANCE:
+ * INHERITANCE:
  *
  * NOTES:
  *

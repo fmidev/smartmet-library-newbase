@@ -165,10 +165,10 @@ NFmiEnumConverter::NFmiEnumConverter(FmiEnumSpace theEnumspace)
  *
  * Return value is kFmiBadParameter if string is unknown.
  *
- * This method is fast, once it has been used atleast once so that
+ * This method is fast, once it has been used at least once so that
  * the parameter table has been initialized.
  *
- * \param theString The name of the paramter
+ * \param theString The name of the parameter
  * \return The enumeration value
  *
  * \todo Use const_iterator internally

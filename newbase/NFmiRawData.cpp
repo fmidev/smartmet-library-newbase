@@ -176,7 +176,7 @@ NFmiRawData::Pimple::Pimple(const string &filename, istream &file, size_t size)
     if (poolsize != itsSize * sizeof(float))
       throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
-    // Skip last newline charater after poolsize
+    // Skip last newline character after poolsize
     char ch = 0;
     file.get(ch);
 
@@ -264,7 +264,7 @@ NFmiRawData::Pimple::Pimple(istream& file, size_t size, bool endianswap)
       if (poolsize != itsSize * sizeof(float))
         throw Fmi::Exception(BCP, "Invalid datapool size in querydata");
 
-      // Skip last newline charater after poolsize
+      // Skip last newline character after poolsize
       char ch = 0;
       file.get(ch);
 

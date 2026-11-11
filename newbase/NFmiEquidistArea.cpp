@@ -268,7 +268,7 @@ NFmiEquidistArea::NFmiEquidistArea(const double theRadialRange,
  * \param delta Undocumented
  * \return Undocumented
  *
- * \todo Should handle the case when acosDelta =~ 0 (almost equitorial)
+ * \todo Should handle the case when acosDelta =~ 0 (almost equatorial)
  */
 // ----------------------------------------------------------------------
 

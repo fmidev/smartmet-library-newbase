@@ -297,7 +297,7 @@ double CalcFlightLevelPressure(double PALT)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Calculate filght level from pressure level
+ * \brief Calculate flight level from pressure level
  *
  * Calculates flight level [FL] from given pressure level [hPa]
  * By definition,

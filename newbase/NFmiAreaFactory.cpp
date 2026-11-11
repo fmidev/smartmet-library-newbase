@@ -824,7 +824,7 @@ std::shared_ptr<NFmiArea> Create(const std::string &theProjection)
 
       if (units && centered)
         throw Fmi::Exception(
-            BCP, "Cannot use a centered projection speficiation with grid size of specific length");
+            BCP, "Cannot use a centered projection specification with grid size of specific length");
 
       const AreaCorners corners{bottomleft,
                                 topright,

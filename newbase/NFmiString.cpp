@@ -554,7 +554,7 @@ char *NFmiString::GetCharsPtr(unsigned long firstChar, unsigned long length) con
  * Searches the wanted longer string (fromChar), but replaces only the first char!
  * \param fromChar Undocumented
  * \param toChar Undocumented
- * \returning false, if fromChar not found, others atleast one mark replaced and returning true
+ * \returning false, if fromChar not found, others at least one mark replaced and returning true
  */
 // ----------------------------------------------------------------------
 
@@ -583,7 +583,7 @@ bool NFmiString::ReplaceChars(const unsigned char *fromChar, const unsigned char
  * Searches the wanted string (fromChars) and replaces it to the given string (toChars).
  * - Replacement done in maximum to the given number of instances (see third parameter
  * replacementsMaxCount)
- * By default replaces all the occurences of 'fromChar' to 'toChars'.
+ * By default replaces all the occurrences of 'fromChar' to 'toChars'.
  *
  * \param fromChar: characters to replace
  * \param toChar: replacement characters

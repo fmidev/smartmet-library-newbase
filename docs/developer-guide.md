@@ -234,7 +234,7 @@ through an `NFmiFastQueryInfo` (`FloatValue(v)`, `SetValues()`, `SetLevelFromVec
   reading old versions working, and do not change what `Write()` produces without
   changing the info version and checking every reader.
 * **Headers are public and many are inline** (`NFmiFastQueryInfo.h` has much of the
-  navigation code inline). A layout or inline change affects every dependant: bump the spec
+  navigation code inline). A layout or inline change affects every dependent: bump the spec
   version and the dependants' floors, and rebuild them together.
 * Most classes have virtual methods; add new virtual methods at the end of a class.
 

@@ -423,7 +423,7 @@ bool NFmiPtrList<Type>::Remove(unsigned long theIndex, bool fDeleteItem)
 {
   // As the method NumberOfItems() this method had to be implemented
   // through counting the items in the list beginning from the start
-  // untill the counter has reached the value of index given (if not,
+  // until the counter has reached the value of index given (if not,
   // the returning is false) and then removing the corresponding item
   Iterator iter = Start();
   unsigned long counter = 0;
@@ -466,7 +466,7 @@ bool NFmiPtrList<Type>::Add(Type *theItem, unsigned long theIndex)
 {
   // Add theItem to the list in oder to index so that
   // theItem will have the given index in the list.
-  // If not succeeded the returs false.
+  // If not succeeded the returns false.
   Iterator iter(itsStart, this);
 
   unsigned long ind = 0;

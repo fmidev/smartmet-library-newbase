@@ -260,7 +260,7 @@ class NFmiQueryInfo
   virtual unsigned long SizeLevels() const;
   virtual unsigned long SizeTimes() const;
 
-  // Desctiptor Active Sizes
+  // Descriptor Active Sizes
   virtual unsigned long SizeActiveParams() const;
   virtual unsigned long SizeActiveLocations() const;
   virtual unsigned long SizeActiveLevels() const;

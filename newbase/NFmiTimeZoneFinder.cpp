@@ -591,7 +591,7 @@ void NFmiTimeZoneFinder::Clear()
  * \code
  * ring
  * \endcode
- * command beging a new ring in it. Naturally each timezone
+ * command begins a new ring in it. Naturally each timezone
  * command (and eof) also terminate the previous ring/timezone.
  *
  * \param theFileName The file to read

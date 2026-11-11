@@ -176,7 +176,7 @@ NFmiString *NFmiStringList::Current() const
 /*!
  * Resets the iterator itsIter of the list.
  * \param FmiDirection theDirect:
- * - defaul value kForward --> itsIter sets at the first item
+ * - default value kForward --> itsIter sets at the first item
  * - kBackward --> itsIter sets at the last item
  *
  * \return false for an empty list, others true

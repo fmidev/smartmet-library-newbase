@@ -59,13 +59,13 @@
  *
  * if(NearestPoint(result,NFmiPoint(x0,y0),100))
  * {
- *   // result is the closest point to x0,y0 withing the radius of 100
+ *   // result is the closest point to x0,y0 within the radius of 100
  * }
  *
  * std::vector<NFmiPoint> results;
  * if(NearestPoints(results,NFmiPoint(x0,y0),100) > 0)
  * {
- *   // results now contains atleast one point within radius 100
+ *   // results now contains at least one point within radius 100
  * }
  * \endcode
  * Note that in general the NFmiNearTree takes two template parameters,
@@ -73,7 +73,7 @@
  * the distance. The default value of the functor is NFmiNearTree<T>,
  * where T is the value type. The default implementation for type T
  * assumes there are X() and Y() accessors in the value type, and that
- * the distance is the 2D Euclidian distance.
+ * the distance is the 2D Euclidean distance.
  *
  * The user may specialize the functor externally. For example, assume
  * there is a Point class which has the accessors written in lower case.

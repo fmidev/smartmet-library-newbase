@@ -354,7 +354,7 @@ void patternfiles()
 
   out = NFmiFileSystem::PatternFiles("*.cpp");
   if (out.size() < 20)
-    TEST_FAILED("*.cpp should have matched atleast 20 files");
+    TEST_FAILED("*.cpp should have matched at least 20 files");
 
   TEST_PASSED();
 }

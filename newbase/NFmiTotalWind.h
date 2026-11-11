@@ -342,7 +342,7 @@ inline void NFmiTotalWind::SetWindDirection(unsigned long theValue)
   // Set 0x3F bits, preserving others
   itsData.longType = (itsData.longType & (~(0x3F << 0))) | ((theValue & 0x3F) << 0);
 
-  // AKa 14-Aug-09: Added parantheses to allow '-Wall' on Ubuntu. Was:
+  // AKa 14-Aug-09: Added parentheses to allow '-Wall' on Ubuntu. Was:
   // itsData.longType = itsData.longType&(~(0x3F<<0))|((theValue&0x3F)<<0);
 }
 

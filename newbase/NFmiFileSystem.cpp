@@ -66,7 +66,7 @@ extern "C"
 #endif
 }
 
-// VC++ does not seem to define these macors:
+// VC++ does not seem to define these macros:
 
 #ifndef S_ISREG
 #define S_ISREG(mode) (mode & S_IFREG)
@@ -838,7 +838,7 @@ list<string> DirectoryFiles(const string& thePath)
  * e.g. myDir/PAL_skandinavia*.sqd return all the files
  * that are in myDir-directory and matches with pattern
  * PAL_skandinavia*.sqd
- * If no mathches, an empty list is returned.
+ * If no matches, an empty list is returned.
  *
  * \param thePattern Pattern e.g. mydir/mydata*.txt
  * \return List of files that match the pattern.
@@ -928,7 +928,7 @@ std::string FileNameFromPath(const std::string &theTotalPathAndFileStr)
  * PAL_skandinavia*.sqd
  * Files must be also newer (modification time) that given time.
  * Also this modification time is returned along filenames.
- * If no mathches, an empty list is returned.
+ * If no matches, an empty list is returned.
  *
  * \param thePattern Pattern e.g. mydir/mydata*.txt
  * \param timeLimit files must be also newer than this time.
@@ -976,7 +976,7 @@ const std::list<std::pair<std::string, std::time_t> > PatternFiles(const std::st
  * e.g. myDir/PAL_skandinavia*.sqd return all the files
  * that are in myDir-directory and matches with pattern
  * PAL_skandinavia*.sqd
- * If no mathches, an empty list is returned.
+ * If no matches, an empty list is returned.
  *
  * \param thePattern Pattern e.g. mydir/mydata*.txt
  * \return List of files that match the pattern.
@@ -1148,7 +1148,7 @@ time_t FindFile(const string &theFileFilter,
  * \note
  * According to Unix stdio.h, should return true on success.
  * If the method is POSIX, so should Windows.
- * Also, the method works equally well for directories, atleast
+ * Also, the method works equally well for directories, at least
  * on Unix.
  */
 // ----------------------------------------------------------------------
@@ -1681,7 +1681,7 @@ void SafeFileSave(const std::string &theFileName, const std::string &theContents
   out.close();
 
 #ifdef _MSC_VER
-  // NFmiFileSystem::RenameFile doesn't work allways desired way on Windows, in some cases
+  // NFmiFileSystem::RenameFile doesn't work always desired way on Windows, in some cases
   // people have noticed that only the TMP-file was left after execution. That's is why I try
   // to solve this with Windows own win32 functionality.
   // Using the ascii version of MoveFileEx -function (A -letter as last character), because we

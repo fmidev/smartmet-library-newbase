@@ -6652,7 +6652,7 @@ bool NFmiQueryInfo::IsInside(const NFmiPoint &theLatLon, double theRadius) const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Retrun true if the given time is inside the data
+ * \brief Return true if the given time is inside the data
  */
 // ----------------------------------------------------------------------
 

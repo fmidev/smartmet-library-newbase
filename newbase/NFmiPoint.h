@@ -179,7 +179,7 @@ inline void NFmiPoint::Y(double newValue)
 }
 // ----------------------------------------------------------------------
 /*!
- * Returns the Euclidian distance between \c this and the given point.
+ * Returns the Euclidean distance between \c this and the given point.
  *
  * The formula of the distance is
  *
@@ -214,11 +214,11 @@ inline NFmiPoint operator+(const NFmiPoint &leftPoint, const NFmiPoint &rightPoi
 
 // ----------------------------------------------------------------------
 /*!
- * Substraction of two NFmiPoint objects
+ * Subtraction of two NFmiPoint objects
  *
  * \param leftPoint Point number 1
  * \param rightPoint Point number 2
- * \return The point with the substracted coordinates
+ * \return The point with the subtracted coordinates
  */
 // ----------------------------------------------------------------------
 

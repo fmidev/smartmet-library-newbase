@@ -6312,7 +6312,7 @@ void FillGridDataWithLocationInterpolation(
     const auto targetXSize = theTargetInfo.GridXNumber();
 
     // Process interpolation in source data order to prevent cache trashing, the file may be huge
-    // and memory mapped. Split processing based on parameter, their respecive data is in continous
+    // and memory mapped. Split processing based on parameter, their respective data is in continuous
     // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
     // Build the location to location mapping sorted based on source data grid ordering
@@ -6376,7 +6376,7 @@ void FillGridDataWithTimeAndLocationInterpolation(
     const auto targetXSize = theTargetInfo.GridXNumber();
 
     // Process interpolation in source data order to prevent cache trashing, the file may be huge
-    // and memory mapped. Split processing based on parameter, their respecive data is in continous
+    // and memory mapped. Split processing based on parameter, their respective data is in continuous
     // disk blocks. Then we sort based on the XY-location, and then process their levels and times.
 
     // Build the location to location mapping sorted based on source data grid ordering
