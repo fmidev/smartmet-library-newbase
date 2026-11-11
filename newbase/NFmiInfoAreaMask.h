@@ -150,7 +150,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
       const NFmiCalculationParams &theCalculationParamsInOut) override;
   void Initialize() override;
 
-  static std::shared_ptr<NFmiDataModifier> CreateIntegrationFuction(
+  static std::shared_ptr<NFmiDataModifier> CreateIntegrationFunction(
       NFmiAreaMask::FunctionType func);
   static bool CalcTimeLoopIndexies(const std::shared_ptr<NFmiFastQueryInfo>& theInfo,
                                    const NFmiCalculationParams &theCalculationParams,
@@ -210,7 +210,7 @@ class NFmiInfoAreaMask : public NFmiAreaMaskImpl
   // jos vanhassa maski jutussa tarvitaan aikainterpolointia, tässä on interpoloitava aika
   NFmiMetTime itsTime;
   // erikois optimointia Value-metodin ja Time-metodin käytössä
-  bool fIsTimeIntepolationNeededInValue;
+  bool fIsTimeInterpolationNeededInValue;
   // tämä asetetaan trueksi jos tarvitaan tehdä lennossa painepinta interpolointeja
   bool fUsePressureLevelInterpolation;
   // jos fUsePressureLevelInterpolation on true, käytetään laskuissa tätä painepintaa
@@ -668,7 +668,7 @@ class NFmiInfoAreaMaskVertFunc : public NFmiInfoAreaMaskMetFuncBase
     return dummy;
   }
 
-  void FindCalculatedLeves(const NFmiLocationCache &theLocationCache);
+  void FindCalculatedLevels(const NFmiLocationCache &theLocationCache);
   void SearchLevels(const NFmiLocationCache &theLocationCache);
   void SearchModelLevels();
   void SetLevelValues();
@@ -896,7 +896,7 @@ class NFmiInfoAreaMaskProbFunc : public NFmiInfoAreaMask
   // Kaikki hilapisteet, missä todennäköisyys ehto piti paikkaansa (tämä otetaan talteen Value
   // -metodissa, jotta NFmiInfoAreaMaskOccurrance -lapsiluokka voi käyttää tämän luokan laskuja
   // hyväkseen hiladatan tapauksessa)
-  int itsConditionFullfilledGridPointCount = 0;
+  int itsConditionFulfilledGridPointCount = 0;
   // Kaikkien laskuissaa läpikäytyjen hilapisteiden määrä, aika- ja area-loopeissa yhteensä,
   // joissa oli ei-puuttuva arvo.
   int itsTotalCalculatedGridPoints = 0;

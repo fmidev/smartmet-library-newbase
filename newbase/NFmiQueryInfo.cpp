@@ -76,7 +76,7 @@ static const NFmiString gInfoHeaderKeyWord("FMI_");
 // alueelle 359.75 - 360 arvoja, käytetään tätä indeksiä merkitsemään NFmiLocationCache -luokan
 // itsLocationIndex -dataosan arvoa, jotta osataan toimia oikein haettaessa interpolaatio arvoja
 // datan 1. ja viimeisestä sarakkeesta.
-static const unsigned long gStrechedGlobalGridIndex = static_cast<unsigned long>(-2);
+static const unsigned long gStretchedGlobalGridIndex = static_cast<unsigned long>(-2);
 
 #if 0
 // ----------------------------------------------------------------------
@@ -3997,7 +3997,7 @@ void FixGridPointEpsError(NFmiPoint &theGridPoint,
 // vai riittääkö nearest piste interpolaatio.
 // Osaa käsitellä myös ns. vajaan globaalin datan tapauksen, missä data menee pituuspiiri suunnassa
 // esim. 0 => 359.5. Tällöin
-// NFmiLocationCache -olion itsLocationIndex -dataosalle annetaan arvo gStrechedGlobalGridIndex.
+// NFmiLocationCache -olion itsLocationIndex -dataosalle annetaan arvo gStretchedGlobalGridIndex.
 // Tämän jälkeen GetCachedValues -metodi
 // osaa kerätä oikeat arvot hilan äärilaidoilta (0-asteen sarake ja 359.5 -sarake) interpolointeja
 // varten.
@@ -4019,7 +4019,7 @@ NFmiLocationCache NFmiQueryInfo::CalcLocationCache(const NFmiPoint &theLatlon,
       }
       else if (DoGlobalWrapFix(locCache.itsGridPoint))
       {
-        locCache.itsLocationIndex = gStrechedGlobalGridIndex;
+        locCache.itsLocationIndex = gStretchedGlobalGridIndex;
       }
     }
     return locCache;
@@ -4538,7 +4538,7 @@ float NFmiQueryInfo::CachedInterpolation(const NFmiLocationCache &theLocationCac
         return InterpolatedValueForCombinedParam(theLocationCache.itsGridPoint);
       if (interp == kNearestPoint || interp == kNoneInterpolation)
       {
-        if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
+        if (theLocationCache.itsLocationIndex == gStretchedGlobalGridIndex)
         {
           unsigned long gridSizeX = Grid()->XNumber();
           double xFraction = theLocationCache.itsGridPoint.X() -
@@ -5037,7 +5037,7 @@ void NFmiQueryInfo::GetCachedValues(const NFmiLocationCache &theLocationCache,
   try
   {
     const NFmiPoint &gpoint = theLocationCache.itsGridPoint;
-    if (theLocationCache.itsLocationIndex == gStrechedGlobalGridIndex)
+    if (theLocationCache.itsLocationIndex == gStretchedGlobalGridIndex)
     {
       unsigned long xsize = Grid()->XNumber();
       // Lasketaan ensin hilan oikean reunan alempi hilapiste

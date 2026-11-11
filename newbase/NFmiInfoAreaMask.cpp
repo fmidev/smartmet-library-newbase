@@ -193,7 +193,7 @@ NFmiInfoAreaMask::~NFmiInfoAreaMask() = default;
 // ----------------------------------------------------------------------
 
 NFmiInfoAreaMask::NFmiInfoAreaMask()
-    : fIsTimeIntepolationNeededInValue(false),
+    : fIsTimeInterpolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing)
 {
@@ -230,7 +230,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiCalculationCondition& theOperation,
     : NFmiAreaMaskImpl(theOperation, theMaskType, theDataType, thePostBinaryOperator),
       itsInfo(theInfo),
       itsDataIdent(theInfo ? theInfo->Param() : NFmiDataIdent()),
-      fIsTimeIntepolationNeededInValue(false),
+      fIsTimeInterpolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing)
 {
@@ -262,7 +262,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const std::shared_ptr<NFmiFastQueryInfo>& the
           NFmiCalculationCondition(), kInfo, NFmiInfoData::kEditable, thePostBinaryOperator),
       itsInfo(theInfo),
       itsDataIdent(theInfo ? theInfo->Param() : NFmiDataIdent()),
-      fIsTimeIntepolationNeededInValue(false),
+      fIsTimeInterpolationNeededInValue(false),
       fUsePressureLevelInterpolation(false),
       itsUsedPressureLevelValue(kFloatMissing)
 {
@@ -281,7 +281,7 @@ NFmiInfoAreaMask::NFmiInfoAreaMask(const NFmiInfoAreaMask &theOther)
       itsInfo(NFmiAreaMask::DoShallowCopy(theOther.itsInfo)),
       itsDataIdent(theOther.itsDataIdent),
       itsLevel(theOther.itsLevel),
-      fIsTimeIntepolationNeededInValue(theOther.fIsTimeIntepolationNeededInValue),
+      fIsTimeInterpolationNeededInValue(theOther.fIsTimeInterpolationNeededInValue),
       fUsePressureLevelInterpolation(theOther.fUsePressureLevelInterpolation),
       itsUsedPressureLevelValue(theOther.itsUsedPressureLevelValue),
       metaParamDataHolder(theOther.metaParamDataHolder),
@@ -354,7 +354,7 @@ bool NFmiInfoAreaMask::Time(const NFmiMetTime &theTime)
       bool status = itsInfo->Time(theTime);
       // Jos tämän jälkeen käytetään samaa aikaa Value-metodissa, ei aikainterpolointia tarvitse
       // tehdä, jos aika löytyi.
-      fIsTimeIntepolationNeededInValue = !status;
+      fIsTimeInterpolationNeededInValue = !status;
       return status;
     }
     return false;
@@ -564,7 +564,7 @@ double NFmiInfoAreaMask::CalcValueFromLocation(const NFmiPoint &theLatLon) const
 {
   try
   {
-    if (fIsTimeIntepolationNeededInValue)
+    if (fIsTimeInterpolationNeededInValue)
       return itsInfo->InterpolatedValue(theLatLon, itsTime, 360);
 
     double value = itsInfo->InterpolatedValue(theLatLon);
@@ -583,7 +583,7 @@ bool NFmiInfoAreaMask::IsTimeInterpolationNeeded(bool fUseTimeInterpolationAlway
 {
   try
   {
-    return (fUseTimeInterpolationAlways || fIsTimeIntepolationNeededInValue) &&
+    return (fUseTimeInterpolationAlways || fIsTimeInterpolationNeededInValue) &&
            !NFmiFastInfoUtils::IsModelClimatologyData(itsInfo);
   }
   catch (...)
@@ -924,7 +924,7 @@ void NFmiInfoAreaMask::UpdateInfo(std::shared_ptr<NFmiFastQueryInfo> &theInfo)
   }
 }
 
-std::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFuction(
+std::shared_ptr<NFmiDataModifier> NFmiInfoAreaMask::CreateIntegrationFunction(
     NFmiAreaMask::FunctionType func)
 {
   try
@@ -2569,7 +2569,7 @@ void NFmiInfoAreaMaskVertFunc::Initialize()
   {
     NFmiInfoAreaMaskMetFuncBase::Initialize();
 
-    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFuction(itsPrimaryFunc);
+    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFunction(itsPrimaryFunc);
 
     switch (itsSecondaryFunc)
     {
@@ -2815,7 +2815,7 @@ void NFmiInfoAreaMaskVertFunc::SetLevelValues()
   }
 }
 
-void NFmiInfoAreaMaskVertFunc::FindCalculatedLeves(const NFmiLocationCache &theLocationCache)
+void NFmiInfoAreaMaskVertFunc::FindCalculatedLevels(const NFmiLocationCache &theLocationCache)
 {
   try
   {
@@ -3053,8 +3053,8 @@ float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
     int search_nth_value = findHeight ? static_cast<int>(::round(itsArgumentVector[2])) : 0;
     bool previousLevelCondition = false;
     bool currentLevelCondition = false;
-    float previousLevelHeigth = kFloatMissing;
-    float currentLevelHeigth = kFloatMissing;
+    float previousLevelHeight = kFloatMissing;
+    float currentLevelHeight = kFloatMissing;
     float foundHeight = kFloatMissing;
     int foundCount = 0;
     unsigned long realStartLevelIndex =
@@ -3067,13 +3067,13 @@ float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
     // kikkailuja
     itsInfo->LevelIndex(realStartLevelIndex);
     previousLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
-    previousLevelHeigth = GetLevelHeightValue(theLocationCache);
+    previousLevelHeight = GetLevelHeightValue(theLocationCache);
     // Jos 1. levelin kohdalla on tilanne jo päällä, laitetaan sen tiedot talteen ja kasvatetaan
     // löytölaskuria
-    if (previousLevelCondition && previousLevelHeigth != kFloatMissing)
+    if (previousLevelCondition && previousLevelHeight != kFloatMissing)
     {
       foundCount++;
-      foundHeight = previousLevelHeigth;
+      foundHeight = previousLevelHeight;
       if (findHeight && search_nth_value == 1) 
         return foundHeight;
     }
@@ -3083,22 +3083,22 @@ float NFmiInfoAreaMaskVertFunc::FindHeightForSimpleCondition(
     auto findValueFunction = [&]()
     {
       currentLevelCondition = VertFuncSimpleconditionCheck(theCalculationParams);
-      currentLevelHeigth = GetLevelHeightValue(theLocationCache);
-      if (currentLevelHeigth == kFloatMissing)
+      currentLevelHeight = GetLevelHeightValue(theLocationCache);
+      if (currentLevelHeight == kFloatMissing)
         return;
       // simple-condition tila muuttunut niin tilanne on mennyt päälle ja otetaan tilanne talteen
       if (previousLevelCondition != currentLevelCondition)
       {
         foundCount++;
         // Laitetaan löytökorkeudeksi sen levelin arvo missä simple-condition oli päällä
-        foundHeight = currentLevelCondition ? currentLevelHeigth : previousLevelHeigth;
+        foundHeight = currentLevelCondition ? currentLevelHeight : previousLevelHeight;
         // Jos etsitään tiettyä esim. 3. löytöä ja foundCount pääsee 3:een, palautetaan
         // välittömästi arvo
         if (search_nth_value > 0 && search_nth_value <= foundCount)
           iterationBreaking.stopIteration = true;
       }
       previousLevelCondition = currentLevelCondition;
-      previousLevelHeigth = currentLevelHeigth;
+      previousLevelHeight = currentLevelHeight;
     };
     IterateLevelsFromGroundUpward(findValueFunction,
                                   iterationBreaking,
@@ -3239,7 +3239,7 @@ double NFmiInfoAreaMaskVertFunc::Value(const NFmiCalculationParams &theCalculati
       return DoVerticalGrad(locationCache, theCalculationParams);
 
     // 2. Käy läpi haluttu level korkeus/level väli ja laske haluttu operaatio niille
-    FindCalculatedLeves(locationCache);
+    FindCalculatedLevels(locationCache);
 
     if (itsStartLevelIndex == gMissingIndex || itsEndLevelIndex == gMissingIndex)
       return kFloatMissing;  // jos jompikumpi level indekseistä osoittaa 'kuuseen', ei kannata
@@ -3491,7 +3491,7 @@ double NFmiInfoAreaMaskVertConditionalFunc::Value(const NFmiCalculationParams& t
     NFmiLocationCache locationCache = CalcLocationCache(theCalculationParams.UsedLatlon());
 
       // 2. Käy läpi haluttu level korkeus/level väli ja laske haluttu operaatio niille
-      FindCalculatedLeves(locationCache);
+      FindCalculatedLevels(locationCache);
 
       if (itsStartLevelIndex != gMissingIndex && itsEndLevelIndex != gMissingIndex)
       {
@@ -3642,7 +3642,7 @@ double NFmiInfoAreaMaskTimeVertFunc::Value(const NFmiCalculationParams &theCalcu
       return kFloatMissing;
 
     // 2. Käy läpi haluttu level korkeus/level väli ja laske haluttu operaatio niille
-    FindCalculatedLeves(locationCache);
+    FindCalculatedLevels(locationCache);
 
     if (itsStartLevelIndex == gMissingIndex || itsEndLevelIndex == gMissingIndex)
       return kFloatMissing;  // jos jompikumpi level indekseistä osoittaa 'kuuseen', ei kannata
@@ -4133,7 +4133,7 @@ double NFmiInfoAreaMaskProbFunc::CalcAreaProbability() const
   {
     // Kerrotaan 100:lla, jotta saadaan prosentteja.
     // Em. luku on double, jotta jakolaskusta ei tulisi integer jakoa.
-    return (100. * itsConditionFullfilledGridPointCount) / itsTotalCalculatedGridPoints;
+    return (100. * itsConditionFulfilledGridPointCount) / itsTotalCalculatedGridPoints;
   }
 
   return kFloatMissing;
@@ -4282,7 +4282,7 @@ void NFmiInfoAreaMaskProbFunc::DoIntegrationCalculations(float value)
     {
       itsTotalCalculatedGridPoints++;
       if (CheckProbabilityCondition(value))
-        itsConditionFullfilledGridPointCount++;
+        itsConditionFulfilledGridPointCount++;
     }
   }
   catch (...)
@@ -4296,7 +4296,7 @@ void NFmiInfoAreaMaskProbFunc::InitializeIntegrationValues()
   try
   {
     itsTotalCalculatedGridPoints = 0;
-    itsConditionFullfilledGridPointCount = 0;
+    itsConditionFulfilledGridPointCount = 0;
   }
   catch (...)
   {
@@ -4336,7 +4336,7 @@ NFmiInfoTimeIntegrator::NFmiInfoTimeIntegrator(const NFmiCalculationCondition& t
 {
   try
   {
-    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFuction(itsIntegrationFunc);
+    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFunction(itsIntegrationFunc);
   }
   catch (...)
   {
@@ -4441,7 +4441,7 @@ NFmiInfoRectAreaIntegrator::NFmiInfoRectAreaIntegrator(
 {
   try
   {
-    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFuction(itsIntegrationFunc);
+    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFunction(itsIntegrationFunc);
   }
   catch (...)
   {
@@ -4534,7 +4534,7 @@ NFmiInfoAreaIntegrationFunc::NFmiInfoAreaIntegrationFunc(
 {
   try
   {
-    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFuction(itsIntegrationFunc);
+    itsFunctionModifier = NFmiInfoAreaMask::CreateIntegrationFunction(itsIntegrationFunc);
   }
   catch (...)
   {
@@ -4687,10 +4687,10 @@ void NFmiInfoAreaMaskAreaProbFunc::DoIntegrationCalculations(float /*value*/)
 {
   try
   {
-    // Jos päästään tänne asti kasvatetaan vain itsConditionFullfilledGridPointCount -laskuria,
+    // Jos päästään tänne asti kasvatetaan vain itsConditionFulfilledGridPointCount -laskuria,
     // tänne pääsy tarkoittaa että laskenta piste on datan alueen ja laskenta alihilan alueella ja
     // lisäksi simple-condition on päästänyt läpi (joiden osumia tässä etsitäänkin).
-    itsConditionFullfilledGridPointCount++;
+    itsConditionFulfilledGridPointCount++;
   }
   catch (...)
   {

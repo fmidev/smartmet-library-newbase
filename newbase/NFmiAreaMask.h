@@ -82,15 +82,15 @@ class NFmiAreaMask
     InfoVariable,              //!< A parameter in the queryinfo
     ResultInfoVariable,        //!< A parameter in the queryinfo (unused?)
     CalculatedVariable,        //!< Calculable variable (sun angle etc)
-    Assigment,                 //!< Assignment operator
+    Assignment,                 //!< Assignment operator
     Operator,                  //!< +, -, *, /, %, ^ etc
     UnaryOperator,             //!< unary + and -
     UnaryBinaryOperator,       //!< NOT, ^, XOR etc
     BinaryOperatorType,        //!< &&, AND, || OR etc
     Variable,                  //!< A regular variable
     Constant,                  //!< A constant
-    FunctionTimeIntergration,  //!< A time dependent function such as min and max
-    FunctionAreaIntergration,  //!< An area dependent function such as min and max
+    FunctionTimeIntegration,  //!< A time dependent function such as min and max
+    FunctionAreaIntegration,  //!< An area dependent function such as min and max
     FunctionPeekXY,            //!< Peek infodata with wanted grid offset
     FunctionPeekXY2,  //!< Peek infodata with wanted modified/macroData grid offset (this works with
     //! GridSizeX and Y functions)

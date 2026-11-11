@@ -24,7 +24,12 @@ class NFmiProducerIdLister
   NFmiProducerIdLister(NFmiQueryInfo &theInfo);  // Huom! pitäisi olla const info, mutta pari
                                                  // metodia pitää muuttaa ensin
   std::string MakeProducerIdString();
-  bool IntepretProducerIdString(const std::string &theString);
+  bool InterpretProducerIdString(const std::string &theString);
+  // The former misspelt name, kept for the SmartMet Workstation
+  bool IntepretProducerIdString(const std::string &theString)
+  {
+    return InterpretProducerIdString(theString);
+  }
   bool ChangeTimeResolution(int theNewResolutionInMinutes);
   int ProducerId(const NFmiMetTime &theTime, bool fAllowInterpolation = false);
   int ProducerId(int theIndex) const;

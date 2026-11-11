@@ -22,13 +22,13 @@ std::string GetDictionaryString(const char *theMagicWord)
     // tabulaattori on siten sanakirjassa
     std::string finalMagicWord(baseWords);
     finalMagicWord += usedMagicWord;
-    auto dictionarySentense =
+    auto dictionarySentence =
         NFmiSettings::Optional<std::string>(finalMagicWord, std::string(theMagicWord));
     NFmiStringTools::ReplaceAll(
-        dictionarySentense,
+        dictionarySentence,
         R"(\t)",
         "\t");  // pitää muuttaa mahdolliset "\\t"-merkkijonot takaisin tabulaattoreiksi
-    return dictionarySentense;
+    return dictionarySentence;
   }
   catch (...)
   {

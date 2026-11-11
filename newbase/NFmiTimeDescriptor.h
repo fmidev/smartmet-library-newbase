@@ -27,12 +27,12 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
 
   NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
                      const NFmiTimeBag &theValidTimeBag,
-                     FmiTimeLocalzation theIsLocalTime = kUTC,
+                     FmiTimeLocalization theIsLocalTime = kUTC,
                      bool theIsInterpolation = false);
 
   NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
                      const NFmiTimeList &theTimeList,
-                     FmiTimeLocalzation theIsLocalTime = kUTC,
+                     FmiTimeLocalization theIsLocalTime = kUTC,
                      bool theIsInterpolation = false);
 
   NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag, const NFmiMetTime &theValidTime);
@@ -107,10 +107,10 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   virtual NFmiTimeBag GetActivePeriod();
 
   void SetLocalTimes(float theLongitude);  // Muuttaa ajan paikalliseksi
-  FmiTimeLocalzation TimeLocalzation() const;
+  FmiTimeLocalization TimeLocalization() const;
   bool IsInterpolation() const;
-  bool IsOriginLastest() const;
-  void OriginLastest(bool theLastest);
+  bool IsOriginLatest() const;
+  void OriginLatest(bool theLatest);
   NFmiTimePerioid Resolution() const;
   NFmiTimePerioid ActiveResolution();
 
@@ -136,7 +136,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   std::istream& Read(std::istream& file) override;
 
   unsigned long LocalTimeStep() const;
-  void ReduseTimeBag();
+  void ReduceTimeBag();
   void ExtendTimeBag();
   //  unsigned long TimeResolution(); // poistettu, käytä Resolution-metodia
   bool IsInside(const NFmiMetTime &theTime) const;
@@ -163,9 +163,9 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
   // -------------------------------------------------------
 
   bool itsTimeBagIdent;
-  FmiTimeLocalzation itsIsLocalTime;
+  FmiTimeLocalization itsIsLocalTime;
   bool itsIsInterpolation;
-  bool itsIsOriginLastest;
+  bool itsIsOriginLatest;
   unsigned long itsLocalTimeStep;  // Kesken
   bool *itsActivity;
 
@@ -180,7 +180,7 @@ class NFmiTimeDescriptor : public NFmiDataDescriptor
  */
 // ----------------------------------------------------------------------
 
-inline FmiTimeLocalzation NFmiTimeDescriptor::TimeLocalzation() const
+inline FmiTimeLocalization NFmiTimeDescriptor::TimeLocalization() const
 {
   return itsIsLocalTime;
 }
@@ -200,19 +200,19 @@ inline bool NFmiTimeDescriptor::IsInterpolation() const
  */
 // ----------------------------------------------------------------------
 
-inline bool NFmiTimeDescriptor::IsOriginLastest() const
+inline bool NFmiTimeDescriptor::IsOriginLatest() const
 {
-  return itsIsOriginLastest;
+  return itsIsOriginLatest;
 }
 // ----------------------------------------------------------------------
 /*!
- * \param theLastest Undocumented
+ * \param theLatest Undocumented
  */
 // ----------------------------------------------------------------------
 
-inline void NFmiTimeDescriptor::OriginLastest(bool theLastest)
+inline void NFmiTimeDescriptor::OriginLatest(bool theLatest)
 {
-  itsIsOriginLastest = theLastest;
+  itsIsOriginLatest = theLatest;
 }
 // ----------------------------------------------------------------------
 /*!

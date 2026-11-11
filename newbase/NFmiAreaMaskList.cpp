@@ -44,8 +44,8 @@ std::shared_ptr<NFmiAreaMaskList> NFmiAreaMaskList::CreateShallowCopy(
       std::shared_ptr<NFmiAreaMaskList> copyMaskList(new NFmiAreaMaskList());
       for (theOther->Reset(); theOther->Next();)
       {
-        std::shared_ptr<NFmiAreaMask> copyedMask(theOther->Current()->Clone());
-        copyMaskList->Add(copyedMask);
+        std::shared_ptr<NFmiAreaMask> copiedMask(theOther->Current()->Clone());
+        copyMaskList->Add(copiedMask);
       }
       copyMaskList->CheckIfMaskUsed();
       return copyMaskList;
@@ -372,7 +372,7 @@ bool NFmiAreaMaskList::CheckIfMaskUsed()
  */
 // ----------------------------------------------------------------------
 
-bool NFmiAreaMaskList::SyncronizeMaskTime(const NFmiMetTime &theTime)
+bool NFmiAreaMaskList::SynchronizeMaskTime(const NFmiMetTime &theTime)
 {
   try
   {

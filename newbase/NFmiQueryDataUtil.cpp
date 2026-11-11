@@ -320,7 +320,7 @@ bool GetProducerIdsLister(NFmiQueryInfo *theInfo, NFmiProducerIdLister &theProdu
     if (theInfo)
     {
       if (theInfo->FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
-        return theProducerIdsLister.IntepretProducerIdString(string(theInfo->GetCurrentKeyValue()));
+        return theProducerIdsLister.InterpretProducerIdString(string(theInfo->GetCurrentKeyValue()));
     }
     return false;
   }
@@ -1202,16 +1202,16 @@ namespace
 void CopyPrioritizedLevelValues(NFmiFastQueryInfo &destInfo,
                                 NFmiFastQueryInfo &sourceInfo1,
                                 NFmiFastQueryInfo &sourceInfo2,
-                                int thePriorisedDataNumber)
+                                int thePrioritizedDataNumber)
 {
   for (destInfo.ResetLevel(), sourceInfo1.ResetLevel(), sourceInfo2.ResetLevel();
        destInfo.NextLevel() && sourceInfo1.NextLevel() && sourceInfo2.NextLevel();)
   {
     float value1 = sourceInfo1.FloatValue();
     float value2 = sourceInfo2.FloatValue();
-    float value = (thePriorisedDataNumber == 2) ? value2 : value1;
+    float value = (thePrioritizedDataNumber == 2) ? value2 : value1;
     if (value == kFloatMissing)  // jos priorisoitu data oli puuttuvaa, annetaan sitten se toinen
-      value = (thePriorisedDataNumber == 2) ? value1 : value2;
+      value = (thePrioritizedDataNumber == 2) ? value1 : value2;
 
     destInfo.FloatValue(value);
   }
@@ -1223,7 +1223,7 @@ void CombineLocationValues(NFmiFastQueryInfo &destInfo,
                            NFmiFastQueryInfo &sourceInfo2,
                            bool useInfo1,
                            bool useInfo2,
-                           int thePriorisedDataNumber)
+                           int thePrioritizedDataNumber)
 {
   //				for(destInfo.ResetParam(), sourceInfo1.ResetParam(),
   // sourceInfo2.ResetParam(); destInfo.NextParam() && sourceInfo1.NextParam() &&
@@ -1246,7 +1246,7 @@ void CombineLocationValues(NFmiFastQueryInfo &destInfo,
             (useInfo2 && useInfo2Time)))  // jos kummastakaan ei löytynyt parametria ei tehdä mitään
         continue;                         // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
-      CopyPrioritizedLevelValues(destInfo, sourceInfo1, sourceInfo2, thePriorisedDataNumber);
+      CopyPrioritizedLevelValues(destInfo, sourceInfo1, sourceInfo2, thePrioritizedDataNumber);
     }
   }
 }
@@ -1263,14 +1263,14 @@ void CombineLocationValues(NFmiFastQueryInfo &destInfo,
  *
  * \param theSourceData1 Undocumented
  * \param theSourceData2 Undocumented
- * \param thePriorisedDataNumber Undocumented
+ * \param thePrioritizedDataNumber Undocumented
  * \return Undocumented
  */
 // ----------------------------------------------------------------------
 
 NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1,
                                                    NFmiQueryData *theSourceData2,
-                                                   int thePriorisedDataNumber)
+                                                   int thePrioritizedDataNumber)
 {
   try
   {
@@ -1305,7 +1305,7 @@ NFmiQueryData *NFmiQueryDataUtil::CombineLocations(NFmiQueryData *theSourceData1
         continue;                   // tähän ei oikeasti saisi mennä!!!!!!! assertin paikka?
 
       CombineLocationValues(
-          destInfo, sourceInfo1, sourceInfo2, useInfo1, useInfo2, thePriorisedDataNumber);
+          destInfo, sourceInfo1, sourceInfo2, useInfo1, useInfo2, thePrioritizedDataNumber);
     }
     return destData;
   }
@@ -4443,7 +4443,7 @@ NFmiQueryData *NFmiQueryDataUtil::DoNowCastFiltering(NFmiFastQueryInfo &theInfo1
     NFmiMetTime firstTime = theInfo2.ValidTime();
     NFmiMetTime lastTime = theInfo1.ValidTimes().LastTime();
     NFmiTimeBag timeBag(firstTime, lastTime, period);
-    FmiTimeLocalzation localization = kUTC;
+    FmiTimeLocalization localization = kUTC;
     bool interpolation = false;
 
     NFmiTimeDescriptor timeDescriptor(originTime, timeBag, localization, interpolation);

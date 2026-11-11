@@ -90,7 +90,7 @@ class NFmiLogger
 
  private:
   void UpdateFileNamesAndPaths(
-      bool updatePath);  // tämä päivittää itsAbsolutLogFilePath:in ja itsCurrentLogFileName:n
+      bool updatePath);  // tämä päivittää itsAbsoluteLogFilePath:in ja itsCurrentLogFileName:n
   void MakeCurrentLogFileName();
   std::string MakeBackupFileFilter();
   bool CheckBackupSystem();  // tekee kaiken mahdollisen liittyen mahdollisiin backup systeemeihin
@@ -119,7 +119,7 @@ class NFmiLogger
   // esim. kImportantInfo + kError (2 + 64 = 66)
   int itsUsedLoggingLevels;
   std::string itsLogFilePath;
-  std::string itsAbsolutLogFilePath;  // tätä käytetään sitten sisäisesti, eikä olla työhakemiston
+  std::string itsAbsoluteLogFilePath;  // tätä käytetään sitten sisäisesti, eikä olla työhakemiston
                                       // muutosten armoilla
   std::string itsLogFileBaseName;
   std::string itsTimeStampStringFormat;  // tähän tulee tulevaisuudessa hieno formatointi, mutta

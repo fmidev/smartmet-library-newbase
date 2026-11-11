@@ -378,7 +378,7 @@ class NFmiQueryDataUtil
 
   static NFmiQueryData *CombineLocations(NFmiQueryData *theSourceData1,
                                          NFmiQueryData *theSourceData2,
-                                         int thePriorisedDataNumber);
+                                         int thePrioritizedDataNumber);
 
   static NFmiQueryData* Interpolate2OtherGrid(NFmiQueryData* theSourceData,
                                               const NFmiGrid* theWantedGrid,

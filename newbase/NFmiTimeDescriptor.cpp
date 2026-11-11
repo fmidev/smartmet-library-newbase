@@ -52,7 +52,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor()
       itsTimeBagIdent(true),
       itsIsLocalTime(kUTC),
       itsIsInterpolation(false),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
@@ -84,7 +84,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor()
 
 NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
                                        const NFmiTimeBag &theValidTimeBag,
-                                       FmiTimeLocalzation theIsLocalTime,
+                                       FmiTimeLocalization theIsLocalTime,
                                        bool theIsInterpolation)
     : itsOriginTimeBag(new NFmiTimeBag(theOriginTime, theOriginTime, 0)),
       itsValidTimeBag(new NFmiTimeBag(theValidTimeBag)),
@@ -92,7 +92,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsTimeBagIdent(true),
       itsIsLocalTime(theIsLocalTime),
       itsIsInterpolation(theIsInterpolation),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(
           new bool[itsValidTimeBag ? itsValidTimeBag->GetSize() : itsTimeList->NumberOfItems()])
@@ -123,7 +123,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
 
 NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
                                        const NFmiTimeList &theTimeList,
-                                       FmiTimeLocalzation theIsLocalTime,
+                                       FmiTimeLocalization theIsLocalTime,
                                        bool theIsInterpolation)
     : itsOriginTimeBag(new NFmiTimeBag(theOriginTime, theOriginTime, 0)),
       itsValidTimeBag(nullptr),
@@ -131,7 +131,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsTimeBagIdent(true),
       itsIsLocalTime(theIsLocalTime),
       itsIsInterpolation(theIsInterpolation),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
@@ -176,7 +176,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag,
       itsTimeBagIdent(false),
       itsIsLocalTime(kUTC),
       itsIsInterpolation(false),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(new bool[itsOriginTimeBag->GetSize()])
 {
@@ -206,7 +206,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeBag &theOriginTimeBag,
       itsTimeBagIdent(false),
       itsIsLocalTime(kUTC),
       itsIsInterpolation(false),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(new bool[itsOriginTimeBag->GetSize()])
 {
@@ -243,7 +243,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiMetTime &theOriginTime,
       itsTimeBagIdent(true),
       itsIsLocalTime(kUTC),
       itsIsInterpolation(false),
-      itsIsOriginLastest(false),
+      itsIsOriginLatest(false),
       itsLocalTimeStep(0),
       itsActivity(nullptr)
 {
@@ -290,7 +290,7 @@ NFmiTimeDescriptor::NFmiTimeDescriptor(const NFmiTimeDescriptor& theTimeDescript
       itsTimeBagIdent(theTimeDescriptor.itsTimeBagIdent),
       itsIsLocalTime(theTimeDescriptor.itsIsLocalTime),
       itsIsInterpolation(theTimeDescriptor.itsIsInterpolation),
-      itsIsOriginLastest(theTimeDescriptor.itsIsOriginLastest),
+      itsIsOriginLatest(theTimeDescriptor.itsIsOriginLatest),
       itsLocalTimeStep(theTimeDescriptor.itsLocalTimeStep),
       itsActivity(nullptr)
 {
@@ -406,7 +406,7 @@ void NFmiTimeDescriptor::ExtendTimeBag()
  */
 // ----------------------------------------------------------------------
 
-void NFmiTimeDescriptor::ReduseTimeBag()
+void NFmiTimeDescriptor::ReduceTimeBag()
 {
   try
   {
@@ -1184,7 +1184,7 @@ bool NFmiTimeDescriptor::operator==(const NFmiTimeDescriptor &theTimeDescriptor)
     bool retVal = true;
     if (differ_when_both_set(itsTimeBagIdent, theTimeDescriptor.itsTimeBagIdent) ||
         differ_when_both_set(itsIsInterpolation, theTimeDescriptor.itsIsInterpolation) ||
-        differ_when_both_set(itsIsOriginLastest, theTimeDescriptor.itsIsOriginLastest) ||
+        differ_when_both_set(itsIsOriginLatest, theTimeDescriptor.itsIsOriginLatest) ||
         differ_when_both_set(itsLocalTimeStep, theTimeDescriptor.itsLocalTimeStep) ||
         differ_when_both_set(itsIsLocalTime, theTimeDescriptor.itsIsLocalTime))
       return false;
@@ -1292,7 +1292,7 @@ std::ostream &NFmiTimeDescriptor::Write(std::ostream &file) const
 
     file << static_cast<unsigned long>(itsIsLocalTime) << " "  // Onko paikallista aikaa
          << itsIsInterpolation << " "                          // Interpoloidaanko
-         << itsIsOriginLastest << " "  // Haetaanko viimeisimmän tuotteen perusteella
+         << itsIsOriginLatest << " "  // Haetaanko viimeisimmän tuotteen perusteella
          << itsTimeBagIdent << " "     // Hakutapa
          << itsLocalTimeStep << " "    // Varalla
          << 0 << " "                   // Varalla
@@ -1374,10 +1374,10 @@ std::istream &NFmiTimeDescriptor::Read(std::istream &file)
     unsigned long theIsLocalTime = 0;
     unsigned long dummy = 0;
 
-    file >> theIsLocalTime >> itsIsInterpolation >> itsIsOriginLastest >> itsTimeBagIdent >>
+    file >> theIsLocalTime >> itsIsInterpolation >> itsIsOriginLatest >> itsTimeBagIdent >>
         itsLocalTimeStep >> dummy >> dummy;
 
-    itsIsLocalTime = FmiTimeLocalzation(theIsLocalTime);
+    itsIsLocalTime = FmiTimeLocalization(theIsLocalTime);
 
     if (itsTimeBagIdent)
     {
@@ -1455,7 +1455,7 @@ void NFmiTimeDescriptor::SetLocalTimes(const float theLongitude)
 {
   try
   {
-    if (TimeLocalzation() == kUTC)
+    if (TimeLocalization() == kUTC)
     {
       itsIsLocalTime = kLongitude;
 

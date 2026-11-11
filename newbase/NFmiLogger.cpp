@@ -531,7 +531,7 @@ bool NFmiLogger::Log2File(const string &theFinalMessage)
   {
     CheckBackupSystem();  // tekee kaiken backup-tiedostoihin liittyvän
     ofstream out;
-    if (OpenFile(itsCurrentLogFileName, itsAbsolutLogFilePath, out))
+    if (OpenFile(itsCurrentLogFileName, itsAbsoluteLogFilePath, out))
     {
       out << theFinalMessage << endl;
       out.close();
@@ -786,7 +786,7 @@ bool NFmiLogger::CleanBackupFiles()
         if (TooOldBackupFileTimeStamp(fileTimeStamp))
         {
           continueLoop = true;
-          string removeFileFullName(itsAbsolutLogFilePath);
+          string removeFileFullName(itsAbsoluteLogFilePath);
           removeFileFullName += foundFileName;
           bool removeStatus = NFmiFileSystem::RemoveFile(removeFileFullName);
           if (!removeStatus)
@@ -994,7 +994,7 @@ void NFmiLogger::MakeCurrentLogFileName()
 {
   try
   {
-    itsCurrentLogFileName = itsAbsolutLogFilePath;
+    itsCurrentLogFileName = itsAbsoluteLogFilePath;
     if (itsCurrentLogFileName[itsCurrentLogFileName.size() - 1] != kFmiDirectorySeparator)
       itsCurrentLogFileName += kFmiDirectorySeparator;
 
@@ -1072,7 +1072,7 @@ string NFmiLogger::MakeBackupFileNameTimeStamp()
  */
 // ----------------------------------------------------------------------
 
-// tämä päivittää itsAbsolutLogFilePath:in ja itsCurrentLogFileName:n
+// tämä päivittää itsAbsoluteLogFilePath:in ja itsCurrentLogFileName:n
 // HUOM!! Tässä pitää ottaa huomioon, että currentti working directory on oikeassa paikassa.
 // UNIX yhteensopivuus ???
 // Pitäisikö fullpath-funktio tehdä NFmiFileSystem:iin??????????
@@ -1087,15 +1087,15 @@ void NFmiLogger::UpdateFileNamesAndPaths(bool updatePath)
       char tmpFullPathStr[pathSize] = "";
 #ifndef UNIX
       ::_fullpath(tmpFullPathStr, itsLogFilePath.c_str(), pathSize);  // UNIX????
-      itsAbsolutLogFilePath = tmpFullPathStr;
+      itsAbsoluteLogFilePath = tmpFullPathStr;
 #else
       getcwd(tmpFullPathStr, pathSize);
-      itsAbsolutLogFilePath = tmpFullPathStr;
-      itsAbsolutLogFilePath += kFmiDirectorySeparator;
-      itsAbsolutLogFilePath += itsLogFilePath;
+      itsAbsoluteLogFilePath = tmpFullPathStr;
+      itsAbsoluteLogFilePath += kFmiDirectorySeparator;
+      itsAbsoluteLogFilePath += itsLogFilePath;
 #endif
-      if (itsAbsolutLogFilePath[itsAbsolutLogFilePath.size() - 1] != kFmiDirectorySeparator)
-        itsAbsolutLogFilePath += kFmiDirectorySeparator;
+      if (itsAbsoluteLogFilePath[itsAbsoluteLogFilePath.size() - 1] != kFmiDirectorySeparator)
+        itsAbsoluteLogFilePath += kFmiDirectorySeparator;
     }
     MakeCurrentLogFileName();
     GetLastLoggetTimeFromLogFile();

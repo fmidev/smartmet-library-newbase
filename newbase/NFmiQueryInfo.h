@@ -1200,7 +1200,7 @@ inline const NFmiMetTime &NFmiQueryInfo::Time() const
 
 inline bool NFmiQueryInfo::IsLocalTime() const
 {
-  return (itsTimeDescriptor ? (itsTimeDescriptor->TimeLocalzation() != kUTC) : false);
+  return (itsTimeDescriptor ? (itsTimeDescriptor->TimeLocalization() != kUTC) : false);
 }
 
 // ----------------------------------------------------------------------

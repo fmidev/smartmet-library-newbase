@@ -251,12 +251,12 @@ def includeClasses(mod):
     NFmiTimeDescriptor.add_constructor([param('const NFmiTimeDescriptor&', 'theTimeDescriptor')])
     NFmiTimeDescriptor.add_constructor([param('const NFmiMetTime&','theOriginTime'),
                                         param('const NFmiTimeList&','theTimeList'),
-					param('FmiTimeLocalzation','theIsLocalTime',default_value='kUTC'),
+					param('FmiTimeLocalization','theIsLocalTime',default_value='kUTC'),
 					param('bool','theIsInterpolation',default_value='false')])
 					
     NFmiTimeDescriptor.add_constructor([param('const NFmiMetTime&','theOriginTime'),
                                         param('const NFmiTimeBag&','theValidTimeBag'),
-					param('FmiTimeLocalzation','theIsLocalTime',default_value='kUTC'),
+					param('FmiTimeLocalization','theIsLocalTime',default_value='kUTC'),
 					param('bool','theIsInterpolation',default_value='false')])
     
     NFmiTimeList.add_constructor([])
@@ -614,7 +614,7 @@ def includeEnums(mod):
     print("// {} members of FmiParameterName extracted from NFmiParameterName.h".format(len(param_names_members)))
     mod.add_enum('FmiParameterName', param_names_members)
 
-    mod.add_enum('FmiTimeLocalzation',['kUTC','kLongitude','kState'])
+    mod.add_enum('FmiTimeLocalization',['kUTC','kLongitude','kState'])
     print("//==================== End of Enums ==============")
 
 def generateCode():

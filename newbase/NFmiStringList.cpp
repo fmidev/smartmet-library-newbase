@@ -275,22 +275,22 @@ void NFmiStringList::Add(NFmiString *theStr, unsigned short theLengthLimitForStr
   {
     auto *strLeft = new NFmiString(*theStr);
     NFmiString *tempStr = nullptr;
-    unsigned long lineLenght = theLengthLimitForStrItem;
+    unsigned long lineLength = theLengthLimitForStrItem;
     unsigned long ind = 0;
 
     for (bool more = true; more; more = strLeft->GetLen() > 0)
     {
-      if (strLeft->GetLen() <= lineLenght)  // only on line left
+      if (strLeft->GetLen() <= lineLength)  // only on line left
       {
         Add(strLeft);
         return;
       }
 
-      ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLenght);
-      // if line feed not found, the end of the word which is longer than lineLenght must be splitt
+      ind = strLeft->SearchLast(reinterpret_cast<const unsigned char *>(" "), lineLength);
+      // if line feed not found, the end of the word which is longer than lineLength must be splitt
       // into the next line
       if (!ind)
-        ind = lineLenght;
+        ind = lineLength;
       // the line feed found stays at the end of the line added to the list
       tempStr = new NFmiString(strLeft->GetChars(1, ind));
       Add(tempStr);

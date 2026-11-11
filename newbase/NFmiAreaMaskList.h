@@ -34,7 +34,9 @@ class NFmiAreaMaskList
   bool IsMasked(const NFmiPoint &theLatLon);
   double MaskValue(const NFmiPoint &theLatLon);
   bool CheckIfMaskUsed();
-  bool SyncronizeMaskTime(const NFmiMetTime &theTime);
+  bool SynchronizeMaskTime(const NFmiMetTime &theTime);
+  // The former misspelt name, kept for the SmartMet Workstation
+  bool SyncronizeMaskTime(const NFmiMetTime &theTime) { return SynchronizeMaskTime(theTime); }
 
   bool Index(unsigned long index);    // 1:sta alkava indeksi, sisäinen muuttuja itsCurrentIndex on
                                       // taas 0:sta alkava

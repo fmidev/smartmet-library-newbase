@@ -3669,7 +3669,7 @@ float CalcLogInterpolatedWindWectorValue(float x1, float x2, float x, float wv1,
   }
 }
 
-double GetLogaritmicFactor(double x1, double x2, double x)
+double GetLogarithmicFactor(double x1, double x2, double x)
 {
   try
   {
@@ -3840,7 +3840,7 @@ bool NFmiFastQueryInfo::GetLevelIndexFromLevelPressures(double pressure, double 
     }  // end of for loop
     if (foundWantedLevels)
     {
-      double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
+      double w = GetLogarithmicFactor(pressureValue, lastPressure, pressure);
       pInd = i - w;
       return true;
     }
@@ -3914,7 +3914,7 @@ bool NFmiFastQueryInfo::GetLevelIndexFromPressureParam(const NFmiPoint &theLatlo
     //			if(!fPressureParamIsRising)
     //				PreviousLevel();
 
-    double w = GetLogaritmicFactor(pressureValue, lastPressure, pressure);
+    double w = GetLogarithmicFactor(pressureValue, lastPressure, pressure);
     pInd = itsLevelIndex - w;
     return true;
   }
@@ -5215,16 +5215,16 @@ std::vector<float> NFmiFastQueryInfo::ConvertPressuresToHeights(
 {
   try
   {
-    std::vector<float> heigths(thePressures.size(), kFloatMissing);
+    std::vector<float> heights(thePressures.size(), kFloatMissing);
     for (size_t i = 0; i < thePressures.size(); i++)
     {
       double heightValue =
           ::CalcHeightAtPressure(thePressures[i]) *
           1000.;  // CalcHeightAtPressure palauttaa kilometreissa, jotka muunnetaan metreiksi
-      heigths[i] = static_cast<float>(heightValue);
+      heights[i] = static_cast<float>(heightValue);
     }
 
-    return heigths;
+    return heights;
   }
   catch (...)
   {

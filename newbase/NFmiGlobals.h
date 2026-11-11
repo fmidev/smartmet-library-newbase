@@ -56,7 +56,7 @@ enum FmiInterpolationMethod
 };
 
 //! Undocumented
-enum FmiTimeLocalzation
+enum FmiTimeLocalization
 {
   kUTC,
   kLongitude,

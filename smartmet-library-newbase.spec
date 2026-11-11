@@ -166,7 +166,8 @@ fi
 
 %changelog
 * Wed Nov 11 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.11-1.fmi
-- Fixed typos in messages and comments
+- Fixed typos in messages, comments and identifiers
+- Fixed misspelt identifiers (ABI change); SyncronizeMaskTime and IntepretProducerIdString remain as forwarders for the SmartMet Workstation
 
 * Sat Nov 7 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.11.7-1.fmi
 - Initialize member variables that some constructors left uninitialized

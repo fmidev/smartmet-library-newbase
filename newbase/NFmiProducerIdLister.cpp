@@ -52,7 +52,7 @@ NFmiProducerIdLister::NFmiProducerIdLister(const std::string& theProducersString
 {
   try
   {
-    IntepretProducerIdString(theProducersString);
+    InterpretProducerIdString(theProducersString);
     // pitäisikö paluuarvo tarkistaa ja jos epäonnistui, heittää poikkeus?
   }
   catch (...)
@@ -71,7 +71,7 @@ NFmiProducerIdLister::NFmiProducerIdLister(NFmiQueryInfo& theInfo) : itsDefaultP
   try
   {
     if (theInfo.FindFirstKey(NFmiQueryDataUtil::GetOfficialQueryDataProdIdsKey()))
-      IntepretProducerIdString(string(theInfo.GetCurrentKeyValue()));
+      InterpretProducerIdString(string(theInfo.GetCurrentKeyValue()));
   }
   catch (...)
   {
@@ -132,14 +132,14 @@ std::string NFmiProducerIdLister::MakeProducerIdString()
 }
 
 //--------------------------------------------------------
-// IntepretProducerIdString
+// InterpretProducerIdString
 //--------------------------------------------------------
 /*!
  * Purkaa annetun stringin jos mahdollista ja muodostaa siitä timebagi, ja producer id vectorin.
  * Palauttaa false, jos ei voinut purkaa/tulkata
  * annettua stringiä.
  */
-bool NFmiProducerIdLister::IntepretProducerIdString(const std::string &theString)
+bool NFmiProducerIdLister::InterpretProducerIdString(const std::string &theString)
 {
   try
   {
