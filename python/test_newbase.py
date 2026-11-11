@@ -24,7 +24,7 @@ def readQueryData(queryData,coordDict,Variables):
     fqi.FirstLevel()
     
     data=[] 
-    #go trough locations
+    #go through locations
     while fqi.NextLocation():
         fqi.ResetTime() #reset time before next parameter 		
         pointID ="%06d" % fqi.Location().GetIdent() #get point id
@@ -40,7 +40,7 @@ def readQueryData(queryData,coordDict,Variables):
         idx=coordDict["statId"].index(id)
         lat=("%10.7f" % coordDict["lat"][idx]).strip()
         lon=("%10.7f" % coordDict["lon"][idx]).strip()
-        #go trough times
+        #go through times
         
         while fqi.NextTime():
            fqi.ResetParam()
@@ -54,7 +54,7 @@ def readQueryData(queryData,coordDict,Variables):
               "latitude": lat,
               "longitude": lon
            }
-            #go trough parameters in querydata
+            #go through parameters in querydata
            while fqi.NextParam():
     
                 #get parameter id
