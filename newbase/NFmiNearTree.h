@@ -99,7 +99,6 @@
 
 #pragma once
 
-#include "NFmiDef.h"
 #include "NFmiNearTreeImpl.h"
 #include <algorithm>
 #include <chrono>

@@ -16,15 +16,17 @@
 
 #include "NFmiLocationBag.h"
 #include "NFmiArea.h"
+#include "NFmiIndividual.h"
 #include "NFmiRadarStation.h"
 #include "NFmiStation.h"
-#include "NFmiValueString.h"
 #include "NFmiVersion.h"
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <algorithm>
-#include <functional>
+#include <cmath>
+#include <istream>
+#include <string>
 
 using namespace std;
 

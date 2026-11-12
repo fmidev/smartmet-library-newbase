@@ -13,7 +13,9 @@
 // ======================================================================
 
 #include "NFmiDataModifierAvgAbs.h"
+#include "NFmiGlobals.h"
 #include "NFmiQueryInfo.h"
+#include <cmath>
 
 // ----------------------------------------------------------------------
 /*!

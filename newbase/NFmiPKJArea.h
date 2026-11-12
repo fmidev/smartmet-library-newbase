@@ -8,6 +8,11 @@
 #pragma once
 
 #include "NFmiKKJArea.h"
+#include "NFmiPoint.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Undocumented
 class NFmiPKJArea : public NFmiKKJArea

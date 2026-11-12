@@ -8,8 +8,15 @@
 #pragma once
 
 #include "NFmiQueryInfo.h"
+#include "NFmiSaveBaseFactory.h"
+#include "NFmiVPlaceDescriptor.h"
+#include <iosfwd>
 
+class NFmiHPlaceDescriptor;
+class NFmiParamDescriptor;
 class NFmiQueryData;
+class NFmiString;
+class NFmiTimeDescriptor;
 
 //! Undocumented
 

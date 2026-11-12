@@ -15,6 +15,7 @@
 #include "NFmiDataIterator.h"
 #include "NFmiAreaMask.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

@@ -13,9 +13,11 @@
 // ======================================================================
 
 #include "NFmiDataModifierCombi.h"
-
+#include "NFmiGlobals.h"
 #include "NFmiIntegrationSelector.h"
 #include <algorithm>
+
+class NFmiCombinedParam;
 
 // ----------------------------------------------------------------------
 /*!

@@ -5,11 +5,12 @@
  */
 // ======================================================================
 
-#include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
 #include <regression/tframe.h>
-#include <cmath>
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
 
 //! Protection against conflicts with global functions
 namespace NFmiSvgPathTest

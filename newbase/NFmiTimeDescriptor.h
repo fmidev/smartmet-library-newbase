@@ -12,6 +12,8 @@
 #include "NFmiMetTime.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiTimeBag.h"
+#include "NFmiTimePeriod.h"
+#include <iosfwd>
 
 class NFmiTimeList;
 

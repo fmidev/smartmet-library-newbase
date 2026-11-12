@@ -8,7 +8,12 @@
 #pragma once
 
 #include "NFmiDataPool.h"
+#include "NFmiGlobals.h"
 #include "NFmiPoint.h"
+#include <cstddef>
+#include <iosfwd>
+
+class NFmiTransformList;
 
 //! Undocumented
 class NFmiGridBase

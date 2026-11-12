@@ -15,11 +15,10 @@
 // ======================================================================
 
 #include "NFmiCommentStripper.h"
-
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 
 using namespace std;
 

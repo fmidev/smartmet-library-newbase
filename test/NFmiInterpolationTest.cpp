@@ -11,6 +11,8 @@
 #include "NFmiStringTools.h"
 #include <regression/tframe.h>
 #include <cmath>
+#include <iostream>
+#include <string>
 
 using namespace std;
 

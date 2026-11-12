@@ -9,7 +9,9 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
-#include "NFmiMetTime.h"
+#include "NFmiTime.h"
+
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiDataModifierExtreme : public NFmiDataModifier

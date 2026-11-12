@@ -7,8 +7,11 @@
 
 #pragma once
 
+#include "NFmiDataModifierBase.h"
 #include "NFmiParamDataModifier.h"
 
+class NFmiDataIdent;
+class NFmiLevel;
 class NFmiQueryInfo;
 
 //! Undocumented

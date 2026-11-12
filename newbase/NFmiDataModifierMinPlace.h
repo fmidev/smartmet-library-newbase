@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "NFmiDataModifier.h"
 #include "NFmiDataModifierExtremePlace.h"
 
 //! Undocumented

@@ -5,11 +5,12 @@
  */
 
 #include "NFmiMilliSecondTimer.h"
+#include "NFmiStringTools.h"
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
-
 #include <algorithm>
 #include <iomanip>
+#include <sstream>
 
 namespace
 {

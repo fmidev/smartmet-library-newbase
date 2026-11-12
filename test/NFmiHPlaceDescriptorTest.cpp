@@ -6,12 +6,16 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
+#include "NFmiLocation.h"
+#include "NFmiPoint.h"
 #include "NFmiQueryData.h"
-#include "NFmiStringTools.h"
+#include "NFmiQueryInfo.h"
+#include "NFmiString.h"
 #include <regression/tframe.h>
-#include <fstream>
-#include <stdexcept>
+#include <iostream>
 #include <string>
+#include <utility>
+#include <vector>
 
 using namespace std;
 

@@ -13,8 +13,14 @@
 // ======================================================================
 
 #include "NFmiRegressionItem.h"
-#include "NFmiSuperSmartInfo.h"
+#include "NFmiDataIdent.h"
+#include "NFmiGlobals.h"
+#include "NFmiParam.h"
+#include "NFmiQueryInfo.h"
 #include <macgyver/Exception.h>
+#include <string>
+
+class NFmiLevel;
 
 // ----------------------------------------------------------------------
 /*!

@@ -13,8 +13,10 @@
 // ======================================================================
 
 #include "NFmiModifiedDataIterator.h"
+#include "NFmiDataModifier.h"
 #include "NFmiInfoModifier.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

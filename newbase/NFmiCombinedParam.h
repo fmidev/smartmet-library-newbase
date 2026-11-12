@@ -10,7 +10,6 @@
 #include "NFmiGlobals.h"
 #include "NFmiMetTime.h"
 #include "NFmiParameterName.h"
-#include "NFmiProducer.h"
 
 //! Undocumented
 enum FmiWeatherParamType
@@ -91,14 +90,11 @@ const unsigned long kTNoFog = 0;
 const unsigned long kTModerateFog = 1;
 const unsigned long kTDenseFog = 2;
 
-class NFmiDataIdent;
-class NFmiParamBag;
-class NFmiQueryInfo;
-class NFmiPoint;
-class NFmiParamDataModifierList;
-class NFmiDataModifier;
 class NFmiDataModifierCombi;
 class NFmiIntegrationSelector;
+class NFmiParamBag;
+class NFmiPoint;
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiCombinedParam

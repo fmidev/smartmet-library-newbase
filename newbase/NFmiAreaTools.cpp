@@ -13,21 +13,21 @@
 // ======================================================================
 
 #include "NFmiAreaTools.h"
-#include "NFmiPoint.h"
-#include <macgyver/Exception.h>
-#include <algorithm>
-#include <iostream>
-
+#include "NFmiArea.h"
 #include "NFmiEquidistArea.h"
 #include "NFmiGnomonicArea.h"
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
 #include "NFmiMercatorArea.h"
+#include "NFmiPoint.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiTransverseMercatorArea.h"
 #include "NFmiYKJArea.h"
+#include <macgyver/Exception.h>
+#include <algorithm>
+#include <string>
 
 // Local utility functions
 

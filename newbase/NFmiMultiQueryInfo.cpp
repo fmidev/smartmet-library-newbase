@@ -21,15 +21,24 @@
 
 #include "NFmiMultiQueryInfo.h"
 #include "NFmiCombinedParam.h"
+#include "NFmiDataIdent.h"
 #include "NFmiFileSystem.h"
+#include "NFmiHPlaceDescriptor.h"
 #include "NFmiInterpolation.h"
 #include "NFmiMetTime.h"
+#include "NFmiParamDescriptor.h"
+#include "NFmiParameterName.h"
 #include "NFmiQueryData.h"
-#include <boost/algorithm/string/predicate.hpp>
+#include "NFmiVPlaceDescriptor.h"
 #include <macgyver/Exception.h>
-#include <macgyver/FileSystem.h>
+#include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <cstdlib>
+#include <set>
 #include <utility>
+
+class NFmiRawData;
 
 // ----------------------------------------------------------------------
 /*!

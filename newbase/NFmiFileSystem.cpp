@@ -6,24 +6,25 @@
 // ======================================================================
 
 #include "NFmiFileSystem.h"
+#include "NFmiDef.h"
 #include "NFmiFileString.h"
+#include "NFmiString.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
-
 #include <algorithm>
-#include <filesystem>
-
 #include <cctype>  // for isalpha
 #include <cstdio>
-#include <ctime>    // for time()
+#include <cstring>
+#include <ctime>  // for time()
+#include <filesystem>
 #include <fstream>  // for time()
+#include <map>
 #include <sstream>
-#include <stdexcept>
+#include <system_error>
 #include <vector>  // for time()
 
 #ifndef _MSC_VER
-#include <dirent.h>
 #else
 // Must use MoveFileExA -funktion on Windows and this is how you have to include and do required
 // stuff
@@ -43,24 +44,18 @@
 #endif
 #endif
 
-#include <cassert>
-
 #ifdef BOOST
-// Finding files is implemented in Linux using boost filesystem & regex
-#include <boost/algorithm/string/predicate.hpp>  //Lasse
 #include <boost/regex.hpp>
 #endif
 
 extern "C"
 {
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #ifndef UNIX
 #include <direct.h>
 #include <io.h>
 #else
-#include <sys/dir.h>  // opendir() etc
 #include <cerrno>
 #include <unistd.h>
 #endif

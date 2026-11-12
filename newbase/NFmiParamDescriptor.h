@@ -9,7 +9,13 @@
 
 #include "NFmiDataDescriptor.h"
 #include "NFmiParamBag.h"
+#include "NFmiParameterName.h"
 #include "NFmiSaveBaseFactory.h"
+#include <iosfwd>
+
+class NFmiDataIdent;
+class NFmiParam;
+class NFmiProducer;
 
 //! Undocumented
 class NFmiParamDescriptor : public NFmiDataDescriptor

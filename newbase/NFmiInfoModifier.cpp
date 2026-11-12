@@ -15,6 +15,10 @@
 #include "NFmiInfoModifier.h"
 #include "NFmiQueryInfo.h"
 #include <macgyver/Exception.h>
+#include <string>
+
+class NFmiDataIdent;
+class NFmiLevel;
 
 // ----------------------------------------------------------------------
 /*!

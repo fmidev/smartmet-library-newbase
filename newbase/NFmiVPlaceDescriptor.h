@@ -9,6 +9,9 @@
 
 #include "NFmiDataDescriptor.h"
 #include "NFmiLevelBag.h"
+#include <iosfwd>
+
+class NFmiLevel;
 
 //! Undocumented
 class NFmiVPlaceDescriptor : public NFmiDataDescriptor

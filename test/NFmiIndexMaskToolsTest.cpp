@@ -6,16 +6,23 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
+#include "NFmiFastQueryInfo.h"
 #include "NFmiFileSystem.h"
 #include "NFmiGrid.h"
 #include "NFmiIndexMask.h"
 #include "NFmiIndexMaskTools.h"
+#include "NFmiPoint.h"
 #include "NFmiStreamQueryData.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <regression/tframe.h>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 //! Protection against conflicts with global functions
 namespace NFmiIndexMaskToolsTest

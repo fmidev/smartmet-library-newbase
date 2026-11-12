@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
 #include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 

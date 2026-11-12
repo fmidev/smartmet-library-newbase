@@ -16,10 +16,11 @@
 #include "NFmiMaskedDataIterator.h"
 #include "NFmiCombinedParam.h"
 #include "NFmiDataModifier.h"
-#include "NFmiIntegrationSelector.h"
+#include "NFmiGlobals.h"
 #include "NFmiSuperSmartInfo.h"
 #include "NFmiWeatherAndCloudiness.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

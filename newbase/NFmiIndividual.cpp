@@ -17,9 +17,10 @@
 
 #include "NFmiIndividual.h"
 #include "NFmiVersion.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <fstream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

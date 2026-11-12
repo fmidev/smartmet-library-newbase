@@ -1,6 +1,9 @@
-#include "NFmiFastQueryInfo.h"
 #include "NFmiSimpleCondition.h"
+#include "NFmiFastQueryInfo.h"
+#include "NFmiInfoData.h"
 #include <macgyver/Exception.h>
+#include <cmath>
+#include <string>
 
 namespace
 {

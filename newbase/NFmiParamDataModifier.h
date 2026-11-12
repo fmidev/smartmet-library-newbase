@@ -8,10 +8,12 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include "NFmiDataModifierBase.h"
+#include <iosfwd>
 
 class NFmiDataIdent;
-class NFmiLevel;
 class NFmiDataModifierList;
+class NFmiLevel;
 
 //! Tämä modifier on tehty parametri ja level kohtaiseksi. Match-metodilla kysytään onko haluttu
 //! modifier.

@@ -10,14 +10,23 @@
 #include "NFmiDataModifierMax.h"
 #include "NFmiDataModifierMin.h"
 #include "NFmiDataModifierSum.h"
-#include "NFmiGrid.h"
+#include "NFmiFastQueryInfo.h"
 #include "NFmiIndexMask.h"
 #include "NFmiIndexMaskSource.h"
 #include "NFmiIndexMaskTools.h"
+#include "NFmiMetTime.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
 #include "NFmiStreamQueryData.h"
 #include "NFmiSvgPath.h"
 #include <regression/tframe.h>
+#include <algorithm>
+#include <cmath>
 #include <fstream>
+#include <iostream>
+#include <string>
+
+class NFmiGrid;
 
 //! Protection against conflicts with global functions
 namespace NFmiDataIntegratorTest

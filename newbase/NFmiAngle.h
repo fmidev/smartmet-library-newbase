@@ -10,6 +10,7 @@
 
 #include "NFmiGlobals.h"
 #include <cmath>
+#include <cstddef>
 
 //! Tyyppimääritelmä kulmayksiköille.
 typedef enum

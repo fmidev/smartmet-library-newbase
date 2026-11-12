@@ -8,17 +8,18 @@
 #ifndef DISABLED_GDAL
 
 #include "NFmiGdalArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiString.h"
-#include "NFmiStringTools.h"
-#include <macgyver/Hash.h>
 #include <boost/math/constants/constants.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <cmath>
-#include <iomanip>
 #include <ogr_spatialref.h>
+#include <sstream>
 
 using namespace std;
 

@@ -9,6 +9,8 @@
 
 #include "NFmiDataModifier.h"
 
+class NFmiQueryInfo;
+
 class NFmiDataModifierWithModifier : public NFmiDataModifier
 {
  public:

@@ -14,11 +14,13 @@
 
 #include "NFmiTimeDescriptor.h"
 #include "NFmiMetTime.h"
+#include "NFmiTime.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeList.h"
-
 #include "NFmiVersion.h"
 #include <macgyver/Exception.h>
+#include <istream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

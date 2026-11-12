@@ -20,21 +20,12 @@
 
 #include "NFmiString.h"
 #include "NFmiStringTools.h"
-
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
-
+#include <macgyver/Hash.h>
 #include <cctype>
-#include <cstdio>
-#include <cstdlib>
 #include <cstring>
 #include <iostream>
-#include <stdexcept>
 #include <string>
-
-#ifdef UNIX
-#include <clocale>
-#endif
 
 using namespace std;
 

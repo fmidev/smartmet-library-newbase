@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "NFmiDef.h"
 #include <memory>
 #include <string>
 

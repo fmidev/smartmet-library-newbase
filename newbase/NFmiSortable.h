@@ -14,8 +14,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-
 //! Undocumented
 class NFmiSortable
 {

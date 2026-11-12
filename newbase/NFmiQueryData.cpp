@@ -12,21 +12,19 @@
  */
 // ======================================================================
 
-#include "NFmiVersion.h"
-
-#include "NFmiFileSystem.h"
-#include "NFmiGrid.h"
 #include "NFmiQueryData.h"
+#include "NFmiFileSystem.h"
+#include "NFmiGlobals.h"
+#include "NFmiHPlaceDescriptor.h"
 #include "NFmiQueryInfo.h"
-#include "NFmiSaveBaseFactory.h"
-#include "NFmiStationBag.h"
+#include "NFmiTimeDescriptor.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
-
-#include <fcntl.h>
 #include <fstream>
-#include <ios>
+#include <iostream>
 #include <utility>
+
+class NFmiGrid;
 
 #ifndef UNIX
 #include <io.h>

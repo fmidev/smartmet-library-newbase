@@ -6,7 +6,10 @@
 // ----------------------------------------------------------------------
 
 #include "NFmiVPlaceDescriptor.h"
+#include "NFmiLevel.h"
 #include <macgyver/Exception.h>
+#include <istream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

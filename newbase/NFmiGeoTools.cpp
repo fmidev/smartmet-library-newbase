@@ -16,6 +16,7 @@
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 namespace NFmiGeoTools
 {

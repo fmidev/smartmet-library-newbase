@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiString.h"  // Added by ClassView
+#include <iosfwd>
 
 //! Undocumented
 enum FmiProbabilityCondition

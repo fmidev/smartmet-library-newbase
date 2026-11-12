@@ -10,11 +10,16 @@
 #include "NFmiArea.h"
 #include "NFmiDataIdent.h"
 #include "NFmiDataMatrix.h"
-#include "NFmiDef.h"
 #include "NFmiGlobals.h"
 #include "NFmiGrid.h"
 #include "NFmiLevel.h"
 #include "NFmiMetTime.h"
+#include "NFmiParam.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include <cmath>
+#include <functional>
 #include <memory>
 #include <shared_mutex>
 
@@ -32,25 +37,20 @@
 
 #endif  // BOOST_DISABLE_THREADS
 
-#include <set>
 #include <string>
 #include <vector>
 
-class NFmiFastQueryInfo;
-class NFmiQueryInfo;
-class NFmiGrid;
-class NFmiQueryData;
-class NFmiTimeDescriptor;
-class NFmiTimeBag;
-class NFmiParamBag;
-class NFmiPoint;
-class NFmiString;
-class NFmiRect;
-class NFmiDataModifier;
 class NFmiCalculationCondition;
+class NFmiDataModifier;
+class NFmiFastQueryInfo;
 class NFmiLocationBag;
-class NFmiArea;
 class NFmiLogger;
+class NFmiParamBag;
+class NFmiQueryData;
+class NFmiQueryInfo;
+class NFmiString;
+class NFmiTimeBag;
+class NFmiTimeDescriptor;
 
 /*!
  * \class MyGrid

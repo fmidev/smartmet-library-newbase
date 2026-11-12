@@ -6,7 +6,10 @@
 // ======================================================================
 
 #include "NFmiMetMath.h"
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
+#include <cmath>
+#include <string>
 
 using namespace std;
 

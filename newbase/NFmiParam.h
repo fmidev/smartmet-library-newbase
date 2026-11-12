@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiIndividual.h"
+#include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 

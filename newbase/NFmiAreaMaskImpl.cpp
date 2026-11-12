@@ -19,6 +19,7 @@
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiSimpleCondition.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

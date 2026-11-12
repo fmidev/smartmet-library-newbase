@@ -33,8 +33,10 @@
 // ======================================================================
 
 #include "NFmiModMeanCalculator.h"
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

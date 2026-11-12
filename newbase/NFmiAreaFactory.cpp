@@ -108,8 +108,11 @@
 // ======================================================================
 
 #include "NFmiAreaFactory.h"
+#include "NFmiArea.h"
 #include "NFmiEquidistArea.h"
+#include "NFmiGaussKruger.h"
 #include "NFmiGdalArea.h"
+#include "NFmiGlobals.h"
 #include "NFmiGnomonicArea.h"
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiLambertEqualArea.h"
@@ -117,24 +120,24 @@
 #include "NFmiMercatorArea.h"
 #include "NFmiOrthographicArea.h"
 #include "NFmiPKJArea.h"
+#include "NFmiRect.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiStringTools.h"
 #include "NFmiTransverseMercatorArea.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
-
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <deque>
 #include <list>
 #include <map>
 #include <memory>
 #include <set>
-#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>

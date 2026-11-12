@@ -8,9 +8,15 @@
 #pragma once
 
 #include "NFmiDataIdent.h"
-#include "NFmiDataMatrix.h"
+#include "NFmiGlobals.h"
+#include "NFmiParam.h"
 #include "NFmiParameterName.h"
 #include "NFmiSize.h"
+#include "NFmiString.h"
+#include <iosfwd>
+#include <vector>
+
+class NFmiProducer;
 
 //! Undocumented
 class NFmiParamBag : public NFmiSize

@@ -28,8 +28,11 @@
 
 #include "NFmiBitMask.h"
 #include "NFmiDataModifier.h"
+#include "NFmiHPlaceDescriptor.h"
 #include "NFmiQueryInfo.h"
 #include <macgyver/Exception.h>
+#include <cstring>
+#include <string>
 
 using namespace std;
 

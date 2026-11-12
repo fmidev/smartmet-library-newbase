@@ -112,8 +112,6 @@
 
 #pragma once
 
-#include "NFmiDef.h"
-
 #include <algorithm>
 #include <cmath>
 #include <vector>

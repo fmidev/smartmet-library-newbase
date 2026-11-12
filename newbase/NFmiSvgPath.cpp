@@ -18,11 +18,10 @@
 // ======================================================================
 
 #include "NFmiSvgPath.h"
+#include "NFmiGlobals.h"
 #include "NFmiPoint.h"
 #include <macgyver/Exception.h>
-
-#include <algorithm>
-#include <iterator>
+#include <cctype>
 #include <sstream>
 #include <string>
 

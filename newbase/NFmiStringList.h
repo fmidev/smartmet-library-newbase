@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
+#include "NFmiGlobals.h"
 #include "NFmiString.h"
-#include "NFmiVoidPtrList.h"
+#include <iosfwd>
+#include <vector>
 
 //! Undocumented
 class NFmiStringList

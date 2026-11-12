@@ -13,14 +13,19 @@
 // ======================================================================
 
 #include "NFmiStreamQueryData.h"
+#include "NFmiFastQueryInfo.h"
 #include "NFmiFileSystem.h"
-#include "NFmiValueString.h"
+#include "NFmiQueryData.h"
+#include "NFmiQueryInfo.h"
+#include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
 #include <algorithm>
-#include <cstdio>
-#include <fcntl.h>
+#include <ctime>
 #include <fstream>
+#include <iostream>
+#include <list>
+#include <string>
 
 #ifndef UNIX
 #include <io.h>

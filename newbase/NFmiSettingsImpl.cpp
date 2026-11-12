@@ -181,15 +181,13 @@
 #include "NFmiFileSystem.h"
 #include "NFmiPreProcessor.h"
 #include "NFmiStringTools.h"
-#include <macgyver/Exception.h>
-
 #include <boost/algorithm/string/trim.hpp>
-
+#include <macgyver/Exception.h>
+#include <cstddef>
 #include <fstream>
-#include <iostream>
 #include <list>
 #include <sstream>
-#include <stdexcept>
+#include <utility>
 
 #define DEFAULT_FILE "smartmet.conf"
 

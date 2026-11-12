@@ -7,10 +7,12 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiTime.h"
 #include "NFmiTimePeriod.h"
-
-class NFmiLocation;
+#include <macgyver/DateTime.h>
+#include <macgyver/LocalDateTime.h>
+#include <iosfwd>
 
 //! Undocumented
 class NFmiMetTime : public NFmiTime

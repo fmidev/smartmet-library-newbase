@@ -66,9 +66,14 @@
 // ======================================================================
 
 #include "NFmiStereographicArea.h"
+#include "NFmiAngle.h"
+#include "NFmiGlobals.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

@@ -7,6 +7,8 @@
 
 #include "NFmiTypeNameTraits.h"
 #include <regression/tframe.h>
+#include <iostream>
+#include <string>
 
 //! Protection against conflicts with global functions
 namespace NFmiTypeNameTraitsTest

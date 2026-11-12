@@ -14,6 +14,8 @@
 
 #include "NFmiDataModifierLogical.h"
 #include "NFmiDataModifierBoolean.h"
+#include "NFmiGlobals.h"
+#include "NFmiString.h"
 
 // ----------------------------------------------------------------------
 /*!

@@ -18,22 +18,35 @@
 #endif
 
 #include "NFmiFastQueryInfo.h"
+#include "NFmiAngle.h"
+#include "NFmiArea.h"
 #include "NFmiCombinedParam.h"
+#include "NFmiDataIdent.h"
 #include "NFmiDataModifier.h"
+#include "NFmiDataPool.h"
 #include "NFmiGrid.h"
 #include "NFmiInterpolation.h"
+#include "NFmiLevel.h"
+#include "NFmiLocation.h"
 #include "NFmiMetMath.h"
+#include "NFmiParam.h"
+#include "NFmiProducer.h"
 #include "NFmiQueryData.h"
 #include "NFmiRawData.h"
+#include "NFmiTimeBag.h"
 #include "NFmiTotalWind.h"
 #include "NFmiWeatherAndCloudiness.h"
 #include <gis/CoordinateMatrix.h>
 #include <gis/CoordinateTransformation.h>
-#include <gis/SpatialReference.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
 #include <stdexcept>
-
+#include <utility>
 
 // ----------------------------------------------------------------------
 /*!

@@ -7,8 +7,11 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiMetTime.h"
 #include "NFmiSize.h"
+#include "NFmiTimePeriod.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiTimeBag : public NFmiSize

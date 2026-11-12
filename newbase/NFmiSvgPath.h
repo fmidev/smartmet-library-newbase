@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
-#include "NFmiDef.h"
 #include <iosfwd>
+#include <vector>
 
 class NFmiPoint;
 

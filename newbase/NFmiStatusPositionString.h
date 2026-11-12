@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStatusString.h"
+#include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiStatusPositionString : public NFmiStatusString

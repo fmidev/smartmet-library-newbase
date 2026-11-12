@@ -66,9 +66,8 @@
 #include "NFmiIndexMask.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
-#include <deque>
 #include <iterator>
-#include <set>
+#include <string>
 
 using namespace std;
 

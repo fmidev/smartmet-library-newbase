@@ -13,7 +13,14 @@
 // ======================================================================
 
 #include "NFmiCalculator.h"
+#include "NFmiDataIterator.h"
+#include "NFmiDataModifier.h"
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
+#include <string>
+
+class NFmiCombinedParam;
+class NFmiQueryInfo;
 
 // ----------------------------------------------------------------------.
 /*!

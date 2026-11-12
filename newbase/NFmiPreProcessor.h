@@ -10,6 +10,7 @@
 #include "NFmiCommentStripper.h"
 #include <map>
 #include <string>
+#include <vector>
 
 //! Undocumented
 class NFmiPreProcessor : public NFmiCommentStripper

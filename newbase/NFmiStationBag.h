@@ -8,7 +8,12 @@
 #pragma once
 
 #include "NFmiLocationBag.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
+#include <iosfwd>
+
+class NFmiIndividual;
+class NFmiLocation;
 
 // ÄLÄ KÄYTÄ TÄTÄ LUOKKAA UUSIIN JUTTUIHIN, VAAN KÄYTÄ NFmiLocationBag:ia
 

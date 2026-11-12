@@ -9,6 +9,12 @@
 
 #include "NFmiArea.h"
 #include "NFmiGaussKruger.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Ellipsoidal Transverse Mercator projection area.
 /*!

@@ -7,8 +7,12 @@
 
 #pragma once
 
-#include "NFmiFastQueryInfo.h"
-#include "NFmiQueryData.h"
+#include "NFmiString.h"
+#include "NFmiVersion.h"
+
+class NFmiFastQueryInfo;
+class NFmiQueryData;
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiStreamQueryData

@@ -7,11 +7,10 @@
 
 #pragma once
 
-#include "NFmiDef.h"
-
 #include <ctime>   // time_t
 #include <list>    // for ListDirectory
 #include <string>  // filenames are strings
+#include <utility>
 
 // Koska Winkkari headerissa
 // on makro joka muuttaa funktion nimeä:

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiStatus.h"
+#include "NFmiString.h"
 
 //! Undocumented
 class NFmiCmdLine

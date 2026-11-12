@@ -14,6 +14,7 @@
 
 #include "NFmiDataModifierCombinedParam.h"
 #include "NFmiCombinedParam.h"
+#include "NFmiGlobals.h"
 
 // ----------------------------------------------------------------------
 /*!

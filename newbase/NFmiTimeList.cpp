@@ -18,7 +18,9 @@
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
-#include <functional>
+#include <istream>
+#include <iterator>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

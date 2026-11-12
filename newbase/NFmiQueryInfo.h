@@ -11,24 +11,44 @@
 #include "NFmiGrid.h"
 #include "NFmiHPlaceDescriptor.h"
 #include "NFmiInfoData.h"
-#include "NFmiLocationBag.h"
+#include "NFmiLocation.h"
+#include "NFmiMetTime.h"
 #include "NFmiParamDescriptor.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
 #include "NFmiRawData.h"
 #include "NFmiSaveBaseFactory.h"
+#include "NFmiString.h"
 #include "NFmiTimeBag.h"
 #include "NFmiTimeDescriptor.h"
+#include "NFmiTimePeriod.h"
 #include "NFmiVPlaceDescriptor.h"
 #include "NFmiVersion.h"
+#include <array>
+#include <cstddef>
+#include <iosfwd>
+#include <iterator>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-class NFmiQueryData;
+class NFmiArea;
 class NFmiCombinedParam;
-class NFmiStringList;
+class NFmiDataIdent;
 class NFmiDataModifier;
 class NFmiDataModifierExtreme;
 class NFmiDataModifierExtremePlace;
-class NFmiBitMask;
+class NFmiLevel;
+class NFmiLocationBag;
+class NFmiParam;
+class NFmiParamBag;
+class NFmiProducer;
+class NFmiQueryData;
 class NFmiStation;
+class NFmiStringList;
+template <class T>
+class NFmiDataMatrix;
 
 //! Undocumented, should be a const int
 #define HEADERMAX 3  // Poistetaan

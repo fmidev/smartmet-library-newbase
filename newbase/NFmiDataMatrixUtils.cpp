@@ -1,7 +1,13 @@
 #include "NFmiDataMatrixUtils.h"
+#include "NFmiDataMatrix.h"
 #include "NFmiInterpolation.h"
 #include "NFmiQueryDataUtil.h"
 #include <macgyver/Exception.h>
+#include <cmath>
+#include <cstddef>
+#include <ostream>
+#include <string>
+#include <vector>
 
 namespace
 {

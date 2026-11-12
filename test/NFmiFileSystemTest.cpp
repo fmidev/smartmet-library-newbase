@@ -7,9 +7,11 @@
 
 #include "NFmiFileSystem.h"
 #include "NFmiStringTools.h"
-#include <regression/tframe.h>
 #include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
+#include <regression/tframe.h>
+#include <cstdlib>
+#include <iostream>
 #include <list>
 #include <string>
 

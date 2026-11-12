@@ -1,16 +1,20 @@
 #pragma once
 
 #include "NFmiDataIdent.h"
-#include "NFmiDataMatrix.h"
 #include "NFmiMetTime.h"
-
+#include "NFmiParameterName.h"
 #include <deque>
 #include <memory>
+#include <string>
+#include <vector>
 
 class NFmiFastQueryInfo;
 class NFmiLevel;
+class NFmiLocation;
 class NFmiPoint;
 class NFmiQueryInfo;
+template <class T>
+class NFmiDataMatrix;
 
 namespace NFmiFastInfoUtils
 {

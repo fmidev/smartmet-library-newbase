@@ -12,6 +12,8 @@
 #include "NFmiDataModifier.h"
 #include "NFmiLocation.h"
 
+class NFmiQueryInfo;
+
 //! Undocumented
 class NFmiDataModifierExtremePlace : public NFmiDataModifier
 {

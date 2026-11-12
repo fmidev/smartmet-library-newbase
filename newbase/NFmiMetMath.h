@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-#include <algorithm>
-#include <cmath>
-
 float FmiSnowWaterRatio(float t, float ff);
 float FmiDewPointUCAR(float t, float rh);
 float FmiDewPointFMI(float t, float rh);

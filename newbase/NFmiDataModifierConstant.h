@@ -8,6 +8,8 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include "NFmiDataModifierBase.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiDataModifierConstant : public NFmiDataModifier

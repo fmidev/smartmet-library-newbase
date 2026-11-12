@@ -13,7 +13,7 @@
 // ======================================================================
 
 #include "NFmiDataModifierStandardDeviation.h"
-#include "NFmiQueryInfo.h"
+#include "NFmiGlobals.h"
 #include <algorithm>
 #include <cmath>
 

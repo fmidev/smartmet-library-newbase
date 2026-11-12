@@ -8,8 +8,11 @@
 #pragma once
 
 #include "NFmiCombinedParam.h"
+#include "NFmiGlobals.h"
+#include "NFmiParameterName.h"
+#include "NFmiProducer.h"
+#include <cstdint>
 
-#include <cmath>
 extern "C"
 {
 #if defined(_MSC_VER) && \
@@ -22,9 +25,7 @@ extern "C"
 }
 
 class NFmiDataIdent;
-class NFmiParamBag;
 class NFmiVoidPtrList;
-class NFmiIntegrationSelector;
 
 //! Undocumented
 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value

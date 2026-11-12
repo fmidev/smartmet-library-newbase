@@ -36,6 +36,7 @@ deallokointi virheet löytyvät tätä kautta.
 #pragma once
 
 #include <stdexcept>
+#include <string>
 
 struct checked_ptr_err : public std::runtime_error
 {

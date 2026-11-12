@@ -7,13 +7,12 @@
 
 #pragma once
 
-#include "NFmiDef.h"
 #include "NFmiGlobals.h"
-#include "NFmiParameterName.h"
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 class NFmiEnumConverter
 {

@@ -13,17 +13,19 @@
 #include "NFmiLambertConformalConicArea.h"
 #include "NFmiLambertEqualArea.h"
 #include "NFmiLatLonArea.h"
+#include "NFmiLocationBag.h"
 #include "NFmiMercatorArea.h"
 #include "NFmiQueryData.h"
+#include "NFmiQueryInfo.h"
 #include "NFmiRotatedLatLonArea.h"
 #include "NFmiStationBag.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiTransverseMercatorArea.h"
-#include "NFmiVersion.h"
 #include "NFmiWebMercatorArea.h"
 #include "NFmiYKJArea.h"
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

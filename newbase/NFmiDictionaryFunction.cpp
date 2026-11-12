@@ -5,6 +5,8 @@
  */
 
 #include "NFmiDictionaryFunction.h"
+#include "NFmiSettings.h"
+#include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
 
 // HUOM! Tämä on kopio NFmiEditMapGeneralDataDoc-luokan metodista, kun en voinut antaa tänne

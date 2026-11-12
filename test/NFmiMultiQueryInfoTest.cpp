@@ -5,16 +5,30 @@
  */
 // ======================================================================
 
+#include "NFmiDataIdent.h"
+#include "NFmiGlobals.h"
+#include "NFmiLevel.h"
+#include "NFmiLevelType.h"
+#include "NFmiLocation.h"
+#include "NFmiMetTime.h"
 #include "NFmiMultiQueryInfo.h"
+#include "NFmiParam.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
+#include "NFmiProducer.h"
 #include "NFmiProducerName.h"
-#include "NFmiQueryData.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStringTools.h"
+#include "NFmiTime.h"
 #include <regression/tframe.h>
-#include <fstream>
-#include <stdexcept>
-#include <string>
-
+#include <cstdlib>
+#include <iostream>
+#include <list>
 #include <memory>
+#include <string>
+#include <vector>
+
+class NFmiQueryData;
 
 using namespace std;
 

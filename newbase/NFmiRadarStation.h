@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiRadarStation : public NFmiStation

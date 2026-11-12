@@ -16,19 +16,18 @@
 #endif
 
 #include "NFmiRawData.h"
+#include "NFmiGlobals.h"
 #include "NFmiVersion.h"
-
+#include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <boost/thread.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/MappedFile.h>
 #include <macgyver/StringConversion.h>
+#include <algorithm>
 #include <cstring>
 #include <filesystem>
-#include <iostream>
-#include <stdexcept>
+#include <sstream>
 #ifndef _MSC_VER
-#include <sys/mman.h>
 #include <cmath>
 #endif
 

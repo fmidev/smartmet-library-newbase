@@ -14,18 +14,34 @@
 
 #include "NFmiInfoAreaMask.h"
 #include "NFmiArea.h"
-#include "NFmiDataModifierClasses.h"
+#include "NFmiCalculationCondition.h"
+#include "NFmiDataModifier.h"
+#include "NFmiDataModifierAvg.h"
+#include "NFmiDataModifierMax.h"
+#include "NFmiDataModifierMedian.h"
+#include "NFmiDataModifierMin.h"
+#include "NFmiDataModifierModAvg.h"
+#include "NFmiDataModifierModMinMax.h"
+#include "NFmiDataModifierSum.h"
 #include "NFmiFastInfoUtils.h"
 #include "NFmiInterpolation.h"
+#include "NFmiLevelType.h"
 #include "NFmiMetMath.h"
+#include "NFmiProducer.h"
 #include "NFmiProducerName.h"
 #include "NFmiQueryDataUtil.h"
 #include "NFmiSimpleCondition.h"
-#include <macgyver/Exception.h>
-
+#include "NFmiString.h"
+#include "NFmiTimeDescriptor.h"
 #include <boost/math/special_functions/round.hpp>
+#include <macgyver/Exception.h>
 #include <algorithm>
+#include <array>
 #include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <stdexcept>
+#include <string>
 
 // HUOM!!! Jostain syystä kun käytin täällä boost::math::iround -funktiota, se ei mennyt parissa
 // VC++ 2013 projektissa linkkerin läpi (Unknown variable blaa blaa). Esim. SmartMet projekti meni

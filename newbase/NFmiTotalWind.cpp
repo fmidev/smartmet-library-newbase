@@ -16,11 +16,13 @@
 #include "NFmiAngle.h"
 #include "NFmiDataIdent.h"
 #include "NFmiInterpolation.h"
+#include "NFmiParam.h"
 #include "NFmiParamBag.h"
+#include "NFmiString.h"
 #include <macgyver/Exception.h>
 #include <cmath>
-
-#include <algorithm>
+#include <cstdlib>
+#include <string>
 
 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
 

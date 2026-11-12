@@ -21,9 +21,11 @@
 #include "NFmiProducerIdLister.h"
 #include "NFmiQueryDataUtil.h"
 #include "NFmiQueryInfo.h"
+#include "NFmiString.h"
+#include "NFmiTimeBag.h"
 #include "NFmiTimeList.h"
+#include "NFmiTimePeriod.h"
 #include <macgyver/Exception.h>
-#include <cmath>
 #include <sstream>
 
 using namespace std;

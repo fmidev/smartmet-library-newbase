@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "NFmiAngle.h"
 #include "NFmiPoint.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiTransformList

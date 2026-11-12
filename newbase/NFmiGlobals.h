@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include "NFmiDef.h"
 #include "NFmiPragma.h"
 
 PRAGMA_WARNING_PUSH()
 PRAGMA_WARNING_DISABLE(4996)
 #include <boost/math/special_functions/fpclassify.hpp>
 #include <cmath>
+
 PRAGMA_WARNING_POP()
 
 namespace Fmi

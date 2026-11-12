@@ -10,7 +10,12 @@
 #pragma once
 
 #include "NFmiArea.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include <cstddef>
+#include <iosfwd>
 #include <memory>
+#include <string>
 
 class OGRSpatialReference;
 

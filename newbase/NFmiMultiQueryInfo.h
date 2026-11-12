@@ -75,9 +75,16 @@
 // Miksi ongelma ei esiinny Linux + gcc yhdistelmän kanssa, ei ole tietoa.
 #define BOOST_DETAIL_NO_CONTAINER_FWD
 
-#include "NFmiDataMatrix.h"
 #include "NFmiFastQueryInfo.h"
-#include <macgyver/DateTime.h>
+#include "NFmiGlobals.h"
+#include "NFmiMetTime.h"
+#include <ctime>
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
+
+class NFmiQueryData;
 
 //! Undocumented
 class NFmiMultiQueryInfo : public NFmiFastQueryInfo

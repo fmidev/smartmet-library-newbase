@@ -5,8 +5,13 @@
  */
 // ======================================================================
 
+#include "NFmiGlobals.h"
 #include "NFmiMetMath.h"
 #include <regression/tframe.h>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 

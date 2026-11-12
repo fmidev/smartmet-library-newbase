@@ -8,7 +8,9 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
-#include "NFmiGlobals.h"  // Added by ClassView
+#include "NFmiDataModifierBase.h"
+
+class NFmiCombinedParam;
 
 //! Undocumented
 

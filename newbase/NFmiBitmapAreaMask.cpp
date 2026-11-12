@@ -7,9 +7,17 @@
 
 #include "NFmiBitmapAreaMask.h"
 #include "NFmiArea.h"
+#include "NFmiCalculationCondition.h"
 #include "NFmiFastQueryInfo.h"
+#include "NFmiGlobals.h"
 #include "NFmiGrid.h"
+#include "NFmiHPlaceDescriptor.h"
+#include "NFmiInfoData.h"
+#include "NFmiLevel.h"
+#include "NFmiString.h"
 #include <macgyver/Exception.h>
+#include <cmath>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

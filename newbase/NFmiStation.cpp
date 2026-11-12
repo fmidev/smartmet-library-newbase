@@ -13,10 +13,11 @@
 // ======================================================================
 
 #include "NFmiStation.h"
+#include "NFmiIndividual.h"
+#include "NFmiVersion.h"
 #include <macgyver/Exception.h>
 #include <fstream>
-
-#include "NFmiVersion.h"
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

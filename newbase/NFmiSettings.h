@@ -9,10 +9,9 @@
 
 #include "NFmiSettingsImpl.h"
 #include "NFmiStringTools.h"
-
-#include <sstream>
-#include <stdexcept>
+#include <macgyver/Exception.h>
 #include <string>
+#include <vector>
 
 namespace NFmiSettings
 {

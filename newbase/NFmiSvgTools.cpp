@@ -22,6 +22,8 @@
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
 #include <macgyver/Exception.h>
+#include <string>
+#include <vector>
 
 namespace NFmiSvgTools
 {

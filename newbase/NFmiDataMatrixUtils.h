@@ -5,10 +5,14 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
 #include "NFmiGlobals.h"  // kFloatMissing
 #include "NFmiParameterName.h"
+#include "NFmiPoint.h"
 #include "NFmiRect.h"
+#include <iosfwd>
+
+template <class T>
+class NFmiDataMatrix;
 
 namespace DataMatrixUtils
 {

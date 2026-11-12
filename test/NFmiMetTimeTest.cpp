@@ -6,7 +6,13 @@
 // ======================================================================
 
 #include "NFmiMetTime.h"
+#include "NFmiStaticTime.h"
+#include "NFmiString.h"
+#include <macgyver/DateTime.h>
+#include <macgyver/LocalDateTime.h>
 #include <regression/tframe.h>
+#include <iostream>
+#include <string>
 
 using namespace std;
 using Fmi::date_time::time_from_string;

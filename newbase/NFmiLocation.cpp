@@ -24,11 +24,13 @@
 #include "NFmiAngle.h"
 #include "NFmiGeoTools.h"
 #include "NFmiMetTime.h"
-#include <macgyver/Hash.h>
+#include "NFmiTime.h"
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
 #include <fstream>
+#include <string>
 
 using namespace std;
 

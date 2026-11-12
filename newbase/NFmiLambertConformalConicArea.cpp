@@ -1,9 +1,11 @@
 #include "NFmiLambertConformalConicArea.h"
-#include "NFmiStringTools.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <cmath>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

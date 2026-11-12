@@ -16,9 +16,10 @@
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <iostream>
-#include <cmath>
+#include <string>
 // memcpy()
 
 using namespace std;

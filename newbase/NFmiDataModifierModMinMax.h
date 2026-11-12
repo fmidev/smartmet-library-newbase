@@ -22,7 +22,7 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
-
+#include "NFmiGlobals.h"
 #include <set>
 
 //! Undocumented

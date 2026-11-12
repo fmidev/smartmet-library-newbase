@@ -14,7 +14,9 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiStation.h"
+#include "NFmiString.h"
 
 //! Undocumented
 class NFmiValueStation : public NFmiStation

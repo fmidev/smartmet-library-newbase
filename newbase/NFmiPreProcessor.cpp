@@ -110,11 +110,11 @@
 // ======================================================================
 
 #include "NFmiPreProcessor.h"
+#include "NFmiDef.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
-
-#include <fstream>
-#include <iostream>
+#include <sstream>
+#include <utility>
 
 using namespace std;
 

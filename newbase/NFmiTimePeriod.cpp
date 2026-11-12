@@ -12,9 +12,9 @@
 // ======================================================================
 
 #include "NFmiTimePeriod.h"
-
 #include "NFmiVersion.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

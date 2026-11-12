@@ -8,8 +8,13 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
+#include "NFmiMetTime.h"
+#include "NFmiPoint.h"
 #include <memory>
 #include <vector>
+
+class NFmiDataIdent;
+class NFmiLevel;
 
 class NFmiAreaMaskList
 {

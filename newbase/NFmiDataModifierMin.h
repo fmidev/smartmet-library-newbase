@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "NFmiDataModifier.h"
 #include "NFmiDataModifierExtreme.h"
 
 class NFmiDataModifierMin : public NFmiDataModifierExtreme

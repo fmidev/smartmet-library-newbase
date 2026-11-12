@@ -49,11 +49,15 @@
 // ======================================================================
 
 #include "NFmiEnumConverter.h"
-#include "NFmiDef.h"
+#include "NFmiParameterName.h"
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
 #include <macgyver/Exception.h>
+#include <algorithm>
+#include <cstddef>
 #include <map>
+#include <strings.h>
+#include <utility>
 #include <vector>
 
 using namespace std;

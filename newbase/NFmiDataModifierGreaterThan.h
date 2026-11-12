@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include "NFmiGlobals.h"
 
 class NFmiDataModifierGreaterThan : public NFmiDataModifier
 {

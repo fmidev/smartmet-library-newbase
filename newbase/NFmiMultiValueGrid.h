@@ -8,7 +8,14 @@
 #pragma once
 
 #include "NFmiGrid.h"
+#include "NFmiGridBase.h"
 #include "NFmiQueryInfo.h"
+#include "NFmiVPlaceDescriptor.h"
+
+class NFmiArea;
+class NFmiDataPool;
+class NFmiParamDescriptor;
+class NFmiTimeDescriptor;
 
 // infolta iteraattori-ominaisuudet
 

@@ -5,13 +5,14 @@
  */
 // ======================================================================
 
+#include "NFmiArea.h"
+#include "NFmiPoint.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiTransverseMercatorArea.h"
-
-#include <regression/tframe.h>
-
 #include <gis/SpatialReference.h>
-
+#include <regression/tframe.h>
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>

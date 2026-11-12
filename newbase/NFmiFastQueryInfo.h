@@ -8,11 +8,34 @@
 #pragma once
 
 #include "NFmiDataMatrix.h"
+#include "NFmiGlobals.h"
+#include "NFmiHPlaceDescriptor.h"
+#include "NFmiInfoData.h"
+#include "NFmiLevelType.h"
+#include "NFmiMetTime.h"
+#include "NFmiParamDescriptor.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
 #include "NFmiQueryInfo.h"
+#include "NFmiRawData.h"
+#include "NFmiTimeDescriptor.h"
+#include "NFmiTimePeriod.h"
+#include "NFmiVPlaceDescriptor.h"
 #include <boost/unordered_map.hpp>
+#include <cstddef>
 #include <memory>
+#include <string>
+#include <vector>
 
-class NFmiRect;
+class NFmiArea;
+class NFmiDataModifier;
+class NFmiGrid;
+class NFmiLevel;
+class NFmiLocationCache;
+class NFmiProducer;
+class NFmiQueryData;
+class NFmiTimeBag;
+class NFmiTimeCache;
 
 namespace Fmi
 {

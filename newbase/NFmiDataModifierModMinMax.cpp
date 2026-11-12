@@ -1,4 +1,10 @@
 #include "NFmiDataModifierModMinMax.h"
+#include <exception>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace
 {

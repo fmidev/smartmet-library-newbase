@@ -9,6 +9,7 @@
 
 #include "NFmiGlobals.h"
 #include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiCalculationCondition

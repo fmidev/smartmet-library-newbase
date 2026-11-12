@@ -9,10 +9,15 @@
 
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiDataIdent.h"
-#include "NFmiDataMatrix.h"
+#include "NFmiPoint.h"
+#include <memory>
+#include <vector>
 
 class NFmiArea;
+class NFmiCalculationCondition;
+class NFmiFastQueryInfo;
 class NFmiGrid;
+class NFmiLevel;
 
 //! Undocumented
 class NFmiBitmapAreaMask : public NFmiAreaMaskImpl

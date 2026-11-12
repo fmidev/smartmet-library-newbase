@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "NFmiDataIterator.h"
-#include "NFmiDataModifier.h"
-
+class NFmiCombinedParam;
+class NFmiDataIterator;
+class NFmiDataModifier;
+class NFmiQueryInfo;
 //! Undocumented
 
 class NFmiCalculator

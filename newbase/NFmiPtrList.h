@@ -46,7 +46,6 @@
 //
 //**********************************************************
 #pragma once
-#include "NFmiGlobals.h"
 
 template <class Type>
 class NFmiPtrList

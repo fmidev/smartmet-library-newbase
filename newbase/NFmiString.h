@@ -7,9 +7,11 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiSortable.h"
-#include <macgyver/Exception.h>
+#include <cstddef>
+#include <iosfwd>
 #include <string>
 
 class NFmiString : public NFmiSortable

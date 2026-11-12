@@ -13,9 +13,14 @@
 // ======================================================================
 
 #include "NFmiQueryInfoSatel.h"
-#include "NFmiQueryData.h"
-#include "NFmiSaveBaseFactory.h"
+#include "NFmiString.h"
 #include <macgyver/Exception.h>
+#include <istream>
+#include <string>
+
+class NFmiHPlaceDescriptor;
+class NFmiParamDescriptor;
+class NFmiTimeDescriptor;
 
 // ----------------------------------------------------------------------
 /*!

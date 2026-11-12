@@ -27,12 +27,17 @@
 
 #include "NFmiMultiPolygonAreaMask.h"
 #include "NFmiBitmapAreaMask.h"
+#include "NFmiGlobals.h"
 #include "NFmiGrid.h"
-#include "NFmiPoint.h"
+#include "NFmiString.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <istream>
+#include <string>
+
+class NFmiCalculationCondition;
 
 // ----------------------------------------------------------------------
 /*!

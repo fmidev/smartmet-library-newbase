@@ -1,4 +1,8 @@
 #include "NFmiDataModifierModAvg.h"
+#include "NFmiGlobals.h"
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace
 {

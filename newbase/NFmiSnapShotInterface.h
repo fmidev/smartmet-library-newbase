@@ -7,9 +7,11 @@
 
 #pragma once
 
-#include "NFmiQueryData.h"
 #include "NFmiString.h"  // Added by ClassView
 #include <ctime>
+
+class NFmiQueryData;
+class NFmiQueryInfo;
 
 #ifdef UNIX
 const NFmiString kFmiWorkingDirectory("/tmp/snapshot");

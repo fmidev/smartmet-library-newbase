@@ -13,10 +13,11 @@
 // ======================================================================
 
 #include "NFmiRect.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
 #include <fstream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

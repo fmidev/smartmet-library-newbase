@@ -17,6 +17,7 @@
 #include <macgyver/Exception.h>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

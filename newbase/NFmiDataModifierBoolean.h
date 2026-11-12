@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include <iosfwd>
 
 //! Undocumented
 enum FmiModifierBoolOperations

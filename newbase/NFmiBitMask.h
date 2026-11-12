@@ -7,14 +7,11 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
 #include "NFmiGridBase.h"
 #include <cmath>
 
-#include <memory>
-
-class NFmiQueryInfo;
 class NFmiDataModifier;
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiBitMask

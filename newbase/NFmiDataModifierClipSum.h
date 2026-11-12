@@ -6,6 +6,7 @@
 #pragma once
 
 #include "NFmiDataModifierAllValidSum.h"
+#include "NFmiQueryInfo.h"
 
 class NFmiDataModifierAllValidClipSum : public NFmiDataModifierAllValidSum
 {

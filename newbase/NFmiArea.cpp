@@ -14,6 +14,7 @@
 #include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiAreaTools.h"
+#include "NFmiSaveBaseFactory.h"
 
 // Needed until HashValue API is changed
 
@@ -37,7 +38,9 @@
 #include <gis/ProjInfo.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
+#include <cmath>
 #include <iostream>
+#include <optional>
 
 namespace
 {

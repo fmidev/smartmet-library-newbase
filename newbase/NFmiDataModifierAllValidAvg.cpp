@@ -15,7 +15,11 @@
 // ======================================================================
 
 #include "NFmiDataModifierAllValidAvg.h"
+#include "NFmiDataIdent.h"
+#include "NFmiGlobals.h"
+#include "NFmiParam.h"
 #include "NFmiQueryInfo.h"
+#include <cassert>
 
 // ----------------------------------------------------------------------
 /*!

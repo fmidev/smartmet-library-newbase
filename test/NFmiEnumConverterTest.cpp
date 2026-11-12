@@ -6,12 +6,13 @@
 // ======================================================================
 
 #include "NFmiEnumConverter.h"
+#include "NFmiParameterName.h"
 #include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
+#include <cstddef>
+#include <iostream>
 #include <list>
-#include <set>
 #include <string>
-#include <vector>
 
 using namespace std;
 

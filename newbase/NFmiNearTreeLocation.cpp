@@ -2,6 +2,7 @@
 #include "NFmiGlobals.h"
 #include "NFmiLocation.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

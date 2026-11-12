@@ -15,13 +15,15 @@
  */
 // ======================================================================
 
-#include <iomanip>
 #include "NFmiTransverseMercatorArea.h"
-
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
+#include <iomanip>
 #include <limits>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

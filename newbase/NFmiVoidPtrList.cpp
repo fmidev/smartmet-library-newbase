@@ -8,6 +8,7 @@
 
 #include "NFmiVoidPtrList.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

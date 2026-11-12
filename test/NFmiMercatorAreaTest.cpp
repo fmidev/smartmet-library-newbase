@@ -6,10 +6,10 @@
 // ======================================================================
 
 #include "NFmiMercatorArea.h"
-
+#include "NFmiPoint.h"
 #include <regression/tframe.h>
-
-#include <stdexcept>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 std::string tostr(const NFmiPoint& p)

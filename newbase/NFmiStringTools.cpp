@@ -13,11 +13,9 @@
 
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
-#include <iostream>
-
 #include <cctype>
 #include <cstdlib>
-#include <locale>
+#include <utility>
 
 using namespace std;
 

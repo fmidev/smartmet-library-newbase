@@ -5,9 +5,14 @@
  */
 // ======================================================================
 
+#include "NFmiCombinedParam.h"
+#include "NFmiGlobals.h"
+#include "NFmiParameterName.h"
 #include "NFmiTotalWind.h"
 #include <regression/tframe.h>
 #include <cmath>
+#include <initializer_list>
+#include <iostream>
 #include <string>
 
 using namespace std;

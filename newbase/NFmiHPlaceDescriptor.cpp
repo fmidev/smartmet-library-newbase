@@ -13,15 +13,17 @@
 // ======================================================================
 
 #include "NFmiHPlaceDescriptor.h"
+#include "NFmiArea.h"
 #include "NFmiGrid.h"
 #include "NFmiLocationBag.h"
 #include "NFmiSaveBaseFactory.h"
-#include "NFmiStation.h"
-#include "NFmiValueString.h"
 #include "NFmiWGS84.h"
-#include <macgyver/Hash.h>
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
+#include <cmath>
+#include <istream>
+#include <string>
 
 using namespace std;
 

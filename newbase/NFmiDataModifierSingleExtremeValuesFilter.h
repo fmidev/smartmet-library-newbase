@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "NFmiDataModifier.h"
 #include "NFmiDataModifierAvg.h"
 
 class NFmiDataModifierSingleExtremeValuesFilter : public NFmiDataModifier

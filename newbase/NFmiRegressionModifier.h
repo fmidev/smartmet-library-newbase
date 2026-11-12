@@ -8,6 +8,12 @@
 #pragma once
 
 #include "NFmiInfoModifier.h"
+#include <iosfwd>
+
+class NFmiDataIdent;
+class NFmiDataModifierList;
+class NFmiLevel;
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiRegressionModifier : public NFmiInfoModifier

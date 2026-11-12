@@ -13,7 +13,9 @@
 // ======================================================================
 
 #include "NFmiDataModifierPrecFormUnion.h"
+#include "NFmiGlobals.h"
 #include "NFmiQueryInfo.h"
+#include "NFmiWeatherAndCloudiness.h"
 
 // ----------------------------------------------------------------------
 /*!

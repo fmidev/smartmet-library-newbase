@@ -15,9 +15,9 @@
 // ======================================================================
 
 #include "NFmiAngle.h"
-#include <macgyver/Hash.h>
 #include <macgyver/Exception.h>
-#include <iostream>
+#include <macgyver/Hash.h>
+#include <string>
 
 using namespace std;
 

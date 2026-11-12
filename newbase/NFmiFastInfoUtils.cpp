@@ -1,8 +1,25 @@
 #include "NFmiFastInfoUtils.h"
+#include "NFmiAngle.h"
+#include "NFmiDataMatrix.h"
 #include "NFmiFastQueryInfo.h"
 #include "NFmiFileString.h"
+#include "NFmiGlobals.h"
+#include "NFmiGrid.h"
+#include "NFmiInfoData.h"
+#include "NFmiLevel.h"
+#include "NFmiLevelType.h"
+#include "NFmiLocation.h"
+#include "NFmiParam.h"
+#include "NFmiPoint.h"
+#include "NFmiProducer.h"
 #include "NFmiProducerName.h"
+#include "NFmiQueryInfo.h"
+#include "NFmiString.h"
+#include "NFmiTimeDescriptor.h"
 #include <macgyver/Exception.h>
+#include <cmath>
+#include <cstddef>
+#include <utility>
 
 namespace
 {

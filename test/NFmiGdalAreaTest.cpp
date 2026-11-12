@@ -6,11 +6,13 @@
 // ======================================================================
 
 #include "NFmiGdalArea.h"
-
-#include <regression/tframe.h>
+#include "NFmiPoint.h"
 #include <macgyver/StringConversion.h>
+#include <regression/tframe.h>
+#include <cmath>
 #include <gdal_version.h>
-#include <stdexcept>
+#include <iostream>
+#include <sstream>
 #include <string>
 
 std::string tostr(const NFmiPoint& p)

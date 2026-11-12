@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
+#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -16,6 +16,7 @@ class NFmiRawData
 {
  private:
   class Pimple;
+
   Pimple* itsPimple;
 
   NFmiRawData& operator=(const NFmiRawData& other);

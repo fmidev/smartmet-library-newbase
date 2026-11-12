@@ -8,10 +8,9 @@
 #include "NFmiAngle.h"
 #include "NFmiStringTools.h"
 #include <regression/tframe.h>
-#include <list>
-#include <set>
+#include <cmath>
+#include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 

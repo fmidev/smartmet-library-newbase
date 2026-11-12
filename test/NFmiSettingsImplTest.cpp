@@ -8,8 +8,9 @@
 #include "NFmiFileSystem.h"
 #include "NFmiSettingsImpl.h"
 #include <regression/tframe.h>
-
 #include <fstream>
+#include <iostream>
+#include <string>
 
 //! Protection against conflicts with global functions
 namespace NFmiSettingsImplTest

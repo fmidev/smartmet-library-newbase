@@ -13,8 +13,10 @@
 // ======================================================================
 
 #include "NFmiFileString.h"
+#include "NFmiDef.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

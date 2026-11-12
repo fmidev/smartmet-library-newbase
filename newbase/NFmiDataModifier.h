@@ -8,7 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifierBase.h"
-#include "NFmiDef.h"
+#include "NFmiGlobals.h"
 
 class NFmiCombinedParam;
 class NFmiQueryInfo;

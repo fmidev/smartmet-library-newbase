@@ -8,17 +8,26 @@
 #pragma once
 
 #include "NFmiArea.h"
-#include "NFmiDataMatrix.h"
+#include "NFmiGlobals.h"
 #include "NFmiGridBase.h"
-
-#include <algorithm>
+#include "NFmiPoint.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <iterator>
 #include <string>
+#include <utility>
+#include <vector>
 
 class NFmiLocation;
+class NFmiTransformList;
+template <class T>
+class NFmiDataMatrix;
 
 namespace Fmi
 {
 class CoordinateMatrix;
+class SpatialReference;
 }  // namespace Fmi
 
 // NFmiLocationCache-luokka käytetään kun halutaan optimoida paikkaan liittyviä interpolaatioita.

@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
 #include "NFmiDataModifier.h"
+#include <vector>
 
 class NFmiDataModifierMedian : public NFmiDataModifier
 {

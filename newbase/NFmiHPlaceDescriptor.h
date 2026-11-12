@@ -8,17 +8,20 @@
 #pragma once
 
 #include "NFmiDataDescriptor.h"
-#include "NFmiDataMatrix.h"
 #include "NFmiGlobals.h"
 #include "NFmiLocation.h"
 #include "NFmiPoint.h"
 #include "NFmiSaveBaseFactory.h"
-#include <algorithm>
+#include "NFmiString.h"
+#include <cstddef>
+#include <iosfwd>
+#include <iterator>
+#include <utility>
+#include <vector>
 
-class NFmiLocationBag;
 class NFmiArea;
 class NFmiGrid;
-class NFmiLocation;
+class NFmiLocationBag;
 
 namespace Fmi
 {

@@ -13,6 +13,7 @@
 // ======================================================================
 
 #include "NFmiLevel.h"
+#include "NFmiGlobals.h"
 #include "NFmiLevelType.h"
 #include <macgyver/Exception.h>
 #include <iostream>

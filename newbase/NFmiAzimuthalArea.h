@@ -9,6 +9,11 @@
 
 #include "NFmiAngle.h"
 #include "NFmiArea.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Undocumented
 class NFmiAzimuthalArea : public NFmiArea

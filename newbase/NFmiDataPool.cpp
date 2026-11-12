@@ -13,16 +13,14 @@
 // ======================================================================
 
 #include "NFmiDataPool.h"
-#include "NFmiString.h"
+#include "NFmiGlobals.h"
 #include "NFmiTransformList.h"
 #include <macgyver/Exception.h>
-
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <fstream>
-#include <memory>
-#include <stdexcept>
+#include <string>
 // memcpy()
 
 using namespace std;

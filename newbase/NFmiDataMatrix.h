@@ -46,9 +46,10 @@
 #include "NFmiGlobals.h"  // kFloatMissing
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
-
+#include <exception>
 #include <iostream>
-#include <sstream>
+#include <string>
+#include <utility>
 #include <vector>
 
 //! A 2D data container

@@ -10,10 +10,12 @@
 #include "NFmiParam.h"
 #include "NFmiParameterName.h"
 #include "NFmiProducer.h"
+#include <iosfwd>
 
-class NFmiVoidPtrList;
-class NFmiVoidPtrIterator;
+class NFmiString;
 class NFmiVoidPtrData;
+class NFmiVoidPtrIterator;
+class NFmiVoidPtrList;
 
 //! Uhhuh, a nameless enum???
 enum

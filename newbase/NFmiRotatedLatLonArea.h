@@ -8,6 +8,11 @@
 #pragma once
 
 #include "NFmiLatLonArea.h"
+#include "NFmiPoint.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Undocumented
 

@@ -7,13 +7,7 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-#include "NFmiVoid.h"
-
-#include <cstdlib>
-#include <memory>
 #include <ostream>
-#include <vector>
 
 class NFmiTransformList;
 

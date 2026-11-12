@@ -7,10 +7,9 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
-#include "NFmiDef.h"
 #include <set>
 #include <string>
+#include <vector>
 
 //! Undocumented
 class NFmiCommentStripper

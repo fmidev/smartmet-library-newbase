@@ -8,7 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
-#include "NFmiWeatherAndCloudiness.h"
+#include "NFmiDataModifierBase.h"
 
 class NFmiDataModifierPrecFormUnion : public NFmiDataModifier
 {

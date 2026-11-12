@@ -15,10 +15,9 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-#include "NFmiStringTools.h"
 #include <macgyver/DateTime.h>
 #include <chrono>
+#include <string>
 
 class NFmiNanoSecondTimer
 {

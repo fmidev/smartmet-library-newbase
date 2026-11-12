@@ -7,23 +7,21 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiInfoData.h"
 #include "NFmiMetTime.h"
 #include "NFmiPoint.h"
 #include "NFmiString.h"
-
 #include <memory>
-
 #include <vector>
 
 class NFmiCalculationCondition;
+class NFmiCalculationParams;
 class NFmiDataIdent;
+class NFmiFastQueryInfo;
 class NFmiLevel;
 class NFmiParam;
-class NFmiFastQueryInfo;
 class NFmiSimpleCondition;
-class NFmiCalculationParams;
-class NFmiMacroParamValue;
 
 //! Undocumented class
 class NFmiAreaMask

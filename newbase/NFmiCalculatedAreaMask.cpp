@@ -42,12 +42,23 @@
 
 #include "NFmiCalculatedAreaMask.h"
 #include "NFmiArea.h"
+#include "NFmiAreaMask.h"
+#include "NFmiAreaMaskHelperStructures.h"
 #include "NFmiDataIdent.h"
 #include "NFmiFastQueryInfo.h"
+#include "NFmiGlobals.h"
 #include "NFmiGrid.h"
+#include "NFmiInfoData.h"
 #include "NFmiLocation.h"
+#include "NFmiParameterName.h"
 #include "NFmiPoint.h"
+#include "NFmiString.h"
+#include "NFmiTime.h"
+#include "NFmiTimeDescriptor.h"
 #include <macgyver/Exception.h>
+#include <string>
+
+class NFmiCalculationCondition;
 
 // ----------------------------------------------------------------------
 /*!

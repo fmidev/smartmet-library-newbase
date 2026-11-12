@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
 #include "NFmiDataModifier.h"
+#include "NFmiGlobals.h"
+#include <vector>
 
 class NFmiDataModifierMode : public NFmiDataModifier
 {

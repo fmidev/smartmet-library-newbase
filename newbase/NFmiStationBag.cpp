@@ -13,8 +13,10 @@
 // ======================================================================
 
 #include "NFmiStationBag.h"
-#include "NFmiValueString.h"
+#include "NFmiLocation.h"
 #include <macgyver/Exception.h>
+#include <string>
+#include <vector>
 
 // ----------------------------------------------------------------------
 /*!

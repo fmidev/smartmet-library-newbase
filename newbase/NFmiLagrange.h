@@ -5,14 +5,9 @@
  */
 // ======================================================================
 
-#include "NFmiDataMatrix.h"  // for kFloatMissing
-#include "NFmiDef.h"
-#include "NFmiGlobals.h"  // for kFloatMissing
-
-#include <cmath>
-#include <string>
-
 #pragma once
+
+#include <vector>
 
 //! Undocumented
 class NFmiLagrange

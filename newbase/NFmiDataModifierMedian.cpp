@@ -6,9 +6,9 @@
 // ======================================================================
 
 #include "NFmiDataModifierMedian.h"
+#include "NFmiGlobals.h"
 #include "NFmiQueryInfo.h"
 #include <algorithm>
-#include <stdexcept>
 
 // ----------------------------------------------------------------------
 /*!

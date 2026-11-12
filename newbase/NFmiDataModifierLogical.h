@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include "NFmiDataModifierBoolean.h"
+#include "NFmiDataModifier.h"
+#include <iosfwd>
 
+class NFmiDataModifierBoolean;
 //! Undocumented
 
 class NFmiDataModifierLogical : public NFmiDataModifier

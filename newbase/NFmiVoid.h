@@ -15,8 +15,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-
 //! Undocumented
 class NFmiVoid
 {

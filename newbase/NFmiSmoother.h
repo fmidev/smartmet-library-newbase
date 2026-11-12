@@ -8,11 +8,14 @@
 #pragma once
 
 #include "NFmiDataMatrix.h"  // for NFmiDataMatrix
-#include "NFmiGlobals.h"     // for kFloatMissing
-#include "NFmiPoint.h"       // for NFmiPoint
-#include <gis/CoordinateMatrix.h>
 #include <cmath>
 #include <string>
+#include <vector>
+
+namespace Fmi
+{
+class CoordinateMatrix;
+}  // namespace Fmi
 
 //! Undocumented
 class NFmiSmoother

@@ -8,11 +8,12 @@
 #pragma once
 
 #include "NFmiDataDescriptor.h"
+#include <iosfwd>
 
-class NFmiParamDataModifierList;
-class NFmiParamDataModifier;
 class NFmiDataIdent;
 class NFmiLevel;
+class NFmiParamDataModifier;
+class NFmiParamDataModifierList;
 
 //! Undocumented
 class NFmiDataModifierDescriptor : public NFmiDataDescriptor

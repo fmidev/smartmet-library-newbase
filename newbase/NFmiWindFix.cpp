@@ -1,8 +1,9 @@
 #include "NFmiWindFix.h"
 #include "NFmiFastInfoUtils.h"
 #include "NFmiFastQueryInfo.h"
-#include "NFmiQueryData.h"
+#include "NFmiParameterName.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 using namespace std;
 

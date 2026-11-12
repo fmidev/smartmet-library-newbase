@@ -7,13 +7,17 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiIndividual.h"
 #include "NFmiPoint.h"
 #include "NFmiSaveBaseFactory.h"
-#include <algorithm>
+#include "NFmiString.h"
+#include <cmath>
+#include <cstddef>
+#include <iosfwd>
 
-class NFmiTime;
 class NFmiMetTime;
+class NFmiTime;
 
 //! Undocumented
 

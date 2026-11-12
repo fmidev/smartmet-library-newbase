@@ -20,36 +20,43 @@
 #endif
 
 #include "NFmiQueryInfo.h"
-#include "NFmiBitMask.h"
-//#include "NFmiDataModifier.h"
-#include "NFmiDataModifierExtreme.h"
-#include "NFmiDataModifierExtremePlace.h"
-#include "NFmiFastQueryInfo.h"  // Rumaa lapsiluokka riippuvaista koodia optimoinnin nimissä ModifyTimesLocationData_FullMT -metodissa
-#include "NFmiFileSystem.h"
-#include "NFmiGrid.h"
-#include "NFmiInterpolation.h"
-#include "NFmiQueryData.h"
-#include "NFmiQueryInfoSatel.h"
-#include "NFmiSaveBaseFactory.h"
-#include "NFmiStringList.h"
-#include "NFmiTimeList.h"
-#include "NFmiTotalWind.h"
-#include "NFmiWeatherAndCloudiness.h"
+#include "NFmiArea.h"
+#include "NFmiCombinedParam.h"
+#include "NFmiDataIdent.h"
+#include "NFmiDataMatrix.h"
 #include <macgyver/Exception.h>
 #include <macgyver/FileSystem.h>
 #include <macgyver/ThreadName.h>
 #include <algorithm>
 #include <cassert>
-#include <cstdlib>
-#include <fstream>
 #include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
 #include <memory>
+#include <mutex>
 #include <shared_mutex>
-#include <stdexcept>
+// #include "NFmiDataModifier.h"
+#include "NFmiDataModifierExtreme.h"
+#include "NFmiDataModifierExtremePlace.h"
+#include "NFmiDataPool.h"
+#include "NFmiFastQueryInfo.h"  // Rumaa lapsiluokka riippuvaista koodia optimoinnin nimissä ModifyTimesLocationData_FullMT -metodissa
+#include "NFmiGrid.h"
+#include "NFmiInterpolation.h"
+#include "NFmiLevelBag.h"
+#include "NFmiLevelType.h"
+#include "NFmiLocationBag.h"
+#include "NFmiParam.h"
+#include "NFmiParamBag.h"
+#include "NFmiQueryData.h"
+#include "NFmiSaveBaseFactory.h"
+#include "NFmiStation.h"
+#include "NFmiStringList.h"
+#include "NFmiTimeList.h"
+#include "NFmiTotalWind.h"
+#include "NFmiWeatherAndCloudiness.h"
 
 // abort()
-
-#include <boost/math/special_functions.hpp>
 
 // Mika: isspace on määritelty ctypessä
 #ifdef UNIX
@@ -70,6 +77,8 @@ using namespace std;
 
 static const NFmiString gInfoHeaderKeyWord("FMI_");
 #include "NFmiVersion.h"
+
+class NFmiProducer;
 
 // Jos on maailma dataa, joka ei mene maailman ympäri kokonaan, vaan esim. 0 -> 359.75
 // koska tuo 360 asteen sarake olisi sama kuin 0 asteen sarake. Tällöin jos tarvitaan interpoloida

@@ -14,7 +14,7 @@
 
 #include "NFmiSize.h"
 #include <macgyver/Exception.h>
-#include <fstream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

@@ -12,12 +12,28 @@
 #endif
 
 #include "NFmiFastQueryInfo.h"
+#include "NFmiGlobals.h"
+#include "NFmiHPlaceDescriptor.h"
+#include "NFmiParam.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
+#include "NFmiQueryInfo.h"
 #include "NFmiRect.h"
+#include "NFmiSaveBaseFactory.h"
+#include "NFmiString.h"
+#include "NFmiVPlaceDescriptor.h"
+#include <cstddef>
+#include <iosfwd>
+#include <vector>
 
-class NFmiCalculator;
 class NFmiAreaMask;
-class NFmiDataModifierDescriptor;
 class NFmiBitmapAreaMask;
+class NFmiCalculator;
+class NFmiCombinedParam;
+class NFmiDataModifierDescriptor;
+class NFmiParamDescriptor;
+class NFmiQueryData;
+class NFmiTimeDescriptor;
 
 //! Undocumented
 class NFmiSuperSmartInfo : public NFmiFastQueryInfo

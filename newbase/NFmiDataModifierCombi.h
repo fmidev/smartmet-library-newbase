@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "NFmiCombinedParam.h"
 #include "NFmiDataModifier.h"
+#include "NFmiDataModifierBase.h"
 
+class NFmiCombinedParam;
 class NFmiIntegrationSelector;
 
 //! Undocumented

@@ -7,18 +7,29 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
+#include "NFmiDataIdent.h"
+#include "NFmiLevel.h"
+#include "NFmiLocation.h"
+#include "NFmiMetTime.h"
+#include "NFmiParamDescriptor.h"
+#include "NFmiPoint.h"
 #include "NFmiQueryInfo.h"
 #include "NFmiRawData.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStation.h"
+#include "NFmiString.h"
 #include "NFmiStringList.h"
-#include <memory>
 #include <boost/thread.hpp>
-#include <boost/thread/once.hpp>
+#include <cstddef>
+#include <iosfwd>
+#include <memory>
 #include <string>
 #include <vector>
 
-class NFmiQueryInfo;
+class NFmiGrid;
+class NFmiHPlaceDescriptor;
+class NFmiTimeDescriptor;
+class NFmiVPlaceDescriptor;
 
 //! Undocumented
 class NFmiQueryData

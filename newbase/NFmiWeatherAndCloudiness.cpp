@@ -17,15 +17,18 @@
 
 #include "NFmiWeatherAndCloudiness.h"
 #include "NFmiDataIdent.h"
-#include "NFmiDataModifierClasses.h"
 #include "NFmiDataModifierCombi.h"
 #include "NFmiIntegrationSelector.h"
+#include "NFmiMetTime.h"
+#include "NFmiParam.h"
 #include "NFmiParamBag.h"
 #include "NFmiPoint.h"
 #include "NFmiQueryInfo.h"
+#include "NFmiString.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
+#include <string>
 
 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
 

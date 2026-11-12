@@ -5,9 +5,11 @@
  */
 // ======================================================================
 
+#include "NFmiIndexMask.h"
 #include "NFmiIndexMaskSource.h"
-#include "NFmiIndexMaskTools.h"
+#include "NFmiMetTime.h"
 #include <regression/tframe.h>
+#include <iostream>
 
 //! Protection against conflicts with global functions
 namespace NFmiIndexMaskSourceTest

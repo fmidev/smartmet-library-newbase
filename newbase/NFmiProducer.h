@@ -15,6 +15,7 @@
 #pragma once
 
 #include "NFmiIndividual.h"
+#include "NFmiString.h"
 
 //! Undocumented
 class NFmiProducer : public NFmiIndividual

@@ -13,6 +13,8 @@
 // ======================================================================
 
 #include "NFmiFindFile.h"
+#include "NFmiDef.h"
+#include "NFmiFileString.h"
 #include <macgyver/Exception.h>
 
 #ifndef UNIX

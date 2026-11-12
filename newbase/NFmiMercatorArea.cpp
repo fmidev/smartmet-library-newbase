@@ -88,11 +88,16 @@
 // ======================================================================
 
 #include "NFmiMercatorArea.h"
+#include "NFmiAngle.h"
+#include "NFmiGlobals.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
-#include <limits>
+#include <algorithm>
 #include <cmath>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

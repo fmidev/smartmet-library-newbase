@@ -8,8 +8,12 @@
 #pragma once
 
 #include "NFmiRegressionModifier.h"
-
 #include <boost/thread.hpp>
+
+class NFmiDataIdent;
+class NFmiLevel;
+class NFmiQueryInfo;
+
 using MutexType = boost::shared_mutex;
 
 //! Undocumented

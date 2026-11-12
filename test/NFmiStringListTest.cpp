@@ -5,8 +5,10 @@
  */
 // ======================================================================
 
+#include "NFmiString.h"
 #include "NFmiStringList.h"
 #include <regression/tframe.h>
+#include <iostream>
 
 //! Protection against conflicts with global functions
 namespace NFmiStringListTest

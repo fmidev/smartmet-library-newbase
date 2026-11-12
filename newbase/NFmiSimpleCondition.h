@@ -1,9 +1,9 @@
 #pragma once
 
 #include "NFmiAreaMask.h"
+#include "NFmiGlobals.h"
 #include <memory>
 
-class NFmiAreaMask;
 class NFmiCalculationParams;
 
 // Part luokka pitää sisällään joko yhtä maskia (esim. T_ec), jolta voidaan pyytää arvoa.

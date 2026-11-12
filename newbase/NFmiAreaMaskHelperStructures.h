@@ -1,5 +1,6 @@
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiMetTime.h"
 #include "NFmiPoint.h"
 

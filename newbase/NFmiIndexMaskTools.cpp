@@ -582,7 +582,7 @@
 #include "NFmiArea.h"
 #include "NFmiCalculationCondition.h"
 #include "NFmiFastQueryInfo.h"
-#include "NFmiGeoTools.h"
+#include "NFmiGlobals.h"
 #include "NFmiGrid.h"
 #include "NFmiIndexMask.h"
 #include "NFmiNearTree.h"
@@ -590,7 +590,6 @@
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
 #include <macgyver/Exception.h>
-#include <cassert>
 #include <cmath>
 
 // Implementation hiding detail functions

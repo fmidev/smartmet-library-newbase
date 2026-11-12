@@ -7,7 +7,9 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
+#include "NFmiGlobals.h"
+#include <iosfwd>
+#include <vector>
 
 class NFmiMetTime;
 class NFmiTimeBag;

@@ -6,11 +6,11 @@
 // ======================================================================
 
 #include "NFmiLocationFinder.h"
+#include "NFmiPoint.h"
 #include <regression/tframe.h>
-#include <list>
-#include <set>
+#include <iostream>
+#include <sstream>
 #include <string>
-#include <vector>
 
 using namespace std;
 

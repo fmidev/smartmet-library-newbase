@@ -13,7 +13,12 @@
 // ======================================================================
 
 #include "NFmiDataModifierList.h"
+#include "NFmiDataModifierBase.h"
+#include "NFmiGlobals.h"
+#include "NFmiString.h"
 #include <cmath>
+
+class NFmiCombinedParam;
 
 using namespace std;
 

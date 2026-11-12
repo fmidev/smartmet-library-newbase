@@ -65,11 +65,13 @@
 // ======================================================================
 
 #include "NFmiOrthographicArea.h"
-#include <macgyver/Hash.h>
+#include "NFmiAngle.h"
+#include "NFmiRect.h"
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
-#include <algorithm>
+#include <macgyver/Hash.h>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "NFmiDef.h"
 #include <cmath>
 #include <cstdlib>
 
@@ -14,8 +13,6 @@
  * Note that we still need to use sqrt so that the triangle inequality
  * will be valid.
  */
-
-#include <iostream>
 
 class NFmiLocation;
 

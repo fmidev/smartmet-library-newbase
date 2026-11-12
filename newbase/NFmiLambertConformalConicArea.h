@@ -1,6 +1,13 @@
 #pragma once
 
 #include "NFmiArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Undocumened
 class NFmiLambertConformalConicArea : public NFmiArea

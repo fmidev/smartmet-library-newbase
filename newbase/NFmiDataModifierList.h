@@ -9,6 +9,9 @@
 
 #include "NFmiDataModifier.h"
 #include "NFmiPtrList.h"
+#include <iosfwd>
+
+class NFmiCombinedParam;
 
 //! Undocumented
 class NFmiDataModifierList : public NFmiDataModifier

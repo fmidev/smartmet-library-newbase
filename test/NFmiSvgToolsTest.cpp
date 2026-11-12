@@ -5,12 +5,12 @@
  */
 // ======================================================================
 
-#include "NFmiGeoTools.h"
 #include "NFmiPoint.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
 #include <regression/tframe.h>
 #include <cmath>
+#include <iostream>
 
 //! Protection against conflicts with global functions
 namespace NFmiSvgToolsTest

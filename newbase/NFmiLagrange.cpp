@@ -32,11 +32,10 @@
 // ======================================================================
 
 #include "NFmiLagrange.h"
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
-
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
+#include <cstring>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

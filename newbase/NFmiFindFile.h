@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include "NFmiFileString.h"
-#include "NFmiGlobals.h"
+#include "NFmiString.h"
 #include <string>
 #ifdef UNIX
 #include <glob.h>

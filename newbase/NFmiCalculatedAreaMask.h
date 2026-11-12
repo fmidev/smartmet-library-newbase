@@ -11,7 +11,10 @@
 
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiMetTime.h"
+#include <memory>
 
+class NFmiCalculationCondition;
+class NFmiDataIdent;
 class NFmiFastQueryInfo;
 
 //! Tarkoitus on tehdä tästä mm. auringonnousukulman ja lat/lon arvojen maskien esiluokka.

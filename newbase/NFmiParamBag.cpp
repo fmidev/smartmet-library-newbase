@@ -16,6 +16,9 @@
 #include <macgyver/Exception.h>
 #include <cassert>
 #include <fstream>
+#include <string>
+
+class NFmiProducer;
 
 using namespace std;
 

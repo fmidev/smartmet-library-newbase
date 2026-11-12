@@ -10,9 +10,14 @@
 #include "NFmiAreaMask.h"
 #include "NFmiAreaMaskHelperStructures.h"
 #include "NFmiCalculationCondition.h"
+#include "NFmiGlobals.h"
 #include "NFmiInfoData.h"
+#include "NFmiMetTime.h"
+#include "NFmiPoint.h"
+#include "NFmiString.h"
+#include <memory>
 
-class NFmAreaMaskList;
+class NFmiSimpleCondition;
 
 //! A basic area mask implementation
 class NFmiAreaMaskImpl : public NFmiAreaMask

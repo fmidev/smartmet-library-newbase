@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "NFmiPoint.h"
 #include "NFmiRect.h"
 
 //! Undocumented

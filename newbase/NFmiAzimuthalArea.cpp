@@ -95,6 +95,7 @@
 
 using namespace std;
 
+#include "NFmiGlobals.h"
 #include "NFmiVersion.h"
 
 // ----------------------------------------------------------------------

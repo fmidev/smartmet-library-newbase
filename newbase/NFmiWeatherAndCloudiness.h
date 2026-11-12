@@ -8,8 +8,11 @@
 #pragma once
 
 #include "NFmiCombinedParam.h"
+#include "NFmiGlobals.h"
+#include "NFmiParameterName.h"
+#include "NFmiProducer.h"
+#include <cstdint>
 
-#include <cmath>
 extern "C"
 {
 #if defined(_MSC_VER) && \
@@ -22,11 +25,8 @@ extern "C"
 }
 
 class NFmiDataIdent;
-class NFmiParamBag;
-class NFmiVoidPtrList;
-class NFmiPoint;
-class NFmiQueryInfo;
 class NFmiIntegrationSelector;
+class NFmiVoidPtrList;
 
 //! Undocumented
 // NOLINTBEGIN(cppcoreguidelines-pro-type-union-access): the union bit fields define the stored value
@@ -275,6 +275,7 @@ class NFmiWeatherAndCloudiness : public NFmiCombinedParam
   unsigned long LargeScaleOverCastHessaa(unsigned long thePrecipitation);
   unsigned long PartlyCloudyHessaa();
   struct WeightedPeriodSums;
+
   template <typename Factor>
   void AddToWeightedPeriodSums(WeightedPeriodSums& sums,
                                const NFmiWeatherAndCloudiness& weather,

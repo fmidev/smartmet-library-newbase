@@ -7,20 +7,22 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
-#include "NFmiGeoTools.h"
+#include "NFmiGlobals.h"
 #include "NFmiLocation.h"
 #include "NFmiNearTree.h"
 #include "NFmiNearTreeLocation.h"
+#include "NFmiPoint.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiSize.h"
 #include <boost/math/constants/constants.hpp>
-#include <algorithm>
-#include <cassert>
+#include <cstddef>
+#include <iosfwd>
 #include <set>
+#include <utility>
+#include <vector>
 
-class NFmiStation;
 class NFmiArea;
+class NFmiStation;
 
 namespace Fmi
 {

@@ -9,6 +9,8 @@
 
 #include "NFmiSortable.h"
 #include "NFmiString.h"
+#include <cstddef>
+#include <iosfwd>
 
 //! Undocumented
 

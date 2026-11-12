@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 class NFmiStatusString : public NFmiString

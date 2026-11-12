@@ -5,8 +5,14 @@
  */
 // ======================================================================
 
+#include "NFmiGlobals.h"
+#include "NFmiMetTime.h"
+#include "NFmiStaticTime.h"
+#include "NFmiString.h"
 #include "NFmiTimeBag.h"
+#include "NFmiTimePeriod.h"
 #include <regression/tframe.h>
+#include <iostream>
 #include <string>
 
 using namespace std;

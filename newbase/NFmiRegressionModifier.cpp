@@ -14,13 +14,22 @@
 
 #include "NFmiRegressionModifier.h"
 #include "NFmiDataIdent.h"
+#include "NFmiDataModifierBase.h"
+#include "NFmiDataModifierBoolean.h"
 #include "NFmiDataModifierConstant.h"
 #include "NFmiDataModifierList.h"
 #include "NFmiDataModifierLogical.h"
+#include "NFmiGlobals.h"
+#include "NFmiParam.h"
+#include "NFmiParameterName.h"
 #include "NFmiRegressionItem.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
-#include <cmath>
+#include <ostream>
+#include <string>
+
+class NFmiLevel;
+class NFmiQueryInfo;
 
 namespace
 {

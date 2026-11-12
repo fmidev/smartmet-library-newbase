@@ -17,10 +17,13 @@
 // ======================================================================
 
 #include "NFmiInterpolation.h"
+#include "NFmiGlobals.h"
 #include "NFmiModMeanCalculator.h"
 #include "NFmiPoint.h"
 #include <macgyver/Exception.h>
+#include <cmath>
 #include <set>
+#include <string>
 
 namespace NFmiInterpolation
 {

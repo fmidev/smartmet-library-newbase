@@ -13,7 +13,10 @@
 // ======================================================================
 
 #include "NFmiLevelBag.h"
+#include "NFmiIndividual.h"
 #include <macgyver/Exception.h>
+#include <istream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

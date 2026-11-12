@@ -16,13 +16,16 @@
 // ======================================================================
 
 #include "NFmiDataIntegrator.h"
-
 #include "NFmiDataModifier.h"
 #include "NFmiFastQueryInfo.h"
+#include "NFmiGlobals.h"
 #include "NFmiIndexMask.h"
 #include "NFmiIndexMaskSource.h"
 #include "NFmiMetTime.h"
+#include "NFmiTime.h"
 #include <macgyver/Exception.h>
+#include <string>
+#include <vector>
 
 namespace NFmiDataIntegrator
 {

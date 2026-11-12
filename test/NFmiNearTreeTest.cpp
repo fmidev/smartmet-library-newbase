@@ -8,6 +8,8 @@
 #include "NFmiNearTree.h"
 #include "NFmiPoint.h"
 #include <regression/tframe.h>
+#include <iostream>
+#include <vector>
 
 //! Protection against conflicts with global functions
 namespace NFmiNearTreeTest

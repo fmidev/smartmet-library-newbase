@@ -7,7 +7,9 @@
 
 #pragma once
 
-#include "NFmiMetTime.h"
+#include "NFmiTime.h"
+#include <ctime>
+#include <iosfwd>
 #include <string>
 
 //! Undocumented

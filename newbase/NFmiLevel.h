@@ -9,6 +9,8 @@
 
 #include "NFmiIndividual.h"
 #include "NFmiLevelType.h"
+#include "NFmiString.h"
+#include <iosfwd>
 
 //! Undocumented
 

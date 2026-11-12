@@ -16,12 +16,21 @@
 #include "NFmiAreaMask.h"
 #include "NFmiBitmapAreaMask.h"
 #include "NFmiCalculator.h"
-#include "NFmiDataModifierClasses.h"
+#include "NFmiDataIdent.h"
+#include "NFmiDataIterator.h"
 #include "NFmiDataModifierDescriptor.h"
-#include "NFmiGrid.h"
+#include "NFmiDataModifierMinMax.h"
+#include "NFmiLevel.h"
 #include "NFmiParamDataModifier.h"
-#include "NFmiRelativeDataIterator.h"
 #include <macgyver/Exception.h>
+#include <cstddef>
+#include <memory>
+#include <string>
+
+class NFmiCombinedParam;
+class NFmiParamDescriptor;
+class NFmiQueryData;
+class NFmiTimeDescriptor;
 
 using namespace std;
 

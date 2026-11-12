@@ -13,10 +13,18 @@
 // ======================================================================
 
 #include "NFmiRotatedLatLonArea.h"
-#include <macgyver/Hash.h>
+#include "NFmiAngle.h"
+#include "NFmiArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiRect.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <algorithm>
+#include <cmath>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

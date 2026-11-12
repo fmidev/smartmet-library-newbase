@@ -6,9 +6,13 @@
 // ======================================================================
 
 #include "NFmiSnapShotInterface.h"
+#include "NFmiQueryData.h"
+#include "NFmiQueryInfo.h"
 #include <macgyver/Exception.h>
+#include <cstdlib>
 #include <ctime>
 #include <fstream>
+#include <string>
 
 using namespace std;
 

@@ -130,10 +130,10 @@
 // ======================================================================
 
 #include "NFmiTransformList.h"
+#include "NFmiGlobals.h"
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <string>

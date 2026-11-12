@@ -11,6 +11,11 @@
 #define MunFmiMin(x, y) ((x) < (y) ? (x) : (y))
 
 #include "NFmiAzimuthalArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiPoint.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 class NFmiOrthographicArea : public NFmiAzimuthalArea
 {

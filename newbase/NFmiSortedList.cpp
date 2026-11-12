@@ -13,9 +13,9 @@
 // ======================================================================
 
 #include "NFmiSortedList.h"
-#include "NFmiMetTime.h"
 #include "NFmiSortable.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

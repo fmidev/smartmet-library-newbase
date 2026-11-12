@@ -64,9 +64,16 @@
 // ======================================================================
 
 #include "NFmiGnomonicArea.h"
+#include "NFmiAngle.h"
+#include "NFmiArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiRect.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <memory>
+#include <sstream>
 
 using namespace std;
 

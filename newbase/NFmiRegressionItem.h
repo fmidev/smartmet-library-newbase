@@ -7,10 +7,12 @@
 
 #pragma once
 
+#include "NFmiDataModifier.h"
 #include "NFmiInfoModifier.h"
 
-class NFmiSuperSmartInfo;
 class NFmiDataIdent;
+class NFmiLevel;
+class NFmiQueryInfo;
 
 //! Undocumented
 class NFmiRegressionItem : public NFmiInfoModifier

@@ -19,10 +19,10 @@
 // ======================================================================
 
 #include "NFmiGaussKruger.h"
-
 #include "NFmiGlobals.h"  // kPii
 #include <macgyver/Exception.h>
 #include <cmath>
+#include <string>
 
 namespace
 {

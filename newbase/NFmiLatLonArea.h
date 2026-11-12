@@ -7,8 +7,14 @@
 
 #pragma once
 
-#include "NFmiAngle.h"
 #include "NFmiArea.h"
+#include "NFmiGlobals.h"
+#include "NFmiPoint.h"
+#include "NFmiRect.h"
+#include "NFmiSaveBaseFactory.h"
+#include <cstddef>
+#include <iosfwd>
+#include <string>
 
 //! Undocumented
 class NFmiLatLonArea : public NFmiArea

@@ -8,11 +8,11 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include <cfloat>
 
 // Mika: For some reason Red-Hat Linux does not have FLT_MAX...?
 
 #ifdef UNIX
-#include <limits.h>
 #ifndef FLT_MAX
 #define FLT_MAX 1e+37
 #endif

@@ -12,6 +12,8 @@
 #include <ctime>
 #include <iostream>
 
+struct tm;
+
 const unsigned long kShortYear = 1;  // YY
 const unsigned long kLongYear = 2;   // YYYY
 const unsigned long kMonth = 4;      // MM

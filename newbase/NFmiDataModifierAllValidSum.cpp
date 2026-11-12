@@ -16,6 +16,10 @@
 // ======================================================================
 
 #include "NFmiDataModifierAllValidSum.h"
+#include "NFmiDataIdent.h"
+#include "NFmiDataModifier.h"
+#include "NFmiGlobals.h"
+#include "NFmiParam.h"
 #include "NFmiQueryInfo.h"
 
 // ----------------------------------------------------------------------

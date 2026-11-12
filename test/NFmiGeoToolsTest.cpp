@@ -6,9 +6,9 @@
 // ======================================================================
 
 #include "NFmiGeoTools.h"
-#include "NFmiGlobals.h"
 #include <regression/tframe.h>
 #include <cmath>
+#include <iostream>
 
 //! Protection against conflicts with global functions
 namespace NFmiGeoToolsTest

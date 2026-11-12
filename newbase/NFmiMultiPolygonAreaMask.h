@@ -8,11 +8,14 @@
 #pragma once
 
 #include "NFmiAreaMaskImpl.h"
+#include "NFmiInfoData.h"
+#include <iosfwd>
 #include <vector>
 
-class NFmiSvgPath;
 class NFmiBitmapAreaMask;
+class NFmiCalculationCondition;
 class NFmiGrid;
+class NFmiSvgPath;
 
 //! Undocumented
 class NFmiMultiPolygonAreaMask : public NFmiAreaMaskImpl

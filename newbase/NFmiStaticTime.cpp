@@ -15,6 +15,9 @@
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
 #include <ctime>
+#include <string>
+
+struct tm;
 
 using namespace std;
 

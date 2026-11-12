@@ -9,8 +9,10 @@
 
 #include "NFmiGlobals.h"
 #include <cmath>
+#include <cstddef>
 #include <iosfwd>
-#include <tuple>
+#include <iterator>
+#include <utility>
 
 class NFmiPoint
 {

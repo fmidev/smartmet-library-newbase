@@ -66,9 +66,7 @@
 #include "NFmiKKJArea.h"
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
-#include <cmath>
-#include <cstdlib>
-#include <stdexcept>
+#include <sstream>
 
 using namespace std;
 

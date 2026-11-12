@@ -7,7 +7,13 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiLocation.h"
+#include "NFmiSaveBaseFactory.h"
+#include "NFmiString.h"
+#include <iosfwd>
+
+class NFmiIndividual;
 
 //! Undocumented
 class NFmiStation : public NFmiLocation

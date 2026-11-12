@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-
 class NFmiArea;
 class NFmiPoint;
 

@@ -13,13 +13,14 @@
 // ======================================================================
 
 #include "NFmiLatLonArea.h"
-#include "NFmiAreaFactory.h"
+#include "NFmiAngle.h"
 #include <fmt/format.h>
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <cmath>
-
-#include <iostream>
+#include <memory>
+#include <sstream>
 
 // ----------------------------------------------------------------------
 /*!

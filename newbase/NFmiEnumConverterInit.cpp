@@ -1,7 +1,9 @@
 #include "NFmiEnumConverter.h"
+#include "NFmiParameterName.h"
 #include "NFmiPressMasks.h"
 #include "NFmiTiesaaAlueet.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 void NFmiEnumConverter::Impl::initRoadRegions()
 {

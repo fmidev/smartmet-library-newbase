@@ -13,15 +13,22 @@
 // ======================================================================
 
 #include "NFmiGrid.h"
-#include "NFmiLocationBag.h"
+#include "NFmiDataMatrix.h"
+#include "NFmiDataPool.h"
+#include "NFmiLocation.h"
 #include "NFmiSaveBaseFactory.h"
 #include "NFmiWGS84.h"
 #include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
-#include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <fstream>
+
+namespace Fmi
+{
+class SpatialReference;
+}  // namespace Fmi
 
 using namespace std;
 

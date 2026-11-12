@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "NFmiDef.h"
 #include "NFmiString.h"
 
 enum FmiValues

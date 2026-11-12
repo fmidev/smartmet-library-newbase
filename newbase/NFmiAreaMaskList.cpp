@@ -14,6 +14,11 @@
 
 #include "NFmiAreaMaskList.h"
 #include <macgyver/Exception.h>
+#include <cstddef>
+#include <string>
+
+class NFmiDataIdent;
+class NFmiLevel;
 
 // ----------------------------------------------------------------------
 /*!

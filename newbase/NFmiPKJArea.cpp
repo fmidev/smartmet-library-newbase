@@ -96,10 +96,9 @@
 // ======================================================================
 
 #include "NFmiPKJArea.h"
+#include "NFmiArea.h"
+#include "NFmiRect.h"
 #include <macgyver/Exception.h>
-#include <cmath>
-#include <cstdlib>
-#include <stdexcept>
 
 // ----------------------------------------------------------------------
 /*!

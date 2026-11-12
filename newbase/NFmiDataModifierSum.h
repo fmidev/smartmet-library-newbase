@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifier.h"
+#include "NFmiDataModifierBase.h"
 
 class NFmiDataModifierSum : public NFmiDataModifier
 {

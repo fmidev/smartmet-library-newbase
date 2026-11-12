@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
-
 const int kDelete = true;
 const int kNoDelete = false;
 const long kNotInList = -1;

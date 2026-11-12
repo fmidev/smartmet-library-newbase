@@ -32,6 +32,8 @@
 
 #include "NFmiIndexMaskSource.h"
 #include <macgyver/Exception.h>
+#include <string>
+#include <utility>
 
 // ----------------------------------------------------------------------
 /*!

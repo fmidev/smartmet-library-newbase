@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include "NFmiDataMatrix.h"
+#include "NFmiMetTime.h"
 #include "NFmiTimeDescriptor.h"
+#include <string>
+#include <vector>
 
 class NFmiQueryInfo;
 

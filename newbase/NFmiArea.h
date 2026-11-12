@@ -8,9 +8,13 @@
 #pragma once
 
 #include "NFmiAngle.h"
+#include "NFmiGlobals.h"
+#include "NFmiPoint.h"
 #include "NFmiRect.h"
-#include "NFmiSaveBaseFactory.h"
 #include <gis/SpatialReference.h>
+#include <cstddef>
+#include <iosfwd>
+#include <memory>
 #include <string>
 
 // Note: We could forward declare Fmi::SpatialReference too, but then all code using this or

@@ -35,16 +35,19 @@
 // ======================================================================
 
 #include "NFmiLocationFinder.h"
+#include "NFmiGlobals.h"
 #include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <algorithm>
 #include <cctype>
 #include <cerrno>
-#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <map>
+#include <optional>
+#include <utility>
 #include <vector>
 // atoi()
 

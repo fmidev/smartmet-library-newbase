@@ -9,6 +9,8 @@
 
 #include "NFmiDataIterator.h"
 
+class NFmiQueryInfo;
+
 //! Undocumented
 
 class NFmiRelativeDataIterator : public NFmiDataIterator

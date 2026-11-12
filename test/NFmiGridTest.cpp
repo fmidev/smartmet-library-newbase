@@ -5,12 +5,13 @@
  */
 // ======================================================================
 
+#include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiGrid.h"
-#include "NFmiStringTools.h"
+#include "NFmiPoint.h"
 #include <regression/tframe.h>
-#include <fstream>
-#include <stdexcept>
+#include <cmath>
+#include <iostream>
 #include <string>
 
 using namespace std;

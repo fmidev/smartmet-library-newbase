@@ -21,7 +21,7 @@
 #include "NFmiSettings.h"
 #include "NFmiValueString.h"
 #include <macgyver/Exception.h>
-#include <sys/timeb.h>
+#include <algorithm>
 #include <ctime>
 #include <iostream>
 

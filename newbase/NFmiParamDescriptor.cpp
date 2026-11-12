@@ -13,12 +13,14 @@
 // ======================================================================
 
 #include "NFmiParamDescriptor.h"
-#include "NFmiDataDescriptor.h"
+#include "NFmiDataIdent.h"
+#include "NFmiParam.h"
 #include "NFmiParamBag.h"
-#include <macgyver/Exception.h>
-#include <cassert>
-
+#include "NFmiString.h"
 #include "NFmiVersion.h"
+#include <macgyver/Exception.h>
+#include <istream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

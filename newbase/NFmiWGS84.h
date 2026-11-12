@@ -1,7 +1,5 @@
 #pragma once
 
-#include "NFmiGlobals.h"
-
 namespace Fmi
 {
 class SpatialReference;

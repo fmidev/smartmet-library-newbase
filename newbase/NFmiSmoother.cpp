@@ -6,6 +6,8 @@
 // ======================================================================
 
 #include "NFmiSmoother.h"
+#include "NFmiGlobals.h"
+#include <gis/CoordinateMatrix.h>
 #include <macgyver/Exception.h>
 #include <cassert>
 #include <cstdlib>

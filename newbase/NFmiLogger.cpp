@@ -17,17 +17,21 @@
 // ======================================================================
 
 #include "NFmiLogger.h"
+#include "NFmiDef.h"
 #include "NFmiFileSystem.h"
 #include "NFmiSettings.h"
+#include "NFmiStaticTime.h"
+#include "NFmiString.h"
+#include "NFmiStringTools.h"
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-
 #include <fstream>
+#include <iostream>
+#include <optional>
 #ifdef UNIX
 #include <unistd.h>  // for getcwd
 #endif
 
-#include <cstdlib>
 #include <utility>
 // atoi()
 

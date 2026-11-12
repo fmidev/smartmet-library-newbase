@@ -5,9 +5,16 @@
  */
 // ======================================================================
 
+#include "NFmiCombinedParam.h"
+#include "NFmiGlobals.h"
+#include "NFmiParameterName.h"
 #include "NFmiWeatherAndCloudiness.h"
 #include <regression/tframe.h>
+#include <algorithm>
 #include <cmath>
+#include <initializer_list>
+#include <iostream>
+#include <iterator>
 #include <string>
 #include <utility>
 #include <vector>

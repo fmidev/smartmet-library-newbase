@@ -8,10 +8,8 @@
 #include "NFmiString.h"
 #include <boost/lexical_cast.hpp>
 #include <regression/tframe.h>
-#include <list>
-#include <set>
+#include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 

@@ -7,14 +7,29 @@
 
 #pragma once
 
+#include "NFmiArea.h"
+#include "NFmiAreaMask.h"
+#include "NFmiAreaMaskHelperStructures.h"
 #include "NFmiAreaMaskImpl.h"
 #include "NFmiDataIdent.h"
 #include "NFmiFastInfoUtils.h"
 #include "NFmiFastQueryInfo.h"
+#include "NFmiGlobals.h"
 #include "NFmiGrid.h"  // täältä tulee NFmiTimeCache-luokka (tiedän, pitäisi jakaa newbase:a osiin)
+#include "NFmiInfoData.h"
 #include "NFmiLevel.h"
+#include "NFmiLocation.h"
 #include "NFmiMetTime.h"
+#include "NFmiParameterName.h"
+#include "NFmiPoint.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <cstddef>
+#include <functional>
+#include <memory>
+#include <utility>
+#include <vector>
 
+class NFmiCalculationCondition;
 class NFmiDataModifier;
 
 class MetaParamDataHolder

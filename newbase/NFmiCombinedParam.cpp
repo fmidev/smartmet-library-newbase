@@ -14,12 +14,13 @@
 // ======================================================================
 
 #include "NFmiCombinedParam.h"
+#include "NFmiDataModifier.h"
 #include "NFmiDataModifierCombi.h"
 #include "NFmiParamBag.h"
-#include "NFmiParamDataModifierList.h"
 #include <macgyver/Exception.h>
 #include <cstdint>
 #include <cstring>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

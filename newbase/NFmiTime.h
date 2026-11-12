@@ -7,10 +7,13 @@
 
 #pragma once
 
+#include "NFmiGlobals.h"
 #include "NFmiStaticTime.h"
-
-#include <macgyver/LocalDateTime.h>
+#include "NFmiString.h"
 #include <macgyver/DateTime.h>
+#include <macgyver/LocalDateTime.h>
+#include <ctime>
+#include <string>
 
 #define DICT_WEEKDAY_MONDAY "WeekdayMonday"
 #define DICT_WEEKDAY_TUESDAY "WeekdayTuesday"

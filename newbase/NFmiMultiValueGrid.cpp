@@ -13,7 +13,14 @@
 // ======================================================================
 
 #include "NFmiMultiValueGrid.h"
+#include "NFmiDataPool.h"
+#include "NFmiHPlaceDescriptor.h"
+#include "NFmiParamDescriptor.h"
+#include "NFmiTimeDescriptor.h"
 #include <macgyver/Exception.h>
+#include <iostream>
+#include <memory>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

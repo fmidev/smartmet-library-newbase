@@ -13,12 +13,15 @@
 // ======================================================================
 
 #include "NFmiDataModifierVariance.h"
-
+#include "NFmiGlobals.h"
 #include "NFmiQueryInfo.h"
-#include "NFmiRegressionItem.h"
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+#include <version>
+
+class NFmiDataIdent;
+class NFmiLevel;
 
 using WriteLock = boost::unique_lock<MutexType>;
 

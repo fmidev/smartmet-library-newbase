@@ -7,12 +7,10 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
 #include "NFmiLevel.h"
+#include "NFmiLevelType.h"
 #include "NFmiSize.h"
-#include "NFmiString.h"
-
-class NFmiLevel;
+#include <iosfwd>
 
 //! Undocumented
 class NFmiLevelBag : public NFmiSize

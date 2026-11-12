@@ -5,6 +5,7 @@
  */
 // ======================================================================
 
+#include "NFmiDataModifier.h"
 #include "NFmiDataModifierAllValidAvg.h"
 #include "NFmiDataModifierAllValidSum.h"
 #include "NFmiDataModifierAvg.h"
@@ -18,6 +19,7 @@
 #include "NFmiGlobals.h"
 #include <regression/tframe.h>
 #include <cmath>
+#include <iostream>
 #include <string>
 #include <vector>
 

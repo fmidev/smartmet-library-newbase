@@ -16,6 +16,7 @@
 #include "NFmiDataModifier.h"
 #include "NFmiQueryInfo.h"
 #include <macgyver/Exception.h>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

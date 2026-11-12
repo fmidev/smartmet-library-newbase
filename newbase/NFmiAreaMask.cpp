@@ -15,10 +15,10 @@
 
 #include "NFmiAreaMask.h"
 #include "NFmiFastQueryInfo.h"
-
 #include <macgyver/Exception.h>
-#include <cmath>
+#include <cstddef>
 #include <memory>
+#include <string>
 
 //! Destructor
 NFmiAreaMask::~NFmiAreaMask() = default;

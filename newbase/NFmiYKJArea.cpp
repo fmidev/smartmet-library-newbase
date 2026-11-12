@@ -95,10 +95,12 @@
 // ======================================================================
 
 #include "NFmiYKJArea.h"
-#include <fmt/format.h>
+#include "NFmiArea.h"
+#include "NFmiRect.h"
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
-#include <cmath>
-#include <cstdlib>
+#include <memory>
+#include <sstream>
 #include <string>
 
 // ----------------------------------------------------------------------

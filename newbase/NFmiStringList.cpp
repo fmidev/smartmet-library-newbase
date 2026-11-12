@@ -20,8 +20,12 @@
 // ======================================================================
 
 #include "NFmiStringList.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStatusPositionString.h"
+#include "NFmiStatusString.h"
 #include <macgyver/Exception.h>
+#include <istream>
+#include <string>
 
 // ----------------------------------------------------------------------
 /*!

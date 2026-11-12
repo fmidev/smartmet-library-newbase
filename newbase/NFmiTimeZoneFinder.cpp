@@ -28,16 +28,17 @@
 
 #include "NFmiTimeZoneFinder.h"
 #include "NFmiFileSystem.h"
+#include "NFmiGlobals.h"
 #include "NFmiPoint.h"
 #include "NFmiPreProcessor.h"
 #include <macgyver/Exception.h>
-#include <iostream>
-#include <list>
+#include <algorithm>
 #include <cmath>
+#include <list>
 #include <memory>
 #include <set>
 #include <sstream>
-#include <stdexcept>
+#include <utility>
 
 using namespace std;
 
@@ -691,6 +692,7 @@ bool NFmiTimeZoneFinder::ReadFile(const string& theFileName)
 // ----------------------------------------------------------------------
 
 #include <iostream>
+
 void NFmiTimeZoneFinder::Check(const NFmiPoint& theLatLon) const
 {
   try

@@ -9,7 +9,6 @@
 
 #pragma once
 
-#include "NFmiGlobals.h"
 #include <iostream>
 
 //! Undocumented

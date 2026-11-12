@@ -8,6 +8,7 @@
 #pragma once
 
 #include "NFmiDataModifierBase.h"
+#include "NFmiGlobals.h"
 
 //! Undocumented
 enum FmiIntegrationSelector

@@ -5,6 +5,7 @@
  */
 // ======================================================================
 
+#include "NFmiArea.h"
 #include "NFmiAreaFactory.h"
 #include "NFmiEquidistArea.h"
 #include "NFmiGdalArea.h"
@@ -12,16 +13,18 @@
 #include "NFmiLatLonArea.h"
 #include "NFmiMercatorArea.h"
 #include "NFmiOrthographicArea.h"
+#include "NFmiPoint.h"
 #include "NFmiRotatedLatLonArea.h"
+#include "NFmiSaveBaseFactory.h"
 #include "NFmiStereographicArea.h"
 #include "NFmiTransverseMercatorArea.h"
 #include "NFmiYKJArea.h"
 #include <macgyver/Exception.h>
 #include <regression/tframe.h>
-#include <memory>
-
 #include <cmath>
-#include <stdexcept>
+#include <initializer_list>
+#include <iostream>
+#include <memory>
 #include <string>
 
 //! Protection against conflicts with global functions

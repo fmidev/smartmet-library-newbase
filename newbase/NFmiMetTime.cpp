@@ -19,10 +19,11 @@
 
 #include "NFmiMetTime.h"
 #include "NFmiLocation.h"
+#include "NFmiStaticTime.h"
 #include <macgyver/Exception.h>
 #include <ctime>
 #include <iostream>
-#include <vector>
+#include <string>
 
 using namespace std;
 
