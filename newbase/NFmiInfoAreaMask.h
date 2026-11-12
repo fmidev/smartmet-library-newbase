@@ -22,7 +22,6 @@
 #include "NFmiMetTime.h"
 #include "NFmiParameterName.h"
 #include "NFmiPoint.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <cstddef>
 #include <functional>
 #include <memory>

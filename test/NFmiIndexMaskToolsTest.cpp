@@ -15,7 +15,6 @@
 #include "NFmiStreamQueryData.h"
 #include "NFmiSvgPath.h"
 #include "NFmiSvgTools.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <regression/tframe.h>
 #include <fstream>
 #include <iostream>
