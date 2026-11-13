@@ -18,7 +18,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-#include <version>
 
 class NFmiDataIdent;
 class NFmiLevel;
